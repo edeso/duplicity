@@ -37,12 +37,6 @@ from setuptools.command.test import test
 from subprocess import Popen, PIPE
 
 
-# check that we can function here
-if not (sys.version_info[:2] >= (3, 5) or (sys.version_info[0] == 2 and sys.version_info[:2] >= (2, 7))):
-    print(u"Sorry, duplicity requires version 2.7 or version 3.5 or later of Python.")
-    sys.exit(1)
-
-
 scm_version_args = {
     u'tag_regex': r'^(?P<prefix>rel.)?(?P<version>[^\+]+)(?P<suffix>.*)?$',
     u'local_scheme': u'no-local-version',
@@ -258,7 +252,7 @@ setup(name=u"duplicity",
     maintainer=u"Kenneth Loafman <kenneth@loafman.com>",
     maintainer_email=u"kenneth@loafman.com",
     url=u"http://duplicity.nongnu.org/index.html",
-    python_requires=u">2.6, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <4",
+    python_requires=u">=3.6, <4",
     platforms=[u"any"],
     packages=[
         u"duplicity",
@@ -310,10 +304,7 @@ setup(name=u"duplicity",
         u"Operating System :: MacOS",
         u"Operating System :: POSIX",
         u"Programming Language :: C",
-        u"Programming Language :: Python :: 2",
-        u"Programming Language :: Python :: 2.7",
         u"Programming Language :: Python :: 3",
-        u"Programming Language :: Python :: 3.5",
         u"Programming Language :: Python :: 3.6",
         u"Programming Language :: Python :: 3.7",
         u"Programming Language :: Python :: 3.8",
