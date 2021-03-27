@@ -66,15 +66,15 @@ response = requests.post('https://slate.host/api/v1/get', data=data, headers=hea
         
 
       def _put(self, file_path):
-url = 'https://uploads.slate.host/api/public/' + '8f835cb3-9a39-429b-87ac-f23205d5280d'
+        url = 'https://uploads.slate.host/api/public/' + '8f835cb3-9a39-429b-87ac-f23205d5280d'
 
-# with open(file_path, 'rb') as file:
-files = {file.name: open(file_path, 'rb')}
-headers = {
-  'Authorization': 'Basic ' + key
-  }
+        # with open(file_path, 'rb') as file:
+        files = {file.name: open(file_path, 'rb')}
+        headers = {
+          'Authorization': 'Basic ' + key
+          }
 
-response = requests.post(url=url, files=files, headers=headers, verify=False)
+        response = requests.post(url=url, files=files, headers=headers, verify=False)
 
         if not response.ok:
           raise BackendException(u"An error occured whilst attempting to upload a file: %s"(response))
@@ -96,7 +96,7 @@ response = requests.post(url=url, files=files, headers=headers, verify=False)
         slates = response.json()['slates']
         file_list = []
         for slate in slates:
-          files = ['data']['objects']
+          files = slate['data']['objects']
           for files in slate:
             file_list += file['name']
             
