@@ -83,7 +83,7 @@ class SlateBackend(duplicity.backend.Backend):
           'Authorization': 'Basic ' + self.key
           }
 
-        response = requests.post(url=slate_url, files=files, headers=headers, verify=False)
+        response = requests.post(url=self.slate_url, files=files, headers=headers, verify=False)
 
         if not response.ok:
           raise BackendException(u"An error occured whilst attempting to upload a file: %s"(response))
