@@ -98,6 +98,7 @@ from duplicity.errors import BackendException
 #   Have fun!
 #
 
+
 class IDriveBackend(duplicity.backend.Backend):
 
     def __init__(self, parsed_url):
@@ -143,7 +144,7 @@ class IDriveBackend(duplicity.backend.Backend):
             log.Warn(u"   https://www.idrivedownloads.com/downloads/linux/download-options/IDrive_linux_32bit.zip")
             log.Warn(u"and place anywhere with exe rights. Then creat env var 'IDEVSPATH' with path to file")
             log.Warn(u"-" * 72)
-            raise BackendException(u"No IDEVSPATH environment variable set. Should contain folder to idevsutil_dedup")
+            raise BackendException(u"No IDEVSPATH env var set. Should contain folder to idevsutil_dedup")
         self.cmd = os.path.join(path, u"idevsutil_dedup")
         log.Debug(u"idrive command base: %s" % (self.cmd))
 
@@ -154,7 +155,7 @@ class IDriveBackend(duplicity.backend.Backend):
             log.Warn(u"WARNING: iDrive logon ID missing")
             log.Warn(u"Create an environment variable IDRIVEID with your iDrive logon ID")
             log.Warn(u"-" * 72)
-            raise BackendException(u"No IDRIVEID environment variable set. Should contain idrive id")
+            raise BackendException(u"No IDRIVEID env var set. Should contain idrive id")
         log.Debug(u"idrive id: %s" % (self.idriveid))
 
         # Get the full-path to the account password file
@@ -165,7 +166,7 @@ class IDriveBackend(duplicity.backend.Backend):
             log.Warn(u"Please create a file with your iDrive logon password,")
             log.Warn(u"Then create an environment variable IDPWDFILE with path/filename of said file")
             log.Warn(u"-" * 72)
-            raise BackendException(u"No IDPWDFILE environment variable set. Should contain file with password (fullpath)")
+            raise BackendException(u"No IDPWDFILE env var set. Should contain file with password")
         log.Debug(u"idrive pwdpath: %s" % (filepath))
         self.auth_switch = u" --password-file={0}".format(filepath)
 
@@ -184,7 +185,8 @@ class IDriveBackend(duplicity.backend.Backend):
                     log.Debug(u"Using existing directory {0} as fake-root".format(self.fakeroot))
                 else:
                     log.Warn(u"-" * 72)
-                    log.Warn(u"WARNING: Creation of FAKEROOT {0} failed; backup will use system temp directory".format(self.fakeroot))
+                    log.Warn(u"WARNING: Creation of FAKEROOT {0} failed; backup will use system temp directory"
+                        .format(self.fakeroot))
                     log.Warn(u"This might interfere with incremental backups")
                     log.Warn(u"-" * 72)
                     raise BackendException(u"Creation of the directory {0} failed".format(self.fakeroot))
@@ -201,7 +203,7 @@ class IDriveBackend(duplicity.backend.Backend):
             log.Warn(u"WARNING: iDrive backup bucket missing")
             log.Warn(u"Create an environment variable IDBUCKET specifying the target bucket")
             log.Warn(u"-" * 72)
-            raise BackendException(u"No IDBUCKET environment variable set. Should contain idrive backup bucket")
+            raise BackendException(u"No IDBUCKET env var set. Should contain idrive backup bucket")
         log.Debug(u"idrive bucket: %s" % (self.bucket))
 
         # check account / get config status and config type
@@ -223,7 +225,7 @@ class IDriveBackend(duplicity.backend.Backend):
                 log.Warn(u"Please create a file with your iDrive encryption key,")
                 log.Warn(u"Then create an environment variable IDKEYFILE with path/filename of said file")
                 log.Warn(u"-" * 72)
-                raise BackendException(u"No IDKEYFILE environment variable set. Should contain file with encription key (fullpath)")
+                raise BackendException(u"No IDKEYFILE env var set. Should contain file with encription key")
             log.Debug(u"idrive keypath: %s" % (filepath))
             self.auth_switch += u" --pvt-key={0}".format(filepath)
 
@@ -232,15 +234,20 @@ class IDriveBackend(duplicity.backend.Backend):
         self.idriveserver = el.attrib[u"cmdUtilityServer"]
 
         # get the device list - primarely used to get device-id string
-        el = self.request(self.cmd + self.auth_switch + u" --list-device {0}@{1}::home".format(self.idriveid, self.idriveserver))
+        el = self.request(self.cmd + self.auth_switch + u" --list-device {0}@{1}::home".
+            format(self.idriveid, self.idriveserver))
         # scan all returned devices for requested device (== bucket)
         self.idrivedevid = None
         for item in el.findall(u'item'):
             if item.attrib[u'nick_name'] == self.bucket:
-                self.idrivedevid = u"5c0b" + item.attrib[u"device_id"] + u"4b5z"        # prefix and suffix reverse-engineered from Common.pl!
+                # prefix and suffix reverse-engineered from Common.pl!
+                self.idrivedevid = u"5c0b" + item.attrib[u"device_id"] + u"4b5z"
         if self.idrivedevid is None:
-            el = self.request(self.cmd + self.auth_switch + u" --create-bucket --bucket-type=D --nick-name={0} --os=Linux --uid=987654321 {1}@{2}::home/".format(self.bucket, self.idriveid, self.idriveserver)).find(u'item')
-            self.idrivedevid = u"5c0b" + el.attrib[u"device_id"] + u"4b5z" # prefix and suffix reverse-engineered from Common.pl!
+            el = self.request(self.cmd + self.auth_switch +
+                u" --create-bucket --bucket-type=D --nick-name={0} --os=Linux --uid=987654321 {1}@{2}::home/"
+                .format(self.bucket, self.idriveid, self.idriveserver)).find(u'item')
+            # prefix and suffix reverse-engineered from Common.pl!
+            self.idrivedevid = u"5c0b" + el.attrib[u"device_id"] + u"4b5z"
 
         # We're fully connected!
         self.connected = True
@@ -249,7 +256,8 @@ class IDriveBackend(duplicity.backend.Backend):
     def list_raw(self):
         # get raw list; used by _list, _query and _query_list
         remote_path = os.path.join(urllib.parse.unquote(self.parsed_url.path.lstrip(u'/')), self.fakeroot.lstrip(u'/')).rstrip()
-        commandline = (self.cmd + self.auth_switch + u" --auth-list --device-id={0} {1}@{2}::home/{3}".format(self.idrivedevid, self.idriveid, self.idriveserver, remote_path))
+        commandline = ((self.cmd + self.auth_switch + u" --auth-list --device-id={0} {1}@{2}::home/{3}"
+            .format(self.idrivedevid, self.idriveid, self.idriveserver, remote_path)))
         try:
             _, l, _ = self.subprocess_popen(commandline)
         except:
@@ -288,7 +296,9 @@ class IDriveBackend(duplicity.backend.Backend):
         flist.write(intrim_file)
         flist.seek(0)
 
-        putrequest = (self.cmd + self.auth_switch + u"  --device-id={0} --files-from={1} / {2}@{3}::home/{4}").format(self.idrivedevid, flist.name, self.idriveid, self.idriveserver, remote_dirpath)
+        putrequest = ((self.cmd + self.auth_switch +
+            u"  --device-id={0} --files-from={1} / {2}@{3}::home/{4}")
+            .format(self.idrivedevid, flist.name, self.idriveid, self.idriveserver, remote_dirpath))
         log.Debug(u"put_file put command: {0}".format(putrequest))
         _, putresponse, _ = self.subprocess_popen(putrequest)
         log.Debug(u"put_file put response: {0}".format(putresponse))
@@ -305,9 +315,11 @@ class IDriveBackend(duplicity.backend.Backend):
         # decode from byte-stream to utf-8 string
         filename = remote_filename.decode(u'utf-8')
 
-        remote_path = os.path.join(urllib.parse.unquote(self.parsed_url.path.lstrip(u'/')), self.fakeroot.lstrip(u'/'), filename).rstrip()
+        remote_path = os.path.join(urllib.parse.unquote(self.parsed_url.path.lstrip(u'/')),
+            self.fakeroot.lstrip(u'/'), filename).rstrip()
 
-        log.Debug(u"_get: remote_filename={0}, local_path={1}, remote_path={2}, parsed_url.path={3}".format(filename, local_path, remote_path, self.parsed_url.path))
+        log.Debug(u"_get: remote_filename={0}, local_path={1}, remote_path={2}, parsed_url.path={3}"
+            .format(filename, local_path, remote_path, self.parsed_url.path))
 
         # Create tempdir to downlaod file into
         tmpdir = tempfile.mkdtemp()
@@ -318,7 +330,9 @@ class IDriveBackend(duplicity.backend.Backend):
         flist.write(remote_path)
         flist.seek(0)
 
-        commandline = (self.cmd + self.auth_switch + u" --device-id={0} --files-from={1} {2}@{3}::home/ {4}").format(self.idrivedevid, flist.name, self.idriveid, self.idriveserver, tmpdir)
+        commandline = ((self.cmd + self.auth_switch +
+            u" --device-id={0} --files-from={1} {2}@{3}::home/ {4}")
+            .format(self.idrivedevid, flist.name, self.idriveid, self.idriveserver, tmpdir))
         log.Debug(u"get command: {0}".format(commandline))
         _, getresponse, _ = self.subprocess_popen(commandline)
         log.Debug(u"_get response: {0}".format(getresponse))
@@ -359,11 +373,14 @@ class IDriveBackend(duplicity.backend.Backend):
         flist.seek(0)
 
         # target path (remote) on idrive
-        remote_path = os.path.join(urllib.parse.unquote(self.parsed_url.path.lstrip(u'/')), self.fakeroot.lstrip(u'/')).rstrip()
+        remote_path = os.path.join(urllib.parse.unquote(self.parsed_url.path.lstrip(u'/')),
+            self.fakeroot.lstrip(u'/')).rstrip()
         log.Debug(u"delete: {0} from remote file path {1}".format(filename, remote_path))
 
         # delete files from file-list
-        delrequest = (self.cmd + self.auth_switch + u" --delete-items --device-id={0} --files-from={1} {2}@{3}::home/{4}").format(self.idrivedevid, flist.name, self.idriveid, self.idriveserver, remote_path)
+        delrequest = ((self.cmd + self.auth_switch +
+            u" --delete-items --device-id={0} --files-from={1} {2}@{3}::home/{4}")
+            .format(self.idrivedevid, flist.name, self.idriveid, self.idriveserver, remote_path))
         log.Debug(u"delete: {0}".format(delrequest))
         _, delresponse, _ = self.subprocess_popen(delrequest)
         log.Debug(u"delete response: {0}".format(delresponse))
@@ -386,11 +403,14 @@ class IDriveBackend(duplicity.backend.Backend):
         flist.seek(0)
 
         # target path (remote) on idrive
-        remote_path = os.path.join(urllib.parse.unquote(self.parsed_url.path.lstrip(u'/')), self.fakeroot.lstrip(u'/')).rstrip()
+        remote_path = os.path.join(urllib.parse.unquote(self.parsed_url.path.lstrip(u'/')), 
+            self.fakeroot.lstrip(u'/')).rstrip()
         log.Debug(u"delete multiple files from remote file path {0}".format(remote_path))
 
         # delete files from file-list
-        delrequest = (self.cmd + self.auth_switch + u" --delete-items --device-id={0} --files-from={1} {2}@{3}::home/{4}").format(self.idrivedevid, flist.name, self.idriveid, self.idriveserver, remote_path)
+        delrequest = ((self.cmd + self.auth_switch + 
+            u" --delete-items --device-id={0} --files-from={1} {2}@{3}::home/{4}")
+            .format(self.idrivedevid, flist.name, self.idriveid, self.idriveserver, remote_path))
         log.Debug(u"delete: {0}".format(delrequest))
         _, delresponse, _ = self.subprocess_popen(delrequest)
         log.Debug(u"delete response: {0}".format(delresponse))
