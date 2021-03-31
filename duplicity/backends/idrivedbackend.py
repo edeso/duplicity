@@ -186,7 +186,7 @@ class IDriveBackend(duplicity.backend.Backend):
                 else:
                     log.Warn(u"-" * 72)
                     log.Warn(u"WARNING: Creation of FAKEROOT {0} failed; backup will use system temp directory"
-                        .format(self.fakeroot))
+                             .format(self.fakeroot))
                     log.Warn(u"This might interfere with incremental backups")
                     log.Warn(u"-" * 72)
                     raise BackendException(u"Creation of the directory {0} failed".format(self.fakeroot))
@@ -235,7 +235,7 @@ class IDriveBackend(duplicity.backend.Backend):
 
         # get the device list - primarely used to get device-id string
         el = self.request(self.cmd + self.auth_switch + u" --list-device {0}@{1}::home".
-            format(self.idriveid, self.idriveserver))
+                          format(self.idriveid, self.idriveserver))
         # scan all returned devices for requested device (== bucket)
         self.idrivedevid = None
         for item in el.findall(u'item'):
@@ -379,8 +379,8 @@ class IDriveBackend(duplicity.backend.Backend):
 
         # delete files from file-list
         delrequest = ((self.cmd + self.auth_switch +
-            u" --delete-items --device-id={0} --files-from={1} {2}@{3}::home/{4}")
-            .format(self.idrivedevid, flist.name, self.idriveid, self.idriveserver, remote_path))
+                       u" --delete-items --device-id={0} --files-from={1} {2}@{3}::home/{4}")
+                       .format(self.idrivedevid, flist.name, self.idriveid, self.idriveserver, remote_path))
         log.Debug(u"delete: {0}".format(delrequest))
         _, delresponse, _ = self.subprocess_popen(delrequest)
         log.Debug(u"delete response: {0}".format(delresponse))
@@ -409,8 +409,8 @@ class IDriveBackend(duplicity.backend.Backend):
 
         # delete files from file-list
         delrequest = ((self.cmd + self.auth_switch +
-            u" --delete-items --device-id={0} --files-from={1} {2}@{3}::home/{4}")
-            .format(self.idrivedevid, flist.name, self.idriveid, self.idriveserver, remote_path))
+                       u" --delete-items --device-id={0} --files-from={1} {2}@{3}::home/{4}")
+                       .format(self.idrivedevid, flist.name, self.idriveid, self.idriveserver, remote_path))
         log.Debug(u"delete: {0}".format(delrequest))
         _, delresponse, _ = self.subprocess_popen(delrequest)
         log.Debug(u"delete response: {0}".format(delresponse))
