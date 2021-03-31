@@ -222,7 +222,7 @@ class IDriveBackend(duplicity.backend.Backend):
                 self.idrivedevid = u"5c0b" + item.attrib[u"device_id"] + u"4b5z"        # prefix and suffix reverse-engineered from Common.pl!
         if self.idrivedevid is None:
             el = self.request(self.cmd + self.auth_switch + u" --create-bucket --bucket-type=D --nick-name={0} --os=Linux --uid=987654321 {1}@{2}::home/".format(self.bucket, self.idriveid, self.idriveserver)).find(u'item')
-            self.idrivedevid = u"5c0b" + el.attrib["device_id"] + u"4b5z" # prefix and suffix reverse-engineered from Common.pl!
+            self.idrivedevid = u"5c0b" + el.attrib[u"device_id"] + u"4b5z" # prefix and suffix reverse-engineered from Common.pl!
 
         # We're fully connected!
         self.connected = True
