@@ -97,8 +97,8 @@ from duplicity.errors import BackendException
 #
 #   Have fun!
 #
-class IDriveBackend(duplicity.backend.Backend):
 
+class IDriveBackend(duplicity.backend.Backend):
 
     def __init__(self, parsed_url):
         duplicity.backend.Backend.__init__(self, parsed_url)
@@ -150,12 +150,21 @@ class IDriveBackend(duplicity.backend.Backend):
         # get the account-id
         self.idriveid = os.environ.get(u"IDRIVEID")
         if self.idriveid is None:
+            log.Warn(u"-" * 72)
+            log.Warn(u"WARNING: iDrive logon ID missing")
+            log.Warn(u"Create an environment variable IDRIVEID with your iDrive logon ID")
+            log.Warn(u"-" * 72)
             raise BackendException(u"No IDRIVEID environment variable set. Should contain idrive id")
         log.Debug(u"idrive id: %s" % (self.idriveid))
 
         # Get the full-path to the account password file
         filepath = os.environ.get(u"IDPWDFILE")
         if filepath is None:
+            log.Warn(u"-" * 72)
+            log.Warn(u"WARNING: iDrive password file missging")
+            log.Warn(u"Please create a file with your iDrive logon password,")
+            log.Warn(u"Then create an environment variable IDPWDFILE with path/filename of said file")
+            log.Warn(u"-" * 72)
             raise BackendException(u"No IDPWDFILE environment variable set. Should contain file with password (fullpath)")
         log.Debug(u"idrive pwdpath: %s" % (filepath))
         self.auth_switch = u" --password-file={0}".format(filepath)
@@ -179,7 +188,7 @@ class IDriveBackend(duplicity.backend.Backend):
                     log.Warn(u"This might interfere with incremental backups")
                     log.Warn(u"-" * 72)
                     raise BackendException(u"Creation of the directory {0} failed".format(self.fakeroot))
-                    #reset fakeroot
+                    # reset fakeroot
                     self.fakeroot = u''
             else:
                 log.Debug(u"Directory {0} created as fake-root (Will clean-up afterwards!)".format(self.fakeroot))
@@ -188,6 +197,10 @@ class IDriveBackend(duplicity.backend.Backend):
         # get the bucket
         self.bucket = os.environ.get(u"IDBUCKET")
         if self.bucket is None:
+            log.Warn(u"-" * 72)
+            log.Warn(u"WARNING: iDrive backup bucket missing")
+            log.Warn(u"Create an environment variable IDBUCKET specifying the target bucket")
+            log.Warn(u"-" * 72)
             raise BackendException(u"No IDBUCKET environment variable set. Should contain idrive backup bucket")
         log.Debug(u"idrive bucket: %s" % (self.bucket))
 
@@ -205,6 +218,11 @@ class IDriveBackend(duplicity.backend.Backend):
         if el.attrib[u"configtype"] == u"PRIVATE":
             filepath = os.environ.get(u"IDKEYFILE")
             if filepath is None:
+                log.Warn(u"-" * 72)
+                log.Warn(u"WARNING: iDrive encryption key file missging")
+                log.Warn(u"Please create a file with your iDrive encryption key,")
+                log.Warn(u"Then create an environment variable IDKEYFILE with path/filename of said file")
+                log.Warn(u"-" * 72)
                 raise BackendException(u"No IDKEYFILE environment variable set. Should contain file with encription key (fullpath)")
             log.Debug(u"idrive keypath: %s" % (filepath))
             self.auth_switch += u" --pvt-key={0}".format(filepath)
@@ -242,11 +260,11 @@ class IDriveBackend(duplicity.backend.Backend):
         log.Debug(u"list response: {0}".format(l))
 
         # get a list of lists from data lines returned by idevsutil_dedup --auth-list
-        filtered = map((lambda line: re.split(u"\[|\]", line)) , [x for x in l.splitlines() if x.startswith(u"[")])
+        filtered = map((lambda line: re.split(r"\[|\]", line)), [x for x in l.splitlines() if x.startswith(u"[")])
         # remove whitespace from elements
         filtered = map((lambda line: map((lambda c: c.strip()), line)), filtered)
         # remove empty elements
-        filtered = list(map((lambda cols: list(filter((lambda c: c!= u''), cols))), filtered))
+        filtered = list(map((lambda cols: list(filter((lambda c: c != u''), cols))), filtered))
 
         return filtered
 
@@ -364,11 +382,11 @@ class IDriveBackend(duplicity.backend.Backend):
 
         # create file-list
         for filename in filename_list:
-            flist.write(filename.decode(u'utf-8').lstrip(u'/')+u'\n')
+            flist.write(filename.decode(u'utf-8').lstrip(u'/') + u'\n')
         flist.seek(0)
 
         # target path (remote) on idrive
-        remote_path = os.path.join(urllib.parse.unquote(self.parsed_url.path.lstrip(u'/')),self.fakeroot.lstrip(u'/')).rstrip()
+        remote_path = os.path.join(urllib.parse.unquote(self.parsed_url.path.lstrip(u'/')), self.fakeroot.lstrip(u'/')).rstrip()
         log.Debug(u"delete multiple files from remote file path {0}".format(remote_path))
 
         # delete files from file-list
