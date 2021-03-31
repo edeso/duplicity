@@ -380,7 +380,7 @@ class IDriveBackend(duplicity.backend.Backend):
         # delete files from file-list
         delrequest = ((self.cmd + self.auth_switch +
                        u" --delete-items --device-id={0} --files-from={1} {2}@{3}::home/{4}")
-                       .format(self.idrivedevid, flist.name, self.idriveid, self.idriveserver, remote_path))
+                      .format(self.idrivedevid, flist.name, self.idriveid, self.idriveserver, remote_path))
         log.Debug(u"delete: {0}".format(delrequest))
         _, delresponse, _ = self.subprocess_popen(delrequest)
         log.Debug(u"delete response: {0}".format(delresponse))
@@ -410,7 +410,7 @@ class IDriveBackend(duplicity.backend.Backend):
         # delete files from file-list
         delrequest = ((self.cmd + self.auth_switch +
                        u" --delete-items --device-id={0} --files-from={1} {2}@{3}::home/{4}")
-                       .format(self.idrivedevid, flist.name, self.idriveid, self.idriveserver, remote_path))
+                      .format(self.idrivedevid, flist.name, self.idriveid, self.idriveserver, remote_path))
         log.Debug(u"delete: {0}".format(delrequest))
         _, delresponse, _ = self.subprocess_popen(delrequest)
         log.Debug(u"delete response: {0}".format(delresponse))
