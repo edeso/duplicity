@@ -390,7 +390,7 @@ def parse_cmdline_options(arglist):
                       callback=lambda o, s, v, p: config.gpg_profile.hidden_recipients.append(v))
 
     # Fake-root for iDrived backend
-    parser.add_option("--idr-fakeroot", dest="fakeroot", type="file", metavar=_("path"))
+    parser.add_option(u"--idr-fakeroot", dest=u"fakeroot", type=u"file", metavar=_(u"path"))
 
     # ignore (some) errors during operations; supposed to make it more
     # likely that you are able to restore data under problematic
