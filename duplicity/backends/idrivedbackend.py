@@ -136,6 +136,13 @@ class IDriveBackend(duplicity.backend.Backend):
         # get the path to the command executable
         path = os.environ.get("IDEVSPATH")
         if path is None:
+            log.Warn("-" * 72)
+            log.Warn("WARNING: No path to 'idevsutil_dedup' has been set. Download module from")
+            log.Warn("   https://www.idrivedownloads.com/downloads/linux/download-options/IDrive_linux_64bit.zip")
+            log.Warn("or")
+            log.Warn("   https://www.idrivedownloads.com/downloads/linux/download-options/IDrive_linux_32bit.zip")
+            log.Warn("and place anywhere with exe rights. Then create env var 'IDEVSPATH' with path to file")
+            log.Warn("-" * 72)
             raise BackendException("No IDEVSPATH environment variable set. Should contain folder to idevsutil_dedup")
         self.cmd = os.path.join( path, "idevsutil_dedup" )
         log.Debug("idrive command base: %s" % (self.cmd))
