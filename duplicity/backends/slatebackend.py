@@ -38,11 +38,18 @@ class SlateBackend(duplicity.backend.Backend):
     def __init__(self, parsed_url):
         duplicity.backend.Backend.__init__(self, slatename)
 
-        self.slate_url = parsed_url
         if 'SLATE_API_KEY' not in os.environ.keys():
           raise BackendException(u"You must set an environment variable SLATE_API_KEY as the value of your slate API key")
         else:
           self.key = os.environ('SLATE_API_KEY')
+        
+        if 'SLATE_SSL_VERIFY' not in os.environ.keys():
+          self.verify = True
+        else:
+          if 'SLATE_SSL_VERIFY' == '0':
+            self.verify = False
+          else:
+            self.verify = True
           
         data = json.dumps({ 'data': {'private': 'true'}})
         headers = {
@@ -50,9 +57,11 @@ class SlateBackend(duplicity.backend.Backend):
           'Authorization': 'Basic ' + self.key
           }
 
-        response = requests.post('https://slate.host/api/v1/get', data=data, headers=headers, verify=False) 
+        response = requests.post('https://slate.host/api/v1/get', data=data, headers=headers, verify=self.verify) 
         if not response.ok:
           raise BackendException(u"Slate backend requires a valid API key")
+        
+        self.slate_id = parsed_url.split['/'][-1]
         
         # Maybe in the future if necessary :
         # r = response.json()
@@ -70,6 +79,8 @@ class SlateBackend(duplicity.backend.Backend):
 
         # log.Info('Loaded slate\nname: %s\uuid: %s\nas: %s'%(slatename, self.slate['id'], r['user']['username']))
         # etc.....
+        
+        
 
       def _put(self, file_path):
         data = json.dumps({ 'data': {'private': 'true'}})
@@ -83,21 +94,21 @@ class SlateBackend(duplicity.backend.Backend):
           'Authorization': 'Basic ' + self.key
           }
 
-        response = requests.post(url=self.slate_url, files=files, headers=headers, verify=False)
+        response = requests.post(url='https://uploads.slate.host/api/public/' + self.slate_id, files=files, headers=headers, verify=self.verify)
 
         if not response.ok:
           raise BackendException(u"An error occured whilst attempting to upload a file: %s"(response))
         else:
-          log.Info("File successfully uploaded to Slate.")
+          log.Info("File successfully uploaded to slate with id:" + self.slate_id)
       
       def _list(self):
-        # Checks if a specific slate has been selectred, otherwise lists all slates
+        # Checks if a specific slate has been selected, otherwise lists all slates
         data = json.dumps({ 'data': {'private': 'true'}})
         headers = {
         'Content-Type': 'application/json', 
         'Authorization': 'Basic ' + self.key
         }
-        response = requests.post('https://slate.host/api/v1/get', data=data, headers=headers, verify=False) 
+        response = requests.post('https://slate.host/api/v1/get', data=data, headers=headers, verify=self.verify) 
 
         if not response.ok:
           raise BackendException(u"Slate backend requires a valid API key")
@@ -105,22 +116,23 @@ class SlateBackend(duplicity.backend.Backend):
         slates = response.json()['slates']
         file_list = []
         for slate in slates:
-          files = slate['data']['objects']
-          for files in slate:
-            file_list += file['name']
+          if slate['id'] == self.slate_id:
+            files = slate['data']['objects']
+            for files in slate:
+              file_list += files['name']
         
         return file_list
         
 
       
-      def _get(self, filename, local_path):
+      def _get(self, remote_filename, local_path):
         data = json.dumps({ 'data': {'private': 'true'}})
         headers = {
         'Content-Type': 'application/json', 
         'Authorization': 'Basic ' + self.key
         }
 
-        response = requests.post('https://slate.host/api/v1/get', data=data, headers=headers, verify=False) 
+        response = requests.post('https://slate.host/api/v1/get', data=data, headers=headers, verify=self.verify) 
 
         if not response.ok:
           raise BackendException(u"Slate backend requires a valid API key")
@@ -128,14 +140,19 @@ class SlateBackend(duplicity.backend.Backend):
         slates = response.json()['slates']
         file_list = self._list()
 
-        if filename not in file_list:
-          raise BackendException(u"The chosen file does not exist in any of your slates")
+        if remote_filename not in file_list:
+          raise BackendException(u"The chosen file does not exist in the chosen slate")
 
         for slate in slates:
-          for obj in slate['data']['objects']:
-            if obj['name'] == filename:
-              cid = obj['url'].split("/")[-1]
-              break
+          if slate['id'] == self.slate_id:
+            for obj in slate['data']['objects']:
+              if obj['name'] == remote_filename:
+                cid = obj['url'].split("/")[-1]
+                break
+              else:
+                raise BackendException(u"The file '" + remote_filename +"' could not be found in the specified slate")
+          else:
+            return BackendException(u"A slate with id " + self.slate_id + " does not exist")
         
         #TODO - index slates and index filenames to check for duplicates, and 
         try:
