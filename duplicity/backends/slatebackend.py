@@ -80,11 +80,12 @@ class SlateBackend(duplicity.backend.Backend):
   
 
   def _put(self, source_path, remote_filename=None):
-    print("attempting to _put")
     print(source_path)
     print(str(source_path))
     print(dir(source_path))
     print(util.fsdecode(source_path.name))
+    print(self.slate_id)
+    remote_filename = str(remote_filename)
     # exit()
 
 
@@ -94,7 +95,6 @@ class SlateBackend(duplicity.backend.Backend):
       'Authorization': 'Basic ' + self.key
       }
 
-    print("opening file")
 
     if remote_filename is None:
       files = {open(util.fsdecode(source_path.name), 'rb').name: open(util.fsdecode(source_path.name), 'rb')}
@@ -102,19 +102,18 @@ class SlateBackend(duplicity.backend.Backend):
     else:
       files = {remote_filename: open(util.fsdecode(source_path.name), 'rb')}
 
-    print("headers")
     headers = {
       'Authorization': 'Basic ' + self.key
       }
-    response = requests.post(url='https://uploads.slate.host/api/public/' + self.slate_id, files=files, headers=headers, verify=self.verify)
 
+    response = requests.post(url='https://uploads.slate.host/api/public/' + self.slate_id, files=files, headers=headers, verify=self.verify)
+    
     if not response.ok:
       raise BackendException(u"An error occured whilst attempting to upload a file: %s"%(response))
     else:
       log.Info("File successfully uploaded to slate with id:" + self.slate_id)
   
   def _list(self):
-    print("attempting to _list")
 
     # Checks if a specific slate has been selected, otherwise lists all slates
     data = json.dumps({ 'data': {'private': 'true'}})
@@ -143,8 +142,6 @@ class SlateBackend(duplicity.backend.Backend):
 
   
   def _get(self, remote_filename, local_path):
-    print("attempting to _get")
-
     # Downloads chosen file from IPFS by parsing its cid
     data = json.dumps({ 'data': {'private': 'true'}})
     headers = {
@@ -175,7 +172,7 @@ class SlateBackend(duplicity.backend.Backend):
         raise BackendException(u"A slate with id " + self.slate_id + " does not exist")
     
     try:
-      urllib.request('ipfs.io/ipfs/%s'%(cid), local_path)
+      urllib.request('ipfs.io/ipfs/%s'%(cid), util.fsdecode(local_path.name))
       log.Info(u'Downloaded file with cid: %s'%(cid))
     except NameError as e:
       raise BackendException(u"Couldn't download file")
