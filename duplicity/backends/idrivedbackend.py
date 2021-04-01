@@ -42,7 +42,7 @@ from duplicity.errors import BackendException
 #
 #
 #   This backend uses an intermediate driver for IDrive: "idevsutil_dedup" that will be
-#   installed automagically  when you perform the account setup on the target system.
+#   installed automagically  when you perform the account setup on your system.
 #   It can, however, also be downloaded directly from the following URL's
 #
 #   https://www.idrivedownloads.com/downloads/linux/download-options/IDrive_linux_64bit.zip
@@ -50,6 +50,7 @@ from duplicity.errors import BackendException
 #   https://www.idrivedownloads.com/downloads/linux/download-options/IDrive_linux_32bit.zip
 #
 #   for 32 and 64 bit linux, respectively. Copy the file anywhere with exe permissions.
+#   (no further setup of your IDrive account is needed for idrived to work)
 #
 #
 #   For this backend to work, you need to create a number of environment variables:
