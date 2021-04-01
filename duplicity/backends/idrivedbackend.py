@@ -35,13 +35,13 @@ from duplicity import progress
 from duplicity.errors import BackendException
 
 #
-#   This backend works with the iDrive  "dedup implementation". V0.1
+#   This backend works with the IDrive  "dedup implementation". V0.1
 #               (for all new and recent accounts)
 #
 #   Credits: This code is loosely inspired by the work of <aappddeevv>
 #
 #
-#   This backend uses an intermediate driver for iDrive: "idevsutil_dedup" that will be
+#   This backend uses an intermediate driver for IDrive: "idevsutil_dedup" that will be
 #   installed automagically  when you perform the account setup on the target system.
 #   It can, however, also be downloaded directly from the following URL's
 #
@@ -68,9 +68,9 @@ from duplicity.errors import BackendException
 #   Note: setup proper security for these files!
 #
 #
-#   The iDrive "root" issue ...
+#   The IDrive "root" issue ...
 #
-#   Idrive stores files according to 1) the selected bucket, 2) the supplied path
+#   IDrive stores files according to 1) the selected bucket, 2) the supplied path
 #   and 3)the absolute path of the directory used for uploads. So ... if we use
 #       - bucket <MYBUCKET>
 #       - duplicity commandline idrived://DUPLICITY
@@ -146,28 +146,28 @@ class IDriveBackend(duplicity.backend.Backend):
             log.Warn(u"-" * 72)
             raise BackendException(u"No IDEVSPATH env var set. Should contain folder to idevsutil_dedup")
         self.cmd = os.path.join(path, u"idevsutil_dedup")
-        log.Debug(u"idrive command base: %s" % (self.cmd))
+        log.Debug(u"IDrive command base: %s" % (self.cmd))
 
         # get the account-id
         self.idriveid = os.environ.get(u"IDRIVEID")
         if self.idriveid is None:
             log.Warn(u"-" * 72)
-            log.Warn(u"WARNING: iDrive logon ID missing")
-            log.Warn(u"Create an environment variable IDRIVEID with your iDrive logon ID")
+            log.Warn(u"WARNING: IDrive logon ID missing")
+            log.Warn(u"Create an environment variable IDriveID with your IDrive logon ID")
             log.Warn(u"-" * 72)
-            raise BackendException(u"No IDRIVEID env var set. Should contain idrive id")
-        log.Debug(u"idrive id: %s" % (self.idriveid))
+            raise BackendException(u"No IDRIVEID env var set. Should contain IDrive id")
+        log.Debug(u"IDrive id: %s" % (self.idriveid))
 
         # Get the full-path to the account password file
         filepath = os.environ.get(u"IDPWDFILE")
         if filepath is None:
             log.Warn(u"-" * 72)
-            log.Warn(u"WARNING: iDrive password file missging")
-            log.Warn(u"Please create a file with your iDrive logon password,")
+            log.Warn(u"WARNING: IDrive password file missging")
+            log.Warn(u"Please create a file with your IDrive logon password,")
             log.Warn(u"Then create an environment variable IDPWDFILE with path/filename of said file")
             log.Warn(u"-" * 72)
             raise BackendException(u"No IDPWDFILE env var set. Should contain file with password")
-        log.Debug(u"idrive pwdpath: %s" % (filepath))
+        log.Debug(u"IDrive pwdpath: %s" % (filepath))
         self.auth_switch = u" --password-file={0}".format(filepath)
 
         # fakeroot set? Create directory and mark for cleanup
@@ -200,11 +200,11 @@ class IDriveBackend(duplicity.backend.Backend):
         self.bucket = os.environ.get(u"IDBUCKET")
         if self.bucket is None:
             log.Warn(u"-" * 72)
-            log.Warn(u"WARNING: iDrive backup bucket missing")
+            log.Warn(u"WARNING: IDrive backup bucket missing")
             log.Warn(u"Create an environment variable IDBUCKET specifying the target bucket")
             log.Warn(u"-" * 72)
-            raise BackendException(u"No IDBUCKET env var set. Should contain idrive backup bucket")
-        log.Debug(u"idrive bucket: %s" % (self.bucket))
+            raise BackendException(u"No IDBUCKET env var set. Should contain IDrive backup bucket")
+        log.Debug(u"IDrive bucket: %s" % (self.bucket))
 
         # check account / get config status and config type
         el = self.request(self.cmd + self.auth_switch + u" --validate --user={0}".format(self.idriveid)).find(u'tree')
@@ -212,21 +212,21 @@ class IDriveBackend(duplicity.backend.Backend):
         if el.attrib[u"message"] != u"SUCCESS":
             raise BackendException(u"Protocol failure - " + el.attrib[u"desc"])
         if el.attrib[u"desc"] != u"VALID ACCOUNT":
-            raise BackendException(u"iDrive account invalid")
+            raise BackendException(u"IDrive account invalid")
         if el.attrib[u"configstatus"] != u"SET":
-            raise BackendException(u"iDrive account not set")
+            raise BackendException(u"IDrive account not set")
 
         # When private encryption enabled: get the full-path to a encription key file
         if el.attrib[u"configtype"] == u"PRIVATE":
             filepath = os.environ.get(u"IDKEYFILE")
             if filepath is None:
                 log.Warn(u"-" * 72)
-                log.Warn(u"WARNING: iDrive encryption key file missging")
-                log.Warn(u"Please create a file with your iDrive encryption key,")
+                log.Warn(u"WARNING: IDrive encryption key file missging")
+                log.Warn(u"Please create a file with your IDrive encryption key,")
                 log.Warn(u"Then create an environment variable IDKEYFILE with path/filename of said file")
                 log.Warn(u"-" * 72)
                 raise BackendException(u"No IDKEYFILE env var set. Should contain file with encription key")
-            log.Debug(u"idrive keypath: %s" % (filepath))
+            log.Debug(u"IDrive keypath: %s" % (filepath))
             self.auth_switch += u" --pvt-key={0}".format(filepath)
 
         # get the server address
@@ -372,7 +372,7 @@ class IDriveBackend(duplicity.backend.Backend):
         flist.write(filename.lstrip(u'/'))
         flist.seek(0)
 
-        # target path (remote) on idrive
+        # target path (remote) on IDrive
         remote_path = os.path.join(urllib.parse.unquote(self.parsed_url.path.lstrip(u'/')),
                                    self.fakeroot.lstrip(u'/')).rstrip()
         log.Debug(u"delete: {0} from remote file path {1}".format(filename, remote_path))
@@ -402,7 +402,7 @@ class IDriveBackend(duplicity.backend.Backend):
             flist.write(filename.decode(u'utf-8').lstrip(u'/') + u'\n')
         flist.seek(0)
 
-        # target path (remote) on idrive
+        # target path (remote) on IDrive
         remote_path = os.path.join(urllib.parse.unquote(self.parsed_url.path.lstrip(u'/')),
                                    self.fakeroot.lstrip(u'/')).rstrip()
         log.Debug(u"delete multiple files from remote file path {0}".format(remote_path))
@@ -420,7 +420,7 @@ class IDriveBackend(duplicity.backend.Backend):
 
     def _close(self):
         # Remove EVS_temp directory + contents
-        log.Debug(u"Removing iDrive temp folder evs_temp")
+        log.Debug(u"Removing IDrive temp folder evs_temp")
         try:
             shutil.rmtree(u"evs_temp")
         except:
