@@ -40,6 +40,19 @@ If you install from the source package, you will also need:
  * Python development files, normally found in module 'python-dev'.
  * librsync development files, normally found in module 'librsync-dev'.
 
+# USING THE SLATE BACKEND
+ * Two environment variables how you use the slate backend:
+  1. SLATE_API_KEY - Your slate API key
+  2. SLATE_SSL_VERIFY - either '1'(True) or '0'(False) for ssl verification
+
+ * To use the slate backend, use the following scheme:
+```
+slate://[slate-id]
+```
+e.g. Full backup of current directory to slate:
+```
+duplicity full . "slate://6920df43-5c3w-2x7i-69aw-2390567uav75" 
+```
 
 # DEVELOPMENT
 
