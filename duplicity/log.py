@@ -406,7 +406,7 @@ class PrettyProgressFormatter(logging.Formatter):
         # So we don't overwrite actual log lines
         if self.last_record_was_progress and record.transferProgress:
             # Go up one line, then erase it
-            s = "\033[F\033[2K" + s
+            s = u"\033[F\033[2K" + s
 
         self.last_record_was_progress = record.transferProgress
 
