@@ -54,6 +54,7 @@ class LocalBackend(duplicity.backend.Backend):
 
     def _put(self, source_path, remote_filename):
         target_path = self.remote_pathdir.append(remote_filename)
+        source_path.setdata()
         source_size = source_path.getsize()
         progress.report_transfer(0, source_size)
         target_path.writefileobj(source_path.open(u"rb"))
