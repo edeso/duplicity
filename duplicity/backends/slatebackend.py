@@ -34,7 +34,7 @@ class SlateBackend(duplicity.backend.Backend):
     """
     def __init__(self, parsed_url):
         duplicity.backend.Backend.__init__(self, parsed_url)
-        print("loading slate backend")
+        print(u"loading slate backend")
         if 'SLATE_API_KEY' not in os.environ.keys():
             raise BackendException(u"You must set an environment variable SLATE_API_KEY as the value of your slate API key")
         else:
@@ -54,7 +54,7 @@ class SlateBackend(duplicity.backend.Backend):
             'Authorization': 'Basic ' + self.key
             }
 
-        response = requests.post('https://slate.host/api/v1/get', data=data, headers=headers, verify=self.verify) 
+        response = requests.post(u'https://slate.host/api/v1/get', data=data, headers=headers, verify=self.verify) 
         if not response.ok:
             raise BackendException(u"Slate backend requires a valid API key")
     
@@ -106,7 +106,7 @@ class SlateBackend(duplicity.backend.Backend):
             'Authorization': 'Basic ' + self.key
             }
 
-        response = requests.post(url='https://uploads.slate.host/api/public/' + self.slate_id, files=files, headers=headers, verify=self.verify)
+        response = requests.post(url=u'https://uploads.slate.host/api/public/' + self.slate_id, files=files, headers=headers, verify=self.verify)
     
         if not response.ok:
             raise BackendException(u"An error occured whilst attempting to upload a file: %s"%(response))
@@ -121,7 +121,7 @@ class SlateBackend(duplicity.backend.Backend):
         'Content-Type': 'application/json', 
         'Authorization': 'Basic ' + self.key
         }
-        response = requests.post('https://slate.host/api/v1/get', data=data, headers=headers, verify=self.verify) 
+        response = requests.post(u'https://slate.host/api/v1/get', data=data, headers=headers, verify=self.verify) 
 
         if not response.ok:
             raise BackendException(u"Slate backend requires a valid API key")
@@ -149,7 +149,7 @@ class SlateBackend(duplicity.backend.Backend):
         'Authorization': 'Basic ' + self.key
         }
 
-        response = requests.post('https://slate.host/api/v1/get', data=data, headers=headers, verify=self.verify) 
+        response = requests.post(u'https://slate.host/api/v1/get', data=data, headers=headers, verify=self.verify) 
 
         if not response.ok:
             raise BackendException(u"Slate backend requires a valid API key")
