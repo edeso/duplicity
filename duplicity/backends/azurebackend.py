@@ -44,7 +44,7 @@ class AzureBackend(duplicity.backend.Backend):
             from azure.storage.blob import BlobServiceClient
         except ImportError as e:
             raise BackendException(u"""\
-Azure backend requires Microsoft Azure Storage SDK for Python (https://pypi.python.org/pypi/azure-storage/).
+Azure backend requires Microsoft Azure Storage SDK for Python (https://pypi.org/project/azure-storage-blob/).
 Exception: %s""" % str(e))
 
         # TODO: validate container name

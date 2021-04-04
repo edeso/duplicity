@@ -1146,6 +1146,9 @@ sign key is also one of the keys to encrypt against
 will be reused instead.
 Otherwise, if passphrase is needed but not set the user will be prompted for it.
 
+Other environment variables may be used to configure specific backends.
+See the notes for the particular backend.
+
 .SH URL FORMAT
 Duplicity uses the URL format (as standard as possible) to define data locations.
 The generic format for a URL is:
@@ -1768,22 +1771,23 @@ backups from cold storage, which vary in both cost and speed.
 See Amazon's documentation for details.
 
 .SH A NOTE ON AZURE ACCESS
-The Azure backend requires the Microsoft Azure Storage SDK for Python to be
-installed on the system.
+The Azure backend requires the Microsoft Azure Storage Blobs client library
+for Python to be installed on the system.
 See
 .B REQUIREMENTS
 above.
 
-It uses environment variables for authentification:
-.BR AZURE_ACCOUNT_NAME " (required),"
-.BR AZURE_ACCOUNT_KEY " (optional),
-.BR AZURE_SHARED_ACCESS_SIGNATURE " (optional)."
-One of
-.BR AZURE_ACCOUNT_KEY " or"
-.BR AZURE_SHARED_ACCESS_SIGNATURE " is required."
+It uses the environment variable
+.BR AZURE_CONNECTION_STRING " (required)."
+This string contains all necessary information such as Storage Account name
+and the key for authentication.
+You can find it under Access Keys for the storage account.
 
-A container name must be a valid DNS name, conforming to the following naming
-rules:
+Duplicity will take care to create the container when performing the backup.
+Do not create it manually before.
+
+A container name (as given as the backup url) must be a valid DNS name,
+conforming to the following naming rules:
 
 .RS
 .IP 1.
@@ -1801,6 +1805,9 @@ All letters in a container name must be lowercase.
 Container names must be from 3 through 63 characters long.
 .IR
 .RE
+
+These rules come from Azure; see
+https://docs.microsoft.com/en-us/rest/api/storageservices/naming-and-referencing-containers--blobs--and-metadata
 
 .SH A NOTE ON CLOUD FILES ACCESS
 Pyrax is Rackspace's next-generation Cloud management API, including
@@ -2474,9 +2481,9 @@ Some backends also require additional components (probably available as packages
 .B python-requests-oauthlib
 - https://github.com/requests/requests-oauthlib
 .TP
-.BR "azure backend" " (Azure Blob Storage Service)"
-.B Microsoft Azure Storage SDK for Python
-- https://pypi.python.org/pypi/azure-storage/
+.BR "azure backend" " (Azure Storage Blob Service)"
+.B Microsoft Azure Storage Blobs client library for Python
+- https://pypi.org/project/azure-storage-blob/
 .TP
 .BR "boto backend" " (S3 Amazon Web Services, Google Cloud Storage)"
 .B boto version 2.0+
