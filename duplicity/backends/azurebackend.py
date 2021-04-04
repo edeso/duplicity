@@ -34,7 +34,7 @@ _VALID_CONTAINER_NAME_RE = re.compile(r"^[a-z0-9](?!.*--)[a-z0-9-]{1,61}[a-z0-9]
 
 
 def _is_valid_container_name(name):
-    """
+    u"""
     Check, whether the given name conforms to the rules as defined in
     https://docs.microsoft.com/en-us/rest/api/storageservices/naming-and-referencing-containers--blobs--and-metadata
     for valid names.
