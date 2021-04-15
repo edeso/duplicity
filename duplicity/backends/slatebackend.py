@@ -28,6 +28,8 @@ from duplicity import log
 from duplicity import util
 from duplicity.errors import BackendException
 
+# TODO: Found backup functions responsible for writing files, gonna edit them to to fix temp file being uploaded
+
 class SlateBackend(duplicity.backend.Backend):
     u"""
     Backend for Slate
