@@ -407,7 +407,7 @@ def write_multivol(backup_type, tarblock_iter, man_outfp, sig_outfp, backend):
 
         # Create volume
         try:
-            log.Info(u"BACKEND: " + config.backend) 
+            log.Info(u"BACKEND: " + str(config.backend)) 
         except:
             pass
         log.Info(u"***CREATING VOLUME***")

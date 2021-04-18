@@ -176,6 +176,7 @@ class FileobjHooked(object):
         del self.hooklist[0]
 
     def to_remote(self):
+        log.Info(u"TO_REMOTE")
         u"""
         We have written the last checkpoint, now encrypt or compress
         and send a copy of it to the remote for final storage.
