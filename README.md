@@ -56,9 +56,10 @@ if you're using python3
 
 
 # USING THE SLATE BACKEND
- * Two environment variables how you use the slate backend:
+ * Two environment variables are used with the slate backend:
   1. SLATE_API_KEY - Your slate API key
-  2. SLATE_SSL_VERIFY - either '1'(True) or '0'(False) for ssl verification
+  2. SLATE_SSL_VERIFY - either '1'(True) or '0'(False) for ssl verification (optional - True by default)
+	3. PASSPHRASE - your gpg passhprase for encryption (optional - will be prompted if not set or not used at all if using the --no-encryption parameter)
 
  * To use the slate backend, use the following scheme:
 ```
