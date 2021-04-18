@@ -12,6 +12,8 @@ The build process can be also be run separately:
 python setup.py build
 ```
 
+If you want to use python 3 replace the `python` command with `python3`
+
 The default prefix is /usr, so files are put in /usr/bin,
 /usr/share/man/, etc.  An alternate prefix can be specified using the
 --prefix=<prefix> option.  For example:
@@ -40,6 +42,19 @@ If you install from the source package, you will also need:
  * Python development files, normally found in module 'python-dev'.
  * librsync development files, normally found in module 'librsync-dev'.
 
+Install python modules by performing the following command in duplicity's root directory:
+
+```
+pip install -r requirements.txt
+```
+or:
+
+```
+pip3 install -r requirements.txt
+```
+if you're using python3
+
+
 # USING THE SLATE BACKEND
  * Two environment variables how you use the slate backend:
   1. SLATE_API_KEY - Your slate API key
@@ -53,6 +68,9 @@ e.g. Full backup of current directory to slate:
 ```
 duplicity full . "slate://6920df43-5c3w-2x7i-69aw-2390567uav75" 
 ```
+
+Here's a demo:
+![Demo](https://gitlab.com/Shr1ftyy/duplicity/uploads/675664ef0eb431d14c8e20045e3fafb6/slate_demo.mp4)
 
 # DEVELOPMENT
 

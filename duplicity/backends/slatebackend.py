@@ -98,7 +98,8 @@ class SlateBackend(duplicity.backend.Backend):
         src = Path(util.fsdecode(source_path.name))
         if str(src.name).startswith("mktemp"):
             log.Info("copying temp file for upload")
-            src = shutil.copyfile(str(src), str(src.with_name(rem_filename)))
+            src = shutil.move(str(src), str(src.with_name(rem_filename)))
+            
         log.Info(u"response")
         headers = {
             u'Authorization': u'Basic ' + self.key
@@ -113,7 +114,7 @@ class SlateBackend(duplicity.backend.Backend):
         else:
             log.Info(u"File successfully uploaded to slate with id:" + self.slate_id)
 
-        if str(src).startswith("mktemp"):
+        if str(src).endswith("difftar.gpg"):
             os.remove(str(src))
   
     def _list(self):
