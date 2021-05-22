@@ -66,7 +66,7 @@ class B2Backend(duplicity.backend.Backend):
         duplicity.backend.Backend.__init__(self, parsed_url)
 
         global DownloadDestLocalFile, FileVersionInfoFactory
-        try: # prefer to use public API methods
+        try:  # prefer to use public API methods
             from b2sdk.v1.api import B2Api
             from b2sdk.v1.account_info import InMemoryAccountInfo
             from b2sdk.v1.download_dest import DownloadDestLocalFile
