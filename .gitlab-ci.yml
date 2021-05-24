@@ -137,16 +137,12 @@ default:
 #     needs: ["code_ub18-04"]
 
 build_pip:
-    variables:
-      TWINE_REPOSITORY_URL: https://test.pypi.org/legacy/
-
     stage: release
     script:
         - pip install twine
         - VERSION=`./setup.py --version`
         - echo "makepip of ${VERSION}"
         - python3 setup.py sdist bdist_wheel
-        - TWINE_PASSWORD=${CI_JOB_TOKEN} TWINE_USERNAME=gitlab-ci-token
         - python3 -m twine upload --repository-url https://test.pypi.org/legacy/ dist/*
 
 #     artifacts:
