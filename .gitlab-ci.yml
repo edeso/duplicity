@@ -142,6 +142,8 @@ build_pip:
         - pip install twine
         - VERSION=`./setup.py --version`
         - echo "makepip of ${VERSION}"
+        - TWINE_USERNAME=$TWINE_USERNAME
+        - TWINE_PASSWORD=$TWINE_PAASSWORD
         - python3 setup.py sdist bdist_wheel
         - python3 -m twine upload dist/duplicity-${VERSION}.tar.gz
         - python3 -m twine upload dist/duplicity-${VERSION}-*.whl
