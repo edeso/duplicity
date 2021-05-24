@@ -139,6 +139,7 @@ py39_ub20-04:
 
 build_pip:
     stage: deploy
+    when: manual
     script:
         - pip install twine
         - VERSION=`./setup.py --version`
