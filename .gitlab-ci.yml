@@ -141,7 +141,7 @@ build_pip:
     script:
         - VERSION=`./setup.py --version`
         - echo "makepip of ${VERSION}"
-        - python setup.py sdist bdist_wheel
+        - python3 setup.py sdist bdist_wheel
     artifacts:
         paths:
             - dist/*.tar.gz
