@@ -28,6 +28,7 @@ variables:
     TWINE_PASSWORD: $TWINE_PASSWORD
 
 stages:
+    - qual
     - test
     - deploy
 
@@ -44,7 +45,7 @@ default:
         - python3 -m pip install --requirement requirements.txt
 
 code_ub18-04:
-    stage: test
+    stage: qual
     script:
         - apt-get install -y python3.8 python3.8-dev
         - tox -e code
