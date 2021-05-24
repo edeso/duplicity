@@ -141,14 +141,14 @@ build_pip:
     variables:
         TWINE_USERNAME: $TWINE_USERNAME
         TWINE_PASSWORD: $TWINE_PAASSWORD
-        TWINE_REPOSITORY_URL: https://upload.pypi.org/legacy/
+#         TWINE_REPOSITORY_URL: https://upload.pypi.org/legacy/
     script:
         - pip install twine
         - VERSION=`./setup.py --version`
         - echo "makepip of ${VERSION}"
         - python3 setup.py sdist bdist_wheel
-        - python3 -m twine upload dist/duplicity-${VERSION}.tar.gz
-        - python3 -m twine upload dist/duplicity-${VERSION}-*.whl
+        - python3 -m twine upload dist/duplicity-${VERSION}.tar.gz --verbose
+        - python3 -m twine upload dist/duplicity-${VERSION}-*.whl --verbose
 
 #     artifacts:
 #         paths:
