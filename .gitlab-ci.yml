@@ -19,20 +19,20 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 variables:
-    # Change pip's cache directory to be inside the project directory since we can
-    # only cache local items.
+    # cache local items
     PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
     # Set to non-interactive so no tzdata prompt
     DEBIAN_FRONTEND: "noninteractive"
+    # for upload to pypi.org
+    TWINE_USERNAME: $TWINE_USERNAME
+    TWINE_PASSWORD: $TWINE_PASSWORD
 
 stages:
-#     - code
-#     - test
-    - release
+    - test
+    - deploy
 
 default:
     image: ubuntu:18.04
-
     before_script:
         # Set locale to prevent UTF-8 errors
         - export LANG=C.UTF-8
@@ -43,115 +43,105 @@ default:
         - python3 -m pip install --upgrade pip
         - python3 -m pip install --requirement requirements.txt
 
-# code_ub18-04:
-#     stage: code
-#     script:
-#         - apt-get install -y python3.8 python3.8-dev
-#         - tox -e code
-#     artifacts:
-#         reports:
-#             junit: report.xml
-#     needs: []
+code_ub18-04:
+    stage: test
+    script:
+        - apt-get install -y python3.8 python3.8-dev
+        - tox -e code
+    artifacts:
+        reports:
+            junit: report.xml
+    needs: []
 
-# py27_ub18-04:
-#     stage: test
-#     script:
-#         - apt-get install -y python2.7 python2.7-dev
-#         - tox -e py27
-#     artifacts:
-#         reports:
-#             junit: report.xml
-#     allow_failure: true
-#     needs: ["code_ub18-04"]
-#
-# py35_ub16-04:
-#     stage: test
-#     image: ubuntu:16.04
-#     before_script:
-#         # Set locale to prevent UTF-8 errors
-#         - export LANG=C.UTF-8
-#         - export LC_ALL=C.UTF-8
-#         - apt-get update
-#         - apt-get install -y build-essential git intltool lftp librsync-dev
-#           libffi-dev libssl-dev openssl par2 rdiff tzdata
-#           python3-pip python3.5 python3.5-dev
-#         - python3 -m pip install --upgrade pip==20.3.4
-#         - python3 -m pip install --requirement requirements.txt
-#     script:
-#         - apt-get install -y python3.5 python3.5-dev
-#         - tox -e py35
-#     artifacts:
-#         reports:
-#             junit: report.xml
-#     allow_failure: true
-#     needs: ["code_ub18-04"]
-#
-# py36_ub18-04:
-#     stage: test
-#     script:
-#         - apt-get install -y python3.6 python3.6-dev
-#         - tox -e py36
-#     artifacts:
-#         reports:
-#             junit: report.xml
-#     needs: ["code_ub18-04"]
-#
-# py37_ub18-04:
-#     stage: test
-#     script:
-#         - apt-get install -y python3.7 python3.7-dev
-#         - tox -e py37
-#     artifacts:
-#         reports:
-#             junit: report.xml
-#     needs: ["code_ub18-04"]
-#
-# py38_ub18-04:
-#     stage: test
-#     script:
-#         - apt-get install -y python3.8 python3.8-dev
-#         - tox -e py38
-#     artifacts:
-#         reports:
-#             junit: report.xml
-#     needs: ["code_ub18-04"]
-#
-# py39_ub20-04:
-#     stage: test
-#     image: ubuntu:20.04
-#     before_script:
-#         # Set locale to prevent UTF-8 errors
-#         - export LANG=C.UTF-8
-#         - export LC_ALL=C.UTF-8
-#         - apt-get update
-#         - apt-get install -y build-essential git intltool lftp librsync-dev
-#           libffi-dev libssl-dev openssl par2 rdiff tzdata python3-pip
-#         - python3 -m pip install --upgrade pip
-#         - python3 -m pip install --requirement requirements.txt
-#     script:
-#         - apt-get install -y python3.9 python3.9-dev
-#         - tox -e py39
-#     artifacts:
-#         reports:
-#             junit: report.xml
-#     needs: ["code_ub18-04"]
+ py27_ub18-04:
+     stage: test
+     script:
+         - apt-get install -y python2.7 python2.7-dev
+         - tox -e py27
+     artifacts:
+         reports:
+             junit: report.xml
+     allow_failure: true
+     needs: ["code_ub18-04"]
+
+ py35_ub16-04:
+     stage: test
+     image: ubuntu:16.04
+     before_script:
+         # Set locale to prevent UTF-8 errors
+         - export LANG=C.UTF-8
+         - export LC_ALL=C.UTF-8
+         - apt-get update
+         - apt-get install -y build-essential git intltool lftp librsync-dev
+           libffi-dev libssl-dev openssl par2 rdiff tzdata
+           python3-pip python3.5 python3.5-dev
+         - python3 -m pip install --upgrade pip==20.3.4
+         - python3 -m pip install --requirement requirements.txt
+     script:
+         - apt-get install -y python3.5 python3.5-dev
+         - tox -e py35
+     artifacts:
+         reports:
+             junit: report.xml
+     allow_failure: true
+     needs: ["code_ub18-04"]
+
+ py36_ub18-04:
+     stage: test
+     script:
+         - apt-get install -y python3.6 python3.6-dev
+         - tox -e py36
+     artifacts:
+         reports:
+             junit: report.xml
+     needs: ["code_ub18-04"]
+
+ py37_ub18-04:
+     stage: test
+     script:
+         - apt-get install -y python3.7 python3.7-dev
+         - tox -e py37
+     artifacts:
+         reports:
+             junit: report.xml
+     needs: ["code_ub18-04"]
+
+ py38_ub18-04:
+     stage: test
+     script:
+         - apt-get install -y python3.8 python3.8-dev
+         - tox -e py38
+     artifacts:
+         reports:
+             junit: report.xml
+     needs: ["code_ub18-04"]
+
+ py39_ub20-04:
+     stage: test
+     image: ubuntu:20.04
+     before_script:
+         # Set locale to prevent UTF-8 errors
+         - export LANG=C.UTF-8
+         - export LC_ALL=C.UTF-8
+         - apt-get update
+         - apt-get install -y build-essential git intltool lftp librsync-dev
+           libffi-dev libssl-dev openssl par2 rdiff tzdata python3-pip
+         - python3 -m pip install --upgrade pip
+         - python3 -m pip install --requirement requirements.txt
+     script:
+         - apt-get install -y python3.9 python3.9-dev
+         - tox -e py39
+     artifacts:
+         reports:
+             junit: report.xml
+     needs: ["code_ub18-04"]
 
 build_pip:
-    stage: release
-    variables:
-        TWINE_USERNAME: $TWINE_USERNAME
-        TWINE_PASSWORD: $TWINE_PASSWORD
-        
+    stage: deploy
     script:
         - pip install twine
         - VERSION=`./setup.py --version`
         - echo "makepip of ${VERSION}"
-        - python3 setup.py sdist bdist_wheel
+        - python3 setup.py sdist
         - python3 -m twine upload dist/duplicity-${VERSION}.tar.gz --verbose
-        - python3 -m twine upload dist/duplicity-${VERSION}-*.whl --verbose
-
-#     artifacts:
-#         paths:
-#             - dist/*.tar.gz
-#             - dist/*.whl
-#     needs: ["py39_ub20-04"]
+    needs: ["py39_ub20-04"]
