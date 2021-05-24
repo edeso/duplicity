@@ -26,8 +26,8 @@ variables:
     DEBIAN_FRONTEND: "noninteractive"
 
 stages:
-    - code
-    - test
+#     - code
+#     - test
     - release
 
 default:
@@ -43,15 +43,15 @@ default:
         - python3 -m pip install --upgrade pip
         - python3 -m pip install --requirement requirements.txt
 
-code_ub18-04:
-    stage: code
-    script:
-        - apt-get install -y python3.8 python3.8-dev
-        - tox -e code
-    artifacts:
-        reports:
-            junit: report.xml
-    needs: []
+# code_ub18-04:
+#     stage: code
+#     script:
+#         - apt-get install -y python3.8 python3.8-dev
+#         - tox -e code
+#     artifacts:
+#         reports:
+#             junit: report.xml
+#     needs: []
 
 # py27_ub18-04:
 #     stage: test
@@ -115,35 +115,42 @@ code_ub18-04:
 #         reports:
 #             junit: report.xml
 #     needs: ["code_ub18-04"]
-
-py39_ub20-04:
-    stage: test
-    image: ubuntu:20.04
-    before_script:
-        # Set locale to prevent UTF-8 errors
-        - export LANG=C.UTF-8
-        - export LC_ALL=C.UTF-8
-        - apt-get update
-        - apt-get install -y build-essential git intltool lftp librsync-dev
-          libffi-dev libssl-dev openssl par2 rdiff tzdata python3-pip
-        - python3 -m pip install --upgrade pip
-        - python3 -m pip install --requirement requirements.txt
-    script:
-        - apt-get install -y python3.9 python3.9-dev
-        - tox -e py39
-    artifacts:
-        reports:
-            junit: report.xml
-    needs: ["code_ub18-04"]
+#
+# py39_ub20-04:
+#     stage: test
+#     image: ubuntu:20.04
+#     before_script:
+#         # Set locale to prevent UTF-8 errors
+#         - export LANG=C.UTF-8
+#         - export LC_ALL=C.UTF-8
+#         - apt-get update
+#         - apt-get install -y build-essential git intltool lftp librsync-dev
+#           libffi-dev libssl-dev openssl par2 rdiff tzdata python3-pip
+#         - python3 -m pip install --upgrade pip
+#         - python3 -m pip install --requirement requirements.txt
+#     script:
+#         - apt-get install -y python3.9 python3.9-dev
+#         - tox -e py39
+#     artifacts:
+#         reports:
+#             junit: report.xml
+#     needs: ["code_ub18-04"]
 
 build_pip:
+    variables:
+      TWINE_REPOSITORY_URL: https://test.pypi.org/legacy/
+
     stage: release
     script:
+        - pip install twine
         - VERSION=`./setup.py --version`
         - echo "makepip of ${VERSION}"
         - python3 setup.py sdist bdist_wheel
-    artifacts:
-        paths:
-            - dist/*.tar.gz
-            - dist/*.whl
-    needs: ["py39_ub20-04"]
+        - TWINE_PASSWORD=${CI_JOB_TOKEN} TWINE_USERNAME=gitlab-ci-token
+        - python3 -m twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+
+#     artifacts:
+#         paths:
+#             - dist/*.tar.gz
+#             - dist/*.whl
+#     needs: ["py39_ub20-04"]
