@@ -138,7 +138,7 @@ build_pip:
         - pip install twine
         - VERSION=`./setup.py --version`
         - echo "makepip of ${VERSION}"
-        - ./setup.py sdist ./setup.py sdist --dist-dir=.
+        - ./setup.py sdist --dist-dir=.
         - python3 -m twine upload duplicity-${VERSION}.tar.gz
 
 build_snap:
