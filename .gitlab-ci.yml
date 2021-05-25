@@ -52,7 +52,6 @@ code_ub18-04:
     artifacts:
         reports:
             junit: report.xml
-    needs: []
 
 py27_ub18-04:
     stage: test
@@ -63,7 +62,6 @@ py27_ub18-04:
         reports:
             junit: report.xml
     allow_failure: true
-    needs: ["code_ub18-04"]
 
 py35_ub16-04:
     stage: test
@@ -85,7 +83,6 @@ py35_ub16-04:
         reports:
             junit: report.xml
     allow_failure: true
-    needs: ["code_ub18-04"]
 
 py36_ub18-04:
     stage: test
@@ -95,7 +92,6 @@ py36_ub18-04:
     artifacts:
         reports:
             junit: report.xml
-    needs: ["code_ub18-04"]
 
 py37_ub18-04:
     stage: test
@@ -105,7 +101,6 @@ py37_ub18-04:
     artifacts:
         reports:
             junit: report.xml
-    needs: ["code_ub18-04"]
 
 py38_ub18-04:
     stage: test
@@ -115,7 +110,6 @@ py38_ub18-04:
     artifacts:
         reports:
             junit: report.xml
-    needs: ["code_ub18-04"]
 
 py39_ub20-04:
     stage: test
@@ -135,15 +129,14 @@ py39_ub20-04:
     artifacts:
         reports:
             junit: report.xml
-    needs: ["code_ub18-04"]
 
 build_pip:
     stage: deploy
     when: manual
+    only: [master]
     script:
         - pip install twine
         - VERSION=`./setup.py --version`
         - echo "makepip of ${VERSION}"
         - python3 setup.py sdist
         - python3 -m twine upload dist/duplicity-${VERSION}.tar.gz --verbose
-    needs: ["py39_ub20-04"]
