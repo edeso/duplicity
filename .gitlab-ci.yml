@@ -159,6 +159,3 @@ build_snap:
         - snapcraft login --with ~/.snaplogin
         - snapcraft build
         - snapcraft upload duplicity_*.snap --release edge
-
-
-
