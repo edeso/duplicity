@@ -73,7 +73,7 @@ class B2Backend(duplicity.backend.Backend):
             from b2sdk.v1.exception import NonExistentBucket
             
             from b2sdk import __version__ as VERSION
-            v_split = VERSION.split('.')
+            v_split = VERSION.split(u'.')
             self.v_num = [ int(x) for x in v_split ]
 
             if self.v_num < [ 1, 9, 0 ]:
