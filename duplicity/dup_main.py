@@ -307,12 +307,12 @@ def write_multivol(backup_type, tarblock_iter, man_outfp, sig_outfp, backend):
             return  # error querying file
         for attempt in range(1, config.num_retries + 1):
             info = backend.query_info([dest_filename])[dest_filename]
-            size = info['size']
+            size = info[u'size']
             if size == orig_size:
                 break
             if size is None:
                 return
-            log.Notice(_("%s Remote filesize %d for %s does not match local size %d, retrying.") % (datetime.now(), size, util.escape(dest_filename), orig_size))
+            log.Notice(_(u"%s Remote filesize %d for %s does not match local size %d, retrying.") % (datetime.now(), size, util.escape(dest_filename), orig_size))
             time.sleep(2**attempt)
         if size != orig_size:
             code_extra = u"%s %d %d" % (util.escape(dest_filename), orig_size, size)
