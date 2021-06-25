@@ -149,12 +149,12 @@ class B2Backend(duplicity.backend.Backend):
         log.Log(u"Get: %s -> %s" % (self.path + util.fsdecode(remote_filename),
                                     util.fsdecode(local_path.name)),
                 log.INFO)
-        if self.v_num < [1,11,0]:
+        if self.v_num < [1, 11, 0]:
             self.bucket.download_file_by_name(quote_plus(self.path + util.fsdecode(remote_filename), u'/'),
                                               DownloadDestLocalFile(local_path.name))
         else:
             df = self.bucket.download_file_by_name(quote_plus(self.path + util.fsdecode(remote_filename), u'/'))
-            df.save(local_path.name)
+            df.save_to(local_path.name)
 
     def _put(self, source_path, remote_filename):
         u"""
