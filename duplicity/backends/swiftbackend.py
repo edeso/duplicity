@@ -173,9 +173,9 @@ Exception: %s""" % str(e))
                 return
         rp = self.prefix + util.fsdecode(remote_filename)
         log.Info("Uploading '%s' to '%s' in remote container '%s'" % (lp, rp, self.container))
-        self.conn.put_object(self.container,
-                             self.prefix + util.fsdecode(remote_filename),
-                             open(lp, u'rb'))
+        self.conn.put_object(container=self.container,
+                             obj=self.prefix + util.fsdecode(remote_filename),
+                             contents=open(lp, u'rb'))
 
     def _get(self, remote_filename, local_path):
         headers, body = self.conn.get_object(self.container,
