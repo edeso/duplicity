@@ -32,7 +32,7 @@ usage() {
 # set defaults if not in environment
 
 if [ "$DISTRO" == "" ]; then
-    DISTRO=18.04
+    DISTRO=20.04
 fi
 
 # possibly override with commandline
