@@ -124,10 +124,14 @@ Exception: %s""" % str(e))
 
         container_metadata = None
         try:
+            log.Info("Starting connection with arguments:'%s'" % conn_kwargs)
             self.conn = Connection(**conn_kwargs)
             self.svc = SwiftService(options=svc_options)
             container_metadata = self.conn.head_container(self.container)
-        except ClientException:
+        except ClientException as e:
+            log.Info(u"Connection failed: %s %s"
+                           % (e.__class__.__name__, str(e)),
+                           log.ErrorCode.connection_failed)
             pass
         except Exception as e:
             log.FatalError(u"Connection failed: %s %s"
