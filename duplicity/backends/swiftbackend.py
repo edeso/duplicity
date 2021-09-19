@@ -159,6 +159,7 @@ Exception: %s""" % str(e))
             st = os.stat(lp)
             # only upload using Dynamic Large Object if mpvolsize is triggered
             if st.st_size >= config.mp_segment_size:
+                log.Info("Uploading Dynamic Large Object")
                 mp = self.svc.upload(
                     self.container,
                     [SwiftUploadObject(lp,
@@ -170,6 +171,8 @@ Exception: %s""" % str(e))
                     if not upload[u'success']:
                         raise BackendException(upload[u'traceback'])
                 return
+        rp = self.prefix + util.fsdecode(remote_filename)
+        log.Info("Uploading '%s' to '%s' in remote container '%s'" % (lp, rp, self.container))
         self.conn.put_object(self.container,
                              self.prefix + util.fsdecode(remote_filename),
                              open(lp, u'rb'))
