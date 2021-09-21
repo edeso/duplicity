@@ -150,6 +150,8 @@ Exception: %s""" % str(e))
         elif policy and container_metadata[policy_header.lower()] != policy:
             log.FatalError(u"Container '%s' exists but its storage policy is '%s' not '%s'."
                            % (self.container, container_metadata[policy_header.lower()], policy))
+        else:
+            log.Info("Container already created: %s" % container_metadata)
 
     def _error_code(self, operation, e):  # pylint: disable=unused-argument
         if isinstance(e, self.resp_exc):
