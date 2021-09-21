@@ -102,7 +102,7 @@ Exception: %s""" % str(e))
 
         # formatting options for swiftclient.SwiftService
         for key in os_options.keys():
-            svc_options['os_' + key] = os_options[key]
+            svc_options[u'os_' + key] = os_options[key]
 
         conn_kwargs[u'os_options'] = os_options
 
@@ -122,7 +122,7 @@ Exception: %s""" % str(e))
 
         container_metadata = None
         try:
-            log.Debug("Starting connection with arguments:'%s'" % conn_kwargs)
+            log.Debug(u"Starting connection with arguments:'%s'" % conn_kwargs)
             self.conn = Connection(**conn_kwargs)
             container_metadata = self.conn.head_container(self.container)
         except ClientException as e:
@@ -147,18 +147,18 @@ Exception: %s""" % str(e))
             log.FatalError(u"Container '%s' exists but its storage policy is '%s' not '%s'."
                            % (self.container, container_metadata[policy_header.lower()], policy))
         else:
-            log.Debug("Container already created: %s" % container_metadata)
+            log.Debug(u"Container already created: %s" % container_metadata)
 
         ## checking service connection
         try:
-            log.Debug("Starting  Swiftservice: '%s'" % svc_options)
+            log.Debug(u"Starting  Swiftservice: '%s'" % svc_options)
             self.svc = SwiftService(options=svc_options)
             container_stat = self.svc.stat(self.container)
         except ClientException as e:
             log.FatalError(u"Connection failed: %s %s"
                            % (e.__class__.__name__, str(e)),
                            log.ErrorCode.connection_failed)
-        log.Debug("Container stats: %s" % container_stat)
+        log.Debug(u"Container stats: %s" % container_stat)
  
 
     def _error_code(self, operation, e):  # pylint: disable=unused-argument
@@ -173,7 +173,7 @@ Exception: %s""" % str(e))
             st = os.stat(lp)
             # only upload using Dynamic Large Object if mpvolsize is triggered
             if st.st_size >= config.mp_segment_size:
-                log.Debug("Uploading Dynamic Large Object")
+                log.Debug(u"Uploading Dynamic Large Object")
                 mp = self.svc.upload(
                     self.container,
                     [SwiftUploadObject(lp,
@@ -186,7 +186,7 @@ Exception: %s""" % str(e))
                         raise BackendException(upload[u'traceback'])
                 return
         rp = self.prefix + util.fsdecode(remote_filename)
-        log.Debug("Uploading '%s' to '%s' in remote container '%s'" % (lp, rp, self.container))
+        log.Debug(u"Uploading '%s' to '%s' in remote container '%s'" % (lp, rp, self.container))
         self.conn.put_object(container=self.container,
                              obj=self.prefix + util.fsdecode(remote_filename),
                              contents=open(lp, u'rb'))
@@ -212,7 +212,7 @@ Exception: %s""" % str(e))
 #        # use swiftservice to correctly report filesize in case of multipart uploads
         sobject = [a for a in self.svc.stat(self.container, [self.prefix + util.fsdecode(filename)])][0]
         sobj = {u'size': int(sobject[u'headers'][u'content-length'])}
-        log.Debug ("Uploaded %s bytes to %s." % (sobj[u'size'], util.fsdecode(filename)))
+        log.Debug(u"Uploaded %s bytes to %s." % (sobj[u'size'], util.fsdecode(filename)))
         return sobj
 
 
