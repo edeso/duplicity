@@ -127,7 +127,7 @@ Exception: %s""" % str(e))
             container_metadata = self.conn.head_container(self.container)
         except ClientException as e:
             log.Debug(u"Connection failed: %s %s"
-                           % (e.__class__.__name__, str(e)))
+                      % (e.__class__.__name__, str(e)))
             pass
         except Exception as e:
             log.FatalError(u"Connection failed: %s %s"
@@ -149,7 +149,7 @@ Exception: %s""" % str(e))
         else:
             log.Debug(u"Container already created: %s" % container_metadata)
 
-        ## checking service connection
+        # checking service connection
         try:
             log.Debug(u"Starting  Swiftservice: '%s'" % svc_options)
             self.svc = SwiftService(options=svc_options)
@@ -159,7 +159,6 @@ Exception: %s""" % str(e))
                            % (e.__class__.__name__, str(e)),
                            log.ErrorCode.connection_failed)
         log.Debug(u"Container stats: %s" % container_stat)
- 
 
     def _error_code(self, operation, e):  # pylint: disable=unused-argument
         if isinstance(e, self.resp_exc):
@@ -209,7 +208,7 @@ Exception: %s""" % str(e))
         deleted = [a for a in self.svc.delete(self.container, [self.prefix + util.fsdecode(filename)])]
 
     def _query(self, filename):
-#        # use swiftservice to correctly report filesize in case of multipart uploads
+        # use swiftservice to correctly report filesize in case of multipart uploads
         sobject = [a for a in self.svc.stat(self.container, [self.prefix + util.fsdecode(filename)])][0]
         sobj = {u'size': int(sobject[u'headers'][u'content-length'])}
         log.Debug(u"Uploaded %s bytes to %s." % (sobj[u'size'], util.fsdecode(filename)))
