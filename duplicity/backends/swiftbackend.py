@@ -211,7 +211,7 @@ Exception: %s""" % str(e))
         # use swiftservice to correctly report filesize in case of multipart uploads
         sobject = [a for a in self.svc.stat(self.container, [self.prefix + util.fsdecode(filename)])][0]
         sobj = {u'size': int(sobject[u'headers'][u'content-length'])}
-        log.Debug(u"Uploaded %s bytes to %s." % (sobj[u'size'], util.fsdecode(filename)))
+        log.Debug(u"Objectquery: '%s' has size %s." % (util.fsdecode(filename), sobj[u'size']))
         return sobj
 
 
