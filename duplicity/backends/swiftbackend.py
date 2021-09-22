@@ -135,7 +135,7 @@ Exception: %s""" % str(e))
                            log.ErrorCode.connection_failed)
 
         if container_metadata is None:
-            log.Debug(u"Creating container %s" % self.container)
+            log.Info(u"Creating container %s" % self.container)
             try:
                 headers = dict([[policy_header, policy]]) if policy else None
                 self.conn.put_container(self.container, headers=headers)
