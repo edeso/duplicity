@@ -62,7 +62,7 @@ class SlateBackend(duplicity.backend.Backend):
         if not response.ok:
             raise BackendException(u"Slate backend requires a valid API key")
     
-        self.slate_id = parsed_url.geturl().split('/')[-1]
+        self.slate_id = parsed_url.geturl().split(u'/')[-1]
     
         # Maybe in the future if necessary :
         # r = response.json()
