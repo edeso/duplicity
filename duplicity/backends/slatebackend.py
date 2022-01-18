@@ -40,8 +40,8 @@ class SlateBackend(duplicity.backend.Backend):
         duplicity.backend.Backend.__init__(self, parsed_url)
         log.Info(u"loading slate backend...")
         if u'SLATE_API_KEY' not in os.environ.keys():
-            raise BackendException(u"You must set an environment variable SLATE_API_KEY 
-                    as the value of your slate API key")
+            raise BackendException(u'''You must set an environment variable SLATE_API_KEY 
+                    as the value of your slate API key''')
         else:
             self.key = os.environ[u'SLATE_API_KEY']
     
@@ -67,25 +67,6 @@ class SlateBackend(duplicity.backend.Backend):
             raise BackendException(u"Slate backend requires a valid API key")
     
         self.slate_id = parsed_url.geturl().split(u'/')[-1]
-    
-        # Maybe in the future if necessary :
-        # r = response.json()
-        # if len(r['slates']) < 1: 
-        #   raise BackendException(u"No valid slates found, please create a slate to upload files")
-    
-        # self.slates = [slate['data']['name']:slate for slate in r['slates']]
-        # slatenames = slates.keys()
-    
-        # if slatename not in slatenames:
-        #   raise BackendException(u"The chosen slate does not exist")
-
-        # self.slate = slate[slatename]
-        # self.id = slate['id']
-
-        # log.Info('Loaded slate\nname: %s\uuid: %s\nas: %s'%(slatename, self.slate['id'], r['user']['username']))
-        # etc.....
-    
-  
 
     def _put(self, source_path, remote_filename):
         data = json.dumps({ u'data': {u'private': u'true'}})
