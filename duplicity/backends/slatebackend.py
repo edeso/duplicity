@@ -91,13 +91,13 @@ class SlateBackend(duplicity.backend.Backend):
             }
 
         log.Info(u"source_path.name: " + str(source_path.name))
-        log.Info(u"remote_filename: " + remote_filename.decode("utf8"))
+        log.Info(u"remote_filename: " + remote_filename.decode(u"utf8"))
         rem_filename = str(util.fsdecode(remote_filename))
 
 
         src = Path(util.fsdecode(source_path.name))
-        if str(src.name).startswith("mktemp"):
-            log.Info("copying temp file for upload")
+        if str(src.name).startswith(u"mktemp"):
+            log.Info(u"copying temp file for upload")
             src = shutil.move(str(src), str(src.with_name(rem_filename)))
             
         log.Info(u"response")
@@ -114,7 +114,7 @@ class SlateBackend(duplicity.backend.Backend):
         else:
             log.Info(u"File successfully uploaded to slate with id:" + self.slate_id)
 
-        if str(src).endswith("difftar.gpg"):
+        if str(src).endswith(u"difftar.gpg"):
             os.remove(str(src))
   
     def _list(self):
@@ -167,11 +167,11 @@ class SlateBackend(duplicity.backend.Backend):
             if slate[u'id'] == self.slate_id:
                 found = True
                 for obj in slate[u'data'][u'objects']:
-                    if obj[u'name'] == remote_filename.decode("utf8"):
+                    if obj[u'name'] == remote_filename.decode(u"utf8"):
                         cid = obj[u'url'].split(u"/")[-1]
                         break
                     else:
-                        raise BackendException(u"The file '" + remote_filename.decode("utf8") +u"' could not be found in the specified slate")
+                        raise BackendException(u"The file '" + remote_filename.decode(u"utf8") +u"' could not be found in the specified slate")
         
         if not found:
             raise BackendException(u"A slate with id " + self.slate_id + u" does not exist")
