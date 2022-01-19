@@ -21,7 +21,7 @@ source_directory target_url
 source_url target_directory
 
 .B duplicity collection-status
-.I [options] [--file-changed <relpath>]
+.I [options] [--file-changed <relpath>] [--show-changes-in-set <index>]
 target_url
 
 .B duplicity list-current-files
@@ -189,9 +189,16 @@ The
 option enables data comparison (see below).
 
 .TP
-.BI "collection-status " "[--file-changed <relpath>]" "<url>"
+.BI "collection-status " "[--file-changed <relpath>] [--show-changes-in-set <index>] <url>"
 Summarize the status of the backup repository by printing the chains
 and sets found, and the number of volumes in each.
+.br
+The
+.I --file-changed
+option summarizes the changes to the file (in the most recent backup chain).
+The
+.I --show-changes-in-set
+option summarizes all the file changes in the index:th backup set (where index 0 means the latest set, 1 means the next to latest, etc.).
 
 .TP
 .BI "list-current-files " "[--time <time>] <url>"
@@ -683,6 +690,10 @@ Adjust the level of redundancy in
 for Par2 recovery files (default 10%).
 
 .TP
+.BI "--par2-volumes " number
+Number of Par2 volumes to create (default 1).
+
+.TP
 .BI --progress
 When selected, duplicity will output the current upload progress and estimated
 upload time. To annotate changes, it will perform a first dry-run before a full
@@ -791,13 +802,22 @@ data in one Availability Zone.
 
 .TP
 .BI "--s3-use-glacier"
-Store volumes using Glacier S3 when uploading to Amazon S3. This storage class
+Store volumes using Glacier Flexible Storage when uploading to Amazon S3. This storage class
 has a lower cost of storage but a higher per-request cost along with delays
 of up to 12 hours from the time of retrieval request. This storage cost is
 calculated against a 90-day storage minimum. According to Amazon this storage is
 ideal for data archiving and long-term backup offering 99.999999999% durability.
 To restore a backup you will have to manually migrate all data stored on AWS
 Glacier back to Standard S3 and wait for AWS to complete the migration.
+.B Notice:
+Duplicity will store the manifest.gpg files from full and incremental backups on
+AWS S3 standard storage to allow quick retrieval for later incremental backups,
+all other data is stored in S3 Glacier.
+
+.TP
+.BI "--s3-use-glacier-ir"
+Store volumes using Glacier Instant Retrieval when uploading to Amazon S3. This storage class
+is similar to Glacier Flexible Storage but offers instant retrieval at standard speeds.
 .B Notice:
 Duplicity will store the manifest.gpg files from full and incremental backups on
 AWS S3 standard storage to allow quick retrieval for later incremental backups,
@@ -844,8 +864,6 @@ Chunk size (in MB) used for S3 multipart uploads. Make this smaller than
 .BI --volsize
 to maximize the use of your bandwidth. For example, a chunk size of 10MB
 with a volsize of 30MB will result in 3 chunks per volume upload.
-
-This has no effect when using the newer boto3 backend.
 
 See also
 .B "A NOTE ON AMAZON S3"
@@ -995,7 +1013,11 @@ currently supports only the
 .B -i
 or
 .B -oIdentityFile
-setting. If needed provide more host specific options via ssh_config file.
+or
+.B -oUserKnownHostsFile
+or
+.B -oGlobalKnownHostsFile
+settings. If needed provide more host specific options via ssh_config file.
 .RE
 
 .TP
@@ -1146,6 +1168,9 @@ sign key is also one of the keys to encrypt against
 will be reused instead.
 Otherwise, if passphrase is needed but not set the user will be prompted for it.
 
+Other environment variables may be used to configure specific backends.
+See the notes for the particular backend.
+
 .SH URL FORMAT
 Duplicity uses the URL format (as standard as possible) to define data locations.
 The generic format for a URL is:
@@ -1201,6 +1226,15 @@ See also
 .PP
 .RS
 b2://account_id[:application_key]@bucket_name/[folder/]
+.RE
+.PP
+.BR "Box"
+.PP
+.RS
+box:///some_dir[?config=path_to_config]
+.PP
+See also
+.B "A NOTE ON BOX ACCESS"
 .RE
 .PP
 .BR "Cloud Files" " (Rackspace)"
@@ -1294,6 +1328,7 @@ if not given in the URL, relies on password being stored within $HOME/.megarc (a
 .PP
 .RS
 megav2://user[:password]@mega.nz/some_dir
+megav3://user[:password]@mega.nz/some_dir[?no_logout=1] (For latest MEGAcmd)
 .PP
 .B NOTE:
 despite "MEGAcmd" no longer uses a configuration file, for convenience storing the user password this backend searches it in the $HOME/.megav2rc file (same syntax as the old $HOME/.megarc)
@@ -1768,22 +1803,22 @@ backups from cold storage, which vary in both cost and speed.
 See Amazon's documentation for details.
 
 .SH A NOTE ON AZURE ACCESS
-The Azure backend requires the Microsoft Azure Storage SDK for Python to be
-installed on the system.
+The Azure backend requires the Microsoft Azure Storage Blobs client library
+for Python to be installed on the system.
 See
-.B REQUIREMENTS
-above.
+.BR REQUIREMENTS .
 
-It uses environment variables for authentification:
-.BR AZURE_ACCOUNT_NAME " (required),"
-.BR AZURE_ACCOUNT_KEY " (optional),
-.BR AZURE_SHARED_ACCESS_SIGNATURE " (optional)."
-One of
-.BR AZURE_ACCOUNT_KEY " or"
-.BR AZURE_SHARED_ACCESS_SIGNATURE " is required."
+It uses the environment variable
+.BR AZURE_CONNECTION_STRING " (required)."
+This string contains all necessary information such as Storage Account name
+and the key for authentication.
+You can find it under Access Keys for the storage account.
 
-A container name must be a valid DNS name, conforming to the following naming
-rules:
+Duplicity will take care to create the container when performing the backup.
+Do not create it manually before.
+
+A container name (as given as the backup url) must be a valid DNS name,
+conforming to the following naming rules:
 
 .RS
 .IP 1.
@@ -1802,13 +1837,49 @@ Container names must be from 3 through 63 characters long.
 .IR
 .RE
 
+These rules come from Azure; see
+https://docs.microsoft.com/en-us/rest/api/storageservices/naming-and-referencing-containers--blobs--and-metadata
+
+.SH A NOTE ON BOX ACCESS
+The box backend requires boxsdk with jwt support to be installed on the system.
+See
+.BR REQUIREMENTS .
+
+It uses the environment variable
+.BR BOX_CONFIG_PATH " (optional)."
+This string contains the path to box custom app's config.json. Either this environment variable or
+the
+.BR config
+query parameter in the url need to be specified, if both are specified, query paramter takes precedence.
+
+.SS Create a Box custom app
+In order to use box backend, user need to create a box custom app in the box developer console (https://app.box.com/developers/console).
+
+After create a new custom app, please make sure it is configured as follow:
+
+.RS
+.IP 1.
+Choose "App Access Only" for "App Access Level"
+.IR
+.IP 2.
+Check "Write all files and folders stored in Box"
+.IR
+.IP 3.
+Generate a Public/Private Keypair
+.IR
+.RE
+
+The user also need to grant the created custom app permission in the
+admin console (https://app.box.com/master/custom-apps) by clicking
+the "+" button and enter the client_id which can be found on the custom
+app's configuration page.
+
 .SH A NOTE ON CLOUD FILES ACCESS
 Pyrax is Rackspace's next-generation Cloud management API, including
 Cloud Files access.  The cfpyrax backend requires the pyrax library to
 be installed on the system.
 See
-.B REQUIREMENTS
-above.
+.BR REQUIREMENTS .
 
 Cloudfiles is Rackspace's now deprecated implementation of OpenStack
 Object Storage protocol.  Users wishing to use Duplicity with Rackspace
@@ -1816,8 +1887,7 @@ Cloud Files should migrate to the new Pyrax plugin to ensure support.
 
 The backend requires python-cloudfiles to be installed on the system.
 See
-.B REQUIREMENTS
-above.
+.BR REQUIREMENTS .
 
 It uses three environment variables for authentification:
 .BR CLOUDFILES_USERNAME " (required),"
@@ -1947,7 +2017,8 @@ Create Access Keys:
 https://code.google.com/apis/console#:storage:legacy
 
 .SH A NOTE ON HUBIC
-The hubic backend requires the pyrax library to be installed on the system. See REQUIREMENTS above.
+The hubic backend requires the pyrax library to be installed on the system. See
+.BR REQUIREMENTS .
 You will need to set your credentials for hubiC in a file called ~/.hubic_credentials, following this
 pattern:
 .PP
@@ -2070,8 +2141,7 @@ to adjust the size (and redundancy) of recovery files in
 
 .SH A NOTE ON PYDRIVE BACKEND
 The pydrive backend requires Python PyDrive package to be installed on the system. See
-.B REQUIREMENTS
-above.
+.BR REQUIREMENTS .
 
 There are two ways to use PyDrive: with a regular account or with a
 "service account". With a service account, a separate account is
@@ -2129,7 +2199,24 @@ GDrive: is a rewritten PyDrive: backend with less dependencies, and a
 simpler setup - it uses the JSON keys downloaded directly from Google
 Cloud Console.
 
-There are two ways to use GDrive: with a regular account or with a
+Note Google has 2 drive methods, `Shared(previously Team) Drives` and `My Drive`,
+both can be shared but require different addressing
+
+.B For a Google Shared Drives folder
+
+Share Drive ID specified as a query parameter, driveID,  in the backend URL.
+Example:
+      gdrive://developer.gserviceaccount.com/target-folder/?driveID=<SHARED DRIVE ID>
+
+.B For a Google My Drive based shared folder
+
+MyDrive folder ID specified as a query parameter, myDriveFolderID, in the backend URL
+Example
+      export GOOGLE_SERVICE_ACCOUNT_URL=<serviceaccount-name>@<serviceaccount-name>.iam.gserviceaccount.com
+      gdrive://${GOOGLE_SERVICE_ACCOUNT_URL}/<target-folder-name-in-myDriveFolder>?myDriveFolderID=<google-myDrive-folder-id>
+
+
+There are also two ways to authenticate to use GDrive: with a regular account or with a
 "service account". With a service account, a separate account is
 created, that is only accessible with Google APIs and not a web login.
 With a regular account, you can store backups in your normal Google
@@ -2142,6 +2229,9 @@ click "Create credentials", then select Service Account with JSON key.
 
 The GOOGLE_SERVICE_JSON_FILE environment variable needs to contain the
 path to the JSON file on duplicity invocation.
+
+export GOOGLE_SERVICE_JSON_FILE=<path-to-serviceaccount-credentials.json>
+
 
 The alternative is to use a regular account. To do this, start as
 above, but when creating a new Client ID, select "Create OAuth client
@@ -2221,8 +2311,8 @@ backend allows to define
 is a complete reimplementation of ssh protocols natively in python. Advantages
 are speed and maintainability. Minor disadvantage is that extra packages are
 needed as listed in
-.B REQUIREMENTS
-above. In
+.BR REQUIREMENTS .
+In
 .I sftp
 (default) mode all operations are done via the according sftp commands. In
 .I scp
@@ -2302,8 +2392,7 @@ Swift is the OpenStack Object Storage service.
 The backend requires python-switclient to be installed on the system.
 python-keystoneclient is also needed to use OpenStack's Keystone Identity service.
 See
-.B REQUIREMENTS
-above.
+.BR REQUIREMENTS .
 
 It uses following environment variables for authentification:
 .BR SWIFT_USERNAME " (required),"
@@ -2336,8 +2425,7 @@ The backend requires python-switclient to be installed on the system.
 python-keystoneclient is also needed to interact with OpenStack's Keystone
 Identity service.
 See
-.B REQUIREMENTS
-above.
+.BR REQUIREMENTS .
 
 It uses following environment variables for authentification:
 .BR PCA_USERNAME " (required),"
@@ -2474,13 +2562,17 @@ Some backends also require additional components (probably available as packages
 .B python-requests-oauthlib
 - https://github.com/requests/requests-oauthlib
 .TP
-.BR "azure backend" " (Azure Blob Storage Service)"
-.B Microsoft Azure Storage SDK for Python
-- https://pypi.python.org/pypi/azure-storage/
+.BR "azure backend" " (Azure Storage Blob Service)"
+.B Microsoft Azure Storage Blobs client library for Python
+- https://pypi.org/project/azure-storage-blob/
 .TP
 .BR "boto backend" " (S3 Amazon Web Services, Google Cloud Storage)"
 .B boto version 2.0+
 - http://github.com/boto/boto
+.TP
+.BR "box backend" " (box.com)"
+.B boxsdk
+- https://github.com/box/box-python-sdk
 .TP
 .BR "cfpyrax backend" " (Rackspace Cloud) and " "hubic backend" " (hubic.com)"
 .B Rackspace CloudFiles Pyrax API
@@ -2512,7 +2604,7 @@ see pydrive backend
 .B megatools client
 - https://github.com/megous/megatools
 .TP
-.BR "MEGA v2 backend (works for all MEGA accounts)" " (mega.nz)"
+.BR "MEGA v2 and v3 backend (works for all MEGA accounts)" " (mega.nz)"
 .B MEGAcmd client
 - https://mega.nz/cmd
 .TP
@@ -2528,9 +2620,6 @@ see pydrive backend
 - http://www.ncftp.com/
 .TP
 .BR "OneDrive backend" " (Microsoft OneDrive)"
-.B python-requests
-- http://python-requests.org
-.br
 .B python-requests-oauthlib
 - https://github.com/requests/requests-oauthlib
 .TP

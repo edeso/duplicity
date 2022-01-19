@@ -49,6 +49,11 @@ class Par2Backend(backend.Backend):
             self.redundancy = 10
 
         try:
+            self.volumes = config.par2_volumes
+        except AttributeError:
+            self.volumes = 1
+
+        try:
             self.common_options = config.par2_options + u" -q -q"
         except AttributeError:
             self.common_options = u"-q -q"
@@ -83,15 +88,26 @@ class Par2Backend(backend.Backend):
         source_symlink.setdata()
 
         log.Info(u"Create Par2 recovery files")
-        par2create = u'par2 c -r%d -n1 %s %s' % (self.redundancy, self.common_options,
-                                                 util.fsdecode(source_symlink.get_canonical()))
+        par2create = u'par2 c -r%d -n%d %s "%s"' % (self.redundancy, self.volumes,
+                                                    self.common_options,
+                                                    util.fsdecode(source_symlink.get_canonical()))
         out, returncode = pexpect.run(par2create, None, True)
+
+        if returncode:
+            log.Warn(u"Failed to create par2 file with requested options, retrying with -n1")
+            par2create = u'par2 c -r%d -n1 %s "%s"' % (self.redundancy, self.common_options,
+                                                       util.fsdecode(source_symlink.get_canonical()))
+            out, returncode = pexpect.run(par2create, None, True)
+            if not returncode:
+                log.Warn(u"Successfully created par2 file with -n1")
 
         source_symlink.delete()
         files_to_transfer = []
         if not returncode:
             for file in par2temp.listdir():
                 files_to_transfer.append(par2temp.append(file))
+        else:
+            log.Error(u"FAILED to create par2 file with returncode %d" % returncode)
 
         method(source_path, remote_filename)
         for file in files_to_transfer:
@@ -124,23 +140,23 @@ class Par2Backend(backend.Backend):
             par2file = par2temp.append(remote_filename + b'.par2')
             self.wrapped_backend._get(par2file.get_filename(), par2file)
 
-            par2verify = u'par2 v %s %s %s' % (self.common_options,
-                                               util.fsdecode(par2file.get_canonical()),
-                                               util.fsdecode(local_path_temp.get_canonical()))
+            par2verify = u'par2 v %s %s "%s"' % (self.common_options,
+                                                 util.fsdecode(par2file.get_canonical()),
+                                                 util.fsdecode(local_path_temp.get_canonical()))
             out, returncode = pexpect.run(par2verify, None, True)
 
             if returncode:
                 log.Warn(u"File is corrupt. Try to repair %s" % remote_filename)
-                c = re.compile(u'%s\\.vol[\\d+]*\\.par2' % remote_filename)
+                c = re.compile(u'%s\\.vol[\\d+]*\\.par2' % remote_filename.decode())
                 par2volumes = [f for f in self.wrapped_backend._list() if c.match(util.fsdecode(f))]
 
                 for filename in par2volumes:
                     file = par2temp.append(filename)
                     self.wrapped_backend._get(filename, file)
 
-                par2repair = u'par2 r %s %s %s' % (self.common_options,
-                                                   util.fsdecode(par2file.get_canonical()),
-                                                   util.fsdecode(local_path_temp.get_canonical()))
+                par2repair = u'par2 r %s %s "%s"' % (self.common_options,
+                                                     util.fsdecode(par2file.get_canonical()),
+                                                     util.fsdecode(local_path_temp.get_canonical()))
                 out, returncode = pexpect.run(par2repair, None, True)
 
                 if returncode:

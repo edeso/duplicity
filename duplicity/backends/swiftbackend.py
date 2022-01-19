@@ -36,6 +36,7 @@ class SwiftBackend(duplicity.backend.Backend):
         duplicity.backend.Backend.__init__(self, parsed_url)
 
         try:
+            from swiftclient.service import SwiftService
             from swiftclient import Connection
             from swiftclient import ClientException
         except ImportError as e:
@@ -45,6 +46,8 @@ Exception: %s""" % str(e))
 
         self.resp_exc = ClientException
         conn_kwargs = {}
+        os_options = {}
+        svc_options = {}
 
         # if the user has already authenticated
         if u'SWIFT_PREAUTHURL' in os.environ and u'SWIFT_PREAUTHTOKEN' in os.environ:
@@ -64,14 +67,12 @@ Exception: %s""" % str(e))
                 raise BackendException(u'SWIFT_AUTHURL environment variable '
                                        u'not set.')
 
-            conn_kwargs[u'user'] = os.environ[u'SWIFT_USERNAME']
-            conn_kwargs[u'key'] = os.environ[u'SWIFT_PASSWORD']
-            conn_kwargs[u'authurl'] = os.environ[u'SWIFT_AUTHURL']
-
-        os_options = {}
+            svc_options[u'os_username'] = conn_kwargs[u'user'] = os.environ[u'SWIFT_USERNAME']
+            svc_options[u'os_password'] = conn_kwargs[u'key'] = os.environ[u'SWIFT_PASSWORD']
+            svc_options[u'os_auth_url'] = conn_kwargs[u'authurl'] = os.environ[u'SWIFT_AUTHURL']
 
         if u'SWIFT_AUTHVERSION' in os.environ:
-            conn_kwargs[u'auth_version'] = os.environ[u'SWIFT_AUTHVERSION']
+            svc_options[u'auth_version'] = conn_kwargs[u'auth_version'] = os.environ[u'SWIFT_AUTHVERSION']
             if os.environ[u'SWIFT_AUTHVERSION'] == u'3':
                 if u'SWIFT_USER_DOMAIN_NAME' in os.environ:
                     os_options.update({u'user_domain_name': os.environ[u'SWIFT_USER_DOMAIN_NAME']})
@@ -99,6 +100,10 @@ Exception: %s""" % str(e))
         if u'SWIFT_REGIONNAME' in os.environ:
             os_options.update({u'region_name': os.environ[u'SWIFT_REGIONNAME']})
 
+        # formatting options for swiftclient.SwiftService
+        for key in os_options.keys():
+            svc_options[u'os_' + key] = os_options[key]
+
         conn_kwargs[u'os_options'] = os_options
 
         # This folds the null prefix and all null parts, which means that:
@@ -117,9 +122,12 @@ Exception: %s""" % str(e))
 
         container_metadata = None
         try:
+            log.Debug(u"Starting connection with arguments:'%s'" % conn_kwargs)
             self.conn = Connection(**conn_kwargs)
             container_metadata = self.conn.head_container(self.container)
-        except ClientException:
+        except ClientException as e:
+            log.Debug(u"Connection failed: %s %s"
+                      % (e.__class__.__name__, str(e)))
             pass
         except Exception as e:
             log.FatalError(u"Connection failed: %s %s"
@@ -138,6 +146,19 @@ Exception: %s""" % str(e))
         elif policy and container_metadata[policy_header.lower()] != policy:
             log.FatalError(u"Container '%s' exists but its storage policy is '%s' not '%s'."
                            % (self.container, container_metadata[policy_header.lower()], policy))
+        else:
+            log.Debug(u"Container already created: %s" % container_metadata)
+
+        # checking service connection
+        try:
+            log.Debug(u"Starting  Swiftservice: '%s'" % svc_options)
+            self.svc = SwiftService(options=svc_options)
+            container_stat = self.svc.stat(self.container)
+        except ClientException as e:
+            log.FatalError(u"Connection failed: %s %s"
+                           % (e.__class__.__name__, str(e)),
+                           log.ErrorCode.connection_failed)
+        log.Debug(u"Container stats: %s" % container_stat)
 
     def _error_code(self, operation, e):  # pylint: disable=unused-argument
         if isinstance(e, self.resp_exc):
@@ -145,9 +166,29 @@ Exception: %s""" % str(e))
                 return log.ErrorCode.backend_not_found
 
     def _put(self, source_path, remote_filename):
-        self.conn.put_object(self.container,
-                             self.prefix + util.fsdecode(remote_filename),
-                             open(util.fsdecode(source_path.name), u'rb'))
+        lp = util.fsdecode(source_path.name)
+        if config.mp_segment_size > 0:
+            from swiftclient.service import SwiftUploadObject
+            st = os.stat(lp)
+            # only upload using Dynamic Large Object if mpvolsize is triggered
+            if st.st_size >= config.mp_segment_size:
+                log.Debug(u"Uploading Dynamic Large Object")
+                mp = self.svc.upload(
+                    self.container,
+                    [SwiftUploadObject(lp,
+                                       object_name=self.prefix + util.fsdecode(remote_filename))],
+                    options={u'segment_size': config.mp_segment_size}
+                )
+                uploads = [a for a in mp if u'container' not in a[u'action']]
+                for upload in uploads:
+                    if not upload[u'success']:
+                        raise BackendException(upload[u'traceback'])
+                return
+        rp = self.prefix + util.fsdecode(remote_filename)
+        log.Debug(u"Uploading '%s' to '%s' in remote container '%s'" % (lp, rp, self.container))
+        self.conn.put_object(container=self.container,
+                             obj=self.prefix + util.fsdecode(remote_filename),
+                             contents=open(lp, u'rb'))
 
     def _get(self, remote_filename, local_path):
         headers, body = self.conn.get_object(self.container,
@@ -163,11 +204,15 @@ Exception: %s""" % str(e))
         return [o[u'name'][len(self.prefix):] for o in objs]
 
     def _delete(self, filename):
-        self.conn.delete_object(self.container, self.prefix + util.fsdecode(filename))
+        # use swiftservice to correctly delete all segments in case of multipart uploads
+        deleted = [a for a in self.svc.delete(self.container, [self.prefix + util.fsdecode(filename)])]
 
     def _query(self, filename):
-        sobject = self.conn.head_object(self.container, self.prefix + util.fsdecode(filename))
-        return {u'size': int(sobject[u'content-length'])}
+        # use swiftservice to correctly report filesize in case of multipart uploads
+        sobject = [a for a in self.svc.stat(self.container, [self.prefix + util.fsdecode(filename)])][0]
+        sobj = {u'size': int(sobject[u'headers'][u'content-length'])}
+        log.Debug(u"Objectquery: '%s' has size %s." % (util.fsdecode(filename), sobj[u'size']))
+        return sobj
 
 
 duplicity.backend.register_backend(u"swift", SwiftBackend)

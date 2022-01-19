@@ -116,7 +116,7 @@ def uexc(e):
     # non-ascii will cause a UnicodeDecodeError when implicitly decoding to
     # unicode.  So we decode manually, using the filesystem encoding.
     # 99.99% of the time, this will be a fine encoding to use.
-    if e.args:
+    if e and e.args:
         # Find arg that is a string
         for m in e.args:
             if isinstance(m, str):
@@ -125,6 +125,14 @@ def uexc(e):
             elif isinstance(m, bytes):
                 # Encoded, likely in filesystem encoding
                 return fsdecode(m)
+        # If the function did not return yet, we did not
+        # succeed in finding a string; return the whole message.
+        # This fails for Python 2, so only do this in Python 3.
+        if sys.version_info[0] > 2:
+            return str(e)
+        # For Python 2, fall back to returning an empty string.
+        else:
+            return u''
     else:
         return u''
 
@@ -212,7 +220,11 @@ def release_lockfile():
         log.Debug(_(u"Releasing lockfile %s") % config.lockpath)
         try:
             config.lockfile.release()
-        except Exception:
+            config.lockfile = None
+            os.remove(config.lockpath)
+            config.lockpath = u""
+        except Exception as e:
+            log.Error(u"Could not release lockfile: %s" % str(e))
             pass
 
 

@@ -23,6 +23,7 @@ from __future__ import print_function
 from future import standard_library
 standard_library.install_aliases()
 
+import sys
 import mock
 import unittest
 
@@ -33,6 +34,7 @@ from duplicity import config
 from . import UnitTestCase
 
 
+@unittest.skipIf(sys.version_info[:2] < (3, 6), u"Skip on bad urllib.parse handling")
 class ParsedUrlTest(UnitTestCase):
     u"""Test the ParsedUrl class"""
     def test_basic(self):
@@ -129,6 +131,9 @@ class ParsedUrlTest(UnitTestCase):
         assert pu.username == u"foo@bar.com", pu.username
         assert pu.password is None, pu.password
         assert pu.port is None, pu.port
+
+        pu = duplicity.backend.ParsedUrl(u"scheme://username:passwor@127.0.0.1:22/path/path")
+        assert pu.strip_auth() == u"scheme://127.0.0.1:22/path/path"
 
     def test_errors(self):
         u"""Test various url errors"""

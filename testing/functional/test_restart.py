@@ -138,7 +138,7 @@ class RestartTest(FunctionalTestCase):
         self.backup(u"full", u"{0}/testfiles/largefiles".format(_runtest_dir))
         self.verify(u"{0}/testfiles/largefiles".format(_runtest_dir))
 
-    @unittest.skipIf(u"ppc64el" in platform.machine(), u"Skip on ppc64el machines")
+    @unittest.skipIf(platform.machine() in [u"ppc64el", u"ppc64le"], u"Skip on ppc64el and ppc64le machines")
     def test_last_file_missing_at_end(self):
         u"""
         Test restart when the last file being backed up is missing on restart.
@@ -171,7 +171,7 @@ class RestartTest(FunctionalTestCase):
         # First, confirm that we have signs of a successful backup
         self.assertEqual(len(glob.glob(u"{0}/testfiles/output/*.manifest*".format(_runtest_dir))), 1)
         self.assertEqual(len(glob.glob(u"{0}/testfiles/output/*.sigtar*".format(_runtest_dir))), 1)
-        self.assertEqual(len(glob.glob(u"{0}/testfiles/cache/{1}/*".format(_runtest_dir, name))), 3)
+        self.assertEqual(len(glob.glob(u"{0}/testfiles/cache/{1}/*".format(_runtest_dir, name))), 2)
         self.assertEqual(len(glob.glob(
             u"{0}/testfiles/cache/{1}/*.manifest*".format(_runtest_dir, name))), 1)
         self.assertEqual(len(glob.glob(
@@ -194,7 +194,7 @@ class RestartTest(FunctionalTestCase):
         assert not os.system(u"""echo 'Volume 2:
     StartingPath   foo
     EndingPath     bar
-    Hash SHA1 sha1' >> /tmp/testfiles/cache/%s/*.manifest.part""" % name)
+    Hash SHA1 sha1' >> {0}/testfiles/cache/{1}/*.manifest.part""".format(_runtest_dir, name))
 
     def test_split_after_small(self):
         u"""

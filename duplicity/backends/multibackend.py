@@ -174,7 +174,7 @@ class MultiBackend(duplicity.backend.Backend):
                 configs = json.load(f)
         except IOError as e:
             log.Log(_(u"MultiBackend: Url %s")
-                    % (parsed_url.geturl()),
+                    % (parsed_url.strip_auth()),
                     log.ERROR)
 
             log.Log(_(u"MultiBackend: Could not load config file %s: %s ")
@@ -246,7 +246,7 @@ class MultiBackend(duplicity.backend.Backend):
                 if (next > len(stores) - 1):
                     next = 0
                 log.Log(_(u"MultiBackend: _put: write to store #%s (%s)")
-                        % (self.__write_cursor, store.backend.parsed_url.url_string),
+                        % (self.__write_cursor, store.backend.parsed_url.strip_auth()),
                         log.DEBUG)
                 store.put(source_path, remote_filename)
                 passed = True
@@ -259,7 +259,7 @@ class MultiBackend(duplicity.backend.Backend):
                     break
             except Exception as e:
                 log.Log(_(u"MultiBackend: failed to write to store #%s (%s), try #%s, Exception: %s")
-                        % (self.__write_cursor, store.backend.parsed_url.url_string, next, e),
+                        % (self.__write_cursor, store.backend.parsed_url.strip_auth(), next, e),
                         log.INFO)
                 self.__write_cursor = next
 
@@ -292,7 +292,7 @@ class MultiBackend(duplicity.backend.Backend):
                 s.get(remote_filename, local_path)
                 return
             log.Log(_(u"MultiBackend: failed to get %s to %s from %s")
-                    % (remote_filename, local_path, s.backend.parsed_url.url_string),
+                    % (remote_filename, local_path, s.backend.parsed_url.strip_auth()),
                     log.INFO)
         log.Log(_(u"MultiBackend: failed to get %s. Tried all backing stores and none succeeded")
                 % (remote_filename),
@@ -305,10 +305,10 @@ class MultiBackend(duplicity.backend.Backend):
             config.are_errors_fatal[u'list'] = (False, [])
             l = s.list()
             log.Notice(_(u"MultiBackend: %s: %d files")
-                       % (s.backend.parsed_url.url_string, len(l)))
+                       % (s.backend.parsed_url.strip_auth(), len(l)))
             if len(l) == 0 and duplicity.backend._last_exception:
                 log.Warn(_(u"Exception during list of %s: %s"
-                           % (s.backend.parsed_url.url_string,
+                           % (s.backend.parsed_url.strip_auth(),
                               util.uexc(duplicity.backend._last_exception))))
                 duplicity.backend._last_exception = None
             lists.append(l)
@@ -346,6 +346,48 @@ class MultiBackend(duplicity.backend.Backend):
             log.Log(_(u"MultiBackend: failed to delete %s. Tried all backing stores and none succeeded")
                     % (filename),
                     log.ERROR)
+
+    def _delete_list(self, filenames):
+        # Store an indication on whether any passed
+        passed = False
+
+        stores = self.__stores
+
+        # since the backend operations will be retried, we can't
+        # simply try to get from the store, if not found, move to the
+        # next store (since each failure will be retried n times
+        # before finally giving up).  So we need to get the list first
+        # before we try to delete
+        # ENHANCEME: maintain a cached list for each store
+        for s in stores:
+            flist = s.list()
+            cleaned = [f for f in filenames if f in flist]
+            if hasattr(s.backend, u'_delete_list'):
+                s._do_delete_list(cleaned)
+            elif hasattr(s.backend, u'_delete'):
+                for filename in cleaned:
+                    s._do_delete(filename)
+            passed = True
+            # In stripe mode, only one item will have the file
+            if self.__mode == u'stripe':
+                return
+        if not passed:
+            log.Log(_(u"MultiBackend: failed to delete %s. Tried all backing stores and none succeeded")
+                    % (filenames),
+                    log.ERROR)
+
+    def pre_process_download(self, filename):
+        for store in self.__stores:
+            if hasattr(store.backend, u'pre_process_download'):
+                store.backend.pre_process_download(filename)
+
+    def pre_process_download_batch(self, filenames):
+        set_files = set(filenames)
+        for store in self.__stores:
+            if hasattr(store.backend, u'pre_process_download_batch'):
+                store_files_to_download = set_files.intersection(store.list())
+                if len(store_files_to_download) > 0:
+                    store.backend.pre_process_download_batch(store_files_to_download)
 
 
 duplicity.backend.register_backend(u'multi', MultiBackend)

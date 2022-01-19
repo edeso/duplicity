@@ -66,6 +66,8 @@ ignore_regexps = [
     r'^([cC]hg|[fF]ix|[nN]ew)\s*:\s*[d|D]ev:',
     r'^(.{3,3}\s*:)?\s*[fF]irst commit.?\s*$',
     r'^Launchpad automatic translations update..*$',
+    r'^.*LP translations.*$',
+    r'^.*Change version for LP.*$',
     r'^Update changelog..*$',
     r'^(\* )?Prep\s*for\s*\d+\.\d+\.\d+.*$',
     r'^$',  ## ignore commits with empty messages
@@ -133,12 +135,11 @@ section_regexps = [
 # body_process = Wrap(regexp=r'\n(?=\w+\s*:)') | Indent(chars="  ")
 # body_process = Wrap(regexp=r'\n(?=\w+\s*:)')
 # body_process = noop
-# body_process = (strip |
-#     ReSub(r'^\* ([A-Za-z])', r'\1') |
-#     ReSub(r'((^|\n)[A-Z]\w+(-\w+)*: .*(\n\s+.*)*)+$', r''))
 body_process = (strip |
-    ReSub('.*\n', '') |
-    ReSub('.*', ''))
+    ReSub(r'^\* ([A-Za-z])', r'\1') |
+    ReSub(r'((^|\n)[A-Z]\w+(-\w+)*: .*(\n\s+.*)*)+$', r'') |
+    Indent(chars="  ") |
+    Wrap(regexp=r"\n\n"))
 
 
 ## ``subject_process`` is a callable
@@ -152,7 +153,11 @@ subject_process = (strip |
     ReSub(r'~', r'\~') |
     ReSub(r'_', r'\_') |
     ReSub(r'^([cC]hg|[fF]ix|[nN]ew)\s*:\s*((dev|use?r|pkg|test|doc)\s*:\s*)?([^\n@]*)(@[a-z]+\s+)*$', r'\4') |
-    SetIfEmpty("No commit message.") | ucfirst | final_dot)
+    SetIfEmpty("No commit message.") |
+    Indent(chars="  ") |
+    Wrap(regexp=r"\n\n") |
+    ucfirst |
+    final_dot)
 
 
 ## ``tag_filter_regexp`` is a regexp

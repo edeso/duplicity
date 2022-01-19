@@ -17,6 +17,14 @@ import urllib.parse  # pylint: disable=import-error
 from requests.compat import quote, quote_plus
 import requests
 
+try:
+    import pyrax
+    from pyrax.base_identity import BaseIdentity, Service
+    import pyrax.exceptions as exc
+except ImportError as e:
+    raise BackendException(u"""\
+Hubic backend requires the pyrax library available from Rackspace.
+Exception: %s""" % str(e))
 
 OAUTH_ENDPOINT = u"https://api.hubic.com/oauth/"
 API_ENDPOINT = u"https://api.hubic.com/1.0/"
@@ -33,15 +41,8 @@ class BearerTokenAuth(requests.auth.AuthBase):
 
 
 class HubicIdentity(BaseIdentity):
-    def __init__(self):
-        try:
-            from pyrax.base_identity import BaseIdentity, Service
-            import pyrax
-            import pyrax.exceptions as exc
-        except ImportError as e:
-            raise BackendException(u"""\
-Hubic backend requires the pyrax library available from Rackspace.
-Exception: %s""" % str(e))
+    def __init__(self, **kwargs):
+        super(HubicIdentity, self).__init__(self, **kwargs)
 
     def _get_auth_endpoint(self):
         return u""

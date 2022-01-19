@@ -177,6 +177,10 @@ compression = True
 # volume size. default 200M
 volsize = 200 * 1024 * 1024
 
+# after this volume, we will switch to multipart upload
+mp_factor = 1.1
+mp_segment_size = mp_factor * volsize
+
 # Working directory for the tempfile module. Defaults to /tmp on most systems.
 temproot = None
 
@@ -221,6 +225,9 @@ s3_use_ia = False
 
 # Whether to use S3 Glacier Storage
 s3_use_glacier = False
+
+# Whether to use S3 Glacier IR Storage
+s3_use_glacier_ir = False
 
 # Whether to use S3 Glacier Deep Archive Storage
 s3_use_deep_archive = False
@@ -353,8 +360,14 @@ par2_redundancy = 10
 # Verbatim par2 other options
 par2_options = u""
 
+# Number of par2 volumes
+par2_volumes = 1
+
 # Whether to enable gio backend
 use_gio = False
+
+# If set, log the chnages is the set instead of the normal collection status
+show_changes_in_set = None
 
 # If set, collect only the file status, not the whole root.
 file_changed = None
@@ -364,6 +377,9 @@ backend_retry_delay = 30
 
 # option for mediafire to purge files on delete instead of sending to trash
 mf_purge = False
+
+# Fake root directory path for iDrived backend
+fakeroot = None
 
 # default filesystem encoding
 # In Python 2 it seems that sys.getfilesystemencoding() will normally return

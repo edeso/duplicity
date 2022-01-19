@@ -22,7 +22,7 @@
 import os
 
 import duplicity.backend
-from duplicity import path
+from duplicity import path, progress
 from duplicity.errors import BackendException
 
 
@@ -54,7 +54,11 @@ class LocalBackend(duplicity.backend.Backend):
 
     def _put(self, source_path, remote_filename):
         target_path = self.remote_pathdir.append(remote_filename)
+        source_path.setdata()
+        source_size = source_path.getsize()
+        progress.report_transfer(0, source_size)
         target_path.writefileobj(source_path.open(u"rb"))
+        progress.report_transfer(source_size, source_size)
 
     def _get(self, filename, local_path):
         source_path = self.remote_pathdir.append(filename)
@@ -65,6 +69,10 @@ class LocalBackend(duplicity.backend.Backend):
 
     def _delete(self, filename):
         self.remote_pathdir.append(filename).delete()
+
+    def _delete_list(self, filenames):
+        for filename in filenames:
+            self.remote_pathdir.append(filename).delete()
 
     def _query(self, filename):
         target_file = self.remote_pathdir.append(filename)

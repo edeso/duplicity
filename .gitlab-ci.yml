@@ -18,20 +18,32 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+# include:
+#     - template: Dependency-Scanning.gitlab-ci.yml
+
+.test-template: &test-template
+    stage: tests
+    except:
+        variables:
+            - $CI_COMMIT_MESSAGE =~ /\[skip[ _-]tests?\]/i
+            - $SKIP_TESTS
+
 variables:
-    # Change pip's cache directory to be inside the project directory since we can
-    # only cache local items.
+    # cache local items
     PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
     # Set to non-interactive so no tzdata prompt
     DEBIAN_FRONTEND: "noninteractive"
+    # for upload to pypi.org
+    TWINE_USERNAME: $TWINE_USERNAME
+    TWINE_PASSWORD: $TWINE_PASSWORD
 
 stages:
-    - code
+    - qual
     - test
+    - deploy
 
 default:
     image: ubuntu:18.04
-
     before_script:
         # Set locale to prevent UTF-8 errors
         - export LANG=C.UTF-8
@@ -41,18 +53,20 @@ default:
           libffi-dev libssl-dev openssl par2 rdiff tzdata python3-pip
         - python3 -m pip install --upgrade pip
         - python3 -m pip install --requirement requirements.txt
+    interruptible: true
 
 code_ub18-04:
-    stage: code
+    <<: *test-template
+    stage: qual
     script:
         - apt-get install -y python3.8 python3.8-dev
         - tox -e code
     artifacts:
         reports:
             junit: report.xml
-    needs: []
 
 py27_ub18-04:
+    <<: *test-template
     stage: test
     script:
         - apt-get install -y python2.7 python2.7-dev
@@ -60,9 +74,10 @@ py27_ub18-04:
     artifacts:
         reports:
             junit: report.xml
-    needs: ["code_ub18-04"]
+    allow_failure: true
 
 py35_ub16-04:
+    <<: *test-template
     stage: test
     image: ubuntu:16.04
     before_script:
@@ -81,9 +96,10 @@ py35_ub16-04:
     artifacts:
         reports:
             junit: report.xml
-    needs: ["code_ub18-04"]
+    allow_failure: true
 
 py36_ub18-04:
+    <<: *test-template
     stage: test
     script:
         - apt-get install -y python3.6 python3.6-dev
@@ -91,9 +107,9 @@ py36_ub18-04:
     artifacts:
         reports:
             junit: report.xml
-    needs: ["code_ub18-04"]
 
 py37_ub18-04:
+    <<: *test-template
     stage: test
     script:
         - apt-get install -y python3.7 python3.7-dev
@@ -101,9 +117,9 @@ py37_ub18-04:
     artifacts:
         reports:
             junit: report.xml
-    needs: ["code_ub18-04"]
 
 py38_ub18-04:
+    <<: *test-template
     stage: test
     script:
         - apt-get install -y python3.8 python3.8-dev
@@ -111,9 +127,9 @@ py38_ub18-04:
     artifacts:
         reports:
             junit: report.xml
-    needs: ["code_ub18-04"]
 
 py39_ub20-04:
+    <<: *test-template
     stage: test
     image: ubuntu:20.04
     before_script:
@@ -131,4 +147,51 @@ py39_ub20-04:
     artifacts:
         reports:
             junit: report.xml
-    needs: ["code_ub18-04"]
+
+build_pip:
+    stage: deploy
+    when: manual
+    only: [master]
+    script:
+        - pip install twine
+        - VERSION=`./setup.py --version`
+        - echo "make pip of ${VERSION}"
+        - ./setup.py sdist --dist-dir=.
+        - python3 -m twine upload duplicity-${VERSION}.tar.gz
+
+build_snap:
+    stage: deploy
+    image: ubuntu:20.04
+    when: manual
+    only: [master]
+    script:
+        - apt-get update
+        - apt-get upgrade
+        - apt-get install -y snapcraft
+        - VERSION=`./setup.py --version`
+        - echo "make snap of ${VERSION}"
+        - ./setup.py sdist --dist-dir=.
+        - rm -rf build
+        - mkdir -p build
+        - tar xf duplicity-${VERSION}.tar.gz -C build
+        - rm -f duplicity-${VERSION}.tar.gz
+        - cd build/duplicity-${VERSION}
+        - head -2 snap/snapcraft.yaml | tail -1
+        - echo $SNAPCRAFT_LOGIN_FILE | base64 --decode --ignore-garbage > snaplogin
+        - snapcraft login --with snaplogin
+        - rm snaplogin
+        - snapcraft snap
+        - snapcraft push duplicity_*.snap --release edge
+
+pages:
+    stage: deploy
+    when: manual
+    image: ubuntu:20.04
+    script:
+        - VERSION=`./setup.py --version`
+        - echo "make docs of ${VERSION}"
+        - make docs
+        - mv docs/_build/html public
+    artifacts:
+        paths:
+            - public

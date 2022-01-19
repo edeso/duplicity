@@ -1,0 +1,18 @@
+#!/bin/bash
+
+set -e
+
+if [ "$#" -ne 0 ]; then
+    echo "usage: makechangelog"
+    exit 2
+fi
+
+gitchangelog > CHANGELOG.md
+CNT=`git status --porcelain | tee /dev/stderr | grep -v " M CHANGELOG.md" | wc -l`
+if [ $CNT -ne 0 ]; then
+    echo "*** REPO DIRTY, REFUSING TO COMMIT ***"
+    exit 1
+fi
+
+git commit -m"Update changelog." CHANGELOG.md
+git push

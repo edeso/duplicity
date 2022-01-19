@@ -66,25 +66,47 @@ class B2Backend(duplicity.backend.Backend):
         duplicity.backend.Backend.__init__(self, parsed_url)
 
         global DownloadDestLocalFile, FileVersionInfoFactory
-        try:  # try to import the new b2sdk if available
-            from b2sdk.api import B2Api
-            from b2sdk.account_info import InMemoryAccountInfo
-            from b2sdk.download_dest import DownloadDestLocalFile
-            from b2sdk.exception import NonExistentBucket
-            from b2sdk.file_version import FileVersionInfoFactory
-        except ImportError as e:
-            if u'b2sdk' in getattr(e, u'name', u'b2sdk'):
-                raise
-            try:  # fall back to import the old b2 client
-                from b2.api import B2Api
-                from b2.account_info import InMemoryAccountInfo
-                from b2.download_dest import DownloadDestLocalFile
-                from b2.exception import NonExistentBucket
-                from b2.file_version import FileVersionInfoFactory
+
+        try:  # figure out what version of b2sdk we have
+            from b2sdk import __version__ as VERSION
+            v_split = VERSION.split(u'.')
+            self.v_num = [int(x) for x in v_split]
+        except:
+            self.v_num = [0, 0, 0]
+
+        try:  # public API v2 is recommended, if available
+            from b2sdk.v2 import B2Api
+            from b2sdk.v2 import InMemoryAccountInfo
+            from b2sdk.v2.exception import NonExistentBucket
+        except ImportError:
+            try:  # if public API v2 not found, try to use public API v1
+                from b2sdk.v1 import B2Api
+                from b2sdk.v1 import InMemoryAccountInfo
+                from b2sdk.v1 import DownloadDestLocalFile
+                from b2sdk.v1.exception import NonExistentBucket
+
+                if self.v_num < [1, 9, 0]:
+                    from b2sdk.v1.file_version import FileVersionInfoFactory
             except ImportError:
-                if u'b2' in getattr(e, u'name', u'b2'):
-                    raise
-                raise BackendException(u'B2 backend requires B2 Python SDK (pip install b2sdk)')
+                try:  # try to import the new b2sdk internal API if available (and public API isn't)
+                    from b2sdk.api import B2Api
+                    from b2sdk.account_info import InMemoryAccountInfo
+                    from b2sdk.download_dest import DownloadDestLocalFile
+                    from b2sdk.exception import NonExistentBucket
+                    from b2sdk.file_version import FileVersionInfoFactory
+                except ImportError as e:
+                    if u'b2sdk' in getattr(e, u'name', u'b2sdk'):
+                        raise
+                    try:  # fall back to import the old b2 client
+                        from b2.api import B2Api
+                        from b2.account_info import InMemoryAccountInfo
+                        from b2.download_dest import DownloadDestLocalFile
+                        from b2.exception import NonExistentBucket
+                        from b2.file_version import FileVersionInfoFactory
+                    except ImportError:
+                        if u'b2' in getattr(e, u'name', u'b2'):
+                            raise
+                        raise BackendException(u'B2 backend requires B2 Python SDK (pip install b2sdk)')
 
         self.service = B2Api(InMemoryAccountInfo())
         self.parsed_url.hostname = u'B2'
@@ -103,8 +125,13 @@ class B2Backend(duplicity.backend.Backend):
         self.path = u"".join([url_part + u"/" for url_part in self.url_parts])
         self.service.authorize_account(u'production', account_id, account_key)
 
-        log.Log(u"B2 Backend (path= %s, bucket= %s, minimum_part_size= %s)" %
-                (self.path, bucket_name, self.service.account_info.get_minimum_part_size()), log.INFO)
+        try:
+            log.Log(u"B2 Backend (path= %s, bucket= %s, recommended_part_size= %s)" %
+                    (self.path, bucket_name, self.service.account_info.get_recommended_part_size()), log.INFO)
+        except AttributeError:
+            log.Log(u"B2 Backend (path= %s, bucket= %s, minimum_part_size= %s)" %
+                    (self.path, bucket_name, self.service.account_info.get_minimum_part_size()), log.INFO)
+
         try:
             self.bucket = self.service.get_bucket_by_name(bucket_name)
             log.Log(u"Bucket found", log.INFO)
@@ -122,8 +149,12 @@ class B2Backend(duplicity.backend.Backend):
         log.Log(u"Get: %s -> %s" % (self.path + util.fsdecode(remote_filename),
                                     util.fsdecode(local_path.name)),
                 log.INFO)
-        self.bucket.download_file_by_name(quote_plus(self.path + util.fsdecode(remote_filename), u'/'),
-                                          DownloadDestLocalFile(local_path.name))
+        if self.v_num < [1, 11, 0]:
+            self.bucket.download_file_by_name(quote_plus(self.path + util.fsdecode(remote_filename), u'/'),
+                                              DownloadDestLocalFile(local_path.name))
+        else:
+            df = self.bucket.download_file_by_name(quote_plus(self.path + util.fsdecode(remote_filename), u'/'))
+            df.save_to(local_path.name)
 
     def _put(self, source_path, remote_filename):
         u"""
@@ -163,16 +194,19 @@ class B2Backend(duplicity.backend.Backend):
         """
         log.Log(u"Query: %s" % self.path + util.fsdecode(filename), log.INFO)
         file_version_info = self.file_info(quote_plus(self.path + util.fsdecode(filename), u'/'))
-        return {u'size': file_version_info.size
+        return {u'size': int(file_version_info.size)
                 if file_version_info is not None and file_version_info.size is not None else -1}
 
     def file_info(self, filename):
-        response = self.bucket.api.session.list_file_names(self.bucket.id_, filename, 1, self.path)
-        for entry in response[u'files']:
-            file_version_info = FileVersionInfoFactory.from_api_response(entry)
-            if file_version_info.file_name == filename:
-                return file_version_info
-        raise BackendException(u'File not found')
+        if self.v_num >= [1, 9, 0]:
+            return self.bucket.get_file_info_by_name(filename)
+        else:
+            response = self.bucket.api.session.list_file_names(self.bucket.id_, filename, 1, self.path)
+            for entry in response[u'files']:
+                file_version_info = FileVersionInfoFactory.from_api_response(entry)
+                if file_version_info.file_name == filename:
+                    return file_version_info
+            raise BackendException(u'File not found')
 
 
 duplicity.backend.register_backend(u"b2", B2Backend)

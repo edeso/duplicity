@@ -48,7 +48,7 @@ class S3Boto3Backend(duplicity.backend.Backend):
     the use of the boto3 module. (See
     https://boto3.amazonaws.com/v1/documentation/api/latest/index.html
     for information on boto3.)
-.
+
     Pursuant to Amazon's announced deprecation of path style S3 access,
     this backend only supports virtual host style bucket URIs.
     See the man page for full details.
@@ -104,6 +104,8 @@ class S3Boto3Backend(duplicity.backend.Backend):
         self.bucket = self.s3.Bucket(self.bucket_name)  # only set if bucket is thought to exist.
 
     def _put(self, local_source_path, remote_filename):
+        from boto3.s3.transfer import TransferConfig  # pylint: disable=import-error
+
         if not self.s3:
             self.reset_connection()
 
@@ -118,6 +120,8 @@ class S3Boto3Backend(duplicity.backend.Backend):
             storage_class = u'ONEZONE_IA'
         elif config.s3_use_glacier and u"manifest" not in remote_filename:
             storage_class = u'GLACIER'
+        elif config.s3_use_glacier_ir and u"manifest" not in remote_filename:
+            storage_class = u'GLACIER_IR'
         elif config.s3_use_deep_archive and u"manifest" not in remote_filename:
             storage_class = u'DEEP_ARCHIVE'
         else:
@@ -136,6 +140,9 @@ class S3Boto3Backend(duplicity.backend.Backend):
             if config.s3_kms_grant:
                 extra_args[u'GrantFullControl'] = config.s3_kms_grant
 
+        transfer_config = TransferConfig(multipart_chunksize=config.s3_multipart_chunk_size,
+                                         multipart_threshold=config.s3_multipart_chunk_size)
+
         # Should the tracker be scoped to the put or the backend?
         # The put seems right to me, but the results look a little more correct
         # scoped to the backend.  This brings up questions about knowing when
@@ -146,6 +153,7 @@ class S3Boto3Backend(duplicity.backend.Backend):
         log.Info(u"Uploading %s/%s to %s Storage" % (self.straight_url, remote_filename, storage_class))
         self.s3.Object(self.bucket.name, key).upload_file(local_source_path.uc_name,
                                                           Callback=tracker.progress_cb,
+                                                          Config=transfer_config,
                                                           ExtraArgs=extra_args)
 
     def _get(self, remote_filename, local_path):

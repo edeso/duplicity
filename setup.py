@@ -25,16 +25,17 @@ from __future__ import print_function
 import os
 import re
 import shutil
+import subprocess
 import sys
 import time
 
 from distutils.command.build_scripts import build_scripts
 from distutils.command.install_data import install_data
 from setuptools import setup, Extension
+from setuptools.command.build_ext import build_ext
 from setuptools.command.install import install
 from setuptools.command.sdist import sdist
 from setuptools.command.test import test
-from subprocess import Popen, PIPE
 
 
 # check that we can function here
@@ -52,9 +53,9 @@ try:
     from setuptools_scm import get_version  # pylint: disable=import-error
     Version = get_version(**scm_version_args)
 except Exception as e:
-    Version = u"0.8.18.dev"
+    Version = u"0.8.22.dev"
     print(u"Unable to get SCM version: defaulting to %s" % (Version,))
-Reldate = time.strftime(u"%B %d, %Y", time.localtime())
+Reldate = time.strftime(u"%B %d, %Y", time.gmtime(int(os.environ.get(u'SOURCE_DATE_EPOCH', time.time()))))
 
 
 # READTHEDOCS uses setup.py sdist but can't handle extensions
@@ -95,8 +96,8 @@ def get_data_files():
             ),
             (u'share/doc/duplicity-%s' % Version,
                 [
-                u'AUTHORS',
                 u'CHANGELOG.md',
+                u'CONTRIBUTING.md',
                 u'COPYING',
                 u'README.md',
                 u'README-LOG.md',
@@ -245,6 +246,16 @@ class InstallDataCommand(install_data):
                     VersionedCopy(path, path)
 
 
+class BuildExtCommand(build_ext):
+    u'''Build extension modules.'''
+
+    def run(self):
+        # build the _librsync.so module
+        print(u"Building extension for librsync...")
+        self.inplace = True
+        build_ext.run(self)
+
+
 with open(u"README.md") as fh:
     long_description = fh.read()
 
@@ -299,6 +310,7 @@ setup(name=u"duplicity",
         ],
     test_suite=u"testing",
     cmdclass={
+        u"build_ext": BuildExtCommand,
         u"install": InstallCommand,
         u"install_data": InstallDataCommand,
         u"sdist": SdistCommand,
@@ -324,7 +336,7 @@ setup(name=u"duplicity",
     )
 
 
-# TODO: is this the best way to clean up afterwards?
+# TODO: Find best way to clean up afterwards.
 if os.path.exists(u'po/LINGUAS'):
     linguas = open(u'po/LINGUAS').readlines()
     for line in linguas:

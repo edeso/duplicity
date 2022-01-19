@@ -389,6 +389,9 @@ def parse_cmdline_options(arglist):
                       dest=u"", action=u"callback",
                       callback=lambda o, s, v, p: config.gpg_profile.hidden_recipients.append(v))
 
+    # Fake-root for iDrived backend
+    parser.add_option(u"--idr-fakeroot", dest=u"fakeroot", type=u"file", metavar=_(u"path"))
+
     # ignore (some) errors during operations; supposed to make it more
     # likely that you are able to restore data under problematic
     # circumstances. the default should absolutely always be False unless
@@ -489,6 +492,9 @@ def parse_cmdline_options(arglist):
     # Verbatim par2 options
     parser.add_option(u"--par2-options", action=u"extend", metavar=_(u"options"))
 
+    # Number of par2 volumes
+    parser.add_option(u"--par2-volumes", type=u"int", metavar=_(u"number"))
+
     # Used to display the progress for the full and incremental backup operations
     parser.add_option(u"--progress", action=u"store_true")
 
@@ -524,6 +530,9 @@ def parse_cmdline_options(arglist):
 
     # Whether to use S3 Glacier Storage
     parser.add_option(u"--s3-use-glacier", action=u"store_true")
+
+    # Whether to use S3 Glacier IR Storage
+    parser.add_option(u"--s3-use-glacier-ir", action=u"store_true")
 
     # Whether to use S3 Glacier Deep Archive Storage
     parser.add_option(u"--s3-use-deep-archive", action=u"store_true")
@@ -653,17 +662,33 @@ def parse_cmdline_options(arglist):
     # option for mediafire to purge files on delete instead of sending to trash
     parser.add_option(u"--mf-purge", action=u"store_true")
 
+    def set_mpsize(o, s, v, p):  # pylint: disable=unused-argument
+        setattr(p.values, u"mp_segment_size", v * 1024 * 1024)
+        setattr(p.values, u"mp_set", True)
+    parser.add_option(u"--mp-segment-size", type=u"int", action=u"callback", metavar=_(u"number"),
+                      callback=set_mpsize)
     # volume size
     # TRANSL: Used in usage help to represent a desired number of
     # something. Example:
     # --num-retries <number>
+
+    def set_volsize(o, s, v, p):  # pylint: disable=unused-argument
+        setattr(p.values, u"volsize", v * 1024 * 1024)
+        # if mp_size was not explicity given, default it to volsize
+        if not getattr(p.values, u'mp_set', False):
+            setattr(p.values, u"mp_segment_size", int(config.mp_factor * p.values.volsize))
+
     parser.add_option(u"--volsize", type=u"int", action=u"callback", metavar=_(u"number"),
-                      callback=lambda o, s, v, p: setattr(p.values, u"volsize", v * 1024 * 1024))
+                      callback=set_volsize)
 
     # If set, collect only the file status, not the whole root.
     parser.add_option(u"--file-changed", action=u"callback", type=u"file",
                       metavar=_(u"path"), dest=u"file_changed",
                       callback=lambda o, s, v, p: setattr(p.values, u"file_changed", v.rstrip(u'/')))
+
+    # If set, show file changes (new, deleted, changed) in the specified backup
+    #  set (0 specifies latest, 1 specifies next latest, etc.)
+    parser.add_option(u"--show-changes-in-set", type=u"int", metavar=_(u"number"))
 
     # delay time before next try after a failure of a backend operation
     # TRANSL: Used in usage help. Example:
@@ -975,6 +1000,10 @@ def usage():
   ftp://%(user)s[:%(password)s]@%(other_host)s[:%(port)s]/%(some_dir)s
   ftps://%(user)s[:%(password)s]@%(other_host)s[:%(port)s]/%(some_dir)s
   gdocs://%(user)s[:%(password)s]@%(other_host)s/%(some_dir)s
+  for gdrive:// a <service-account-url> like the following is required
+        <serviceaccount-name>@<serviceaccount-name>.iam.gserviceaccount.com
+  gdrive://<service-account-url>/target-folder/?driveID=<SHARED DRIVE ID> (for GOOGLE Shared Drive)
+  gdrive://<service-account-url>/target-folder/?myDriveFolderID=<google-myDrive-folder-id> (for GOOGLE MyDrive)
   hsi://%(user)s[:%(password)s]@%(other_host)s[:%(port)s]/%(some_dir)s
   imap://%(user)s[:%(password)s]@%(other_host)s[:%(port)s]/%(some_dir)s
   mega://%(user)s[:%(password)s]@%(other_host)s/%(some_dir)s
@@ -1131,10 +1160,10 @@ def check_consistency(action):
                          config.remove_time is not None])
     elif action == u"restore" or action == u"verify":
         if full_backup:
-            command_line_error(u"--full option cannot be used when "
+            command_line_error(u"full option cannot be used when "
                                u"restoring or verifying")
         elif config.incremental:
-            command_line_error(u"--incremental option cannot be used when "
+            command_line_error(u"incremental option cannot be used when "
                                u"restoring or verifying")
         if select_opts and action == u"restore":
             log.Warn(_(u"Command line warning: %s") % _(u"Selection options --exclude/--include\n"
@@ -1143,7 +1172,7 @@ def check_consistency(action):
     else:
         assert action == u"inc" or action == u"full"
         if verify:
-            command_line_error(u"--verify option cannot be used "
+            command_line_error(u"verify option cannot be used "
                                u"when backing up")
         if config.restore_dir:
             command_line_error(u"restore option incompatible with %s backup"
