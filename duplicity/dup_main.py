@@ -776,14 +776,6 @@ def restore_get_patched_rop_iter(col_stats):
         u"""Get file object iterator from backup_set contain given index"""
         manifest = backup_set.get_manifest()
         volumes = manifest.get_containing_volumes(index)
-<<<<<<< HEAD
-        log.Info(u"VOLUMES: %s" % (volumes))
-
-        if hasattr(backup_set.backend.backend, u'pre_process_download_batch'):
-            backup_set.backend.backend.pre_process_download_batch(backup_set.volume_name_dict.values())
-
-=======
->>>>>>> master
         for vol_num in volumes:
             try:
                 yield restore_get_enc_fileobj(backup_set.backend,
