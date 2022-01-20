@@ -54,25 +54,6 @@ pip3 install -r requirements.txt
 ```
 if you're using python3
 
-
-# USING THE SLATE BACKEND
- * Two environment variables are used with the slate backend:
-  1. `SLATE_API_KEY` - Your slate API key
-  2. `SLATE_SSL_VERIFY` - either '1'(True) or '0'(False) for ssl verification (optional - True by default)
-  3. `PASSPHRASE` - your gpg passhprase for encryption (optional - will be prompted if not set or not used at all if using the `--no-encryption` parameter)
-
-To use the slate backend, use the following scheme:
-```
-slate://[slate-id]
-```
-e.g. Full backup of current directory to slate:
-```
-duplicity full . "slate://6920df43-5c3w-2x7i-69aw-2390567uav75" 
-```
-
-Here's a demo:
-![Demo](https://gitlab.com/Shr1ftyy/duplicity/uploads/675664ef0eb431d14c8e20045e3fafb6/slate_demo.mp4)
-
 # DEVELOPMENT
 
 For more information on downloading duplicity's source code from the

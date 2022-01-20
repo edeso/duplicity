@@ -123,7 +123,6 @@ def get_data_files():
                     assert not os.system(u"cp po/%s.po po/%s" % (lang, lang)), lang
                     assert not os.system(u"msgfmt po/%s.po -o po/%s/duplicity.mo" % (lang, lang)), lang
 
-
         for root, dirs, files in os.walk(u"po"):
             for file in files:
                 path = os.path.join(root, file)
