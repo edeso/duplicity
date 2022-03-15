@@ -26,6 +26,8 @@ apps:
 parts:
     duplicity:
         plugin: python
+        build-environment:
+          - PYTHONPATH: "$SNAPCRAFT_PART_INSTALL/usr/lib/python3/dist-packages"
         build-packages:
             - build-essential
             - ieee-data
