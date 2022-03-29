@@ -152,7 +152,7 @@ changelog:
     stage: deploy
     when: manual
     script:
-        - pip install gitchangelog
+        - pip install gitchangelog pystache
         - VERSION=`./setup.py --version`
         - echo "make changelog of ${VERSION}"
         - tools/makechangelog
