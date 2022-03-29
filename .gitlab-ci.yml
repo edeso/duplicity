@@ -148,8 +148,18 @@ py39_ub20-04:
         reports:
             junit: report.xml
 
+changelog:
+    stage: deploy
+    when: manual
+    script:
+        - pip install gitchangelog
+        - VERSION=`./setup.py --version`
+        - echo "make changelog of ${VERSION}"
+        - tools/makechangelog
+
 build_pip:
     stage: deploy
+    needs: changelog
     when: manual
     script:
         - pip install twine
@@ -160,6 +170,7 @@ build_pip:
 
 build_snap:
     stage: deploy
+    needs: changelog
     when: manual
     image: "ubuntudesktop/gnome-3-38-2004"
     script:
