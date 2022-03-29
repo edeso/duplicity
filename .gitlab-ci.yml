@@ -155,6 +155,8 @@ changelog:
         - pip install gitchangelog pystache
         - VERSION=`./setup.py --version`
         - echo "make changelog of ${VERSION}"
+        - git config --global user.email $GIT_USER_EMAIL
+        - git config --global user.name $GIT_USER_NAME
         - tools/makechangelog
 
 build_pip:
