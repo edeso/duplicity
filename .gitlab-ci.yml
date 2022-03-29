@@ -33,12 +33,6 @@ variables:
     PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
     # Set to non-interactive so no tzdata prompt
     DEBIAN_FRONTEND: "noninteractive"
-    # for upload to pypi.org
-    TWINE_USERNAME: $TWINE_USERNAME
-    TWINE_PASSWORD: $TWINE_PASSWORD
-    # for commit of changelog
-    GIT_AUTHOR_NAME: $GIT_USER_NAME
-    GIT_AUTHOR_EMAIL: $GIT_USER_EMAIL
 
 stages:
     - qual
@@ -154,6 +148,9 @@ py39_ub20-04:
 changelog:
     stage: deploy
     when: manual
+    variables:
+        GIT_AUTHOR_NAME: $GIT_AUTHOR_NAME
+        GIT_AUTHOR_EMAIL: $GIT_AUTHOR_EMAIL
     script:
         - pip install gitchangelog pystache
         - VERSION=`./setup.py --version`
@@ -165,6 +162,9 @@ build_pip:
     stage: deploy
     needs: [changelog]
     when: manual
+    variables:
+        TWINE_USERNAME: $TWINE_USERNAME
+        TWINE_PASSWORD: $TWINE_PASSWORD
     script:
         - pip install twine
         - VERSION=`./setup.py --version`
