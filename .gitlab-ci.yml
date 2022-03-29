@@ -36,6 +36,9 @@ variables:
     # for upload to pypi.org
     TWINE_USERNAME: $TWINE_USERNAME
     TWINE_PASSWORD: $TWINE_PASSWORD
+    # for commit of changelog
+    GIT_USER_NAME: $GIT_USER_NAME
+    GIT_USER_EMAIL: $GIT_USER_EMAIL
 
 stages:
     - qual
@@ -157,7 +160,7 @@ changelog:
         - echo "make changelog of ${VERSION}"
         - export GIT_AUTHOR_NAME=${GIT_USER_NAME}
         - export GIT_AUTHOR_EMAIL=${GIT_USER_EMAIL}
-        - env
+        - env | sort
         - tools/makechangelog
 
 build_pip:
