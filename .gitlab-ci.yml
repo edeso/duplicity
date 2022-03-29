@@ -37,8 +37,8 @@ variables:
     TWINE_USERNAME: $TWINE_USERNAME
     TWINE_PASSWORD: $TWINE_PASSWORD
     # for commit of changelog
-    GIT_USER_NAME: $GIT_USER_NAME
-    GIT_USER_EMAIL: $GIT_USER_EMAIL
+    GIT_AUTHOR_NAME: $GIT_USER_NAME
+    GIT_AUTHOR_EMAIL: $GIT_USER_EMAIL
 
 stages:
     - qual
@@ -158,8 +158,6 @@ changelog:
         - pip install gitchangelog pystache
         - VERSION=`./setup.py --version`
         - echo "make changelog of ${VERSION}"
-        - export GIT_AUTHOR_NAME=${GIT_USER_NAME}
-        - export GIT_AUTHOR_EMAIL=${GIT_USER_EMAIL}
         - env | sort
         - tools/makechangelog
 
