@@ -34,9 +34,4 @@ if [ $CNT -ne 0 ]; then
 fi
 
 git commit -m"Update changelog." -m"[skip tests]" CHANGELOG.md
-if [ ! -e /.dockerenv ]; then
-    git push
-else
-    git push origin HEAD:${CI_COMMIT_BRANCH}
-fi
-
+git push -o ci.skip
