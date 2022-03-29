@@ -149,8 +149,8 @@ changelog:
     stage: deploy
     when: manual
     variables:
-        GIT_AUTHOR_NAME: $GIT_AUTHOR_NAME
-        GIT_AUTHOR_EMAIL: $GIT_AUTHOR_EMAIL
+        GIT_AUTHOR_NAME: $GITLAB_USER_NAME
+        GIT_AUTHOR_EMAIL: $GITLAB_USER_EMAIL
     script:
         - pip install gitchangelog pystache
         - VERSION=`./setup.py --version`
