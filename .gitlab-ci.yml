@@ -159,7 +159,7 @@ changelog:
 
 build_pip:
     stage: deploy
-    needs: changelog
+    needs: [changelog]
     when: manual
     script:
         - pip install twine
@@ -170,7 +170,7 @@ build_pip:
 
 build_snap:
     stage: deploy
-    needs: changelog
+    needs: [changelog]
     when: manual
     image: "ubuntudesktop/gnome-3-38-2004"
     script:
