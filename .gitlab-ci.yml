@@ -154,9 +154,8 @@ changelog:
         GIT_AUTHOR_EMAIL: $GITLAB_USER_EMAIL
         SSH_PRIVATE_KEY: $SSH_PRIVATE_KEY
     before_script:
+        - apt-get install -y openssh-client git python3-pip
           # Set up the SSH key and the known_hosts file
-        - env | sort
-        - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
         - eval $(ssh-agent -s)
         - mkdir -p ~/.ssh
         - chmod 700 ~/.ssh
@@ -164,13 +163,12 @@ changelog:
         - echo "${SSH_PRIVATE_KEY}" | tr -d '\r' | ssh-add -
         - ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
         # Set up config for git commit
-        - 'which git || ( apt-get update -y && apt-get install git -y )'
         - git config --global user.email "${GIT_AUTHOR_EMAIL}"
         - git config --global user.name "${GIT_AUTHOR_NAME}"
         - git clone --branch=${CI_COMMIT_BRANCH} git@gitlab.com:duplicity/duplicity.git ${CI_COMMIT_BRANCH}
         - cd ${CI_COMMIT_BRANCH}
     script:
-        - pip install gitchangelog pystache
+        - python3 -m pip install gitchangelog pystache
         - VERSION=`./setup.py --version`
         - echo "make changelog of ${VERSION}"
         - tools/makechangelog
