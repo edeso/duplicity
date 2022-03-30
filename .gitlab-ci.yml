@@ -147,6 +147,7 @@ py39_ub20-04:
 
 changelog:
     stage: deploy
+    image: ubuntu:20.04
     when: manual
     variables:
         GIT_AUTHOR_NAME: $GITLAB_USER_NAME
@@ -161,14 +162,15 @@ changelog:
         - chmod 700 ~/.ssh
         - echo "${SSH_PRIVATE_KEY}" | tr -d '\r' | ssh-add -
         - ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
-    script:
-        - pip install gitchangelog pystache
-        - VERSION=`./setup.py --version`
-        - echo "make changelog of ${VERSION}"
+        # Set up config for git commit
         - git config --global user.email "${GIT_AUTHOR_EMAIL}"
         - git config --global user.name "${GIT_AUTHOR_NAME}"
         - git clone --branch=${CI_COMMIT_BRANCH} git@gitlab.com:duplicity/duplicity.git ${CI_COMMIT_BRANCH}
         - cd ${CI_COMMIT_BRANCH}
+    script:
+        - pip install gitchangelog pystache
+        - VERSION=`./setup.py --version`
+        - echo "make changelog of ${VERSION}"
         - tools/makechangelog
 
 build_pip:
