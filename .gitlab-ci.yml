@@ -155,7 +155,11 @@ changelog:
         SSH_PRIVATE_KEY: $SSH_PRIVATE_KEY
     before_script:
         - apt-get update
-        - apt-get install -y openssh-client git python3-pip
+        - apt-get install -y build-essential git intltool lftp librsync-dev
+          libffi-dev libssl-dev openssl par2 rdiff tzdata python3-pip
+          openssh-client git
+        - python3 -m pip install --upgrade pip
+        - python3 -m pip install --requirement requirements.txt
           # Set up the SSH key and the known_hosts file
         - eval $(ssh-agent -s)
         - mkdir -p ~/.ssh
