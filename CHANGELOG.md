@@ -29,6 +29,9 @@
 
 ### Other
 
+* Merge branch 'duplicity-core20' of gitlab.com:duplicity/duplicity into
+duplicity-core20. [Kenneth Loafman]
+
 * Merge branch 'duplicity-core20' of
 git@gitlab.com:duplicity/duplicity.git into duplicity-core20. [Kenneth Loafman]
 
