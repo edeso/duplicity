@@ -154,6 +154,7 @@ changelog:
         GIT_AUTHOR_EMAIL: $GITLAB_USER_EMAIL
         SSH_PRIVATE_KEY: $SSH_PRIVATE_KEY
     before_script:
+        - apt-get update
         - apt-get install -y openssh-client git python3-pip
           # Set up the SSH key and the known_hosts file
         - eval $(ssh-agent -s)
