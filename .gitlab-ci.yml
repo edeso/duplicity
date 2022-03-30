@@ -151,6 +151,7 @@ changelog:
     variables:
         GIT_AUTHOR_NAME: $GITLAB_USER_NAME
         GIT_AUTHOR_EMAIL: $GITLAB_USER_EMAIL
+        SSH_PRIVATE_KEY: $SSH_PRIVATE_KEY
     before_script:
           # Set up the SSH key and the known_hosts file
         - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
