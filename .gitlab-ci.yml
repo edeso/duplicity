@@ -154,6 +154,7 @@ changelog:
         SSH_PRIVATE_KEY: $SSH_PRIVATE_KEY
     before_script:
           # Set up the SSH key and the known_hosts file
+        - env | sort
         - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
         - eval $(ssh-agent -s)
         - mkdir -p ~/.ssh
@@ -164,7 +165,6 @@ changelog:
         - pip install gitchangelog pystache
         - VERSION=`./setup.py --version`
         - echo "make changelog of ${VERSION}"
-        - env | sort
         - git config --global user.email "${GIT_AUTHOR_EMAIL}"
         - git config --global user.name "${GIT_AUTHOR_NAME}"
         - git clone --branch=${CI_COMMIT_BRANCH} git@gitlab.com:duplicity/duplicity.git ${CI_COMMIT_BRANCH}
