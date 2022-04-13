@@ -41,7 +41,7 @@ import traceback
 import atexit
 
 if sys.version_info.major == 2:
-    import cStringIO.StringIO  # pylint: disable=import-error
+    from cStringIO import StringIO  # pylint: disable=import-error
 else:
     from io import StringIO  # pylint: disable=import-error
 
