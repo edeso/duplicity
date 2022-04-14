@@ -27,12 +27,10 @@ from builtins import str
 from builtins import range
 
 import base64
-import csv
 import http.client
 import os
 import re
 import shutil
-import sys
 import urllib.request  # pylint: disable=import-error
 import urllib.parse  # pylint: disable=import-error
 import urllib.error  # pylint: disable=import-error
