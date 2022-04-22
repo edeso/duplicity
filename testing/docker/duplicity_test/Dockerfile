@@ -1,7 +1,8 @@
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf8 -*-
 #
 # Copyright 2019 Nils Tekampe <nils@tekampe.org>,
-# Kenneth Loafman <kenneth@loafman.com> and Aaron Whitehouse <code@whitehouse.kiwi.nz>
+# Kenneth Loafman <kenneth@loafman.com>,
+# Aaron Whitehouse <code@whitehouse.kiwi.nz>
 #
 # This file is part of duplicity.
 #
@@ -32,38 +33,70 @@ ARG DEBIAN_FRONTEND=noninteractive
 # packages needed for testing duplicity
 RUN apt-get update \
     && apt-get install -y \
-            2to3 \
-            build-essential \
-            git \
-            intltool \
-            lftp \
-            librsync-dev \
-            libffi-dev \
-            libssl-dev \
-            openssl \
-            par2 \
-            python3-pip \
-            python3-dev \
-            python3-future \
-            python3-pip \
-            python3 \
-            rdiff \
-            tzdata  # required for testing/unit/test_statistics.py
+        2to3 \
+        build-essential \
+        git \
+        intltool \
+        lftp \
+        librsync-dev \
+        libffi-dev \
+        libssl-dev \
+        openssl \
+        par2 \
+        python3-pip \
+        python3 \
+        rdiff \
+        tzdata
+
+# The following packages are for building python via pyenv
+RUN apt-get install -y \
+        curl \
+        libbz2-dev \
+        libffi-dev \
+        liblzma-dev \
+        libncursesw5-dev \
+        libreadline-dev \
+        libsqlite3-dev \
+        libssl-dev \
+        libxml2-dev \
+        libxmlsec1-dev \
+        llvm \
+        make \
+        tk-dev \
+        wget \
+        xz-utils \
+        zlib1g-dev
 
 # The following packages are not necessary for testing but make life easier or support debugging
 RUN apt-get install -y \
-            ftp \
-            iputils-ping \
-            mc \
-            nano \
-            net-tools \
-            rsync \
+        ftp \
+        iputils-ping \
+        mc \
+        nano \
+        net-tools \
+        rsync \
     && rm -rf /var/lib/apt/lists/*
 
-# Installing requirements w/pip
-COPY requirements.* /tmp
-RUN pip install --upgrade pip
-RUN pip install -r /tmp/requirements.txt -r /tmp/requirements.dev
+# Install pyenv
+RUN git clone https://github.com/pyenv/pyenv.git /home/test/.pyenv
+ENV PYENV_ROOT "/home/test/.pyenv"
+ENV PATH "$PYENV_ROOT/bin:$PATH"
+RUN eval "$(pyenv init --path)" \
+    && eval "$(pyenv init -)"
+
+# Install all the Pythons we test
+RUN pyenv install 2.7.18
+RUN pyenv install 3.5.10
+RUN pyenv install 3.6.15
+RUN pyenv install 3.7.13
+RUN pyenv install 3.8.13
+RUN pyenv install 3.9.11
+RUN pyenv install 3.10.3
+
+# Tell tox how to find executables
+USER root
+RUN python3 -m pip install tox tox-pyenv \
+    && pyenv local 2.7.18 3.5.10 3.6.15 3.7.13 3.8.13 3.9.11 3.10.3
 
 # Delete root's password so we can do 'su -'
 RUN passwd --delete root
@@ -77,11 +110,10 @@ WORKDIR /home/test
 
 # Copy a SSH key to the users folder that is used for some test cases
 USER root
-COPY testing/docker/id_rsa /home/test/.ssh/
-COPY testing/docker/id_rsa.pub /home/test/.ssh/
+COPY id_rsa /home/test/.ssh/
+COPY id_rsa.pub /home/test/.ssh/
 RUN chown -R test:test /home/test/.ssh
 RUN chmod 400 /home/test/.ssh/id_rsa
-
 USER test
 
 # Set final workdir to duplicity

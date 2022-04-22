@@ -26,4 +26,4 @@ cd `dirname $0`
 
 export DOCKER_BUILDKIT=0
 
-docker build -t firstprime/duplicity_test -f duplicity_test/Dockerfile ../..
+docker build --compress --tag firstprime/duplicity_test --file duplicity_test/Dockerfile .
