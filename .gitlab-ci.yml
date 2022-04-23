@@ -58,7 +58,6 @@ code:
     stage: qual
     script:
         - ~/.pyenv/shims/python3.10 -m tox -e code
-    allow_failure: true
 
 py27:
     <<: *test-template
