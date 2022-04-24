@@ -57,51 +57,51 @@ code:
     <<: *test-template
     stage: qual
     script:
-        - ~/.pyenv/shims/python3.10 -m tox -e code
+        - python3.10 -m tox -e code
 
 py27:
     <<: *test-template
     stage: test
     script:
-        - ~/.pyenv/shims/python2.7 -m tox -e py27
+        - python2.7 -m tox -e py27
     allow_failure: true
 
 py35:
     <<: *test-template
     stage: test
     script:
-        - ~/.pyenv/shims/python3.5 -m tox -e py35
+        - python3.5 -m tox -e py35
     allow_failure: true
 
 py36:
     <<: *test-template
     stage: test
     script:
-        - ~/.pyenv/shims/python3.6 -m tox -e py36
+        - python3.6 -m tox -e py36
 
 py37:
     <<: *test-template
     stage: test
     script:
-        - ~/.pyenv/shims/python3.7 -m tox -e py37
+        - python3.7 -m tox -e py37
 
 py38:
     <<: *test-template
     stage: test
     script:
-        - ~/.pyenv/shims/python3.8 -m tox -e py38
+        - python3.8 -m tox -e py38
 
 py39:
     <<: *test-template
     stage: test
     script:
-        - ~/.pyenv/shims/python3.9 -m tox -e py39
+        - python3.9 -m tox -e py39
 
 py310:
     <<: *test-template
     stage: test
     script:
-        - ~/.pyenv/shims/python3.10 -m tox -e py310
+        - python3.10 -m tox -e py310
 
 build_pip:
     stage: deploy
