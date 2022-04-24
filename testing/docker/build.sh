@@ -26,4 +26,5 @@ cd `dirname $0`
 
 export DOCKER_BUILDKIT=0
 
-docker build --compress --tag firstprime/duplicity_test --file duplicity_test/Dockerfile .
+docker build --compress --tag firstprime/duplicity_test --fileq duplicity_test/Dockerfile .
+docker volume create toxworkdir

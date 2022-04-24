@@ -26,7 +26,7 @@ FROM ubuntu:20.04
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 ENV PYENV_ROOT "/root/.pyenv"
-ENV PATH "$PYENV_ROOT/bin:$PATH"
+ENV PATH "$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PATH"
 
 # Set to non-interactive so no tzdata prompt
 ARG DEBIAN_FRONTEND=noninteractive
@@ -92,16 +92,7 @@ RUN git clone https://github.com/pyenv/pyenv.git /root/.pyenv \
 
 # Tell tox how to find executables, aliases for interactive use
 RUN python3 -m pip install tox tox-pyenv \
-    && pyenv local 2.7.18 3.5.10 3.6.15 3.7.13 3.8.13 3.9.11 3.10.3 \
-    && echo "alias python2=`pyenv which python2.7`" >> ~/.bashrc \
-    && echo "alias python3=`pyenv which python3.8`" >> ~/.bashrc \
-    && echo "alias python2.7=`pyenv which python2.7`" >> ~/.bashrc \
-    && echo "alias python3.5=`pyenv which python3.5`" >> ~/.bashrc \
-    && echo "alias python3.6=`pyenv which python3.6`" >> ~/.bashrc \
-    && echo "alias python3.7=`pyenv which python3.7`" >> ~/.bashrc \
-    && echo "alias python3.8=`pyenv which python3.8`" >> ~/.bashrc \
-    && echo "alias python3.9=`pyenv which python3.9`" >> ~/.bashrc \
-    && echo "alias python3.10=`pyenv which python3.10`" >> ~/.bashrc
+    && pyenv local 2.7.18 3.5.10 3.6.15 3.7.13 3.8.13 3.9.11 3.10.3
 
 # Set final workdir to duplicity
 WORKDIR /root/duplicity
