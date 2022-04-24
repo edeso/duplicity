@@ -1,5 +1,6 @@
 #
-# Copyright 2017 Nils Tekampe <nils@tekampe.org>
+# Copyright 2017 Nils Tekampe <nils@tekampe.org>,
+# Kenneth Loafman <kenneth@loafman.com>
 #
 # This file is part of duplicity.
 # This script sets up a test network for the tests of dupclicity
@@ -36,8 +37,8 @@ services:
         stdin_open: true
         tty: true
         volumes:
-              - ../..:/home/test/duplicity
-              - toxworkdir:/home/test/.tox
+              - ../..:/root/duplicity
+              - toxworkdir:/root/.tox
 
 
 #         depends_on:

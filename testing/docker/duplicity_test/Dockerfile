@@ -25,6 +25,8 @@ FROM ubuntu:20.04
 # Set locale to prevent UTF-8 errors
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
+ENV PYENV_ROOT "/root/.pyenv"
+ENV PATH "$PYENV_ROOT/bin:$PATH"
 
 # Set to non-interactive so no tzdata prompt
 ARG DEBIAN_FRONTEND=noninteractive
@@ -46,10 +48,9 @@ RUN apt-get update \
         python3-pip \
         python3 \
         rdiff \
-        tzdata
-
+        tzdata \
 # The following packages are for building python via pyenv
-RUN apt-get install -y \
+    && apt-get install -y \
         curl \
         libbz2-dev \
         libffi-dev \
@@ -65,10 +66,9 @@ RUN apt-get install -y \
         tk-dev \
         wget \
         xz-utils \
-        zlib1g-dev
-
+        zlib1g-dev \
 # The following packages are not necessary for testing but make life easier or support debugging
-RUN apt-get install -y \
+    && apt-get install -y \
         ftp \
         iputils-ping \
         mc \
@@ -78,43 +78,40 @@ RUN apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install pyenv
-RUN git clone https://github.com/pyenv/pyenv.git /home/test/.pyenv
-ENV PYENV_ROOT "/home/test/.pyenv"
-ENV PATH "$PYENV_ROOT/bin:$PATH"
-RUN eval "$(pyenv init --path)" \
-    && eval "$(pyenv init -)"
-
+RUN git clone https://github.com/pyenv/pyenv.git /root/.pyenv \
+    && eval "$(pyenv init --path)" \
+    && eval "$(pyenv init -)" \
 # Install all the Pythons we test
-RUN pyenv install 2.7.18
-RUN pyenv install 3.5.10
-RUN pyenv install 3.6.15
-RUN pyenv install 3.7.13
-RUN pyenv install 3.8.13
-RUN pyenv install 3.9.11
-RUN pyenv install 3.10.3
+    && pyenv install 2.7.18 \
+    && pyenv install 3.5.10 \
+    && pyenv install 3.6.15 \
+    && pyenv install 3.7.13 \
+    && pyenv install 3.8.13 \
+    && pyenv install 3.9.11 \
+    && pyenv install 3.10.3
 
-# Tell tox how to find executables
-USER root
+# Tell tox how to find executables, aliases for interactive use
 RUN python3 -m pip install tox tox-pyenv \
-    && pyenv local 2.7.18 3.5.10 3.6.15 3.7.13 3.8.13 3.9.11 3.10.3
-
-# Delete root's password so we can do 'su -'
-RUN passwd --delete root
-
-# Install test user and swap to it
-RUN groupadd test && useradd -m -g test test
-USER test
-
-# Setting a working directory to home
-WORKDIR /home/test
-
-# Copy a SSH key to the users folder that is used for some test cases
-USER root
-COPY id_rsa /home/test/.ssh/
-COPY id_rsa.pub /home/test/.ssh/
-RUN chown -R test:test /home/test/.ssh
-RUN chmod 400 /home/test/.ssh/id_rsa
-USER test
+    && pyenv local 2.7.18 3.5.10 3.6.15 3.7.13 3.8.13 3.9.11 3.10.3 \
+    && echo "alias python2=`pyenv which python2.7`" >> ~/.bashrc \
+    && echo "alias python3=`pyenv which python3.8`" >> ~/.bashrc \
+    && echo "alias python2.7=`pyenv which python2.7`" >> ~/.bashrc \
+    && echo "alias python3.5=`pyenv which python3.5`" >> ~/.bashrc \
+    && echo "alias python3.6=`pyenv which python3.6`" >> ~/.bashrc \
+    && echo "alias python3.7=`pyenv which python3.7`" >> ~/.bashrc \
+    && echo "alias python3.8=`pyenv which python3.8`" >> ~/.bashrc \
+    && echo "alias python3.9=`pyenv which python3.9`" >> ~/.bashrc \
+    && echo "alias python3.10=`pyenv which python3.10`" >> ~/.bashrc
 
 # Set final workdir to duplicity
-WORKDIR /home/test/duplicity
+WORKDIR /root/duplicity
+
+# # run tox for all tests so envs are created as part of image
+# RUN tox -e code \
+#     && tox -e py27 -- -k test_lazy \
+#     && tox -e py35 -- -k test_lazy \
+#     && tox -e py36 -- -k test_lazy \
+#     && tox -e py37 -- -k test_lazy \
+#     && tox -e py38 -- -k test_lazy \
+#     && tox -e py39 -- -k test_lazy \
+#     && tox -e py310 -- -k test_lazy
