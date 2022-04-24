@@ -23,7 +23,7 @@
 #     - template: Dependency-Scanning.gitlab-ci.yml
 
 .test-template: &test-template
-    image: firstprime/duplicity_test
+    image: firstprime/duplicity_test:latest
     stage: test
     rules:
         - if: $CI_COMMIT_MESSAGE =~ /\[skip[ _-]tests?\]/i || $SKIP_TESTS
@@ -57,51 +57,51 @@ code:
     <<: *test-template
     stage: qual
     script:
-        - python3.10 -m tox -e code
+        - tox -e code
 
 py27:
     <<: *test-template
     stage: test
     script:
-        - python2.7 -m tox -e py27
+        - tox -e py27
     allow_failure: true
 
 py35:
     <<: *test-template
     stage: test
     script:
-        - python3.5 -m tox -e py35
+        - tox -e py35
     allow_failure: true
 
 py36:
     <<: *test-template
     stage: test
     script:
-        - python3.6 -m tox -e py36
+        - tox -e py36
 
 py37:
     <<: *test-template
     stage: test
     script:
-        - python3.7 -m tox -e py37
+        - tox -e py37
 
 py38:
     <<: *test-template
     stage: test
     script:
-        - python3.8 -m tox -e py38
+        - tox -e py38
 
 py39:
     <<: *test-template
     stage: test
     script:
-        - python3.9 -m tox -e py39
+        - tox -e py39
 
 py310:
     <<: *test-template
     stage: test
     script:
-        - python3.10 -m tox -e py310
+        - tox -e py310
 
 build_pip:
     stage: deploy
