@@ -27,6 +27,7 @@ ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 ENV PYENV_ROOT "/root/.pyenv"
 ENV PATH "$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PATH"
+ENV TOXWORKDIR="/root/.tox"
 
 # Set to non-interactive so no tzdata prompt
 ARG DEBIAN_FRONTEND=noninteractive
@@ -90,19 +91,35 @@ RUN git clone https://github.com/pyenv/pyenv.git /root/.pyenv \
     && pyenv install 3.9.11 \
     && pyenv install 3.10.3
 
-# Tell tox how to find executables, aliases for interactive use
-RUN python3 -m pip install tox tox-pyenv \
+# Tell tox how to find executables, install all requirements
+COPY requirements.dev .
+COPY requirements.txt .
+COPY tox.ini .
+RUN python3 -m pip install --upgrade pip setuptools setuptools-scm \
+    && python3 -m pip install -rrequirements.dev -rrequirements.txt \
+    && python3 -m pip install tox tox-pyenv \
     && pyenv local 2.7.18 3.5.10 3.6.15 3.7.13 3.8.13 3.9.11 3.10.3
 
-# Set final workdir to duplicity
-WORKDIR /root/duplicity
+# set up tiny dummy project to make tox happy
+WORKDIR /root
+COPY hello-world-master.zip .
+RUN unzip -o hello-world-master.zip
+COPY requirements.dev hello-world-master
+COPY requirements.txt hello-world-master
+COPY tox.ini hello-world-master
 
-# # run tox for all tests so envs are created as part of image
-# RUN tox -e code \
-#     && tox -e py27 -- -k test_lazy \
-#     && tox -e py35 -- -k test_lazy \
-#     && tox -e py36 -- -k test_lazy \
-#     && tox -e py37 -- -k test_lazy \
-#     && tox -e py38 -- -k test_lazy \
-#     && tox -e py39 -- -k test_lazy \
-#     && tox -e py310 -- -k test_lazy
+# set to dummy workdir
+WORKDIR /root/hello-world-master
+
+# run tox so environss are created as part of image.
+RUN tox --notest -- --setup-only
+
+# cleanup the noise left over
+RUN rm -rf /root/.tox/dist/hello_world*.zip \
+    rm -rf /root/.tox/distshare/hello_world*.zip \
+    rm -rf /root/hello-world-master* \
+    rm -rf /root/requirements.* \
+    rm -rf /root/tox.ini
+
+# Set workdir to duplicity
+WORKDIR /root/duplicity
