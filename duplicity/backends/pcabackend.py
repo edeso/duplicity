@@ -170,7 +170,7 @@ Exception: %s""" % str(e))
         while listing:
             marker = listing[-1][u'name']
             version_marker = listing[-1].get(u'version_id')
-            listing = self.conn.get_container(self.container, marker=marker, version_marker=version_marker,
+            listing = self.conn.get_container(self.container, marker=marker,
                                               full_listing=False, path=self.prefix,
                                               query_string=u'policy_extra=true')[1]
             if listing:
