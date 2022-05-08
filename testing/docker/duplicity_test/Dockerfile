@@ -79,7 +79,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # Install pyenv
-RUN git clone https://github.com/pyenv/pyenv.git /root/.pyenv \
+RUN git clone -b "v2.3.0" --single-branch https://github.com/pyenv/pyenv.git /root/.pyenv \
     && eval "$(pyenv init --path)" \
     && eval "$(pyenv init -)" \
 # Install all the Pythons we test
