@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 # vim:tabstop=4:shiftwidth=4:expandtab
 #
 # Copyright 2014 Google Inc.
