@@ -483,9 +483,9 @@ moduleinit(void)
   d = PyModule_GetDict(m);
   librsyncError = PyErr_NewException("_librsync.librsyncError", NULL, NULL);
   PyDict_SetItemString(d, "librsyncError", librsyncError);
-  temp = Py_BuildValue("l", (long)RS_JOB_BLOCKSIZE)
+  temp = Py_BuildValue("l", (long)RS_JOB_BLOCKSIZE);
   PyDict_SetItemString(d, "RS_JOB_BLOCKSIZE", temp);
-  temp = Py_BuildValue("l", (long)RS_DEFAULT_BLOCK_LEN)
+  temp = Py_BuildValue("l", (long)RS_DEFAULT_BLOCK_LEN);
   PyDict_SetItemString(d, "RS_DEFAULT_BLOCK_LEN", temp);
 
   return m;
