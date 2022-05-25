@@ -31,8 +31,10 @@ from . import UnitTestCase
 from duplicity.globmatch import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 from duplicity.path import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 from testing import _runtest_dir
-from unittest.mock import patch
-
+try:
+    from unittest.mock import patch
+except ImportError:
+    from mock import patch
 
 def sel_file(glob_str, include, file_path):
     u"""Returns the selection value for file_path, given the include value,
