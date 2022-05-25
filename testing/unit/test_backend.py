@@ -23,7 +23,10 @@ from __future__ import print_function
 from future import standard_library
 standard_library.install_aliases()
 
-import unittest.mock as mock
+try:
+    import unittest.mock as mock
+except ImportError:
+    import mock
 import unittest
 
 import duplicity.backend
