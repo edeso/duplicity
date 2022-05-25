@@ -24,7 +24,7 @@ from future import standard_library
 standard_library.install_aliases()
 
 import sys
-import mock
+import unittest.mock as mock
 import unittest
 
 import duplicity.backend

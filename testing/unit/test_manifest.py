@@ -25,7 +25,7 @@ standard_library.install_aliases()
 
 import re
 import unittest
-from mock import patch
+from unittest.mock import patch
 
 from duplicity import config
 from duplicity import manifest
