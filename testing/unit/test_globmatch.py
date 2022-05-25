@@ -30,7 +30,7 @@ import sys
 from . import UnitTestCase
 from duplicity.globmatch import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 from duplicity.path import *  # pylint: disable=unused-wildcard-import,redefined-builtin
-from mock import patch
+from unittest.mock import patch
 
 
 def sel_file(glob_str, include, file_path):

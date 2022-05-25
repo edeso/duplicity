@@ -31,7 +31,7 @@ import unittest
 from duplicity.selection import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 from duplicity.lazy import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 from . import UnitTestCase
-from mock import patch
+from unittest.mock import patch
 
 
 class MatchingTest(UnitTestCase):

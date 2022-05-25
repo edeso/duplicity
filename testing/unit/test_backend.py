@@ -23,7 +23,7 @@ from __future__ import print_function
 from future import standard_library
 standard_library.install_aliases()
 
-import mock
+import unittest.mock as mock
 import unittest
 
 import duplicity.backend
