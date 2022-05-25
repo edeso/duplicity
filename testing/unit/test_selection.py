@@ -34,7 +34,7 @@ from duplicity.lazy import *  # pylint: disable=unused-wildcard-import,redefined
 from . import UnitTestCase
 try:
     from unittest.mock import patch
-exception ImportError:
+except ImportError:
     from mock import patch
 
 class MatchingTest(UnitTestCase):
