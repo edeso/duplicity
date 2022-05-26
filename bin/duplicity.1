@@ -824,10 +824,14 @@ below.
 .TP
 .BI "--s3-multipart-chunk-size"
 .RS
-Chunk size (in MB, default is 25MB) used for S3 multipart uploads. Make this smaller than
+Chunk size (in MB, default is 20MB) used for S3 multipart uploads. Adjust this
+to maximize bandwidth usage. For example, a chunk size of 10MB and a
+volsize of 100MB would result in 10 chunks per volume upload.
+
+.B NOTE:
+This value should optimally be an even multiple of your
 .B --volsize
-to maximize the use of your bandwidth. For example, a chunk size of 10MB
-with a volsize of 30MB will result in 3 chunks per volume upload.
+for optimal performance.
 
 See also
 .B "A NOTE ON AMAZON S3"
@@ -837,11 +841,12 @@ below.
 .TP
 .BI "--s3-multipart-max-procs"
 .RS
-Specify the maximum number of processes to spawn when performing a multipart
-upload to S3. By default, this will choose the number of processors detected
-on your system (e.g. 4 for a 4-core system). You can adjust this number as
-required to ensure you don't overload your system while maximizing the use of
-your bandwidth.
+Maximum number of concurrent uploads when performing a multipart upload. 
+The default is 4. You can adjust this number to maximizing bandwidth 
+and CPU utilization.  
+
+.B NOTE: 
+Too many concurrent uploads may have diminishing returns.
 
 See also
 .B "A NOTE ON AMAZON S3"

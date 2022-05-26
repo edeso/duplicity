@@ -241,13 +241,13 @@ s3_use_multiprocessing = False
 # Chunk size used for S3 multipart uploads.The number of parallel uploads to
 # S3 be given by chunk size / volume size. Use this to maximize the use of
 # your bandwidth. Defaults to 25MB
-s3_multipart_chunk_size = 25 * 1024 * 1024
+s3_multipart_chunk_size = 20 * 1024 * 1024
 
 # Minimum chunk size accepted by S3
 s3_multipart_minimum_chunk_size = 5 * 1024 * 1024
 
 # Maximum number of processes to use while doing a multipart upload to S3
-s3_multipart_max_procs = None
+s3_multipart_max_procs = 4
 
 # Maximum time to wait for a part to finish when doig a multipart upload to S3
 s3_multipart_max_timeout = None
