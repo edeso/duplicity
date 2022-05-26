@@ -25,7 +25,10 @@ standard_library.install_aliases()
 
 import re
 import unittest
-from mock import patch
+try:
+    from unittest.mock import patch
+except ImportError:
+    from mock import patch
 
 from duplicity import config
 from duplicity import manifest
