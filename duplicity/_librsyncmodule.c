@@ -186,7 +186,7 @@ _librsync_new_deltamaker(PyObject* self, PyObject* args)
     return NULL;
 
   dm = PyObject_New(_librsync_DeltaMakerObject, &_librsync_DeltaMakerType);
-  if (dm == NULL)	return NULL;
+  if (dm == NULL) return NULL;
 
   /* Put signature at sig_ptr and build hash */
   sig_loader = rs_loadsig_begin(&sig_ptr);
@@ -199,12 +199,12 @@ _librsync_new_deltamaker(PyObject* self, PyObject* args)
   rs_job_free(sig_loader);
   if (result != RS_DONE) {
     _librsync_seterror(result, "delta rs_signature_t builder");
-	Py_DECREF(dm);
+    Py_DECREF(dm);
     return NULL;
   }
   if ((result = rs_build_hash_table(sig_ptr)) != RS_DONE) {
     _librsync_seterror(result, "delta rs_build_hash_table");
-	Py_DECREF(dm);
+    Py_DECREF(dm);
     return NULL;
   }
 
