@@ -32,7 +32,7 @@ class FileChunkIO(io.FileIO):
         self.bytes = bytes
         if bytes is None:
             self.bytes = os.stat(name).st_size - self.offset
-        super(FileChunkIO, self).__init__(name, mode, closefd, *args, **kwargs)
+        super(FileChunkIO, self).__init__(os.fsdecode(name), mode, closefd, *args, **kwargs)
         self.seek(0)
 
     def seek(self, offset, whence=SEEK_SET):
