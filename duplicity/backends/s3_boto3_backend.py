@@ -143,7 +143,8 @@ class S3Boto3Backend(duplicity.backend.Backend):
                 extra_args[u'GrantFullControl'] = config.s3_kms_grant
 
         transfer_config = TransferConfig(multipart_chunksize=config.s3_multipart_chunk_size,
-                                         multipart_threshold=config.s3_multipart_chunk_size)
+                                         multipart_threshold=config.s3_multipart_chunk_size,
+                                         max_concurrency=config.s3_multipart_max_procs)
 
         # Should the tracker be scoped to the put or the backend?
         # The put seems right to me, but the results look a little more correct
