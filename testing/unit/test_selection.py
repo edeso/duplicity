@@ -32,8 +32,10 @@ import unittest
 from duplicity.selection import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 from duplicity.lazy import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 from . import UnitTestCase
-from mock import patch
-
+try:
+    from unittest.mock import patch
+except ImportError:
+    from mock import patch
 
 class MatchingTest(UnitTestCase):
     u"""Test matching of file names against various selection functions"""
