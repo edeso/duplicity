@@ -199,10 +199,12 @@ _librsync_new_deltamaker(PyObject* self, PyObject* args)
   rs_job_free(sig_loader);
   if (result != RS_DONE) {
     _librsync_seterror(result, "delta rs_signature_t builder");
+    Py_DECREF(dm);
     return NULL;
   }
   if ((result = rs_build_hash_table(sig_ptr)) != RS_DONE) {
     _librsync_seterror(result, "delta rs_build_hash_table");
+    Py_DECREF(dm);
     return NULL;
   }
 
@@ -462,7 +464,7 @@ static PyMethodDef _librsyncMethods[] = {
 static PyObject *
 moduleinit(void)
 {
-  PyObject *m, *d;
+  PyObject *m, *d, *temp;
 
   #if PY_MAJOR_VERSION >= 3 && PY_MINOR_VERSION >= 10
   Py_SET_TYPE(&_librsync_SigMakerType, &PyType_Type);
@@ -479,10 +481,12 @@ moduleinit(void)
   d = PyModule_GetDict(m);
   librsyncError = PyErr_NewException("_librsync.librsyncError", NULL, NULL);
   PyDict_SetItemString(d, "librsyncError", librsyncError);
-  PyDict_SetItemString(d, "RS_JOB_BLOCKSIZE",
-                       Py_BuildValue("l", (long)RS_JOB_BLOCKSIZE));
-  PyDict_SetItemString(d, "RS_DEFAULT_BLOCK_LEN",
-                       Py_BuildValue("l", (long)RS_DEFAULT_BLOCK_LEN));
+  temp = Py_BuildValue("l", (long)RS_JOB_BLOCKSIZE);
+  PyDict_SetItemString(d, "RS_JOB_BLOCKSIZE", temp);
+  Py_DECREF(temp);
+  temp = Py_BuildValue("l", (long)RS_DEFAULT_BLOCK_LEN);
+  PyDict_SetItemString(d, "RS_DEFAULT_BLOCK_LEN", temp);
+  Py_DECREF(temp);
 
   return m;
 }
