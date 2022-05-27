@@ -102,8 +102,6 @@ class BotoBackend(BotoSingleBackend):
 
     def _setup_pool(self):
         number_of_procs = config.s3_multipart_max_procs
-        if not number_of_procs:
-            number_of_procs = psutil.cpu_count(logical=False)
 
         if getattr(self, u'_pool', False):
             log.Debug(u"A process pool already exists. Destroying previous pool.")
