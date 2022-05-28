@@ -53,16 +53,16 @@ git commit -a -m"Prep for ${REL}"
 
 # add release tag and push it
 git tag -f rel.${REL}
-git push --tags -f origin master -o ci.skip
+git push --tags -f origin main -o ci.skip
 
 # make changelog and move tag to include it
 tools/makechangelog
 git tag -f rel.${REL}
-git push --tags -f origin master
+git push --tags -f origin main
 
 # update all repos
-git push mirror master
-git push alpha master -o ci.skip
+git push mirror main
+git push alpha main -o ci.skip
 
 # make and sign the release
 ./setup.py sdist --dist-dir=.
