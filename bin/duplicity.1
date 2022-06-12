@@ -874,7 +874,7 @@ below.
 .TP
 .BI "--s3-region-name"
 .RS
-Specifies the region of the S3 storage.
+Specifies the region of the S3 storage. Usually mandatory if the bucket is created in a specific region.
 
 .B NOTE:
 Only in
@@ -1977,8 +1977,12 @@ AWS_ACCESS_KEY_ID=<key_id> AWS_SECRET_ACCESS_KEY=<access_key> duplicity /some/pa
 .RE
 
 .RB "you may add " "--s3-endpoint-url"
-.RB "and " "--s3-region-name"
-and other s3 options documented above if needed.
+(to access non Amazon S3 services or regional endpoints)
+.RB "and may need " "--s3-region-name"
+(for buckets created in specific regions)
+and other
+.B "--s3-..."
+options documented above.
 
 legacy
 .BR "boto backend" " example backup command line:"
