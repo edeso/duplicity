@@ -1,3 +1,58 @@
+## (unreleased)
+
+### Changes
+
+* New os\_options for SWIFT backend. [Florian Perrot]
+
+* Clarify when --s3-endpoint-url,-region-name are needed. [ede]
+
+* Better defaults for S3 mac procs and chunk sizing. [Josh Goebel]
+
+* --s3\_multipart\_max\_procs applies to BOTO3 backend also. [Josh Goebel]
+
+* Migrate to unittest.mock. [Gwyn Ciesla]
+
+* Replace pexpect.run with subprocess\_popen in par2backend. [Kenneth Loafman]
+
+* Fix PEP8 issue. [Kenneth Loafman]
+
+* Add returncode to BackendException for rclonebackend. [Kenneth Loafman]
+
+  [ci skip]
+
+* Snap use core20 coreutils if none in PATH env var. [ede]
+
+  add "/snap/core20/current/usr/bin" to PATH
+
+### Fix
+
+* Make sure that FileChunkIO#name is a string, not a bytes-like object. [Josh Goebel]
+
+* Fix possible memory leaks.  Fixes #128.  Fixes #129. [Kenneth Loafman]
+
+* Additional fixes/checks for pexpect version.  Fixes #125. [Kenneth Loafman]
+
+  - Add check to ssh_pexpect_backend, par2backend, for version < 4.5.0
+  - Skip test for par2backend instance if version < 4.5.0
+
+* Fixes #125.  Add use\_poll=True to pexpect.run in par2backend. [Kenneth Loafman]
+
+  - allows way too many incrementals to operate.   - regression test,
+  issue125.sh, added to manual.
+
+* Fix issue #78 - Retry on SHA1 mismatch. [Kenneth Loafman]
+
+* Add missing double quote. [ede]
+
+### Other
+
+* Merge branch 'main' of gitlab.com:duplicity/duplicity. [Kenneth Loafman]
+
+* Doc: clarify when --s3-endpoint-url,-region-name are need. [ede]
+
+* Merge branch 'master' of gitlab.com:duplicity/duplicity. [Kenneth Loafman]
+
+
 ## rel.0.8.23 (2022-05-15)
 
 ### New
