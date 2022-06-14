@@ -2753,10 +2753,10 @@ It uses following environment variables for authentification:
 .BR SWIFT_USERNAME " (required),"
 .BR SWIFT_PASSWORD " (required),"
 .BR SWIFT_AUTHURL " (required),"
-.BR SWIFT_TENANTID " and"
-.BR SWIFT_TENANTNAME "(required with SWIFT_AUTHVERSION=2, the tenantname can be included in the username),"
+.BR SWIFT_TENANTID " or"
+.BR SWIFT_TENANTNAME " (required with SWIFT_AUTHVERSION=2, the SWIFT_TENANTNAME can be included in the username ex: SWIFT_USERNAME=tenantname:user),"
 .BR SWIFT_PROJECT_ID " or"
-.BR SWIFT_PROJECT_NAME " (required with SWIFT_AUTHVERSION=3)"
+.BR SWIFT_PROJECT_NAME " (required with SWIFT_AUTHVERSION=3),"
 .BR SWIFT_USERID " (optional, required only for IBM Bluemix ObjectStorage),"
 .BR SWIFT_REGIONNAME " (optional)"
 
