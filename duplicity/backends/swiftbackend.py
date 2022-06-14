@@ -82,6 +82,10 @@ Exception: %s""" % str(e))
                     os_options.update({u'project_domain_name': os.environ[u'SWIFT_PROJECT_DOMAIN_NAME']})
                 if u'SWIFT_PROJECT_DOMAIN_ID' in os.environ:
                     os_options.update({u'project_domain_id': os.environ[u'SWIFT_PROJECT_DOMAIN_ID']})
+                if u'SWIFT_PROJECT_ID' in os.environ:
+                    os_options.update({u'project_id': os.environ[u'SWIFT_PROJECT_ID']})
+                if u'SWIFT_PROJECT_NAME' in os.environ:
+                    os_options.update({u'project_name': os.environ[u'SWIFT_PROJECT_NAME']})
                 if u'SWIFT_TENANTNAME' in os.environ:
                     os_options.update({u'tenant_name': os.environ[u'SWIFT_TENANTNAME']})
                 if u'SWIFT_ENDPOINT_TYPE' in os.environ:
