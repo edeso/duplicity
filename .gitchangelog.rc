@@ -138,7 +138,8 @@ section_regexps = [
 body_process = (strip |
     ReSub(r'^\* ([A-Za-z])', r'\1') |
     ReSub(r'((^|\n)[A-Z]\w+(-\w+)*: .*(\n\s+.*)*)+$', r'') |
-    ReSub(r'\[.* ci\]', r'') |
+    ReSub(r'\[.*\s+skip\]', r'') |
+    ReSub(r'\[skip\s+.*\]', r'') |
     Indent(chars="  ") |
     Wrap(regexp=r"\n\n"))
 
