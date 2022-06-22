@@ -12,11 +12,11 @@ The build process can be also be run separately:
 python setup.py build
 ```
 
-If you want to use python 3 replace`python` command `python3`
+If you want to use python 3 replace`python` with `python3`
 
 The default prefix is /usr, so files are put in /usr/bin,
-/usr/share/man/, etc.  An alternate prefix can be specified using the
---prefix=<prefix> option.  For example:
+/usr/share/man/, etc.  An alternate prefix can be specified
+using the --prefix=<prefix> option.  For example:
 
 ```
 python setup.py install --prefix=/usr/local
@@ -41,12 +41,12 @@ If you install from the source package, you will also need:
 Install python modules by performing the following command in duplicity's root directory:
 
 ```
-pip install -r requirements.txt
+pip install -r requirements.txt -r requirements.dev
 ```
 or:
 
 ```
-pip3 install -r requirements.txt
+pip3 install -r requirements.txt -r requirements.dev
 ```
 if you're using python3
 
