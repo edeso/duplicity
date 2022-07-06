@@ -28,6 +28,7 @@ import os
 import platform
 import subprocess
 import sys
+import pytest
 import unittest
 
 from testing import _runtest_dir
@@ -48,6 +49,7 @@ class RestartTest(FunctionalTestCase):
         self.backup(u"full", u"{0}/testfiles/largefiles".format(_runtest_dir))
         self.verify(u"{0}/testfiles/largefiles".format(_runtest_dir))
 
+    @pytest.mark.slow
     @unittest.skipIf(sys.version_info.major == 2, u"Skip on possible timing error")
     def test_multiple_checkpoint_restart(self):
         u"""
@@ -151,6 +153,7 @@ class RestartTest(FunctionalTestCase):
         self.backup(u"full", u"{0}/testfiles/largefiles".format(_runtest_dir))
         self.verify(u"{0}/testfiles/largefiles".format(_runtest_dir))
 
+    @pytest.mark.slow
     def test_restart_incremental(self):
         u"""
         Test restarting an incremental backup
