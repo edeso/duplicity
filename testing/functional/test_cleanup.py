@@ -23,6 +23,7 @@ from __future__ import print_function
 from future import standard_library
 standard_library.install_aliases()
 
+import pytest
 import unittest
 
 from testing import _runtest_dir
@@ -33,6 +34,7 @@ class CleanupTest(FunctionalTestCase):
     u"""
     Test cleanup using duplicity binary
     """
+    @pytest.mark.slow
     def test_cleanup_after_partial(self):
         u"""
         Regression test for https://bugs.launchpad.net/bugs/409593

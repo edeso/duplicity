@@ -24,9 +24,12 @@ from builtins import range
 from future import standard_library
 standard_library.install_aliases()
 
+import pytest
+
 from duplicity import path
 from testing import _runtest_dir
 from . import FunctionalTestCase
+
 
 
 class ReplicateTest(FunctionalTestCase):
@@ -66,6 +69,7 @@ class ReplicateTest(FunctionalTestCase):
         path1, path2 = path.Path(filename1), path.Path(filename2)
         assert path1.compare_recursive(path2, verbose=1)
 
+    @pytest.mark.slow
     def test_replicate(self):
         u"""Test replication"""
         self.runtest([u"{0}/testfiles/dir1".format(_runtest_dir), u"{0}/testfiles/dir2".format(_runtest_dir)])
@@ -75,6 +79,7 @@ class ReplicateTest(FunctionalTestCase):
         self.runtest([u"{0}/testfiles/dir1".format(_runtest_dir), u"{0}/testfiles/dir2".format(_runtest_dir)],
                      replicate_options=[u"--no-encryption"])
 
+    @pytest.mark.slow
     def test_replicate_asym(self):
         u"""Test replication with reencryption"""
         asym_options = [u"--encrypt-key", self.encrypt_key1]

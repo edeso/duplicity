@@ -24,6 +24,7 @@ from __future__ import print_function
 from future import standard_library
 standard_library.install_aliases()
 
+import pytest
 import unittest
 
 from testing import _runtest_dir
@@ -34,6 +35,7 @@ class BadUploadTest(FunctionalTestCase):
     u"""
     Test missing volume upload using duplicity binary
     """
+    @pytest.mark.slow
     def test_missing_file(self):
         u"""
         Test basic lost file
