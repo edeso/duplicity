@@ -22,18 +22,18 @@ for i in {254..1}
 do
     echo "File test${i}"
     dd if=/dev/urandom of=/tmp/testfiles/test${i}.file bs=1M count=1 status=none
-    bin/duplicity --name issue125 --encrypt-key ${MYTESTKEY} --no-print -v0 /tmp/testfiles par2+file:///tmp/testbackup
+    bin/duplicity --name issue125 --encrypt-key ${MYTESTKEY} --no-print -v0 /tmp/testfiles file:///tmp/testbackup
 done
 
 # verify works
-bin/duplicity verify --name issue125 --encrypt-key ${MYTESTKEY} par2+file:///tmp/testbackup /tmp/testfiles
+bin/duplicity verify --name issue125 --encrypt-key ${MYTESTKEY} file:///tmp/testbackup /tmp/testfiles
 
 # 255th backup set
 dd if=/dev/urandom of=/tmp/testfiles/test255.file bs=1M count=1 status=none
-bin/duplicity --name issue125 --encrypt-key ${MYTESTKEY} --no-print -v0 /tmp/testfiles par2+file:///tmp/testbackup
+bin/duplicity --name issue125 --encrypt-key ${MYTESTKEY} --no-print -v0 /tmp/testfiles file:///tmp/testbackup
 
 # verify crashes with "filedescriptor out of range in select()"
-bin/duplicity verify --name issue125 --encrypt-key ${MYTESTKEY} par2+file:///tmp/testbackup /tmp/testfiles
+bin/duplicity verify --name issue125 --encrypt-key ${MYTESTKEY} file:///tmp/testbackup /tmp/testfiles
 
 # Clean up
 rm -r /tmp/testfiles /tmp/testbackup ~/.cache/duplicity/issue125
