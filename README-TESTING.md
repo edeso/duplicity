@@ -6,12 +6,13 @@ Duplicity's tests are unit tests contained in the /testing folder of the main re
 ## Running tests on your branch
 The recommended approach is to test duplicity using Docker, to ensure that you are running tests in a known-good
 environment. This also creates additional containers to test backends. You can run tests on your branch as follows:
-a. Install Docker
-b. cd [BRANCH FOLDER]/testing/docker/
-c. ./setup.sh to build and to start the containers and open a shell inside your branch folder in duplicity_test.
-d. cd testing/
-e. ./run-tests
-f. When you are finished, exit the Docker container and run ./teardown.sh to delete the containers.
+
+1. Install Docker
+2. cd [BRANCH FOLDER]/testing/docker/
+3. ./setup.sh to build and to start the containers and open a shell inside your branch folder in duplicity_test.
+4. cd testing/
+5. ./run-tests
+6. When you are finished, exit the Docker container and run ./teardown.sh to delete the containers.
 
 Please test your branch using this method and ensure all tests pass before submitting a merge request.
 

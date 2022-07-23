@@ -7,12 +7,12 @@ The format consists of a stream of stanzas, each starting with a keyword and
 some arguments, an optional suggested user text (each line of which starts with 
 ". ") and ending with an endline.  Like so:
 
->>>
+```
 KEYWORD 3\n  
 . Hello!  All work and now play make Jack a...\n  
 . dull boy.\n  
 \n  
->>>
+```
 
 You can get this output by specifying either *--log-fd* or *--log-file*.
 
