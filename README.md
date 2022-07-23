@@ -12,7 +12,7 @@ The build process can be also be run separately:
 python setup.py build
 ```
 
-If you want to use python 3 replace`python` with `python3`
+If you want to use python 3 replace `python` with `python3`
 
 The default prefix is /usr, so files are put in /usr/bin,
 /usr/share/man/, etc.  An alternate prefix can be specified
@@ -29,7 +29,6 @@ export PYTHONPATH='/usr/local/lib/python.x/site-packages/'
  * Python 2.7, or 3.5 to 3.10
  * librsync v0.9.6 or later
  * GnuPG for encryption
- * fasteners 0.14.1 or later for concurrency locking
  * see `requirements.txt` for complete list
 
 If you install from the source package, you will also need:
