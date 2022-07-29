@@ -34,7 +34,7 @@ from duplicity.errors import BackendException
 import duplicity.backend
 
 from testing import _runtest_dir
-from testing import _testing_dir
+
 
 class BackendInstanceBase(UnitTestCase):
 
@@ -159,7 +159,7 @@ class BackendInstanceBase(UnitTestCase):
         # that gives log.ErrorCode.backend_not_found.
         try:
             info = self.backend._query(b'file-a')
-        except BackendException as e:
+        except BackendException as e:  # pylint:
             pass  # Something went wrong, but it was an 'expected' something
         except Exception as e:
             code = duplicity.backend._get_code_from_exception(self.backend, u'query', e)

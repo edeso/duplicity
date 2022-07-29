@@ -31,7 +31,6 @@ from testing import _runtest_dir
 from . import FunctionalTestCase
 
 
-
 class ReplicateTest(FunctionalTestCase):
     u"""
     Test backup/replicate/restore using duplicity binary

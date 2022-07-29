@@ -48,5 +48,6 @@ class BadUploadTest(FunctionalTestCase):
         else:
             self.fail(u'Expected CmdError not thrown')
 
+
 if __name__ == u"__main__":
     unittest.main()

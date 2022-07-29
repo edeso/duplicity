@@ -64,7 +64,7 @@ class RdiffdirTest(FunctionalTestCase):
         sig_path.setdata()
         assert sig_path.exists()
 
-        assert new_path.compare_recursive(seq_path, verbose = 1)
+        assert new_path.compare_recursive(seq_path, verbose=1)
 
         for dirname in dirname_list[1:]:
             new_path = path.Path(dirname)

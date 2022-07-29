@@ -77,5 +77,6 @@ class CleanupTest(FunctionalTestCase):
         leftovers = self.get_backend_files()
         self.assertEqual(full1_files | full2_files, leftovers)
 
+
 if __name__ == u"__main__":
     unittest.main()
