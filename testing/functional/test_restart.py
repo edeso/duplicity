@@ -373,9 +373,11 @@ class RestartTestWithoutEncryption(RestartTest):
         sigtars = glob.glob(u"{0}/testfiles/output/duplicity-full*.sigtar.gz".format(_runtest_dir))
         self.assertEqual(1, len(sigtars))
         sigtar = sigtars[0]
-        self.assertEqual(0, os.system(u"{0} c --file={1}/testfiles/snapshot.sigtar -C {1}/testfiles snapshot".format(tarcmd, _runtest_dir)))
+        self.assertEqual(0, os.system(u"{0} c --file={1}/testfiles/snapshot.sigtar -C {1}/testfiles snapshot".format(
+            tarcmd, _runtest_dir)))
         self.assertEqual(0, os.system(u"gunzip -c {1} > {0}/testfiles/full.sigtar".format(_runtest_dir, sigtar)))
-        self.assertEqual(0, os.system(u"{0} A --file={1}/testfiles/snapshot.sigtar {1}/testfiles/full.sigtar".format(tarcmd, _runtest_dir)))
+        self.assertEqual(0, os.system(u"{0} A --file={1}/testfiles/snapshot.sigtar {1}/testfiles/full.sigtar".format(
+            tarcmd, _runtest_dir)))
         self.assertEqual(0, os.system(u"gzip {0}/testfiles/snapshot.sigtar".format(_runtest_dir)))
         os.remove(sigtar)
         os.rename(u"{0}/testfiles/snapshot.sigtar.gz".format(_runtest_dir), sigtar)
@@ -387,6 +389,7 @@ class RestartTestWithoutEncryption(RestartTest):
         self.assertEqual(1, len(glob.glob(u"{0}/testfiles/output/duplicity-new*.sigtar.gz".format(_runtest_dir))))
         # Confirm we can restore it (which in buggy versions, would fail)
         self.restore()
+
 
 if __name__ == u"__main__":
     unittest.main()

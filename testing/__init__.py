@@ -85,6 +85,7 @@ if sys.version_info.major == 2:
         with open(os.path.join(_bin_dir, file), u"w") as f:
             p2 = f.write(p2)
 
+
 class DuplicityTestCase(unittest.TestCase):
 
     sign_key = u'839E6A2856538CCF'
