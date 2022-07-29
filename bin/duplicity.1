@@ -874,7 +874,7 @@ below.
 .TP
 .BI "--s3-region-name"
 .RS
-Specifies the region of the S3 storage.
+Specifies the region of the S3 storage. Usually mandatory if the bucket is created in a specific region.
 
 .B NOTE:
 Only in
@@ -1977,8 +1977,12 @@ AWS_ACCESS_KEY_ID=<key_id> AWS_SECRET_ACCESS_KEY=<access_key> duplicity /some/pa
 .RE
 
 .RB "you may add " "--s3-endpoint-url"
-.RB "and " "--s3-region-name"
-and other s3 options documented above if needed.
+(to access non Amazon S3 services or regional endpoints)
+.RB "and may need " "--s3-region-name"
+(for buckets created in specific regions)
+and other
+.B "--s3-..."
+options documented above.
 
 legacy
 .BR "boto backend" " example backup command line:"
@@ -2749,10 +2753,12 @@ It uses following environment variables for authentification:
 .BR SWIFT_USERNAME " (required),"
 .BR SWIFT_PASSWORD " (required),"
 .BR SWIFT_AUTHURL " (required),"
-.BR SWIFT_USERID " (required, only for IBM Bluemix ObjectStorage),"
-.BR SWIFT_TENANTID " (required, only for IBM Bluemix ObjectStorage),"
-.BR SWIFT_REGIONNAME " (required, only for IBM Bluemix ObjectStorage),"
-.BR SWIFT_TENANTNAME " (optional, the tenant can be included in the username)"
+.BR SWIFT_TENANTID " or"
+.BR SWIFT_TENANTNAME " (required with SWIFT_AUTHVERSION=2, can alternatively be defined in SWIFT_USERNAME like e.g. SWIFT_USERNAME="tenantname:user"),"
+.BR SWIFT_PROJECT_ID " or"
+.BR SWIFT_PROJECT_NAME " (required with SWIFT_AUTHVERSION=3),"
+.BR SWIFT_USERID " (optional, required only for IBM Bluemix ObjectStorage),"
+.BR SWIFT_REGIONNAME " (optional)"
 
 If the user was previously authenticated, the following environment
 variables can be used instead:
