@@ -23,6 +23,7 @@ standard_library.install_aliases()
 import unittest
 import duplicity
 
+
 class TestExc(unittest.TestCase):
 
     def test_uexc(self):

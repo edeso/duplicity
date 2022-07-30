@@ -426,7 +426,7 @@ class TestExcludeFilelistTest(IncludeExcludeFunctionalTest):
 
         # Backup the files exactly as in test_exclude_filelist, but with the --progress option
         self.backup(u"full", u"testfiles/select2", options=[u"--exclude-filelist=testfiles/exclude.txt",
-                                                          u"--progress"])
+                                                            u"--progress"])
         self.restore()
         restore_dir = u"testfiles/restore_out"
         restored = self.directory_tree_to_list_of_lists(restore_dir)
@@ -1206,6 +1206,7 @@ class TestUnicode(IncludeExcludeFunctionalTest):
         restored = self.directory_tree_to_list_of_lists(restore_dir)
         self.assertEqual(restored, [[u"прыклад", u"օրինակ.txt"],
                                     [u"пример", u"উদাহরণ"], [u"例"], [u"Παράδειγμα"], [u"ઉદાહરણ.log"]])
+
 
 if __name__ == u"__main__":
     unittest.main()

@@ -25,6 +25,7 @@ from future import standard_library
 standard_library.install_aliases()
 
 import os
+import pytest
 import unittest
 
 from duplicity import path
@@ -63,6 +64,7 @@ class FinalTest(FunctionalTestCase):
         path1, path2 = path.Path(filename1), path.Path(filename2)
         assert path1.compare_recursive(path2, verbose=1)
 
+    @pytest.mark.slow
     def test_basic_cycle(self, backup_options=[], restore_options=[]):
         u"""Run backup/restore test on basic directories"""
         self.runtest([u"{0}/testfiles/dir1".format(_runtest_dir),
@@ -83,6 +85,7 @@ class FinalTest(FunctionalTestCase):
                         file_to_verify=filename, time=time,
                         options=restore_options)
 
+    @pytest.mark.slow
     def test_asym_cycle(self):
         u"""Like test_basic_cycle but use asymmetric encryption and signing"""
         backup_options = [u"--encrypt-key", self.encrypt_key1,
@@ -92,6 +95,7 @@ class FinalTest(FunctionalTestCase):
         self.test_basic_cycle(backup_options=backup_options,
                               restore_options=restore_options)
 
+    @pytest.mark.slow
     def test_asym_with_hidden_recipient_cycle(self):
         u"""Like test_basic_cycle but use asymmetric encryption (hiding key id) and signing"""
         backup_options = [u"--hidden-encrypt-key", self.encrypt_key1,
@@ -110,6 +114,7 @@ class FinalTest(FunctionalTestCase):
         self.backup(u"full", u"{0}/testfiles/empty_dir".format(_runtest_dir))
         self.backup(u"inc", u"{0}/testfiles/empty_dir".format(_runtest_dir))
 
+    @pytest.mark.slow
     def test_long_filenames(self):
         u"""Test backing up a directory with long filenames in it"""
         # Note that some versions of ecryptfs (at least through Ubuntu 11.10)
@@ -119,19 +124,19 @@ class FinalTest(FunctionalTestCase):
         if lf_dir.exists():
             lf_dir.deltree()
         lf_dir.mkdir()
-        lf1 = lf_dir.append(u"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+        lf1 = lf_dir.append(u"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")  # noqa
         lf1.mkdir()
-        lf2 = lf1.append(u"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB")
+        lf2 = lf1.append(u"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB")  # noqa
         lf2.mkdir()
-        lf3 = lf2.append(u"CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC")
+        lf3 = lf2.append(u"CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC")  # noqa
         lf3.mkdir()
-        lf4 = lf3.append(u"DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD")
+        lf4 = lf3.append(u"DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD")  # noqa
         lf4.touch()
-        lf4_1 = lf3.append(u"SYMLINK--------------------------------------------------------------------------------------------")
-        os.symlink(u"SYMLINK-DESTINATION-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------", lf4_1.name)
+        lf4_1 = lf3.append(u"SYMLINK--------------------------------------------------------------------------------------------")  # noqa
+        os.symlink(u"SYMLINK-DESTINATION-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------", lf4_1.name)  # noqa
         lf4_1.setdata()
         assert lf4_1.issym()
-        lf4_2 = lf3.append(u"DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD")
+        lf4_2 = lf3.append(u"DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD")  # noqa
         fp = lf4_2.open(u"wb")
         fp.write(b"hello" * 1000)
         assert not fp.close()
@@ -146,6 +151,7 @@ class FinalTest(FunctionalTestCase):
         self.backup(u"inc", u"{0}/testfiles/empty_dir".format(_runtest_dir))
         self.assertRaises(CmdError, self.restore, u"this_file_does_not_exist")
 
+    @pytest.mark.slow
     def test_remove_older_than(self):
         u"""Test removing old backup chains"""
         first_chain = self.backup(u"full", u"{0}/testfiles/dir1".format(_runtest_dir), current_time=10000)
@@ -182,6 +188,7 @@ class ShortFilenamesFinalTest(FinalTest):
     def setUp(self):
         super(ShortFilenamesFinalTest, self).setUp()
         self.class_args.extend([u"--short-filenames"])
+
 
 if __name__ == u"__main__":
     unittest.main()

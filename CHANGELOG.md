@@ -18,8 +18,6 @@
 
 * Add returncode to BackendException for rclonebackend. [Kenneth Loafman]
 
-  [ci skip]
-
 * Snap use core20 coreutils if none in PATH env var. [ede]
 
   add "/snap/core20/current/usr/bin" to PATH
@@ -143,6 +141,8 @@ git@gitlab.com:duplicity/duplicity.git into duplicity-core20. [Kenneth Loafman]
 * Add testing/manual/issue98.sh to test issue #98. [Kenneth Loafman]
 
 * Add Getting Versioned Source to README-REPO.md. [Kenneth Loafman]
+
+  [no ci]
 
 * Add --use-glacier-ir option for instant retrieval.  Fixes #102. [Kenneth Loafman]
 

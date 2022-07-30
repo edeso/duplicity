@@ -97,7 +97,9 @@ class FileNamingBase(object):
         assert pr.end_time == 1029826800
 
         if not config.short_filenames:
-            pr = file_naming.parse(config.file_prefix + config.file_prefix_signature + b"duplicity-new-signatures.2002-08-18T00:04:30-07:00.to.2002-08-20T00:00:00-07:00.sigtar.gpg")
+            pr = file_naming.parse(config.file_prefix +
+                                   config.file_prefix_signature +
+                                   b"duplicity-new-signatures.2002-08-18T00:04:30-07:00.to.2002-08-20T00:00:00-07:00.sigtar.gpg")  # noqa
             assert pr, pr
             assert pr.type == u"new-sig"
             assert pr.end_time == 1029826800
@@ -117,7 +119,7 @@ class FileNamingBase(object):
         assert pr.end_time == 1029826800
 
         if not config.short_filenames:
-            pr = file_naming.parse(config.file_prefix + config.file_prefix_signature + b"duplicity-new-signatures.2002-08-18T00:04:30-07:00.to.2002-08-20T00:00:00-07:00.sigtar.part.gpg")
+            pr = file_naming.parse(config.file_prefix + config.file_prefix_signature + b"duplicity-new-signatures.2002-08-18T00:04:30-07:00.to.2002-08-20T00:00:00-07:00.sigtar.part.gpg")  # noqa
             assert pr, pr
             assert pr.partial
             assert pr.type == u"new-sig"

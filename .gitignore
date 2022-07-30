@@ -1,4 +1,3 @@
-**/apsw
 *.egg
 *.log
 *.pyc
@@ -37,4 +36,5 @@ testfiles
 testing/gnupg/.gpg-v21-migrated
 testing/gnupg/S.*
 testing/gnupg/private-keys-v1.d
-testing/manual/test_config.py
+testing/manual/test_config.py.tmpl
+venv
