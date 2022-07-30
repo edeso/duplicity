@@ -487,16 +487,16 @@ See the
 section for more information.
 
 .TP
-.BI --file-prefix " prefix"
+.BI "--file-prefix " prefix
 .PD 0
 .TP
-.BI --file-prefix-manifest " prefix"
+.BI "--file-prefix-manifest " prefix
 .PD 0
 .TP
-.BI --file-prefix-archive " prefix"
+.BI "--file-prefix-archive " prefix
 .PD 0
 .TP
-.BI --file-prefix-signature " prefix"
+.BI "--file-prefix-signature " prefix
 .RS
 Adds a prefix to either all files or only manifest, archive, signature files.
 
@@ -781,7 +781,7 @@ duplicity --rsync-options="--partial-dir=.rsync-partial" /home/me rsync://uid@ot
 .RE
 
 .TP
-.BI "--s3-endpoint-url" " url"
+.BI "--s3-endpoint-url " url
 .RS
 Specifies the endpoint URL of the S3 storage.
 
@@ -2750,15 +2750,25 @@ See
 .BR REQUIREMENTS .
 
 It uses following environment variables for authentification:
+
+.RS
 .BR SWIFT_USERNAME " (required),"
+.br
 .BR SWIFT_PASSWORD " (required),"
+.br
 .BR SWIFT_AUTHURL " (required),"
+.br
 .BR SWIFT_TENANTID " or"
-.BR SWIFT_TENANTNAME " (required with SWIFT_AUTHVERSION=2, can alternatively be defined in SWIFT_USERNAME like e.g. SWIFT_USERNAME="tenantname:user"),"
+.B SWIFT_TENANTNAME
+(required with SWIFT_AUTHVERSION=2, can alternatively be defined in SWIFT_USERNAME like e.g. SWIFT_USERNAME="tenantname:user"),
+.br
 .BR SWIFT_PROJECT_ID " or"
 .BR SWIFT_PROJECT_NAME " (required with SWIFT_AUTHVERSION=3),"
+.br
 .BR SWIFT_USERID " (optional, required only for IBM Bluemix ObjectStorage),"
-.BR SWIFT_REGIONNAME " (optional)"
+.br
+.BR SWIFT_REGIONNAME " (optional)."
+.RE
 
 If the user was previously authenticated, the following environment
 variables can be used instead:

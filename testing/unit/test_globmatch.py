@@ -36,6 +36,7 @@ try:
 except ImportError:
     from mock import patch
 
+
 def sel_file(glob_str, include, file_path):
     u"""Returns the selection value for file_path, given the include value,
     returning:
@@ -94,7 +95,7 @@ class TestGlobToRegex(UnitTestCase):
         if sys.version_info[:2] == (3, 6):
             self.assertEqual(glob_to_regex(u"/usr/*/bin/"),
                              u"\\/usr\\/[^/]*\\/bin\\/")
-        elif  sys.version_info[:2] >= (3, 7):
+        elif sys.version_info[:2] >= (3, 7):
             self.assertEqual(glob_to_regex(u"/usr/*/bin/"),
                              u"/usr/[^/]*/bin/")
         else:
@@ -110,9 +111,9 @@ class TestSelectValuesFromGlobs(UnitTestCase):
     def test_glob_scans_parent_directories(self):
         u"""Test glob scans parent"""
         self.assertEqual(
-            inc_sel_dir(u"{0}/testfiles/parent/sub".format(_runtest_dir), u"{0}/testfiles/parent".format(_runtest_dir)), 2)
+            inc_sel_dir(u"{0}/testfiles/parent/sub".format(_runtest_dir), u"{0}/testfiles/parent".format(_runtest_dir)), 2)  # noqa
         self.assertEqual(
-            inc_sel_dir(u"{0}/testfiles/select2/3/3sub2".format(_runtest_dir), u"{0}/testfiles/select2/3".format(_runtest_dir)), 2)
+            inc_sel_dir(u"{0}/testfiles/select2/3/3sub2".format(_runtest_dir), u"{0}/testfiles/select2/3".format(_runtest_dir)), 2)  # noqa
 
     def test_double_asterisk_include(self):
         u"""Test a few globbing patterns, including **"""

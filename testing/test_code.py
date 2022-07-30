@@ -22,6 +22,7 @@ from __future__ import print_function
 from future import standard_library
 standard_library.install_aliases()
 
+import glob
 import os
 import sys
 import subprocess
@@ -39,6 +40,14 @@ from . import find_unadorned_strings
 
 skipCodeTest = pytest.mark.skipif(not os.getenv(u'RUN_CODE_TESTS', None) == u'1',
                                   reason=u'Must set environment var RUN_CODE_TESTS=1')
+
+files_to_test = [
+    os.path.join(_top_dir, u'bin/duplicity'),
+    os.path.join(_top_dir, u'bin/rdiffdir'),
+    os.path.join(_top_dir, u'duplicity'),
+    os.path.join(_top_dir, u'testing/functional'),
+    os.path.join(_top_dir, u'testing/unit'),
+] + glob.glob(os.path.join(_top_dir, u'testing/*.py'))
 
 
 class CodeTest(DuplicityTestCase):
@@ -76,7 +85,8 @@ class CodeTest(DuplicityTestCase):
             u"--nofix=urllib",
             u"--nofix=xrange",
             u"--nofix=map",
-            _top_dir])
+        ] + files_to_test
+        )
 
     @skipCodeTest
     def test_pylint(self):
@@ -84,18 +94,15 @@ class CodeTest(DuplicityTestCase):
         self.run_checker([
             u"pylint",
             u"--rcfile=" + os.path.join(_top_dir, u"pylintrc"),
-            os.path.join(_top_dir, u'duplicity'),
-            os.path.join(_top_dir, u'bin/duplicity'),
-            os.path.join(_top_dir, u'bin/rdiffdir')])
+        ] + files_to_test
+        )
 
     @skipCodeTest
     def test_pep8(self):
         u"""Test that we conform to PEP-8 using pycodestyle."""
         # Note that the settings, ignores etc for pycodestyle are set in tox.ini, not here
         style = pycodestyle.StyleGuide(config_file=os.path.join(_top_dir, u'tox.ini'))
-        result = style.check_files([os.path.join(_top_dir, u'duplicity'),
-                                    os.path.join(_top_dir, u'bin/duplicity'),
-                                    os.path.join(_top_dir, u'bin/rdiffdir')])
+        result = style.check_files(files_to_test)
         self.assertEqual(result.total_errors, 0,
                          u"Found %s code style errors (and warnings)." % result.total_errors)
 
@@ -104,13 +111,13 @@ class CodeTest(DuplicityTestCase):
         u"""For predictable results in python/3 all string literals need to be marked as unicode, bytes or raw"""
 
         ignored_files = [
-                         # These are not source files we want to check
-                         os.path.join(_top_dir, u'.tox', u'*'),
-                         os.path.join(_top_dir, u'.eggs', u'*'),
-                         os.path.join(_top_dir, u'docs', u'conf.py'),
-                         # TODO Every file from here down needs to be fixed and the exclusion removed
-                         ]
-
+            # These are not source files we want to check
+            os.path.join(_top_dir, u'.tox', u'*'),
+            os.path.join(_top_dir, u'.eggs', u'*'),
+            os.path.join(_top_dir, u'docs', u'conf.py'),
+            os.path.join(_top_dir, u'venv', u'*'),
+            # TODO Every file from here down needs to be fixed and the exclusion removed
+        ]
 
         # Find all the .py files in the duplicity tree
         # We cannot use glob.glob recursive until we drop support for Python < 3.5
@@ -131,7 +138,7 @@ class CodeTest(DuplicityTestCase):
         matches.extend([
             os.path.join(_top_dir, u"bin", u"duplicity"),
             os.path.join(_top_dir, u"bin", u"rdiffdir")
-            ])
+        ])
 
         do_assert = False
         for python_source_file in matches:

@@ -48,13 +48,15 @@ filename_list1 = [b"duplicity-full.2002-08-17T16:17:01-07:00.manifest.gpg",
                   b"duplicity-inc.2002-08-17T16:17:01-07:00.to.2002-08-18T00:04:30-07:00.vol1.difftar.gpg",
                   b"Extra stuff to be ignored"]
 
-remote_sigchain_filename_list = [b"duplicity-full-signatures.2002-08-17T16:17:01-07:00.sigtar.gpg",
-                                 b"duplicity-new-signatures.2002-08-17T16:17:01-07:00.to.2002-08-18T00:04:30-07:00.sigtar.gpg",
-                                 b"duplicity-new-signatures.2002-08-18T00:04:30-07:00.to.2002-08-20T00:00:00-07:00.sigtar.gpg"]
+remote_sigchain_filename_list = \
+    [b"duplicity-full-signatures.2002-08-17T16:17:01-07:00.sigtar.gpg",
+     b"duplicity-new-signatures.2002-08-17T16:17:01-07:00.to.2002-08-18T00:04:30-07:00.sigtar.gpg",
+     b"duplicity-new-signatures.2002-08-18T00:04:30-07:00.to.2002-08-20T00:00:00-07:00.sigtar.gpg"]
 
-local_sigchain_filename_list = [b"duplicity-full-signatures.2002-08-17T16:17:01-07:00.sigtar.gz",
-                                b"duplicity-new-signatures.2002-08-17T16:17:01-07:00.to.2002-08-18T00:04:30-07:00.sigtar.gz",
-                                b"duplicity-new-signatures.2002-08-18T00:04:30-07:00.to.2002-08-20T00:00:00-07:00.sigtar.gz"]
+local_sigchain_filename_list = \
+    [b"duplicity-full-signatures.2002-08-17T16:17:01-07:00.sigtar.gz",
+     b"duplicity-new-signatures.2002-08-17T16:17:01-07:00.to.2002-08-18T00:04:30-07:00.sigtar.gz",
+     b"duplicity-new-signatures.2002-08-18T00:04:30-07:00.to.2002-08-20T00:00:00-07:00.sigtar.gz"]
 
 # A filename list with some incomplete volumes, an older full volume,
 # and a complete chain.
@@ -132,7 +134,8 @@ class CollectionTest(UnitTestCase):
         chain = dup_collections.SignatureChain(1, config.archive_dir_path)
         for filename in local_sigchain_filename_list:
             assert chain.add_filename(filename)
-        assert not chain.add_filename(b"duplicity-new-signatures.2002-08-18T00:04:30-07:00.to.2002-08-20T00:00:00-07:00.sigtar.gpg")
+        assert not chain.add_filename(
+            b"duplicity-new-signatures.2002-08-18T00:04:30-07:00.to.2002-08-20T00:00:00-07:00.sigtar.gpg")
 
     def test_sig_chains(self):
         u"""Test making signature chains from filename list"""

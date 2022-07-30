@@ -23,6 +23,7 @@ from __future__ import print_function
 from future import standard_library
 standard_library.install_aliases()
 
+import pytest
 import unittest
 
 from testing import _runtest_dir
@@ -33,6 +34,7 @@ class CleanupTest(FunctionalTestCase):
     u"""
     Test cleanup using duplicity binary
     """
+    @pytest.mark.slow
     def test_cleanup_after_partial(self):
         u"""
         Regression test for https://bugs.launchpad.net/bugs/409593
@@ -74,6 +76,7 @@ class CleanupTest(FunctionalTestCase):
         self.run_duplicity(options=[u"remove-all-inc-of-but-n-full", u"1", self.backend_url, u"--force"])
         leftovers = self.get_backend_files()
         self.assertEqual(full1_files | full2_files, leftovers)
+
 
 if __name__ == u"__main__":
     unittest.main()

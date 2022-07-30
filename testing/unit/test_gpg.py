@@ -150,7 +150,7 @@ class GPGTest(UnitTestCase):
             gpg.GPGWriteFile(gwfh, u"{0}/testfiles/output/gpgwrite.gpg".format(_runtest_dir),
                              profile, size=size)
             # print os.stat("/tmp/testfiles/output/gpgwrite.gpg").st_size-size
-            assert size - 64 * 1024 <= os.stat(u"{0}/testfiles/output/gpgwrite.gpg".format(_runtest_dir)).st_size <= size + 64 * 1024
+            assert size - 64 * 1024 <= os.stat(u"{0}/testfiles/output/gpgwrite.gpg".format(_runtest_dir)).st_size <= size + 64 * 1024  # noqa
         gwfh.set_at_end()
         gpg.GPGWriteFile(gwfh, u"{0}/testfiles/output/gpgwrite.gpg".format(_runtest_dir),
                          profile, size=size)
@@ -164,7 +164,7 @@ class GPGTest(UnitTestCase):
             gpg.GzipWriteFile(gwfh, u"{0}/testfiles/output/gzwrite.gz".format(_runtest_dir),
                               size=size)
             # print os.stat("/tmp/testfiles/output/gzwrite.gz").st_size-size
-            assert size - 64 * 1024 <= os.stat(u"{0}/testfiles/output/gzwrite.gz".format(_runtest_dir)).st_size <= size + 64 * 1024
+            assert size - 64 * 1024 <= os.stat(u"{0}/testfiles/output/gzwrite.gz".format(_runtest_dir)).st_size <= size + 64 * 1024  # noqa
         gwfh.set_at_end()
         gpg.GzipWriteFile(gwfh, u"{0}/testfiles/output/gzwrite.gz".format(_runtest_dir), size=size)
         # print os.stat("/tmp/testfiles/output/gzwrite.gz").st_size
@@ -215,7 +215,7 @@ class SHATest(UnitTestCase):
         self.unpack_testfiles()
 
     def test_sha(self):
-        testhash = gpg.get_hash(u"SHA1", path.Path(u"{0}/testfiles/various_file_types/regular_file".format(_runtest_dir)))
+        testhash = gpg.get_hash(u"SHA1", path.Path(u"{0}/testfiles/various_file_types/regular_file".format(_runtest_dir)))  # noqa
         assert testhash == u"886d722999862724e1e62d0ac51c468ee336ef8e", testhash
 
 
