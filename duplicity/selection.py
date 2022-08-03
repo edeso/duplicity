@@ -27,6 +27,7 @@ from builtins import object
 import os
 import stat
 import sys
+import re
 
 from duplicity import config
 from duplicity import diffdir
