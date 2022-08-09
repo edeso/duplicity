@@ -113,7 +113,7 @@ build_pip:
         - apt-get update
         - apt-get install -y git python3-pip git intltool
         - python3 -m pip install --upgrade pip
-        - python3 -m pip install -r requirements.dev
+        - python3 -m pip install -r requirements.txt
         - python3 -m pip install twine
     script:
         - ./setup.py sdist --dist-dir=.
@@ -135,7 +135,7 @@ build_snap:
         - apt-get update
         - apt-get install -y git python3-pip git intltool squashfs-tools
         - python3 -m pip install --upgrade pip
-        - python3 -m pip install -r requirements.txt -r requirements.dev
+        - python3 -m pip install -r requirements.txt
     script:
         - tools/makesnap
         - tools/installsnap
@@ -158,7 +158,7 @@ pages:
         - apt-get update
         - apt-get install -y git python3-pip git intltool
         - python3 -m pip install --upgrade pip
-        - python3 -m pip install -r requirements.dev
+        - python3 -m pip install -r requirements.txt
         - VERSION=`./setup.py --version`
         - echo "make docs of ${VERSION}"
         - make docs
