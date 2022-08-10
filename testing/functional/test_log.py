@@ -65,15 +65,15 @@ class LogTest(FunctionalTestCase):
         linecount = 0
         lastline = False
         for line in f:
-            assert(not lastline)
+            assert (not lastline)
             linecount += 1
             if linecount == 1:
-                assert(line == u"ERROR 2\n")
+                assert (line == u"ERROR 2\n")
             elif line[0] != u"\n":
-                assert(line.startswith(r". "))
+                assert (line.startswith(r". "))
             else:
                 lastline = True
-        assert(lastline)
+        assert lastline
 
 
 if __name__ == u"__main__":
