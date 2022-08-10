@@ -256,7 +256,7 @@ class TemporaryDirectory(object):
         try:
             if fname in self.__pending:
                 log.Debug(_(u"Forgetting temporary file %s") % util.fsdecode(fname))
-                del(self.__pending[fname])
+                del self.__pending[fname]
             else:
                 log.Warn(_(u"Attempt to forget unknown tempfile %s - this is probably a bug.") % util.fsdecode(fname))
                 pass

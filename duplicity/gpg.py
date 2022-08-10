@@ -224,7 +224,7 @@ class GPGFile(object):
                                        u'status': self.status_fp,
                                        u'stderr': self.stderr_fp,
                                        u'logger': self.logger_fp})
-            if not(config.use_agent):
+            if not (config.use_agent):
                 p1.handles[u'passphrase'].write(passphrase)
                 p1.handles[u'passphrase'].close()
             self.gpg_output = p1.handles[u'stdout']

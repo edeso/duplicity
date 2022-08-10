@@ -41,7 +41,6 @@ snapcraft login --with ~/.snaplogin
 cd build/duplicity-${VERSION}/
 for f in duplicity_*.snap; do
     snapcraft upload $f --release edge
-    [ ! -e /.dockerenv ] && snapcraft sign-build $f --key-name firstprime
 done
 
 # mv into working source tree
