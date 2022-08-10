@@ -35,17 +35,16 @@ If you install from the source package, you will also need:
 
  * Python development files, normally found in module 'python-dev'.
  * librsync development files, normally found in module 'librsync-dev'.
- * see `requirements.dev` for complete list
-
+ 
 Install python modules by performing the following command in duplicity's root directory:
 
 ```
-pip install -r requirements.txt -r requirements.dev
+pip install -r requirements.txt
 ```
 or:
 
 ```
-pip3 install -r requirements.txt -r requirements.dev
+pip3 install -r requirements.txt
 ```
 if you're using python3
 
