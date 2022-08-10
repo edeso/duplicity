@@ -22,6 +22,7 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 #
 
+# shellcheck disable=SC2006
 cd `dirname $0`
 
 export DOCKER_BUILDKIT=0
