@@ -24,14 +24,6 @@
 
 cd `dirname $0`
 
-export DOCKER_BUILDKIT=0
-
-cp ../../requirements.* .
-cp ../../setup.py .
-cp ../../tox.ini .
-
-docker build --compress --tag firstprime/duplicity_test --file duplicity_test/Dockerfile .
-
-rm requirements.*
-rm setup.py
-rm tox.ini
+docker tag firstprime/duplicity_test:latest registry.gitlab.com/duplicity/duplicity/firstprime/duplicity_test:latest
+docker login registry.gitlab.com
+docker push registry.gitlab.com/duplicity/duplicity/firstprime/duplicity_test:latest
