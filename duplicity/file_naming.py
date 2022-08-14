@@ -21,9 +21,6 @@
 
 u"""Produce and parse the names of duplicity's backup files"""
 
-from builtins import str
-from builtins import range
-from builtins import object
 import re
 from duplicity import dup_time
 from duplicity import config
@@ -153,8 +150,7 @@ def to_base36(n):
         last_digit = str(mod)
     else:
         last_digit = chr(ord(u'a') + mod - 10)
-    if sys.version_info.major >= 3:
-        last_digit = last_digit.encode()
+    last_digit = last_digit.encode()
     if n == mod:
         return last_digit
     else:
@@ -168,7 +164,7 @@ def from_base36(s):
     total = 0
     for i in range(len(s)):
         total *= 36
-        if sys.version_info.major >= 3 and isinstance(s, bytes):
+        if isinstance(s, bytes):
             digit_ord = s[i]
         else:
             digit_ord = ord(s[i])

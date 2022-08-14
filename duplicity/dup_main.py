@@ -30,12 +30,6 @@
 # any suggestions.
 
 from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
-from builtins import map
-from builtins import next
-from builtins import object
-from builtins import range
 
 import copy
 import fasteners
@@ -78,8 +72,7 @@ def getpass_safe(message):
     # in non-ascii characters.
     import getpass
     import locale
-    if sys.version_info.major == 2:
-        message = message.encode(locale.getpreferredencoding(), u'replace')
+    message = message.encode(locale.getpreferredencoding(), u'replace')
     return getpass.getpass(message)
 
 

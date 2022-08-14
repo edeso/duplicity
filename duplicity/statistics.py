@@ -22,10 +22,6 @@
 u"""Generate and process backup statistics"""
 from __future__ import division
 
-from builtins import zip
-from builtins import map
-from builtins import str
-from builtins import object
 
 import re
 import time

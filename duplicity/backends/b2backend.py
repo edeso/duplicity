@@ -23,9 +23,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from future import standard_library
-standard_library.install_aliases()
-from builtins import object
 
 from urllib.parse import quote_plus  # pylint: disable=import-error
 

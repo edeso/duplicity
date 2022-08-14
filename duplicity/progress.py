@@ -34,7 +34,6 @@ This is a forecast based on gathered evidence.
 
 from __future__ import absolute_import
 from __future__ import division
-from builtins import object
 
 from datetime import datetime, timedelta
 import collections as sys_collections

@@ -25,9 +25,6 @@ which is now patched with some code for iterative threaded execution
 see duplicity's README for details
 """
 
-from builtins import next
-from builtins import str
-from builtins import object
 import os
 import sys
 import tempfile
@@ -244,10 +241,7 @@ class GPGFile(object):
         try:
             res = self.gpg_input.write(buf)
             if res is not None:
-                if sys.version_info.major >= 3:
-                    self.byte_count += res
-                else:
-                    self.byte_count += len(res)
+                self.byte_count += res
         except Exception:
             self.gpg_failed()
         return res

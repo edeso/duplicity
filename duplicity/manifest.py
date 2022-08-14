@@ -21,9 +21,6 @@
 
 u"""Create and edit manifest for session contents"""
 
-from builtins import map
-from builtins import range
-from builtins import object
 
 import re
 import sys
@@ -514,10 +511,7 @@ def Quote(s):
 
 
 def maybe_chr(ch):
-    if sys.version_info.major >= 3:
-        return chr(ch)
-    else:
-        return ch
+    return chr(ch)
 
 
 def Unquote(quoted_string):
@@ -534,10 +528,7 @@ def Unquote(quoted_string):
         if char == b"\\":
             # quoted section
             assert maybe_chr(quoted_string[i + 1]) == u"x"
-            if sys.version_info.major >= 3:
-                return_list.append(int(quoted_string[i + 2:i + 4].decode(), 16).to_bytes(1, byteorder=u'big'))
-            else:
-                return_list.append(chr(int(quoted_string[i + 2:i + 4], 16)))
+            return_list.append(int(quoted_string[i + 2:i + 4].decode(), 16).to_bytes(1, byteorder=u'big'))
             i += 4
         else:
             return_list.append(char)

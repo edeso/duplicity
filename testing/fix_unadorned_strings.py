@@ -35,18 +35,10 @@ python_token = namedtuple(u'python_token', u'type string start end line')
 
 
 def return_unadorned_string_tokens(f):
-    if sys.version_info[0] < 3:
-        unnamed_tokens = tokenize.generate_tokens(f.readline)
-        for t in unnamed_tokens:
-            named_token = python_token(token.tok_name[t[0]], *t[1:])
-            if named_token.type == u"STRING" and named_token.string[0] in [u'"', u"'"]:
-                yield named_token
-
-    else:
-        named_tokens = tokenize.tokenize(f.readline)
-        for t in named_tokens:
-            if t.type == token.STRING and t.string[0] in [u'"', u"'"]:
-                yield t
+    named_tokens = tokenize.tokenize(f.readline)
+    for t in named_tokens:
+        if t.type == token.STRING and t.string[0] in [u'"', u"'"]:
+            yield t
 
 
 def check_file_for_unadorned(python_file):

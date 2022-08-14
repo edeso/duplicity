@@ -25,9 +25,6 @@
 # shell, so shouldn't have strange characters in them.
 
 from __future__ import division
-from future import standard_library
-standard_library.install_aliases()
-from builtins import map
 
 import os
 import re

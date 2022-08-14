@@ -24,7 +24,4 @@ import gettext
 
 __version__ = u'$version'
 
-if sys.version_info.major >= 3:
-    gettext.install(u'duplicity', names=[u'ngettext'])
-else:
-    gettext.install(u'duplicity', names=[u'ngettext'], unicode=True)  # pylint: disable=unexpected-keyword-arg
+gettext.install(u'duplicity', names=[u'ngettext'])

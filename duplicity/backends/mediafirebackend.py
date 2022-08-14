@@ -20,7 +20,6 @@
 
 u"""MediaFire Duplicity Backend"""
 
-from builtins import str
 
 import os
 

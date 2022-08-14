@@ -21,18 +21,12 @@
 
 u"""Classes and functions on collections of backup volumes"""
 
-from builtins import str
-from builtins import zip
-from builtins import map
-from builtins import range
-from builtins import object
 
 import sys
 
 from duplicity import log
 from duplicity import file_naming
 from duplicity import path
-from duplicity import util
 from duplicity import dup_time
 from duplicity import config
 from duplicity import manifest
@@ -40,10 +34,7 @@ from duplicity import util
 from duplicity.gpg import GPGError
 
 # For type testing against both int and long types that works in python 2/3
-if sys.version_info < (3,):
-    integer_types = (int, int)
-else:
-    integer_types = (int,)
+integer_types = (int,)
 
 
 class CollectionsError(Exception):

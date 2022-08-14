@@ -24,11 +24,6 @@ Provides a common interface to all backends and certain sevices
 intended to be used by the backends themselves.
 """
 
-from future import standard_library
-standard_library.install_aliases()
-from builtins import str
-from builtins import range
-from builtins import object
 
 import errno
 import os
@@ -308,7 +303,7 @@ class ParsedUrl(object):
         self.port = None
         try:
             self.port = pu.port
-        except Exception:  # not raised in python2.7, just returns None
+        except Exception:  # just returns None
             # TODO: remove after dropping python 2.7 support
             if self.scheme in [u'rclone']:
                 pass

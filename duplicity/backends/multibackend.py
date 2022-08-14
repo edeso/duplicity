@@ -23,8 +23,6 @@
 
 #
 
-from future import standard_library
-standard_library.install_aliases()
 import os
 import os.path
 import sys
@@ -184,8 +182,6 @@ class MultiBackend(duplicity.backend.Backend):
 
         for config in configs:
             url = config[u'url'] + self.__subpath
-            if sys.version_info.major == 2:
-                url = url.encode(u'utf-8')
             log.Log(_(u"MultiBackend: use store %s")
                     % (url),
                     log.INFO)

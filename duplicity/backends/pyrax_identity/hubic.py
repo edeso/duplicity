@@ -4,9 +4,6 @@
 # Licensed under the MIT license
 
 from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
-from builtins import str
 
 import configparser
 import os
