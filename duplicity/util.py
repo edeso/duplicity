@@ -24,12 +24,6 @@ Miscellaneous utilities.
 """
 
 from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
-from builtins import isinstance
-from builtins import map
-from builtins import object
-from builtins import str
 
 import csv
 import errno
@@ -40,10 +34,7 @@ import sys
 import traceback
 import atexit
 
-if sys.version_info.major == 2:
-    from cStringIO import StringIO  # pylint: disable=import-error
-else:
-    from io import StringIO  # pylint: disable=import-error
+from io import StringIO
 
 from duplicity import tarfile
 import duplicity.config as config
@@ -92,13 +83,8 @@ def exception_traceback(limit=50):
     lines.extend(traceback.format_exception_only(type, value))
 
     msg = u"Traceback (innermost last):\n"
-    if sys.version_info.major >= 3:
-        msg = msg + u"%-20s %s" % (str.join(u"", lines[:-1]), lines[-1])
-    else:
-        msg = msg + u"%-20s %s" % (string.join(lines[:-1], u""), lines[-1])
+    msg = msg + u"%-20s %s" % (str.join(u"", lines[:-1]), lines[-1])
 
-    if sys.version_info.major < 3:
-        return msg.decode(u'unicode-escape', u'replace')
     return msg
 
 
@@ -134,11 +120,7 @@ def uexc(e):
         # If the function did not return yet, we did not
         # succeed in finding a string; return the whole message.
         # This fails for Python 2, so only do this in Python 3.
-        if sys.version_info[0] > 2:
-            return str(e)
-        # For Python 2, fall back to returning an empty string.
-        else:
-            return u''
+        return str(e)
     else:
         return u''
 

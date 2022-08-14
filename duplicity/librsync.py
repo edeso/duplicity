@@ -26,8 +26,6 @@ which is written in C.  The goal was to use C as little as possible...
 
 """
 
-from builtins import object
-from builtins import str
 
 import array
 import os
@@ -92,10 +90,7 @@ class LikeFile(object):
                 self._add_to_outbuf_once()
             real_len = min(length, len(self.outbuf))
 
-        if sys.version_info.major >= 3:
-            return_val = self.outbuf[:real_len].tobytes()
-        else:
-            return_val = self.outbuf[:real_len].tostring()
+        return_val = self.outbuf[:real_len].tobytes()
         del self.outbuf[:real_len]
         return return_val
 
@@ -108,10 +103,7 @@ class LikeFile(object):
         except _librsync.librsyncError as e:
             raise librsyncError(str(e))
         self.inbuf = self.inbuf[len_inbuf_read:]
-        if sys.version_info.major >= 3:
-            self.outbuf.frombytes(cycle_out)
-        else:
-            self.outbuf.fromstring(cycle_out)
+        self.outbuf.frombytes(cycle_out)
 
     def _add_to_inbuf(self):
         u"""Make sure len(self.inbuf) >= blocksize"""

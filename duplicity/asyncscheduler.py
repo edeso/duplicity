@@ -25,9 +25,6 @@ Asynchronous job scheduler, for concurrent execution with minimalistic
 dependency guarantees.
 """
 
-from future import standard_library
-standard_library.install_aliases()
-from builtins import object
 import duplicity
 from duplicity import log
 from duplicity.dup_threading import require_threading

@@ -39,8 +39,8 @@ from setuptools.command.test import test
 
 
 # check that we can function here
-if not (sys.version_info[:2] >= (3, 5) or (sys.version_info[0] == 2 and sys.version_info[:2] >= (2, 7))):
-    print(u"Sorry, duplicity requires version 2.7 or version 3.5 or later of Python.")
+if not sys.version_info[:2] >= (3, 5):
+    print(u"Sorry, duplicity requires version 3.5 or later of Python.")
     sys.exit(1)
 
 
@@ -329,8 +329,6 @@ setup(name=u"duplicity",
         u"Operating System :: MacOS",
         u"Operating System :: POSIX",
         u"Programming Language :: C",
-        u"Programming Language :: Python :: 2",
-        u"Programming Language :: Python :: 2.7",
         u"Programming Language :: Python :: 3",
         u"Programming Language :: Python :: 3.5",
         u"Programming Language :: Python :: 3.6",

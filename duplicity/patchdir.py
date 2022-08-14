@@ -19,10 +19,6 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from builtins import map
-from builtins import next
-from builtins import object
-from builtins import range
 
 import re
 import sys
@@ -161,8 +157,6 @@ def get_index_from_tarinfo(tarinfo):
     for prefix in [u"snapshot/", u"diff/", u"deleted/",
                    u"multivol_diff/", u"multivol_snapshot/"]:
         tiname = util.get_tarinfo_name(tarinfo)
-        if sys.version_info.major == 2 and isinstance(prefix, unicode):
-            prefix = prefix.encode()
         if tiname.startswith(prefix):
             name = tiname[len(prefix):]  # strip prefix
             if prefix.startswith(u"multivol"):
@@ -190,10 +184,7 @@ def get_index_from_tarinfo(tarinfo):
     if name == r"." or name == r"":
         index = ()
     else:
-        if sys.version_info.major >= 3:
-            index = tuple(util.fsencode(name).split(b"/"))
-        else:
-            index = tuple(name.split(b"/"))
+        index = tuple(util.fsencode(name).split(b"/"))
         if b'..' in index:
             raise PatchDirException(u"Tar entry %s contains '..'.  Security "
                                     u"violation" % util.fsdecode(tiname))

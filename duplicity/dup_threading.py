@@ -28,9 +28,6 @@ the standard threading module, and absolute imports require
 at least python 2.5.)
 """
 
-from future import standard_library
-standard_library.install_aliases()
-from builtins import object
 import sys
 from duplicity import errors
 

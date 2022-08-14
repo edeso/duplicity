@@ -83,7 +83,6 @@ RUN git clone -b "v2.3.0" --single-branch https://github.com/pyenv/pyenv.git /ro
     && eval "$(pyenv init --path)" \
     && eval "$(pyenv init -)" \
 # Install all the Pythons we test
-    && pyenv install 2.7.18 \
     && pyenv install 3.5.10 \
     && pyenv install 3.6.15 \
     && pyenv install 3.7.13 \
@@ -97,7 +96,7 @@ COPY tox.ini .
 RUN python3 -m pip install --upgrade pip setuptools setuptools-scm \
     && python3 -m pip install -rrequirements.txt \
     && python3 -m pip install tox tox-pyenv \
-    && pyenv local 2.7.18 3.5.10 3.6.15 3.7.13 3.8.13 3.9.12 3.10.4
+    && pyenv local 3.5.10 3.6.15 3.7.13 3.8.13 3.9.12 3.10.4
 
 # set up tiny dummy project to make tox happy
 WORKDIR /root

@@ -23,7 +23,6 @@ u"""Provide time related exceptions and functions"""
 from __future__ import division
 
 from past.utils import old_div
-from builtins import map
 
 import time
 import types
@@ -34,10 +33,7 @@ from duplicity import config
 from duplicity import util
 
 # For type testing against both int and long types that works in python 2/3
-if sys.version_info < (3,):
-    integer_types = (int, types.LongType)
-else:
-    integer_types = (int,)
+integer_types = (int,)
 
 
 class TimeException(Exception):

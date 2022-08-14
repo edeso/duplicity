@@ -20,9 +20,6 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from future import standard_library
-standard_library.install_aliases()
-from builtins import input
 
 import email
 import email.encoders
@@ -42,9 +39,8 @@ except:
     pass
 
 # TODO: should probably change use of socket.sslerror instead of doing this
-if sys.version_info.major >= 3:
-    import ssl
-    socket.sslerror = ssl.SSLError
+import ssl
+socket.sslerror = ssl.SSLError
 
 from duplicity import config
 from duplicity import log
@@ -235,10 +231,7 @@ class ImapBackend(duplicity.backend.Backend):
         for msg in flist:
             if (len(msg) == 1):
                 continue
-            if sys.version_info.major >= 3:
-                headers = Parser(policy=default).parsestr(msg[1].decode(u"unicode-escape"))  # noqa  # pylint: disable=unsubscriptable-object
-            else:
-                headers = Parser().parsestr(msg[1].decode(u"unicode-escape"))  # pylint: disable=unsubscriptable-object
+            headers = Parser(policy=default).parsestr(msg[1].decode(u"unicode-escape"))  # noqa  # pylint: disable=unsubscriptable-object
             subj = headers[u"subject"]
             header_from = headers[u"from"]
 

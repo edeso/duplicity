@@ -22,10 +22,6 @@
 u"""Parse command line, check for consistency, and set config"""
 
 from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
-from builtins import str
-from builtins import range
 
 from copy import copy
 import optparse
@@ -716,15 +712,14 @@ def parse_cmdline_options(arglist):
             setattr(config, f, v)
 
     # convert file_prefix* string
-    if sys.version_info.major >= 3:
-        if isinstance(config.file_prefix, str):
-            config.file_prefix = bytes(config.file_prefix, u'utf-8')
-        if isinstance(config.file_prefix_manifest, str):
-            config.file_prefix_manifest = bytes(config.file_prefix_manifest, u'utf-8')
-        if isinstance(config.file_prefix_archive, str):
-            config.file_prefix_archive = bytes(config.file_prefix_archive, u'utf-8')
-        if isinstance(config.file_prefix_signature, str):
-            config.file_prefix_signature = bytes(config.file_prefix_signature, u'utf-8')
+    if isinstance(config.file_prefix, str):
+        config.file_prefix = bytes(config.file_prefix, u'utf-8')
+    if isinstance(config.file_prefix_manifest, str):
+        config.file_prefix_manifest = bytes(config.file_prefix_manifest, u'utf-8')
+    if isinstance(config.file_prefix_archive, str):
+        config.file_prefix_archive = bytes(config.file_prefix_archive, u'utf-8')
+    if isinstance(config.file_prefix_signature, str):
+        config.file_prefix_signature = bytes(config.file_prefix_signature, u'utf-8')
 
     # todo: this should really NOT be done here
     socket.setdefaulttimeout(config.timeout)

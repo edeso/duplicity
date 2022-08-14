@@ -19,9 +19,6 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from __future__ import print_function
-from builtins import range
-from future import standard_library
-standard_library.install_aliases()
 
 import os
 import pexpect
@@ -92,10 +89,6 @@ class FunctionalTestCase(DuplicityTestCase):
         # console unexpectedly (like for gpg password or such).
 
         # Check all string inputs are unicode -- we will convert to system encoding before running the command
-        for item in options:
-            if sys.version_info.major == 2:
-                assert not isinstance(item, str), u"item " + unicode(item) + u" in options is not unicode"
-
         for item in passphrase_input:
             assert isinstance(item, u"".__class__), u"item " + unicode(item) + u" in passphrase_input is not unicode"
 
@@ -142,12 +135,7 @@ class FunctionalTestCase(DuplicityTestCase):
         # else:
 
         # Manually encode to filesystem encoding and send to spawn as bytes
-        # ToDo: Remove this once we no longer have to support systems with pexpect < 4.0
-        if sys.version_info.major > 2:
-            child = pexpect.spawn(u'/bin/sh', [u'-c', cmdline], timeout=None)
-        else:
-            child = pexpect.spawn(b'/bin/sh', [b'-c', cmdline.encode(sys.getfilesystemencoding(),
-                                                                     u'replace')], timeout=None)
+        child = pexpect.spawn(u'/bin/sh', [u'-c', cmdline], timeout=None)
 
         for passphrase in passphrase_input:
             child.expect(b'passphrase.*:')

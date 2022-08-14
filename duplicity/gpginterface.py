@@ -226,7 +226,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 or see http://www.gnu.org/copyleft/lesser.html
 """
 
-from builtins import object
 import os
 import sys
 import fcntl
@@ -409,9 +408,8 @@ class GnuPG(object):
             # if we are writing
             if _fd_modes[fh_name] == u'w' or _fd_modes[fh_name] == u'wb':
                 pipe = (pipe[1], pipe[0])
-            if sys.version_info.major >= 3:
-                os.set_inheritable(pipe[0], True)
-                os.set_inheritable(pipe[1], True)
+            os.set_inheritable(pipe[0], True)
+            os.set_inheritable(pipe[1], True)
             process._pipes[fh_name] = Pipe(pipe[0], pipe[1], 0)
 
         for fh_name, fh in list(attach_fhs.items()):
