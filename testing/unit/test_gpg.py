@@ -35,24 +35,24 @@ from testing import _runtest_dir
 from . import UnitTestCase
 
 
-@pytest.mark.usefixtures(u"redirect_stdin")
+@pytest.mark.usefixtures("redirect_stdin")
 class GPGTest(UnitTestCase):
-    u"""Test GPGFile"""
+    """Test GPGFile"""
     def setUp(self):
         super(GPGTest, self).setUp()
         self.unpack_testfiles()
-        self.default_profile = gpg.GPGProfile(passphrase=u"foobar")
+        self.default_profile = gpg.GPGProfile(passphrase="foobar")
 
     def gpg_cycle(self, s, profile=None):
-        u"""Test encryption/decryption cycle on string s"""
-        epath = path.Path(u"{0}/testfiles/output/encrypted_file".format(_runtest_dir))
+        """Test encryption/decryption cycle on string s"""
+        epath = path.Path("{0}/testfiles/output/encrypted_file".format(_runtest_dir))
         if not profile:
             profile = self.default_profile
         encrypted_file = gpg.GPGFile(1, epath, profile)
         encrypted_file.write(s)
         encrypted_file.close()
 
-        epath2 = path.Path(u"{0}/testfiles/output/encrypted_file".format(_runtest_dir))
+        epath2 = path.Path("{0}/testfiles/output/encrypted_file".format(_runtest_dir))
         decrypted_file = gpg.GPGFile(0, epath2, profile)
         dec_buf = decrypted_file.read()
         decrypted_file.close()
@@ -60,24 +60,24 @@ class GPGTest(UnitTestCase):
         assert s == dec_buf, (len(s), len(dec_buf))
 
     def test_gpg1(self):
-        u"""Test gpg short strings"""
+        """Test gpg short strings"""
         self.gpg_cycle(b"hello, world")
         self.gpg_cycle(b"ansoetuh aoetnuh aoenstuh aoetnuh asoetuh saoteuh ")
 
     def test_gpg2(self):
-        u"""Test gpg long strings easily compressed"""
+        """Test gpg long strings easily compressed"""
         self.gpg_cycle(b" " * 50000)
         self.gpg_cycle(b"aoeu" * 1000000)
 
     def test_gpg3(self):
-        u"""Test on random data - must have /dev/urandom device"""
-        infp = open(u"/dev/urandom", u"rb")
+        """Test on random data - must have /dev/urandom device"""
+        infp = open("/dev/urandom", "rb")
         rand_buf = infp.read(120000)
         infp.close()
         self.gpg_cycle(rand_buf)
 
     def test_gpg_asym(self):
-        u"""Test GPG asymmetric encryption"""
+        """Test GPG asymmetric encryption"""
         profile = gpg.GPGProfile(passphrase=self.sign_passphrase,
                                  recipients=[self.encrypt_key1,
                                              self.encrypt_key2])
@@ -88,7 +88,7 @@ class GPGTest(UnitTestCase):
         self.gpg_cycle(b"aoeu" * 10000, profile2)
 
     def test_gpg_hidden_asym(self):
-        u"""Test GPG asymmetric encryption with hidden key id"""
+        """Test GPG asymmetric encryption with hidden key id"""
         profile = gpg.GPGProfile(passphrase=self.sign_passphrase,
                                  hidden_recipients=[self.encrypt_key1,
                                                     self.encrypt_key2])
@@ -99,14 +99,14 @@ class GPGTest(UnitTestCase):
         self.gpg_cycle(b"aoeu" * 10000, profile2)
 
     def test_gpg_signing(self):
-        u"""Test to make sure GPG reports the proper signature key"""
+        """Test to make sure GPG reports the proper signature key"""
         plaintext = b"hello" * 50000
 
         signing_profile = gpg.GPGProfile(passphrase=self.sign_passphrase,
                                          sign_key=self.sign_key,
                                          recipients=[self.encrypt_key1])
 
-        epath = path.Path(u"{0}/testfiles/output/encrypted_file".format(_runtest_dir))
+        epath = path.Path("{0}/testfiles/output/encrypted_file".format(_runtest_dir))
         encrypted_signed_file = gpg.GPGFile(1, epath, signing_profile)
         encrypted_signed_file.write(plaintext)
         encrypted_signed_file.close()
@@ -118,14 +118,14 @@ class GPGTest(UnitTestCase):
         assert sig == self.sign_key, sig
 
     def test_gpg_signing_and_hidden_encryption(self):
-        u"""Test to make sure GPG reports the proper signature key even with hidden encryption key id"""
+        """Test to make sure GPG reports the proper signature key even with hidden encryption key id"""
         plaintext = b"hello" * 50000
 
         signing_profile = gpg.GPGProfile(passphrase=self.sign_passphrase,
                                          sign_key=self.sign_key,
                                          hidden_recipients=[self.encrypt_key1])
 
-        epath = path.Path(u"{0}/testfiles/output/encrypted_file".format(_runtest_dir))
+        epath = path.Path("{0}/testfiles/output/encrypted_file".format(_runtest_dir))
         encrypted_signed_file = gpg.GPGFile(1, epath, signing_profile)
         encrypted_signed_file.write(plaintext)
         encrypted_signed_file.close()
@@ -136,33 +136,33 @@ class GPGTest(UnitTestCase):
         sig = decrypted_file.get_signature()
         assert sig == self.sign_key, sig
 
-    @unittest.skipIf(platform.machine() in [u"ppc64el", u"ppc64le"], u"Skip on ppc64el of ppc64el machines")
+    @unittest.skipIf(platform.machine() in ["ppc64el", "ppc64le"], "Skip on ppc64el of ppc64el machines")
     def test_GPGWriteFile(self):
-        u"""Test GPGWriteFile"""
+        """Test GPGWriteFile"""
         size = 400 * 1000
         gwfh = GPGWriteFile_Helper()
-        profile = gpg.GPGProfile(passphrase=u"foobar")
+        profile = gpg.GPGProfile(passphrase="foobar")
         for i in range(10):
-            gpg.GPGWriteFile(gwfh, u"{0}/testfiles/output/gpgwrite.gpg".format(_runtest_dir),
+            gpg.GPGWriteFile(gwfh, "{0}/testfiles/output/gpgwrite.gpg".format(_runtest_dir),
                              profile, size=size)
             # print os.stat("/tmp/testfiles/output/gpgwrite.gpg").st_size-size
-            assert size - 64 * 1024 <= os.stat(u"{0}/testfiles/output/gpgwrite.gpg".format(_runtest_dir)).st_size <= size + 64 * 1024  # noqa
+            assert size - 64 * 1024 <= os.stat("{0}/testfiles/output/gpgwrite.gpg".format(_runtest_dir)).st_size <= size + 64 * 1024  # noqa
         gwfh.set_at_end()
-        gpg.GPGWriteFile(gwfh, u"{0}/testfiles/output/gpgwrite.gpg".format(_runtest_dir),
+        gpg.GPGWriteFile(gwfh, "{0}/testfiles/output/gpgwrite.gpg".format(_runtest_dir),
                          profile, size=size)
         # print os.stat("/tmp/testfiles/output/gpgwrite.gpg").st_size
 
     def test_GzipWriteFile(self):
-        u"""Test GzipWriteFile"""
+        """Test GzipWriteFile"""
         size = 400 * 1000
         gwfh = GPGWriteFile_Helper()
         for i in range(10):
-            gpg.GzipWriteFile(gwfh, u"{0}/testfiles/output/gzwrite.gz".format(_runtest_dir),
+            gpg.GzipWriteFile(gwfh, "{0}/testfiles/output/gzwrite.gz".format(_runtest_dir),
                               size=size)
             # print os.stat("/tmp/testfiles/output/gzwrite.gz").st_size-size
-            assert size - 64 * 1024 <= os.stat(u"{0}/testfiles/output/gzwrite.gz".format(_runtest_dir)).st_size <= size + 64 * 1024  # noqa
+            assert size - 64 * 1024 <= os.stat("{0}/testfiles/output/gzwrite.gz".format(_runtest_dir)).st_size <= size + 64 * 1024  # noqa
         gwfh.set_at_end()
-        gpg.GzipWriteFile(gwfh, u"{0}/testfiles/output/gzwrite.gz".format(_runtest_dir), size=size)
+        gpg.GzipWriteFile(gwfh, "{0}/testfiles/output/gzwrite.gz".format(_runtest_dir), size=size)
         # print os.stat("/tmp/testfiles/output/gzwrite.gz").st_size
 
 
@@ -172,17 +172,17 @@ class GPGWriteHelper2(object):
 
 
 class GPGWriteFile_Helper(object):
-    u"""Used in test_GPGWriteFile above"""
+    """Used in test_GPGWriteFile above"""
     def __init__(self):
-        self.from_random_fp = open(u"/dev/urandom", u"rb")
+        self.from_random_fp = open("/dev/urandom", "rb")
         self.at_end = 0
 
     def set_at_end(self):
-        u"""Iterator stops when you call this"""
+        """Iterator stops when you call this"""
         self.at_end = 1
 
     def get_buffer(self, size):
-        u"""Return buffer of size size, consisting of half random data"""
+        """Return buffer of size size, consisting of half random data"""
         s1 = int(old_div(size, 2))
         s2 = size - s1
         return b"a" * s1 + self.from_random_fp.read(s2)
@@ -205,15 +205,15 @@ class GPGWriteFile_Helper(object):
 
 
 class SHATest(UnitTestCase):
-    u"""Test making sha signatures"""
+    """Test making sha signatures"""
     def setUp(self):
         super(SHATest, self).setUp()
         self.unpack_testfiles()
 
     def test_sha(self):
-        testhash = gpg.get_hash(u"SHA1", path.Path(u"{0}/testfiles/various_file_types/regular_file".format(_runtest_dir)))  # noqa
-        assert testhash == u"886d722999862724e1e62d0ac51c468ee336ef8e", testhash
+        testhash = gpg.get_hash("SHA1", path.Path("{0}/testfiles/various_file_types/regular_file".format(_runtest_dir)))  # noqa
+        assert testhash == "886d722999862724e1e62d0ac51c468ee336ef8e", testhash
 
 
-if __name__ == u"__main__":
+if __name__ == "__main__":
     unittest.main()

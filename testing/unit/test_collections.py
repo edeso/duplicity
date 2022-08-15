@@ -78,31 +78,31 @@ filename_list2 = [b"duplicity-full.2001-01-01T16:17:01-07:00.manifest.gpg",
 
 
 class CollectionTest(UnitTestCase):
-    u"""Test collections"""
+    """Test collections"""
     def setUp(self):
         super(CollectionTest, self).setUp()
 
         self.unpack_testfiles()
 
-        col_test_dir = path.Path(u"{0}/testfiles/collectionstest".format(_runtest_dir))
-        archive_dir_path = col_test_dir.append(u"archive_dir")
-        self.set_config(u'archive_dir_path', archive_dir_path)
-        self.archive_dir_backend = backend.get_backend(u"file://{0}/testfiles/collectionstest".format(_runtest_dir) +
-                                                       u"/archive_dir")
+        col_test_dir = path.Path("{0}/testfiles/collectionstest".format(_runtest_dir))
+        archive_dir_path = col_test_dir.append("archive_dir")
+        self.set_config('archive_dir_path', archive_dir_path)
+        self.archive_dir_backend = backend.get_backend("file://{0}/testfiles/collectionstest".format(_runtest_dir) +
+                                                       "/archive_dir")
 
-        self.real_backend = backend.get_backend(u"file://%s/%s" %
-                                                (col_test_dir.uc_name, u"remote_dir"))
-        self.output_dir = path.Path(u"{0}/testfiles/output".format(_runtest_dir))  # used as a temp directory
-        self.output_dir_backend = backend.get_backend(u"file://{0}/testfiles/output".format(_runtest_dir))
+        self.real_backend = backend.get_backend("file://%s/%s" %
+                                                (col_test_dir.uc_name, "remote_dir"))
+        self.output_dir = path.Path("{0}/testfiles/output".format(_runtest_dir))  # used as a temp directory
+        self.output_dir_backend = backend.get_backend("file://{0}/testfiles/output".format(_runtest_dir))
 
     def set_gpg_profile(self):
-        u"""Set gpg profile to standard "foobar" sym"""
-        self.set_config(u'gpg_profile', gpg.GPGProfile(passphrase=u"foobar"))
+        """Set gpg profile to standard "foobar" sym"""
+        self.set_config('gpg_profile', gpg.GPGProfile(passphrase="foobar"))
 
     def test_backup_chains(self):
-        u"""Test basic backup chain construction"""
+        """Test basic backup chain construction"""
         random.shuffle(filename_list1)
-        cs = dup_collections.CollectionsStatus(None, config.archive_dir_path, u"full")
+        cs = dup_collections.CollectionsStatus(None, config.archive_dir_path, "full")
         chains, orphaned, incomplete = cs.get_backup_chains(filename_list1)
         if len(chains) != 1 or len(orphaned) != 0:
             print(chains)
@@ -114,21 +114,21 @@ class CollectionTest(UnitTestCase):
         assert chain.fullset.time == 1029626221
 
     def test_collections_status(self):
-        u"""Test CollectionStatus object's set_values()"""
+        """Test CollectionStatus object's set_values()"""
         def check_cs(cs):
-            u"""Check values of collections status"""
+            """Check values of collections status"""
             assert cs.values_set
 
             assert cs.matched_chain_pair
             assert cs.matched_chain_pair[0].end_time == 1029826800
             assert len(cs.all_backup_chains) == 1, cs.all_backup_chains
 
-        cs = dup_collections.CollectionsStatus(self.real_backend, config.archive_dir_path, u"full").set_values()
+        cs = dup_collections.CollectionsStatus(self.real_backend, config.archive_dir_path, "full").set_values()
         check_cs(cs)
         assert cs.matched_chain_pair[0].islocal()
 
     def test_sig_chain(self):
-        u"""Test a single signature chain"""
+        """Test a single signature chain"""
         chain = dup_collections.SignatureChain(1, config.archive_dir_path)
         for filename in local_sigchain_filename_list:
             assert chain.add_filename(filename)
@@ -136,19 +136,19 @@ class CollectionTest(UnitTestCase):
             b"duplicity-new-signatures.2002-08-18T00:04:30-07:00.to.2002-08-20T00:00:00-07:00.sigtar.gpg")
 
     def test_sig_chains(self):
-        u"""Test making signature chains from filename list"""
-        cs = dup_collections.CollectionsStatus(None, config.archive_dir_path, u"full")
+        """Test making signature chains from filename list"""
+        cs = dup_collections.CollectionsStatus(None, config.archive_dir_path, "full")
         chains, orphaned_paths = cs.get_signature_chains(local=1)
         self.sig_chains_helper(chains, orphaned_paths)
 
     def test_sig_chains2(self):
-        u"""Test making signature chains from filename list on backend"""
-        cs = dup_collections.CollectionsStatus(self.archive_dir_backend, config.archive_dir_path, u"full")
+        """Test making signature chains from filename list on backend"""
+        cs = dup_collections.CollectionsStatus(self.archive_dir_backend, config.archive_dir_path, "full")
         chains, orphaned_paths = cs.get_signature_chains(local=None)
         self.sig_chains_helper(chains, orphaned_paths)
 
     def sig_chains_helper(self, chains, orphaned_paths):
-        u"""Test chains and orphaned_paths values for two above tests"""
+        """Test chains and orphaned_paths values for two above tests"""
         if orphaned_paths:
             for op in orphaned_paths:
                 print(op)
@@ -157,7 +157,7 @@ class CollectionTest(UnitTestCase):
         assert chains[0].end_time == 1029826800
 
     def sigchain_fileobj_get(self, local):
-        u"""Return chain, local if local is true with filenames added"""
+        """Return chain, local if local is true with filenames added"""
         if local:
             chain = dup_collections.SignatureChain(1, config.archive_dir_path)
             for filename in local_sigchain_filename_list:
@@ -169,7 +169,7 @@ class CollectionTest(UnitTestCase):
         return chain
 
     def sigchain_fileobj_check_list(self, chain):
-        u"""Make sure the list of file objects in chain has right contents
+        """Make sure the list of file objects in chain has right contents
 
         The contents of the /tmp/testfiles/collectiontest/remote_dir have
         to be coordinated with this test.
@@ -187,26 +187,26 @@ class CollectionTest(UnitTestCase):
         test_fileobj(1, b"hello 1")
         test_fileobj(2, b"Hello 2")
 
-    @pytest.mark.usefixtures(u"redirect_stdin")
+    @pytest.mark.usefixtures("redirect_stdin")
     def test_sigchain_fileobj(self):
-        u"""Test getting signature chain fileobjs from archive_dir_path"""
+        """Test getting signature chain fileobjs from archive_dir_path"""
         self.set_gpg_profile()
         self.sigchain_fileobj_check_list(self.sigchain_fileobj_get(1))
         self.sigchain_fileobj_check_list(self.sigchain_fileobj_get(None))
 
     def get_filelist2_cs(self):
-        u"""Return set CollectionsStatus object from filelist 2"""
+        """Return set CollectionsStatus object from filelist 2"""
         # Set up /tmp/testfiles/output with files from filename_list2
         for filename in filename_list2:
             p = self.output_dir.append(filename)
             p.touch()
 
-        cs = dup_collections.CollectionsStatus(self.output_dir_backend, config.archive_dir_path, u"full")
+        cs = dup_collections.CollectionsStatus(self.output_dir_backend, config.archive_dir_path, "full")
         cs.set_values()
         return cs
 
     def test_get_extraneous(self):
-        u"""Test the listing of extraneous files"""
+        """Test the listing of extraneous files"""
         cs = self.get_filelist2_cs()
         assert len(cs.orphaned_backup_sets) == 1, cs.orphaned_backup_sets
         assert len(cs.local_orphaned_sig_names) == 0, cs.local_orphaned_sig_names
@@ -221,30 +221,30 @@ class CollectionTest(UnitTestCase):
         errors = []
         for filename in remote_received_list:
             if filename not in right_list:
-                errors.append(u"### Got bad extraneous filename " + filename.decode())
+                errors.append("### Got bad extraneous filename " + filename.decode())
             else:
                 right_list.remove(filename)
         for filename in right_list:
-            errors.append(u"### Didn't receive extraneous filename " + filename)
-        assert not errors, u"\n" + u"\n".join(errors)
+            errors.append("### Didn't receive extraneous filename " + filename)
+        assert not errors, "\n" + "\n".join(errors)
 
     def test_get_olderthan(self):
-        u"""Test getting list of files older than a certain time"""
+        """Test getting list of files older than a certain time"""
         cs = self.get_filelist2_cs()
         oldsets = cs.get_older_than(
-            dup_time.genstrtotime(u"2002-05-01T16:17:01-07:00"))
+            dup_time.genstrtotime("2002-05-01T16:17:01-07:00"))
         oldset_times = [s.get_time() for s in oldsets]
-        right_times = [dup_time.genstrtotime(u'2001-01-01T16:17:01-07:00')]
+        right_times = [dup_time.genstrtotime('2001-01-01T16:17:01-07:00')]
         assert oldset_times == right_times, \
             [oldset_times, right_times]
 
         oldsets_required = cs.get_older_than_required(
-            dup_time.genstrtotime(u"2002-08-17T20:00:00-07:00"))
+            dup_time.genstrtotime("2002-08-17T20:00:00-07:00"))
         oldset_times = [s.get_time() for s in oldsets_required]
-        right_times_required = [dup_time.genstrtotime(u'2002-08-17T16:17:01-07:00')]
+        right_times_required = [dup_time.genstrtotime('2002-08-17T16:17:01-07:00')]
         assert oldset_times == right_times_required, \
             [oldset_times, right_times_required]
 
 
-if __name__ == u"__main__":
+if __name__ == "__main__":
     unittest.main()

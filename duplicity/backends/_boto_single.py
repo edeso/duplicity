@@ -31,13 +31,13 @@ from duplicity.errors import FatalBackendException, BackendException
 from duplicity import progress
 from duplicity import util
 
-BOTO_MIN_VERSION = u"2.1.1"
+BOTO_MIN_VERSION = "2.1.1"
 
 
 def get_connection(scheme, parsed_url, storage_uri):
     try:
         from boto.s3.connection import S3Connection
-        assert hasattr(S3Connection, u'lookup')
+        assert hasattr(S3Connection, 'lookup')
 
         # Newer versions of boto default to using
         # virtual hosting for buckets as a result of
@@ -76,11 +76,11 @@ def get_connection(scheme, parsed_url, storage_uri):
             if cfs_supported:
                 calling_format = SubdomainCallingFormat()
             else:
-                log.FatalError(u"Use of new-style (subdomain) S3 bucket addressing was"
-                               u"requested, but does not seem to be supported by the "
-                               u"boto library. Either you need to upgrade your boto "
-                               u"library or duplicity has failed to correctly detect "
-                               u"the appropriate support.",
+                log.FatalError("Use of new-style (subdomain) S3 bucket addressing was"
+                               "requested, but does not seem to be supported by the "
+                               "boto library. Either you need to upgrade your boto "
+                               "library or duplicity has failed to correctly detect "
+                               "the appropriate support.",
                                log.ErrorCode.boto_old_style)
         else:
             if cfs_supported:
@@ -89,23 +89,23 @@ def get_connection(scheme, parsed_url, storage_uri):
                 calling_format = None
 
     except ImportError:
-        log.FatalError(u"This backend (s3) requires boto library, version %s or later, "
-                       u"(http://code.google.com/p/boto/)." % BOTO_MIN_VERSION,
+        log.FatalError("This backend (s3) requires boto library, version %s or later, "
+                       "(http://code.google.com/p/boto/)." % BOTO_MIN_VERSION,
                        log.ErrorCode.boto_lib_too_old)
 
     if not parsed_url.hostname:
         # Use the default host.
         conn = storage_uri.connect(is_secure=(not config.s3_unencrypted_connection))
     else:
-        assert scheme == u's3'
+        assert scheme == 's3'
         conn = storage_uri.connect(host=parsed_url.hostname, port=parsed_url.port,
                                    is_secure=(not config.s3_unencrypted_connection))
 
-    if hasattr(conn, u'calling_format'):
+    if hasattr(conn, 'calling_format'):
         if calling_format is None:
-            log.FatalError(u"It seems we previously failed to detect support for calling "
-                           u"formats in the boto library, yet the support is there. This is "
-                           u"almost certainly a duplicity bug.",
+            log.FatalError("It seems we previously failed to detect support for calling "
+                           "formats in the boto library, yet the support is there. This is "
+                           "almost certainly a duplicity bug.",
                            log.ErrorCode.boto_calling_format)
         else:
             conn.calling_format = calling_format
@@ -113,12 +113,12 @@ def get_connection(scheme, parsed_url, storage_uri):
     else:
         # Duplicity hangs if boto gets a null bucket name.
         # HC: Caught a socket error, trying to recover
-        raise BackendException(u'Boto requires a bucket name.')
+        raise BackendException('Boto requires a bucket name.')
     return conn
 
 
 class BotoBackend(duplicity.backend.Backend):
-    u"""
+    """
     Backend for Amazon's Simple Storage System, (aka Amazon S3), though
     the use of the boto module, (http://code.google.com/p/boto/).
 
@@ -136,7 +136,7 @@ class BotoBackend(duplicity.backend.Backend):
         if config.s3_endpoint_url:
             import urllib.parse
             pu = urllib.parse.urlparse(config.s3_endpoint_url)
-            if pu.scheme and pu.scheme.lower() == u'http':
+            if pu.scheme and pu.scheme.lower() == 'http':
                 config.s3_unencrypted_connection = True
             if pu.hostname:
                 parsed_url.netloc = pu.netloc
@@ -153,33 +153,33 @@ class BotoBackend(duplicity.backend.Backend):
         # This folds the null prefix and all null parts, which means that:
         #  //MyBucket/ and //MyBucket are equivalent.
         #  //MyBucket//My///My/Prefix/ and //MyBucket/My/Prefix are equivalent.
-        self.url_parts = [x for x in parsed_url.path.split(u'/') if x != u'']
+        self.url_parts = [x for x in parsed_url.path.split('/') if x != '']
 
         if self.url_parts:
             self.bucket_name = self.url_parts.pop(0)
         else:
             # Duplicity hangs if boto gets a null bucket name.
             # HC: Caught a socket error, trying to recover
-            raise BackendException(u'Boto requires a bucket name.')
+            raise BackendException('Boto requires a bucket name.')
 
         if self.url_parts:
-            self.key_prefix = u'%s/' % u'/'.join(self.url_parts)
+            self.key_prefix = '%s/' % '/'.join(self.url_parts)
         else:
-            self.key_prefix = u''
+            self.key_prefix = ''
 
         self.straight_url = duplicity.backend.strip_auth_from_url(parsed_url)
         self.parsed_url = parsed_url
 
         # duplicity and boto.storage_uri() have different URI formats.
         # boto uses scheme://bucket[/name] and specifies hostname on connect()
-        self.scheme = duplicity.backend.strip_prefix(parsed_url.scheme, u'boto')[:2]
-        self.boto_uri_str = u'://'.join((self.scheme,
-                                         parsed_url.path.lstrip(u'/')))
+        self.scheme = duplicity.backend.strip_prefix(parsed_url.scheme, 'boto')[:2]
+        self.boto_uri_str = '://'.join((self.scheme,
+                                        parsed_url.path.lstrip('/')))
 
         if config.s3_european_buckets:
             self.my_location = Location.EU
         else:
-            self.my_location = u''
+            self.my_location = ''
         self.resetConnection()
         self._listed_keys = {}
 
@@ -195,7 +195,7 @@ class BotoBackend(duplicity.backend.Backend):
     def resetConnection(self):
         import boto  # pylint: disable=import-error
 
-        if getattr(self, u'conn', False):
+        if getattr(self, 'conn', False):
             self.conn.close()
         self.bucket = None
         self.conn = None
@@ -218,15 +218,15 @@ class BotoBackend(duplicity.backend.Backend):
 
         if config.s3_european_buckets:
             if not config.s3_use_new_style:
-                raise FatalBackendException(u"European bucket creation was requested, but not new-style "
-                                            u"bucket addressing (--s3-use-new-style)",
+                raise FatalBackendException("European bucket creation was requested, but not new-style "
+                                            "bucket addressing (--s3-use-new-style)",
                                             code=log.ErrorCode.s3_bucket_not_style)
 
         if self.bucket is None:
             try:
                 self.bucket = self.conn.get_bucket(self.bucket_name)
             except Exception as e:
-                if u"NoSuchBucket" in str(e):
+                if "NoSuchBucket" in str(e):
                     self.bucket = self.conn.create_bucket(self.bucket_name,
                                                           location=self.my_location)
                 else:
@@ -235,43 +235,43 @@ class BotoBackend(duplicity.backend.Backend):
         key = self.bucket.new_key(self.key_prefix + remote_filename)
 
         if config.s3_use_rrs:
-            storage_class = u'REDUCED_REDUNDANCY'
+            storage_class = 'REDUCED_REDUNDANCY'
         elif config.s3_use_ia:
-            storage_class = u'STANDARD_IA'
+            storage_class = 'STANDARD_IA'
         elif config.s3_use_onezone_ia:
-            storage_class = u'ONEZONE_IA'
-        elif config.s3_use_glacier and u"manifest" not in remote_filename:
-            storage_class = u'GLACIER'
-        elif config.s3_use_glacier_ir and u"manifest" not in remote_filename:
-            storage_class = u'GLACIER_IR'
-        elif config.s3_use_deep_archive and u"manifest" not in remote_filename:
-            storage_class = u'DEEP_ARCHIVE'
+            storage_class = 'ONEZONE_IA'
+        elif config.s3_use_glacier and "manifest" not in remote_filename:
+            storage_class = 'GLACIER'
+        elif config.s3_use_glacier_ir and "manifest" not in remote_filename:
+            storage_class = 'GLACIER_IR'
+        elif config.s3_use_deep_archive and "manifest" not in remote_filename:
+            storage_class = 'DEEP_ARCHIVE'
         else:
-            storage_class = u'STANDARD'
-        log.Info(u"Uploading %s/%s to %s Storage" % (self.straight_url, remote_filename, storage_class))
+            storage_class = 'STANDARD'
+        log.Info("Uploading %s/%s to %s Storage" % (self.straight_url, remote_filename, storage_class))
         if config.s3_use_sse:
             headers = {
-                u'Content-Type': u'application/octet-stream',
-                u'x-amz-storage-class': storage_class,
-                u'x-amz-server-side-encryption': u'AES256'
+                'Content-Type': 'application/octet-stream',
+                'x-amz-storage-class': storage_class,
+                'x-amz-server-side-encryption': 'AES256'
             }
         elif config.s3_use_sse_kms:
             if config.s3_kms_key_id is None:
-                raise FatalBackendException(u"S3 USE SSE KMS was requested, but key id not provided "
-                                            u"require (--s3-kms-key-id)",
+                raise FatalBackendException("S3 USE SSE KMS was requested, but key id not provided "
+                                            "require (--s3-kms-key-id)",
                                             code=log.ErrorCode.s3_kms_no_id)
             headers = {
-                u'Content-Type': u'application/octet-stream',
-                u'x-amz-storage-class': storage_class,
-                u'x-amz-server-side-encryption': u'aws:kms',
-                u'x-amz-server-side-encryption-aws-kms-key-id': config.s3_kms_key_id
+                'Content-Type': 'application/octet-stream',
+                'x-amz-storage-class': storage_class,
+                'x-amz-server-side-encryption': 'aws:kms',
+                'x-amz-server-side-encryption-aws-kms-key-id': config.s3_kms_key_id
             }
             if config.s3_kms_grant is not None:
-                headers[u'x-amz-grant-full-control'] = config.s3_kms_grant
+                headers['x-amz-grant-full-control'] = config.s3_kms_grant
         else:
             headers = {
-                u'Content-Type': u'application/octet-stream',
-                u'x-amz-storage-class': storage_class
+                'Content-Type': 'application/octet-stream',
+                'x-amz-storage-class': storage_class
             }
 
         upload_start = time.time()
@@ -279,7 +279,7 @@ class BotoBackend(duplicity.backend.Backend):
         upload_end = time.time()
         total_s = abs(upload_end - upload_start) or 1  # prevent a zero value!
         rough_upload_speed = os.path.getsize(source_path.name) / total_s
-        log.Debug(u"Uploaded %s/%s to %s Storage at roughly %f bytes/second" %
+        log.Debug("Uploaded %s/%s to %s Storage at roughly %f bytes/second" %
                   (self.straight_url, remote_filename, storage_class,
                    rough_upload_speed))
 
@@ -293,7 +293,7 @@ class BotoBackend(duplicity.backend.Backend):
 
     def _list(self):
         if not self.bucket:
-            raise BackendException(u"No connection to backend")
+            raise BackendException("No connection to backend")
         return self.list_filenames_in_bucket()
 
     def list_filenames_in_bucket(self):
@@ -309,10 +309,10 @@ class BotoBackend(duplicity.backend.Backend):
         filename_list = []
         for k in self.bucket.list(prefix=self.key_prefix):
             try:
-                filename = k.key.replace(self.key_prefix, u'', 1)
+                filename = k.key.replace(self.key_prefix, '', 1)
                 filename_list.append(filename)
                 self._listed_keys[k.key] = k
-                log.Debug(u"Listed %s/%s" % (self.straight_url, filename))
+                log.Debug("Listed %s/%s" % (self.straight_url, filename))
             except AttributeError:
                 pass
         return filename_list
@@ -325,8 +325,8 @@ class BotoBackend(duplicity.backend.Backend):
         filename = util.fsdecode(filename)
         key = self.bucket.lookup(self.key_prefix + filename)
         if key is None:
-            return {u'size': -1}
-        return {u'size': key.size}
+            return {'size': -1}
+        return {'size': key.size}
 
     def upload(self, filename, key, headers):
         key.set_contents_from_filename(filename, headers,
@@ -342,23 +342,23 @@ class BotoBackend(duplicity.backend.Backend):
             self._listed_keys[key_name] = list(self.bucket.list(key_name))[0]
         key = self._listed_keys[key_name]
 
-        if key.storage_class == u"GLACIER":
+        if key.storage_class == "GLACIER":
             # We need to move the file out of glacier
             if not self.bucket.get_key(key.key).ongoing_restore:
-                log.Info(u"File %s is in Glacier storage, restoring to S3" % remote_filename)
+                log.Info("File %s is in Glacier storage, restoring to S3" % remote_filename)
                 key.restore(days=1)  # Shouldn't need this again after 1 day
             if wait:
-                log.Info(u"Waiting for file %s to restore from Glacier" % remote_filename)
+                log.Info("Waiting for file %s to restore from Glacier" % remote_filename)
                 while self.bucket.get_key(key.key).ongoing_restore:
                     time.sleep(60)
                     self.resetConnection()
-                log.Info(u"File %s was successfully restored from Glacier" % remote_filename)
+                log.Info("File %s was successfully restored from Glacier" % remote_filename)
 
     def pre_process_download_batch(self, remote_filenames):
-        log.Info(u"Starting batch unfreezing from Glacier")
+        log.Info("Starting batch unfreezing from Glacier")
         # Used primarily to move all necessary files in Glacier to S3 at once
-        with ThreadPoolExecutor(thread_name_prefix=u's3-unfreeze-glacier') as executor:
+        with ThreadPoolExecutor(thread_name_prefix='s3-unfreeze-glacier') as executor:
             for remote_filename in remote_filenames:
                 remote_filename = util.fsdecode(remote_filename)
                 executor.submit(self.pre_process_download, remote_filename, False)
-        log.Info(u"Batch unfreezing from Glacier finished")
+        log.Info("Batch unfreezing from Glacier finished")

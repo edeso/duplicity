@@ -40,18 +40,18 @@ from duplicity.filechunkio import FileChunkIO
 from ._boto_single import BotoBackend as BotoSingleBackend
 from ._boto_single import get_connection
 
-BOTO_MIN_VERSION = u"2.1.1"
+BOTO_MIN_VERSION = "2.1.1"
 
 # Multiprocessing is not supported on *BSD
-if sys.platform not in (u'darwin', u'linux2'):
+if sys.platform not in ('darwin', 'linux2'):
     from multiprocessing import dummy as multiprocessing
-    log.Debug(u'Multiprocessing is not supported on %s, will use threads instead.' % sys.platform)
+    log.Debug('Multiprocessing is not supported on %s, will use threads instead.' % sys.platform)
 else:
     import multiprocessing
 
 
 class ConsumerThread(threading.Thread):
-    u"""
+    """
     A background thread that collects all written bytes from all
     the pool workers, and reports it to the progress module.
     Wakes up every second to check for termination
@@ -78,7 +78,7 @@ class ConsumerThread(threading.Thread):
 
 
 class BotoBackend(BotoSingleBackend):
-    u"""
+    """
     Backend for Amazon's Simple Storage System, (aka Amazon S3), though
     the use of the boto module, (http://code.google.com/p/boto/).
 
@@ -100,19 +100,19 @@ class BotoBackend(BotoSingleBackend):
     def _setup_pool(self):
         number_of_procs = config.s3_multipart_max_procs
 
-        if getattr(self, u'_pool', False):
-            log.Debug(u"A process pool already exists. Destroying previous pool.")
+        if getattr(self, '_pool', False):
+            log.Debug("A process pool already exists. Destroying previous pool.")
             self._pool.terminate()  # pylint:disable=access-member-before-definition
             self._pool.join()  # pylint:disable=access-member-before-definition
             self._pool = None
 
-        log.Debug(u"Setting multipart boto backend process pool to %d processes" % number_of_procs)
+        log.Debug("Setting multipart boto backend process pool to %d processes" % number_of_procs)
 
         self._pool = multiprocessing.Pool(processes=number_of_procs)
 
     def _close(self):
         BotoSingleBackend._close(self)
-        log.Debug(u"Closing pool")
+        log.Debug("Closing pool")
         self._pool.terminate()
         self._pool.join()
 
@@ -123,7 +123,7 @@ class BotoBackend(BotoSingleBackend):
 
         # Check minimum chunk size for S3
         if chunk_size < config.s3_multipart_minimum_chunk_size:
-            log.Warn(u"Minimum chunk size is %d, but %d specified." % (
+            log.Warn("Minimum chunk size is %d, but %d specified." % (
                 config.s3_multipart_minimum_chunk_size, chunk_size))
             chunk_size = config.s3_multipart_minimum_chunk_size
 
@@ -136,7 +136,7 @@ class BotoBackend(BotoSingleBackend):
             if (bytes % chunk_size):
                 chunks += 1
 
-        log.Debug(u"Uploading %d bytes in %d chunks" % (bytes, chunks))
+        log.Debug("Uploading %d bytes in %d chunks" % (bytes, chunks))
 
         mp = self.bucket.initiate_multipart_upload(key.key, headers, encrypt_key=config.s3_use_sse)
 
@@ -156,7 +156,7 @@ class BotoBackend(BotoSingleBackend):
                       queue]
             tasks.append(self._pool.apply_async(multipart_upload_worker, params))
 
-        log.Debug(u"Waiting for the pool to finish processing %s tasks" % len(tasks))
+        log.Debug("Waiting for the pool to finish processing %s tasks" % len(tasks))
         while tasks:
             try:
                 tasks[0].wait(timeout=config.s3_multipart_max_timeout)
@@ -164,18 +164,18 @@ class BotoBackend(BotoSingleBackend):
                     if tasks[0].successful():
                         del tasks[0]
                     else:
-                        log.Debug(u"Part upload not successful, aborting multipart upload.")
+                        log.Debug("Part upload not successful, aborting multipart upload.")
                         self._setup_pool()
                         break
                 else:
                     raise multiprocessing.TimeoutError
             except multiprocessing.TimeoutError:
-                log.Debug(u"%s tasks did not finish by the specified timeout,"
-                          u"aborting multipart upload and resetting pool." % len(tasks))
+                log.Debug("%s tasks did not finish by the specified timeout,"
+                          "aborting multipart upload and resetting pool." % len(tasks))
                 self._setup_pool()
                 break
 
-        log.Debug(u"Done waiting for the pool to finish processing")
+        log.Debug("Done waiting for the pool to finish processing")
 
         # Terminate the consumer thread, if any
         if config.progress:
@@ -184,14 +184,14 @@ class BotoBackend(BotoSingleBackend):
 
         if len(tasks) > 0 or len(mp.get_all_parts()) < chunks:
             mp.cancel_upload()
-            raise BackendException(u"Multipart upload failed. Aborted.")
+            raise BackendException("Multipart upload failed. Aborted.")
 
         return mp.complete_upload()
 
 
 def multipart_upload_worker(scheme, parsed_url, storage_uri, bucket_name, multipart_id,
                             filename, offset, bytes, num_retries, queue):  # pylint: disable=redefined-builtin
-    u"""
+    """
     Worker method for uploading a file chunk to S3 using multipart upload.
     Note that the file chunk is read into memory, so it's important to keep
     this number reasonably small.
@@ -199,20 +199,20 @@ def multipart_upload_worker(scheme, parsed_url, storage_uri, bucket_name, multip
 
     def _upload_callback(uploaded, total):
         worker_name = multiprocessing.current_process().name
-        log.Debug(u"%s: Uploaded %s/%s bytes" % (worker_name, uploaded, total))
+        log.Debug("%s: Uploaded %s/%s bytes" % (worker_name, uploaded, total))
         if queue is not None:
             queue.put([offset, uploaded])  # Push data to the consumer thread
 
     def _upload(num_retries):
         worker_name = multiprocessing.current_process().name
-        log.Debug(u"%s: Uploading chunk %d" % (worker_name, offset + 1))
+        log.Debug("%s: Uploading chunk %d" % (worker_name, offset + 1))
         try:
             conn = get_connection(scheme, parsed_url, storage_uri)
             bucket = conn.lookup(bucket_name)
 
             for mp in bucket.list_multipart_uploads():
                 if mp.id == multipart_id:
-                    with FileChunkIO(filename, u'r', offset=offset * bytes, bytes=bytes) as fd:
+                    with FileChunkIO(filename, 'r', offset=offset * bytes, bytes=bytes) as fd:
                         start = time.time()
                         try:
                             mp.upload_part_from_file(fd, offset + 1, cb=_upload_callback,
@@ -221,11 +221,11 @@ def multipart_upload_worker(scheme, parsed_url, storage_uri, bucket_name, multip
                         except socket.gaierror as ex:
                             log.Warn(ex.strerror)
                         end = time.time()
-                        log.Debug((u"{name}: Uploaded chunk {chunk} "
-                                   u"at roughly {speed} bytes/second").format(name=worker_name,
-                                                                              chunk=offset + 1,
-                                                                              speed=(bytes /
-                                                                                     max(1, abs(end - start)))))
+                        log.Debug(("{name}: Uploaded chunk {chunk} "
+                                   "at roughly {speed} bytes/second").format(name=worker_name,
+                                                                             chunk=offset + 1,
+                                                                             speed=(bytes /
+                                                                                    max(1, abs(end - start)))))
                     break
             conn.close()
             conn = None
@@ -234,12 +234,12 @@ def multipart_upload_worker(scheme, parsed_url, storage_uri, bucket_name, multip
         except Exception as e:
             traceback.print_exc()
             if num_retries:
-                log.Debug(u"%s: Upload of chunk %d failed. Retrying %d more times..." % (
+                log.Debug("%s: Upload of chunk %d failed. Retrying %d more times..." % (
                     worker_name, offset + 1, num_retries - 1))
                 return _upload(num_retries - 1)
-            log.Debug(u"%s: Upload of chunk %d failed. Aborting..." % (
+            log.Debug("%s: Upload of chunk %d failed. Aborting..." % (
                 worker_name, offset + 1))
             raise e
-        log.Debug(u"%s: Upload of chunk %d complete" % (worker_name, offset + 1))
+        log.Debug("%s: Upload of chunk %d complete" % (worker_name, offset + 1))
 
     return _upload(num_retries)
