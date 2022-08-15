@@ -52,12 +52,12 @@ class B2ProgressListener(object):
 
 
 class B2Backend(duplicity.backend.Backend):
-    u"""
+    """
     Backend for BackBlaze's B2 storage service
     """
 
     def __init__(self, parsed_url):
-        u"""
+        """
         Authorize to B2 api and set up needed variables
         """
         duplicity.backend.Backend.__init__(self, parsed_url)
@@ -66,7 +66,7 @@ class B2Backend(duplicity.backend.Backend):
 
         try:  # figure out what version of b2sdk we have
             from b2sdk import __version__ as VERSION
-            v_split = VERSION.split(u'.')
+            v_split = VERSION.split('.')
             self.v_num = [int(x) for x in v_split]
         except:
             self.v_num = [0, 0, 0]
@@ -92,7 +92,7 @@ class B2Backend(duplicity.backend.Backend):
                     from b2sdk.exception import NonExistentBucket
                     from b2sdk.file_version import FileVersionInfoFactory
                 except ImportError as e:
-                    if u'b2sdk' in getattr(e, u'name', u'b2sdk'):
+                    if 'b2sdk' in getattr(e, 'name', 'b2sdk'):
                         raise
                     try:  # fall back to import the old b2 client
                         from b2.api import B2Api
@@ -101,97 +101,97 @@ class B2Backend(duplicity.backend.Backend):
                         from b2.exception import NonExistentBucket
                         from b2.file_version import FileVersionInfoFactory
                     except ImportError:
-                        if u'b2' in getattr(e, u'name', u'b2'):
+                        if 'b2' in getattr(e, 'name', 'b2'):
                             raise
-                        raise BackendException(u'B2 backend requires B2 Python SDK (pip install b2sdk)')
+                        raise BackendException('B2 backend requires B2 Python SDK (pip install b2sdk)')
 
         self.service = B2Api(InMemoryAccountInfo())
-        self.parsed_url.hostname = u'B2'
+        self.parsed_url.hostname = 'B2'
 
         account_id = parsed_url.username
         account_key = self.get_password()
 
         self.url_parts = [
-            x for x in parsed_url.path.replace(u"@", u"/").split(u'/') if x != u''
+            x for x in parsed_url.path.replace("@", "/").split('/') if x != ''
         ]
         if self.url_parts:
             self.username = self.url_parts.pop(0)
             bucket_name = self.url_parts.pop(0)
         else:
-            raise BackendException(u"B2 requires a bucket name")
-        self.path = u"".join([url_part + u"/" for url_part in self.url_parts])
-        self.service.authorize_account(u'production', account_id, account_key)
+            raise BackendException("B2 requires a bucket name")
+        self.path = "".join([url_part + "/" for url_part in self.url_parts])
+        self.service.authorize_account('production', account_id, account_key)
 
         try:
-            log.Log(u"B2 Backend (path= %s, bucket= %s, recommended_part_size= %s)" %
+            log.Log("B2 Backend (path= %s, bucket= %s, recommended_part_size= %s)" %
                     (self.path, bucket_name, self.service.account_info.get_recommended_part_size()), log.INFO)
         except AttributeError:
-            log.Log(u"B2 Backend (path= %s, bucket= %s, minimum_part_size= %s)" %
+            log.Log("B2 Backend (path= %s, bucket= %s, minimum_part_size= %s)" %
                     (self.path, bucket_name, self.service.account_info.get_minimum_part_size()), log.INFO)
 
         try:
             self.bucket = self.service.get_bucket_by_name(bucket_name)
-            log.Log(u"Bucket found", log.INFO)
+            log.Log("Bucket found", log.INFO)
         except NonExistentBucket:
             try:
-                log.Log(u"Bucket not found, creating one", log.INFO)
-                self.bucket = self.service.create_bucket(bucket_name, u'allPrivate')
+                log.Log("Bucket not found, creating one", log.INFO)
+                self.bucket = self.service.create_bucket(bucket_name, 'allPrivate')
             except:
-                raise FatalBackendException(u"Bucket cannot be created")
+                raise FatalBackendException("Bucket cannot be created")
 
     def _get(self, remote_filename, local_path):
-        u"""
+        """
         Download remote_filename to local_path
         """
-        log.Log(u"Get: %s -> %s" % (self.path + util.fsdecode(remote_filename),
-                                    util.fsdecode(local_path.name)),
+        log.Log("Get: %s -> %s" % (self.path + util.fsdecode(remote_filename),
+                                   util.fsdecode(local_path.name)),
                 log.INFO)
         if self.v_num < [1, 11, 0]:
-            self.bucket.download_file_by_name(quote_plus(self.path + util.fsdecode(remote_filename), u'/'),
+            self.bucket.download_file_by_name(quote_plus(self.path + util.fsdecode(remote_filename), '/'),
                                               DownloadDestLocalFile(local_path.name))
         else:
-            df = self.bucket.download_file_by_name(quote_plus(self.path + util.fsdecode(remote_filename), u'/'))
+            df = self.bucket.download_file_by_name(quote_plus(self.path + util.fsdecode(remote_filename), '/'))
             df.save_to(local_path.name)
 
     def _put(self, source_path, remote_filename):
-        u"""
+        """
         Copy source_path to remote_filename
         """
-        log.Log(u"Put: %s -> %s" % (util.fsdecode(source_path.name),
-                                    self.path + util.fsdecode(remote_filename)),
+        log.Log("Put: %s -> %s" % (util.fsdecode(source_path.name),
+                                   self.path + util.fsdecode(remote_filename)),
                 log.INFO)
         self.bucket.upload_local_file(util.fsdecode(source_path.name),
-                                      quote_plus(self.path + util.fsdecode(remote_filename), u'/'),
-                                      content_type=u'application/pgp-encrypted',
+                                      quote_plus(self.path + util.fsdecode(remote_filename), '/'),
+                                      content_type='application/pgp-encrypted',
                                       progress_listener=B2ProgressListener())
 
     def _list(self):
-        u"""
+        """
         List files on remote server
         """
         return [file_version_info.file_name[len(self.path):]
                 for (file_version_info, folder_name) in self.bucket.ls(self.path)]
 
     def _delete(self, filename):
-        u"""
+        """
         Delete filename from remote server
         """
         full_filename = self.path + util.fsdecode(filename)
-        log.Log(u"Delete: %s" % full_filename, log.INFO)
+        log.Log("Delete: %s" % full_filename, log.INFO)
 
         if config.b2_hide_files:
             self.bucket.hide_file(full_filename)
         else:
-            file_version_info = self.file_info(quote_plus(full_filename, u'/'))
+            file_version_info = self.file_info(quote_plus(full_filename, '/'))
             self.bucket.delete_file_version(file_version_info.id_, file_version_info.file_name)
 
     def _query(self, filename):
-        u"""
+        """
         Get size info of filename
         """
-        log.Log(u"Query: %s" % self.path + util.fsdecode(filename), log.INFO)
-        file_version_info = self.file_info(quote_plus(self.path + util.fsdecode(filename), u'/'))
-        return {u'size': int(file_version_info.size)
+        log.Log("Query: %s" % self.path + util.fsdecode(filename), log.INFO)
+        file_version_info = self.file_info(quote_plus(self.path + util.fsdecode(filename), '/'))
+        return {'size': int(file_version_info.size)
                 if file_version_info is not None and file_version_info.size is not None else -1}
 
     def file_info(self, filename):
@@ -199,11 +199,11 @@ class B2Backend(duplicity.backend.Backend):
             return self.bucket.get_file_info_by_name(filename)
         else:
             response = self.bucket.api.session.list_file_names(self.bucket.id_, filename, 1, self.path)
-            for entry in response[u'files']:
+            for entry in response['files']:
                 file_version_info = FileVersionInfoFactory.from_api_response(entry)
                 if file_version_info.file_name == filename:
                     return file_version_info
-            raise BackendException(u'File not found')
+            raise BackendException('File not found')
 
 
-duplicity.backend.register_backend(u"b2", B2Backend)
+duplicity.backend.register_backend("b2", B2Backend)

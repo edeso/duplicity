@@ -27,7 +27,7 @@ from duplicity.errors import BackendException
 
 
 class LocalBackend(duplicity.backend.Backend):
-    u"""Use this backend when saving to local disk
+    """Use this backend when saving to local disk
 
     Urls look like file://testfiles/output.  Relative to root can be
     gotten with extra slash (file:///usr/local).
@@ -36,8 +36,8 @@ class LocalBackend(duplicity.backend.Backend):
     def __init__(self, parsed_url):
         duplicity.backend.Backend.__init__(self, parsed_url)
         # The URL form "file:MyFile" is not a valid duplicity target.
-        if not parsed_url.path.startswith(u'//'):
-            raise BackendException(u"Bad file:// path syntax.")
+        if not parsed_url.path.startswith('//'):
+            raise BackendException("Bad file:// path syntax.")
         self.remote_pathdir = path.Path(parsed_url.path[2:])
         try:
             os.makedirs(self.remote_pathdir.base)
@@ -57,12 +57,12 @@ class LocalBackend(duplicity.backend.Backend):
         source_path.setdata()
         source_size = source_path.getsize()
         progress.report_transfer(0, source_size)
-        target_path.writefileobj(source_path.open(u"rb"))
+        target_path.writefileobj(source_path.open("rb"))
         progress.report_transfer(source_size, source_size)
 
     def _get(self, filename, local_path):
         source_path = self.remote_pathdir.append(filename)
-        local_path.writefileobj(source_path.open(u"rb"))
+        local_path.writefileobj(source_path.open("rb"))
 
     def _list(self):
         return self.remote_pathdir.listdir()
@@ -78,7 +78,7 @@ class LocalBackend(duplicity.backend.Backend):
         target_file = self.remote_pathdir.append(filename)
         target_file.setdata()
         size = target_file.getsize() if target_file.exists() else -1
-        return {u'size': size}
+        return {'size': size}
 
 
-duplicity.backend.register_backend(u"file", LocalBackend)
+duplicity.backend.register_backend("file", LocalBackend)

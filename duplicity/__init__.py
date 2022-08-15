@@ -22,6 +22,6 @@
 import sys
 import gettext
 
-__version__ = u'$version'
+__version__ = '$version'
 
-gettext.install(u'duplicity', names=[u'ngettext'])
+gettext.install('duplicity', names=['ngettext'])

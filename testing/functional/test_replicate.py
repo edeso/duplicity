@@ -29,24 +29,24 @@ from . import FunctionalTestCase
 
 
 class ReplicateTest(FunctionalTestCase):
-    u"""
+    """
     Test backup/replicate/restore using duplicity binary
     """
 
     def runtest(self, dirlist, backup_options=[], replicate_options=[], restore_options=[]):
         # Back up directories to local backend
         current_time = 100000
-        self.backup(u"full", dirlist[0], current_time=current_time,
+        self.backup("full", dirlist[0], current_time=current_time,
                     options=backup_options)
         for new_dir in dirlist[1:]:
             current_time += 100000
-            self.backup(u"inc", new_dir, current_time=current_time,
+            self.backup("inc", new_dir, current_time=current_time,
                         options=backup_options)
 
         # Replicate to other backend
         source_url = self.backend_url
-        target_url = u"file://{0}/testfiles/replicate_out".format(_runtest_dir)
-        self.run_duplicity(options=[u"replicate"] +
+        target_url = "file://{0}/testfiles/replicate_out".format(_runtest_dir)
+        self.run_duplicity(options=["replicate"] +
                            replicate_options + [source_url, target_url])
 
         self.backend_url = target_url
@@ -56,28 +56,28 @@ class ReplicateTest(FunctionalTestCase):
             dirname = dirlist[i]
             current_time = 100000 * (i + 1)
             self.restore(time=current_time, options=restore_options)
-            self.check_same(dirname, u"{0}/testfiles/restore_out".format(_runtest_dir))
+            self.check_same(dirname, "{0}/testfiles/restore_out".format(_runtest_dir))
             self.verify(dirname,
                         time=current_time, options=restore_options)
 
     def check_same(self, filename1, filename2):
-        u"""Verify two filenames are the same"""
+        """Verify two filenames are the same"""
         path1, path2 = path.Path(filename1), path.Path(filename2)
         assert path1.compare_recursive(path2, verbose=1)
 
     @pytest.mark.slow
     def test_replicate(self):
-        u"""Test replication"""
-        self.runtest([u"{0}/testfiles/dir1".format(_runtest_dir), u"{0}/testfiles/dir2".format(_runtest_dir)])
+        """Test replication"""
+        self.runtest(["{0}/testfiles/dir1".format(_runtest_dir), "{0}/testfiles/dir2".format(_runtest_dir)])
 
     def test_replicate_noencryption(self):
-        u"""Test replication with decryption"""
-        self.runtest([u"{0}/testfiles/dir1".format(_runtest_dir), u"{0}/testfiles/dir2".format(_runtest_dir)],
-                     replicate_options=[u"--no-encryption"])
+        """Test replication with decryption"""
+        self.runtest(["{0}/testfiles/dir1".format(_runtest_dir), "{0}/testfiles/dir2".format(_runtest_dir)],
+                     replicate_options=["--no-encryption"])
 
     @pytest.mark.slow
     def test_replicate_asym(self):
-        u"""Test replication with reencryption"""
-        asym_options = [u"--encrypt-key", self.encrypt_key1]
-        self.runtest([u"{0}/testfiles/dir1".format(_runtest_dir), u"{0}/testfiles/dir2".format(_runtest_dir)],
+        """Test replication with reencryption"""
+        asym_options = ["--encrypt-key", self.encrypt_key1]
+        self.runtest(["{0}/testfiles/dir1".format(_runtest_dir), "{0}/testfiles/dir2".format(_runtest_dir)],
                      replicate_options=asym_options, restore_options=asym_options)

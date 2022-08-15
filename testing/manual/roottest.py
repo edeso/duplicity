@@ -21,7 +21,7 @@
 
 import config
 import sys, unittest
-sys.path.insert(0, u"../")
+sys.path.insert(0, "../")
 
 from duplicity import diffdir
 from duplicity import patchdir
@@ -31,7 +31,7 @@ from duplicity.path import *  # pylint: disable=unused-wildcard-import,redefined
 config.setup()
 
 class RootTest(unittest.TestCase):
-    u"""Test doing operations that only root can"""
+    """Test doing operations that only root can"""
 
     def setUp(self):
         # must run with euid/egid of root
@@ -39,13 +39,13 @@ class RootTest(unittest.TestCase):
         # make sure uid/gid match euid/egid
         os.setuid(os.geteuid())
         os.setgid(os.getegid())
-        assert not os.system(u"tar xzf manual/rootfiles.tar.gz > /dev/null 2>&1")
+        assert not os.system("tar xzf manual/rootfiles.tar.gz > /dev/null 2>&1")
 
     def tearDown(self):
-        assert not os.system(u"rm -rf /tmp/testfiles tempdir temp2.tar")
+        assert not os.system("rm -rf /tmp/testfiles tempdir temp2.tar")
 
     def copyfileobj(self, infp, outfp):
-        u"""Copy in fileobj to out, closing afterwards"""
+        """Copy in fileobj to out, closing afterwards"""
         blocksize = 32 * 1024
         while 1:
             buf = infp.read(blocksize)
@@ -55,23 +55,23 @@ class RootTest(unittest.TestCase):
         assert not outfp.close()
 
     def deltmp(self):
-        u"""Delete temporary directories"""
-        assert not os.system(u"rm -rf /tmp/testfiles/output")
-        os.mkdir(u"/tmp/testfiles/output")
+        """Delete temporary directories"""
+        assert not os.system("rm -rf /tmp/testfiles/output")
+        os.mkdir("/tmp/testfiles/output")
 
     def get_sel(self, path):
-        u"""Get selection iter over the given directory"""
+        """Get selection iter over the given directory"""
         return selection.Select(path).set_iter()
 
     def total_sequence(self, filelist):
-        u"""Test signatures, diffing, and patching on directory list"""
+        """Test signatures, diffing, and patching on directory list"""
         assert len(filelist) >= 2
         self.deltmp()
-        assert not os.system(u"cp -pR %s /tmp/testfiles/output/sequence" %
+        assert not os.system("cp -pR %s /tmp/testfiles/output/sequence" %
                              (filelist[0],))
-        seq_path = Path(u"/tmp/testfiles/output/sequence")
-        sig = Path(u"/tmp/testfiles/output/sig.tar")
-        diff = Path(u"/tmp/testfiles/output/diff.tar")
+        seq_path = Path("/tmp/testfiles/output/sequence")
+        sig = Path("/tmp/testfiles/output/sig.tar")
+        diff = Path("/tmp/testfiles/output/diff.tar")
         for dirname in filelist[1:]:
             new_path = Path(dirname)
             diffdir.write_block_iter(
@@ -79,51 +79,51 @@ class RootTest(unittest.TestCase):
 
             diffdir.write_block_iter(
                 diffdir.DirDelta(selection.Select(new_path).set_iter(),
-                                 sig.open(u"rb")),
+                                 sig.open("rb")),
                 diff)
 
-            patchdir.Patch(seq_path, diff.open(u"rb"))
+            patchdir.Patch(seq_path, diff.open("rb"))
 
             assert seq_path.compare_recursive(new_path, 1)
 
     def test_basic_cycle(self):
-        u"""Test cycle on dir with devices, changing uid/gid, etc."""
-        self.total_sequence([u'/tmp/testfiles/root1', u'/tmp/testfiles/root2'])
+        """Test cycle on dir with devices, changing uid/gid, etc."""
+        self.total_sequence(['/tmp/testfiles/root1', '/tmp/testfiles/root2'])
 
     def test_patchdir(self):
-        u"""Test changing uid/gid, devices"""
+        """Test changing uid/gid, devices"""
         self.deltmp()
-        os.system(u"cp -pR /tmp/testfiles/root1 /tmp/testfiles/output/sequence")
-        seq_path = Path(u"/tmp/testfiles/output/sequence")
-        new_path = Path(u"/tmp/testfiles/root2")
-        sig = Path(u"/tmp/testfiles/output/sig.tar")
-        diff = Path(u"/tmp/testfiles/output/diff.tar")
+        os.system("cp -pR /tmp/testfiles/root1 /tmp/testfiles/output/sequence")
+        seq_path = Path("/tmp/testfiles/output/sequence")
+        new_path = Path("/tmp/testfiles/root2")
+        sig = Path("/tmp/testfiles/output/sig.tar")
+        diff = Path("/tmp/testfiles/output/diff.tar")
 
         diffdir.write_block_iter(diffdir.DirSig(self.get_sel(seq_path)), sig)
-        deltablock = diffdir.DirDelta(self.get_sel(new_path), sig.open(u"rb"))
+        deltablock = diffdir.DirDelta(self.get_sel(new_path), sig.open("rb"))
         diffdir.write_block_iter(deltablock, diff)
 
-        patchdir.Patch(seq_path, diff.open(u"rb"))
+        patchdir.Patch(seq_path, diff.open("rb"))
 
         # since we are not running as root, don't even both comparing,
         # just make sure file5 exists and file4 doesn't.
-        file5 = seq_path.append(u"file5")
+        file5 = seq_path.append("file5")
         assert file5.isreg()
-        file4 = seq_path.append(u"file4")
+        file4 = seq_path.append("file4")
         assert file4.type is None
 
     def test_patchdir2(self):
-        u"""Again test files we don't have access to, this time Tar_WriteSig"""
+        """Again test files we don't have access to, this time Tar_WriteSig"""
         self.deltmp()
-        sig_path = Path(u"/tmp/testfiles/output/sig.sigtar")
-        tar_path = Path(u"/tmp/testfiles/output/tar.tar")
-        basis_path = Path(u"/tmp/testfiles/root1")
+        sig_path = Path("/tmp/testfiles/output/sig.sigtar")
+        tar_path = Path("/tmp/testfiles/output/tar.tar")
+        basis_path = Path("/tmp/testfiles/root1")
 
         deltablock = diffdir.DirFull_WriteSig(self.get_sel(basis_path),
-                                              sig_path.open(u"wb"))
+                                              sig_path.open("wb"))
         diffdir.write_block_iter(deltablock, tar_path)
 
 def runtests(): unittest.main()
 
-if __name__ == u"__main__":
+if __name__ == "__main__":
     unittest.main()

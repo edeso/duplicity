@@ -29,28 +29,28 @@ from testing import _runtest_dir
 
 
 class LogTest(FunctionalTestCase):
-    u"""Test machine-readable functions/classes in log.py"""
+    """Test machine-readable functions/classes in log.py"""
 
-    logfile = u"{0}/duplicity.log".format(_runtest_dir)
+    logfile = "{0}/duplicity.log".format(_runtest_dir)
 
     def setUp(self):
         super(LogTest, self).setUp()
-        assert not os.system(u"rm -f {0}".format(self.logfile))
+        assert not os.system("rm -f {0}".format(self.logfile))
 
     def tearDown(self):
         super(LogTest, self).tearDown()
-        assert not os.system(u"rm -f {0}".format(self.logfile))
+        assert not os.system("rm -f {0}".format(self.logfile))
 
     def test_command_line_error(self):
-        u"""Check notification of a simple error code"""
+        """Check notification of a simple error code"""
 
         # Run actual duplicity command (will fail, because no arguments passed)
-        basepython = os.environ.get(u'TOXPYTHON', None)
+        basepython = os.environ.get('TOXPYTHON', None)
         if basepython is not None:
-            os.system(u"{0} {1}/bin/duplicity --log-file={2} >/dev/null 2>&1".format
+            os.system("{0} {1}/bin/duplicity --log-file={2} >/dev/null 2>&1".format
                       (basepython, _top_dir, self.logfile))
         else:
-            os.system(u"{0}/bin/duplicity --log-file={1} >/dev/null 2>&1".format(
+            os.system("{0}/bin/duplicity --log-file={1} >/dev/null 2>&1".format(
                 _top_dir, self.logfile))
 
         # The format of the file should be:
@@ -59,20 +59,20 @@ class LogTest(FunctionalTestCase):
         # . Blah blah blah.
         #
         # """
-        f = open(self.logfile, u'r')
+        f = open(self.logfile, 'r')
         linecount = 0
         lastline = False
         for line in f:
             assert (not lastline)
             linecount += 1
             if linecount == 1:
-                assert (line == u"ERROR 2\n")
-            elif line[0] != u"\n":
+                assert (line == "ERROR 2\n")
+            elif line[0] != "\n":
                 assert (line.startswith(r". "))
             else:
                 lastline = True
         assert lastline
 
 
-if __name__ == u"__main__":
+if __name__ == "__main__":
     unittest.main()
