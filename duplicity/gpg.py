@@ -132,7 +132,6 @@ class GPGFile(object):
         """
         self.status_fp = None  # used to find signature
         self.closed = None  # set to true after file closed
-        self.logger_fp = tempfile.TemporaryFile(dir=tempdir.default().dir())
         self.stderr_fp = tempfile.TemporaryFile(dir=tempdir.default().dir())
         self.name = encrypt_path
         self.byte_count = 0
@@ -203,8 +202,7 @@ class GPGFile(object):
                 gnupg_fhs = [u'stdin', u'passphrase']
             p1 = gnupg.run(cmdlist, create_fhs=gnupg_fhs,
                            attach_fhs={u'stdout': encrypt_path.open(u"wb"),
-                                       u'stderr': self.stderr_fp,
-                                       u'logger': self.logger_fp})
+                                       u'stderr': self.stderr_fp})
             if not config.use_agent:
                 p1.handles[u'passphrase'].write(passphrase)
                 p1.handles[u'passphrase'].close()
@@ -263,13 +261,12 @@ class GPGFile(object):
     def gpg_failed(self):
         msg = u"GPG Failed, see log below:\n"
         msg += u"===== Begin GnuPG log =====\n"
-        for fp in (self.logger_fp, self.stderr_fp):
-            fp.seek(0)
-            for line in fp:
-                try:
-                    msg += str(line.strip(), locale.getpreferredencoding(), u'replace') + u"\n"
-                except Exception as e:
-                    msg += line.strip() + u"\n"
+        self.stderr_fp.seek(0)
+        for line in self.stderr_fp:
+            try:
+                msg += str(line.strip(), locale.getpreferredencoding(), u'replace') + u"\n"
+            except Exception as e:
+                msg += line.strip() + u"\n"
         msg += u"===== End GnuPG log =====\n"
         if not (msg.find(u"invalid packet (ctb=14)") > -1):
             raise GPGError(msg)
@@ -306,7 +303,6 @@ class GPGFile(object):
                 self.gpg_process.wait()
             except Exception:
                 self.gpg_failed()
-        self.logger_fp.close()
         self.stderr_fp.close()
         self.closed = 1
 
