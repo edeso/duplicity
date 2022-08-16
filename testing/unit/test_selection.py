@@ -37,6 +37,7 @@ try:
 except ImportError:
     from mock import patch
 
+
 class MatchingTest(UnitTestCase):
     u"""Test matching of file names against various selection functions"""
     def setUp(self):
@@ -686,7 +687,7 @@ class ParseArgsTest(UnitTestCase):
         self.ParseTest([(u"--include", u"testfiles/select2/1/1sub1/1sub1sub1"),
                         (u"--exclude", u"**")],
                        [(), (u"1sub1sub1",), (u"1sub1sub1",
-                                             u"1sub1sub1_file.txt")])
+                        u"1sub1sub1_file.txt")])
 
     def test_includes_files_trailing_slash(self):
         u"""Unit test the functional test test_includes_files_trailing_slash"""
@@ -696,7 +697,7 @@ class ParseArgsTest(UnitTestCase):
         self.ParseTest([(u"--include", u"testfiles/select2/1/1sub1/1sub1sub1/"),
                         (u"--exclude", u"**")],
                        [(), (u"1sub1sub1",), (u"1sub1sub1",
-                                             u"1sub1sub1_file.txt")])
+                                              u"1sub1sub1_file.txt")])
 
     def test_includes_files_trailing_slash_globbing_chars(self):
         u"""Unit test functional test_includes_files_trailing_slash_globbing_chars"""
@@ -705,8 +706,7 @@ class ParseArgsTest(UnitTestCase):
         self.root = Path(u"testfiles/select2/1/1sub1")
         self.ParseTest([(u"--include", u"testfiles/s?lect2/1/1sub1/1sub1sub1/"),
                         (u"--exclude", u"**")],
-                       [(), (u"1sub1sub1",), (u"1sub1sub1",
-                                             u"1sub1sub1_file.txt")])
+                       [(), (u"1sub1sub1",), (u"1sub1sub1", u"1sub1sub1_file.txt")])
 
     def test_glob(self):
         u"""Test globbing expression"""
@@ -1056,6 +1056,7 @@ class TestGlobGetNormalSf(UnitTestCase):
             self.assertEqual(
                 self.glob_tester(u"testfiles/select/1",
                                  u"*/select/1/1", 1, u"testfiles"), 2)
+
 
 if __name__ == u"__main__":
     unittest.main()

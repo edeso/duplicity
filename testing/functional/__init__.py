@@ -147,7 +147,7 @@ class FunctionalTestCase(DuplicityTestCase):
             child = pexpect.spawn(u'/bin/sh', [u'-c', cmdline], timeout=None)
         else:
             child = pexpect.spawn(b'/bin/sh', [b'-c', cmdline.encode(sys.getfilesystemencoding(),
-                                                                 u'replace')], timeout=None)
+                                                                     u'replace')], timeout=None)
 
         for passphrase in passphrase_input:
             child.expect(b'passphrase.*:')

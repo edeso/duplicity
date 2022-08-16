@@ -88,23 +88,21 @@ RUN git clone -b "v2.3.0" --single-branch https://github.com/pyenv/pyenv.git /ro
     && pyenv install 3.6.15 \
     && pyenv install 3.7.13 \
     && pyenv install 3.8.13 \
-    && pyenv install 3.9.11 \
-    && pyenv install 3.10.3
+    && pyenv install 3.9.12 \
+    && pyenv install 3.10.4
 
 # Tell tox how to find executables, install all requirements
-COPY requirements.dev .
 COPY requirements.txt .
 COPY tox.ini .
 RUN python3 -m pip install --upgrade pip setuptools setuptools-scm \
-    && python3 -m pip install -rrequirements.dev -rrequirements.txt \
+    && python3 -m pip install -rrequirements.txt \
     && python3 -m pip install tox tox-pyenv \
-    && pyenv local 2.7.18 3.5.10 3.6.15 3.7.13 3.8.13 3.9.11 3.10.3
+    && pyenv local 2.7.18 3.5.10 3.6.15 3.7.13 3.8.13 3.9.12 3.10.4
 
 # set up tiny dummy project to make tox happy
 WORKDIR /root
 COPY hello-world-master.zip .
 RUN unzip -o hello-world-master.zip
-COPY requirements.dev hello-world-master
 COPY requirements.txt hello-world-master
 COPY tox.ini hello-world-master
 

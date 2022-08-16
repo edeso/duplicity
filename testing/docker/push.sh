@@ -1,9 +1,11 @@
 #!/bin/bash
-# -*- Mode:Shell; indent-tabs-mode:nil; tab-width -*-
 #
-# Copyright 2022 Kenneth Loafman <kenneth@loafman.com>
+# Copyright 2017 Nils Tekampe <nils@tekampe.org>
 #
 # This file is part of duplicity.
+# This script sets up a test network for the tests of dupclicity
+# This script takes the assumption that the containers for the testinfrastructure do deither run
+# or they are removed. It is not intended to have stopped containers.
 #
 # Duplicity is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
@@ -18,31 +20,10 @@
 # You should have received a copy of the GNU General Public License
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+#
 
-set -e
+cd `dirname $0`
 
-if [ "`uname`" != "Linux" ]; then
-    echo "$0 does not run on `uname`"
-    exit 2
-fi
-
-if [ "$#" -ne 0 ]; then
-    echo "usage: $0"
-    exit 2
-fi
-
-VERSION=`./setup.py --version`
-echo "$0 of ${VERSION}"
-
-# make sure we're logged in
-snapcraft login --with ~/.snaplogin
-
-# push to edge and sign
-cd build/duplicity-${VERSION}/
-for f in duplicity_*.snap; do
-    snapcraft upload $f --release edge
-done
-
-# mv into working source tree
-[ ! -e /.dockerenv ] && mv duplicity_*.snap ../.. || true
-[ ! -e /.dockerenv ] && mv duplicity_*.txt ../.. || true
+docker tag firstprime/duplicity_test:latest registry.gitlab.com/duplicity/duplicity/firstprime/duplicity_test:latest
+docker login registry.gitlab.com
+docker push registry.gitlab.com/duplicity/duplicity/firstprime/duplicity_test:latest
