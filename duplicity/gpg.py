@@ -221,8 +221,9 @@ class GPGFile(object):
                 gnupg_fhs = [u'stdout', u'passphrase']
             p1 = gnupg.run([u'--decrypt'], create_fhs=gnupg_fhs,
                            attach_fhs={u'stdin': encrypt_path.open(u"rb"),
+                                       u'status': self.status_fp,
                                        u'stderr': self.stderr_fp})
-            if not(config.use_agent):
+            if not config.use_agent:
                 p1.handles[u'passphrase'].write(passphrase)
                 p1.handles[u'passphrase'].close()
             self.gpg_output = p1.handles[u'stdout']
