@@ -49,9 +49,11 @@ class LogTest(FunctionalTestCase):
         # Run actual duplicity command (will fail, because no arguments passed)
         basepython = os.environ.get(u'TOXPYTHON', None)
         if basepython is not None:
-            os.system(u"{0} {1}/bin/duplicity --log-file={2} >/dev/null 2>&1".format(basepython, _top_dir, self.logfile))
+            os.system(u"{0} {1}/bin/duplicity --log-file={2} >/dev/null 2>&1".format
+                      (basepython, _top_dir, self.logfile))
         else:
-            os.system(u"{0}/bin/duplicity --log-file={1} >/dev/null 2>&1".format(_top_dir, self.logfile))
+            os.system(u"{0}/bin/duplicity --log-file={1} >/dev/null 2>&1".format(
+                _top_dir, self.logfile))
 
         # The format of the file should be:
         # """ERROR 2
@@ -63,15 +65,15 @@ class LogTest(FunctionalTestCase):
         linecount = 0
         lastline = False
         for line in f:
-            assert(not lastline)
+            assert (not lastline)
             linecount += 1
             if linecount == 1:
-                assert(line == u"ERROR 2\n")
+                assert (line == u"ERROR 2\n")
             elif line[0] != u"\n":
-                assert(line.startswith(r". "))
+                assert (line.startswith(r". "))
             else:
                 lastline = True
-        assert(lastline)
+        assert lastline
 
 
 if __name__ == u"__main__":

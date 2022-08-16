@@ -78,8 +78,6 @@ class Select(object):
     be redundant and presumably isn't what the user intends.
 
     """
-    # This re should not match normal filenames, but usually just globs
-    glob_re = re.compile(u"(.*[*?[]|ignorecase\\:)", re.I | re.S)
 
     def __init__(self, path):
         u"""Initializer, called with Path of root directory"""

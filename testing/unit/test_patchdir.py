@@ -284,7 +284,7 @@ class TestInnerFuncs(UnitTestCase):
 
     # TODO: fix test_patch_seq2ropath for macOS, maybe others.
     #       Fails under tox, pytest, and pydevd
-    #----------
+    # ----------
     #     def testseq(seq, perms, buf):
     #         result = patchdir.patch_seq2ropath(seq)
     # >       assert result.getperms() == perms, (result.getperms(), perms)
