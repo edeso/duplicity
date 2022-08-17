@@ -213,13 +213,13 @@ class GPGFile(object):
                 cmdlist.append(profile.encrypt_secring)
             if profile.sign_key:
                 self.status_fp = tempfile.TemporaryFile(dir=tempdir.default().dir())
-                gpg_attach = {u'stdin':encrypt_path.open(u"rb"),
-                              u'status':self.status_fp,
-                              u'stderr':self.stderr_fp}
+                gpg_attach = {u'stdin': encrypt_path.open(u"rb"),
+                              u'status': self.status_fp,
+                              u'stderr': self.stderr_fp}
             else:
                 self.status_fp = None
-                gpg_attach = {u'stdin':encrypt_path.open(u"rb"),
-                              u'stderr':self.stderr_fp}
+                gpg_attach = {u'stdin': encrypt_path.open(u"rb"),
+                              u'stderr': self.stderr_fp}
             # Skip the passphrase if using the agent
             if config.use_agent:
                 gnupg_fhs = [u'stdout', ]
