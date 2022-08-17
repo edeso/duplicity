@@ -211,16 +211,22 @@ class GPGFile(object):
             if (profile.recipients or profile.hidden_recipients) and profile.encrypt_secring:
                 cmdlist.append(u'--secret-keyring')
                 cmdlist.append(profile.encrypt_secring)
-            self.status_fp = tempfile.TemporaryFile(dir=tempdir.default().dir())
+            if profile.sign_key:
+                self.status_fp = tempfile.TemporaryFile(dir=tempdir.default().dir())
+                gpg_attach = {u'stdin':encrypt_path.open(u"rb"),
+                              u'status':self.status_fp,
+                              u'stderr':self.stderr_fp}
+            else:
+                self.status_fp = None
+                gpg_attach = {u'stdin':encrypt_path.open(u"rb"),
+                              u'stderr':self.stderr_fp}
             # Skip the passphrase if using the agent
             if config.use_agent:
                 gnupg_fhs = [u'stdout', ]
             else:
                 gnupg_fhs = [u'stdout', u'passphrase']
             p1 = gnupg.run([u'--decrypt'], create_fhs=gnupg_fhs,
-                           attach_fhs={u'stdin': encrypt_path.open(u"rb"),
-                                       u'status': self.status_fp,
-                                       u'stderr': self.stderr_fp})
+                           attach_fhs=gpg_attach)
             if not config.use_agent:
                 p1.handles[u'passphrase'].write(passphrase)
                 p1.handles[u'passphrase'].close()
