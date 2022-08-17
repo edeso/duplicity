@@ -63,29 +63,6 @@ class CodeTest(DuplicityTestCase):
                         f"Test failed: returncode = {process.returncode}")
 
     @skipCodeTest
-    def test_2to3(self):
-        # As we modernize the source code, we can remove more and more nofixes
-        self.run_checker([
-            "2to3",
-            "--nofix=next",
-            "--nofix=types",
-            "--nofix=unicode",
-            # The following fixes we don't want to remove, since they are false
-            # positives, things we don't care about, or real incompatibilities
-            # but which 2to3 can fix for us better automatically.
-            "--nofix=callable",
-            "--nofix=dict",
-            "--nofix=future",
-            "--nofix=imports",
-            "--nofix=print",
-            "--nofix=raw_input",
-            "--nofix=urllib",
-            "--nofix=xrange",
-            "--nofix=map",
-        ] + files_to_test
-        )
-
-    @skipCodeTest
     def test_pylint(self):
         """Pylint test (requires pylint to be installed to pass)"""
         self.run_checker([
