@@ -133,6 +133,7 @@ class GPGFile(object):
         """
         self.status_fp = None  # used to find signature
         self.closed = None  # set to true after file closed
+        self.stderr_fp = open(u"/dev/null", u"wb")
         self.name = encrypt_path
         self.byte_count = 0
         self.signature = None
@@ -202,7 +203,8 @@ class GPGFile(object):
             else:
                 gnupg_fhs = [u'stdin', u'passphrase']
             p1 = gnupg.run(cmdlist, create_fhs=gnupg_fhs,
-                           attach_fhs={u'stdout': encrypt_path.open(u"wb")})
+                           attach_fhs={u'stdout': encrypt_path.open(u"wb"),
+                                       u'stderr': self.stderr_fp})
             if not config.use_agent:
                 p1.handles[u'passphrase'].write(passphrase)
                 p1.handles[u'passphrase'].close()
@@ -214,10 +216,12 @@ class GPGFile(object):
             if profile.sign_key:
                 self.status_fp = tempfile.TemporaryFile(dir=tempdir.default().dir())
                 gpg_attach = {u'stdin': encrypt_path.open(u"rb"),
-                              u'status': self.status_fp}
+                              u'status': self.status_fp,
+                              u'stderr': self.stderr_fp}
             else:
                 self.status_fp = None
-                gpg_attach = {u'stdin': encrypt_path.open(u"rb")}
+                gpg_attach = {u'stdin': encrypt_path.open(u"rb"),
+                              u'stderr': self.stderr_fp}
             # Skip the passphrase if using the agent
             if config.use_agent:
                 gnupg_fhs = [u'stdout', ]
@@ -298,6 +302,7 @@ class GPGFile(object):
                 self.gpg_process.wait()
             except Exception:
                 self.gpg_failed()
+        self.stderr_fp.close()
         self.closed = 1
 
     def set_signature(self):
