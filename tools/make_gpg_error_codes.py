@@ -25,10 +25,10 @@ import subprocess
 
 code_line_re = re.compile(r"^(\d+)\t+([A-Z_]+)\t+(.*)$")
 
-# p = subprocess.run(["curl", "https://raw.githubusercontent.com/gpg/libgpg-error/master/src/err-codes.h.in",
-#                "--output", "/tmp/error-codes.h.in"])
-# if p.returncode:
-#     raise subprocess.CalledProcessError
+p = subprocess.run(["curl", "https://raw.githubusercontent.com/gpg/libgpg-error/master/src/err-codes.h.in",
+               "--output", "/tmp/error-codes.h.in"])
+if p.returncode:
+    raise subprocess.CalledProcessError
 
 lines = open(u"/tmp/error-codes.h.in").readlines()
 
@@ -48,6 +48,6 @@ print(u"gpg_error_codes = {", file=output)
 for line in lines:
     match = code_line_re.match(line)
     if match:
-        print(f"    {match.group(1)}: u'{match.group(2)}: {match.group(3)}',", file=output)
+        print(f"    {match.group(1)}: u'{match.group(2)}: ' + _(u'{match.group(3)}'),", file=output)
 
 print(u"}", file=output)
