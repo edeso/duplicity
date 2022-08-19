@@ -25,8 +25,8 @@ import subprocess
 
 code_line_re = re.compile(r"^(\d+)\t+([A-Z_]+)\t+(.*)$")
 
-p = subprocess.run(["curl", "https://raw.githubusercontent.com/gpg/libgpg-error/master/src/err-codes.h.in",
-               "--output", "/tmp/error-codes.h.in"])
+p = subprocess.run([u"curl", u"https://raw.githubusercontent.com/gpg/libgpg-error/master/src/err-codes.h.in",
+               u"--output", u"/tmp/error-codes.h.in"])
 if p.returncode:
     raise subprocess.CalledProcessError
 
