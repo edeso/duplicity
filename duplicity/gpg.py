@@ -267,8 +267,10 @@ class GPGFile(object):
             self.read(offset - self.byte_count)
 
     def gpg_failed(self):
-        if not self.gpg_process.returncode == 14:
-            raise GPGError(gpg_error_codes[self.gpg_process.returncode])
+        ret = self.gpg_process.returned >> 8
+        if ret != 2:
+            msg = gpg_error_codes.get(ret, u"GPG returned an unknown error code: %d" % ret)
+            raise GPGError(msg)
         else:
             return u""
 
