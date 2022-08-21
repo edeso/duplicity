@@ -310,7 +310,7 @@ def start_debugger(remote=False):
             os.environ[u'PATHS_FROM_ECLIPSE_TO_PYTHON'] = json.dumps(pathlist)
 
         import pydevd  # pylint: disable=import-error
-        pydevd.settrace(u'dione.local', port=5678, stdoutToServer=True, stderrToServer=True)
+        pydevd.settrace(u'dione.local', port=6700, stdoutToServer=True, stderrToServer=True)
 
         # In a dev environment the path is screwed so fix it.
         base = sys.path.pop(0)
