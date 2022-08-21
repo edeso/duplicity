@@ -219,8 +219,6 @@ class GPGFile(object):
             if profile.sign_key:
                 self.status_fp = tempfile.TemporaryFile(dir=tempdir.default().dir())
                 gpg_attach[u'status'] = self.status_fp
-            else:
-                self.status_fp = None
             # Skip the passphrase if using the agent
             if config.use_agent:
                 gnupg_fhs = [u'stdout', ]
