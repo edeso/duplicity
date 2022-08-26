@@ -265,9 +265,11 @@ class GPGFile(object):
             self.read(offset - self.byte_count)
 
     def gpg_failed(self):
-        ret = self.gpg_process.returned >> 8
-        msg = gpg_error_codes.get(ret, u"GPG returned an unknown error code: %d" % ret)
-        if ret != 2:
+        if self.gpg_process.returned:
+            retcode = self.gpg_process.returned >> 8
+            msg = gpg_error_codes.get(retcode,
+                                      u"GPG returned an unknown error code: %d" % retcode) + u"\n"
+        if retcode != 2:
             msg += u"GPG Failed, see log below:\n"
             msg += u"===== Begin GnuPG log =====\n"
             self.stderr_fp.seek(0)
