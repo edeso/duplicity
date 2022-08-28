@@ -179,11 +179,11 @@ class GPGWriteFile_Helper(object):
     u"""Used in test_GPGWriteFile above"""
     def __init__(self):
         self.from_random_fp = open(u"/dev/urandom", u"rb")
-        self.at_end = 0
+        self.at_end = False
 
     def set_at_end(self):
         u"""Iterator stops when you call this"""
-        self.at_end = 1
+        self.at_end = True
 
     def get_buffer(self, size):
         u"""Return buffer of size size, consisting of half random data"""

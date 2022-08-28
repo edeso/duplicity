@@ -232,11 +232,15 @@ import fcntl
 
 from duplicity import log
 
+# TODO: remove dummy_threading import after Python 3.7 EOL
 try:
     import threading
 except ImportError:
-    import dummy_threading as threading
-    log.Warn(_(u"Threading not available -- zombie processes may appear"))
+    try:
+        import dummy_threading as threading
+        log.Warn(_(u"Threading not available -- zombie processes may appear"))
+    except ImportError:
+        log.FatalError(u"Neither threading nor dummy_threading available.")
 
 __author__ = u"Frank J. Tobin, ftobin@neverending.org"
 __version__ = u"0.3.2"
