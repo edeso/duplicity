@@ -2332,13 +2332,17 @@ duplicity will keep the authentication token - this location must be
 writable.
 
 During the first run, you will be prompted to visit an URL in your
-browser to grant access to your drive. An HTTP server will be started
-locally on port 8080 to receive the redirect from this browser based
-authorization flow. If you are running duplicity on a remote server,
-you will need to port forward port 8080 from the machine where you do
-the web based authentication. Once granted, you will receive a
-verification code to paste back into Duplicity. The credentials are
-then cached in the file references above for future use.
+browser to grant access to your Google Drive. An HTTP server will be
+started locally to receive the redirect from this authentication
+flow. By default, the server will start on port 8080 but you can
+override that with the environment variable
+GOOGLE_OAUTH_LOCAL_SERVER_PORT.  If you are running duplicity on a
+remote server, you will need to either port forward from the machine
+where you do the web based authentication or use the argument
+GOOGLE_OAUTH_LOCAL_SERVER_HOST to the host name which refers to this
+remote server from the machine doing the web based authentication
+flow. The credentials are then cached in the file references above for
+future use.
 
 As a sanity check, GDrive checks the host and username from the URL
 against the JSON key, and refuses to proceed if the addresses do not
