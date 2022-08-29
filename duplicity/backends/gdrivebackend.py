@@ -64,6 +64,10 @@ Exception: %s""" % str(e))
         # both methods use a Google Services Account
         # export GOOGLE_SERVICE_JSON_FILE=<serviceaccount-credentials.json>
         # export GOOGLE_SERVICE_ACCOUNT_URL=<serviceaccount-name>@<serviceaccount-name>.iam.gserviceaccount.com
+        #
+        # Note that a local http server will be created on port 8080 to receive the redirect from the Google
+        # OAuth service. If you are running on a remote server, you will need to port forward 8080 from the machine
+        # which will do the web based authentication.
 
         self.shared_drive_corpora = {}
         self.shared_drive_id = {}
@@ -118,7 +122,7 @@ Exception: %s""" % str(e))
                             u'Client ID in the JSON file (%s) does not match the URL (%s)' %
                             (flow.client_config[u'client_id'], client_id))
 
-                    credentials = flow.run_console()
+                    credentials = flow.run_local_server()
                 # Save the credentials for the next run
                 with open(os.environ[u'GOOGLE_CREDENTIALS_FILE'], u'wb') as token:
                     pickle.dump(credentials, token)
