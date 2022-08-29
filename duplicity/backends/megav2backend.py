@@ -20,13 +20,12 @@
 
 from __future__ import print_function
 
-from duplicity import util
-from duplicity.errors import BackendException
-import duplicity.backend
-
 import os
-import subprocess
 import re
+import subprocess
+
+import duplicity.backend
+from duplicity.errors import BackendException
 
 
 class Megav2Backend(duplicity.backend.Backend):

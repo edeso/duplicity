@@ -22,11 +22,15 @@
 
 from __future__ import print_function
 
-import pytest
 import unittest
 
+import pytest
+
 from testing import _runtest_dir
-from . import CmdError, FunctionalTestCase
+from . import (
+    CmdError,
+    FunctionalTestCase,
+)
 
 
 class BadUploadTest(FunctionalTestCase):

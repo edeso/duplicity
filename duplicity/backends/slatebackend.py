@@ -16,17 +16,16 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+import json
 import os
 import shutil
-import requests
-import json
 import urllib.request
 from pathlib import Path
-import time
+
+import requests
 
 import duplicity.backend
 from duplicity import log
-from duplicity import util
 from duplicity.errors import BackendException
 
 

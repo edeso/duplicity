@@ -19,11 +19,12 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from __future__ import print_function
+
 import os.path
 import string
-import urllib.request  # pylint: disable=import-error
-import urllib.parse  # pylint: disable=import-error
 import urllib.error  # pylint: disable=import-error
+import urllib.parse  # pylint: disable=import-error
+import urllib.request  # pylint: disable=import-error
 
 import duplicity.backend
 from duplicity import __version__

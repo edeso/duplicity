@@ -20,13 +20,18 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from __future__ import print_function
+
 import os
 import re
 import tempfile
 
 import duplicity.backend
+from duplicity import (
+    config,
+    tempdir,
+    util,
+)
 from duplicity.errors import InvalidBackendURL
-from duplicity import config, tempdir, util
 
 
 class RsyncBackend(duplicity.backend.Backend):

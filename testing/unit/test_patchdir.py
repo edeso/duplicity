@@ -22,16 +22,12 @@
 from __future__ import print_function
 
 import io
-import os
 import platform
 import unittest
 
 from duplicity import diffdir
 from duplicity import patchdir
 from duplicity import selection
-from duplicity import tarfile
-from duplicity import librsync
-from duplicity.lazy import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 from duplicity.path import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 from testing import _runtest_dir
 from . import UnitTestCase

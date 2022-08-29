@@ -28,18 +28,14 @@
 
 from __future__ import print_function
 
-import json
-import os
 import sys
 
-from duplicity.dup_main import main
 import duplicity.errors
-
 from duplicity import gpg
 from duplicity import log
 from duplicity import tempdir
 from duplicity import util
-
+from duplicity.dup_main import main
 
 if sys.version_info[:2] > (3, 7):
     sys.stdout.reconfigure(errors=u'surrogateescape')

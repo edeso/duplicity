@@ -27,16 +27,19 @@ import http.client
 import os
 import re
 import shutil
-import urllib.request  # pylint: disable=import-error
-import urllib.parse  # pylint: disable=import-error
 import urllib.error  # pylint: disable=import-error
+import urllib.parse  # pylint: disable=import-error
+import urllib.request  # pylint: disable=import-error
 import xml.dom.minidom
 
 import duplicity.backend
 from duplicity import config
 from duplicity import log
 from duplicity import util
-from duplicity.errors import BackendException, FatalBackendException
+from duplicity.errors import (
+    BackendException,
+    FatalBackendException,
+)
 
 
 class CustomMethodRequest(urllib.request.Request):

@@ -23,13 +23,13 @@
 
 from __future__ import print_function
 
-from copy import copy
+import io
 import optparse
 import os
 import re
-import sys
 import socket
-import io
+import sys
+from copy import copy
 
 try:
     from hashlib import md5
@@ -43,8 +43,6 @@ from duplicity import gpg
 from duplicity import log
 from duplicity import path
 from duplicity import selection
-from duplicity import util
-
 
 select_opts = []  # Will hold all the selection options
 select_files = []  # Will hold file objects when filelist given

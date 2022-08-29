@@ -23,9 +23,8 @@
 
 from __future__ import print_function
 
-import unittest
 import pickle
-import sys
+import unittest
 from functools import reduce
 
 from duplicity.lazy import *  # pylint: disable=unused-wildcard-import,redefined-builtin

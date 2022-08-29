@@ -32,13 +32,17 @@
 from __future__ import print_function
 
 import copy
-import fasteners
 import os
 import platform
 import resource
 import sys
 import time
+from datetime import datetime
 
+import fasteners
+
+import duplicity.config as config
+import duplicity.errors
 from duplicity import __version__
 from duplicity import asyncscheduler
 from duplicity import commandline
@@ -47,7 +51,6 @@ from duplicity import dup_collections
 from duplicity import dup_temp
 from duplicity import dup_time
 from duplicity import file_naming
-from duplicity import config
 from duplicity import gpg
 from duplicity import log
 from duplicity import manifest
@@ -56,12 +59,7 @@ from duplicity import path
 from duplicity import progress
 from duplicity import tempdir
 from duplicity import util
-import duplicity.errors
 from duplicity.errors import BadVolumeException
-
-import duplicity.config as config
-
-from datetime import datetime
 
 # If exit_val is not None, exit with given value at end.
 exit_val = None

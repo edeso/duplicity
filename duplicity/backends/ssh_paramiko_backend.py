@@ -30,12 +30,11 @@ import os
 import re
 import sys
 import warnings
-
 from binascii import hexlify
 
 import duplicity.backend
-from duplicity import progress
 from duplicity import config
+from duplicity import progress
 from duplicity import util
 from duplicity.errors import BackendException
 

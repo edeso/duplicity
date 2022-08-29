@@ -29,11 +29,10 @@ from __future__ import division
 import os
 import re
 
+import duplicity.backend
 from duplicity import config
 from duplicity import log
-from duplicity import util
 from duplicity.errors import BackendException
-import duplicity.backend
 
 
 class SSHPExpectBackend(duplicity.backend.Backend):

@@ -26,7 +26,10 @@ import os
 import unittest
 
 from testing import _runtest_dir
-from . import CmdError, FunctionalTestCase
+from . import (
+    CmdError,
+    FunctionalTestCase,
+)
 
 
 class VerifyTest(FunctionalTestCase):

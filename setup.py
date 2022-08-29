@@ -25,12 +25,10 @@ from __future__ import print_function
 import os
 import re
 import shutil
-import subprocess
 import sys
 import time
-
-from distutils.command.build_scripts import build_scripts
 from distutils.command.install_data import install_data
+
 from setuptools import (
     setup,
     Extension,

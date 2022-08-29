@@ -21,16 +21,14 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-import os
-import stat
 import sys
-import re
 
-from duplicity import config
 from duplicity import diffdir
-from duplicity import log
-from duplicity import util
-from duplicity.globmatch import GlobbingError, FilePrefixError, select_fn_from_glob
+from duplicity.globmatch import (
+    GlobbingError,
+    FilePrefixError,
+    select_fn_from_glob,
+)
 from duplicity.path import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 
 """Iterate exactly the requested files in a directory

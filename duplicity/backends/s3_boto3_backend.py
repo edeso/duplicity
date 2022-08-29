@@ -23,9 +23,11 @@
 import duplicity.backend
 from duplicity import config
 from duplicity import log
-from duplicity.errors import FatalBackendException, BackendException
-from duplicity import util
 from duplicity import progress
+from duplicity.errors import (
+    FatalBackendException,
+    BackendException,
+)
 
 
 # Note: current gaps with the old boto backend include:

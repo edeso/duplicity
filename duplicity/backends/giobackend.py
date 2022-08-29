@@ -18,10 +18,10 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-import os
-import subprocess
 import atexit
+import os
 import signal
+import subprocess
 
 import duplicity.backend
 from duplicity import log

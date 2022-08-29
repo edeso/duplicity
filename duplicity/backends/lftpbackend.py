@@ -28,9 +28,10 @@
 import os
 import os.path
 import re
-import urllib.request  # pylint: disable=import-error
-import urllib.parse  # pylint: disable=import-error
 import urllib.error  # pylint: disable=import-error
+import urllib.parse  # pylint: disable=import-error
+import urllib.request  # pylint: disable=import-error
+
 try:
     from shlex import quote as cmd_quote
 except ImportError:
@@ -40,7 +41,6 @@ import duplicity.backend
 from duplicity import config
 from duplicity import log
 from duplicity import tempdir
-from duplicity import util
 
 
 class LFTPBackend(duplicity.backend.Backend):

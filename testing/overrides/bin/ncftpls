@@ -2,10 +2,11 @@
 
 from __future__ import print_function
 
-from duplicity.backend import ParsedUrl
 import os
 import subprocess
 import sys
+
+from duplicity.backend import ParsedUrl
 
 if sys.argv[1] == '-v':
     print('blah 3.2.1')

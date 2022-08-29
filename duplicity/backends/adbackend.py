@@ -19,19 +19,20 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import print_function
 from __future__ import division
-import os.path
+from __future__ import print_function
+
 import json
+import os.path
+import re
 import sys
 import time
-import re
 from io import DEFAULT_BUFFER_SIZE
 
 import duplicity.backend
-from duplicity.errors import BackendException
 from duplicity import config
 from duplicity import log
+from duplicity.errors import BackendException
 
 
 class ADBackend(duplicity.backend.Backend):

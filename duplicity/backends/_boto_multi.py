@@ -23,7 +23,6 @@
 from __future__ import division
 
 import os
-import psutil
 import queue
 import socket
 import sys
@@ -32,11 +31,9 @@ import time
 import traceback
 
 from duplicity import config
-from duplicity import log
 from duplicity import progress
 from duplicity.errors import *  # pylint: disable=unused-wildcard-import
 from duplicity.filechunkio import FileChunkIO
-
 from ._boto_single import BotoBackend as BotoSingleBackend
 from ._boto_single import get_connection
 

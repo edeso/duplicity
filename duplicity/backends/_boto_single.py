@@ -20,16 +20,19 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from __future__ import division
-from concurrent.futures import ThreadPoolExecutor
+
 import os
 import time
+from concurrent.futures import ThreadPoolExecutor
 
 import duplicity.backend
 from duplicity import config
 from duplicity import log
-from duplicity.errors import FatalBackendException, BackendException
 from duplicity import progress
-from duplicity import util
+from duplicity.errors import (
+    FatalBackendException,
+    BackendException,
+)
 
 BOTO_MIN_VERSION = "2.1.1"
 
