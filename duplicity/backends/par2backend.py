@@ -77,20 +77,20 @@ class Par2Backend(backend.Backend):
         source_symlink = par2temp.append(remote_filename)
         source_target = source_path.get_canonical()
         if not os.path.isabs(source_target):
-            source_target = os.path.join(util.fsencode(os.getcwd()), source_target)
+            source_target = os.path.join(os.fsencode(os.getcwd()), source_target)
         os.symlink(source_target, source_symlink.get_canonical())
         source_symlink.setdata()
 
         log.Info("Create Par2 recovery files")
         par2create = 'par2 c -r%d -n%d %s "%s"' % (self.redundancy, self.volumes,
                                                    self.common_options,
-                                                   util.fsdecode(source_symlink.get_canonical()))
+                                                   os.fsdecode(source_symlink.get_canonical()))
         returncode, out, err = self.subprocess_popen(par2create)
 
         if returncode:
             log.Warn("Failed to create par2 file with requested options, retrying with -n1")
             par2create = 'par2 c -r%d -n1 %s "%s"' % (self.redundancy, self.common_options,
-                                                      util.fsdecode(source_symlink.get_canonical()))
+                                                      os.fsdecode(source_symlink.get_canonical()))
             returncode, out, err = self.subprocess_popen(par2create)
             if not returncode:
                 log.Warn("Successfully created par2 file with -n1")
@@ -135,22 +135,22 @@ class Par2Backend(backend.Backend):
             self.wrapped_backend._get(par2file.get_filename(), par2file)
 
             par2verify = 'par2 v %s %s "%s"' % (self.common_options,
-                                                util.fsdecode(par2file.get_canonical()),
-                                                util.fsdecode(local_path_temp.get_canonical()))
+                                                os.fsdecode(par2file.get_canonical()),
+                                                os.fsdecode(local_path_temp.get_canonical()))
             returncode, out, err = self.subprocess_popen(par2verify)
 
             if returncode:
                 log.Warn("File is corrupt. Try to repair %s" % remote_filename)
                 c = re.compile('%s\\.vol[\\d+]*\\.par2' % remote_filename.decode())
-                par2volumes = [f for f in self.wrapped_backend._list() if c.match(util.fsdecode(f))]
+                par2volumes = [f for f in self.wrapped_backend._list() if c.match(os.fsdecode(f))]
 
                 for filename in par2volumes:
                     file = par2temp.append(filename)
                     self.wrapped_backend._get(filename, file)
 
                 par2repair = 'par2 r %s %s "%s"' % (self.common_options,
-                                                    util.fsdecode(par2file.get_canonical()),
-                                                    util.fsdecode(local_path_temp.get_canonical()))
+                                                    os.fsdecode(par2file.get_canonical()),
+                                                    os.fsdecode(local_path_temp.get_canonical()))
                 returncode, out, err = self.subprocess_popen(par2repair)
 
                 if returncode:
@@ -171,10 +171,10 @@ class Par2Backend(backend.Backend):
 
         remote_list = self.unfiltered_list()
 
-        c = re.compile('%s(?:\\.vol[\\d+]*)?\\.par2' % util.fsdecode(filename))
+        c = re.compile('%s(?:\\.vol[\\d+]*)?\\.par2' % os.fsdecode(filename))
         for remote_filename in remote_list:
-            if c.match(util.fsdecode(remote_filename)):
-                self.wrapped_backend._delete(util.fsencode(remote_filename))
+            if c.match(os.fsdecode(remote_filename)):
+                self.wrapped_backend._delete(os.fsencode(remote_filename))
 
     def delete_list(self, filename_list):
         """delete given filename_list and all .par2 files that belong to them
@@ -182,9 +182,9 @@ class Par2Backend(backend.Backend):
         remote_list = self.unfiltered_list()
 
         for filename in filename_list[:]:
-            c = re.compile('%s(?:\\.vol[\\d+]*)?\\.par2' % util.fsdecode(filename))
+            c = re.compile('%s(?:\\.vol[\\d+]*)?\\.par2' % os.fsdecode(filename))
             for remote_filename in remote_list:
-                if c.match(util.fsdecode(remote_filename)):
+                if c.match(os.fsdecode(remote_filename)):
                     # insert here to make sure par2 files will be removed first
                     filename_list.insert(0, remote_filename)
 
@@ -205,7 +205,7 @@ class Par2Backend(backend.Backend):
         c = re.compile('(?!.*\\.par2$)')
         filtered_list = []
         for filename in remote_list:
-            if c.match(util.fsdecode(filename)):
+            if c.match(os.fsdecode(filename)):
                 filtered_list.append(filename)
         return filtered_list
 

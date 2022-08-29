@@ -30,13 +30,13 @@ class SXBackend(duplicity.backend.Backend):
         self.url_string = parsed_url.url_string
 
     def _put(self, source_path, remote_filename):
-        remote_filename = util.fsdecode(remote_filename)
+        remote_filename = os.fsdecode(remote_filename)
         remote_path = os.path.join(self.url_string, remote_filename)
         commandline = "sxcp {0} {1}".format(source_path.uc_name, remote_path)
         self.subprocess_popen(commandline)
 
     def _get(self, remote_filename, local_path):
-        remote_filename = util.fsdecode(remote_filename)
+        remote_filename = os.fsdecode(remote_filename)
         remote_path = os.path.join(self.url_string, remote_filename)
         commandline = "sxcp {0} {1}".format(remote_path, local_path.uc_name)
         self.subprocess_popen(commandline)
@@ -46,7 +46,7 @@ class SXBackend(duplicity.backend.Backend):
         commandline = "sxls {0}/".format(self.url_string)
         _, l, _ = self.subprocess_popen(commandline)
         # Look for our files as the last element of a long list line
-        return [util.fsencode(x[x.rindex('/') + 1:].split()[-1]) for x in l.split('\n')
+        return [os.fsencode(x[x.rindex('/') + 1:].split()[-1]) for x in l.split('\n')
                 if x and not x.startswith("total ")]
 
     def _delete(self, filename):

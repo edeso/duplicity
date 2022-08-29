@@ -21,15 +21,14 @@
 
 """Classes and functions on collections of backup volumes"""
 
+import os
 
-import sys
-
-from duplicity import log
-from duplicity import file_naming
-from duplicity import path
-from duplicity import dup_time
 from duplicity import config
+from duplicity import dup_time
+from duplicity import file_naming
+from duplicity import log
 from duplicity import manifest
+from duplicity import path
 from duplicity import util
 from duplicity.gpg import GPGError
 
@@ -110,8 +109,8 @@ class BackupSet(object):
                 "%s" has the same volume number.
                 Please check your command line and retry.""" % (
                     pr.volume_number,
-                    util.fsdecode(self.volume_name_dict[pr.volume_number]),
-                    util.fsdecode(filename)
+                    os.fsdecode(self.volume_name_dict[pr.volume_number]),
+                    os.fsdecode(filename)
                 )
             self.volume_name_dict[pr.volume_number] = filename
 
@@ -174,7 +173,7 @@ class BackupSet(object):
         try:
             self.backend.delete(rfn)
         except Exception:
-            log.Debug(_("BackupSet.delete: missing %s") % [util.fsdecode(f) for f in rfn])
+            log.Debug(_("BackupSet.delete: missing %s") % [os.fsdecode(f) for f in rfn])
             pass
         if self.action != "replicate":
             local_filename_list = config.archive_dir_path.listdir()
@@ -188,7 +187,7 @@ class BackupSet(object):
                 try:
                     config.archive_dir_path.append(lfn).delete()
                 except Exception:
-                    log.Debug(_("BackupSet.delete: missing %s") % [util.fsdecode(f) for f in lfn])
+                    log.Debug(_("BackupSet.delete: missing %s") % [os.fsdecode(f) for f in lfn])
                     pass
         util.release_lockfile()
 
@@ -200,7 +199,7 @@ class BackupSet(object):
         if self.remote_manifest_name:
             filelist.append(self.remote_manifest_name)
         filelist.extend(list(self.volume_name_dict.values()))
-        return "[%s]" % ", ".join(map(util.fsdecode, filelist))
+        return "[%s]" % ", ".join(map(os.fsdecode, filelist))
 
     def get_timestr(self):
         """
@@ -254,10 +253,10 @@ class BackupSet(object):
             manifest_buffer = self.backend.get_data(self.remote_manifest_name)
         except GPGError as message:
             log.Error(_("Error processing remote manifest (%s): %s") %
-                      (util.fsdecode(self.remote_manifest_name), util.uexc(message)))
+                      (os.fsdecode(self.remote_manifest_name), util.uexc(message)))
             return None
         log.Info(_("Processing remote manifest %s (%s)") % (
-            util.fsdecode(self.remote_manifest_name), len(manifest_buffer)))
+            os.fsdecode(self.remote_manifest_name), len(manifest_buffer)))
         return manifest.Manifest().from_string(manifest_buffer)
 
     def get_manifest(self):
@@ -804,7 +803,7 @@ class CollectionsStatus(object):
                               "Warning, found the following local orphaned "
                               "signature files:",
                               len(self.local_orphaned_sig_names)) + "\n" +
-                     "\n".join(map(util.fsdecode, self.local_orphaned_sig_names)),
+                     "\n".join(map(os.fsdecode, self.local_orphaned_sig_names)),
                      log.WarningCode.orphaned_sig)
 
         if self.remote_orphaned_sig_names:
@@ -813,7 +812,7 @@ class CollectionsStatus(object):
                               "Warning, found the following remote orphaned "
                               "signature files:",
                               len(self.remote_orphaned_sig_names)) + "\n" +
-                     "\n".join(map(util.fsdecode, self.remote_orphaned_sig_names)),
+                     "\n".join(map(os.fsdecode, self.remote_orphaned_sig_names)),
                      log.WarningCode.orphaned_sig)
 
         if self.all_sig_chains and sig_chain_warning and not self.matched_chain_pair:
@@ -843,7 +842,7 @@ class CollectionsStatus(object):
         missing files.
         """
         log.Debug(_("Extracting backup chains from list of files: %s")
-                  % [util.fsdecode(f) for f in filename_list])
+                  % [os.fsdecode(f) for f in filename_list])
         # First put filenames in set form
         sets = []
 
@@ -854,15 +853,15 @@ class CollectionsStatus(object):
             pr = file_naming.parse(filename)
             for set in sets:  # pylint: disable=redefined-builtin
                 if set.add_filename(filename, pr):
-                    log.Debug(_("File %s is part of known set") % (util.fsdecode(filename),))
+                    log.Debug(_("File %s is part of known set") % (os.fsdecode(filename),))
                     break
             else:
-                log.Debug(_("File %s is not part of a known set; creating new set") % (util.fsdecode(filename),))
+                log.Debug(_("File %s is not part of a known set; creating new set") % (os.fsdecode(filename),))
                 new_set = BackupSet(self.backend, self.action)
                 if new_set.add_filename(filename, pr):
                     sets.append(new_set)
                 else:
-                    log.Debug(_("Ignoring file (rejected by backup set) '%s'") % util.fsdecode(filename))
+                    log.Debug(_("Ignoring file (rejected by backup set) '%s'") % os.fsdecode(filename))
 
         for f in filename_list:
             add_to_sets(f)
@@ -1204,7 +1203,7 @@ class CollectionsStatus(object):
         specified_file_backup_set = []
         specified_file_backup_type = []
 
-        modified_filepath = util.fsencode(modified_filepath)
+        modified_filepath = os.fsencode(modified_filepath)
         for bs in all_backup_set:
             filelist = [fileinfo[1] for fileinfo in bs.get_files_changed()]
             if modified_filepath in filelist:

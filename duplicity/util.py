@@ -25,51 +25,19 @@ Miscellaneous utilities.
 
 from __future__ import print_function
 
+import atexit
 import csv
 import errno
 import json
 import os
-import string
 import sys
 import traceback
-import atexit
 
 from io import StringIO
 
-from duplicity import tarfile
 import duplicity.config as config
 import duplicity.log as log
-
-try:
-    # For paths, just use path.name/uname rather than converting with these
-    from os import fsencode, fsdecode  # pylint: disable=unused-import
-except ImportError:
-    # Most likely Python version < 3.2, so define our own fsencode/fsdecode.
-    # These are functions that encode/decode unicode paths to filesystem encoding,
-    # but the cleverness is that they handle non-unicode characters on Linux
-    # There is a *partial* backport to python available here:
-    # https://github.com/pjdelport/backports.os/blob/master/src/backports/os.py
-    # but if it cannot be trusted for full-circle translation, then we may as well
-    # just read and store the bytes version of the path as path.name before
-    # creating the unicode version (for path matching etc) and ensure that in
-    # real-world usage (as opposed to testing) we create the path objects from a
-    # bytes string.
-    # ToDo: Revisit this once we drop Python 2 support/the backport is complete
-
-    def fsencode(unicode_filename):
-        """Convert a unicode filename to a filename encoded in the system encoding"""
-        # For paths, just use path.name rather than converting with this
-        # If we are not doing any cleverness with non-unicode filename bytes,
-        # encoding to system encoding is good enough
-        return unicode_filename.encode(sys.getfilesystemencoding(), "replace")
-
-    def fsdecode(bytes_filename):
-        """Convert a filename encoded in the system encoding to unicode"""
-        # For paths, just use path.uc_name rather than converting with this
-        # If we are not doing any cleverness with non-unicode filename bytes,
-        # decoding using system encoding is good enough. Use "ignore" as
-        # Linux paths can contain non-Unicode characters
-        return bytes_filename.decode(config.fsencoding, "replace")
+from duplicity import tarfile
 
 
 def exception_traceback(limit=50):
@@ -90,14 +58,14 @@ def exception_traceback(limit=50):
 
 def escape(string):
     "Convert a (bytes) filename to a format suitable for logging (quoted utf8)"
-    string = fsdecode(string).encode('unicode-escape', 'replace')
+    string = os.fsdecode(string).encode('unicode-escape', 'replace')
     return "'%s'" % string.decode('utf8', 'replace').replace("'", '\\x27')
 
 
 def uindex(index):
     "Convert an index (a tuple of path parts) to unicode for printing"
     if index:
-        return os.path.join(*list(map(fsdecode, index)))
+        return os.path.join(*list(map(os.fsdecode, index)))
     else:
         return '.'
 
@@ -116,7 +84,7 @@ def uexc(e):
                 return m
             elif isinstance(m, bytes):
                 # Encoded, likely in filesystem encoding
-                return fsdecode(m)
+                return os.fsdecode(m)
         # If the function did not return yet, we did not
         # succeed in finding a string; return the whole message.
         # This fails for Python 2, so only do this in Python 3.

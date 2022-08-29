@@ -214,7 +214,7 @@ class BotoBackend(duplicity.backend.Backend):
         self.resetConnection()
 
     def _put(self, source_path, remote_filename):
-        remote_filename = util.fsdecode(remote_filename)
+        remote_filename = os.fsdecode(remote_filename)
 
         if config.s3_european_buckets:
             if not config.s3_use_new_style:
@@ -284,7 +284,7 @@ class BotoBackend(duplicity.backend.Backend):
                    rough_upload_speed))
 
     def _get(self, remote_filename, local_path):
-        remote_filename = util.fsdecode(remote_filename)
+        remote_filename = os.fsdecode(remote_filename)
         key_name = self.key_prefix + remote_filename
         self.pre_process_download(remote_filename, wait=True)
         key = self._listed_keys[key_name]
@@ -318,11 +318,11 @@ class BotoBackend(duplicity.backend.Backend):
         return filename_list
 
     def _delete(self, filename):
-        filename = util.fsdecode(filename)
+        filename = os.fsdecode(filename)
         self.bucket.delete_key(self.key_prefix + filename)
 
     def _query(self, filename):
-        filename = util.fsdecode(filename)
+        filename = os.fsdecode(filename)
         key = self.bucket.lookup(self.key_prefix + filename)
         if key is None:
             return {'size': -1}
@@ -359,6 +359,6 @@ class BotoBackend(duplicity.backend.Backend):
         # Used primarily to move all necessary files in Glacier to S3 at once
         with ThreadPoolExecutor(thread_name_prefix='s3-unfreeze-glacier') as executor:
             for remote_filename in remote_filenames:
-                remote_filename = util.fsdecode(remote_filename)
+                remote_filename = os.fsdecode(remote_filename)
                 executor.submit(self.pre_process_download, remote_filename, False)
         log.Info("Batch unfreezing from Glacier finished")

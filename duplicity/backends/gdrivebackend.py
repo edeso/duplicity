@@ -176,7 +176,7 @@ Exception: %s""" % str(e))
     def file_by_name(self, filename):
         from googleapiclient.errors import HttpError
 
-        filename = util.fsdecode(filename)
+        filename = os.fsdecode(filename)
 
         if filename in self.id_cache:
             # It might since have been locally moved, renamed or deleted, so we
@@ -234,7 +234,7 @@ Exception: %s""" % str(e))
     def _put(self, source_path, remote_filename):
         from googleapiclient.http import MediaFileUpload
 
-        remote_filename = util.fsdecode(remote_filename)
+        remote_filename = os.fsdecode(remote_filename)
         drive_file = self.file_by_name(remote_filename)
         if remote_filename.endswith('.gpg'):
             mime_type = 'application/pgp-encrypted'
@@ -275,7 +275,7 @@ Exception: %s""" % str(e))
         drive_file = self.file_by_name(remote_filename)
         request = self.drive.files().get_media(fileId=drive_file['id'],
                                                **self.shared_drive_flags_support)
-        with open(util.fsdecode(local_path.name), "wb") as fh:
+        with open(os.fsdecode(local_path.name), "wb") as fh:
             done = False
             downloader = MediaIoBaseDownload(fh, request)
             while done is False:
@@ -314,7 +314,7 @@ Exception: %s""" % str(e))
     def _delete(self, filename):
         file_id = self.id_by_name(filename)
         if file_id == '':
-            log.Warn("File '%s' does not exist while trying to delete it" % (util.fsdecode(filename),))
+            log.Warn("File '%s' does not exist while trying to delete it" % (os.fsdecode(filename),))
         else:
             self.drive.files().delete(fileId=file_id,
                                       **self.shared_drive_flags_support).execute()

@@ -133,7 +133,7 @@ Exception: %s""" % str(e))
         """Build relative URI"""
         return (
             'mf:' + self.folder["folderkey"] +
-            ('/' + util.fsdecode(filename))
+            ('/' + os.fsdecode(filename))
         )
 
 

@@ -96,18 +96,18 @@ class MegaBackend(duplicity.backend.Backend):
         'uploads file to Mega (deletes it first, to ensure it does not exist)'
 
         try:
-            self.delete(util.fsdecode(remote_filename))
+            self.delete(os.fsdecode(remote_filename))
         except Exception:
             pass
 
-        self.upload(local_file=util.fsdecode(source_path.get_canonical()),
-                    remote_file=util.fsdecode(remote_filename))
+        self.upload(local_file=os.fsdecode(source_path.get_canonical()),
+                    remote_file=os.fsdecode(remote_filename))
 
     def _get(self, remote_filename, local_path):
         'downloads file from Mega'
 
-        self.download(remote_file=util.fsdecode(remote_filename),
-                      local_file=util.fsdecode(local_path.name))
+        self.download(remote_file=os.fsdecode(remote_filename),
+                      local_file=os.fsdecode(local_path.name))
 
     def _list(self):
         'list files in the backup folder'
@@ -117,7 +117,7 @@ class MegaBackend(duplicity.backend.Backend):
     def _delete(self, filename):
         'deletes remote '
 
-        self.delete(remote_file=util.fsdecode(filename))
+        self.delete(remote_file=os.fsdecode(filename))
 
     def folder_contents(self, files_only=False):
         'lists contents of a folder, optionally ignoring subdirectories'
@@ -130,7 +130,7 @@ class MegaBackend(duplicity.backend.Backend):
             cmd = ['megals', '-', self._username, '-p', self._password, self._folder]
 
         files = subprocess.check_output(cmd)
-        files = util.fsdecode(files.strip()).split('\n')
+        files = os.fsdecode(files.strip()).split('\n')
 
         # remove the folder name, including the path separator
         files = [f[len(self._folder) + 1:] for f in files]
@@ -139,7 +139,7 @@ class MegaBackend(duplicity.backend.Backend):
         if files_only:
             files = [f for f in files if '/' not in f]
 
-        return [util.fsencode(f) for f in files]
+        return [os.fsencode(f) for f in files]
 
     def download(self, remote_file, local_file):
 

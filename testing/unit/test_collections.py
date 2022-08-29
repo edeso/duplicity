@@ -1,4 +1,3 @@
-from __future__ import print_function
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
 # Copyright 2002 Ben Escoto <ben@emerose.org>
@@ -26,14 +25,16 @@ import pytest
 import random
 import unittest
 
-from . import UnitTestCase
 from duplicity import backend
 from duplicity import config
 from duplicity import dup_collections
 from duplicity import dup_time
 from duplicity import gpg
 from duplicity import path
+
 from testing import _runtest_dir
+
+from . import UnitTestCase
 
 filename_list1 = [b"duplicity-full.2002-08-17T16:17:01-07:00.manifest.gpg",
                   b"duplicity-full.2002-08-17T16:17:01-07:00.vol1.difftar.gpg",

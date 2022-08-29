@@ -55,11 +55,11 @@ class RcloneBackend(duplicity.backend.Backend):
         if parsed_url.path.startswith("//"):
             self.remote_path = self.remote_path[2:].replace(":/", ":", 1)
 
-        self.remote_path = util.fsdecode(self.remote_path)
+        self.remote_path = os.fsdecode(self.remote_path)
 
     def _get(self, remote_filename, local_path):
-        remote_filename = util.fsdecode(remote_filename)
-        local_pathname = util.fsdecode(local_path.name)
+        remote_filename = os.fsdecode(remote_filename)
+        local_pathname = os.fsdecode(local_path.name)
         commandline = "%s copyto '%s/%s' '%s'" % (
             self.rclone_cmd, self.remote_path, remote_filename, local_pathname)
         rc, o, e = self._subprocess_safe_popen(commandline)
@@ -69,8 +69,8 @@ class RcloneBackend(duplicity.backend.Backend):
             raise BackendException("rclone returned rc = %d: %s" % (rc, e))
 
     def _put(self, source_path, remote_filename):
-        source_pathname = util.fsdecode(source_path.name)
-        remote_filename = util.fsdecode(remote_filename)
+        source_pathname = os.fsdecode(source_path.name)
+        remote_filename = os.fsdecode(remote_filename)
         commandline = "%s copyto '%s' '%s/%s'" % (
             self.rclone_cmd, source_pathname, self.remote_path, remote_filename)
         rc, o, e = self._subprocess_safe_popen(commandline)
@@ -88,10 +88,10 @@ class RcloneBackend(duplicity.backend.Backend):
             raise BackendException("rclone returned rc = %d: %s" % (rc, e))
         if not o:
             return filelist
-        return [util.fsencode(x) for x in o.split('\n') if x]
+        return [os.fsencode(x) for x in o.split('\n') if x]
 
     def _delete(self, remote_filename):
-        remote_filename = util.fsdecode(remote_filename)
+        remote_filename = os.fsdecode(remote_filename)
         commandline = "%s deletefile --drive-use-trash=false '%s/%s'" % (
             self.rclone_cmd, self.remote_path, remote_filename)
         rc, o, e = self._subprocess_safe_popen(commandline)

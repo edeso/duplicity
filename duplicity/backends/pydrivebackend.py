@@ -153,7 +153,7 @@ Exception: %s""" % str(e))
         except ImportError:
             from pydrive.files import ApiRequestError  # pylint: disable=import-error
 
-        filename = util.fsdecode(filename)  # PyDrive deals with unicode filenames
+        filename = os.fsdecode(filename)  # PyDrive deals with unicode filenames
 
         if filename in self.id_cache:
             # It might since have been locally moved, renamed or deleted, so we
@@ -203,7 +203,7 @@ Exception: %s""" % str(e))
             return drive_file['id']
 
     def _put(self, source_path, remote_filename):
-        remote_filename = util.fsdecode(remote_filename)
+        remote_filename = os.fsdecode(remote_filename)
         drive_file = self.file_by_name(remote_filename)
         if drive_file is None:
             # No existing file, make a new one
@@ -216,7 +216,7 @@ Exception: %s""" % str(e))
         else:
             log.Info("PyDrive backend: replacing existing file '%s' with id '%s'" % (
                 remote_filename, drive_file['id']))
-        drive_file.SetContentFile(util.fsdecode(source_path.name))
+        drive_file.SetContentFile(os.fsdecode(source_path.name))
         if self.shared_drive_id:
             drive_file.Upload(param={'supportsTeamDrives': True})
         else:
@@ -225,7 +225,7 @@ Exception: %s""" % str(e))
 
     def _get(self, remote_filename, local_path):
         drive_file = self.file_by_name(remote_filename)
-        drive_file.GetContentFile(util.fsdecode(local_path.name))
+        drive_file.GetContentFile(os.fsdecode(local_path.name))
 
     def _list(self):
         list_file_args = {
@@ -246,7 +246,7 @@ Exception: %s""" % str(e))
     def _delete(self, filename):
         file_id = self.id_by_name(filename)
         if file_id == '':
-            log.Warn("File '%s' does not exist while trying to delete it" % (util.fsdecode(filename),))
+            log.Warn("File '%s' does not exist while trying to delete it" % (os.fsdecode(filename),))
         elif self.shared_drive_id:
             self.drive.auth.service.files().delete(fileId=file_id, param={'supportsTeamDrives': True}).execute()
         else:

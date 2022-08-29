@@ -45,7 +45,7 @@ _bin_dir = os.path.join(_testing_dir, 'overrides', 'bin')
 if platform.system().startswith('Darwin'):
     # Use temp space from getconf, never /tmp
     _runtest_dir = subprocess.check_output(['getconf', 'DARWIN_USER_TEMP_DIR'])
-    _runtest_dir = util.fsdecode(_runtest_dir).rstrip().rstrip('/')
+    _runtest_dir = os.fsdecode(_runtest_dir).rstrip().rstrip('/')
 else:
     _runtest_dir = os.getenv('TMPDIR', False) or os.getenv('TEMP', False) or '/tmp'
 

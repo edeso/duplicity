@@ -107,13 +107,13 @@ class RsyncBackend(duplicity.backend.Backend):
                                 "" % self.munge_password(url))
 
     def _put(self, source_path, remote_filename):
-        remote_filename = util.fsdecode(remote_filename)
+        remote_filename = os.fsdecode(remote_filename)
         remote_path = os.path.join(self.url_string, remote_filename)
         commandline = "%s %s %s" % (self.cmd, source_path.uc_name, remote_path)
         self.subprocess_popen(commandline)
 
     def _get(self, remote_filename, local_path):
-        remote_filename = util.fsdecode(remote_filename)
+        remote_filename = os.fsdecode(remote_filename)
         remote_path = os.path.join(self.url_string, remote_filename)
         commandline = "%s %s %s" % (self.cmd, remote_path, local_path.uc_name)
         self.subprocess_popen(commandline)
@@ -127,7 +127,7 @@ class RsyncBackend(duplicity.backend.Backend):
                 return None
         commandline = "%s %s" % (self.cmd, self.url_string)
         result, stdout, stderr = self.subprocess_popen(commandline)
-        return [util.fsencode(x) for x in map(split, stdout.split('\n')) if x]
+        return [os.fsencode(x) for x in map(split, stdout.split('\n')) if x]
 
     def _delete_list(self, filename_list):
         delete_list = filename_list
@@ -142,7 +142,7 @@ class RsyncBackend(duplicity.backend.Backend):
         exclude, exclude_name = tempdir.default().mkstemp_file()
         to_delete = [exclude_name]
         for file in dont_delete_list:
-            file = util.fsdecode(file)
+            file = os.fsdecode(file)
             path = os.path.join(dir, file)
             to_delete.append(path)
             try:

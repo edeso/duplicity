@@ -230,7 +230,7 @@ class SSHPExpectBackend(duplicity.backend.Backend):
             raise BackendException("Error running '%s': %s" % (commandline, msg))
 
     def _put(self, source_path, remote_filename):
-        remote_filename = util.fsdecode(remote_filename)
+        remote_filename = os.fsdecode(remote_filename)
         if self.use_scp:
             self.put_scp(source_path, remote_filename)
         else:
@@ -253,7 +253,7 @@ class SSHPExpectBackend(duplicity.backend.Backend):
         self.run_scp_command(commandline)
 
     def _get(self, remote_filename, local_path):
-        remote_filename = util.fsdecode(remote_filename)
+        remote_filename = os.fsdecode(remote_filename)
         if self.use_scp:
             self.get_scp(remote_filename, local_path)
         else:
@@ -296,14 +296,14 @@ class SSHPExpectBackend(duplicity.backend.Backend):
 
     def _delete(self, filename):
         commands = ["cd \"%s\"" % (self.remote_dir,)]
-        commands.append("rm \"%s\"" % util.fsdecode(filename))
+        commands.append("rm \"%s\"" % os.fsdecode(filename))
         commandline = ("%s %s %s" % (self.sftp_command, config.ssh_options, self.host_string))
         self.run_sftp_command(commandline, commands)
 
     def _delete_list(self, filename_list):
         commands = ["cd \"%s\"" % (self.remote_dir,)]
         for filename in filename_list:
-            commands.append("rm \"%s\"" % util.fsdecode(filename))
+            commands.append("rm \"%s\"" % os.fsdecode(filename))
         commandline = ("%s %s %s" % (self.sftp_command, config.ssh_options, self.host_string))
         self.run_sftp_command(commandline, commands)
 
