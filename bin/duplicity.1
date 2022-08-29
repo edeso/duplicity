@@ -841,11 +841,11 @@ below.
 .TP
 .BI "--s3-multipart-max-procs"
 .RS
-Maximum number of concurrent uploads when performing a multipart upload. 
-The default is 4. You can adjust this number to maximizing bandwidth 
-and CPU utilization.  
+Maximum number of concurrent uploads when performing a multipart upload.
+The default is 4. You can adjust this number to maximizing bandwidth
+and CPU utilization.
 
-.B NOTE: 
+.B NOTE:
 Too many concurrent uploads may have diminishing returns.
 
 See also
@@ -2332,8 +2332,12 @@ duplicity will keep the authentication token - this location must be
 writable.
 
 During the first run, you will be prompted to visit an URL in your
-browser to grant access to your drive. Once granted, you will receive
-a verification code to paste back into Duplicity. The credentials are
+browser to grant access to your drive. An HTTP server will be started
+locally on port 8080 to receive the redirect from this browser based
+authorization flow. If you are running duplicity on a remote server,
+you will need to port forward port 8080 from the machine where you do
+the web based authentication. Once granted, you will receive a
+verification code to paste back into Duplicity. The credentials are
 then cached in the file references above for future use.
 
 As a sanity check, GDrive checks the host and username from the URL
