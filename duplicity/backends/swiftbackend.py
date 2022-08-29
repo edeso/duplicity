@@ -169,7 +169,7 @@ Exception: %s""" % str(e))
                 return log.ErrorCode.backend_not_found
 
     def _put(self, source_path, remote_filename):
-        lp = util.fsdecode(source_path.name)
+        lp = os.fsdecode(source_path.name)
         if config.mp_segment_size > 0:
             from swiftclient.service import SwiftUploadObject
             st = os.stat(lp)
@@ -179,7 +179,7 @@ Exception: %s""" % str(e))
                 mp = self.svc.upload(
                     self.container,
                     [SwiftUploadObject(lp,
-                                       object_name=self.prefix + util.fsdecode(remote_filename))],
+                                       object_name=self.prefix + os.fsdecode(remote_filename))],
                     options={'segment_size': config.mp_segment_size}
                 )
                 uploads = [a for a in mp if 'container' not in a['action']]
@@ -187,15 +187,15 @@ Exception: %s""" % str(e))
                     if not upload['success']:
                         raise BackendException(upload['traceback'])
                 return
-        rp = self.prefix + util.fsdecode(remote_filename)
+        rp = self.prefix + os.fsdecode(remote_filename)
         log.Debug("Uploading '%s' to '%s' in remote container '%s'" % (lp, rp, self.container))
         self.conn.put_object(container=self.container,
-                             obj=self.prefix + util.fsdecode(remote_filename),
+                             obj=self.prefix + os.fsdecode(remote_filename),
                              contents=open(lp, 'rb'))
 
     def _get(self, remote_filename, local_path):
         headers, body = self.conn.get_object(self.container,
-                                             self.prefix + util.fsdecode(remote_filename),
+                                             self.prefix + os.fsdecode(remote_filename),
                                              resp_chunk_size=1024)
         with open(local_path.name, 'wb') as f:
             for chunk in body:
@@ -208,13 +208,13 @@ Exception: %s""" % str(e))
 
     def _delete(self, filename):
         # use swiftservice to correctly delete all segments in case of multipart uploads
-        deleted = [a for a in self.svc.delete(self.container, [self.prefix + util.fsdecode(filename)])]
+        deleted = [a for a in self.svc.delete(self.container, [self.prefix + os.fsdecode(filename)])]
 
     def _query(self, filename):
         # use swiftservice to correctly report filesize in case of multipart uploads
-        sobject = [a for a in self.svc.stat(self.container, [self.prefix + util.fsdecode(filename)])][0]
+        sobject = [a for a in self.svc.stat(self.container, [self.prefix + os.fsdecode(filename)])][0]
         sobj = {'size': int(sobject['headers']['content-length'])}
-        log.Debug("Objectquery: '%s' has size %s." % (util.fsdecode(filename), sobj['size']))
+        log.Debug("Objectquery: '%s' has size %s." % (os.fsdecode(filename), sobj['size']))
         return sobj
 
 

@@ -401,7 +401,7 @@ class WebDAVBackend(duplicity.backend.Backend):
             return None
 
     def _get(self, remote_filename, local_path):
-        url = self.directory + util.fsdecode(remote_filename)
+        url = self.directory + os.fsdecode(remote_filename)
         response = None
         try:
             target_file = local_path.open("wb")
@@ -427,7 +427,7 @@ class WebDAVBackend(duplicity.backend.Backend):
                 response.close()
 
     def _put(self, source_path, remote_filename):
-        url = self.directory + util.fsdecode(remote_filename)
+        url = self.directory + os.fsdecode(remote_filename)
         response = None
         try:
             source_file = source_path.open("rb")
@@ -449,7 +449,7 @@ class WebDAVBackend(duplicity.backend.Backend):
                 response.close()
 
     def _delete(self, filename):
-        url = self.directory + util.fsdecode(filename)
+        url = self.directory + os.fsdecode(filename)
         response = None
         try:
             response = self.request("DELETE", url)

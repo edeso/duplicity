@@ -223,13 +223,13 @@ def parse_cmdline_options(arglist):
 
     def add_selection(o, option, additional_arg, p):  # pylint: disable=unused-argument
         if o.type in ("string", "file"):
-            addarg = util.fsdecode(additional_arg)
+            addarg = os.fsdecode(additional_arg)
         else:
             addarg = additional_arg
-        select_opts.append((util.fsdecode(option), addarg))
+        select_opts.append((os.fsdecode(option), addarg))
 
     def add_filelist(o, s, filename, p):  # pylint: disable=unused-argument
-        select_opts.append((util.fsdecode(s), util.fsdecode(filename)))
+        select_opts.append((os.fsdecode(s), os.fsdecode(filename)))
         try:
             select_files.append(io.open(filename, "rt", encoding="UTF-8"))
         except IOError:
@@ -241,8 +241,8 @@ def parse_cmdline_options(arglist):
         sys.exit(0)
 
     def add_rename(o, s, v, p):  # pylint: disable=unused-argument
-        key = util.fsencode(os.path.normcase(os.path.normpath(v[0])))
-        config.rename[key] = util.fsencode(v[1])
+        key = os.fsencode(os.path.normcase(os.path.normpath(v[0])))
+        config.rename[key] = os.fsencode(v[1])
 
     parser = optparse.OptionParser(option_class=DupOption, usage=usage())
 
@@ -358,7 +358,7 @@ def parse_cmdline_options(arglist):
     # --archive-dir <path>
     parser.add_option("--file-to-restore", "-r", action="callback", type="file",
                       metavar=_("path"), dest="restore_dir",
-                      callback=lambda o, s, v, p: setattr(p.values, "restore_dir", util.fsencode(v.strip('/'))))
+                      callback=lambda o, s, v, p: setattr(p.values, "restore_dir", os.fsencode(v.strip('/'))))
 
     # Used to confirm certain destructive operations like deleting old files.
     parser.add_option("--force", action="store_true")

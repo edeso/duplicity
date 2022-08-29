@@ -97,7 +97,7 @@ class NCFTPBackend(duplicity.backend.Backend):
             self.flags += " -P '%s'" % (parsed_url.port)
 
     def _put(self, source_path, remote_filename):
-        remote_filename = util.fsdecode(remote_filename)
+        remote_filename = os.fsdecode(remote_filename)
         remote_path = os.path.join(urllib.parse.unquote(re.sub('^/', '', self.parsed_url.path)),
                                    remote_filename).rstrip()
         commandline = "ncftpput %s -m -V -C '%s' '%s'" % \
@@ -105,7 +105,7 @@ class NCFTPBackend(duplicity.backend.Backend):
         self.subprocess_popen(commandline)
 
     def _get(self, remote_filename, local_path):
-        remote_filename = util.fsdecode(remote_filename)
+        remote_filename = os.fsdecode(remote_filename)
         remote_path = os.path.join(urllib.parse.unquote(re.sub('^/', '', self.parsed_url.path)),
                                    remote_filename).rstrip()
         commandline = "ncftpget %s -V -C '%s' '%s' '%s'" % \
@@ -117,7 +117,7 @@ class NCFTPBackend(duplicity.backend.Backend):
         commandline = "ncftpls %s -l '%s'" % (self.flags, self.url_string)
         _, l, _ = self.subprocess_popen(commandline)
         # Look for our files as the last element of a long list line
-        return [util.fsencode(x.split()[-1]) for x in l.split('\n') if x and not x.startswith("total ")]
+        return [os.fsencode(x.split()[-1]) for x in l.split('\n') if x and not x.startswith("total ")]
 
     def _delete(self, filename):
         commandline = "ncftpls %s -l -X 'DELE %s' '%s'" % \

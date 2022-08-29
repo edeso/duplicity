@@ -106,7 +106,7 @@ def delta_iter_error_handler(exc, new_path, sig_path, sig_tar=None):  # pylint: 
     else:
         assert 0, "Both new and sig are None for some reason"
     log.Warn(_("Error %s getting delta for %s")
-             % (util.uexc(exc), util.fsdecode(index_string)))
+             % (util.uexc(exc), os.fsdecode(index_string)))
     return None
 
 
@@ -127,7 +127,7 @@ def get_delta_path(new_path, sig_path, sigTarFile=None):
         Callback activated when FileWithSignature read to end
         """
         ti.size = len(sig_string)
-        ti.name = "signature/" + util.fsdecode(b"/".join(index))
+        ti.name = "signature/" + os.fsdecode(b"/".join(index))
         sigTarFile.addfile(ti, io.BytesIO(sig_string))
 
     if new_path.isreg() and sig_path and sig_path.isreg() and sig_path.difftype == "signature":
@@ -141,7 +141,7 @@ def get_delta_path(new_path, sig_path, sigTarFile=None):
     else:
         delta_path.difftype = "snapshot"
         if sigTarFile:
-            ti.name = "snapshot/" + util.fsdecode(b"/".join(index))
+            ti.name = "snapshot/" + os.fsdecode(b"/".join(index))
         if not new_path.isreg():
             if sigTarFile:
                 sigTarFile.addfile(ti)
@@ -166,14 +166,14 @@ def log_delta_path(delta_path, new_path=None, stats=None):
         if new_path and stats:
             stats.add_new_file(new_path)
         log.Info(_("A %s") %
-                 (util.fsdecode(delta_path.get_relative_path())),
+                 (os.fsdecode(delta_path.get_relative_path())),
                  log.InfoCode.diff_file_new,
                  util.escape(delta_path.get_relative_path()))
     else:
         if new_path and stats:
             stats.add_changed_file(new_path)
         log.Info(_("M %s") %
-                 (util.fsdecode(delta_path.get_relative_path())),
+                 (os.fsdecode(delta_path.get_relative_path())),
                  log.InfoCode.diff_file_changed,
                  util.escape(delta_path.get_relative_path()))
 
@@ -203,7 +203,7 @@ def get_delta_iter(new_iter, sig_iter, sig_fileobj=None):
             if sig_path and sig_path.exists() and sig_path.index != ():
                 # but signature says it did
                 log.Info(_("D %s") %
-                         (util.fsdecode(sig_path.get_relative_path())),
+                         (os.fsdecode(sig_path.get_relative_path())),
                          log.InfoCode.diff_file_deleted,
                          util.escape(sig_path.get_relative_path()))
                 if sigTarFile:
@@ -247,7 +247,7 @@ def sigtar2path_iter(sigtarobj):
         else:
             raise DiffDirException("Bad tarinfo name %s" % (tiname,))
 
-        index = tuple(util.fsencode(name).split(b"/"))
+        index = tuple(os.fsencode(name).split(b"/"))
         if not index[-1]:
             index = index[:-1]  # deal with trailing /, ""
 
@@ -397,7 +397,7 @@ class FileWithReadCounter(object):
         except IOError as ex:
             buf = b""
             log.Warn(_("Error %s getting delta for %s")
-                     % (util.uexc(ex), util.fsdecode(self.infile.name)))
+                     % (util.uexc(ex), os.fsdecode(self.infile.name)))
         if stats:
             stats.SourceFileSize += len(buf)
         return buf
@@ -617,11 +617,11 @@ class SigTarBlockIter(TarBlockIter):
             sigbuf = sfp.read()
             sfp.close()
             ti.name = b"signature/" + b"/".join(path.index)
-            ti.name = util.fsdecode(ti.name)
+            ti.name = os.fsdecode(ti.name)
             return self.tarinfo2tarblock(path.index, ti, sigbuf)
         else:
             ti.name = b"snapshot/" + b"/".join(path.index)
-            ti.name = util.fsdecode(ti.name)
+            ti.name = os.fsdecode(ti.name)
             return self.tarinfo2tarblock(path.index, ti)
 
 

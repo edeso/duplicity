@@ -77,9 +77,9 @@ class SlateBackend(duplicity.backend.Backend):
 
         log.Debug("source_path.name: " + str(source_path.name))
         log.Debug("remote_filename: " + remote_filename.decode("utf8"))
-        rem_filename = str(util.fsdecode(remote_filename))
+        rem_filename = str(os.fsdecode(remote_filename))
 
-        src = Path(util.fsdecode(source_path.name))
+        src = Path(os.fsdecode(source_path.name))
         if str(src.name).startswith("mktemp"):
             log.Debug("copying temp file for upload")
             src = shutil.move(str(src), str(src.with_name(rem_filename)))
@@ -173,7 +173,7 @@ class SlateBackend(duplicity.backend.Backend):
             raise BackendException("A slate with id " + self.slate_id + " does not exist")
 
         try:
-            urllib.request.urlretrieve('http://ipfs.io/ipfs/%s' % (cid), util.fsdecode(local_path.name))
+            urllib.request.urlretrieve('http://ipfs.io/ipfs/%s' % (cid), os.fsdecode(local_path.name))
             log.Debug('Downloaded file with cid: %s' % (cid))
         except NameError as e:
             raise BackendException("Couldn't download file")

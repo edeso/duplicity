@@ -20,20 +20,12 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-import re
-import sys
 import tempfile
 
-from duplicity import errors
 from duplicity import diffdir
-from duplicity import config
-from duplicity import librsync
-from duplicity import log
+from duplicity import errors
 from duplicity import selection
-from duplicity import tarfile
 from duplicity import tempdir
-from duplicity import util
-from duplicity.lazy import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 from duplicity.path import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 
 """Functions for patching of directories"""
@@ -76,12 +68,12 @@ def patch_diff_tarfile(base_path, diff_tarfile, restrict_index=()):
     ITR = IterTreeReducer(PathPatcher, [base_path])
     for basis_path, diff_ropath in collated:
         if basis_path:
-            log.Info(_("Patching %s") % (util.fsdecode(basis_path.get_relative_path())),
+            log.Info(_("Patching %s") % (os.fsdecode(basis_path.get_relative_path())),
                      log.InfoCode.patch_file_patching,
                      util.escape(basis_path.get_relative_path()))
             ITR(basis_path.index, basis_path, diff_ropath)
         else:
-            log.Info(_("Patching %s") % (util.fsdecode(diff_ropath.get_relative_path())),
+            log.Info(_("Patching %s") % (os.fsdecode(diff_ropath.get_relative_path())),
                      log.InfoCode.patch_file_patching,
                      util.escape(diff_ropath.get_relative_path()))
             ITR(diff_ropath.index, basis_path, diff_ropath)
@@ -184,10 +176,10 @@ def get_index_from_tarinfo(tarinfo):
     if name == r"." or name == r"":
         index = ()
     else:
-        index = tuple(util.fsencode(name).split(b"/"))
+        index = tuple(os.fsencode(name).split(b"/"))
         if b'..' in index:
             raise PatchDirException("Tar entry %s contains '..'.  Security "
-                                    "violation" % util.fsdecode(tiname))
+                                    "violation" % os.fsdecode(tiname))
     return (index, difftype, multivol)
 
 
@@ -546,7 +538,7 @@ def integrate_patch_iters(iter_list):
         except Exception as e:
             filename = normalized[-1].get_ropath().get_relative_path()
             log.Warn(_("Error '%s' patching %s") %
-                     (util.uexc(e), util.fsdecode(filename)),
+                     (util.uexc(e), os.fsdecode(filename)),
                      log.WarningCode.cannot_process,
                      util.escape(filename))
 
@@ -621,7 +613,7 @@ class ROPath_IterWriter(ITRBranch):
     def can_fast_process(self, index, ropath):  # pylint: disable=unused-argument
         """Can fast process (no recursion) if ropath isn't a directory"""
         log.Info(_("Writing %s of type %s") %
-                 (util.fsdecode(ropath.get_relative_path()), ropath.type),
+                 (os.fsdecode(ropath.get_relative_path()), ropath.type),
                  log.InfoCode.patch_file_writing,
                  "%s %s" % (util.escape(ropath.get_relative_path()), ropath.type))
         return not ropath.isdir()
