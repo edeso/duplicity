@@ -29,7 +29,6 @@ import imaplib
 import os
 import re
 import socket
-import sys
 import time
 
 from email.parser import Parser
@@ -43,7 +42,6 @@ import ssl
 socket.sslerror = ssl.SSLError
 
 from duplicity import config
-from duplicity import log
 from duplicity.errors import *  # pylint: disable=unused-wildcard-import
 import duplicity.backend
 

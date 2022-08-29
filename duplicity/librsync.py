@@ -29,7 +29,6 @@ which is written in C.  The goal was to use C as little as possible...
 
 import array
 import os
-import sys
 
 from . import _librsync
 

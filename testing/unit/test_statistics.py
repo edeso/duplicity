@@ -23,10 +23,10 @@ from __future__ import print_function
 
 import unittest
 
-from . import UnitTestCase
 from duplicity import path
 from duplicity.statistics import *  # pylint: disable=redefined-builtin, unused-wildcard-import
 from testing import _runtest_dir
+from . import UnitTestCase
 
 
 class StatsObjTest(UnitTestCase):

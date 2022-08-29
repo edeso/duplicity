@@ -29,6 +29,7 @@ at least python 2.5.)
 """
 
 import sys
+
 from duplicity import errors
 
 _threading_supported = True

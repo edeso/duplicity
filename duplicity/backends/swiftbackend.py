@@ -23,7 +23,6 @@ import os
 import duplicity.backend
 from duplicity import config
 from duplicity import log
-from duplicity import util
 from duplicity.errors import BackendException
 
 

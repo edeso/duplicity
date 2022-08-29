@@ -26,33 +26,29 @@ intended to be used by the backends themselves.
 
 
 import errno
+import getpass
 import os
+import re
 import sys
 import time
-import re
-import getpass
-import re
-import urllib.request  # pylint: disable=import-error
-import urllib.parse  # pylint: disable=import-error
 import urllib.error  # pylint: disable=import-error
+import urllib.parse  # pylint: disable=import-error
+import urllib.request  # pylint: disable=import-error
 
+import duplicity.backends
+from duplicity import config
 from duplicity import dup_temp
 from duplicity import file_naming
-from duplicity import config
 from duplicity import log
 from duplicity import path
 from duplicity import util
-
-from duplicity.util import exception_traceback
-
 from duplicity.errors import BackendException
-from duplicity.errors import FatalBackendException
-from duplicity.errors import TemporaryLoadException
 from duplicity.errors import ConflictingScheme
+from duplicity.errors import FatalBackendException
 from duplicity.errors import InvalidBackendURL
+from duplicity.errors import TemporaryLoadException
 from duplicity.errors import UnsupportedBackendScheme
-
-import duplicity.backends
+from duplicity.util import exception_traceback
 
 _backends = {}
 _backend_prefixes = {}

@@ -21,12 +21,10 @@
 
 from __future__ import print_function
 
-
-import os
-import sys
-import platform
 import io
-
+import os
+import platform
+import sys
 import unittest
 
 from . import FunctionalTestCase

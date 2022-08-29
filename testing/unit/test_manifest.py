@@ -23,6 +23,7 @@ from __future__ import print_function
 
 import re
 import unittest
+
 try:
     from unittest.mock import patch
 except ImportError:

@@ -30,7 +30,6 @@ from __future__ import print_function
 
 import errno
 import gzip
-import os
 import re
 import shutil
 import socket
@@ -43,9 +42,7 @@ from duplicity import dup_time
 from duplicity import file_naming
 from duplicity import gpg
 from duplicity import librsync
-from duplicity import log
 from duplicity import tarfile
-from duplicity import util
 from duplicity.lazy import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 
 _copy_blocksize = 64 * 1024

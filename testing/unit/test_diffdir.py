@@ -1,4 +1,15 @@
 from __future__ import print_function
+from __future__ import print_function
+
+import unittest
+
+from duplicity import diffdir
+from duplicity import selection
+from duplicity.path import *  # pylint: disable=unused-wildcard-import,redefined-builtin
+from testing import _runtest_dir
+from . import UnitTestCase
+
+
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
 # Copyright 2002 Ben Escoto <ben@emerose.org>
@@ -19,19 +30,6 @@ from __future__ import print_function
 # You should have received a copy of the GNU General Public License
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-
-from __future__ import print_function
-
-import os
-import unittest
-
-from duplicity import diffdir
-from duplicity import selection
-from duplicity import tarfile
-from duplicity import util
-from duplicity.path import *  # pylint: disable=unused-wildcard-import,redefined-builtin
-from testing import _runtest_dir
-from . import UnitTestCase
 
 
 class DDTest(UnitTestCase):

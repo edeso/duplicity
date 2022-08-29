@@ -22,10 +22,9 @@
 """Generate and process backup statistics"""
 from __future__ import division
 
-
+import os
 import re
 import time
-import os
 
 from duplicity import config
 from duplicity import dup_time

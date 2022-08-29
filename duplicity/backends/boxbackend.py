@@ -22,10 +22,14 @@ from __future__ import print_function
 
 import os
 
-import duplicity.backend
-from boxsdk import Client, JWTAuth
-from duplicity.errors import BackendException
+from boxsdk import (
+    Client,
+    JWTAuth,
+)
 from future import standard_library
+
+import duplicity.backend
+from duplicity.errors import BackendException
 
 standard_library.install_aliases()
 

@@ -22,6 +22,7 @@
 from __future__ import print_function
 
 import sys
+
 try:
     import unittest.mock as mock
 except ImportError:

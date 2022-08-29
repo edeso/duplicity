@@ -26,9 +26,8 @@ or see http://www.gnu.org/copyleft/lesser.html
 
 from __future__ import print_function
 
-import unittest
-
 import tempfile
+import unittest
 
 from duplicity import gpginterface
 

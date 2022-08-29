@@ -21,9 +21,9 @@
 
 from __future__ import print_function
 
-import sys
-import unittest
 import time
+import unittest
+
 from duplicity import dup_time
 from . import UnitTestCase
 

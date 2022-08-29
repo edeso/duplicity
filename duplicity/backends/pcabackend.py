@@ -20,12 +20,11 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import os
+import time
 
 import duplicity.backend
 from duplicity import log
-from duplicity import util
 from duplicity.errors import BackendException
-import time
 
 
 class PCABackend(duplicity.backend.Backend):

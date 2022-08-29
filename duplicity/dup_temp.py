@@ -24,15 +24,15 @@
 from __future__ import print_function
 
 import os
-import sys
 import shutil
+import sys
 
+from duplicity import config
+from duplicity import file_naming
+from duplicity import gpg
 from duplicity import log
 from duplicity import path
-from duplicity import file_naming
 from duplicity import tempdir
-from duplicity import config
-from duplicity import gpg
 
 
 def new_temppath():

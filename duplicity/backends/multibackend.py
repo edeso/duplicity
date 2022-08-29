@@ -23,19 +23,18 @@
 
 #
 
+import json
 import os
 import os.path
-import sys
-import urllib.request  # pylint: disable=import-error
-import urllib.parse  # pylint: disable=import-error
 import urllib.error  # pylint: disable=import-error
-import json
+import urllib.parse  # pylint: disable=import-error
+import urllib.request  # pylint: disable=import-error
 
 import duplicity.backend
-from duplicity.errors import BackendException
 from duplicity import config
 from duplicity import log
 from duplicity import util
+from duplicity.errors import BackendException
 
 
 class MultiBackend(duplicity.backend.Backend):

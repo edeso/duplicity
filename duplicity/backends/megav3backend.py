@@ -24,10 +24,10 @@ import os
 import re
 import subprocess
 
-import duplicity.backend
-from duplicity import util
-from duplicity.errors import BackendException
 from future import standard_library
+
+import duplicity.backend
+from duplicity.errors import BackendException
 
 standard_library.install_aliases()
 

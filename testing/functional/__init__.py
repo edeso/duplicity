@@ -21,17 +21,16 @@
 from __future__ import print_function
 
 import os
-import pexpect
 import platform
 import sys
 import time
 
+import pexpect
+
 from duplicity import backend
-from duplicity import util
 from .. import DuplicityTestCase
-from .. import _top_dir
 from .. import _runtest_dir
-from pkg_resources import parse_version
+from .. import _top_dir
 
 
 class CmdError(Exception):

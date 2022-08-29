@@ -20,12 +20,12 @@
 
 from __future__ import print_function
 
-import unittest
 import os
+import unittest
 
-from . import FunctionalTestCase
-from testing import _top_dir
 from testing import _runtest_dir
+from testing import _top_dir
+from . import FunctionalTestCase
 
 
 class LogTest(FunctionalTestCase):

@@ -19,15 +19,16 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import print_function
 from __future__ import division
-from past.utils import old_div
+from __future__ import print_function
 
 import os
 import platform
-import pytest
 import random
 import unittest
+
+import pytest
+from past.utils import old_div
 
 from duplicity import gpg
 from duplicity import path

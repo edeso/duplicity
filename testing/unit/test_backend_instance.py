@@ -20,18 +20,17 @@
 
 from __future__ import print_function
 
-import os
 import io
+import os
 import unittest
 
-from . import UnitTestCase
+import duplicity.backend
 from duplicity import log
 from duplicity import path
 from duplicity import util
 from duplicity.errors import BackendException
-import duplicity.backend
-
 from testing import _runtest_dir
+from . import UnitTestCase
 
 
 class BackendInstanceBase(UnitTestCase):

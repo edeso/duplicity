@@ -28,16 +28,12 @@ the second, the ROPath iterator is put into tar block form.
 """
 from __future__ import division
 
-
 import io
-import sys
 
-from duplicity import statistics
-from duplicity import util
-from duplicity import config
-from duplicity.path import *  # pylint: disable=unused-wildcard-import,redefined-builtin
-from duplicity.lazy import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 from duplicity import progress
+from duplicity import statistics
+from duplicity.lazy import *  # pylint: disable=unused-wildcard-import,redefined-builtin
+from duplicity.path import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 
 # A StatsObj will be written to this from DirDelta and DirDelta_WriteSig.
 stats = None

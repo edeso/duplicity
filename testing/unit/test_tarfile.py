@@ -21,6 +21,7 @@
 from __future__ import print_function
 
 import unittest
+
 from duplicity import cached_ops
 from duplicity import tarfile
 from . import UnitTestCase

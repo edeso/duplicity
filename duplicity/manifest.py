@@ -23,11 +23,9 @@
 
 
 import re
-import sys
 
 from duplicity import config
 from duplicity import log
-from duplicity import config
 from duplicity import util
 
 

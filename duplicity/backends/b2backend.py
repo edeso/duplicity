@@ -26,12 +26,14 @@
 
 from urllib.parse import quote_plus  # pylint: disable=import-error
 
+import duplicity.backend
+from duplicity import config
 from duplicity import log
 from duplicity import progress
-from duplicity import util
-from duplicity import config
-from duplicity.errors import BackendException, FatalBackendException
-import duplicity.backend
+from duplicity.errors import (
+    BackendException,
+    FatalBackendException,
+)
 
 
 class B2ProgressListener(object):

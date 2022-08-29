@@ -22,12 +22,16 @@
 from __future__ import print_function
 
 import os
-import pytest
 import unittest
+
+import pytest
 
 from duplicity import path
 from testing import _runtest_dir
-from . import CmdError, FunctionalTestCase
+from . import (
+    CmdError,
+    FunctionalTestCase,
+)
 
 
 class FinalTest(FunctionalTestCase):

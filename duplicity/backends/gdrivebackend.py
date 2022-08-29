@@ -21,10 +21,9 @@
 import os
 import pickle
 
-from duplicity import log
-from duplicity import util
-from duplicity.errors import BackendException
 import duplicity.backend
+from duplicity import log
+from duplicity.errors import BackendException
 
 
 class GDriveBackend(duplicity.backend.Backend):

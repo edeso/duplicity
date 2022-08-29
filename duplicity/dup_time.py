@@ -22,13 +22,12 @@
 """Provide time related exceptions and functions"""
 from __future__ import division
 
+import calendar
+import re
+import time
+
 from past.utils import old_div
 
-import time
-import types
-import re
-import calendar
-import sys
 from duplicity import config
 from duplicity import util
 

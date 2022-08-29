@@ -28,7 +28,6 @@ from duplicity import log
 from duplicity.errors import BackendException
 from duplicity.util import fsdecode
 
-
 _VALID_CONTAINER_NAME_RE = re.compile(r"^[a-z0-9](?!.*--)[a-z0-9-]{1,61}[a-z0-9]$")
 
 

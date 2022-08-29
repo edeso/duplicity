@@ -22,18 +22,21 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import print_function
 from __future__ import division
-from past.utils import old_div
-import time
+from __future__ import print_function
+
 import json
 import os
 import sys
+import time
+
+from past.utils import old_div
 
 import duplicity.backend
-from duplicity.errors import BackendException
 from duplicity import config
 from duplicity import log
+from duplicity.errors import BackendException
+
 
 # For documentation on the API, see
 # The previous Live SDK API required the use of opaque folder IDs to navigate paths, but the Microsoft Graph

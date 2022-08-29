@@ -18,21 +18,19 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-import os
-import urllib
-import tempfile
-import re
-import xml.etree.ElementTree as ET
-import shutil
 import errno
-
+import os
+import re
+import shutil
+import tempfile
+import urllib
+import xml.etree.ElementTree as ET
 
 import duplicity.backend
 from duplicity import config
 from duplicity import log
-from duplicity import tempdir
-from duplicity import progress
 from duplicity.errors import BackendException
+
 
 #
 #   This backend works with the IDrive  "dedup implementation". V0.1

@@ -11,8 +11,11 @@ import re
 import time
 import urllib.parse  # pylint: disable=import-error
 
-from requests.compat import quote, quote_plus
 import requests
+from requests.compat import (
+    quote,
+    quote_plus,
+)
 
 try:
     import pyrax

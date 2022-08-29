@@ -226,9 +226,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 or see http://www.gnu.org/copyleft/lesser.html
 """
 
+import fcntl
 import os
 import sys
-import fcntl
 
 from duplicity import log
 

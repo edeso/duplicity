@@ -25,10 +25,11 @@ from __future__ import print_function
 
 import sys
 
-from . import UnitTestCase
 from duplicity.globmatch import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 from duplicity.path import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 from testing import _runtest_dir
+from . import UnitTestCase
+
 try:
     from unittest.mock import patch
 except ImportError:

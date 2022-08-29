@@ -20,11 +20,11 @@
 
 import os
 import re
+
 from duplicity import backend
-from duplicity.errors import BackendException
-from duplicity import log
 from duplicity import config
-from duplicity import util
+from duplicity import log
+from duplicity.errors import BackendException
 
 
 class Par2Backend(backend.Backend):

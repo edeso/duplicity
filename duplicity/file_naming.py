@@ -22,9 +22,9 @@
 """Produce and parse the names of duplicity's backup files"""
 
 import re
-from duplicity import dup_time
+
 from duplicity import config
-import sys
+from duplicity import dup_time
 
 full_vol_re = None
 full_vol_re_short = None

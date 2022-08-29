@@ -25,9 +25,9 @@ import glob
 import os
 import platform
 import subprocess
-import sys
-import pytest
 import unittest
+
+import pytest
 
 from testing import _runtest_dir
 from . import FunctionalTestCase

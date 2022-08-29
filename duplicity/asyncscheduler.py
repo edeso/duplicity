@@ -27,9 +27,9 @@ dependency guarantees.
 
 import duplicity
 from duplicity import log
-from duplicity.dup_threading import require_threading
-from duplicity.dup_threading import interruptably_wait
 from duplicity.dup_threading import async_split
+from duplicity.dup_threading import interruptably_wait
+from duplicity.dup_threading import require_threading
 from duplicity.dup_threading import with_lock
 
 thread = duplicity.dup_threading.thread_module()

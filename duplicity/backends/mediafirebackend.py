@@ -24,7 +24,6 @@
 import os
 
 import duplicity.backend
-from duplicity import util
 from duplicity.errors import BackendException
 
 DUPLICITY_APP_ID = '45593'

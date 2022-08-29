@@ -22,11 +22,10 @@ from __future__ import print_function
 
 import glob
 import os
-import sys
 import subprocess
+import sys
+
 import pytest
-import fnmatch
-import os
 
 if os.getenv('RUN_CODE_TESTS', None) == '1':
     # Make conditional so that we do not have to import in environments that
