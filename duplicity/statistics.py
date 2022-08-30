@@ -20,7 +20,6 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 """Generate and process backup statistics"""
-from __future__ import division
 
 import os
 import re

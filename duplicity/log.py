@@ -22,7 +22,6 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 """Log various messages depending on verbosity level"""
-from __future__ import division
 
 import datetime
 import logging

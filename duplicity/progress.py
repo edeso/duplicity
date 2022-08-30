@@ -32,8 +32,6 @@ and the time left to transfer all the (yet unknown) amount of data to send.
 This is a forecast based on gathered evidence.
 """
 
-from __future__ import absolute_import
-from __future__ import division
 
 import collections as sys_collections
 import math

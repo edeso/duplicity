@@ -29,7 +29,6 @@
 # Please send mail to me or the mailing list if you find bugs or have
 # any suggestions.
 
-from __future__ import print_function
 
 import copy
 import os

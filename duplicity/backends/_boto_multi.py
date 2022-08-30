@@ -20,7 +20,6 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import division
 
 import os
 import queue
@@ -130,7 +129,7 @@ class BotoBackend(BotoSingleBackend):
             chunks = 1
         else:
             chunks = bytes // chunk_size
-            if (bytes % chunk_size):
+            if bytes % chunk_size:
                 chunks += 1
 
         log.Debug("Uploading %d bytes in %d chunks" % (bytes, chunks))

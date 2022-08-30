@@ -21,7 +21,6 @@
 
 """Define some lazy data structures and functions acting on them"""
 
-from __future__ import print_function
 
 import os
 

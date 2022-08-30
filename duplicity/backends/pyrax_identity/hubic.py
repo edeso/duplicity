@@ -3,7 +3,6 @@
 # Copyright (c) 2014 Gu1
 # Licensed under the MIT license
 
-from __future__ import print_function
 
 import configparser
 import os

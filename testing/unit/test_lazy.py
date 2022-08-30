@@ -21,7 +21,6 @@
 
 # pylint: disable=no-value-for-parameter
 
-from __future__ import print_function
 
 import pickle
 import unittest

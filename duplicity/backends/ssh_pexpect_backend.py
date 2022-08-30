@@ -24,7 +24,6 @@
 # have the same syntax.  Also these strings will be executed by the
 # shell, so shouldn't have strange characters in them.
 
-from __future__ import division
 
 import os
 import re
