@@ -20,13 +20,10 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 """Provide time related exceptions and functions"""
-from __future__ import division
 
 import calendar
 import re
 import time
-
-from past.utils import old_div
 
 from duplicity import config
 from duplicity import util
@@ -229,9 +226,9 @@ def gettzd(dstflag):
     # time.localtime()
 
     if dstflag > 0:
-        offset = old_div(-1 * time.altzone, 60)
+        offset = -1 * time.altzone // 60
     else:
-        offset = old_div(-1 * time.timezone, 60)
+        offset = -1 * time.timezone // 60
     if offset > 0:
         prefix = "+"
     elif offset < 0:

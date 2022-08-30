@@ -26,7 +26,6 @@ securely created temporary directory.
 The public interface of this module is thread-safe.
 """
 
-from __future__ import print_function
 
 import os
 import platform

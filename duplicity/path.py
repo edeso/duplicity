@@ -26,7 +26,6 @@ associates stat information with filenames
 
 """
 
-from __future__ import print_function
 
 import errno
 import gzip

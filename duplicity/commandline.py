@@ -21,7 +21,6 @@
 
 """Parse command line, check for consistency, and set config"""
 
-from __future__ import print_function
 
 import io
 import optparse

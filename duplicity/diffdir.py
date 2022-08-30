@@ -26,7 +26,6 @@ Note that the main processes of this module have two parts.  In the
 first, the signature or delta is constructed of a ROPath iterator.  In
 the second, the ROPath iterator is put into tar block form.
 """
-from __future__ import division
 
 import io
 

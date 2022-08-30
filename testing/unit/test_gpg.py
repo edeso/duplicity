@@ -19,8 +19,6 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import division
-from __future__ import print_function
 
 import os
 import platform
@@ -28,7 +26,6 @@ import random
 import unittest
 
 import pytest
-from past.utils import old_div
 
 from duplicity import gpg
 from duplicity import path
@@ -184,7 +181,7 @@ class GPGWriteFile_Helper(object):
 
     def get_buffer(self, size):
         """Return buffer of size size, consisting of half random data"""
-        s1 = int(old_div(size, 2))
+        s1 = size // 2
         s2 = size - s1
         return b"a" * s1 + self.from_random_fp.read(s2)
 
