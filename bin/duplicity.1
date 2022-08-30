@@ -2331,6 +2331,7 @@ this file, and GOOGLE_CREDENTIALS_FILE to a path to a file where
 duplicity will keep the authentication token - this location must be
 writable.
 
+.B NOTE:
 As a sanity check, GDrive checks the host and username from the URL
 against the JSON key, and refuses to proceed if the addresses do not
 match. Either the email (for the service accounts) or Client ID (for
@@ -2348,7 +2349,6 @@ for this purpose (by default on http://localhost:8080/).
 Ip-address/host and port can be adjusted if need be by providing the environment variables
 GOOGLE_OAUTH_LOCAL_SERVER_HOST, GOOGLE_OAUTH_LOCAL_SERVER_PORT respectively.
 
-.B NOTE:
 If you are running duplicity in a remote location, you will 
 need to make sure that you will be able to access the above 
 HTTP-service with a browser utilizing e.g. port forwarding 
