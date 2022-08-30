@@ -2331,6 +2331,13 @@ this file, and GOOGLE_CREDENTIALS_FILE to a path to a file where
 duplicity will keep the authentication token - this location must be
 writable.
 
+As a sanity check, GDrive checks the host and username from the URL
+against the JSON key, and refuses to proceed if the addresses do not
+match. Either the email (for the service accounts) or Client ID (for
+regular OAuth accounts) must be present in the URL. See
+.B URL FORMAT
+above.
+
 .SS First run / OAuth 2.0 authorization
 
 During the first run, you will be prompted to visit an URL in your
@@ -2349,13 +2356,6 @@ or temporary firewall permission.
 
 The access credentials will be saved in the JSON file mentioned 
 above for future use after a successful authorization.
-
-As a sanity check, GDrive checks the host and username from the URL
-against the JSON key, and refuses to proceed if the addresses do not
-match. Either the email (for the service accounts) or Client ID (for
-regular OAuth accounts) must be present in the URL. See
-.B URL FORMAT
-above.
 
 .SH A NOTE ON HUBIC
 The hubic backend requires the pyrax library to be installed on the system. See
