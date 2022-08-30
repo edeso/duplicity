@@ -2302,7 +2302,7 @@ Example:
 MyDrive folder ID specified as a query parameter, myDriveFolderID, in the backend URL
 Example
       export GOOGLE_SERVICE_ACCOUNT_URL=<serviceaccount-name>@<serviceaccount-name>.iam.gserviceaccount.com
-      gdrive://${GOOGLE_SERVICE_ACCOUNT_URL}/<target-folder-name-in-myDriveFolder>?myDriveFolderID=<google-myDrive-folder-id>
+      gdrive://${GOOGLE_SERVICE_ACCOUNT_URL}/<target-folder-name-in-myDriveFolder>?myDriveFolderID=root
 
 
 There are also two ways to authenticate to use GDrive: with a regular account or with a
@@ -2331,18 +2331,24 @@ this file, and GOOGLE_CREDENTIALS_FILE to a path to a file where
 duplicity will keep the authentication token - this location must be
 writable.
 
+.SS First run / OAuth 2.0 authorization
+
 During the first run, you will be prompted to visit an URL in your
-browser to grant access to your Google Drive. An HTTP server will be
-started locally to receive the redirect from this authentication
-flow. By default, the server will start on port 8080 but you can
-override that with the environment variable
-GOOGLE_OAUTH_LOCAL_SERVER_PORT.  If you are running duplicity on a
-remote server, you will need to either port forward from the machine
-where you do the web based authentication or use the argument
-GOOGLE_OAUTH_LOCAL_SERVER_HOST to the host name which refers to this
-remote server from the machine doing the web based authentication
-flow. The credentials are then cached in the file references above for
-future use.
+browser to grant access to your Google Drive. A temporary HTTP-service will be
+started on a 
+.B local network interface
+for this purpose (by default on http://localhost:8080/).
+Ip-address/host and port can be adjusted if need be by providing the environment variables
+GOOGLE_OAUTH_LOCAL_SERVER_HOST, GOOGLE_OAUTH_LOCAL_SERVER_PORT respectively.
+
+.B NOTE:
+If you are running duplicity in a remote location, you will 
+need to make sure that you will be able to access the above 
+HTTP-service with a browser utilizing e.g. port forwarding 
+or temporary firewall permission.
+
+The access credentials will be saved in the JSON file mentioned 
+above for future use after a successful authorization.
 
 As a sanity check, GDrive checks the host and username from the URL
 against the JSON key, and refuses to proceed if the addresses do not
