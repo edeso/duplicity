@@ -122,7 +122,12 @@ Exception: %s""" % str(e))
                             u'Client ID in the JSON file (%s) does not match the URL (%s)' %
                             (flow.client_config[u'client_id'], client_id))
 
-                    credentials = flow.run_local_server()
+                    flow_args = {}
+                    if u'GOOGLE_OAUTH_LOCAL_SERVER_PORT' in os.environ:
+                        flow_args[u'port'] = int(os.environ[u'GOOGLE_OAUTH_LOCAL_SERVER_PORT'])
+                    if u'GOOGLE_OAUTH_LOCAL_SERVER_HOST' in os.environ:
+                        flow_args[u'host'] = os.environ[u'GOOGLE_OAUTH_LOCAL_SERVER_HOST']
+                    credentials = flow.run_local_server(**flow_args)
                 # Save the credentials for the next run
                 with open(os.environ[u'GOOGLE_CREDENTIALS_FILE'], u'wb') as token:
                     pickle.dump(credentials, token)
