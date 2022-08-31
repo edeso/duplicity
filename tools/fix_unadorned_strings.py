@@ -29,33 +29,33 @@ import token
 def return_unadorned_string_tokens(f):
     named_tokens = tokenize.tokenize(f.readline)
     for t in named_tokens:
-        if t.type == token.STRING and t.string[0] in ['"', "'"]:
+        if t.type == token.STRING and t.string[0] in [u'"', u"'"]:
             yield t
 
 
 def check_file_for_unadorned(filename):
     string_list = []
-    with open(filename, 'rb') as f:
+    with open(filename, u'rb') as f:
         for s in return_unadorned_string_tokens(f):
             string_list.append((filename, s.start, s.end, s.string))
     return string_list
 
 
-if __name__ == "__main__":
+if __name__ == u"__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(description='Fix any unadorned string literals in a Python file')
-    parser.add_argument('file', help='The file to search')
+    parser = argparse.ArgumentParser(description=u'Fix any unadorned string literals in a Python file')
+    parser.add_argument(u'file', help=u'The file to search')
     args = parser.parse_args()
 
-    lines = open(args.file, "r").readlines()
+    lines = open(args.file, u"r").readlines()
     lines = [list(line) for line in lines]
 
     unadorned_string_list = check_file_for_unadorned(args.file)
     if len(unadorned_string_list) == 0:
-        print("There are no unadorned strings in", args.file)
+        print(u"There are no unadorned strings in", args.file)
     else:
-        print("There are unadorned strings in", args.file)
+        print(u"There are unadorned strings in", args.file)
 
         locs = {}
         for unadorned_string in unadorned_string_list:
@@ -70,8 +70,8 @@ if __name__ == "__main__":
 
         for linenum in sorted(locs.keys()):
             for colnum in locs[linenum]:
-                lines[linenum].insert(colnum, 'u')
-            print("{}: {}: {}".format(linenum, len(locs[linenum]), ''.join(lines[linenum][:-1])))
+                lines[linenum].insert(colnum, u'u')
+            print(u"{}: {}: {}".format(linenum, len(locs[linenum]), u''.join(lines[linenum][:-1])))
 
-        lines = [''.join(line) for line in lines]
-        open(args.file, "w").writelines(lines)
+        lines = [u''.join(line) for line in lines]
+        open(args.file, u"w").writelines(lines)

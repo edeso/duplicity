@@ -32,7 +32,7 @@ standard_library.install_aliases()
 
 
 class Megav3Backend(duplicity.backend.Backend):
-    """Backend for MEGA.nz cloud storage, only one that works for accounts created since Nov. 2018
+    u"""Backend for MEGA.nz cloud storage, only one that works for accounts created since Nov. 2018
     See https://github.com/megous/megatools/issues/411 for more details
 
     This MEGA backend resorts to official tools (MEGAcmd) as available at https://mega.nz/cmd
@@ -46,109 +46,109 @@ class Megav3Backend(duplicity.backend.Backend):
         duplicity.backend.Backend.__init__(self, parsed_url)
 
         # Sanity check : ensure all the necessary "MEGAcmd" binaries exist
-        self._check_binary_exists('mega-cmd')
-        self._check_binary_exists('mega-exec')
-        self._check_binary_exists('mega-help')
-        self._check_binary_exists('mega-get')
-        self._check_binary_exists('mega-login')
-        self._check_binary_exists('mega-logout')
-        self._check_binary_exists('mega-ls')
-        self._check_binary_exists('mega-mkdir')
-        self._check_binary_exists('mega-put')
-        self._check_binary_exists('mega-rm')
-        self._check_binary_exists('mega-whoami')
+        self._check_binary_exists(u'mega-cmd')
+        self._check_binary_exists(u'mega-exec')
+        self._check_binary_exists(u'mega-help')
+        self._check_binary_exists(u'mega-get')
+        self._check_binary_exists(u'mega-login')
+        self._check_binary_exists(u'mega-logout')
+        self._check_binary_exists(u'mega-ls')
+        self._check_binary_exists(u'mega-mkdir')
+        self._check_binary_exists(u'mega-put')
+        self._check_binary_exists(u'mega-rm')
+        self._check_binary_exists(u'mega-whoami')
 
         # "MEGAcmd" does not use a config file, however it is handy to keep one (with the old ".megarc" format) to
         # securely store the username and password
         self._hostname = parsed_url.hostname
         if parsed_url.username is None:
-            self._megarc = os.getenv('HOME') + '/.megav3rc'
+            self._megarc = os.getenv(u'HOME') + u'/.megav3rc'
             try:
-                conf_file = open(self._megarc, "r")
+                conf_file = open(self._megarc, u"r")
             except Exception as e:
                 raise BackendException(
-                    "No password provided in URL and MEGA configuration "
-                    "file for duplicity does not exist as '%s'"
+                    u"No password provided in URL and MEGA configuration "
+                    u"file for duplicity does not exist as '%s'"
                     % (self._megarc,)
                 )
 
             myvars = {}
             for line in conf_file:
-                name, var = line.partition("=")[::2]
+                name, var = line.partition(u"=")[::2]
                 myvars[name.strip()] = str(var.strip())
             conf_file.close()
-            self._username = myvars["Username"]
-            self._password = myvars["Password"]
+            self._username = myvars[u"Username"]
+            self._password = myvars[u"Password"]
 
         else:
             self._username = parsed_url.username
             self._password = parsed_url.password
 
-        no_logout_option = parsed_url.query_args.get('no_logout', [])
+        no_logout_option = parsed_url.query_args.get(u'no_logout', [])
         self._no_logout = (len(no_logout_option) > 0) and (
-            no_logout_option[0].lower() in ['1', 'yes', 'true']
+            no_logout_option[0].lower() in [u'1', u'yes', u'true']
         )
 
         self.ensure_mega_cmd_running()
 
         # Remote folder ("MEGAcmd" no longer shows "Root/" at the top of the hierarchy)
-        self._folder = '/' + parsed_url.path[1:]
+        self._folder = u'/' + parsed_url.path[1:]
 
         # Only create the remote folder if it doesn't exist yet
         self.mega_login()
-        cmd = ['mega-ls', self._folder]
+        cmd = [u'mega-ls', self._folder]
         try:
             self.subprocess_popen(cmd)
         except Exception as e:
             self._makedir(self._folder)
 
     def _check_binary_exists(self, cmd):
-        'Checks that a specified command exists in the running user command path'
+        u'Checks that a specified command exists in the running user command path'
 
         try:
             # Ignore the output, as we only need the return code
-            subprocess.check_output(['which', cmd])
+            subprocess.check_output([u'which', cmd])
         except Exception as e:
             raise BackendException(
-                "Command '%s' not found, make sure 'MEGAcmd' tools (https://mega.nz/cmd) is "
-                "properly installed and in the running user command path"
+                u"Command '%s' not found, make sure 'MEGAcmd' tools (https://mega.nz/cmd) is "
+                u"properly installed and in the running user command path"
                 % (cmd,)
             )
 
     def ensure_mega_cmd_running(self):
-        'Trigger any mega command to ensure mega-cmd server is running'
+        u'Trigger any mega command to ensure mega-cmd server is running'
         try:
             subprocess.run(
-                "mega-help",
+                u"mega-help",
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
             ).check_returncode()
         except Exception:
-            raise BackendException('Cannot execute mega command')
+            raise BackendException(u'Cannot execute mega command')
 
     def _makedir(self, path):
-        'Creates a remote directory (recursively if necessary)'
+        u'Creates a remote directory (recursively if necessary)'
 
         self.mega_login()
-        cmd = ['mega-mkdir', '-p', path]
+        cmd = [u'mega-mkdir', u'-p', path]
         try:
             self.subprocess_popen(cmd)
         except Exception as e:
             error_str = str(e)
-            if "Folder already exists" in error_str:
+            if u"Folder already exists" in error_str:
                 raise BackendException(
-                    "Folder '%s' could not be created on MEGA because it already exists. "
-                    "Use another path or remove the folder in MEGA manually"
+                    u"Folder '%s' could not be created on MEGA because it already exists. "
+                    u"Use another path or remove the folder in MEGA manually"
                     % (path,)
                 )
             else:
                 raise BackendException(
-                    "Folder '%s' could not be created, reason : '%s'"
+                    u"Folder '%s' could not be created, reason : '%s'"
                     % (path, e)
                 )
 
     def _put(self, source_path, remote_filename):
-        """Uploads file to the specified remote folder (tries to delete it first to make
+        u"""Uploads file to the specified remote folder (tries to delete it first to make
         sure the new one can be uploaded)"""
 
         try:
@@ -161,7 +161,7 @@ class Megav3Backend(duplicity.backend.Backend):
         )
 
     def _get(self, remote_filename, local_path):
-        'Downloads file from the specified remote path'
+        u'Downloads file from the specified remote path'
 
         self.download(
             remote_file=remote_filename.decode(),
@@ -169,50 +169,50 @@ class Megav3Backend(duplicity.backend.Backend):
         )
 
     def _list(self):
-        'Lists files in the specified remote path'
+        u'Lists files in the specified remote path'
 
         return self.folder_contents(files_only=True)
 
     def _delete(self, filename):
-        'Deletes file from the specified remote path'
+        u'Deletes file from the specified remote path'
 
         self.delete(remote_file=filename.decode())
 
     def _close(self):
-        'Function called when backend is done being used'
+        u'Function called when backend is done being used'
 
         if not self._no_logout:
-            cmd = ['mega-logout']
+            cmd = [u'mega-logout']
             self.subprocess_popen(cmd)
 
-        cmd = ['mega-exec', 'exit']
+        cmd = [u'mega-exec', u'exit']
         self.subprocess_popen(cmd)
 
     def mega_login(self):
-        """Helper function to check existing session exists"""
+        u"""Helper function to check existing session exists"""
 
         # Abort if command doesn't return in a reasonable time (somehow "mega-session" sometimes
         # doesn't return), and create session if one doesn't exist yet
         try:
             result = subprocess.run(
-                'mega-whoami',
+                u'mega-whoami',
                 timeout=30,
                 capture_output=True,
             )
             result.check_returncode()
-            current_username = result.stdout.decode().split(':')[-1].strip()
+            current_username = result.stdout.decode().split(u':')[-1].strip()
             if current_username != self._username:
-                raise Exception("Username is not match")
+                raise Exception(u"Username is not match")
         except subprocess.TimeoutExpired:
             self._close()
             raise BackendException(
-                "Timed out while trying to determine if a MEGA session exists"
+                u"Timed out while trying to determine if a MEGA session exists"
             )
         except Exception as e:
             if self._password is None:
                 self._password = self.get_password()
 
-            cmd = ['mega-login', self._username, self._password]
+            cmd = [u'mega-login', self._username, self._password]
             try:
                 subprocess.run(
                     cmd,
@@ -221,59 +221,59 @@ class Megav3Backend(duplicity.backend.Backend):
             except Exception as e:
                 self._close()
                 raise BackendException(
-                    "Could not log in to MEGA, error : '%s'" % (e,)
+                    u"Could not log in to MEGA, error : '%s'" % (e,)
                 )
 
     def folder_contents(self, files_only=False):
-        'Lists contents of a remote MEGA path, optionally ignoring subdirectories'
+        u'Lists contents of a remote MEGA path, optionally ignoring subdirectories'
 
-        cmd = ['mega-ls', '-l', self._folder]
+        cmd = [u'mega-ls', u'-l', self._folder]
 
         self.mega_login()
         files = subprocess.check_output(cmd)
-        files = files.decode().split('\n')
+        files = files.decode().split(u'\n')
 
         # Optionally ignore directories
         if files_only:
-            files = [f.split()[5] for f in files if re.search('^-', f)]
+            files = [f.split()[5] for f in files if re.search(u'^-', f)]
 
         return files
 
     def download(self, remote_file, local_file):
-        'Downloads a file from a remote MEGA path'
+        u'Downloads a file from a remote MEGA path'
 
-        cmd = ['mega-get', self._folder + '/' + remote_file, local_file]
+        cmd = [u'mega-get', self._folder + u'/' + remote_file, local_file]
         self.mega_login()
         self.subprocess_popen(cmd)
 
     def upload(self, local_file, remote_file):
-        'Uploads a file to a remote MEGA path'
+        u'Uploads a file to a remote MEGA path'
 
-        cmd = ['mega-put', local_file, self._folder + '/' + remote_file]
+        cmd = [u'mega-put', local_file, self._folder + u'/' + remote_file]
         self.mega_login()
         try:
             self.subprocess_popen(cmd)
         except Exception as e:
             error_str = str(e)
-            if "Reached storage quota" in error_str:
+            if u"Reached storage quota" in error_str:
                 raise BackendException(
-                    "MEGA account over quota, could not write file : '%s' . "
-                    "Upgrade your storage at https://mega.nz/pro or remove some data."
+                    u"MEGA account over quota, could not write file : '%s' . "
+                    u"Upgrade your storage at https://mega.nz/pro or remove some data."
                     % (remote_file,)
                 )
             else:
                 raise BackendException(
-                    "Failed writing file '%s' to MEGA, reason : '%s'"
+                    u"Failed writing file '%s' to MEGA, reason : '%s'"
                     % (remote_file, e)
                 )
 
     def delete(self, remote_file):
-        'Deletes a file from a remote MEGA path'
+        u'Deletes a file from a remote MEGA path'
 
-        cmd = ['mega-rm', '-f', self._folder + '/' + remote_file]
+        cmd = [u'mega-rm', u'-f', self._folder + u'/' + remote_file]
         self.mega_login()
         self.subprocess_popen(cmd)
 
 
-duplicity.backend.register_backend('megav3', Megav3Backend)
-duplicity.backend.uses_netloc.extend(['megav3'])
+duplicity.backend.register_backend(u'megav3', Megav3Backend)
+duplicity.backend.uses_netloc.extend([u'megav3'])

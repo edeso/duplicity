@@ -38,7 +38,7 @@ from duplicity.errors import BackendException
 
 
 class MultiBackend(duplicity.backend.Backend):
-    """Store files across multiple remote stores. URL is a path to a local file
+    u"""Store files across multiple remote stores. URL is a path to a local file
     containing URLs/other config defining the remote store"""
 
     # the stores we are managing
@@ -47,32 +47,32 @@ class MultiBackend(duplicity.backend.Backend):
 
     # Set of known query paramaters
     __knownQueryParameters = frozenset([
-        'mode',
-        'onfail',
-        'subpath',
+        u'mode',
+        u'onfail',
+        u'subpath',
     ])
 
     # the mode of operation to follow
     # can be one of 'stripe' or 'mirror' currently
-    __mode = 'stripe'
+    __mode = u'stripe'
     __mode_allowedSet = frozenset([
-        'mirror',
-        'stripe',
+        u'mirror',
+        u'stripe',
     ])
 
     # the write error handling logic
     # can be one of the following:
     # * continue - default, on failure continues to next source
     # * abort - stop all further operations
-    __onfail_mode = 'continue'
+    __onfail_mode = u'continue'
     __onfail_mode_allowedSet = frozenset([
-        'abort',
-        'continue',
+        u'abort',
+        u'continue',
     ])
 
     # sub path to dynamically add sub directories to backends
     # will be appended to the url value
-    __subpath = ''
+    __subpath = u''
 
     # when we write in stripe mode, we "stripe" via a simple round-robin across
     # remote stores.  It's hard to get too much more sophisticated
@@ -90,24 +90,24 @@ class MultiBackend(duplicity.backend.Backend):
         try:
             queryMultiDict = urllib.parse.parse_qs(reparsed_url.query, strict_parsing=True)
         except ValueError as e:
-            log.Log(_("MultiBackend: Could not parse query string %s: %s ")
+            log.Log(_(u"MultiBackend: Could not parse query string %s: %s ")
                     % (reparsed_url.query, e),
                     log.ERROR)
-            raise BackendException('Could not parse query string')
+            raise BackendException(u'Could not parse query string')
         queryDict = dict()
         # Convert the multi-dict to a single dictionary
         # while checking to make sure that no unrecognized values are found
         for name, valueList in list(queryMultiDict.items()):
             if len(valueList) != 1:
-                log.Log(_("MultiBackend: Invalid query string %s: more than one value for %s")
+                log.Log(_(u"MultiBackend: Invalid query string %s: more than one value for %s")
                         % (reparsed_url.query, name),
                         log.ERROR)
-                raise BackendException('Invalid query string')
+                raise BackendException(u'Invalid query string')
             if name not in MultiBackend.__knownQueryParameters:
-                log.Log(_("MultiBackend: Invalid query string %s: unknown parameter %s")
+                log.Log(_(u"MultiBackend: Invalid query string %s: unknown parameter %s")
                         % (reparsed_url.query, name),
                         log.ERROR)
-                raise BackendException('Invalid query string')
+                raise BackendException(u'Invalid query string')
 
             queryDict[name] = valueList[0]
         return queryDict
@@ -147,59 +147,59 @@ class MultiBackend(duplicity.backend.Backend):
 
         queryParams = MultiBackend.get_query_params(parsed_url)
 
-        if 'mode' in queryParams:
-            self.__mode = queryParams['mode']
+        if u'mode' in queryParams:
+            self.__mode = queryParams[u'mode']
 
-        if 'onfail' in queryParams:
-            self.__onfail_mode = queryParams['onfail']
+        if u'onfail' in queryParams:
+            self.__onfail_mode = queryParams[u'onfail']
 
         if self.__mode not in MultiBackend.__mode_allowedSet:
-            log.Log(_("MultiBackend: illegal value for %s: %s")
-                    % ('mode', self.__mode), log.ERROR)
-            raise BackendException("MultiBackend: invalid mode value")
+            log.Log(_(u"MultiBackend: illegal value for %s: %s")
+                    % (u'mode', self.__mode), log.ERROR)
+            raise BackendException(u"MultiBackend: invalid mode value")
 
         if self.__onfail_mode not in MultiBackend.__onfail_mode_allowedSet:
-            log.Log(_("MultiBackend: illegal value for %s: %s")
-                    % ('onfail', self.__onfail_mode), log.ERROR)
-            raise BackendException("MultiBackend: invalid onfail value")
+            log.Log(_(u"MultiBackend: illegal value for %s: %s")
+                    % (u'onfail', self.__onfail_mode), log.ERROR)
+            raise BackendException(u"MultiBackend: invalid onfail value")
 
-        if 'subpath' in queryParams:
-            self.__subpath = queryParams['subpath']
+        if u'subpath' in queryParams:
+            self.__subpath = queryParams[u'subpath']
 
         try:
             with open(parsed_url.path) as f:
                 configs = json.load(f)
         except IOError as e:
-            log.Log(_("MultiBackend: Url %s")
+            log.Log(_(u"MultiBackend: Url %s")
                     % (parsed_url.strip_auth()),
                     log.ERROR)
 
-            log.Log(_("MultiBackend: Could not load config file %s: %s ")
+            log.Log(_(u"MultiBackend: Could not load config file %s: %s ")
                     % (parsed_url.path, e),
                     log.ERROR)
-            raise BackendException('Could not load config file')
+            raise BackendException(u'Could not load config file')
 
         for config in configs:
-            url = config['url'] + self.__subpath
-            log.Log(_("MultiBackend: use store %s")
+            url = config[u'url'] + self.__subpath
+            log.Log(_(u"MultiBackend: use store %s")
                     % (url),
                     log.INFO)
-            if 'env' in config:
-                for env in config['env']:
-                    log.Log(_("MultiBackend: set env %s = %s")
-                            % (env['name'], env['value']),
+            if u'env' in config:
+                for env in config[u'env']:
+                    log.Log(_(u"MultiBackend: set env %s = %s")
+                            % (env[u'name'], env[u'value']),
                             log.INFO)
-                    os.environ[env['name']] = env['value']
+                    os.environ[env[u'name']] = env[u'value']
 
             store = duplicity.backend.get_backend(url)
             self.__stores.append(store)
 
             # Prefix affinity
-            if 'prefixes' in config:
-                if self.__mode == 'stripe':
-                    raise BackendException("Multibackend: stripe mode not supported with prefix affinity.")
-                for prefix in config['prefixes']:
-                    log.Log(_("Multibackend: register affinity for prefix %s")
+            if u'prefixes' in config:
+                if self.__mode == u'stripe':
+                    raise BackendException(u"Multibackend: stripe mode not supported with prefix affinity.")
+                for prefix in config[u'prefixes']:
+                    log.Log(_(u"Multibackend: register affinity for prefix %s")
                             % prefix, log.INFO)
                     if prefix in self.__affinities:
                         self.__affinities[prefix].append(store)
@@ -230,7 +230,7 @@ class MultiBackend(duplicity.backend.Backend):
         stores = self._eligible_stores(remote_filename)
 
         # Mirror mode always starts at zero
-        if self.__mode == 'mirror':
+        if self.__mode == u'mirror':
             self.__write_cursor = 0
 
         first = self.__write_cursor
@@ -240,7 +240,7 @@ class MultiBackend(duplicity.backend.Backend):
                 next = self.__write_cursor + 1  # pylint: disable=redefined-builtin
                 if (next > len(stores) - 1):
                     next = 0
-                log.Log(_("MultiBackend: _put: write to store #%s (%s)")
+                log.Log(_(u"MultiBackend: _put: write to store #%s (%s)")
                         % (self.__write_cursor, store.backend.parsed_url.strip_auth()),
                         log.DEBUG)
                 store.put(source_path, remote_filename)
@@ -250,27 +250,27 @@ class MultiBackend(duplicity.backend.Backend):
                 if next == 0:
                     break
                 # If in stripe mode, don't continue to the next
-                if self.__mode == 'stripe':
+                if self.__mode == u'stripe':
                     break
             except Exception as e:
-                log.Log(_("MultiBackend: failed to write to store #%s (%s), try #%s, Exception: %s")
+                log.Log(_(u"MultiBackend: failed to write to store #%s (%s), try #%s, Exception: %s")
                         % (self.__write_cursor, store.backend.parsed_url.strip_auth(), next, e),
                         log.INFO)
                 self.__write_cursor = next
 
                 # If we consider write failure as abort, abort
-                if self.__onfail_mode == 'abort':
-                    log.Log(_("MultiBackend: failed to write %s. Aborting process.")
+                if self.__onfail_mode == u'abort':
+                    log.Log(_(u"MultiBackend: failed to write %s. Aborting process.")
                             % (source_path),
                             log.ERROR)
-                    raise BackendException("failed to write")
+                    raise BackendException(u"failed to write")
 
                 # If we've looped around, and none of them passed, fail
                 if (self.__write_cursor == first) and not passed:
-                    log.Log(_("MultiBackend: failed to write %s. Tried all backing stores and none succeeded")
+                    log.Log(_(u"MultiBackend: failed to write %s. Tried all backing stores and none succeeded")
                             % (source_path),
                             log.ERROR)
-                    raise BackendException("failed to write")
+                    raise BackendException(u"failed to write")
 
     def _get(self, remote_filename, local_path):
         # since the backend operations will be retried, we can't
@@ -286,30 +286,30 @@ class MultiBackend(duplicity.backend.Backend):
             if remote_filename in flist:
                 s.get(remote_filename, local_path)
                 return
-            log.Log(_("MultiBackend: failed to get %s to %s from %s")
+            log.Log(_(u"MultiBackend: failed to get %s to %s from %s")
                     % (remote_filename, local_path, s.backend.parsed_url.strip_auth()),
                     log.INFO)
-        log.Log(_("MultiBackend: failed to get %s. Tried all backing stores and none succeeded")
+        log.Log(_(u"MultiBackend: failed to get %s. Tried all backing stores and none succeeded")
                 % (remote_filename),
                 log.ERROR)
-        raise BackendException("failed to get")
+        raise BackendException(u"failed to get")
 
     def _list(self):
         lists = []
         for s in self.__stores:
-            config.are_errors_fatal['list'] = (False, [])
+            config.are_errors_fatal[u'list'] = (False, [])
             l = s.list()
-            log.Notice(_("MultiBackend: %s: %d files")
+            log.Notice(_(u"MultiBackend: %s: %d files")
                        % (s.backend.parsed_url.strip_auth(), len(l)))
             if len(l) == 0 and duplicity.backend._last_exception:
-                log.Warn(_("Exception during list of %s: %s"
+                log.Warn(_(u"Exception during list of %s: %s"
                            % (s.backend.parsed_url.strip_auth(),
                               util.uexc(duplicity.backend._last_exception))))
                 duplicity.backend._last_exception = None
             lists.append(l)
         # combine the lists into a single flat list w/o duplicates via set:
         result = list({item for sublist in lists for item in sublist})
-        log.Log(_("MultiBackend: combined list: %s")
+        log.Log(_(u"MultiBackend: combined list: %s")
                 % (result),
                 log.DEBUG)
         return result
@@ -329,16 +329,16 @@ class MultiBackend(duplicity.backend.Backend):
         for s in stores:
             flist = s.list()
             if filename in flist:
-                if hasattr(s.backend, '_delete_list'):
+                if hasattr(s.backend, u'_delete_list'):
                     s._do_delete_list([filename, ])
-                elif hasattr(s.backend, '_delete'):
+                elif hasattr(s.backend, u'_delete'):
                     s._do_delete(filename)
                 passed = True
                 # In stripe mode, only one item will have the file
-                if self.__mode == 'stripe':
+                if self.__mode == u'stripe':
                     return
         if not passed:
-            log.Log(_("MultiBackend: failed to delete %s. Tried all backing stores and none succeeded")
+            log.Log(_(u"MultiBackend: failed to delete %s. Tried all backing stores and none succeeded")
                     % (filename),
                     log.ERROR)
 
@@ -357,32 +357,32 @@ class MultiBackend(duplicity.backend.Backend):
         for s in stores:
             flist = s.list()
             cleaned = [f for f in filenames if f in flist]
-            if hasattr(s.backend, '_delete_list'):
+            if hasattr(s.backend, u'_delete_list'):
                 s._do_delete_list(cleaned)
-            elif hasattr(s.backend, '_delete'):
+            elif hasattr(s.backend, u'_delete'):
                 for filename in cleaned:
                     s._do_delete(filename)
             passed = True
             # In stripe mode, only one item will have the file
-            if self.__mode == 'stripe':
+            if self.__mode == u'stripe':
                 return
         if not passed:
-            log.Log(_("MultiBackend: failed to delete %s. Tried all backing stores and none succeeded")
+            log.Log(_(u"MultiBackend: failed to delete %s. Tried all backing stores and none succeeded")
                     % (filenames),
                     log.ERROR)
 
     def pre_process_download(self, filename):
         for store in self.__stores:
-            if hasattr(store.backend, 'pre_process_download'):
+            if hasattr(store.backend, u'pre_process_download'):
                 store.backend.pre_process_download(filename)
 
     def pre_process_download_batch(self, filenames):
         set_files = set(filenames)
         for store in self.__stores:
-            if hasattr(store.backend, 'pre_process_download_batch'):
+            if hasattr(store.backend, u'pre_process_download_batch'):
                 store_files_to_download = set_files.intersection(store.list())
                 if len(store_files_to_download) > 0:
                     store.backend.pre_process_download_batch(store_files_to_download)
 
 
-duplicity.backend.register_backend('multi', MultiBackend)
+duplicity.backend.register_backend(u'multi', MultiBackend)

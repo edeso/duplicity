@@ -26,23 +26,23 @@ import sys
 
 import pytest
 
-if os.getenv('RUN_CODE_TESTS', None) == '1':
+if os.getenv(u'RUN_CODE_TESTS', None) == u'1':
     # Make conditional so that we do not have to import in environments that
     # do not run the tests (e.g. the build servers)
     import pycodestyle
 
 from . import _top_dir, DuplicityTestCase
 
-skipCodeTest = pytest.mark.skipif(not os.getenv('RUN_CODE_TESTS', None) == '1',
-                                  reason='Must set environment var RUN_CODE_TESTS=1')
+skipCodeTest = pytest.mark.skipif(not os.getenv(u'RUN_CODE_TESTS', None) == u'1',
+                                  reason=u'Must set environment var RUN_CODE_TESTS=1')
 
 files_to_test = [
-    os.path.join(_top_dir, 'bin/duplicity'),
-    os.path.join(_top_dir, 'bin/rdiffdir'),
-    os.path.join(_top_dir, 'duplicity'),
-    os.path.join(_top_dir, 'testing/functional'),
-    os.path.join(_top_dir, 'testing/unit'),
-] + glob.glob(os.path.join(_top_dir, 'testing/*.py'))
+    os.path.join(_top_dir, u'bin/duplicity'),
+    os.path.join(_top_dir, u'bin/rdiffdir'),
+    os.path.join(_top_dir, u'duplicity'),
+    os.path.join(_top_dir, u'testing/functional'),
+    os.path.join(_top_dir, u'testing/unit'),
+] + glob.glob(os.path.join(_top_dir, u'testing/*.py'))
 
 
 class CodeTest(DuplicityTestCase):
@@ -54,30 +54,30 @@ class CodeTest(DuplicityTestCase):
                                    universal_newlines=True)
         output = process.communicate()[0]
         if len(output):
-            for line in output.split('\n'):
+            for line in output.split(u'\n'):
                 print(line, file=sys.stderr)
-            output = ""
+            output = u""
         self.assertTrue(process.returncode in returncodes,
                         f"Test failed: returncode = {process.returncode}")
 
     @skipCodeTest
     def test_pylint(self):
-        """Pylint test (requires pylint to be installed to pass)"""
+        u"""Pylint test (requires pylint to be installed to pass)"""
         self.run_checker([
-            "pylint",
-            "--rcfile=" + os.path.join(_top_dir, "pylintrc"),
+            u"pylint",
+            u"--rcfile=" + os.path.join(_top_dir, u"pylintrc"),
         ] + files_to_test
         )
 
     @skipCodeTest
     def test_pep8(self):
-        """Test that we conform to PEP-8 using pycodestyle."""
+        u"""Test that we conform to PEP-8 using pycodestyle."""
         # Note that the settings, ignores etc for pycodestyle are set in tox.ini, not here
-        style = pycodestyle.StyleGuide(config_file=os.path.join(_top_dir, 'tox.ini'))
+        style = pycodestyle.StyleGuide(config_file=os.path.join(_top_dir, u'tox.ini'))
         result = style.check_files(files_to_test)
         self.assertEqual(result.total_errors, 0,
-                         "Found %s code style errors (and warnings)." % result.total_errors)
+                         u"Found %s code style errors (and warnings)." % result.total_errors)
 
 
-if __name__ == "__main__":
+if __name__ == u"__main__":
     unittest.main()

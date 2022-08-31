@@ -19,7 +19,7 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-"""
+u"""
 duplicity's gpg interface, builds upon Frank Tobin's GnuPGInterface
 which is now patched with some code for iterative threaded execution
 see duplicity's README for details
@@ -47,19 +47,19 @@ blocksize = 256 * 1024
 
 
 class GPGError(Exception):
-    """
+    u"""
     Indicate some GPG Error
     """
     pass
 
 
 class GPGProfile(object):
-    """
+    u"""
     Just hold some GPG settings, avoid passing tons of arguments
     """
     def __init__(self, passphrase=None, sign_key=None,
                  recipients=None, hidden_recipients=None):
-        """
+        u"""
         Set all data with initializer
 
         passphrase is the passphrase.  If it is None (not ""), assume
@@ -67,7 +67,7 @@ class GPGProfile(object):
         indicated, and recipients should be a list of keys.  For all
         keys, the format should be an hex key like 'AA0E73D2'.
         """
-        assert passphrase is None or isinstance(passphrase, (str, "".__class__))
+        assert passphrase is None or isinstance(passphrase, (str, u"".__class__))
 
         self.passphrase = passphrase
         self.signing_passphrase = passphrase
@@ -101,20 +101,20 @@ class GPGProfile(object):
                 gnupg.options.extra_args.append(opt)
 
         # get gpg version
-        res = gnupg.run(["--version"], create_fhs=["stdout"])
-        line = res.handles["stdout"].readline().rstrip()
+        res = gnupg.run([u"--version"], create_fhs=[u"stdout"])
+        line = res.handles[u"stdout"].readline().rstrip()
         m = self._version_re.search(line)
         if m is not None:
-            return (int(m.group("maj")), int(m.group("min")), int(m.group("bug")))
-        raise GPGError("failed to determine gnupg version of %s from %s" % (binary, line))
+            return (int(m.group(u"maj")), int(m.group(u"min")), int(m.group(u"bug")))
+        raise GPGError(u"failed to determine gnupg version of %s from %s" % (binary, line))
 
 
 class GPGFile(object):
-    """
+    u"""
     File-like object that encrypts decrypts another file on the fly
     """
     def __init__(self, encrypt, encrypt_path, profile):
-        """
+        u"""
         GPGFile initializer
 
         If recipients is set, use public key encryption and encrypt to
@@ -139,14 +139,14 @@ class GPGFile(object):
         if config.gpg_binary is not None:
             gnupg.call = config.gpg_binary
         gnupg.options.meta_interactive = 0
-        gnupg.options.extra_args.append('--no-secmem-warning')
-        gnupg.options.extra_args.append('--ignore-mdc-error')
+        gnupg.options.extra_args.append(u'--no-secmem-warning')
+        gnupg.options.extra_args.append(u'--ignore-mdc-error')
 
         # Support three versions of gpg present 1.x, 2.0.x, 2.1.x
         if profile.gpg_version[:1] == (1,):
             if config.use_agent:
                 # gpg1 agent use is optional
-                gnupg.options.extra_args.append('--use-agent')
+                gnupg.options.extra_args.append(u'--use-agent')
 
         elif profile.gpg_version[:2] == (2, 0):
             pass
@@ -155,10 +155,10 @@ class GPGFile(object):
             if not config.use_agent:
                 # This forces gpg2 to ignore the agent.
                 # Necessary to enforce truly non-interactive operation.
-                gnupg.options.extra_args.append('--pinentry-mode=loopback')
+                gnupg.options.extra_args.append(u'--pinentry-mode=loopback')
 
         else:
-            raise GPGError("Unsupported GNUPG version, %s" % profile.gpg_version)
+            raise GPGError(u"Unsupported GNUPG version, %s" % profile.gpg_version)
 
         # user supplied options
         if config.gpg_options:
@@ -168,7 +168,7 @@ class GPGFile(object):
         cmdlist = []
         if profile.sign_key:
             gnupg.options.default_key = profile.sign_key
-            cmdlist.append("--sign")
+            cmdlist.append(u"--sign")
         # encrypt: sign key needs passphrase
         # decrypt: encrypt key needs passphrase
         # special case: allow different symmetric pass with empty sign pass
@@ -179,51 +179,51 @@ class GPGFile(object):
         # in case the passphrase is not set, pass an empty one to prevent
         # TypeError: expected a character buffer object on .write()
         if passphrase is None:
-            passphrase = ""
+            passphrase = u""
 
         if encrypt:
             if profile.recipients:
                 gnupg.options.recipients = profile.recipients
-                cmdlist.append('--encrypt')
+                cmdlist.append(u'--encrypt')
             if profile.hidden_recipients:
                 gnupg.options.hidden_recipients = profile.hidden_recipients
-                cmdlist.append('--encrypt')
+                cmdlist.append(u'--encrypt')
             if not (profile.recipients or profile.hidden_recipients):
-                cmdlist.append('--symmetric')
+                cmdlist.append(u'--symmetric')
                 # use integrity protection
-                gnupg.options.extra_args.append('--force-mdc')
+                gnupg.options.extra_args.append(u'--force-mdc')
             # Skip the passphrase if using the agent
             if config.use_agent:
-                gnupg_fhs = ['stdin', ]
+                gnupg_fhs = [u'stdin', ]
             else:
-                gnupg_fhs = ['stdin', 'passphrase']
+                gnupg_fhs = [u'stdin', u'passphrase']
             p1 = gnupg.run(cmdlist, create_fhs=gnupg_fhs,
-                           attach_fhs={'stdout': encrypt_path.open("wb"),
-                                       'stderr': self.stderr_fp,
-                                       'logger': self.logger_fp})
+                           attach_fhs={u'stdout': encrypt_path.open(u"wb"),
+                                       u'stderr': self.stderr_fp,
+                                       u'logger': self.logger_fp})
             if not config.use_agent:
-                p1.handles['passphrase'].write(passphrase)
-                p1.handles['passphrase'].close()
-            self.gpg_input = p1.handles['stdin']
+                p1.handles[u'passphrase'].write(passphrase)
+                p1.handles[u'passphrase'].close()
+            self.gpg_input = p1.handles[u'stdin']
         else:
             if (profile.recipients or profile.hidden_recipients) and profile.encrypt_secring:
-                cmdlist.append('--secret-keyring')
+                cmdlist.append(u'--secret-keyring')
                 cmdlist.append(profile.encrypt_secring)
             self.status_fp = tempfile.TemporaryFile(dir=tempdir.default().dir())
             # Skip the passphrase if using the agent
             if config.use_agent:
-                gnupg_fhs = ['stdout', ]
+                gnupg_fhs = [u'stdout', ]
             else:
-                gnupg_fhs = ['stdout', 'passphrase']
-            p1 = gnupg.run(['--decrypt'], create_fhs=gnupg_fhs,
-                           attach_fhs={'stdin': encrypt_path.open("rb"),
-                                       'status': self.status_fp,
-                                       'stderr': self.stderr_fp,
-                                       'logger': self.logger_fp})
+                gnupg_fhs = [u'stdout', u'passphrase']
+            p1 = gnupg.run([u'--decrypt'], create_fhs=gnupg_fhs,
+                           attach_fhs={u'stdin': encrypt_path.open(u"rb"),
+                                       u'status': self.status_fp,
+                                       u'stderr': self.stderr_fp,
+                                       u'logger': self.logger_fp})
             if not (config.use_agent):
-                p1.handles['passphrase'].write(passphrase)
-                p1.handles['passphrase'].close()
-            self.gpg_output = p1.handles['stdout']
+                p1.handles[u'passphrase'].write(passphrase)
+                p1.handles[u'passphrase'].close()
+            self.gpg_output = p1.handles[u'stdout']
         self.gpg_process = p1
         self.encrypt = encrypt
 
@@ -250,25 +250,25 @@ class GPGFile(object):
 
     def seek(self, offset):
         assert not self.encrypt
-        assert offset >= self.byte_count, "%d < %d" % (offset, self.byte_count)
+        assert offset >= self.byte_count, u"%d < %d" % (offset, self.byte_count)
         if offset > self.byte_count:
             self.read(offset - self.byte_count)
 
     def gpg_failed(self):
-        msg = "GPG Failed, see log below:\n"
-        msg += "===== Begin GnuPG log =====\n"
+        msg = u"GPG Failed, see log below:\n"
+        msg += u"===== Begin GnuPG log =====\n"
         for fp in (self.logger_fp, self.stderr_fp):
             fp.seek(0)
             for line in fp:
                 try:
-                    msg += str(line.strip(), locale.getpreferredencoding(), 'replace') + "\n"
+                    msg += str(line.strip(), locale.getpreferredencoding(), u'replace') + u"\n"
                 except Exception as e:
-                    msg += line.strip() + "\n"
-        msg += "===== End GnuPG log =====\n"
-        if not (msg.find("invalid packet (ctb=14)") > -1):
+                    msg += line.strip() + u"\n"
+        msg += u"===== End GnuPG log =====\n"
+        if not (msg.find(u"invalid packet (ctb=14)") > -1):
             raise GPGError(msg)
         else:
-            return ""
+            return u""
 
     def close(self):
         if self.encrypt:
@@ -305,7 +305,7 @@ class GPGFile(object):
         self.closed = 1
 
     def set_signature(self):
-        """
+        u"""
         Set self.signature to signature keyID
 
         This only applies to decrypted files.  If the file was not
@@ -322,7 +322,7 @@ class GPGFile(object):
             self.signature = match.group(1).decode()
 
     def get_signature(self):
-        """
+        u"""
         Return  keyID of signature, or None if none
         """
         assert self.closed
@@ -332,7 +332,7 @@ class GPGFile(object):
 def GPGWriteFile(block_iter, filename, profile,
                  size=200 * 1024 * 1024,
                  max_footer_size=16 * 1024):
-    """
+    u"""
     Write GPG compressed file of given size
 
     This function writes a gpg compressed file by reading from the
@@ -356,14 +356,14 @@ def GPGWriteFile(block_iter, filename, profile,
     from duplicity import path
 
     def top_off(bytelen, file):
-        """
+        u"""
         Add bytelen of incompressible data to to_gpg_fp
 
         In this case we take the incompressible data from the
         beginning of filename (it should contain enough because size
         >> largest block size).
         """
-        incompressible_fp = open(filename, "rb")
+        incompressible_fp = open(filename, u"rb")
         assert util.copyfileobj(incompressible_fp, file.gpg_input, bytelen) == bytelen
         incompressible_fp.close()
 
@@ -401,7 +401,7 @@ def GPGWriteFile(block_iter, filename, profile,
 
 
 def GzipWriteFile(block_iter, filename, size=200 * 1024 * 1024, gzipped=True):
-    """
+    u"""
     Write gzipped compressed file of given size
 
     This is like the earlier GPGWriteFile except it writes a gzipped
@@ -413,7 +413,7 @@ def GzipWriteFile(block_iter, filename, size=200 * 1024 * 1024, gzipped=True):
     GPGWriteFile (returns true if wrote until end of block_iter).
     """
     class FileCounted(object):
-        """
+        u"""
         Wrapper around file object that counts number of bytes written
         """
         def __init__(self, fileobj):
@@ -428,11 +428,11 @@ def GzipWriteFile(block_iter, filename, size=200 * 1024 * 1024, gzipped=True):
         def close(self):
             return self.fileobj.close()
 
-    file_counted = FileCounted(open(filename, "wb"))
+    file_counted = FileCounted(open(filename, u"wb"))
 
     # if gzipped wrap with GzipFile else plain file out
     if gzipped:
-        outfile = gzip.GzipFile(None, "wb", 6, file_counted)
+        outfile = gzip.GzipFile(None, u"wb", 6, file_counted)
     else:
         outfile = file_counted
     at_end_of_blockiter = 0
@@ -452,7 +452,7 @@ def GzipWriteFile(block_iter, filename, size=200 * 1024 * 1024, gzipped=True):
 
 
 def PlainWriteFile(block_iter, filename, size=200 * 1024 * 1024, gzipped=False):
-    """
+    u"""
     Write plain uncompressed file of given size
 
     This is like the earlier GPGWriteFile except it writes a gzipped
@@ -467,20 +467,20 @@ def PlainWriteFile(block_iter, filename, size=200 * 1024 * 1024, gzipped=False):
 
 
 def get_hash(hash, path, hex=1):  # pylint: disable=redefined-builtin
-    """
+    u"""
     Return hash of path
 
     hash should be "MD5" or "SHA1".  The output will be in hexadecimal
     form if hex is true, and in text (base64) otherwise.
     """
     # assert path.isreg()
-    fp = path.open("rb")
-    if hash == "SHA1":
+    fp = path.open(u"rb")
+    if hash == u"SHA1":
         hash_obj = sha1()
-    elif hash == "MD5":
+    elif hash == u"MD5":
         hash_obj = md5()
     else:
-        assert 0, "Unknown hash %s" % (hash,)
+        assert 0, u"Unknown hash %s" % (hash,)
 
     while 1:
         buf = fp.read(blocksize)

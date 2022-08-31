@@ -30,30 +30,30 @@ import token
 def return_adorned_string_tokens(f):
     named_tokens = tokenize.tokenize(f.readline)
     for t in named_tokens:
-        if t.type == token.STRING and t.string[0] == 'u' and t.string[1] in ['"', "'"]:
+        if t.type == token.STRING and t.string[0] == u'u' and t.string[1] in [u'"', u"'"]:
             yield t
 
 
 def check_file_for_adorned(filename):
     string_list = []
-    with open(filename, 'rb') as f:
+    with open(filename, u'rb') as f:
         for s in return_adorned_string_tokens(f):
             string_list.append((filename, s.start, s.end, s.string))
     return string_list
 
 
-if __name__ == "__main__":
+if __name__ == u"__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(description='Find any adorned string literals in a Python file')
-    parser.add_argument('file', help='The file to search')
+    parser = argparse.ArgumentParser(description=u'Find any adorned string literals in a Python file')
+    parser.add_argument(u'file', help=u'The file to search')
     args = parser.parse_args()
 
     adorned_string_list = check_file_for_adorned(args.file)
     if len(adorned_string_list) == 0:
-        print("There are no adorned strings in", args.file)
+        print(u"There are no adorned strings in", args.file)
     else:
-        print("There are adorned strings in", args.file)
+        print(u"There are adorned strings in", args.file)
         for adorned_string in adorned_string_list:
             print(adorned_string)
             python_file, string_start, string_end, string = adorned_string

@@ -22,9 +22,9 @@ import duplicity.backend
 from duplicity import config
 
 if (config.cf_backend and
-        config.cf_backend.lower().strip() == 'pyrax'):
+        config.cf_backend.lower().strip() == u'pyrax'):
     from ._cf_pyrax import PyraxBackend as CFBackend
 else:
     from ._cf_cloudfiles import CloudFilesBackend as CFBackend
 
-duplicity.backend.register_backend("cf+http", CFBackend)
+duplicity.backend.register_backend(u"cf+http", CFBackend)
