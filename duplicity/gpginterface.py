@@ -23,7 +23,7 @@ Example code:
 
 >>> import gpginterface
 >>>
->>> plaintext  = "Three blind mice"
+>>> plaintext  = b"Three blind mice"
 >>> passphrase = "This is the passphrase"
 >>>
 >>> gnupg = gpginterface.GnuPG()
@@ -43,10 +43,10 @@ Example code:
 >>> p1 = gnupg.run(['--symmetric'],
 ...                create_fhs=['stdin', 'stdout', 'passphrase'])
 >>>
->>> p1.handles['passphrase'].write(passphrase)
+>>> ret = p1.handles['passphrase'].write(passphrase)
 >>> p1.handles['passphrase'].close()
 >>>
->>> p1.handles['stdin'].write(plaintext)
+>>> ret = p1.handles['stdin'].write(plaintext)
 >>> p1.handles['stdin'].close()
 >>>
 >>> ciphertext = p1.handles['stdout'].read()
@@ -62,7 +62,7 @@ Example code:
 >>>
 >>> p2 = gnupg.run(['--decrypt'], create_fhs=['stdin', 'stdout'])
 >>>
->>> p2.handles['stdin'].write(ciphertext)
+>>> ret = p2.handles['stdin'].write(ciphertext)
 >>> p2.handles['stdin'].close()
 >>>
 >>> decrypted_plaintext = p2.handles['stdout'].read()
@@ -73,7 +73,7 @@ Example code:
 >>>
 >>> # Our decrypted plaintext:
 >>> decrypted_plaintext
-'Three blind mice'
+b'Three blind mice'
 >>>
 >>> # ...and see it's the same as what we orignally encrypted
 >>> assert decrypted_plaintext == plaintext, \
@@ -84,10 +84,10 @@ Example code:
 >>> # Now let's trying using run()'s attach_fhs paramter
 >>>
 >>> # we're assuming we're running on a unix...
->>> input = open('/etc/motd')
+>>> infp = open('/etc/manpaths', 'rb')
 >>>
 >>> p1 = gnupg.run(['--symmetric'], create_fhs=['stdout'],
-...                                 attach_fhs={'stdin': input})
+...                                 attach_fhs={'stdin': infp})
 >>>
 >>> # GnuPG will read the stdin from /etc/motd
 >>> ciphertext = p1.handles['stdout'].read()
@@ -104,20 +104,19 @@ Example code:
 ...                               attach_fhs={'stdout': temp})
 >>>
 >>> # give GnuPG our encrypted stuff from the first run
->>> p2.handles['stdin'].write(ciphertext)
+>>> ret = p2.handles['stdin'].write(ciphertext)
 >>> p2.handles['stdin'].close()
 >>>
 >>> # process cleanup
 >>> p2.wait()
 >>>
 >>> # rewind the tempfile and see what GnuPG gave us
->>> temp.seek(0)
+>>> ret = temp.seek(0)
 >>> decrypted_plaintext = temp.read()
 >>>
 >>> # compare what GnuPG decrypted with our original input
->>> input.seek(0)
->>> input_data = input.read()
->>>
+>>> ret = infp.seek(0)
+>>> input_data = infp.read()
 >>> assert decrypted_plaintext == input_data, \
            "GnuPG decrypted output does not match original input"
 
@@ -137,7 +136,7 @@ ciphertext.
 >>> class MyGnuPG(gpginterface.GnuPG):
 ...
 ...     def __init__(self):
-...         gpginterface.GnuPG.__init__(self)
+...         super().__init__()
 ...         self.setup_my_options()
 ...
 ...     def setup_my_options(self):
@@ -160,12 +159,12 @@ ciphertext.
 ...        return output
 ...
 >>> gnupg = MyGnuPG()
->>> ciphertext = gnupg.encrypt_string("The secret", ['0x260C4FA3'])
+>>> ciphertext = gnupg.encrypt_string(b"The secret", ['E477C232'])
 >>>
 >>> # just a small sanity test here for doctest
 >>> import types
->>> assert isinstance(ciphertext, types.StringType), \
-           "What GnuPG gave back is not a string!"
+>>> assert isinstance(ciphertext, bytes), \
+           "What GnuPG gave back is not bytes!"
 
 Here is an example of generating a key:
 >>> import gpginterface
@@ -181,7 +180,7 @@ Here is an example of generating a key:
 >>> proc = gnupg.run(['--gen-key'], create_fhs=['stdin', 'stdout',
 ...                                             'logger'])
 >>>
->>> proc.handles['stdin'].write('''Key-Type: DSA
+>>> ret = proc.handles['stdin'].write(b'''Key-Type: DSA
 ... Key-Length: 1024
 ... # We are only testing syntax this time, so dry-run
 ... %dry-run
@@ -232,11 +231,15 @@ import sys
 
 from duplicity import log
 
+# TODO: remove dummy_threading import after Python 3.7 EOL
 try:
     import threading
 except ImportError:
-    import dummy_threading as threading
-    log.Warn(_(u"Threading not available -- zombie processes may appear"))
+    try:
+        import dummy_threading as threading
+        log.Warn(_(u"Threading not available -- zombie processes may appear"))
+    except ImportError:
+        log.FatalError(u"Neither threading nor dummy_threading available.")
 
 __author__ = u"Frank J. Tobin, ftobin@neverending.org"
 __version__ = u"0.3.2"
@@ -706,13 +709,7 @@ def threaded_waitpid(process):
         process.returned = 0
 
 
-def _run_doctests():
-    import doctest
-    return doctest.testmod(GnuPGInterface)
-
-
-# deprecated
-GnuPGInterface = GnuPG
-
 if __name__ == u'__main__':
-    _run_doctests()
+    import doctest
+    from . import gpginterface  # pylint: disable=import-error
+    doctest.testmod(gpginterface)
