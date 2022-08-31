@@ -65,7 +65,7 @@ class VerifyTest(FunctionalTestCase):
         # Set the atime and mtime of the file to the time that we collected, as on some systems
         # the times from a stat call don't match what a utime will set.
         os.utime(u'{0}/testfiles/various_file_types/executable'.format(_runtest_dir), (file_info.st_atime,
-                                                                                      file_info.st_mtime))
+                                                                                       file_info.st_mtime))
 
         self.backup(u"full", u"{0}/testfiles/various_file_types".format(_runtest_dir), options=[])
 
@@ -75,7 +75,7 @@ class VerifyTest(FunctionalTestCase):
 
         # Set the atime and mtime for the file back to what it was prior to the edit
         os.utime(u'{0}/testfiles/various_file_types/executable'.format(_runtest_dir), (file_info.st_atime,
-                                                                                      file_info.st_mtime))
+                                                                                       file_info.st_mtime))
 
         # Test verify for the file
         self.verify(u'{0}/testfiles/various_file_types/executable'.format(_runtest_dir), file_to_verify=u'executable',
@@ -116,7 +116,7 @@ class VerifyTest(FunctionalTestCase):
         # Set the atime and mtime of the file to the time that we collected, as on some systems
         # the times from a stat call don't match what a utime will set
         os.utime(u'{0}/testfiles/various_file_types/executable'.format(_runtest_dir), (file_info.st_atime,
-                                                                                      file_info.st_mtime))
+                                                                                       file_info.st_mtime))
 
         self.backup(u"full", u"{0}/testfiles/various_file_types".format(_runtest_dir), options=[])
         # Edit source file
@@ -125,7 +125,7 @@ class VerifyTest(FunctionalTestCase):
 
         # Set the atime and mtime for the file back to what it was prior to the edit
         os.utime(u'{0}/testfiles/various_file_types/executable'.format(_runtest_dir), (file_info.st_atime,
-                                                                                      file_info.st_mtime))
+                                                                                       file_info.st_mtime))
 
         # Test verify for edited file fails with --compare-data
         try:

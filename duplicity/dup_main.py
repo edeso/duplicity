@@ -713,10 +713,10 @@ def list_current(col_stats):
     for path in path_iter:
         if path.difftype != u"deleted":
             user_info = u"%s %s" % (dup_time.timetopretty(path.getmtime()),
-                                   os.fsdecode(path.get_relative_path()))
+                                    os.fsdecode(path.get_relative_path()))
             log_info = u"%s %s %s" % (dup_time.timetostring(path.getmtime()),
-                                     util.escape(path.get_relative_path()),
-                                     path.type)
+                                      util.escape(path.get_relative_path()),
+                                      path.type)
             log.Log(user_info, log.INFO, log.InfoCode.file_list,
                     log_info, True)
 
@@ -1272,7 +1272,7 @@ def sync_archive(col_stats):
             util.ignore_missing(os.unlink, del_name)
         except Exception as e:
             log.Warn(_(u"Unable to delete %s: %s") % (os.fsdecode(del_name),
-                                                     util.uexc(e)))
+                                                      util.uexc(e)))
 
     def copy_to_local(fn):
         u"""

@@ -83,14 +83,14 @@ class Par2Backend(backend.Backend):
 
         log.Info(u"Create Par2 recovery files")
         par2create = u'par2 c -r%d -n%d %s "%s"' % (self.redundancy, self.volumes,
-                                                   self.common_options,
-                                                   os.fsdecode(source_symlink.get_canonical()))
+                                                    self.common_options,
+                                                    os.fsdecode(source_symlink.get_canonical()))
         returncode, out, err = self.subprocess_popen(par2create)
 
         if returncode:
             log.Warn(u"Failed to create par2 file with requested options, retrying with -n1")
             par2create = u'par2 c -r%d -n1 %s "%s"' % (self.redundancy, self.common_options,
-                                                      os.fsdecode(source_symlink.get_canonical()))
+                                                       os.fsdecode(source_symlink.get_canonical()))
             returncode, out, err = self.subprocess_popen(par2create)
             if not returncode:
                 log.Warn(u"Successfully created par2 file with -n1")
@@ -135,8 +135,8 @@ class Par2Backend(backend.Backend):
             self.wrapped_backend._get(par2file.get_filename(), par2file)
 
             par2verify = u'par2 v %s %s "%s"' % (self.common_options,
-                                                os.fsdecode(par2file.get_canonical()),
-                                                os.fsdecode(local_path_temp.get_canonical()))
+                                                 os.fsdecode(par2file.get_canonical()),
+                                                 os.fsdecode(local_path_temp.get_canonical()))
             returncode, out, err = self.subprocess_popen(par2verify)
 
             if returncode:
@@ -149,8 +149,8 @@ class Par2Backend(backend.Backend):
                     self.wrapped_backend._get(filename, file)
 
                 par2repair = u'par2 r %s %s "%s"' % (self.common_options,
-                                                    os.fsdecode(par2file.get_canonical()),
-                                                    os.fsdecode(local_path_temp.get_canonical()))
+                                                     os.fsdecode(par2file.get_canonical()),
+                                                     os.fsdecode(local_path_temp.get_canonical()))
                 returncode, out, err = self.subprocess_popen(par2repair)
 
                 if returncode:

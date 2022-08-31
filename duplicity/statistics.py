@@ -133,8 +133,8 @@ class StatsObj(object):
     def get_stats_string(self):
         u"""Return extended string printing out statistics"""
         return u"%s%s%s" % (self.get_timestats_string(),
-                           self.get_filestats_string(),
-                           self.get_miscstats_string())
+                            self.get_filestats_string(),
+                            self.get_miscstats_string())
 
     def get_timestats_string(self):
         u"""Return portion of statistics string dealing with time"""
@@ -163,7 +163,7 @@ class StatsObj(object):
                 return u""
             if in_bytes:
                 return u"%s %s (%s)\n" % (attr, val,
-                                         self.get_byte_summary_string(val))
+                                          self.get_byte_summary_string(val))
             else:
                 return u"%s %s\n" % (attr, val)
 

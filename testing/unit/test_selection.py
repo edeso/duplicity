@@ -695,7 +695,7 @@ class ParseArgsTest(UnitTestCase):
         self.ParseTest([(u"--include", u"testfiles/select2/1/1sub1/1sub1sub1/"),
                         (u"--exclude", u"**")],
                        [(), (u"1sub1sub1",), (u"1sub1sub1",
-                                             u"1sub1sub1_file.txt")])
+                                              u"1sub1sub1_file.txt")])
 
     def test_includes_files_trailing_slash_globbing_chars(self):
         u"""Unit test functional test_includes_files_trailing_slash_globbing_chars"""

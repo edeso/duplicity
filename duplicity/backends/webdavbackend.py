@@ -151,7 +151,7 @@ class WebDAVBackend(duplicity.backend.Backend):
         self.directory = self.sanitize_path(parsed_url.path)
 
         log.Info(_(u"Using WebDAV host %s port %s") % (parsed_url.hostname,
-                                                      parsed_url.port))
+                                                       parsed_url.port))
         log.Info(_(u"Using WebDAV directory %s") % (self.directory,))
 
         self.conn = None
@@ -394,7 +394,7 @@ class WebDAVBackend(duplicity.backend.Backend):
                 u"safety measure. If this happens to you, "\
                 u"please report the problem"\
                 u"" % (parsed_url.hostname,
-                      self.parsed_url.hostname)
+                       self.parsed_url.hostname)
             raise BackendException(m)
 
         if filename.startswith(self.directory):

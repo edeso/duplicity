@@ -307,7 +307,7 @@ Exception: %s""" % str(e))
 
                     upload_cursor.offset = f.tell()
                     log.Debug(u'progress: %d of %d' % (upload_cursor.offset,
-                                                      file_size))
+                                                       file_size))
                     progress.report_transfer(upload_cursor.offset, file_size)
                 except ApiError as e:
                     error = e.error
@@ -371,7 +371,7 @@ Exception: %s""" % str(e))
         log.Debug(u'dpbx,files_download(%s)' % remote_path)
         res_metadata, http_fd = self.api_client.files_download(remote_path)
         log.Debug(u'dpbx,files_download(%s): %s, %s' % (remote_path, res_metadata,
-                                                       http_fd))
+                                                        http_fd))
         file_size = res_metadata.size
         to_fd = None
         progress.report_transfer(0, file_size)

@@ -402,7 +402,7 @@ class BackupChain(object):
         suitable for log messages.
         """
         return u"[%s]-[%s]" % (dup_time.timetopretty(self.start_time),
-                              dup_time.timetopretty(self.end_time))
+                               dup_time.timetopretty(self.end_time))
 
     def to_log_info(self, prefix=u''):
         u"""
@@ -883,7 +883,7 @@ class CollectionsStatus(object):
                 for chain in chains:
                     if chain.add_inc(set):
                         log.Debug(_(u"Added set %s to pre-existing chain %s") % (set.get_timestr(),
-                                                                                chain.short_desc()))
+                                                                                 chain.short_desc()))
                         break
                 else:
                     log.Debug(_(u"Found orphaned set %s") % (set.get_timestr(),))

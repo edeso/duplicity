@@ -310,7 +310,7 @@ def parse_cmdline_options(arglist):
 
     parser.add_option(u"--exclude-globbing-filelist", type=u"file", metavar=_(u"filename"),
                       dest=u"", action=u"callback", callback=lambda o, s, v, p: (add_filelist(o, s, v, p),
-                                                                               old_globbing_filelist_deprecation(s)),
+                                                                                 old_globbing_filelist_deprecation(s)),
                       help=optparse.SUPPRESS_HELP)
 
     # TRANSL: Used in usage help to represent the name of a file. Example:
@@ -417,7 +417,7 @@ def parse_cmdline_options(arglist):
                       help=optparse.SUPPRESS_HELP)
     parser.add_option(u"--include-globbing-filelist", type=u"file", metavar=_(u"filename"),
                       dest=u"", action=u"callback", callback=lambda o, s, v, p: (add_filelist(o, s, v, p),
-                                                                               old_globbing_filelist_deprecation(s)),
+                                                                                 old_globbing_filelist_deprecation(s)),
                       help=optparse.SUPPRESS_HELP)
     parser.add_option(u"--include-regexp", metavar=_(u"regular_expression"), dest=u"",
                       type=u"string", action=u"callback", callback=add_selection)
@@ -1173,8 +1173,8 @@ def check_consistency(action):
                                u"restoring or verifying")
         if select_opts and action == u"restore":
             log.Warn(_(u"Command line warning: %s") % _(u"Selection options --exclude/--include\n"
-                                                       u"currently work only when backing up,"
-                                                       u"not restoring."))
+                                                        u"currently work only when backing up,"
+                                                        u"not restoring."))
     else:
         assert action == u"inc" or action == u"full"
         if verify:

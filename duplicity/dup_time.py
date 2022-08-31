@@ -306,9 +306,9 @@ def genstrtotime(timestr, override_curtime=None):
     if not match:
         error()
     timestr = u"%s-%02d-%02dT00:00:00%s" % (match.group(u'year'),
-                                           int(match.group(u'month')),
-                                           int(match.group(u'day')),
-                                           gettzd(0))
+                                            int(match.group(u'month')),
+                                            int(match.group(u'day')),
+                                            gettzd(0))
     t = stringtotime(timestr)
     if t:
         return t

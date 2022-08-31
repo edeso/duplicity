@@ -146,7 +146,7 @@ class B2Backend(duplicity.backend.Backend):
         Download remote_filename to local_path
         """
         log.Log(u"Get: %s -> %s" % (self.path + os.fsdecode(remote_filename),
-                                   os.fsdecode(local_path.name)),
+                                    os.fsdecode(local_path.name)),
                 log.INFO)
         if self.v_num < [1, 11, 0]:
             self.bucket.download_file_by_name(quote_plus(self.path + os.fsdecode(remote_filename), u'/'),
@@ -160,7 +160,7 @@ class B2Backend(duplicity.backend.Backend):
         Copy source_path to remote_filename
         """
         log.Log(u"Put: %s -> %s" % (os.fsdecode(source_path.name),
-                                   self.path + os.fsdecode(remote_filename)),
+                                    self.path + os.fsdecode(remote_filename)),
                 log.INFO)
         self.bucket.upload_local_file(os.fsdecode(source_path.name),
                                       quote_plus(self.path + os.fsdecode(remote_filename), u'/'),

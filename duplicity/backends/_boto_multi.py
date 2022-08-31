@@ -219,9 +219,9 @@ def multipart_upload_worker(scheme, parsed_url, storage_uri, bucket_name, multip
                         end = time.time()
                         log.Debug((u"{name}: Uploaded chunk {chunk} "
                                    u"at roughly {speed} bytes/second").format(name=worker_name,
-                                                                             chunk=offset + 1,
-                                                                             speed=(bytes /
-                                                                                    max(1, abs(end - start)))))
+                                                                              chunk=offset + 1,
+                                                                              speed=(bytes /
+                                                                                     max(1, abs(end - start)))))
                     break
             conn.close()
             conn = None

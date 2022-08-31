@@ -318,7 +318,7 @@ class ADBackend(duplicity.backend.Backend):
             log.Info(u'%s upload failed with timeout status code=%d. Speculatively '
                      u'waiting for %d seconds to see if Amazon Drive finished the '
                      u'upload anyway' % (remote_filename, response.status_code,
-                                        config.timeout))
+                                         config.timeout))
             tries = config.timeout / 15
             while tries >= 0:
                 tries -= 1

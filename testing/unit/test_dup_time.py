@@ -105,7 +105,7 @@ class TimeTest(object):
         assert i2s(u"7D2h") == 7 * 86400 + 2 * 3600
         assert i2s(u"2Y3s") == 2 * 365 * 86400 + 3
         assert i2s(u"1M2W4D2h5m20s") == (30 * 86400 + 2 * 7 * 86400 + 4 * 86400 +
-                                        2 * 3600 + 5 * 60 + 20)
+                                         2 * 3600 + 5 * 60 + 20)
 
     def testPrettyIntervals(self):
         u"""Test printable interval conversion"""
