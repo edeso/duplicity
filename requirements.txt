@@ -2,7 +2,15 @@
 
 fasteners
 pydevd                  ; python_version >= '3.6'
+pydevd-pycharm          ; python_version >= '3.6'
 python-gettext
+
+
+##### requests libraries #####
+
+chardet < 3.10
+urllib3 < 1.26
+requests
 
 
 ##### backend libraries #####
@@ -29,7 +37,6 @@ pydrive2                ; python_version >= '3.6'
 pyrax                   ; python_version >= '3.6'
 python-swiftclient
 python-keystoneclient
-requests
 requests-oauthlib
 
 

@@ -35,6 +35,7 @@ from duplicity import config
 from duplicity import gpginterface
 from duplicity import tempdir
 from duplicity import util
+from duplicity.gpg_error_codes import gpg_error_codes
 
 try:
     from hashlib import sha1
@@ -105,7 +106,7 @@ class GPGProfile(object):
         line = res.handles[u"stdout"].readline().rstrip()
         m = self._version_re.search(line)
         if m is not None:
-            return (int(m.group(u"maj")), int(m.group(u"min")), int(m.group(u"bug")))
+            return int(m.group(u"maj")), int(m.group(u"min")), int(m.group(u"bug"))
         raise GPGError(u"failed to determine gnupg version of %s from %s" % (binary, line))
 
 
@@ -128,10 +129,10 @@ class GPGFile(object):
         """
         self.status_fp = None  # used to find signature
         self.closed = None  # set to true after file closed
-        self.logger_fp = tempfile.TemporaryFile(dir=tempdir.default().dir())
         self.stderr_fp = tempfile.TemporaryFile(dir=tempdir.default().dir())
         self.name = encrypt_path
         self.byte_count = 0
+        self.signature = None
 
         # Start GPG process - copied from GnuPGInterface docstring.
         gnupg = gpginterface.GnuPG()
@@ -197,10 +198,10 @@ class GPGFile(object):
                 gnupg_fhs = [u'stdin', ]
             else:
                 gnupg_fhs = [u'stdin', u'passphrase']
-            p1 = gnupg.run(cmdlist, create_fhs=gnupg_fhs,
+            p1 = gnupg.run(cmdlist,
+                           create_fhs=gnupg_fhs,
                            attach_fhs={u'stdout': encrypt_path.open(u"wb"),
-                                       u'stderr': self.stderr_fp,
-                                       u'logger': self.logger_fp})
+                                       u'stderr': self.stderr_fp})
             if not config.use_agent:
                 p1.handles[u'passphrase'].write(passphrase)
                 p1.handles[u'passphrase'].close()
@@ -209,18 +210,20 @@ class GPGFile(object):
             if (profile.recipients or profile.hidden_recipients) and profile.encrypt_secring:
                 cmdlist.append(u'--secret-keyring')
                 cmdlist.append(profile.encrypt_secring)
-            self.status_fp = tempfile.TemporaryFile(dir=tempdir.default().dir())
+            gpg_attach = {u'stdin': encrypt_path.open(u"rb"),
+                          u'stderr': self.stderr_fp}
+            if profile.sign_key:
+                self.status_fp = tempfile.TemporaryFile(dir=tempdir.default().dir())
+                gpg_attach[u'status'] = self.status_fp
             # Skip the passphrase if using the agent
             if config.use_agent:
                 gnupg_fhs = [u'stdout', ]
             else:
                 gnupg_fhs = [u'stdout', u'passphrase']
-            p1 = gnupg.run([u'--decrypt'], create_fhs=gnupg_fhs,
-                           attach_fhs={u'stdin': encrypt_path.open(u"rb"),
-                                       u'status': self.status_fp,
-                                       u'stderr': self.stderr_fp,
-                                       u'logger': self.logger_fp})
-            if not (config.use_agent):
+            p1 = gnupg.run([u'--decrypt'],
+                           create_fhs=gnupg_fhs,
+                           attach_fhs=gpg_attach)
+            if not config.use_agent:
                 p1.handles[u'passphrase'].write(passphrase)
                 p1.handles[u'passphrase'].close()
             self.gpg_output = p1.handles[u'stdout']
@@ -255,17 +258,20 @@ class GPGFile(object):
             self.read(offset - self.byte_count)
 
     def gpg_failed(self):
-        msg = u"GPG Failed, see log below:\n"
-        msg += u"===== Begin GnuPG log =====\n"
-        for fp in (self.logger_fp, self.stderr_fp):
-            fp.seek(0)
-            for line in fp:
+        if self.gpg_process.returned:
+            retcode = self.gpg_process.returned >> 8
+            msg = gpg_error_codes.get(retcode,
+                                      u"GPG returned an unknown error code: %d" % retcode) + u"\n"
+        if retcode != 2:
+            msg += u"GPG Failed, see log below:\n"
+            msg += u"===== Begin GnuPG log =====\n"
+            self.stderr_fp.seek(0)
+            for line in self.stderr_fp:
                 try:
                     msg += str(line.strip(), locale.getpreferredencoding(), u'replace') + u"\n"
                 except Exception as e:
                     msg += line.strip() + u"\n"
-        msg += u"===== End GnuPG log =====\n"
-        if not (msg.find(u"invalid packet (ctb=14)") > -1):
+            msg += u"===== End GnuPG log =====\n"
             raise GPGError(msg)
         else:
             return u""
@@ -300,7 +306,6 @@ class GPGFile(object):
                 self.gpg_process.wait()
             except Exception:
                 self.gpg_failed()
-        self.logger_fp.close()
         self.stderr_fp.close()
         self.closed = 1
 
