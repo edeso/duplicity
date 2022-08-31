@@ -55,7 +55,7 @@ if __name__ == "__main__":
     if len(adorned_string_list) == 0:
         print("There are no adorned strings in", args.file)
     else:
-        print("There are adorned strings in", args.file, "\n")
+        print("There are adorned strings in", args.file)
 
         locs = {}
         for adorned_string in adorned_string_list:
