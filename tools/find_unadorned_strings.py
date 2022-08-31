@@ -53,7 +53,7 @@ if __name__ == "__main__":
     if len(unadorned_string_list) == 0:
         print("There are no unadorned strings in", args.file)
     else:
-        print("There are unadorned strings in", args.file, "\n")
+        print("There are unadorned strings in", args.file)
         for unadorned_string in unadorned_string_list:
             print(unadorned_string)
             python_file, string_start, string_end, string = unadorned_string

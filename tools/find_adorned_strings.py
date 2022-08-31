@@ -53,7 +53,7 @@ if __name__ == "__main__":
     if len(adorned_string_list) == 0:
         print("There are no adorned strings in", args.file)
     else:
-        print("There are adorned strings in", args.file, "\n")
+        print("There are adorned strings in", args.file)
         for adorned_string in adorned_string_list:
             print(adorned_string)
             python_file, string_start, string_end, string = adorned_string
