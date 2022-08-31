@@ -103,7 +103,7 @@ class Manifest(object):
                        u"Previous directory: %s") % (config.local_path.name, self.local_dirname)
             code = log.ErrorCode.source_dir_mismatch
             code_extra = u"%s %s" % (util.escape(config.local_path.name),
-                                    util.escape(self.local_dirname))
+                                     util.escape(self.local_dirname))
         else:
             return
 

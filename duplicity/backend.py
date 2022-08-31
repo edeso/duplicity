@@ -406,7 +406,7 @@ def retry(operation, fatal=True):
                                 else:
                                     return util.escape(f)
                             extra = u' '.join([operation] + [make_filename(x) for x in args
-                                                            if (x and isinstance(x, str))])
+                                                             if (x and isinstance(x, str))])
                             log.FatalError(_(u"Giving up after %s attempts. %s: %s")
                                            % (n, e.__class__.__name__,
                                               util.uexc(e)), code=code, extra=extra)

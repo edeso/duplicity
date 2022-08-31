@@ -343,7 +343,7 @@ Are you sure you want to continue connecting (yes/no)? """ % (hostname,
                 raise BackendException(b"scp remote error: %b" % chan.recv(-1))
             fstat = os.stat(source_path.name)
             chan.send(u'C%s %d %s\n' % (oct(fstat.st_mode)[-4:], fstat.st_size,
-                                       remote_filename))
+                                        remote_filename))
             response = chan.recv(1)
             if (response != b"\0"):
                 raise BackendException(b"scp remote error: %b" % chan.recv(-1))
@@ -370,7 +370,7 @@ Are you sure you want to continue connecting (yes/no)? """ % (hostname,
                 chan = self.client.get_transport().open_session()
                 chan.settimeout(config.timeout)
                 chan.exec_command(u"scp -f '%s/%s'" % (self.remote_dir,
-                                                      remote_filename))
+                                                       remote_filename))
             except Exception as e:
                 raise BackendException(u"scp execution failed: %s" % e)
 
@@ -403,7 +403,7 @@ Are you sure you want to continue connecting (yes/no)? """ % (hostname,
             msg = chan.recv(1)  # check the final status
             if msg != b'\0':
                 raise BackendException(u"scp get %s failed: %s" % (remote_filename,
-                                                                  chan.recv(-1)))
+                                                                   chan.recv(-1)))
             f.close()
             chan.send(u'\0')  # send final done indicator
             chan.close()

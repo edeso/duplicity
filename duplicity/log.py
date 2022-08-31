@@ -205,12 +205,12 @@ def TransferProgress(progress, eta, changed_bytes, elapsed, speed, stalled):
             speed_amount /= 1024.0
             speed_scale = u"GB"
     s = u"%.1f%s %s [%.1f%s/s] [%s>%s] %d%% ETA %s" % (data_amount, data_scale,
-                                                      _ElapsedSecs2Str(elapsed),
-                                                      speed_amount, speed_scale,
-                                                      u'=' * dots, u' ' * (40 - dots),
-                                                      progress,
-                                                      eta_str
-                                                      )
+                                                       _ElapsedSecs2Str(elapsed),
+                                                       speed_amount, speed_scale,
+                                                       u'=' * dots, u' ' * (40 - dots),
+                                                       progress,
+                                                       eta_str
+                                                       )
 
     controlLine = u"%d %d %d %d %d %d" % (changed_bytes, elapsed, progress, eta, speed, stalled)
     Log(s, NOTICE, InfoCode.upload_progress, controlLine, transfer_progress=True)

@@ -190,7 +190,7 @@ def get_delta_iter(new_iter, sig_iter, sig_fileobj=None):
         sigTarFile = None
     for new_path, sig_path in collated:
         log.Debug(_(u"Comparing %s and %s") % (new_path and util.uindex(new_path.index),
-                                              sig_path and util.uindex(sig_path.index)))
+                                               sig_path and util.uindex(sig_path.index)))
         if not new_path or not new_path.type:
             # File doesn't exist (but ignore attempts to delete base dir;
             # old versions of duplicity could have written out the sigtar in

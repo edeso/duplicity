@@ -485,7 +485,7 @@ def patch_seq2ropath(patch_seq):
     u"""Apply the patches in patch_seq, return single ropath"""
     first = patch_seq[0]
     assert first.difftype != u"diff", u"First patch in sequence " \
-                                     u"%s was a diff" % patch_seq
+                                      u"%s was a diff" % patch_seq
     if not first.isreg():
         # No need to bother with data if not regular file
         assert len(patch_seq) == 1, u"Patch sequence isn't regular, but " \

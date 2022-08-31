@@ -240,8 +240,8 @@ class SSHPExpectBackend(duplicity.backend.Backend):
                     u"rename \"%s.%s.part\" \"%s%s\"" %
                     (self.remote_prefix, remote_filename, self.remote_prefix, remote_filename)]
         commandline = (u"%s %s %s" % (self.sftp_command,
-                                     config.ssh_options,
-                                     self.host_string))
+                                      config.ssh_options,
+                                      self.host_string))
         self.run_sftp_command(commandline, commands)
 
     def put_scp(self, source_path, remote_filename):
@@ -261,8 +261,8 @@ class SSHPExpectBackend(duplicity.backend.Backend):
         commands = [u"get \"%s%s\" \"%s\"" %
                     (self.remote_prefix, remote_filename, local_path.uc_name)]
         commandline = (u"%s %s %s" % (self.sftp_command,
-                                     config.ssh_options,
-                                     self.host_string))
+                                      config.ssh_options,
+                                      self.host_string))
         self.run_sftp_command(commandline, commands)
 
     def get_scp(self, remote_filename, local_path):
@@ -285,8 +285,8 @@ class SSHPExpectBackend(duplicity.backend.Backend):
 
         commands = mkdir_commands + [u"ls -1"]
         commandline = (u"%s %s %s" % (self.sftp_command,
-                                     config.ssh_options,
-                                     self.host_string))
+                                      config.ssh_options,
+                                      self.host_string))
 
         l = self.run_sftp_command(commandline, commands).split(u'\n')[1:]
 
