@@ -34,68 +34,68 @@ class RcloneBackend(duplicity.backend.Backend):
         duplicity.backend.Backend.__init__(self, parsed_url)
         self.parsed_url = parsed_url
         self.remote_path = self.parsed_url.path
-        self.rclone_cmd = "rclone"
+        self.rclone_cmd = u"rclone"
 
         try:
-            rc, o, e = self._subprocess_safe_popen(self.rclone_cmd + " version")
+            rc, o, e = self._subprocess_safe_popen(self.rclone_cmd + u" version")
         except Exception:
-            log.FatalError("rclone not found: please install rclone", log.ErrorCode.backend_error)
+            log.FatalError(u"rclone not found: please install rclone", log.ErrorCode.backend_error)
 
         verb = log.getverbosity()
         if verb >= log.DEBUG:
-            os.environ["RCLONE_LOG_LEVEL"] = "DEBUG"
+            os.environ[u"RCLONE_LOG_LEVEL"] = u"DEBUG"
         elif verb >= log.INFO:
-            os.environ["RCLONE_LOG_LEVEL"] = "INFO"
+            os.environ[u"RCLONE_LOG_LEVEL"] = u"INFO"
         elif verb >= log.NOTICE:
-            os.environ["RCLONE_LOG_LEVEL"] = "NOTICE"
+            os.environ[u"RCLONE_LOG_LEVEL"] = u"NOTICE"
         elif verb >= log.ERROR:
-            os.environ["RCLONE_LOG_LEVEL"] = "ERROR"
+            os.environ[u"RCLONE_LOG_LEVEL"] = u"ERROR"
 
-        if parsed_url.path.startswith("//"):
-            self.remote_path = self.remote_path[2:].replace(":/", ":", 1)
+        if parsed_url.path.startswith(u"//"):
+            self.remote_path = self.remote_path[2:].replace(u":/", u":", 1)
 
         self.remote_path = os.fsdecode(self.remote_path)
 
     def _get(self, remote_filename, local_path):
         remote_filename = os.fsdecode(remote_filename)
         local_pathname = os.fsdecode(local_path.name)
-        commandline = "%s copyto '%s/%s' '%s'" % (
+        commandline = u"%s copyto '%s/%s' '%s'" % (
             self.rclone_cmd, self.remote_path, remote_filename, local_pathname)
         rc, o, e = self._subprocess_safe_popen(commandline)
         if rc != 0:
             if os.path.isfile(local_pathname):
                 os.remove(local_pathname)
-            raise BackendException("rclone returned rc = %d: %s" % (rc, e))
+            raise BackendException(u"rclone returned rc = %d: %s" % (rc, e))
 
     def _put(self, source_path, remote_filename):
         source_pathname = os.fsdecode(source_path.name)
         remote_filename = os.fsdecode(remote_filename)
-        commandline = "%s copyto '%s' '%s/%s'" % (
+        commandline = u"%s copyto '%s' '%s/%s'" % (
             self.rclone_cmd, source_pathname, self.remote_path, remote_filename)
         rc, o, e = self._subprocess_safe_popen(commandline)
         if rc != 0:
-            raise BackendException("rclone returned rc = %d: %s" % (rc, e))
+            raise BackendException(u"rclone returned rc = %d: %s" % (rc, e))
 
     def _list(self):
         filelist = []
-        commandline = "%s lsf '%s'" % (
+        commandline = u"%s lsf '%s'" % (
             self.rclone_cmd, self.remote_path)
         rc, o, e = self._subprocess_safe_popen(commandline)
         if rc == 3:
             return filelist
         if rc != 0:
-            raise BackendException("rclone returned rc = %d: %s" % (rc, e))
+            raise BackendException(u"rclone returned rc = %d: %s" % (rc, e))
         if not o:
             return filelist
-        return [os.fsencode(x) for x in o.split('\n') if x]
+        return [os.fsencode(x) for x in o.split(u'\n') if x]
 
     def _delete(self, remote_filename):
         remote_filename = os.fsdecode(remote_filename)
-        commandline = "%s deletefile --drive-use-trash=false '%s/%s'" % (
+        commandline = u"%s deletefile --drive-use-trash=false '%s/%s'" % (
             self.rclone_cmd, self.remote_path, remote_filename)
         rc, o, e = self._subprocess_safe_popen(commandline)
         if rc != 0:
-            raise BackendException("rclone returned rc = %d: %s" % (rc, e))
+            raise BackendException(u"rclone returned rc = %d: %s" % (rc, e))
 
     def _subprocess_safe_popen(self, commandline):
         import shlex
@@ -103,10 +103,10 @@ class RcloneBackend(duplicity.backend.Backend):
         args = shlex.split(commandline)
         p = Popen(args, stdout=PIPE, stderr=PIPE, universal_newlines=True)
         stdout, stderr = p.communicate()
-        for l in stderr.split('\n'):
+        for l in stderr.split(u'\n'):
             if len(l) > 1:
                 print(l)
         return p.returncode, stdout, stderr
 
 
-duplicity.backend.register_backend("rclone", RcloneBackend)
+duplicity.backend.register_backend(u"rclone", RcloneBackend)

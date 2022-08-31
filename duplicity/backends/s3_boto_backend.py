@@ -28,6 +28,6 @@ if config.s3_use_multiprocessing:
 else:
     from ._boto_single import BotoBackend
 
-duplicity.backend.register_backend("boto+gs", BotoBackend)
+duplicity.backend.register_backend(u"boto+gs", BotoBackend)
 # s3 is also implemented by the newer boto3 backend now
-duplicity.backend.register_backend("boto+s3", BotoBackend)
+duplicity.backend.register_backend(u"boto+s3", BotoBackend)

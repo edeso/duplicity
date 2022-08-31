@@ -29,33 +29,33 @@ import token
 def return_adorned_string_tokens(f):
     named_tokens = tokenize.tokenize(f.readline)
     for t in named_tokens:
-        if t.type == token.STRING and t.string[0] == 'u' and t.string[1] in ['"', "'"]:
+        if t.type == token.STRING and t.string[0] == u'u' and t.string[1] in [u'"', u"'"]:
             yield t
 
 
 def check_file_for_adorned(filename):
     string_list = []
-    with open(filename, 'rb') as f:
+    with open(filename, u'rb') as f:
         for s in return_adorned_string_tokens(f):
             string_list.append((filename, s.start, s.end, s.string))
     return string_list
 
 
-if __name__ == "__main__":
+if __name__ == u"__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(description='Fix any adorned string literals in a Python file')
-    parser.add_argument('file', help='The file to search')
+    parser = argparse.ArgumentParser(description=u'Fix any adorned string literals in a Python file')
+    parser.add_argument(u'file', help=u'The file to search')
     args = parser.parse_args()
 
-    lines = open(args.file, "r").readlines()
+    lines = open(args.file, u"r").readlines()
     lines = [list(line) for line in lines]
 
     adorned_string_list = check_file_for_adorned(args.file)
     if len(adorned_string_list) == 0:
-        print("There are no adorned strings in", args.file)
+        print(u"There are no adorned strings in", args.file)
     else:
-        print("There are adorned strings in", args.file)
+        print(u"There are adorned strings in", args.file)
 
         locs = {}
         for adorned_string in adorned_string_list:
@@ -71,7 +71,7 @@ if __name__ == "__main__":
         for linenum in sorted(locs.keys()):
             for colnum in sorted(locs[linenum], reverse=True):
                 lines[linenum] = lines[linenum][0:colnum] + lines[linenum][colnum+1:]
-            print("{}: {}: {}".format(linenum, len(locs[linenum]), ''.join(lines[linenum][:-1])))
+            print(u"{}: {}: {}".format(linenum, len(locs[linenum]), u''.join(lines[linenum][:-1])))
 
-        lines = [''.join(line) for line in lines]
-        open(args.file, "w").writelines(lines)
+        lines = [u''.join(line) for line in lines]
+        open(args.file, u"w").writelines(lines)

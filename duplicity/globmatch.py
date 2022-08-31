@@ -27,33 +27,33 @@ import re
 
 
 class GlobbingError(Exception):
-    """Something has gone wrong when parsing a glob string"""
+    u"""Something has gone wrong when parsing a glob string"""
     pass
 
 
 class FilePrefixError(GlobbingError):
-    """Signals that a specified file doesn't start with correct prefix"""
+    u"""Signals that a specified file doesn't start with correct prefix"""
     pass
 
 
 def _glob_get_prefix_regexs(glob_str):
-    """Return list of regexps equivalent to prefixes of glob_str"""
+    u"""Return list of regexps equivalent to prefixes of glob_str"""
     # Internal. Used by glob_get_normal_sf.
-    glob_parts = glob_str.split("/")
-    if "" in glob_parts[1:-1]:
+    glob_parts = glob_str.split(u"/")
+    if u"" in glob_parts[1:-1]:
         # "" OK if comes first or last, as in /foo/
-        raise GlobbingError("Consecutive '/'s found in globbing string " +
+        raise GlobbingError(u"Consecutive '/'s found in globbing string " +
                             glob_str)
 
-    prefixes = ["/".join(glob_parts[:i + 1]) for i in range(len(glob_parts))]
+    prefixes = [u"/".join(glob_parts[:i + 1]) for i in range(len(glob_parts))]
     # we must make exception for root "/", only dir to end in slash
-    if prefixes[0] == "":
-        prefixes[0] = "/"
+    if prefixes[0] == u"":
+        prefixes[0] = u"/"
     return list(map(glob_to_regex, prefixes))
 
 
 def select_fn_from_glob(glob_str, include, ignore_case=False):
-    """Return a function test_fn(path) which
+    u"""Return a function test_fn(path) which
     tests whether path matches glob, as per the Unix shell rules, taking as
     arguments a path, a glob string and include (0 indicating that the glob
     string is an exclude glob and 1 indicating that it is an include glob,
@@ -68,10 +68,10 @@ def select_fn_from_glob(glob_str, include, ignore_case=False):
     assert isinstance(glob_str, str)
     glob_ends_w_slash = False
 
-    if glob_str == "/":
+    if glob_str == u"/":
         # If the glob string is '/', it implicitly includes everything
-        glob_str = "/**"
-    elif glob_str[-1] == "/":
+        glob_str = u"/**"
+    elif glob_str[-1] == u"/":
         glob_ends_w_slash = True
         # Remove trailing / from directory name (unless that is the entire
         # string)
@@ -91,30 +91,30 @@ def select_fn_from_glob(glob_str, include, ignore_case=False):
     # Note that the "/" at the end of the regex means that it will match
     # if the glob matches a parent folders of path, i.e. including a folder
     # includes everything within it.
-    glob_comp_re = re_comp("^%s($|/)" % glob_to_regex(glob_str))
+    glob_comp_re = re_comp(u"^%s($|/)" % glob_to_regex(glob_str))
 
     if glob_ends_w_slash:
         # Creates a version of glob_comp_re that does not match folder contents
         # This can be used later to check that an exact match is actually a
         # folder, rather than a file.
-        glob_comp_re_exact = re_comp("^%s($)" % glob_to_regex(glob_str))
+        glob_comp_re_exact = re_comp(u"^%s($)" % glob_to_regex(glob_str))
 
-    if glob_str.find("**") != -1:
+    if glob_str.find(u"**") != -1:
         # glob_str has a ** in it
-        glob_str = glob_str[:glob_str.find("**") + 2]  # truncate after **
+        glob_str = glob_str[:glob_str.find(u"**") + 2]  # truncate after **
 
     # Below regex is translates to:
     # ^ string must be at the beginning of path
     # the regexs corresponding to the parent directories of glob_str
     # $ nothing must follow except for the end of the string or newline
-    scan_comp_re = re_comp("^(%s)$" %
-                           "|".join(_glob_get_prefix_regexs(glob_str)))
+    scan_comp_re = re_comp(u"^(%s)$" %
+                           u"|".join(_glob_get_prefix_regexs(glob_str)))
 
     def test_fn(path):
-        assert not path.uc_name[-1] == "/" or path.uc_name == "/", \
-            "path.name should never end in '/' during normal operation for " \
-            "normal paths (except '/' alone)\n" \
-            "path.name here is " + path.uc_name + " and glob is " + glob_str
+        assert not path.uc_name[-1] == u"/" or path.uc_name == u"/", \
+            u"path.name should never end in '/' during normal operation for " \
+            u"normal paths (except '/' alone)\n" \
+            u"path.name here is " + path.uc_name + u" and glob is " + glob_str
 
         if glob_comp_re.match(path.uc_name):
             # Path matches glob, or is contained within a matching folder
@@ -144,7 +144,7 @@ def select_fn_from_glob(glob_str, include, ignore_case=False):
 
 
 def glob_to_regex(pat):
-    """Returned regular expression equivalent to shell glob pat
+    u"""Returned regular expression equivalent to shell glob pat
 
     Currently only the ?, *, [], and ** expressions are supported.
     Ranges like [a-z] are currently unsupported.  There is no
@@ -158,34 +158,34 @@ def glob_to_regex(pat):
 
     assert isinstance(pat, str)
 
-    i, n, res = 0, len(pat), ''
+    i, n, res = 0, len(pat), u''
     while i < n:
         c, s = pat[i], pat[i:i + 2]
         i = i + 1
-        if s == '**':
-            res = res + '.*'
+        if s == u'**':
+            res = res + u'.*'
             i = i + 1
-        elif c == '*':
-            res = res + '[^/]*'
-        elif c == '?':
-            res = res + '[^/]'
-        elif c == '[':
+        elif c == u'*':
+            res = res + u'[^/]*'
+        elif c == u'?':
+            res = res + u'[^/]'
+        elif c == u'[':
             j = i
-            if j < n and pat[j] in '!^':
+            if j < n and pat[j] in u'!^':
                 j = j + 1
-            if j < n and pat[j] == ']':
+            if j < n and pat[j] == u']':
                 j = j + 1
-            while j < n and pat[j] != ']':
+            while j < n and pat[j] != u']':
                 j = j + 1
             if j >= n:
-                res = res + '\\['  # interpret the [ literally
+                res = res + u'\\['  # interpret the [ literally
             else:
                 # Deal with inside of [..]
-                stuff = pat[i:j].replace('\\', '\\\\')
+                stuff = pat[i:j].replace(u'\\', u'\\\\')
                 i = j + 1
-                if stuff[0] in '!^':
-                    stuff = '^' + stuff[1:]
-                res = res + '[' + stuff + ']'
+                if stuff[0] in u'!^':
+                    stuff = u'^' + stuff[1:]
+                res = res + u'[' + stuff + u']'
         else:
             res = res + re.escape(c)
     return res

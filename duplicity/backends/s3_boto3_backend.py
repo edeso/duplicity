@@ -45,7 +45,7 @@ from duplicity.errors import (
 #              - allow user to specify how fast to restore (impacts cost).
 
 class S3Boto3Backend(duplicity.backend.Backend):
-    """
+    u"""
     Backend for Amazon's Simple Storage System, (aka Amazon S3), though
     the use of the boto3 module. (See
     https://boto3.amazonaws.com/v1/documentation/api/latest/index.html
@@ -68,16 +68,16 @@ class S3Boto3Backend(duplicity.backend.Backend):
         # This folds the null prefix and all null parts, which means that:
         #  //MyBucket/ and //MyBucket are equivalent.
         #  //MyBucket//My///My/Prefix/ and //MyBucket/My/Prefix are equivalent.
-        url_path_parts = [x for x in parsed_url.path.split('/') if x != '']
+        url_path_parts = [x for x in parsed_url.path.split(u'/') if x != u'']
         if url_path_parts:
             self.bucket_name = url_path_parts.pop(0)
         else:
-            raise BackendException('S3 requires a bucket name.')
+            raise BackendException(u'S3 requires a bucket name.')
 
         if url_path_parts:
-            self.key_prefix = '%s/' % '/'.join(url_path_parts)
+            self.key_prefix = u'%s/' % u'/'.join(url_path_parts)
         else:
-            self.key_prefix = ''
+            self.key_prefix = u''
 
         self.parsed_url = parsed_url
         self.straight_url = duplicity.backend.strip_auth_from_url(parsed_url)
@@ -91,16 +91,16 @@ class S3Boto3Backend(duplicity.backend.Backend):
         from botocore.exceptions import ClientError  # pylint: disable=import-error
 
         self.bucket = None
-        self.s3 = boto3.resource('s3', region_name=config.s3_region_name,
+        self.s3 = boto3.resource(u's3', region_name=config.s3_region_name,
                                  use_ssl=(not config.s3_unencrypted_connection),
                                  endpoint_url=config.s3_endpoint_url)
 
         try:
             self.s3.meta.client.head_bucket(Bucket=self.bucket_name)
         except botocore.exceptions.ClientError as bce:
-            error_code = bce.response['Error']['Code']
-            if error_code == '404':
-                raise FatalBackendException('S3 bucket "%s" does not exist' % self.bucket_name,
+            error_code = bce.response[u'Error'][u'Code']
+            if error_code == u'404':
+                raise FatalBackendException(u'S3 bucket "%s" does not exist' % self.bucket_name,
                                             code=log.ErrorCode.backend_not_found)
             else:
                 raise
@@ -117,32 +117,32 @@ class S3Boto3Backend(duplicity.backend.Backend):
         key = self.key_prefix + remote_filename
 
         if config.s3_use_rrs:
-            storage_class = 'REDUCED_REDUNDANCY'
+            storage_class = u'REDUCED_REDUNDANCY'
         elif config.s3_use_ia:
-            storage_class = 'STANDARD_IA'
+            storage_class = u'STANDARD_IA'
         elif config.s3_use_onezone_ia:
-            storage_class = 'ONEZONE_IA'
-        elif config.s3_use_glacier and "manifest" not in remote_filename:
-            storage_class = 'GLACIER'
-        elif config.s3_use_glacier_ir and "manifest" not in remote_filename:
-            storage_class = 'GLACIER_IR'
-        elif config.s3_use_deep_archive and "manifest" not in remote_filename:
-            storage_class = 'DEEP_ARCHIVE'
+            storage_class = u'ONEZONE_IA'
+        elif config.s3_use_glacier and u"manifest" not in remote_filename:
+            storage_class = u'GLACIER'
+        elif config.s3_use_glacier_ir and u"manifest" not in remote_filename:
+            storage_class = u'GLACIER_IR'
+        elif config.s3_use_deep_archive and u"manifest" not in remote_filename:
+            storage_class = u'DEEP_ARCHIVE'
         else:
-            storage_class = 'STANDARD'
-        extra_args = {'StorageClass': storage_class}
+            storage_class = u'STANDARD'
+        extra_args = {u'StorageClass': storage_class}
 
         if config.s3_use_sse:
-            extra_args['ServerSideEncryption'] = 'AES256'
+            extra_args[u'ServerSideEncryption'] = u'AES256'
         elif config.s3_use_sse_kms:
             if config.s3_kms_key_id is None:
-                raise FatalBackendException("S3 USE SSE KMS was requested, but key id not provided "
-                                            "require (--s3-kms-key-id)",
+                raise FatalBackendException(u"S3 USE SSE KMS was requested, but key id not provided "
+                                            u"require (--s3-kms-key-id)",
                                             code=log.ErrorCode.s3_kms_no_id)
-            extra_args['ServerSideEncryption'] = 'aws:kms'
-            extra_args['SSEKMSKeyId'] = config.s3_kms_key_id
+            extra_args[u'ServerSideEncryption'] = u'aws:kms'
+            extra_args[u'SSEKMSKeyId'] = config.s3_kms_key_id
             if config.s3_kms_grant:
-                extra_args['GrantFullControl'] = config.s3_kms_grant
+                extra_args[u'GrantFullControl'] = config.s3_kms_grant
 
         transfer_config = TransferConfig(multipart_chunksize=config.s3_multipart_chunk_size,
                                          multipart_threshold=config.s3_multipart_chunk_size,
@@ -155,7 +155,7 @@ class S3Boto3Backend(duplicity.backend.Backend):
         # tracker = UploadProgressTracker() # Scope the tracker to the put()
         tracker = self.tracker
 
-        log.Info("Uploading %s/%s to %s Storage" % (self.straight_url, remote_filename, storage_class))
+        log.Info(u"Uploading %s/%s to %s Storage" % (self.straight_url, remote_filename, storage_class))
         self.s3.Object(self.bucket.name, key).upload_file(local_source_path.uc_name,
                                                           Callback=tracker.progress_cb,
                                                           Config=transfer_config,
@@ -176,9 +176,9 @@ class S3Boto3Backend(duplicity.backend.Backend):
         filename_list = []
         for obj in self.bucket.objects.filter(Prefix=self.key_prefix):
             try:
-                filename = obj.key.replace(self.key_prefix, '', 1)
+                filename = obj.key.replace(self.key_prefix, u'', 1)
                 filename_list.append(os.fsencode(filename))
-                log.Debug("Listed %s/%s" % (self.straight_url, filename))
+                log.Debug(u"Listed %s/%s" % (self.straight_url, filename))
             except AttributeError:
                 pass
         return filename_list
@@ -205,11 +205,11 @@ class S3Boto3Backend(duplicity.backend.Backend):
             s3_obj.load()
             content_length = s3_obj.content_length
         except botocore.exceptions.ClientError as bce:
-            if bce.response['Error']['Code'] == '404':
+            if bce.response[u'Error'][u'Code'] == u'404':
                 pass
             else:
                 raise
-        return {'size': content_length}
+        return {u'size': content_length}
 
 
 class UploadProgressTracker(object):
@@ -227,6 +227,6 @@ class UploadProgressTracker(object):
         # progress.report_transfer(fresh_byte_count, 0)
 
 
-duplicity.backend.register_backend("boto3+s3", S3Boto3Backend)
+duplicity.backend.register_backend(u"boto3+s3", S3Boto3Backend)
 # make boto3 the default s3 backend
-duplicity.backend.register_backend("s3", S3Boto3Backend)
+duplicity.backend.register_backend(u"s3", S3Boto3Backend)

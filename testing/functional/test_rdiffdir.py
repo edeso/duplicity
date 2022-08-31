@@ -30,34 +30,34 @@ from . import FunctionalTestCase
 
 
 class RdiffdirTest(FunctionalTestCase):
-    """Test rdiffdir command line program"""
+    u"""Test rdiffdir command line program"""
 
     def run_cmd(self, command):
         assert not os.system(command)
 
     def run_rdiffdir(self, argstring):
-        """Run rdiffdir with given arguments"""
+        u"""Run rdiffdir with given arguments"""
         cmd_list = list()
-        basepython = os.environ.get('TOXPYTHON', None)
+        basepython = os.environ.get(u'TOXPYTHON', None)
         if basepython is not None:
             cmd_list.extend([basepython])
-        cmd_list.extend(["{0}/bin/rdiffdir".format(_top_dir)])
+        cmd_list.extend([u"{0}/bin/rdiffdir".format(_top_dir)])
         cmd_list.extend(argstring.split())
-        cmdline = " ".join(['"%s"' % x for x in cmd_list])
+        cmdline = u" ".join([u'"%s"' % x for x in cmd_list])
         self.run_cmd(cmdline)
 
     def run_cycle(self, dirname_list):
-        """Run diff/patch cycle on directories in dirname_list"""
+        u"""Run diff/patch cycle on directories in dirname_list"""
         assert len(dirname_list) >= 2
 
-        seq_path = path.Path("{0}/testfiles/output/sequence".format(_runtest_dir))
+        seq_path = path.Path(u"{0}/testfiles/output/sequence".format(_runtest_dir))
         new_path = path.Path(dirname_list[0])
-        delta_path = path.Path("{0}/testfiles/output/delta.tar".format(_runtest_dir))
-        sig_path = path.Path("{0}/testfiles/output/sig.tar".format(_runtest_dir))
+        delta_path = path.Path(u"{0}/testfiles/output/delta.tar".format(_runtest_dir))
+        sig_path = path.Path(u"{0}/testfiles/output/sig.tar".format(_runtest_dir))
 
-        self.run_cmd("cp -pR %s %s" % (new_path.uc_name, seq_path.uc_name))
+        self.run_cmd(u"cp -pR %s %s" % (new_path.uc_name, seq_path.uc_name))
         seq_path.setdata()
-        self.run_rdiffdir("sig %s %s" % (seq_path.uc_name, sig_path.uc_name))
+        self.run_rdiffdir(u"sig %s %s" % (seq_path.uc_name, sig_path.uc_name))
         sig_path.setdata()
         assert sig_path.exists()
 
@@ -70,13 +70,13 @@ class RdiffdirTest(FunctionalTestCase):
             if delta_path.exists():
                 delta_path.delete()
             assert not delta_path.exists()
-            self.run_rdiffdir("delta %s %s %s" %
+            self.run_rdiffdir(u"delta %s %s %s" %
                               (sig_path.uc_name, new_path.uc_name, delta_path.uc_name))
             delta_path.setdata()
             assert delta_path.exists()
 
             # patch and compare
-            self.run_rdiffdir("patch %s %s" % (seq_path.uc_name, delta_path.uc_name))
+            self.run_rdiffdir(u"patch %s %s" % (seq_path.uc_name, delta_path.uc_name))
             seq_path.setdata()
             new_path.setdata()
             assert new_path.compare_recursive(seq_path, verbose=1)
@@ -84,18 +84,18 @@ class RdiffdirTest(FunctionalTestCase):
             # Make new signature
             sig_path.delete()
             assert not sig_path.exists()
-            self.run_rdiffdir("sig %s %s" % (seq_path.uc_name, sig_path.uc_name))
+            self.run_rdiffdir(u"sig %s %s" % (seq_path.uc_name, sig_path.uc_name))
             sig_path.setdata()
             assert sig_path.isreg()
 
     def test_dirx(self):
-        """Test cycle on {0}/testfiles/dirx"""
-        self.run_cycle(['{0}/testfiles/empty_dir'.format(_runtest_dir),
-                        '{0}/testfiles/dir1'.format(_runtest_dir),
-                        '{0}/testfiles/dir2'.format(_runtest_dir),
-                        '{0}/testfiles/dir3'.format(_runtest_dir),
-                        '{0}/testfiles/empty_dir'.format(_runtest_dir)])
+        u"""Test cycle on {0}/testfiles/dirx"""
+        self.run_cycle([u'{0}/testfiles/empty_dir'.format(_runtest_dir),
+                        u'{0}/testfiles/dir1'.format(_runtest_dir),
+                        u'{0}/testfiles/dir2'.format(_runtest_dir),
+                        u'{0}/testfiles/dir3'.format(_runtest_dir),
+                        u'{0}/testfiles/empty_dir'.format(_runtest_dir)])
 
 
-if __name__ == "__main__":
+if __name__ == u"__main__":
     unittest.main()

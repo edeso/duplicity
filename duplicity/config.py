@@ -19,7 +19,7 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-"""Store global configuration information"""
+u"""Store global configuration information"""
 
 import os
 import socket
@@ -63,13 +63,13 @@ current_time = None
 # contains the signatures and manifests of the relevent backup
 # collection), and for checkpoint state between volumes.
 # NOTE: this gets expanded in duplicity.commandline
-os.environ["XDG_CACHE_HOME"] = os.getenv("XDG_CACHE_HOME", os.path.expanduser("~/.cache"))
-archive_dir = os.path.expandvars("$XDG_CACHE_HOME/duplicity")
+os.environ[u"XDG_CACHE_HOME"] = os.getenv(u"XDG_CACHE_HOME", os.path.expanduser(u"~/.cache"))
+archive_dir = os.path.expandvars(u"$XDG_CACHE_HOME/duplicity")
 archive_dir_path = None
 
 # config dir for future use
-os.environ["XDG_CONFIG_HOME"] = os.getenv("XDG_CONFIG_HOME", os.path.expanduser("~/.config"))
-config_dir = os.path.expandvars("$XDG_CONFIG_HOME/duplicity")
+os.environ[u"XDG_CONFIG_HOME"] = os.getenv(u"XDG_CONFIG_HOME", os.path.expanduser(u"~/.config"))
+config_dir = os.path.expandvars(u"$XDG_CONFIG_HOME/duplicity")
 
 # Restores will try to bring back the state as of the following time.
 # If it is None, default to current time.
@@ -86,12 +86,12 @@ backend = None
 # See example of use in multibackend.py _list()
 # Do not use in normal cases!
 are_errors_fatal = {
-    'delete': (True, None),
-    'get': (True, None),
-    'list': (True, None),
-    'move': (True, None),
-    'put': (True, None),
-    'query': (True, None),
+    u'delete': (True, None),
+    u'get': (True, None),
+    u'list': (True, None),
+    u'move': (True, None),
+    u'put': (True, None),
+    u'query': (True, None),
 }
 
 # If set, the Select object which iterates paths in the local
@@ -105,7 +105,7 @@ gpg_binary = None
 gpg_profile = None
 
 # Options to pass to gpg
-gpg_options = ''
+gpg_options = u''
 
 # Maximum file blocksize
 max_blocksize = 2048
@@ -123,10 +123,10 @@ pydevd = False
 # Character used like the ":" in time strings like
 # 2002-08-06T04:22:00-07:00.  The colon isn't good for filenames on
 # windows machines.
-time_separator = ":"
+time_separator = u":"
 
 # Global lockfile used to manage concurrency
-lockpath = ""
+lockpath = u""
 lockfile = None
 
 # If this is true, only warn and don't raise fatal error when backup
@@ -187,10 +187,10 @@ temproot = None
 timeout = 30
 
 # FTP data connection type
-ftp_connection = 'passive'
+ftp_connection = u'passive'
 
 # Header options for Webdav
-webdav_headers = ""
+webdav_headers = u""
 
 # Asynchronous put/get concurrency limit
 # (default of 0 disables asynchronicity).
@@ -264,7 +264,7 @@ s3_region_name = None
 s3_endpoint_url = None
 
 # Which storage policy to use for Swift containers
-swift_storage_policy = ""
+swift_storage_policy = u""
 
 # The largest size upload supported in a single put call for azure
 azure_max_single_put_size = None
@@ -285,10 +285,10 @@ imap_full_address = False
 
 # Name of the imap folder where we want to store backups.
 # Can be changed with a command line argument.
-imap_mailbox = "INBOX"
+imap_mailbox = u"INBOX"
 
 # Sync partial metadata by default
-metadata_sync_mode = "partial"
+metadata_sync_mode = u"partial"
 
 # Whether the old filename format is in effect.
 old_filenames = False
@@ -304,10 +304,10 @@ sftp_command = None
 ssh_askpass = False
 
 # user added ssh options
-ssh_options = ""
+ssh_options = u""
 
 # default cf backend is pyrax
-cf_backend = "pyrax"
+cf_backend = u"pyrax"
 
 # default to fully deleting files in b2
 b2_hide_files = False
@@ -318,7 +318,7 @@ ssl_cacert_path = None
 ssl_no_check_certificate = False
 
 # user added rsync options
-rsync_options = ""
+rsync_options = u""
 
 # will be a Restart object if restarting
 restart = None
@@ -357,7 +357,7 @@ progress_rate = 3
 par2_redundancy = 10
 
 # Verbatim par2 other options
-par2_options = ""
+par2_options = u""
 
 # Number of par2 volumes
 par2_volumes = 1
@@ -388,4 +388,4 @@ fakeroot = None
 # 'utf-8' or some other sane encoding, but will sometimes fail and return
 # either 'ascii' or None.  Both are bogus, so default to 'utf-8' if it does.
 fsencoding = sys.getfilesystemencoding()
-fsencoding = fsencoding if fsencoding not in ['ascii', 'ANSI_X3.4-1968', None] else 'utf-8'
+fsencoding = fsencoding if fsencoding not in [u'ascii', u'ANSI_X3.4-1968', None] else u'utf-8'
