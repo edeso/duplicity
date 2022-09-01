@@ -32,6 +32,7 @@ if os.getenv(u'RUN_CODE_TESTS', None) == u'1':
     import pycodestyle
 
 from . import _top_dir, DuplicityTestCase
+from tools import find_unadorned_strings
 
 skipCodeTest = pytest.mark.skipif(not os.getenv(u'RUN_CODE_TESTS', None) == u'1',
                                   reason=u'Must set environment var RUN_CODE_TESTS=1')
@@ -39,10 +40,12 @@ skipCodeTest = pytest.mark.skipif(not os.getenv(u'RUN_CODE_TESTS', None) == u'1'
 files_to_test = [
     os.path.join(_top_dir, u'bin/duplicity'),
     os.path.join(_top_dir, u'bin/rdiffdir'),
-    os.path.join(_top_dir, u'duplicity'),
-    os.path.join(_top_dir, u'testing/functional'),
-    os.path.join(_top_dir, u'testing/unit'),
-] + glob.glob(os.path.join(_top_dir, u'testing/*.py'))
+]
+files_to_test.extend(glob.glob(os.path.join(_top_dir, u'duplicity/*.py')))
+files_to_test.extend(glob.glob(os.path.join(_top_dir, u'testing/functional/*.py')))
+files_to_test.extend(glob.glob(os.path.join(_top_dir, u'testing/unit/*.py')))
+files_to_test.extend(glob.glob(os.path.join(_top_dir, u'testing/*.py')))
+print(files_to_test)
 
 
 class CodeTest(DuplicityTestCase):
@@ -78,6 +81,21 @@ class CodeTest(DuplicityTestCase):
         self.assertEqual(result.total_errors, 0,
                          u"Found %s code style errors (and warnings)." % result.total_errors)
 
+    @skipCodeTest
+    def test_unadorned_string_literals(self):
+        u"""For predictable results in python/3 all string literals need to be marked as unicode, bytes or raw"""
 
-if __name__ == u"__main__":
-    unittest.main()
+        # Find all the .py files in the duplicity tree
+        # We cannot use glob.glob recursive until we drop support for Python < 3.5
+        matches = []
+
+        for python_source_file in files_to_test:
+            # Check each of the relevant python sources for unadorned string literals
+            unadorned_string_list = find_unadorned_strings.check_file_for_unadorned(python_source_file)
+            if unadorned_string_list:
+                print(f"Found {len(unadorned_string_list):d} unadorned strings in {python_source_file:s}:",
+                      file=sys.stderr)
+                for unadorned_string in unadorned_string_list:
+                    print(unadorned_string[1:], file=sys.stderr)
+
+        self.assertEqual(unadorned_string_list, [], u"Found unadorned strings.")
