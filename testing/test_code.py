@@ -41,7 +41,7 @@ files_to_test = [
     os.path.join(_top_dir, u'bin/duplicity'),
     os.path.join(_top_dir, u'bin/rdiffdir'),
 ]
-files_to_test.extend(glob.glob(os.path.join(_top_dir, u'duplicity/*.py')))
+files_to_test.extend(glob.glob(os.path.join(_top_dir, u'duplicity/**/*.py'), recursive=True))
 files_to_test.extend(glob.glob(os.path.join(_top_dir, u'testing/functional/*.py')))
 files_to_test.extend(glob.glob(os.path.join(_top_dir, u'testing/unit/*.py')))
 files_to_test.extend(glob.glob(os.path.join(_top_dir, u'testing/*.py')))
