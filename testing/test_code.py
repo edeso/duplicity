@@ -45,7 +45,6 @@ files_to_test.extend(glob.glob(os.path.join(_top_dir, u'duplicity/*.py')))
 files_to_test.extend(glob.glob(os.path.join(_top_dir, u'testing/functional/*.py')))
 files_to_test.extend(glob.glob(os.path.join(_top_dir, u'testing/unit/*.py')))
 files_to_test.extend(glob.glob(os.path.join(_top_dir, u'testing/*.py')))
-print(files_to_test)
 
 
 class CodeTest(DuplicityTestCase):
