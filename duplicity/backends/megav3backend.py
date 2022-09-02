@@ -23,12 +23,8 @@ import os
 import re
 import subprocess
 
-from future import standard_library
-
 import duplicity.backend
 from duplicity.errors import BackendException
-
-standard_library.install_aliases()
 
 
 class Megav3Backend(duplicity.backend.Backend):

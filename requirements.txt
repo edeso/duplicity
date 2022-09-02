@@ -15,7 +15,7 @@ requests
 
 ##### backend libraries #####
 
-
+azure-core              ; python_version >= '3.6'
 azure-storage-blob      ; python_version >= '3.6'
 b2sdk                   ; python_version >= '3.6'
 boto

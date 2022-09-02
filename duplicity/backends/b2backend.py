@@ -67,7 +67,7 @@ class B2Backend(duplicity.backend.Backend):
         global DownloadDestLocalFile, FileVersionInfoFactory
 
         try:  # figure out what version of b2sdk we have
-            from b2sdk import __version__ as VERSION
+            from b2sdk import __version__ as VERSION  # pylint: disable=import-error
             v_split = VERSION.split(u'.')
             self.v_num = [int(x) for x in v_split]
         except:

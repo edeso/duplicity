@@ -21,16 +21,13 @@
 
 import os
 
-from boxsdk import (
+from boxsdk import (  # pylint: disable=import-error
     Client,
     JWTAuth,
 )
-from future import standard_library
 
 import duplicity.backend
 from duplicity.errors import BackendException
-
-standard_library.install_aliases()
 
 
 class BoxBackend(duplicity.backend.Backend):
