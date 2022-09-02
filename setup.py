@@ -301,11 +301,9 @@ setup(name=u"duplicity",
       include_package_data=True,
       install_requires=[
           u"fasteners",
-          u"future",
       ],
       tests_require=[
           u"fasteners",
-          u"future",
           u"mock",
           u"pexpect",
           u"pytest",
