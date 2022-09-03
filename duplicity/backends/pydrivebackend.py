@@ -148,9 +148,9 @@ Exception: %s""" % str(e))
 
     def file_by_name(self, filename):
         try:
-            from pydrive2.files import ApiRequestError  # pylint: disable=import-error
+            from pydrive2.files import ApiRequestError
         except ImportError:
-            from pydrive.files import ApiRequestError  # pylint: disable=import-error
+            from pydrive.files import ApiRequestError
 
         filename = os.fsdecode(filename)  # PyDrive deals with unicode filenames
 
@@ -261,9 +261,9 @@ Exception: %s""" % str(e))
 
     def _error_code(self, operation, error):  # pylint: disable=unused-argument
         try:
-            from pydrive2.files import ApiRequestError, FileNotUploadedError  # pylint: disable=import-error
+            from pydrive2.files import ApiRequestError, FileNotUploadedError
         except ImportError:
-            from pydrive.files import ApiRequestError, FileNotUploadedError  # pylint: disable=import-error
+            from pydrive.files import ApiRequestError, FileNotUploadedError
         if isinstance(error, FileNotUploadedError):
             return log.ErrorCode.backend_not_found
         elif isinstance(error, ApiRequestError):

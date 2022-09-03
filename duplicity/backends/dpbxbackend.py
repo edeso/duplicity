@@ -32,9 +32,9 @@ import re
 import sys
 import time
 import traceback
-import urllib.error  # pylint: disable=import-error
-import urllib.parse  # pylint: disable=import-error
-import urllib.request  # pylint: disable=import-error
+import urllib.error
+import urllib.parse
+import urllib.request
 
 from requests.exceptions import ConnectionError  # pylint: disable=redefined-builtin
 

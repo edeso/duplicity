@@ -82,7 +82,8 @@ Exception: %s""" % str(e))
         self._get_or_create_container()
 
     def _get_or_create_container(self):
-        from azure_core.exceptions import ResourceExistsError  # pylint: disable=import-error
+        # Note: azure comes from azure-core module
+        from azure.core.exceptions import ResourceExistsError
 
         try:
             self.container = self.blob_service.get_container_client(self.container_name)
@@ -91,7 +92,7 @@ Exception: %s""" % str(e))
             pass
         except Exception as e:
             log.FatalError(u"Could not create Azure container: %s"
-                           % str(e.message).split(u'\n', 1)[0],
+                           % str(e).split(u'\n', 1)[0],
                            log.ErrorCode.connection_failed)
 
     def _put(self, source_path, remote_filename):

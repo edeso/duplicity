@@ -86,9 +86,9 @@ class S3Boto3Backend(duplicity.backend.Backend):
         self.tracker = UploadProgressTracker()
 
     def reset_connection(self):
-        import boto3  # pylint: disable=import-error
-        import botocore  # pylint: disable=import-error
-        from botocore.exceptions import ClientError  # pylint: disable=import-error
+        import boto3
+        import botocore
+        from botocore.exceptions import ClientError
 
         self.bucket = None
         self.s3 = boto3.resource(u's3', region_name=config.s3_region_name,
@@ -108,7 +108,7 @@ class S3Boto3Backend(duplicity.backend.Backend):
         self.bucket = self.s3.Bucket(self.bucket_name)  # only set if bucket is thought to exist.
 
     def _put(self, local_source_path, remote_filename):
-        from boto3.s3.transfer import TransferConfig  # pylint: disable=import-error
+        from boto3.s3.transfer import TransferConfig
 
         if not self.s3:
             self.reset_connection()
@@ -195,7 +195,7 @@ class S3Boto3Backend(duplicity.backend.Backend):
         if not self.s3:
             self.reset_connection()
 
-        import botocore  # pylint: disable=import-error
+        import botocore
 
         remote_filename = os.fsdecode(remote_filename)
         key = self.key_prefix + remote_filename

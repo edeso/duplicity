@@ -48,7 +48,7 @@ scm_version_args = {
 }
 
 try:
-    from setuptools_scm import get_version  # pylint: disable=import-error
+    from setuptools_scm import get_version
 
     Version = get_version(**scm_version_args)
 except Exception as e:

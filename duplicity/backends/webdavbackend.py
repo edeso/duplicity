@@ -27,9 +27,9 @@ import http.client
 import os
 import re
 import shutil
-import urllib.error  # pylint: disable=import-error
-import urllib.parse  # pylint: disable=import-error
-import urllib.request  # pylint: disable=import-error
+import urllib.error
+import urllib.parse
+import urllib.request
 import xml.dom.minidom
 
 import duplicity.backend
@@ -274,7 +274,7 @@ class WebDAVBackend(duplicity.backend.Backend):
         return urllib.request.parse_keqv_list(urllib.request.parse_http_list(challenge_string))
 
     def get_kerberos_authorization(self):
-        import kerberos  # pylint: disable=import-error
+        import kerberos
         _, ctx = kerberos.authGSSClientInit(u"HTTP@%s" % self.conn.host)
         kerberos.authGSSClientStep(ctx, u"")
         tgt = kerberos.authGSSClientResponse(ctx)

@@ -31,9 +31,9 @@ import os
 import re
 import sys
 import time
-import urllib.error  # pylint: disable=import-error
-import urllib.parse  # pylint: disable=import-error
-import urllib.request  # pylint: disable=import-error
+import urllib.error
+import urllib.parse
+import urllib.request
 
 import duplicity.backends
 from duplicity import config

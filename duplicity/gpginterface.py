@@ -711,5 +711,5 @@ def threaded_waitpid(process):
 
 if __name__ == u'__main__':
     import doctest
-    from . import gpginterface  # pylint: disable=import-error
+    from . import gpginterface
     doctest.testmod(gpginterface)
