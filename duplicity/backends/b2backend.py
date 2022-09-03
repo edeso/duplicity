@@ -24,7 +24,7 @@
 # THE SOFTWARE.
 
 
-from urllib.parse import quote_plus  # pylint: disable=import-error
+from urllib.parse import quote_plus
 
 import duplicity.backend
 from duplicity import config
@@ -67,7 +67,7 @@ class B2Backend(duplicity.backend.Backend):
         global DownloadDestLocalFile, FileVersionInfoFactory
 
         try:  # figure out what version of b2sdk we have
-            from b2sdk import __version__ as VERSION  # pylint: disable=import-error
+            from b2sdk import __version__ as VERSION
             v_split = VERSION.split(u'.')
             self.v_num = [int(x) for x in v_split]
         except:

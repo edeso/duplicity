@@ -33,7 +33,7 @@ import os
 from . import _librsync
 
 if os.environ.get(u'READTHEDOCS') == u'True':
-    import unittest.mock as mock  # pylint: disable=import-error
+    import unittest.mock as mock
     import duplicity
     duplicity._librsync = mock.MagicMock()
 

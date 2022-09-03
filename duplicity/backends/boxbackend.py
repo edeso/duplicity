@@ -21,7 +21,7 @@
 
 import os
 
-from boxsdk import (  # pylint: disable=import-error
+from boxsdk import (
     Client,
     JWTAuth,
 )

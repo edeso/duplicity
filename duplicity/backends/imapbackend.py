@@ -33,7 +33,7 @@ import time
 
 from email.parser import Parser
 try:
-    from email.policy import default  # pylint: disable=import-error
+    from email.policy import default
 except:
     pass
 

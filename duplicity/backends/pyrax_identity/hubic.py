@@ -8,7 +8,7 @@ import configparser
 import os
 import re
 import time
-import urllib.parse  # pylint: disable=import-error
+import urllib.parse
 
 import requests
 from requests.compat import (

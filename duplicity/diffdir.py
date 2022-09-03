@@ -31,7 +31,6 @@ import io
 
 from duplicity import progress
 from duplicity import statistics
-from duplicity.lazy import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 from duplicity.path import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 
 # A StatsObj will be written to this from DirDelta and DirDelta_WriteSig.

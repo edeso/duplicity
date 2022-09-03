@@ -28,9 +28,9 @@
 import os
 import os.path
 import re
-import urllib.error  # pylint: disable=import-error
-import urllib.parse  # pylint: disable=import-error
-import urllib.request  # pylint: disable=import-error
+import urllib.error
+import urllib.parse
+import urllib.request
 
 try:
     from shlex import quote as cmd_quote

@@ -113,7 +113,7 @@ class BotoBackend(BotoSingleBackend):
         self._pool.join()
 
     def upload(self, filename, key, headers=None):
-        import boto  # pylint: disable=import-error
+        import boto
 
         chunk_size = config.s3_multipart_chunk_size
 
