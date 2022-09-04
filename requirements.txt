@@ -26,7 +26,6 @@ gdata-python3           ; python_version >= '3.6'
 google-api-python-client
 google-auth-oauthlib
 jottalib
-kerberos
 keyring
 mediafire
 megatools               ; python_version >= '3.6'
