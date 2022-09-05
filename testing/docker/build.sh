@@ -22,16 +22,18 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 #
 
-cd `dirname $0`
+set -e
 
-export DOCKER_BUILDKIT=0
+cd `dirname "$0"`
 
-cp ../../requirements.* .
+cp ../../requirements.txt .
 cp ../../setup.py .
 cp ../../tox.ini .
 
-docker build --compress --tag firstprime/duplicity_test --file duplicity_test/Dockerfile .
+docker buildx build --compress --tag=firstprime/duplicity_test --file=duplicity_test/Dockerfile ./
 
-rm requirements.*
+docker tag firstprime/duplicity_test:latest registry.gitlab.com/duplicity/duplicity/firstprime/duplicity_test:latest
+
+rm requirements.txt
 rm setup.py
 rm tox.ini

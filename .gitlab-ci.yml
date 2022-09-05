@@ -32,6 +32,7 @@
             - bin/duplicity
             - bin/rdiffdir
             - duplicity/**/*
+            - testing/**/*
           when: always
         - when: never
 
