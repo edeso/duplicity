@@ -20,7 +20,7 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-FROM ubuntu:20.04
+FROM ubuntu:20.04 AS base
 
 # Set locale to prevent UTF-8 errors
 ENV LANG C.UTF-8
@@ -79,17 +79,17 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # Install pyenv
-RUN git clone -b "v2.3.0" --single-branch https://github.com/pyenv/pyenv.git /root/.pyenv \
+RUN git clone -b "v2.3.4" --single-branch https://github.com/pyenv/pyenv.git /root/.pyenv \
     && eval "$(pyenv init --path)" \
-    && eval "$(pyenv init -)" \
+    && eval "$(pyenv init -)"
 # Install all the Pythons we test
-    && pyenv install 2.7.18 \
-    && pyenv install 3.5.10 \
-    && pyenv install 3.6.15 \
-    && pyenv install 3.7.13 \
-    && pyenv install 3.8.13 \
-    && pyenv install 3.9.12 \
-    && pyenv install 3.10.4
+RUN pyenv install 2.7.18
+RUN pyenv install 3.5.10
+RUN pyenv install 3.6.15
+RUN pyenv install 3.7.13
+RUN pyenv install 3.8.13
+RUN pyenv install 3.9.13
+RUN pyenv install 3.10.5
 
 # Tell tox how to find executables, install all requirements
 COPY requirements.txt .
@@ -97,7 +97,7 @@ COPY tox.ini .
 RUN python3 -m pip install --upgrade pip setuptools setuptools-scm \
     && python3 -m pip install -rrequirements.txt \
     && python3 -m pip install tox tox-pyenv \
-    && pyenv local 2.7.18 3.5.10 3.6.15 3.7.13 3.8.13 3.9.12 3.10.4
+    && pyenv local 2.7.18 3.5.10 3.6.15 3.7.13 3.8.13 3.9.13 3.10.5
 
 # set up tiny dummy project to make tox happy
 WORKDIR /root
@@ -110,13 +110,20 @@ COPY tox.ini hello-world-master
 WORKDIR /root/hello-world-master
 
 # run tox so environss are created as part of image.
-RUN tox --notest -- --setup-only
+RUN tox --notest -e code -- --setup-only
+RUN tox --notest -e py27 -- --setup-only
+RUN tox --notest -e py35 -- --setup-only
+RUN tox --notest -e py36 -- --setup-only
+RUN tox --notest -e py37 -- --setup-only
+RUN tox --notest -e py38 -- --setup-only
+RUN tox --notest -e py39 -- --setup-only
+RUN tox --notest -e py310 -- --setup-only
 
 # cleanup the noise left over
 RUN rm -rf /root/.tox/dist/hello_world*.zip \
     rm -rf /root/.tox/distshare/hello_world*.zip \
     rm -rf /root/hello-world-master* \
-    rm -rf /root/requirements.* \
+    rm -rf /root/requirements.txt \
     rm -rf /root/tox.ini
 
 # Set workdir to duplicity
