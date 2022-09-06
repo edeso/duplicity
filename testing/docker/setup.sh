@@ -1,6 +1,7 @@
 #!/bin/bash
 #
-# Copyright 2017 Nils Tekampe <nils@tekampe.org>
+# Copyright 2017 Nils Tekampe <nils@tekampe.org>,
+# Kenneth Loafman <kenneth@loafman.com>
 #
 # This file is part of duplicity.
 # This script sets up a test network for the tests of dupclicity
@@ -22,7 +23,7 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 #
 
-cd `dirname $0`
+cd `dirname "$0"`
 
-docker-compose up -d
-docker-compose exec duplicity_test /bin/bash
+docker compose up -d
+docker compose exec duplicity_test /bin/bash
