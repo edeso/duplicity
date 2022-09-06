@@ -1,6 +1,7 @@
 #!/bin/bash
 #
-# Copyright 2017 Nils Tekampe <nils@tekampe.org>
+# Copyright 2017 Nils Tekampe <nils@tekampe.org>,
+# Kenneth Loafman <kenneth@loafman.com>
 #
 # This file is part of duplicity.
 # This script sets up a test network for the tests of dupclicity
@@ -31,8 +32,6 @@ cp ../../setup.py .
 cp ../../tox.ini .
 
 docker buildx build --compress --tag=firstprime/duplicity_test --file=duplicity_test/Dockerfile ./
-
-docker tag firstprime/duplicity_test:latest registry.gitlab.com/duplicity/duplicity/firstprime/duplicity_test:latest
 
 rm requirements.txt
 rm setup.py

@@ -20,7 +20,7 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-FROM ubuntu:20.04 AS base
+FROM ubuntu:20.04
 
 # Set locale to prevent UTF-8 errors
 ENV LANG C.UTF-8
@@ -95,7 +95,6 @@ RUN pyenv install 3.10.5
 COPY requirements.txt .
 COPY tox.ini .
 RUN python3 -m pip install --upgrade pip setuptools setuptools-scm \
-    && python3 -m pip install -rrequirements.txt \
     && python3 -m pip install tox tox-pyenv \
     && pyenv local 2.7.18 3.5.10 3.6.15 3.7.13 3.8.13 3.9.13 3.10.5
 
@@ -120,7 +119,8 @@ RUN tox --notest -e py39 -- --setup-only
 RUN tox --notest -e py310 -- --setup-only
 
 # cleanup the noise left over
-RUN rm -rf /root/.tox/dist/hello_world*.zip \
+RUN rm -rf /root/.cache/pip \
+    rm -rf /root/.tox/dist/hello_world*.zip \
     rm -rf /root/.tox/distshare/hello_world*.zip \
     rm -rf /root/hello-world-master* \
     rm -rf /root/requirements.txt \
