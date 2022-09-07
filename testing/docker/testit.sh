@@ -23,14 +23,8 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 #
 
-set -e
-
 cd `dirname "$0"`
 
-cp ../../requirements.txt .
-cp ../../tox.ini .
-
-docker buildx build --compress --tag=firstprime/duplicity_test --file=duplicity_test/Dockerfile ./
-
-rm requirements.txt
-rm tox.ini
+docker compose up -d
+docker compose exec duplicity_test /bin/bash -c "tox -e code"
+docker compose down
