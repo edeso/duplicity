@@ -91,9 +91,7 @@ RUN pyenv install 3.8.13
 RUN pyenv install 3.9.13
 RUN pyenv install 3.10.5
 
-# Tell tox how to find executables, install all requirements
-COPY requirements.txt .
-COPY tox.ini .
+# Tell tox how to find python.  Update pip minimals.
 RUN python3 -m pip install --upgrade pip setuptools setuptools-scm \
     && python3 -m pip install tox tox-pyenv \
     && pyenv local 2.7.18 3.5.10 3.6.15 3.7.13 3.8.13 3.9.13 3.10.5
