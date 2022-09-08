@@ -174,9 +174,6 @@ website:
     rules:
         - if: $CI_PIPELINE_SOURCE == "push"
         - if: $CI_JOB_MANUAL
-    image: ubuntu:latest
-    before_script:
-        - apt-get update
-        - apt-get install -y curl
+    image: curlimages/curl:latest
     script:
         - "curl -X POST --fail -F token=glptt-4b36433bf6cbe713f5f8163e4da9b617695e9368 -F ref=master https://gitlab.com/api/v4/projects/29130748/trigger/pipeline"
