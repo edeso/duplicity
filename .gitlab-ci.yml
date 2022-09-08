@@ -175,11 +175,7 @@ website:
     rules:
         - when: manual
         - if: $CI_COMMIT_TAG
-        - changes:
-            - "CHANGELOG.md"
-            - "README.md"
-            - "bin/duplicity.1"
-          if: $CI_PIPELINE_SOURCE == "push"
+        - if: $CI_PIPELINE_SOURCE == "push"
         - when: never
     allow_failure: true
     variables:
