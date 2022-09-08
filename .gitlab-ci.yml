@@ -176,7 +176,7 @@ website:
         - if: $CI_PIPELINE_SOURCE == "push"
           when: always
         - if: $CI_JOB_MANUAL
-          when: manual
+        - when: manual
     allow_failure: true
     variables:
         GIT_STRATEGY: none
