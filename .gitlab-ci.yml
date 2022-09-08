@@ -179,4 +179,4 @@ website:
         GIT_CHECKOUT: "false"
     image: curlimages/curl:latest
     script:
-        - "curl -X POST --fail -F token=glptt-4b36433bf6cbe713f5f8163e4da9b617695e9368 -F ref=master https://gitlab.com/api/v4/projects/29130748/trigger/pipeline"
+        - "curl -X POST --fail -F token=$WEBSITE_TRIGGER_TOKEN -F ref=master https://gitlab.com/api/v4/projects/29130748/trigger/pipeline"
