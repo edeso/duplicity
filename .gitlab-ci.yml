@@ -171,9 +171,9 @@ pages:
 website:
     stage: deploy
     when: manual
-    only:
-        - pushes
-        - tags
+    rules:
+        - if: $CI_PIPELINE_SOURCE == "push"
+        - if: $CI_JOB_MANUAL
     image: ubuntu:latest
     before_script:
         - apt-get update
