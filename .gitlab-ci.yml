@@ -177,6 +177,7 @@ website:
           when: always
         - if: $CI_JOB_MANUAL
           when: manual
+    allow_failure: true
     variables:
         GIT_STRATEGY: none
         GIT_CHECKOUT: "false"
