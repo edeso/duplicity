@@ -173,7 +173,6 @@ pages:
 website:
     stage: deploy
     rules:
-        - when: manual
         - if: $CI_PIPELINE_SOURCE == "push"
     allow_failure: true
     variables:
