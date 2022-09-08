@@ -172,6 +172,7 @@ pages:
 # needs WEBSITE_TRIGGER_TOKEN as masked variable in CI settings
 website:
     stage: deploy
+    when: manual
     rules:
         - if: $CI_PIPELINE_SOURCE == "push"
         - if: $CI_JOB_MANUAL
