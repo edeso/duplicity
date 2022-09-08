@@ -168,6 +168,8 @@ pages:
         paths:
             - public
 
+# run a pipeline trigger on new pushes or when run manually
+# needs WEBSITE_TRIGGER_TOKEN as masked variable in CI settings
 website:
     stage: deploy
     when: manual
