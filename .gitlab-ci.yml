@@ -174,7 +174,9 @@ website:
     stage: deploy
     rules:
         - if: $CI_PIPELINE_SOURCE == "push"
-          when: always
+        - changes:
+            - ".gitlab-ci.yml"
+            when: never
         - if: $CI_JOB_MANUAL
         - when: manual
     allow_failure: true
