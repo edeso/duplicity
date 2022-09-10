@@ -48,6 +48,7 @@ RUN apt-get update \
         par2 \
         python3-pip \
         python3 \
+        rclone \
         rdiff \
         tzdata \
 # The following packages are for building python via pyenv
