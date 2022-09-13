@@ -1,5 +1,6 @@
 name: duplicity
 version: $version
+license: GPL-2.0
 summary: Efficient, encrypted backup to local or remote hosts
 description: |
   Duplicity backs directories by producing encrypted tar-format volumes and uploading
