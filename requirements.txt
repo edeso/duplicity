@@ -3,6 +3,7 @@
 fasteners
 future
 pydevd                  ; python_version >= '3.6'
+pydevd-pycharm          ; python_version >= '3.6'
 python-gettext
 
 
@@ -15,7 +16,7 @@ requests
 
 ##### backend libraries #####
 
-
+azure-core              ; python_version >= '3.6'
 azure-storage-blob      ; python_version >= '3.6'
 b2sdk                   ; python_version >= '3.6'
 boto
@@ -33,7 +34,6 @@ megatools               ; python_version >= '3.6'
 paramiko
 pexpect
 psutil
-pydrive                 ; python_version >= '3.6'
 pydrive2                ; python_version >= '3.6'
 pyrax                   ; python_version >= '3.6'
 python-swiftclient
