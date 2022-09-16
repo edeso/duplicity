@@ -11,7 +11,7 @@ Some instructions and hints for building duplicity snaps.
 ## Build Process 
 
 1. cd into clone root
-2. Run `tools/makesnap arm64,amd64,armhf,ppc64el`
+2. Run `tools/makesnap [arm64,amd64,armhf,ppc64el]`
    1. run without args to build amd64 only locally
    2. run with all args to build remotely on LP
 3. Run `tools/installsnap` to install to local machine
