@@ -1,6 +1,7 @@
 #!/bin/bash
 #
-# Copyright 2017 Nils Tekampe <nils@tekampe.org>
+# Copyright 2017 Nils Tekampe <nils@tekampe.org>,
+# Kenneth Loafman <kenneth@loafman.com>
 #
 # This file is part of duplicity.
 # This script sets up a test network for the tests of dupclicity
@@ -22,16 +23,14 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 #
 
-cd `dirname $0`
+set -e
 
-export DOCKER_BUILDKIT=0
+cd `dirname "$0"`
 
-cp ../../requirements.* .
-cp ../../setup.py .
+cp ../../requirements.txt .
 cp ../../tox.ini .
 
-docker build --compress --tag firstprime/duplicity_test --file duplicity_test/Dockerfile .
+docker buildx build --compress --tag=firstprime/duplicity_test --file=duplicity_test/Dockerfile ./
 
-rm requirements.*
-rm setup.py
+rm requirements.txt
 rm tox.ini
