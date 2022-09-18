@@ -26,4 +26,5 @@
 cd `dirname "$0"`
 
 docker compose up -d
-docker compose exec duplicity_test /bin/bash
+docker compose exec duplicity_test /bin/bash -c "tox -e code"
+docker compose down

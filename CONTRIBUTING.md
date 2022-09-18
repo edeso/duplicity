@@ -25,6 +25,7 @@ Duplicity Authors
 - Matthieu Huin <mhu@enovance.com>
 - Michael Stapelberg <stapelberg+duplicity@google.com>
 - Michael Terry <mike@mterry.name>
+- Patrick Riley <patriley@gmail.com>
 - Peter Schuller <peter.schuller@infidyne.com>
 - Roman Yepishev <rye@keypressure.com>
 - Scott McKenzie <noizyland@gmail.com>

@@ -841,11 +841,11 @@ below.
 .TP
 .BI "--s3-multipart-max-procs"
 .RS
-Maximum number of concurrent uploads when performing a multipart upload. 
-The default is 4. You can adjust this number to maximizing bandwidth 
-and CPU utilization.  
+Maximum number of concurrent uploads when performing a multipart upload.
+The default is 4. You can adjust this number to maximizing bandwidth
+and CPU utilization.
 
-.B NOTE: 
+.B NOTE:
 Too many concurrent uploads may have diminishing returns.
 
 See also
@@ -2302,7 +2302,7 @@ Example:
 MyDrive folder ID specified as a query parameter, myDriveFolderID, in the backend URL
 Example
       export GOOGLE_SERVICE_ACCOUNT_URL=<serviceaccount-name>@<serviceaccount-name>.iam.gserviceaccount.com
-      gdrive://${GOOGLE_SERVICE_ACCOUNT_URL}/<target-folder-name-in-myDriveFolder>?myDriveFolderID=<google-myDrive-folder-id>
+      gdrive://${GOOGLE_SERVICE_ACCOUNT_URL}/<target-folder-name-in-myDriveFolder>?myDriveFolderID=root
 
 
 There are also two ways to authenticate to use GDrive: with a regular account or with a
@@ -2331,17 +2331,31 @@ this file, and GOOGLE_CREDENTIALS_FILE to a path to a file where
 duplicity will keep the authentication token - this location must be
 writable.
 
-During the first run, you will be prompted to visit an URL in your
-browser to grant access to your drive. Once granted, you will receive
-a verification code to paste back into Duplicity. The credentials are
-then cached in the file references above for future use.
-
+.B NOTE:
 As a sanity check, GDrive checks the host and username from the URL
 against the JSON key, and refuses to proceed if the addresses do not
 match. Either the email (for the service accounts) or Client ID (for
 regular OAuth accounts) must be present in the URL. See
 .B URL FORMAT
 above.
+
+.SS First run / OAuth 2.0 authorization
+
+During the first run, you will be prompted to visit an URL in your
+browser to grant access to your Google Drive. A temporary HTTP-service will be
+started on a 
+.B local network interface
+for this purpose (by default on http://localhost:8080/).
+Ip-address/host and port can be adjusted if need be by providing the environment variables
+GOOGLE_OAUTH_LOCAL_SERVER_HOST, GOOGLE_OAUTH_LOCAL_SERVER_PORT respectively.
+
+If you are running duplicity in a remote location, you will 
+need to make sure that you will be able to access the above 
+HTTP-service with a browser utilizing e.g. port forwarding 
+or temporary firewall permission.
+
+The access credentials will be saved in the JSON file mentioned 
+above for future use after a successful authorization.
 
 .SH A NOTE ON HUBIC
 The hubic backend requires the pyrax library to be installed on the system. See
