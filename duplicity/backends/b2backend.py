@@ -23,18 +23,17 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from future import standard_library
-standard_library.install_aliases()
-from builtins import object
 
-from urllib.parse import quote_plus  # pylint: disable=import-error
+from urllib.parse import quote_plus
 
+import duplicity.backend
+from duplicity import config
 from duplicity import log
 from duplicity import progress
-from duplicity import util
-from duplicity import config
-from duplicity.errors import BackendException, FatalBackendException
-import duplicity.backend
+from duplicity.errors import (
+    BackendException,
+    FatalBackendException,
+)
 
 
 class B2ProgressListener(object):
@@ -146,25 +145,25 @@ class B2Backend(duplicity.backend.Backend):
         u"""
         Download remote_filename to local_path
         """
-        log.Log(u"Get: %s -> %s" % (self.path + util.fsdecode(remote_filename),
-                                    util.fsdecode(local_path.name)),
+        log.Log(u"Get: %s -> %s" % (self.path + os.fsdecode(remote_filename),
+                                    os.fsdecode(local_path.name)),
                 log.INFO)
         if self.v_num < [1, 11, 0]:
-            self.bucket.download_file_by_name(quote_plus(self.path + util.fsdecode(remote_filename), u'/'),
+            self.bucket.download_file_by_name(quote_plus(self.path + os.fsdecode(remote_filename), u'/'),
                                               DownloadDestLocalFile(local_path.name))
         else:
-            df = self.bucket.download_file_by_name(quote_plus(self.path + util.fsdecode(remote_filename), u'/'))
+            df = self.bucket.download_file_by_name(quote_plus(self.path + os.fsdecode(remote_filename), u'/'))
             df.save_to(local_path.name)
 
     def _put(self, source_path, remote_filename):
         u"""
         Copy source_path to remote_filename
         """
-        log.Log(u"Put: %s -> %s" % (util.fsdecode(source_path.name),
-                                    self.path + util.fsdecode(remote_filename)),
+        log.Log(u"Put: %s -> %s" % (os.fsdecode(source_path.name),
+                                    self.path + os.fsdecode(remote_filename)),
                 log.INFO)
-        self.bucket.upload_local_file(util.fsdecode(source_path.name),
-                                      quote_plus(self.path + util.fsdecode(remote_filename), u'/'),
+        self.bucket.upload_local_file(os.fsdecode(source_path.name),
+                                      quote_plus(self.path + os.fsdecode(remote_filename), u'/'),
                                       content_type=u'application/pgp-encrypted',
                                       progress_listener=B2ProgressListener())
 
@@ -179,7 +178,7 @@ class B2Backend(duplicity.backend.Backend):
         u"""
         Delete filename from remote server
         """
-        full_filename = self.path + util.fsdecode(filename)
+        full_filename = self.path + os.fsdecode(filename)
         log.Log(u"Delete: %s" % full_filename, log.INFO)
 
         if config.b2_hide_files:
@@ -192,8 +191,8 @@ class B2Backend(duplicity.backend.Backend):
         u"""
         Get size info of filename
         """
-        log.Log(u"Query: %s" % self.path + util.fsdecode(filename), log.INFO)
-        file_version_info = self.file_info(quote_plus(self.path + util.fsdecode(filename), u'/'))
+        log.Log(u"Query: %s" % self.path + os.fsdecode(filename), log.INFO)
+        file_version_info = self.file_info(quote_plus(self.path + os.fsdecode(filename), u'/'))
         return {u'size': int(file_version_info.size)
                 if file_version_info is not None and file_version_info.size is not None else -1}
 

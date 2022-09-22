@@ -25,15 +25,11 @@ which is now patched with some code for iterative threaded execution
 see duplicity's README for details
 """
 
-from builtins import next
-from builtins import str
-from builtins import object
-import os
-import sys
-import tempfile
-import re
 import gzip
 import locale
+import os
+import re
+import tempfile
 
 from duplicity import config
 from duplicity import gpginterface
@@ -247,10 +243,7 @@ class GPGFile(object):
         try:
             res = self.gpg_input.write(buf)
             if res is not None:
-                if sys.version_info.major >= 3:
-                    self.byte_count += res
-                else:
-                    self.byte_count += len(res)
+                self.byte_count += res
         except Exception:
             self.gpg_failed()
         return res
@@ -265,9 +258,11 @@ class GPGFile(object):
             self.read(offset - self.byte_count)
 
     def gpg_failed(self):
-        ret = self.gpg_process.returned >> 8
-        msg = gpg_error_codes.get(ret, u"GPG returned an unknown error code: %d" % ret)
-        if ret != 2:
+        if self.gpg_process.returned:
+            retcode = self.gpg_process.returned >> 8
+            msg = gpg_error_codes.get(retcode,
+                                      u"GPG returned an unknown error code: %d" % retcode) + u"\n"
+        if retcode != 2:
             msg += u"GPG Failed, see log below:\n"
             msg += u"===== Begin GnuPG log =====\n"
             self.stderr_fp.seek(0)

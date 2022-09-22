@@ -20,13 +20,8 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import division
-from future import standard_library
-standard_library.install_aliases()
-from builtins import range
 
 import os
-import psutil
 import queue
 import socket
 import sys
@@ -35,11 +30,9 @@ import time
 import traceback
 
 from duplicity import config
-from duplicity import log
 from duplicity import progress
 from duplicity.errors import *  # pylint: disable=unused-wildcard-import
 from duplicity.filechunkio import FileChunkIO
-
 from ._boto_single import BotoBackend as BotoSingleBackend
 from ._boto_single import get_connection
 
@@ -120,7 +113,7 @@ class BotoBackend(BotoSingleBackend):
         self._pool.join()
 
     def upload(self, filename, key, headers=None):
-        import boto  # pylint: disable=import-error
+        import boto
 
         chunk_size = config.s3_multipart_chunk_size
 
@@ -136,7 +129,7 @@ class BotoBackend(BotoSingleBackend):
             chunks = 1
         else:
             chunks = bytes // chunk_size
-            if (bytes % chunk_size):
+            if bytes % chunk_size:
                 chunks += 1
 
         log.Debug(u"Uploading %d bytes in %d chunks" % (bytes, chunks))

@@ -24,40 +24,31 @@ Provides a common interface to all backends and certain sevices
 intended to be used by the backends themselves.
 """
 
-from future import standard_library
-standard_library.install_aliases()
-from builtins import str
-from builtins import range
-from builtins import object
 
 import errno
+import getpass
 import os
+import re
 import sys
 import time
-import re
-import getpass
-import re
-import urllib.request  # pylint: disable=import-error
-import urllib.parse  # pylint: disable=import-error
-import urllib.error  # pylint: disable=import-error
+import urllib.error
+import urllib.parse
+import urllib.request
 
+import duplicity.backends
+from duplicity import config
 from duplicity import dup_temp
 from duplicity import file_naming
-from duplicity import config
 from duplicity import log
 from duplicity import path
 from duplicity import util
-
-from duplicity.util import exception_traceback
-
 from duplicity.errors import BackendException
-from duplicity.errors import FatalBackendException
-from duplicity.errors import TemporaryLoadException
 from duplicity.errors import ConflictingScheme
+from duplicity.errors import FatalBackendException
 from duplicity.errors import InvalidBackendURL
+from duplicity.errors import TemporaryLoadException
 from duplicity.errors import UnsupportedBackendScheme
-
-import duplicity.backends
+from duplicity.util import exception_traceback
 
 _backends = {}
 _backend_prefixes = {}
@@ -308,7 +299,7 @@ class ParsedUrl(object):
         self.port = None
         try:
             self.port = pu.port
-        except Exception:  # not raised in python2.7, just returns None
+        except Exception:  # just returns None
             # TODO: remove after dropping python 2.7 support
             if self.scheme in [u'rclone']:
                 pass
@@ -540,7 +531,7 @@ class BackendWrapper(object):
 
     def __do_put(self, source_path, remote_filename):
         if hasattr(self.backend, u'_put'):
-            log.Info(_(u"Writing %s") % util.fsdecode(remote_filename))
+            log.Info(_(u"Writing %s") % os.fsdecode(remote_filename))
             self.backend._put(source_path, remote_filename)
         else:
             raise NotImplementedError()
@@ -597,7 +588,7 @@ class BackendWrapper(object):
                 # There shouldn't be any encoding errors for files we care
                 # about, since duplicity filenames are ascii.  But user files
                 # may be in the same directory.  So just replace characters.
-                return util.fsencode(filename)
+                return os.fsencode(filename)
             else:
                 return filename
 

@@ -23,62 +23,19 @@ u"""
 Miscellaneous utilities.
 """
 
-from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
-from builtins import isinstance
-from builtins import map
-from builtins import object
-from builtins import str
 
+import atexit
 import csv
 import errno
 import json
 import os
-import string
 import sys
 import traceback
-import atexit
+from io import StringIO
 
-if sys.version_info.major == 2:
-    from cStringIO import StringIO  # pylint: disable=import-error
-else:
-    from io import StringIO  # pylint: disable=import-error
-
-from duplicity import tarfile
 import duplicity.config as config
 import duplicity.log as log
-
-try:
-    # For paths, just use path.name/uname rather than converting with these
-    from os import fsencode, fsdecode  # pylint: disable=unused-import
-except ImportError:
-    # Most likely Python version < 3.2, so define our own fsencode/fsdecode.
-    # These are functions that encode/decode unicode paths to filesystem encoding,
-    # but the cleverness is that they handle non-unicode characters on Linux
-    # There is a *partial* backport to python available here:
-    # https://github.com/pjdelport/backports.os/blob/master/src/backports/os.py
-    # but if it cannot be trusted for full-circle translation, then we may as well
-    # just read and store the bytes version of the path as path.name before
-    # creating the unicode version (for path matching etc) and ensure that in
-    # real-world usage (as opposed to testing) we create the path objects from a
-    # bytes string.
-    # ToDo: Revisit this once we drop Python 2 support/the backport is complete
-
-    def fsencode(unicode_filename):
-        u"""Convert a unicode filename to a filename encoded in the system encoding"""
-        # For paths, just use path.name rather than converting with this
-        # If we are not doing any cleverness with non-unicode filename bytes,
-        # encoding to system encoding is good enough
-        return unicode_filename.encode(sys.getfilesystemencoding(), u"replace")
-
-    def fsdecode(bytes_filename):
-        u"""Convert a filename encoded in the system encoding to unicode"""
-        # For paths, just use path.uc_name rather than converting with this
-        # If we are not doing any cleverness with non-unicode filename bytes,
-        # decoding using system encoding is good enough. Use "ignore" as
-        # Linux paths can contain non-Unicode characters
-        return bytes_filename.decode(config.fsencoding, u"replace")
+from duplicity import tarfile
 
 
 def exception_traceback(limit=50):
@@ -92,26 +49,21 @@ def exception_traceback(limit=50):
     lines.extend(traceback.format_exception_only(type, value))
 
     msg = u"Traceback (innermost last):\n"
-    if sys.version_info.major >= 3:
-        msg = msg + u"%-20s %s" % (str.join(u"", lines[:-1]), lines[-1])
-    else:
-        msg = msg + u"%-20s %s" % (string.join(lines[:-1], u""), lines[-1])
+    msg = msg + u"%-20s %s" % (str.join(u"", lines[:-1]), lines[-1])
 
-    if sys.version_info.major < 3:
-        return msg.decode(u'unicode-escape', u'replace')
     return msg
 
 
 def escape(string):
     u"Convert a (bytes) filename to a format suitable for logging (quoted utf8)"
-    string = fsdecode(string).encode(u'unicode-escape', u'replace')
+    string = os.fsdecode(string).encode(u'unicode-escape', u'replace')
     return u"'%s'" % string.decode(u'utf8', u'replace').replace(u"'", u'\\x27')
 
 
 def uindex(index):
     u"Convert an index (a tuple of path parts) to unicode for printing"
     if index:
-        return os.path.join(*list(map(fsdecode, index)))
+        return os.path.join(*list(map(os.fsdecode, index)))
     else:
         return u'.'
 
@@ -130,15 +82,11 @@ def uexc(e):
                 return m
             elif isinstance(m, bytes):
                 # Encoded, likely in filesystem encoding
-                return fsdecode(m)
+                return os.fsdecode(m)
         # If the function did not return yet, we did not
         # succeed in finding a string; return the whole message.
         # This fails for Python 2, so only do this in Python 3.
-        if sys.version_info[0] > 2:
-            return str(e)
-        # For Python 2, fall back to returning an empty string.
-        else:
-            return u''
+        return str(e)
     else:
         return u''
 
@@ -309,7 +257,7 @@ def start_debugger(remote=False):
                          os.path.normpath(os.path.join(server, p))) for p in duppaths]
             os.environ[u'PATHS_FROM_ECLIPSE_TO_PYTHON'] = json.dumps(pathlist)
 
-        import pydevd  # pylint: disable=import-error
+        import pycharm_pydevd  # pylint: disable=import-error
         pydevd.settrace(u'dione.local', port=6700, stdoutToServer=True, stderrToServer=True)
 
         # In a dev environment the path is screwed so fix it.

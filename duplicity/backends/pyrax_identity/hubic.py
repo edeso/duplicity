@@ -3,19 +3,18 @@
 # Copyright (c) 2014 Gu1
 # Licensed under the MIT license
 
-from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
-from builtins import str
 
 import configparser
 import os
 import re
 import time
-import urllib.parse  # pylint: disable=import-error
+import urllib.parse
 
-from requests.compat import quote, quote_plus
 import requests
+from requests.compat import (
+    quote,
+    quote_plus,
+)
 
 try:
     import pyrax

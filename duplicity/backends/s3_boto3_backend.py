@@ -23,9 +23,11 @@
 import duplicity.backend
 from duplicity import config
 from duplicity import log
-from duplicity.errors import FatalBackendException, BackendException
-from duplicity import util
 from duplicity import progress
+from duplicity.errors import (
+    FatalBackendException,
+    BackendException,
+)
 
 
 # Note: current gaps with the old boto backend include:
@@ -84,9 +86,9 @@ class S3Boto3Backend(duplicity.backend.Backend):
         self.tracker = UploadProgressTracker()
 
     def reset_connection(self):
-        import boto3  # pylint: disable=import-error
-        import botocore  # pylint: disable=import-error
-        from botocore.exceptions import ClientError  # pylint: disable=import-error
+        import boto3
+        import botocore
+        from botocore.exceptions import ClientError
 
         self.bucket = None
         self.s3 = boto3.resource(u's3', region_name=config.s3_region_name,
@@ -106,12 +108,12 @@ class S3Boto3Backend(duplicity.backend.Backend):
         self.bucket = self.s3.Bucket(self.bucket_name)  # only set if bucket is thought to exist.
 
     def _put(self, local_source_path, remote_filename):
-        from boto3.s3.transfer import TransferConfig  # pylint: disable=import-error
+        from boto3.s3.transfer import TransferConfig
 
         if not self.s3:
             self.reset_connection()
 
-        remote_filename = util.fsdecode(remote_filename)
+        remote_filename = os.fsdecode(remote_filename)
         key = self.key_prefix + remote_filename
 
         if config.s3_use_rrs:
@@ -163,7 +165,7 @@ class S3Boto3Backend(duplicity.backend.Backend):
         if not self.s3:
             self.reset_connection()
 
-        remote_filename = util.fsdecode(remote_filename)
+        remote_filename = os.fsdecode(remote_filename)
         key = self.key_prefix + remote_filename
         self.s3.Object(self.bucket.name, key).download_file(local_path.uc_name)
 
@@ -175,7 +177,7 @@ class S3Boto3Backend(duplicity.backend.Backend):
         for obj in self.bucket.objects.filter(Prefix=self.key_prefix):
             try:
                 filename = obj.key.replace(self.key_prefix, u'', 1)
-                filename_list.append(util.fsencode(filename))
+                filename_list.append(os.fsencode(filename))
                 log.Debug(u"Listed %s/%s" % (self.straight_url, filename))
             except AttributeError:
                 pass
@@ -185,7 +187,7 @@ class S3Boto3Backend(duplicity.backend.Backend):
         if not self.s3:
             self.reset_connection()
 
-        remote_filename = util.fsdecode(remote_filename)
+        remote_filename = os.fsdecode(remote_filename)
         key = self.key_prefix + remote_filename
         self.s3.Object(self.bucket.name, key).delete()
 
@@ -193,9 +195,9 @@ class S3Boto3Backend(duplicity.backend.Backend):
         if not self.s3:
             self.reset_connection()
 
-        import botocore  # pylint: disable=import-error
+        import botocore
 
-        remote_filename = util.fsdecode(remote_filename)
+        remote_filename = os.fsdecode(remote_filename)
         key = self.key_prefix + remote_filename
         content_length = -1
         try:

@@ -26,15 +26,9 @@ associates stat information with filenames
 
 """
 
-from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
-from builtins import str
-from builtins import object
 
 import errno
 import gzip
-import os
 import re
 import shutil
 import socket
@@ -47,9 +41,7 @@ from duplicity import dup_time
 from duplicity import file_naming
 from duplicity import gpg
 from duplicity import librsync
-from duplicity import log
 from duplicity import tarfile
-from duplicity import util
 from duplicity.lazy import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 
 _copy_blocksize = 64 * 1024
@@ -96,7 +88,7 @@ class ROPath(object):
         elif stat.S_ISFIFO(st_mode):
             self.type = u"fifo"
         elif stat.S_ISSOCK(st_mode):
-            raise PathException(util.fsdecode(self.get_relative_path()) +
+            raise PathException(os.fsdecode(self.get_relative_path()) +
                                 u"is a socket, unsupported by tar")
             self.type = u"sock"  # pylint: disable=unreachable
         elif stat.S_ISCHR(st_mode):
@@ -113,7 +105,7 @@ class ROPath(object):
                                 os.minor(self.stat.st_rdev))
             except:
                 log.Warn(_(u"Warning: %s invalid devnums (0x%X), treating as (0, 0).")
-                         % (util.fsdecode(self.get_relative_path()), self.stat.st_rdev))
+                         % (os.fsdecode(self.get_relative_path()), self.stat.st_rdev))
                 self.devnums = (0, 0)
 
     def blank(self):
@@ -204,7 +196,7 @@ class ROPath(object):
             self.type = u"sym"
             self.symtext = tarinfo.linkname
             if isinstance(self.symtext, u"".__class__):
-                self.symtext = util.fsencode(self.symtext)
+                self.symtext = os.fsencode(self.symtext)
         elif type == tarfile.CHRTYPE:
             self.type = u"chr"
             self.devnums = (tarinfo.devmajor, tarinfo.devminor)
@@ -269,7 +261,7 @@ class ROPath(object):
         """
         ti = tarfile.TarInfo()
         if self.index:
-            ti.name = util.fsdecode(b"/".join(self.index))
+            ti.name = os.fsdecode(b"/".join(self.index))
         else:
             ti.name = u"."
         if self.isdir():
@@ -290,7 +282,7 @@ class ROPath(object):
                 ti.type = tarfile.SYMTYPE
                 ti.linkname = self.symtext
                 if isinstance(ti.linkname, bytes):
-                    ti.linkname = util.fsdecode(ti.linkname)
+                    ti.linkname = os.fsdecode(ti.linkname)
             elif self.isdev():
                 if self.type == u"chr":
                     ti.type = tarfile.CHRTYPE
@@ -304,7 +296,7 @@ class ROPath(object):
             ti.uid, ti.gid = self.stat.st_uid, self.stat.st_gid
             if self.stat.st_mtime < 0:
                 log.Warn(_(u"Warning: %s has negative mtime, treating as 0.")
-                         % (util.fsdecode(self.get_relative_path())))
+                         % (os.fsdecode(self.get_relative_path())))
                 ti.mtime = 0
             else:
                 ti.mtime = int(self.stat.st_mtime)
@@ -368,7 +360,7 @@ class ROPath(object):
         """
         def log_diff(log_string):
             log_str = _(u"Difference found:") + u" " + log_string
-            log.Notice(log_str % (util.fsdecode(self.get_relative_path())))
+            log.Notice(log_str % (os.fsdecode(self.get_relative_path())))
 
         if include_data is False:
             return True
@@ -406,7 +398,7 @@ class ROPath(object):
             else:
                 return 1
         elif self.issym():
-            if self.symtext == other.symtext or self.symtext + util.fsencode(os.sep) == other.symtext:
+            if self.symtext == other.symtext or self.symtext + os.fsencode(os.sep) == other.symtext:
                 return 1
             else:
                 log_diff(_(u"Symlink %%s points to %s, expected %s") %
@@ -514,7 +506,7 @@ class Path(ROPath):
             path, extra = os.path.split(path)
             tail.insert(0, extra)
         if path:
-            return config.rename[path].split(util.fsencode(os.sep)) + tail
+            return config.rename[path].split(os.fsencode(os.sep)) + tail
         else:
             return index  # no rename found
 
@@ -525,8 +517,8 @@ class Path(ROPath):
         self.opened, self.fileobj = None, None
         if isinstance(base, str):
             # For now (Python 2), it is helpful to know that all paths
-            # are starting with bytes -- see note above util.fsencode definition
-            base = util.fsencode(base)
+            # are starting with bytes -- see note above os.fsencode definition
+            base = os.fsencode(base)
         self.base = base
 
         # Create self.index, which is the path as a tuple
@@ -536,7 +528,7 @@ class Path(ROPath):
 
         # We converted any unicode base to filesystem encoding, so self.name should
         # be in filesystem encoding already and does not need to change
-        self.uc_name = util.fsdecode(self.name)
+        self.uc_name = os.fsdecode(self.name)
 
         self.setdata()
 
@@ -564,7 +556,7 @@ class Path(ROPath):
     def append(self, ext):
         u"""Return new Path with ext added to index"""
         if isinstance(ext, u"".__class__):
-            ext = util.fsencode(ext)
+            ext = os.fsencode(ext)
         return self.__class__(self.base, self.index + (ext,))
 
     def new_index(self, index):
@@ -582,7 +574,7 @@ class Path(ROPath):
     def contains(self, child):
         u"""Return true if path is a directory and contains child"""
         if isinstance(child, u"".__class__):
-            child = util.fsencode(child)
+            child = os.fsencode(child)
         # We don't use append(child).exists() here because that requires exec
         # permissions as well as read. listdir() just needs read permissions.
         return self.isdir() and child in self.listdir()

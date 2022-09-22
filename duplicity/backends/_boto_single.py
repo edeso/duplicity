@@ -19,18 +19,19 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import division
-from builtins import str
-from concurrent.futures import ThreadPoolExecutor
+
 import os
 import time
+from concurrent.futures import ThreadPoolExecutor
 
 import duplicity.backend
 from duplicity import config
 from duplicity import log
-from duplicity.errors import FatalBackendException, BackendException
 from duplicity import progress
-from duplicity import util
+from duplicity.errors import (
+    FatalBackendException,
+    BackendException,
+)
 
 BOTO_MIN_VERSION = u"2.1.1"
 
@@ -144,7 +145,7 @@ class BotoBackend(duplicity.backend.Backend):
                 parsed_url.hostname = pu.hostname
 
         try:
-            import boto  # pylint: disable=import-error
+            import boto
             from boto.s3.connection import Location
         except ImportError:
             raise
@@ -175,7 +176,7 @@ class BotoBackend(duplicity.backend.Backend):
         # boto uses scheme://bucket[/name] and specifies hostname on connect()
         self.scheme = duplicity.backend.strip_prefix(parsed_url.scheme, u'boto')[:2]
         self.boto_uri_str = u'://'.join((self.scheme,
-                                         parsed_url.path.lstrip(u'/')))
+                                        parsed_url.path.lstrip(u'/')))
 
         if config.s3_european_buckets:
             self.my_location = Location.EU
@@ -194,7 +195,7 @@ class BotoBackend(duplicity.backend.Backend):
         del self.storage_uri
 
     def resetConnection(self):
-        import boto  # pylint: disable=import-error
+        import boto
 
         if getattr(self, u'conn', False):
             self.conn.close()
@@ -215,7 +216,7 @@ class BotoBackend(duplicity.backend.Backend):
         self.resetConnection()
 
     def _put(self, source_path, remote_filename):
-        remote_filename = util.fsdecode(remote_filename)
+        remote_filename = os.fsdecode(remote_filename)
 
         if config.s3_european_buckets:
             if not config.s3_use_new_style:
@@ -285,7 +286,7 @@ class BotoBackend(duplicity.backend.Backend):
                    rough_upload_speed))
 
     def _get(self, remote_filename, local_path):
-        remote_filename = util.fsdecode(remote_filename)
+        remote_filename = os.fsdecode(remote_filename)
         key_name = self.key_prefix + remote_filename
         self.pre_process_download(remote_filename, wait=True)
         key = self._listed_keys[key_name]
@@ -319,11 +320,11 @@ class BotoBackend(duplicity.backend.Backend):
         return filename_list
 
     def _delete(self, filename):
-        filename = util.fsdecode(filename)
+        filename = os.fsdecode(filename)
         self.bucket.delete_key(self.key_prefix + filename)
 
     def _query(self, filename):
-        filename = util.fsdecode(filename)
+        filename = os.fsdecode(filename)
         key = self.bucket.lookup(self.key_prefix + filename)
         if key is None:
             return {u'size': -1}
@@ -360,6 +361,6 @@ class BotoBackend(duplicity.backend.Backend):
         # Used primarily to move all necessary files in Glacier to S3 at once
         with ThreadPoolExecutor(thread_name_prefix=u's3-unfreeze-glacier') as executor:
             for remote_filename in remote_filenames:
-                remote_filename = util.fsdecode(remote_filename)
+                remote_filename = os.fsdecode(remote_filename)
                 executor.submit(self.pre_process_download, remote_filename, False)
         log.Info(u"Batch unfreezing from Glacier finished")

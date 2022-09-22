@@ -25,27 +25,26 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import print_function
-from __future__ import division
-from future import standard_library
-standard_library.install_aliases()
-from builtins import input
-from builtins import str
+
 import io
 import os
 import re
 import sys
 import time
 import traceback
-import urllib.request  # pylint: disable=import-error
-import urllib.parse  # pylint: disable=import-error
-import urllib.error  # pylint: disable=import-error
+import urllib.error
+import urllib.parse
+import urllib.request
 
-from duplicity import log, config
+from requests.exceptions import ConnectionError  # pylint: disable=redefined-builtin
+
+import duplicity.backend
+from duplicity import (
+    log,
+    config,
+)
 from duplicity import progress
 from duplicity.errors import BackendException
-from requests.exceptions import ConnectionError  # pylint: disable=redefined-builtin
-import duplicity.backend
 
 # This is chunk size for upload using Dpbx chumked API v2. It doesn't
 # make sense to make it much large since Dpbx SDK uses connection pool

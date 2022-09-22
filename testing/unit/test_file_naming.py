@@ -19,18 +19,14 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import print_function
-from builtins import object
-from future import standard_library
-standard_library.install_aliases()
 
+import os
 import unittest
 
+from duplicity import config
 from duplicity import dup_time
 from duplicity import file_naming
 from duplicity import log
-from duplicity import config
-from duplicity import util
 from . import UnitTestCase
 
 
@@ -53,7 +49,7 @@ class FileNamingBase(object):
 
         file_naming.prepare_regex(force=True)
         filename = file_naming.get(u"inc", volume_number=23)
-        log.Info(u"Inc filename: " + util.fsdecode(filename))
+        log.Info(u"Inc filename: " + os.fsdecode(filename))
         pr = file_naming.parse(filename)
         assert pr and pr.type == u"inc", pr
         assert pr.start_time == 10
@@ -62,7 +58,7 @@ class FileNamingBase(object):
         assert not pr.partial
 
         filename = file_naming.get(u"full-sig")
-        log.Info(u"Full sig filename: " + util.fsdecode(filename))
+        log.Info(u"Full sig filename: " + os.fsdecode(filename))
         pr = file_naming.parse(filename)
         assert pr.type == u"full-sig"
         assert pr.time == 20

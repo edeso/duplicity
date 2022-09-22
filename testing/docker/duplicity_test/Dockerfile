@@ -84,7 +84,6 @@ RUN git clone -b "v2.3.4" --single-branch https://github.com/pyenv/pyenv.git /ro
     && eval "$(pyenv init --path)" \
     && eval "$(pyenv init -)"
 # Install all the Pythons we test
-RUN pyenv install 2.7.18
 RUN pyenv install 3.5.10
 RUN pyenv install 3.6.15
 RUN pyenv install 3.7.13
@@ -95,7 +94,7 @@ RUN pyenv install 3.10.5
 # Tell tox how to find python.  Update pip minimals.
 RUN python3 -m pip install --upgrade pip setuptools setuptools-scm \
     && python3 -m pip install tox tox-pyenv \
-    && pyenv local 2.7.18 3.5.10 3.6.15 3.7.13 3.8.13 3.9.13 3.10.5
+    && pyenv local 3.5.10 3.6.15 3.7.13 3.8.13 3.9.12 3.10.4
 
 # set up tiny dummy project to make tox happy
 WORKDIR /root
@@ -109,7 +108,6 @@ WORKDIR /root/hello-world-master
 
 # run tox so environss are created as part of image.
 RUN tox --notest -e code -- --setup-only
-RUN tox --notest -e py27 -- --setup-only
 RUN tox --notest -e py35 -- --setup-only
 RUN tox --notest -e py36 -- --setup-only
 RUN tox --notest -e py37 -- --setup-only

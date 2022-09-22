@@ -21,21 +21,17 @@
 
 u"""Manage temporary files"""
 
-from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
-from builtins import object
 
 import os
-import sys
 import shutil
+import sys
 
+from duplicity import config
+from duplicity import file_naming
+from duplicity import gpg
 from duplicity import log
 from duplicity import path
-from duplicity import file_naming
 from duplicity import tempdir
-from duplicity import config
-from duplicity import gpg
 
 
 def new_temppath():

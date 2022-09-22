@@ -22,20 +22,17 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import print_function
-from __future__ import division
-from past.utils import old_div
-from builtins import input
-from builtins import str
-import time
+
 import json
 import os
 import sys
+import time
 
 import duplicity.backend
-from duplicity.errors import BackendException
 from duplicity import config
 from duplicity import log
+from duplicity.errors import BackendException
+
 
 # For documentation on the API, see
 # The previous Live SDK API required the use of opaque folder IDs to navigate paths, but the Microsoft Graph
@@ -150,7 +147,7 @@ class OneDriveBackend(duplicity.backend.Backend):
             # https://docs.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_createuploadsession?
             # indicates 10 MiB is optimal for stable high speed connections.
             offset = 0
-            desired_num_fragments = old_div(10 * 1024 * 1024, self.REQUIRED_FRAGMENT_SIZE_MULTIPLE)
+            desired_num_fragments = 10 * 1024 * 1024 // self.REQUIRED_FRAGMENT_SIZE_MULTIPLE
             while True:
                 chunk = source_file.read(desired_num_fragments * self.REQUIRED_FRAGMENT_SIZE_MULTIPLE)
                 if len(chunk) == 0:

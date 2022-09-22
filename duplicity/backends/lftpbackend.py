@@ -24,15 +24,14 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from future import standard_library
-standard_library.install_aliases()
 
 import os
 import os.path
 import re
-import urllib.request  # pylint: disable=import-error
-import urllib.parse  # pylint: disable=import-error
-import urllib.error  # pylint: disable=import-error
+import urllib.error
+import urllib.parse
+import urllib.request
+
 try:
     from shlex import quote as cmd_quote
 except ImportError:
@@ -42,7 +41,6 @@ import duplicity.backend
 from duplicity import config
 from duplicity import log
 from duplicity import tempdir
-from duplicity import util
 
 
 class LFTPBackend(duplicity.backend.Backend):
@@ -147,12 +145,12 @@ class LFTPBackend(duplicity.backend.Backend):
 
     def _put(self, source_path, remote_filename):
         if isinstance(remote_filename, b"".__class__):
-            remote_filename = util.fsdecode(remote_filename)
+            remote_filename = os.fsdecode(remote_filename)
         commandline = u"lftp -c \"source %s; mkdir -p %s; put %s -o %s\"" % (
             self.tempname,
             cmd_quote(self.remote_path),
             cmd_quote(source_path.uc_name),
-            cmd_quote(self.remote_path) + util.fsdecode(remote_filename)
+            cmd_quote(self.remote_path) + os.fsdecode(remote_filename)
         )
         log.Debug(u"CMD: %s" % commandline)
         s, l, e = self.subprocess_popen(commandline)
@@ -164,7 +162,7 @@ class LFTPBackend(duplicity.backend.Backend):
 
     def _get(self, remote_filename, local_path):
         if isinstance(remote_filename, b"".__class__):
-            remote_filename = util.fsdecode(remote_filename)
+            remote_filename = os.fsdecode(remote_filename)
         commandline = u"lftp -c \"source %s; get %s -o %s\"" % (
             cmd_quote(self.tempname),
             cmd_quote(self.remote_path) + remote_filename,
@@ -196,13 +194,13 @@ class LFTPBackend(duplicity.backend.Backend):
                   u"%s" % (l))
 
         # Look for our files as the last element of a long list line
-        return [util.fsencode(x.split()[-1]) for x in l.split(u'\n') if x]
+        return [os.fsencode(x.split()[-1]) for x in l.split(u'\n') if x]
 
     def _delete(self, filename):
         commandline = u"lftp -c \"source %s; cd %s; rm %s\"" % (
             cmd_quote(self.tempname),
             cmd_quote(self.remote_path),
-            cmd_quote(util.fsdecode(filename))
+            cmd_quote(os.fsdecode(filename))
         )
         log.Debug(u"CMD: %s" % commandline)
         _, l, e = self.subprocess_popen(commandline)

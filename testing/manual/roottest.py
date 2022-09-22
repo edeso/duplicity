@@ -19,8 +19,9 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-import config
-import sys, unittest
+import sys
+import unittest
+
 sys.path.insert(0, u"../")
 
 from duplicity import diffdir

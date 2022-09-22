@@ -18,18 +18,13 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import print_function
 
 import os
 import re
 import subprocess
 
 import duplicity.backend
-from duplicity import util
 from duplicity.errors import BackendException
-from future import standard_library
-
-standard_library.install_aliases()
 
 
 class Megav3Backend(duplicity.backend.Backend):

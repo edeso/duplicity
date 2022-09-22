@@ -18,22 +18,18 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
 
-import os
 import io
+import os
 import unittest
 
-from . import UnitTestCase
+import duplicity.backend
 from duplicity import log
 from duplicity import path
 from duplicity import util
 from duplicity.errors import BackendException
-import duplicity.backend
-
 from testing import _runtest_dir
+from . import UnitTestCase
 
 
 class BackendInstanceBase(UnitTestCase):
@@ -202,10 +198,10 @@ class Par2BackendTest(BackendInstanceBase):
 # class RsyncBackendTest(BackendInstanceBase):
 #     def setUp(self):
 #         super(RsyncBackendTest, self).setUp()
-#         os.makedirs(u'{0}/testfiles/output')  # rsync needs it to exist first
-#         url = u'rsync://localhost:2222//%s/{0}/testfiles/output' % os.getcwd()
+#         os.makedirs('{0}/testfiles/output')  # rsync needs it to exist first
+#         url = 'rsync://localhost:2222//%s/{0}/testfiles/output' % os.getcwd()
 #         self.backend = duplicity.backend.get_backend_object(url)
-#         self.assertEqual(self.backend.__class__.__name__, u'RsyncBackend')
+#         self.assertEqual(self.backend.__class__.__name__, 'RsyncBackend')
 
 
 class TahoeBackendTest(BackendInstanceBase):
@@ -221,11 +217,11 @@ class TahoeBackendTest(BackendInstanceBase):
 #  class HSIBackendTest(BackendInstanceBase):
 #      def setUp(self):
 #          super(HSIBackendTest, self).setUp()
-#          os.makedirs(u'{0}/testfiles/output')
+#          os.makedirs('{0}/testfiles/output')
 #          # hostname is ignored...  Seemingly on purpose
-#          url = u'hsi://hostname%s/{0}/testfiles/output' % os.getcwd()
+#          url = 'hsi://hostname%s/{0}/testfiles/output' % os.getcwd()
 #          self.backend = duplicity.backend.get_backend_object(url)
-#          self.assertEqual(self.backend.__class__.__name__, u'HSIBackend')
+#          self.assertEqual(self.backend.__class__.__name__, 'HSIBackend')
 
 
 @unittest.skipIf(not util.which(u'lftp'), u"lftp not installed")

@@ -20,43 +20,41 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import print_function
 
 import os
 import re
 import shutil
-import subprocess
 import sys
 import time
-
-from distutils.command.build_scripts import build_scripts
 from distutils.command.install_data import install_data
-from setuptools import setup, Extension
+
+from setuptools import (
+    setup,
+    Extension,
+)
 from setuptools.command.build_ext import build_ext
 from setuptools.command.install import install
 from setuptools.command.sdist import sdist
 from setuptools.command.test import test
 
-
 # check that we can function here
-if not (sys.version_info[:2] >= (3, 5) or (sys.version_info[0] == 2 and sys.version_info[:2] >= (2, 7))):
-    print(u"Sorry, duplicity requires version 2.7 or version 3.5 or later of Python.")
+if not sys.version_info[:2] >= (3, 5):
+    print(u"Sorry, duplicity requires version 3.5 or later of Python.")
     sys.exit(1)
 
-
 scm_version_args = {
-    u'tag_regex': r'^(?P<prefix>rel.)?(?P<version>[^\+]+)(?P<suffix>.*)?$',
-    u'local_scheme': u'no-local-version',
-    }
+    u'tag_regex':r'^(?P<prefix>rel.)?(?P<version>[^\+]+)(?P<suffix>.*)?$',
+    u'local_scheme':u'no-local-version',
+}
 
 try:
-    from setuptools_scm import get_version  # pylint: disable=import-error
+    from setuptools_scm import get_version
+
     Version = get_version(**scm_version_args)
 except Exception as e:
     Version = u"0.8.24.dev"
     print(u"Unable to get SCM version: defaulting to %s" % (Version,))
 Reldate = time.strftime(u"%B %d, %Y", time.gmtime(int(os.environ.get(u'SOURCE_DATE_EPOCH', time.time()))))
-
 
 # READTHEDOCS uses setup.py sdist but can't handle extensions
 ext_modules = list()
@@ -76,11 +74,11 @@ if not os.environ.get(u'READTHEDOCS') == u'True':
             libdir_list = [os.path.join(LIBRSYNC_DIR, u'lib')]
 
     # build the librsync extension
-    ext_modules=[Extension(name=r"duplicity._librsync",
-                           sources=[r"duplicity/_librsyncmodule.c"],
-                           include_dirs=incdir_list,
-                           library_dirs=libdir_list,
-                           libraries=[u"rsync"])]
+    ext_modules = [Extension(name=r"duplicity._librsync",
+                             sources=[r"duplicity/_librsyncmodule.c"],
+                             include_dirs=incdir_list,
+                             library_dirs=libdir_list,
+                             libraries=[u"rsync"])]
 
 
 def get_data_files():
@@ -88,24 +86,24 @@ def get_data_files():
 
     # static data files
     data_files = [
-            (u'share/man/man1',
-                [
-                u'bin/duplicity.1',
-                u'bin/rdiffdir.1'
-                ]
-            ),
-            (u'share/doc/duplicity-%s' % Version,
-                [
-                u'CHANGELOG.md',
-                u'CONTRIBUTING.md',
-                u'COPYING',
-                u'README.md',
-                u'README-LOG.md',
-                u'README-REPO.md',
-                u'README-TESTING.md',
-                ],
-            ),
-        ]
+        (u'share/man/man1',
+         [
+             u'bin/duplicity.1',
+             u'bin/rdiffdir.1'
+         ]
+         ),
+        (u'share/doc/duplicity-%s' % Version,
+         [
+             u'CHANGELOG.md',
+             u'CONTRIBUTING.md',
+             u'COPYING',
+             u'README.md',
+             u'README-LOG.md',
+             u'README-REPO.md',
+             u'README-TESTING.md',
+         ],
+         ),
+    ]
 
     if not os.environ.get(u'READTHEDOCS') == u'True':
         # msgfmt the translation files
@@ -269,79 +267,73 @@ class BuildExtCommand(build_ext):
 with open(u"README.md") as fh:
     long_description = fh.read()
 
-
 setup(name=u"duplicity",
-    version=Version,
-    description=u"Encrypted backup using rsync algorithm",
-    long_description=long_description,
-    long_description_content_type=u"text/plain",
-    author=u"Ben Escoto <ben@emrose.org>",
-    author_email=u"ben@emrose.org",
-    maintainer=u"Kenneth Loafman <kenneth@loafman.com>",
-    maintainer_email=u"kenneth@loafman.com",
-    url=u"http://duplicity.us",
-    python_requires=u">2.6, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <4",
-    platforms=[u"any"],
-    packages=[
-        u"duplicity",
-        u"duplicity.backends",
-        u"duplicity.backends.pyrax_identity",
-        u"testing",
-        u"testing.functional",
-        u"testing.overrides",
-        u"testing.unit",
-        ],
-    package_dir={
-        u"duplicity": u"duplicity",
-        u"duplicity.backends": u"duplicity/backends",
-        },
-    ext_modules=ext_modules,
-    scripts=[
-        u"bin/rdiffdir",
-        u"bin/duplicity",
-        ],
-    data_files=get_data_files(),
-    include_package_data=True,
-    install_requires=[
-        u"fasteners",
-        u"future",
-        ],
-    tests_require=[
-        u"fasteners",
-        u"future",
-        u"mock",
-        u"pexpect",
-        u"pytest",
-        u"pytest-runner",
-        ],
-    test_suite=u"testing",
-    cmdclass={
-        u"build_ext": BuildExtCommand,
-        u"install": InstallCommand,
-        u"install_data": InstallDataCommand,
-        u"sdist": SdistCommand,
-        u"test": TestCommand,
-        },
-    classifiers=[
-        u"Development Status :: 6 - Mature",
-        u"Environment :: Console",
-        u"License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
-        u"Operating System :: MacOS",
-        u"Operating System :: POSIX",
-        u"Programming Language :: C",
-        u"Programming Language :: Python :: 2",
-        u"Programming Language :: Python :: 2.7",
-        u"Programming Language :: Python :: 3",
-        u"Programming Language :: Python :: 3.5",
-        u"Programming Language :: Python :: 3.6",
-        u"Programming Language :: Python :: 3.7",
-        u"Programming Language :: Python :: 3.8",
-        u"Programming Language :: Python :: 3.9",
-        u"Programming Language :: Python :: 3.10",
-        u"Topic :: System :: Archiving :: Backup"
-        ],
-    )
-
+      version=Version,
+      description=u"Encrypted backup using rsync algorithm",
+      long_description=long_description,
+      long_description_content_type=u"text/plain",
+      author=u"Ben Escoto <ben@emrose.org>",
+      author_email=u"ben@emrose.org",
+      maintainer=u"Kenneth Loafman <kenneth@loafman.com>",
+      maintainer_email=u"kenneth@loafman.com",
+      url=u"http://duplicity.us",
+      python_requires=u">2.6, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <4",
+      platforms=[u"any"],
+      packages=[
+          u"duplicity",
+          u"duplicity.backends",
+          u"duplicity.backends.pyrax_identity",
+          u"testing",
+          u"testing.functional",
+          u"testing.overrides",
+          u"testing.unit",
+      ],
+      package_dir={
+          u"duplicity":u"duplicity",
+          u"duplicity.backends":u"duplicity/backends",
+      },
+      ext_modules=ext_modules,
+      scripts=[
+          u"bin/rdiffdir",
+          u"bin/duplicity",
+      ],
+      data_files=get_data_files(),
+      include_package_data=True,
+      install_requires=[
+          u"fasteners",
+      ],
+      tests_require=[
+          u"fasteners",
+          u"mock",
+          u"pexpect",
+          u"pytest",
+          u"pytest-runner",
+      ],
+      test_suite=u"testing",
+      cmdclass={
+          u"build_ext":BuildExtCommand,
+          u"install":InstallCommand,
+          u"install_data":InstallDataCommand,
+          u"sdist":SdistCommand,
+          u"test":TestCommand,
+      },
+      classifiers=[
+          u"Development Status :: 6 - Mature",
+          u"Environment :: Console",
+          u"License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
+          u"Operating System :: MacOS",
+          u"Operating System :: POSIX",
+          u"Programming Language :: C",
+          u"Programming Language :: Python :: 3",
+          u"Programming Language :: Python :: 3.5",
+          u"Programming Language :: Python :: 3.6",
+          u"Programming Language :: Python :: 3.7",
+          u"Programming Language :: Python :: 3.8",
+          u"Programming Language :: Python :: 3.9",
+          u"Programming Language :: Python :: 3.10",
+          u"Topic :: System :: Archiving :: Backup"
+      ],
+      )
 
 # TODO: Find best way to clean up afterwards.
 if os.path.exists(u'po/LINGUAS'):

@@ -19,17 +19,14 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
 
 import glob
 import os
 import platform
 import subprocess
-import sys
-import pytest
 import unittest
+
+import pytest
 
 from testing import _runtest_dir
 from . import FunctionalTestCase
@@ -39,7 +36,6 @@ class RestartTest(FunctionalTestCase):
     u"""
     Test checkpoint/restart using duplicity binary
     """
-    @unittest.skipIf(sys.version_info.major == 2, u"Skip on possible timing error")
     def test_basic_checkpoint_restart(self):
         u"""
         Test basic Checkpoint/Restart
@@ -50,7 +46,6 @@ class RestartTest(FunctionalTestCase):
         self.verify(u"{0}/testfiles/largefiles".format(_runtest_dir))
 
     @pytest.mark.slow
-    @unittest.skipIf(sys.version_info.major == 2, u"Skip on possible timing error")
     def test_multiple_checkpoint_restart(self):
         u"""
         Test multiple Checkpoint/Restart
@@ -62,7 +57,6 @@ class RestartTest(FunctionalTestCase):
         self.backup(u"full", u"{0}/testfiles/largefiles".format(_runtest_dir))
         self.verify(u"{0}/testfiles/largefiles".format(_runtest_dir))
 
-    @unittest.skipIf(sys.version_info.major == 2, u"Skip on possible timing error")
     def test_first_volume_failure(self):
         u"""
         Test restart when no volumes are available on the remote.
@@ -74,7 +68,6 @@ class RestartTest(FunctionalTestCase):
         self.backup(u"full", u"{0}/testfiles/largefiles".format(_runtest_dir))
         self.verify(u"{0}/testfiles/largefiles".format(_runtest_dir))
 
-    @unittest.skipIf(sys.version_info.major == 2, u"Skip on possible timing error")
     def test_multi_volume_failure(self):
         u"""
         Test restart when fewer volumes are available on the remote
@@ -87,7 +80,6 @@ class RestartTest(FunctionalTestCase):
         self.backup(u"full", u"{0}/testfiles/largefiles".format(_runtest_dir))
         self.verify(u"{0}/testfiles/largefiles".format(_runtest_dir))
 
-    @unittest.skipIf(sys.version_info.major == 2, u"Skip on possible timing error")
     def test_restart_encrypt_without_password(self):
         u"""
         Test that we can successfully restart a encrypt-key-only backup without
@@ -104,7 +96,6 @@ class RestartTest(FunctionalTestCase):
         self.set_environ(u'PASSPHRASE', self.sign_passphrase)
         self.verify(u"{0}/testfiles/largefiles".format(_runtest_dir))
 
-    @unittest.skipIf(sys.version_info.major == 2, u"Skip on possible timing error")
     def test_restart_sign_and_encrypt(self):
         u"""
         Test restarting a backup using same key for sign and encrypt
@@ -116,7 +107,6 @@ class RestartTest(FunctionalTestCase):
         self.backup(u"full", u"{0}/testfiles/largefiles".format(_runtest_dir), options=enc_opts)
         self.verify(u"{0}/testfiles/largefiles".format(_runtest_dir))
 
-    @unittest.skipIf(sys.version_info.major == 2, u"Skip on possible timing error")
     def test_restart_sign_and_hidden_encrypt(self):
         u"""
         Test restarting a backup using same key for sign and encrypt (hidden key id)
@@ -279,7 +269,6 @@ class RestartTest(FunctionalTestCase):
         assert not os.system(u"diff {0}/file1 {1}/testfiles/restore_out/file1".format(source, _runtest_dir))
         assert not os.system(u"diff {0}/z {1}/testfiles/restore_out/z".format(source, _runtest_dir))
 
-    @unittest.skipIf(sys.version_info.major == 2, u"Skip on possible timing error")
     def test_changed_source_dangling_manifest_volume(self):
         u"""
         If we restart but find remote volumes missing, we can easily end up

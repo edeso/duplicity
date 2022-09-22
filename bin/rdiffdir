@@ -27,18 +27,18 @@
 # any suggestions.
 
 from __future__ import print_function
-from builtins import str
-import sys
+
 import getopt
 import gzip
 import os
+import sys
 
-from duplicity import diffdir
-from duplicity import patchdir
-from duplicity import log
 from duplicity import config
-from duplicity import selection
+from duplicity import diffdir
+from duplicity import log
+from duplicity import patchdir
 from duplicity import path
+from duplicity import selection
 from duplicity import util
 
 # If set, compress diff and delta files using gzip

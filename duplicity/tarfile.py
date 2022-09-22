@@ -20,7 +20,6 @@
 
 u"""Like system tarfile but with caching."""
 
-from __future__ import absolute_import
 
 import tarfile
 from duplicity import cached_ops

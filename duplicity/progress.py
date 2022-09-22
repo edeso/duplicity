@@ -32,16 +32,16 @@ and the time left to transfer all the (yet unknown) amount of data to send.
 This is a forecast based on gathered evidence.
 """
 
-from __future__ import absolute_import
-from __future__ import division
-from builtins import object
 
-from datetime import datetime, timedelta
 import collections as sys_collections
 import math
 import pickle
 import threading
 import time
+from datetime import (
+    datetime,
+    timedelta,
+)
 
 from duplicity import config
 from duplicity import log

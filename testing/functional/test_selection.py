@@ -19,16 +19,11 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
 
-
-import os
-import sys
-import platform
 import io
-
+import os
+import platform
+import sys
 import unittest
 
 from . import FunctionalTestCase
@@ -546,11 +541,11 @@ class TestIncludeFilelistTest(IncludeExcludeFunctionalTest):
                     u"- testfiles/select2/1/1sub1/1sub1sub3/1sub1sub3_file.txt\n"
                     u"          \n"
                     u"- testfiles/select2/1/1sub1/1sub1sub2\n"
-                    #  u"- testfiles/select2/1/1sub2\n"  # Commented out because of Bug #1408411
+                    #  "- testfiles/select2/1/1sub2\n"  # Commented out because of Bug #1408411
                     u"'testfiles/select2/1.py'\n"
                     u"       # This is another full-line comment, with spaces     \n"
                     u"testfiles/select2/3\n"
-                    #  u"- testfiles/select2/2\n" # Commented out because of Bug #1408411
+                    #  "- testfiles/select2/2\n" # Commented out because of Bug #1408411
                     u"testfiles/select2/1\n"
                     u'- "testfiles/select2/trailing_space "\n'  # es instead of ea as no wildcard - **
                     u"- testfiles/select2/1.doc")  # es instead of ea as no wildcard - **

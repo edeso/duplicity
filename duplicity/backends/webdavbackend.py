@@ -21,26 +21,25 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from future import standard_library
-standard_library.install_aliases()
-from builtins import str
-from builtins import range
 
 import base64
 import http.client
 import os
 import re
 import shutil
-import urllib.request  # pylint: disable=import-error
-import urllib.parse  # pylint: disable=import-error
-import urllib.error  # pylint: disable=import-error
+import urllib.error
+import urllib.parse
+import urllib.request
 import xml.dom.minidom
 
 import duplicity.backend
 from duplicity import config
 from duplicity import log
 from duplicity import util
-from duplicity.errors import BackendException, FatalBackendException
+from duplicity.errors import (
+    BackendException,
+    FatalBackendException,
+)
 
 
 class CustomMethodRequest(urllib.request.Request):
@@ -101,20 +100,6 @@ class VerifiedHTTPSConnection(http.client.HTTPSConnection):
             self.sock = context.wrap_socket(sock, server_hostname=self.host)
         # the legacy way needing a cert file
         else:
-            if config.ssl_cacert_path:
-                raise FatalBackendException(
-                    _(u"Option '--ssl-cacert-path' is not supported "
-                      u"with python 2.7.8 and below."))
-
-            if not self.cacert_file:
-                raise FatalBackendException(_(u"""\
-For certificate verification with python 2.7.8 or earlier a cacert database
-file is needed in one of these locations: %s
-Hints:
-Consult the man page, chapter 'SSL Certificate Verification'.
-Consider using the options --ssl-cacert-file, --ssl-no-check-certificate .""") %
-                                            u", ".join(self.cacert_candidates))
-
             # wrap the socket in ssl using verification
             self.sock = ssl.wrap_socket(sock,
                                         cert_reqs=ssl.CERT_REQUIRED,
@@ -419,7 +404,7 @@ class WebDAVBackend(duplicity.backend.Backend):
             return None
 
     def _get(self, remote_filename, local_path):
-        url = self.directory + util.fsdecode(remote_filename)
+        url = self.directory + os.fsdecode(remote_filename)
         response = None
         try:
             target_file = local_path.open(u"wb")
@@ -445,7 +430,7 @@ class WebDAVBackend(duplicity.backend.Backend):
                 response.close()
 
     def _put(self, source_path, remote_filename):
-        url = self.directory + util.fsdecode(remote_filename)
+        url = self.directory + os.fsdecode(remote_filename)
         response = None
         try:
             source_file = source_path.open(u"rb")
@@ -467,7 +452,7 @@ class WebDAVBackend(duplicity.backend.Backend):
                 response.close()
 
     def _delete(self, filename):
-        url = self.directory + util.fsdecode(filename)
+        url = self.directory + os.fsdecode(filename)
         response = None
         try:
             response = self.request(u"DELETE", url)

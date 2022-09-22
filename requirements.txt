@@ -1,14 +1,13 @@
 ##### basic requirements #####
 
 fasteners
-future
 python-gettext
 
 
 ##### requests libraries #####
 
-chardet<3.10
-urllib3<1.26
+chardet < 3.10
+urllib3 < 1.26
 requests
 
 
@@ -16,12 +15,11 @@ requests
 
 azure-core
 azure-storage-blob
-b2sdk                   ; python_version >= '3.7'
+b2sdk
 boto
 boto3
 boxsdk[jwt]
 dropbox
-gdata                   ; python_version == '2.7'
 gdata-python3
 google-api-python-client
 google-auth-oauthlib
@@ -42,11 +40,12 @@ requests-oauthlib
 ##### testing libraries #####
 
 
-2to3
 coverage
 mock>=3.0.5
 pycodestyle
 pylint
+pydevd
+pydevd-pycharm
 pytest
 pytest-cov
 pytest-runner

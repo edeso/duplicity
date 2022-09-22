@@ -18,9 +18,10 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from duplicity import log
-from duplicity import util
+import os
+
 import duplicity.backend
+from duplicity import log
 
 
 class TAHOEBackend(duplicity.backend.Backend):
@@ -50,7 +51,7 @@ class TAHOEBackend(duplicity.backend.Backend):
                 return u"%s:" % self.alias
 
         if isinstance(filename, b"".__class__):
-            filename = util.fsdecode(filename)
+            filename = os.fsdecode(filename)
         if self.directory != u"":
             return u"%s:%s/%s" % (self.alias, self.directory, filename)
         else:
@@ -69,7 +70,7 @@ class TAHOEBackend(duplicity.backend.Backend):
 
     def _list(self):
         output = self.run(u"tahoe", u"ls", self.get_remote_path())
-        return [util.fsencode(x) for x in output.split(u'\n') if x]
+        return [os.fsencode(x) for x in output.split(u'\n') if x]
 
     def _delete(self, filename):
         self.run(u"tahoe", u"rm", self.get_remote_path(filename))

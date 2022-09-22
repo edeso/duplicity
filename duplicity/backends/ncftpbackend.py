@@ -19,19 +19,16 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from future import standard_library
-standard_library.install_aliases()
 import os.path
-import urllib.request  # pylint: disable=import-error
-import urllib.parse  # pylint: disable=import-error
-import urllib.error  # pylint: disable=import-error
 import re
+import urllib.error
+import urllib.parse
+import urllib.request
 
 import duplicity.backend
 from duplicity import config
 from duplicity import log
 from duplicity import tempdir
-from duplicity import util
 
 
 class NCFTPBackend(duplicity.backend.Backend):
@@ -99,7 +96,7 @@ class NCFTPBackend(duplicity.backend.Backend):
             self.flags += u" -P '%s'" % (parsed_url.port)
 
     def _put(self, source_path, remote_filename):
-        remote_filename = util.fsdecode(remote_filename)
+        remote_filename = os.fsdecode(remote_filename)
         remote_path = os.path.join(urllib.parse.unquote(re.sub(u'^/', u'', self.parsed_url.path)),
                                    remote_filename).rstrip()
         commandline = u"ncftpput %s -m -V -C '%s' '%s'" % \
@@ -107,7 +104,7 @@ class NCFTPBackend(duplicity.backend.Backend):
         self.subprocess_popen(commandline)
 
     def _get(self, remote_filename, local_path):
-        remote_filename = util.fsdecode(remote_filename)
+        remote_filename = os.fsdecode(remote_filename)
         remote_path = os.path.join(urllib.parse.unquote(re.sub(u'^/', u'', self.parsed_url.path)),
                                    remote_filename).rstrip()
         commandline = u"ncftpget %s -V -C '%s' '%s' '%s'" % \
@@ -119,7 +116,7 @@ class NCFTPBackend(duplicity.backend.Backend):
         commandline = u"ncftpls %s -l '%s'" % (self.flags, self.url_string)
         _, l, _ = self.subprocess_popen(commandline)
         # Look for our files as the last element of a long list line
-        return [util.fsencode(x.split()[-1]) for x in l.split(u'\n') if x and not x.startswith(u"total ")]
+        return [os.fsencode(x.split()[-1]) for x in l.split(u'\n') if x and not x.startswith(u"total ")]
 
     def _delete(self, filename):
         commandline = u"ncftpls %s -l -X 'DELE %s' '%s'" % \
