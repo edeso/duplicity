@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -e
+
+# in git repo, no .py extension
+echo bin/duplicity > /tmp/filelist
+echo bin/rdiffdir >> /tmp/filelist
+
+# in git repo
+git ls-files | grep '.*.py$' >> /tmp/filelist
+
+if [ $# -eq 0 ]; then
+    cat /tmp/filelist
+elif [ -e "$1" ]; then
+    cat /tmp/filelist | xargs -n1 "$1"
+fi

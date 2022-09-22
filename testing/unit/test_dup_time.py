@@ -19,22 +19,15 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
-from builtins import object
 
-import sys
-import unittest
 import time
+import unittest
+
 from duplicity import dup_time
 from . import UnitTestCase
 
 # For type testing against both int and long types that works in python 2/3
-if sys.version_info < (3,):
-    integer_types = (int, int)
-else:
-    integer_types = (int,)
+integer_types = (int,)
 
 
 class TimeTest(object):

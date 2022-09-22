@@ -29,22 +29,19 @@
 # Please send mail to me or the mailing list if you find bugs or have
 # any suggestions.
 
-from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
-from builtins import map
-from builtins import next
-from builtins import object
-from builtins import range
 
 import copy
-import fasteners
 import os
 import platform
 import resource
 import sys
 import time
+from datetime import datetime
 
+import fasteners
+
+import duplicity.config as config
+import duplicity.errors
 from duplicity import __version__
 from duplicity import asyncscheduler
 from duplicity import commandline
@@ -53,7 +50,6 @@ from duplicity import dup_collections
 from duplicity import dup_temp
 from duplicity import dup_time
 from duplicity import file_naming
-from duplicity import config
 from duplicity import gpg
 from duplicity import log
 from duplicity import manifest
@@ -62,12 +58,7 @@ from duplicity import path
 from duplicity import progress
 from duplicity import tempdir
 from duplicity import util
-import duplicity.errors
 from duplicity.errors import BadVolumeException
-
-import duplicity.config as config
-
-from datetime import datetime
 
 # If exit_val is not None, exit with given value at end.
 exit_val = None
@@ -78,8 +69,7 @@ def getpass_safe(message):
     # in non-ascii characters.
     import getpass
     import locale
-    if sys.version_info.major == 2:
-        message = message.encode(locale.getpreferredencoding(), u'replace')
+    message = message.encode(locale.getpreferredencoding(), u'replace')
     return getpass.getpass(message)
 
 
@@ -328,7 +318,7 @@ def write_multivol(backup_type, tarblock_iter, man_outfp, sig_outfp, backend):
             time.sleep(2**attempt)
         if size != orig_size:
             code_extra = u"%s %d %d" % (util.escape(dest_filename), orig_size, size)
-            log.FatalError(_(u"File %s was corrupted during upload.") % util.fsdecode(dest_filename),
+            log.FatalError(_(u"File %s was corrupted during upload.") % os.fsdecode(dest_filename),
                            log.ErrorCode.volume_wrong_size, code_extra)
 
     def put(tdp, dest_filename, vol_num):
@@ -723,7 +713,7 @@ def list_current(col_stats):
     for path in path_iter:
         if path.difftype != u"deleted":
             user_info = u"%s %s" % (dup_time.timetopretty(path.getmtime()),
-                                    util.fsdecode(path.get_relative_path()))
+                                    os.fsdecode(path.get_relative_path()))
             log_info = u"%s %s %s" % (dup_time.timetostring(path.getmtime()),
                                       util.escape(path.get_relative_path()),
                                       path.type)
@@ -749,7 +739,7 @@ def restore(col_stats):
                                   restore_get_patched_rop_iter(col_stats)):
         if config.restore_dir:
             log.FatalError(_(u"%s not found in archive - no files restored.")
-                           % (util.fsdecode(config.restore_dir)),
+                           % (os.fsdecode(config.restore_dir)),
                            log.ErrorCode.restore_dir_not_found)
         else:
             log.FatalError(_(u"No files found in archive - nothing restored."),
@@ -836,14 +826,14 @@ def restore_get_enc_fileobj(backend, filename, volume_info):
             error_msg = u"%s\n %s\n %s\n %s\n" % (
                 _(u"Invalid data - %s hash mismatch for file:") %
                 hash_pair[0],
-                util.fsdecode(filename),
+                os.fsdecode(filename),
                 _(u"Calculated hash: %s") % calculated_hash,
                 _(u"Manifest hash: %s") % hash_pair[1]
             )
             log.Error(error_msg, code=log.ErrorCode.mismatched_hash)
     else:
         if config.ignore_errors:
-            exc = duplicity.errors.BadVolumeException(u"Hash mismatch for: %s" % util.fsdecode(filename))
+            exc = duplicity.errors.BadVolumeException(u"Hash mismatch for: %s" % os.fsdecode(filename))
             log.Warn(_(u"IGNORED_ERROR: Warning: ignoring error as requested: %s: %s")
                      % (exc.__class__.__name__, util.uexc(exc)))
         else:
@@ -946,7 +936,7 @@ def cleanup(col_stats):
         log.Warn(_(u"No extraneous files found, nothing deleted in cleanup."))
         return
 
-    filestr = u"\n".join(map(util.fsdecode, extraneous))
+    filestr = u"\n".join(map(os.fsdecode, extraneous))
     if config.force:
         log.Notice(ngettext(u"Deleting this file from backend:",
                             u"Deleting these files from backend:",
@@ -1277,11 +1267,11 @@ def sync_archive(col_stats):
         del_name = config.archive_dir_path.append(fn).name
 
         log.Notice(_(u"Deleting local %s (not authoritative at backend).") %
-                   util.fsdecode(del_name))
+                   os.fsdecode(del_name))
         try:
             util.ignore_missing(os.unlink, del_name)
         except Exception as e:
-            log.Warn(_(u"Unable to delete %s: %s") % (util.fsdecode(del_name),
+            log.Warn(_(u"Unable to delete %s: %s") % (os.fsdecode(del_name),
                                                       util.uexc(e)))
 
     def copy_to_local(fn):
@@ -1315,7 +1305,7 @@ def sync_archive(col_stats):
                             name = name.name
                     else:
                         name = None
-                    log.FatalError(_(u"Failed to read %s: %s") % (util.fsdecode(fn), util.uexc(e)),
+                    log.FatalError(_(u"Failed to read %s: %s") % (os.fsdecode(fn), util.uexc(e)),
                                    log.ErrorCode.generic)
                 if not res.data:
                     self.fileobj.close()
@@ -1328,7 +1318,7 @@ def sync_archive(col_stats):
             def get_footer(self):
                 return b""
 
-        log.Notice(_(u"Copying %s to local cache.") % util.fsdecode(fn))
+        log.Notice(_(u"Copying %s to local cache.") % os.fsdecode(fn))
 
         pr, loc_name, rem_name = resolve_basename(fn)
 
@@ -1395,10 +1385,10 @@ def sync_archive(col_stats):
         else:
             if local_missing:
                 log.Notice(_(u"Sync would copy the following from remote to local:") +
-                           u"\n" + u"\n".join(map(util.fsdecode, local_missing)))
+                           u"\n" + u"\n".join(map(os.fsdecode, local_missing)))
             if local_spurious:
                 log.Notice(_(u"Sync would remove the following spurious local files:") +
-                           u"\n" + u"\n".join(map(util.fsdecode, local_spurious)))
+                           u"\n" + u"\n".join(map(os.fsdecode, local_spurious)))
 
 
 def check_last_manifest(col_stats):
@@ -1475,7 +1465,7 @@ def log_startup_parms(verbosity=log.INFO):
     """
     log.Log(u'=' * 80, verbosity)
     log.Log(u"duplicity %s" % __version__, verbosity)
-    u_args = (util.fsdecode(arg) for arg in sys.argv)
+    u_args = (os.fsdecode(arg) for arg in sys.argv)
     log.Log(u"Args: %s" % u' '.join(u_args), verbosity)
     log.Log(u' '.join(platform.uname()), verbosity)
     log.Log(u"%s %s" % (sys.executable or sys.platform, sys.version), verbosity)

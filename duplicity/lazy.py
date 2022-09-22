@@ -21,12 +21,6 @@
 
 u"""Define some lazy data structures and functions acting on them"""
 
-from __future__ import print_function
-
-from builtins import map
-from builtins import next
-from builtins import range
-from builtins import object
 
 import os
 
@@ -427,7 +421,7 @@ class ITRBranch(object):
             filename = os.path.join(*self.index)  # pylint: disable=not-an-iterable
         else:
             filename = u"."
-        log.Warn(_(u"Error '%s' processing %s") % (exc, util.fsdecode(filename)),
+        log.Warn(_(u"Error '%s' processing %s") % (exc, os.fsdecode(filename)),
                  log.WarningCode.cannot_process,
                  util.escape(filename))
 
@@ -437,6 +431,6 @@ class ITRBranch(object):
             index_str = u"."
         else:
             index_str = os.path.join(*index)
-        log.Warn(_(u"Skipping %s because of previous error") % util.fsdecode(index_str),
+        log.Warn(_(u"Skipping %s because of previous error") % os.fsdecode(index_str),
                  log.WarningCode.process_skipped,
                  util.escape(index_str))

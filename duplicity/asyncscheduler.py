@@ -25,14 +25,11 @@ Asynchronous job scheduler, for concurrent execution with minimalistic
 dependency guarantees.
 """
 
-from future import standard_library
-standard_library.install_aliases()
-from builtins import object
 import duplicity
 from duplicity import log
-from duplicity.dup_threading import require_threading
-from duplicity.dup_threading import interruptably_wait
 from duplicity.dup_threading import async_split
+from duplicity.dup_threading import interruptably_wait
+from duplicity.dup_threading import require_threading
 from duplicity.dup_threading import with_lock
 
 thread = duplicity.dup_threading.thread_module()
@@ -67,8 +64,7 @@ class AsyncScheduler(object):
         given level of concurrency.
         """
         log.Info(u"%s: %s" % (self.__class__.__name__,
-                              _(u"instantiating at concurrency %d") %
-                              (concurrency)))
+                              _(u"instantiating at concurrency %d") % concurrency))
         assert concurrency >= 0, u"%s concurrency level must be >= 0" % (self.__class__.__name__,)
 
         self.__failed = False  # has at least one task failed so far?

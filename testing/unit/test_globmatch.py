@@ -21,16 +21,14 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
 
 import sys
 
-from . import UnitTestCase
 from duplicity.globmatch import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 from duplicity.path import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 from testing import _runtest_dir
+from . import UnitTestCase
+
 try:
     from unittest.mock import patch
 except ImportError:

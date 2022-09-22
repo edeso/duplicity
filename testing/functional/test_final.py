@@ -19,18 +19,18 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import print_function
-from builtins import range
-from future import standard_library
-standard_library.install_aliases()
 
 import os
-import pytest
 import unittest
+
+import pytest
 
 from duplicity import path
 from testing import _runtest_dir
-from . import CmdError, FunctionalTestCase
+from . import (
+    CmdError,
+    FunctionalTestCase,
+)
 
 
 class FinalTest(FunctionalTestCase):

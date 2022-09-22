@@ -18,9 +18,6 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
 
 import gettext
 import os
@@ -37,10 +34,7 @@ from duplicity import util
 
 util.start_debugger()
 
-if sys.version_info.major >= 3:
-    gettext.install(u'duplicity', names=[u'ngettext'])
-else:
-    gettext.install(u'duplicity', names=[u'ngettext'], unicode=True)  # pylint: disable=unexpected-keyword-arg
+gettext.install(u'duplicity', names=[u'ngettext'])
 
 _testing_dir = os.path.dirname(os.path.abspath(__file__))
 _top_dir = os.path.dirname(_testing_dir)
@@ -50,7 +44,7 @@ _bin_dir = os.path.join(_testing_dir, u'overrides', u'bin')
 if platform.system().startswith(u'Darwin'):
     # Use temp space from getconf, never /tmp
     _runtest_dir = subprocess.check_output([u'getconf', u'DARWIN_USER_TEMP_DIR'])
-    _runtest_dir = util.fsdecode(_runtest_dir).rstrip().rstrip(u'/')
+    _runtest_dir = os.fsdecode(_runtest_dir).rstrip().rstrip(u'/')
 else:
     _runtest_dir = os.getenv(u'TMPDIR', False) or os.getenv(u'TEMP', False) or u'/tmp'
 
@@ -73,17 +67,6 @@ os.system(u"chmod 700 %s" % os.path.join(_testing_dir, u'gnupg'))
 # Standardize time
 os.environ[u'TZ'] = u'US/Central'
 time.tzset()
-
-# TODO: find place in setup.py to do this
-# fix shebangs in _bin_dir to be current python
-if sys.version_info.major == 2:
-    files = os.listdir(_bin_dir)
-    for file in files:
-        print(u"converting %s to python2" % file, file=sys.stderr)
-        with open(os.path.join(_bin_dir, file), u"r") as f:
-            p2 = f.read().replace(u"python3", u"python")
-        with open(os.path.join(_bin_dir, file), u"w") as f:
-            p2 = f.write(p2)
 
 
 class DuplicityTestCase(unittest.TestCase):

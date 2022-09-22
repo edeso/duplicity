@@ -26,25 +26,12 @@ Note that the main processes of this module have two parts.  In the
 first, the signature or delta is constructed of a ROPath iterator.  In
 the second, the ROPath iterator is put into tar block form.
 """
-from __future__ import division
-
-from future import standard_library
-standard_library.install_aliases()
-from builtins import map
-from builtins import next
-from builtins import str
-from builtins import range
-from builtins import object
 
 import io
-import sys
 
-from duplicity import statistics
-from duplicity import util
-from duplicity import config
-from duplicity.path import *  # pylint: disable=unused-wildcard-import,redefined-builtin
-from duplicity.lazy import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 from duplicity import progress
+from duplicity import statistics
+from duplicity.path import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 
 # A StatsObj will be written to this from DirDelta and DirDelta_WriteSig.
 stats = None
@@ -113,7 +100,7 @@ def delta_iter_error_handler(exc, new_path, sig_path, sig_tar=None):  # pylint: 
     else:
         assert 0, u"Both new and sig are None for some reason"
     log.Warn(_(u"Error %s getting delta for %s")
-             % (util.uexc(exc), util.fsdecode(index_string)))
+             % (util.uexc(exc), os.fsdecode(index_string)))
     return None
 
 
@@ -134,10 +121,7 @@ def get_delta_path(new_path, sig_path, sigTarFile=None):
         Callback activated when FileWithSignature read to end
         """
         ti.size = len(sig_string)
-        if sys.version_info.major >= 3:
-            ti.name = u"signature/" + util.fsdecode(b"/".join(index))
-        else:
-            ti.name = b"signature/" + b"/".join(index)
+        ti.name = u"signature/" + os.fsdecode(b"/".join(index))
         sigTarFile.addfile(ti, io.BytesIO(sig_string))
 
     if new_path.isreg() and sig_path and sig_path.isreg() and sig_path.difftype == u"signature":
@@ -151,10 +135,7 @@ def get_delta_path(new_path, sig_path, sigTarFile=None):
     else:
         delta_path.difftype = u"snapshot"
         if sigTarFile:
-            if sys.version_info.major >= 3:
-                ti.name = u"snapshot/" + util.fsdecode(b"/".join(index))
-            else:
-                ti.name = b"snapshot/" + b"/".join(index)
+            ti.name = u"snapshot/" + os.fsdecode(b"/".join(index))
         if not new_path.isreg():
             if sigTarFile:
                 sigTarFile.addfile(ti)
@@ -179,14 +160,14 @@ def log_delta_path(delta_path, new_path=None, stats=None):
         if new_path and stats:
             stats.add_new_file(new_path)
         log.Info(_(u"A %s") %
-                 (util.fsdecode(delta_path.get_relative_path())),
+                 (os.fsdecode(delta_path.get_relative_path())),
                  log.InfoCode.diff_file_new,
                  util.escape(delta_path.get_relative_path()))
     else:
         if new_path and stats:
             stats.add_changed_file(new_path)
         log.Info(_(u"M %s") %
-                 (util.fsdecode(delta_path.get_relative_path())),
+                 (os.fsdecode(delta_path.get_relative_path())),
                  log.InfoCode.diff_file_changed,
                  util.escape(delta_path.get_relative_path()))
 
@@ -216,15 +197,12 @@ def get_delta_iter(new_iter, sig_iter, sig_fileobj=None):
             if sig_path and sig_path.exists() and sig_path.index != ():
                 # but signature says it did
                 log.Info(_(u"D %s") %
-                         (util.fsdecode(sig_path.get_relative_path())),
+                         (os.fsdecode(sig_path.get_relative_path())),
                          log.InfoCode.diff_file_deleted,
                          util.escape(sig_path.get_relative_path()))
                 if sigTarFile:
                     ti = ROPath(sig_path.index).get_tarinfo()
-                    if sys.version_info.major >= 3:
-                        ti.name = u"deleted/" + util.uindex(sig_path.index)
-                    else:
-                        ti.name = b"deleted/" + b"/".join(sig_path.index)
+                    ti.name = u"deleted/" + util.uindex(sig_path.index)
                     sigTarFile.addfile(ti)
                 stats.add_deleted_file(sig_path)
                 yield ROPath(sig_path.index)
@@ -263,10 +241,7 @@ def sigtar2path_iter(sigtarobj):
         else:
             raise DiffDirException(u"Bad tarinfo name %s" % (tiname,))
 
-        if sys.version_info.major >= 3:
-            index = tuple(util.fsencode(name).split(b"/"))
-        else:
-            index = tuple(name.split(b"/"))
+        index = tuple(os.fsencode(name).split(b"/"))
         if not index[-1]:
             index = index[:-1]  # deal with trailing /, ""
 
@@ -416,7 +391,7 @@ class FileWithReadCounter(object):
         except IOError as ex:
             buf = b""
             log.Warn(_(u"Error %s getting delta for %s")
-                     % (util.uexc(ex), util.fsdecode(self.infile.name)))
+                     % (util.uexc(ex), os.fsdecode(self.infile.name)))
         if stats:
             stats.SourceFileSize += len(buf)
         return buf
@@ -636,13 +611,11 @@ class SigTarBlockIter(TarBlockIter):
             sigbuf = sfp.read()
             sfp.close()
             ti.name = b"signature/" + b"/".join(path.index)
-            if sys.version_info.major >= 3:
-                ti.name = util.fsdecode(ti.name)
+            ti.name = os.fsdecode(ti.name)
             return self.tarinfo2tarblock(path.index, ti, sigbuf)
         else:
             ti.name = b"snapshot/" + b"/".join(path.index)
-            if sys.version_info.major >= 3:
-                ti.name = util.fsdecode(ti.name)
+            ti.name = os.fsdecode(ti.name)
             return self.tarinfo2tarblock(path.index, ti)
 
 

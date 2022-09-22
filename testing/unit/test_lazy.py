@@ -21,15 +21,9 @@
 
 # pylint: disable=no-value-for-parameter
 
-from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
-from builtins import next
-from builtins import range
 
-import unittest
 import pickle
-import sys
+import unittest
 from functools import reduce
 
 from duplicity.lazy import *  # pylint: disable=unused-wildcard-import,redefined-builtin
@@ -135,10 +129,7 @@ class FilterTestCase(Iterators):
     def testError(self):
         u"""Should raise appropriate error"""
         i = Iter.filter(lambda x: x, self.falseerror_maker())
-        if sys.version_info.major >= 3:
-            self.assertRaises(Exception, i.__next__)
-        else:
-            self.assertRaises(Exception, i.next)
+        self.assertRaises(Exception, i.__next__)
 
 
 class MapTestCase(Iterators):
@@ -155,10 +146,7 @@ class MapTestCase(Iterators):
                 raise NameError
         i = Iter.map(f, self.trueerror_maker())
         next(i)
-        if sys.version_info.major >= 3:
-            self.assertRaises(NameError, i.__next__)
-        else:
-            self.assertRaises(NameError, i.next)
+        self.assertRaises(NameError, i.__next__)
 
     def testEmpty(self):
         u"""Map of an empty iterator is empty"""
@@ -181,10 +169,7 @@ class CatTestCase(Iterators):
         i = Iter.cat(self.typeerror_maker(), self.nameerror_maker())
         next(i)
         next(i)
-        if sys.version_info.major >= 3:
-            self.assertRaises(TypeError, i.__next__)
-        else:
-            self.assertRaises(TypeError, i.next)
+        self.assertRaises(TypeError, i.__next__)
 
 
 class AndOrTestCase(Iterators):

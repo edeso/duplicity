@@ -23,21 +23,18 @@
 
 #
 
-from future import standard_library
-standard_library.install_aliases()
+import json
 import os
 import os.path
-import sys
-import urllib.request  # pylint: disable=import-error
-import urllib.parse  # pylint: disable=import-error
-import urllib.error  # pylint: disable=import-error
-import json
+import urllib.error
+import urllib.parse
+import urllib.request
 
 import duplicity.backend
-from duplicity.errors import BackendException
 from duplicity import config
 from duplicity import log
 from duplicity import util
+from duplicity.errors import BackendException
 
 
 class MultiBackend(duplicity.backend.Backend):
@@ -184,8 +181,6 @@ class MultiBackend(duplicity.backend.Backend):
 
         for config in configs:
             url = config[u'url'] + self.__subpath
-            if sys.version_info.major == 2:
-                url = url.encode(u'utf-8')
             log.Log(_(u"MultiBackend: use store %s")
                     % (url),
                     log.INFO)
@@ -218,7 +213,7 @@ class MultiBackend(duplicity.backend.Backend):
 
     def _eligible_stores(self, filename):
         if self.__affinities:
-            matching_prefixes = [k for k in list(self.__affinities.keys()) if util.fsdecode(filename).startswith(k)]
+            matching_prefixes = [k for k in list(self.__affinities.keys()) if os.fsdecode(filename).startswith(k)]
             matching_stores = {store for prefix in matching_prefixes for store in self.__affinities[prefix]}
             if matching_stores:
                 # Distinct stores with matching prefix

@@ -22,11 +22,10 @@
 u"""Store global configuration information"""
 
 import os
-import sys
 import socket
+import sys
 
 from duplicity import __version__
-
 
 # The current version of duplicity
 version = __version__

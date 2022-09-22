@@ -12,8 +12,6 @@ The build process can be also be run separately:
 python setup.py build
 ```
 
-If you want to use python 3 replace `python` with `python3`
-
 The default prefix is /usr, so files are put in /usr/bin,
 /usr/share/man/, etc.  An alternate prefix can be specified
 using the --prefix=<prefix> option.  For example:
@@ -26,7 +24,7 @@ export PYTHONPATH='/usr/local/lib/python.x/site-packages/'
 
 # REQUIREMENTS
 
- * Python 2.7, or 3.5 to 3.10
+ * Python 3.5 to 3.10
  * librsync v0.9.6 or later
  * GnuPG for encryption
  * see `requirements.txt` for complete list

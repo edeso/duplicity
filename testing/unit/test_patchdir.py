@@ -19,24 +19,14 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
-from builtins import map
-from builtins import object
-from builtins import range
 
 import io
-import os
 import platform
 import unittest
 
 from duplicity import diffdir
 from duplicity import patchdir
 from duplicity import selection
-from duplicity import tarfile
-from duplicity import librsync
-from duplicity.lazy import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 from duplicity.path import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 from testing import _runtest_dir
 from . import UnitTestCase

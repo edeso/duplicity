@@ -28,8 +28,6 @@ import unittest
 _top_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), u'..', u'..')
 sys.path.insert(0, _top_dir)
 
-from duplicity import config
-
 try:
     from testing.manual import test_config
 except ImportError as e:

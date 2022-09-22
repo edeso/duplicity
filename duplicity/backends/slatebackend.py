@@ -16,18 +16,16 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from builtins import str
+import json
 import os
 import shutil
-import requests
-import json
 import urllib.request
 from pathlib import Path
-import time
+
+import requests
 
 import duplicity.backend
 from duplicity import log
-from duplicity import util
 from duplicity.errors import BackendException
 
 
@@ -78,9 +76,9 @@ class SlateBackend(duplicity.backend.Backend):
 
         log.Debug(u"source_path.name: " + str(source_path.name))
         log.Debug(u"remote_filename: " + remote_filename.decode(u"utf8"))
-        rem_filename = str(util.fsdecode(remote_filename))
+        rem_filename = str(os.fsdecode(remote_filename))
 
-        src = Path(util.fsdecode(source_path.name))
+        src = Path(os.fsdecode(source_path.name))
         if str(src.name).startswith(u"mktemp"):
             log.Debug(u"copying temp file for upload")
             src = shutil.move(str(src), str(src.with_name(rem_filename)))
@@ -155,7 +153,7 @@ class SlateBackend(duplicity.backend.Backend):
         # file_list = self._list()
 
         # if remote_filename not in file_list:
-        #     raise BackendException(u"The chosen file does not exist in the chosen slate")
+        #     raise BackendException("The chosen file does not exist in the chosen slate")
 
         for slate in slates:
             if slate[u'id'] == self.slate_id:
@@ -174,7 +172,7 @@ class SlateBackend(duplicity.backend.Backend):
             raise BackendException(u"A slate with id " + self.slate_id + u" does not exist")
 
         try:
-            urllib.request.urlretrieve(u'http://ipfs.io/ipfs/%s' % (cid), util.fsdecode(local_path.name))
+            urllib.request.urlretrieve(u'http://ipfs.io/ipfs/%s' % (cid), os.fsdecode(local_path.name))
             log.Debug(u'Downloaded file with cid: %s' % (cid))
         except NameError as e:
             raise BackendException(u"Couldn't download file")

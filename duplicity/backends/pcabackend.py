@@ -19,14 +19,12 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from builtins import str
 import os
+import time
 
 import duplicity.backend
 from duplicity import log
-from duplicity import util
 from duplicity.errors import BackendException
-import time
 
 
 class PCABackend(duplicity.backend.Backend):
@@ -150,13 +148,13 @@ Exception: %s""" % str(e))
                 return log.ErrorCode.backend_not_found
 
     def _put(self, source_path, remote_filename):
-        self.conn.put_object(self.container, self.prefix + util.fsdecode(remote_filename),
-                             open(util.fsdecode(source_path.name), u'rb'))
+        self.conn.put_object(self.container, self.prefix + os.fsdecode(remote_filename),
+                             open(os.fsdecode(source_path.name), u'rb'))
 
     def _get(self, remote_filename, local_path):
-        body = self.unseal(util.fsdecode(remote_filename))
+        body = self.unseal(os.fsdecode(remote_filename))
         if body:
-            with open(util.fsdecode(local_path.name), u'wb') as f:
+            with open(os.fsdecode(local_path.name), u'wb') as f:
                 for chunk in body:
                     f.write(chunk)
 
@@ -180,13 +178,13 @@ Exception: %s""" % str(e))
         return rv[1]
 
     def _list(self):
-        return [util.fsencode(o[u'name'][len(self.prefix):]) for o in self.__list_objs()]
+        return [os.fsencode(o[u'name'][len(self.prefix):]) for o in self.__list_objs()]
 
     def _delete(self, filename):
-        self.conn.delete_object(self.container, self.prefix + util.fsdecode(filename))
+        self.conn.delete_object(self.container, self.prefix + os.fsdecode(filename))
 
     def _query(self, filename):
-        sobject = self.conn.head_object(self.container, self.prefix + util.fsdecode(filename))
+        sobject = self.conn.head_object(self.container, self.prefix + os.fsdecode(filename))
         return {u'size': int(sobject[u'content-length'])}
 
     def unseal(self, remote_filename):
@@ -219,13 +217,13 @@ Exception: %s""" % str(e))
         """
         retry_interval = 60  # status will be shown every 60s
         # remote_filenames are bytes string
-        u_remote_filenames = list(map(util.fsdecode, remote_filenames))
+        u_remote_filenames = list(map(os.fsdecode, remote_filenames))
         objs = self.__list_objs(ffilter=lambda x: x[u'name'] in u_remote_filenames)
         # first step: retrieve pca seal status for all required volumes
         # and launch unseal for all sealed files
         one_object_not_unsealed = False
         for o in objs:
-            filename = util.fsdecode(o[u'name'])
+            filename = os.fsdecode(o[u'name'])
             # see ovh documentation for policy_retrieval_state definition
             policy_retrieval_state = o[u'policy_retrieval_state']
             log.Info(u"Volume %s. State : %s. " % (filename, policy_retrieval_state))
@@ -249,11 +247,11 @@ Exception: %s""" % str(e))
         Shows unsealing status for input volumes
         """
         one_object_not_unsealed = False
-        objs = self.__list_objs(ffilter=lambda x: util.fsdecode(x[u'name']) in u_remote_filenames)
+        objs = self.__list_objs(ffilter=lambda x: os.fsdecode(x[u'name']) in u_remote_filenames)
         max_duration = 0
         for o in objs:
             policy_retrieval_state = o[u'policy_retrieval_state']
-            filename = util.fsdecode(o[u'name'])
+            filename = os.fsdecode(o[u'name'])
             if policy_retrieval_state == u'sealed':
                 log.Notice(u"Error: volume is still in sealed state : %s." % (filename))
                 log.Notice(u"Launching unseal of volume %s." % (filename))

@@ -21,10 +21,6 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import division
-from builtins import input
-from builtins import oct
-from builtins import zip
 
 import errno
 import getpass
@@ -33,12 +29,11 @@ import os
 import re
 import sys
 import warnings
-
 from binascii import hexlify
 
 import duplicity.backend
-from duplicity import progress
 from duplicity import config
+from duplicity import progress
 from duplicity import util
 from duplicity.errors import BackendException
 
@@ -330,7 +325,7 @@ Are you sure you want to continue connecting (yes/no)? """ % (hostname,
 
     def _put(self, source_path, remote_filename):
         # remote_filename is a byte object, not str or unicode
-        remote_filename = util.fsdecode(remote_filename)
+        remote_filename = os.fsdecode(remote_filename)
         if self.use_scp:
             f = open(source_path.name, u'rb')
             try:
@@ -369,7 +364,7 @@ Are you sure you want to continue connecting (yes/no)? """ % (hostname,
 
     def _get(self, remote_filename, local_path):
         # remote_filename is a byte object, not str or unicode
-        remote_filename = util.fsdecode(remote_filename)
+        remote_filename = os.fsdecode(remote_filename)
         if self.use_scp:
             try:
                 chan = self.client.get_transport().open_session()
@@ -427,7 +422,7 @@ Are you sure you want to continue connecting (yes/no)? """ % (hostname,
 
     def _delete(self, filename):
         # filename is a byte object, not str or unicode
-        filename = util.fsdecode(filename)
+        filename = os.fsdecode(filename)
         # In scp mode unavoidable quoting issues will cause failures if
         # filenames containing single quotes are encountered.
         if self.use_scp:

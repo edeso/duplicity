@@ -20,20 +20,15 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from builtins import next
-from builtins import str
-from builtins import object
 
-import os
-import stat
 import sys
-import re
 
-from duplicity import config
 from duplicity import diffdir
-from duplicity import log
-from duplicity import util
-from duplicity.globmatch import GlobbingError, FilePrefixError, select_fn_from_glob
+from duplicity.globmatch import (
+    GlobbingError,
+    FilePrefixError,
+    select_fn_from_glob,
+)
 from duplicity.path import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 
 u"""Iterate exactly the requested files in a directory
@@ -114,15 +109,15 @@ class Select(object):
             try:
                 mode = os.stat(fullpath)[stat.ST_MODE]
                 if stat.S_ISSOCK(mode):
-                    log.Info(_(u"Skipping socket %s") % util.fsdecode(fullpath),
+                    log.Info(_(u"Skipping socket %s") % os.fsdecode(fullpath),
                              log.InfoCode.skipping_socket,
                              util.escape(fullpath))
                 else:
-                    log.Warn(_(u"Error initializing file %s") % util.fsdecode(fullpath),
+                    log.Warn(_(u"Error initializing file %s") % os.fsdecode(fullpath),
                              log.WarningCode.cannot_iterate,
                              util.escape(fullpath))
             except OSError:
-                log.Warn(_(u"Error accessing possibly locked file %s") % util.fsdecode(fullpath),
+                log.Warn(_(u"Error accessing possibly locked file %s") % os.fsdecode(fullpath),
                          log.WarningCode.cannot_stat, util.escape(fullpath))
             return None
 

@@ -25,10 +25,10 @@
 import logging
 import posixpath
 
+import duplicity.backend
 # import duplicity stuff
 from duplicity import log
 from duplicity.errors import BackendException
-import duplicity.backend
 
 
 def get_jotta_device(jfs):
