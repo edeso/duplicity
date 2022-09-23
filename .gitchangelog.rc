@@ -214,7 +214,7 @@ output_engine = mustache("markdown")
 ##
 ## This option tells git-log whether to include merge commits in the log.
 ## The default is to include them.
-include_merge = True
+include_merge = False
 
 
 ## ``log_encoding`` is a string identifier
@@ -223,7 +223,7 @@ include_merge = True
 ## The default is to be clever about it: it checks ``git config`` for
 ## ``i18n.logOutputEncoding``, and if not found will default to git's own
 ## default: ``utf-8``.
-#log_encoding = 'utf-8'
+log_encoding = 'utf-8'
 
 
 ## ``publish`` is a callable
@@ -261,7 +261,7 @@ include_merge = True
 #     r'/(?P<rev>[0-9]+\.[0-9]+(\.[0-9]+)?)\s+\([0-9]+-[0-9]{2}-[0-9]{2}\)\n--+\n/',
 #     idx=lambda m: m.start(1)
 # )
-#publish = stdout
+publish = stdout
 
 
 ## ``revs`` is a list of callable or a list of string
