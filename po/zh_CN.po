@@ -1,23 +1,23 @@
-# Simplified Chinese translation for duplicity
-# Copyright (c) 2009 Rosetta Contributors and Canonical Ltd 2009
-# This file is distributed under the same license as the duplicity package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2009.
-#
 msgid ""
 msgstr ""
 "Project-Id-Version: duplicity\n"
 "Report-Msgid-Bugs-To: Kenneth Loafman <kenneth@loafman.com>\n"
-"POT-Creation-Date: 2020-03-07 09:49-0600\n"
-"PO-Revision-Date: 2018-02-23 13:10+0000\n"
-"Last-Translator: Careone <zzbusagain@yahoo.com.cn>\n"
-"Language-Team: Simplified Chinese <zh_CN@li.org>\n"
-"Language: \n"
+"POT-Creation-Date: 2020-03-19 14:16-0500\n"
+"PO-Revision-Date: 2022-09-25 18:03\n"
+"Last-Translator: \n"
+"Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Launchpad-Export-Date: 2020-03-18 06:32+0000\n"
-"X-Generator: Launchpad (build 3a6db24bbe7280ec09bae73384238390fcc98ad3)\n"
+"X-Launchpad-Export-Date: 2021-11-21 16:40+0000\n"
+"X-Generator: Launchpad (build ad4ef5362dff26fb27989d006230bae6da62d38c)\n"
+"Language: zh_CN\n"
+"X-Crowdin-Project: duplicity\n"
+"X-Crowdin-Project-ID: 539508\n"
+"X-Crowdin-Language: zh-CN\n"
+"X-Crowdin-File: /main/po/duplicity.pot\n"
+"X-Crowdin-File-ID: 6\n"
 
 #: ../bin/duplicity:120
 msgid "INT intercepted...exiting."
@@ -70,8 +70,7 @@ msgid "task completed successfully"
 msgstr "任务成功完成"
 
 #: ../duplicity/asyncscheduler.py:192
-msgid ""
-"a previously scheduled task has failed; propagating the result immediately"
+msgid "a previously scheduled task has failed; propagating the result immediately"
 msgstr "之前调度的一个任务失败，立即返回错误结果信息"
 
 #: ../duplicity/asyncscheduler.py:215 ../duplicity/asyncscheduler.py:236
@@ -192,8 +191,7 @@ msgstr ""
 
 #: ../duplicity/backends/multibackend.py:276
 #, python-format
-msgid ""
-"MultiBackend: failed to write %s. Tried all backing stores and none succeeded"
+msgid "MultiBackend: failed to write %s. Tried all backing stores and none succeeded"
 msgstr "多后台：写入 %s 失败。已尝试所有后台存储均失败"
 
 #: ../duplicity/backends/multibackend.py:295
@@ -203,8 +201,7 @@ msgstr "多后台：提取 %s 到 %s 失败 (从 %s 中提取)"
 
 #: ../duplicity/backends/multibackend.py:298
 #, python-format
-msgid ""
-"MultiBackend: failed to get %s. Tried all backing stores and none succeeded"
+msgid "MultiBackend: failed to get %s. Tried all backing stores and none succeeded"
 msgstr "多后台：提取 %s 失败。已尝试所有后台存储均失败"
 
 #: ../duplicity/backends/multibackend.py:308
@@ -229,9 +226,7 @@ msgstr "多后台：删除 %s 失败 (从 %s 删除)"
 
 #: ../duplicity/backends/multibackend.py:350
 #, python-format
-msgid ""
-"MultiBackend: failed to delete %s. Tried all backing stores and none "
-"succeeded"
+msgid "MultiBackend: failed to delete %s. Tried all backing stores and none succeeded"
 msgstr "多后台：删除 %s 失败。已尝试所有后台存储均失败"
 
 #: ../duplicity/backends/pydrivebackend.py:150
@@ -249,14 +244,12 @@ msgid "Cacert database file '%s' is not readable."
 msgstr ""
 
 #: ../duplicity/backends/webdavbackend.py:105
-msgid ""
-"Option '--ssl-cacert-path' is not supported with python 2.7.8 and below."
+msgid "Option '--ssl-cacert-path' is not supported with python 2.7.8 and below."
 msgstr ""
 
 #: ../duplicity/backends/webdavbackend.py:109
 #, python-format
-msgid ""
-"For certificate verification with python 2.7.8 or earlier a cacert database\n"
+msgid "For certificate verification with python 2.7.8 or earlier a cacert database\n"
 "file is needed in one of these locations: %s\n"
 "Hints:\n"
 "Consult the man page, chapter 'SSL Certificate Verification'.\n"
@@ -332,16 +325,12 @@ msgid "WebDAV response2 status %s with reason '%s'."
 msgstr ""
 
 #: ../duplicity/backends/webdavbackend.py:263
-msgid ""
-"python-kerberos needed to use kerberos                           "
-"authorization, falling back to basic auth."
+msgid "python-kerberos needed to use kerberos                           authorization, falling back to basic auth."
 msgstr ""
 
 #: ../duplicity/backends/webdavbackend.py:267
 #, python-format
-msgid ""
-"Kerberos authorization failed: %s.                          Falling back to "
-"basic auth."
+msgid "Kerberos authorization failed: %s.                          Falling back to basic auth."
 msgstr ""
 
 #: ../duplicity/backends/webdavbackend.py:365
@@ -376,35 +365,25 @@ msgstr ""
 
 #: ../duplicity/commandline.py:79
 #, python-format
-msgid ""
-"Warning: Option %s is pending deprecation and will be removed in a future "
-"release.\n"
+msgid "Warning: Option %s is pending deprecation and will be removed in a future release.\n"
 "Use of default filenames is strongly suggested."
-msgstr ""
-"警告：选项 %s 即将被放弃并在未来的版本中移除。\n"
+msgstr "警告：选项 %s 即将被放弃并在未来的版本中移除。\n"
 "强烈建议使用默认文件名。"
 
 #: ../duplicity/commandline.py:86
 #, python-format
-msgid ""
-"Warning: Option %s is pending deprecation and will be removed in a future "
-"release.\n"
-"--include-filelist and --exclude-filelist now accept globbing characters and "
-"should be used instead."
-msgstr ""
-"警告：选项 %s 即将被放弃并在未来的版本中移除。\n"
+msgid "Warning: Option %s is pending deprecation and will be removed in a future release.\n"
+"--include-filelist and --exclude-filelist now accept globbing characters and should be used instead."
+msgstr "警告：选项 %s 即将被放弃并在未来的版本中移除。\n"
 "请使用 --include-filelist 和 --exclude-filelist (可使用通配符)。"
 
 #: ../duplicity/commandline.py:96
 #, python-format
-msgid ""
-"Warning: Option %s is pending deprecation and will be removed in a future "
-"release.\n"
+msgid "Warning: Option %s is pending deprecation and will be removed in a future release.\n"
 "On many GNU/Linux systems, stdin is represented by /dev/stdin and\n"
 "--include-filelist=/dev/stdin or --exclude-filelist=/dev/stdin could\n"
 "be used as a substitute."
-msgstr ""
-"警告：选项 %s 即将被放弃并在未来的版本中移除。\n"
+msgstr "警告：选项 %s 即将被放弃并在未来的版本中移除。\n"
 "在很多 GNU/Linux 系统下，stdin 由 /dev/stdin 表示，\n"
 "因此可以用 --include-filelist=/dev/stdin 或 --exclude-filelist=/dev/stdin\n"
 "进行替代。"
@@ -472,9 +451,7 @@ msgstr "选项"
 
 #: ../duplicity/commandline.py:394
 #, python-format
-msgid ""
-"Running in 'ignore errors' mode due to %s; please re-consider if this was "
-"not intended"
+msgid "Running in 'ignore errors' mode due to %s; please re-consider if this was not intended"
 msgstr "由于 %s，目前程序运行在“忽略错误”的模式下，请谨慎考虑"
 
 #. Used in usage help to represent an imap mailbox
@@ -519,7 +496,7 @@ msgstr "命令"
 
 #: ../duplicity/commandline.py:583
 msgid "pyrax|cloudfiles"
-msgstr "pyrax|cloudfiles"
+msgstr ""
 
 #: ../duplicity/commandline.py:604
 msgid "pem formatted bundle of certificate authorities"
@@ -611,7 +588,7 @@ msgstr "模块"
 #. ftp://user[:password]@other.host[:port]/some_dir
 #: ../duplicity/commandline.py:847
 msgid "other.host"
-msgstr "other.host"
+msgstr ""
 
 #. Used in usage help. Example:
 #. ftp://user[:password]@other.host[:port]/some_dir
@@ -716,20 +693,16 @@ msgstr "指定的存档目录“%s”不存在，或者不是一个文件夹。"
 
 #: ../duplicity/commandline.py:1012
 #, python-format
-msgid ""
-"Sign key should be an 8, 16 alt. 40 character hex string, like 'AA0E73D2'.\n"
+msgid "Sign key should be an 8, 16 alt. 40 character hex string, like 'AA0E73D2'.\n"
 "Received '%s' instead."
-msgstr ""
-"签名密钥应当为形如\"AA0E73D2\"的 8, 16 或 40 位的 16 进制字符串。\n"
+msgstr "签名密钥应当为形如\"AA0E73D2\"的 8, 16 或 40 位的 16 进制字符串。\n"
 "然而接收的字符串为“%s”。"
 
 #: ../duplicity/commandline.py:1072
 #, python-format
-msgid ""
-"Restore destination directory %s already exists.\n"
+msgid "Restore destination directory %s already exists.\n"
 "Will not overwrite."
-msgstr ""
-"回复目标文件夹 %s 已存在。\n"
+msgstr "回复目标文件夹 %s 已存在。\n"
 "不进行覆盖。"
 
 #: ../duplicity/commandline.py:1077
@@ -748,11 +721,9 @@ msgid "Command line warning: %s"
 msgstr "命令行警告：%s"
 
 #: ../duplicity/commandline.py:1114
-msgid ""
-"Selection options --exclude/--include\n"
+msgid "Selection options --exclude/--include\n"
 "currently work only when backing up,not restoring."
-msgstr ""
-"选择参数 --exclude/--include\n"
+msgstr "选择参数 --exclude/--include\n"
 "仅适用于备份操作，不适用于还原操作。"
 
 #: ../duplicity/commandline.py:1150
@@ -762,12 +733,10 @@ msgstr ""
 
 #: ../duplicity/commandline.py:1177
 #, python-format
-msgid ""
-"Bad URL '%s'.\n"
+msgid "Bad URL '%s'.\n"
 "Examples of URL strings are \"scp://user@host.net:1234/path\" and\n"
 "\"file:///usr/local\".  See the man page for more information."
-msgstr ""
-"无效 URL ”%s“。\n"
+msgstr "无效 URL ”%s“。\n"
 "有效 URL 形如 “scp://user@host.net:1234/path” 和\n"
 "“file:///usr/local”，更多详情请查阅 man 手册。"
 
@@ -815,9 +784,7 @@ msgid "Fatal Error: No manifests found for most recent backup"
 msgstr "致命错误：没有最近备份的清单"
 
 #: ../duplicity/dup_collections.py:228
-msgid ""
-"Fatal Error: Remote manifest does not match local one.  Either the remote "
-"backup set or the local archive directory has been corrupted."
+msgid "Fatal Error: Remote manifest does not match local one.  Either the remote backup set or the local archive directory has been corrupted."
 msgstr "致命错误：远程和本地清单不匹配，本地存档目录或远程备份集崩溃。"
 
 #: ../duplicity/dup_collections.py:236
@@ -980,8 +947,7 @@ msgid "Warning, found signatures but no corresponding backup files"
 msgstr "警告，找到无对应备份文件的签名"
 
 #: ../duplicity/dup_collections.py:827
-msgid ""
-"Warning, found incomplete backup sets, probably left from aborted session"
+msgid "Warning, found incomplete backup sets, probably left from aborted session"
 msgstr "警告，找到不完整的备份集，可能来自于中断的会话"
 
 #: ../duplicity/dup_collections.py:831
@@ -1026,9 +992,7 @@ msgstr "找到孤立的集合 %s"
 
 #: ../duplicity/dup_collections.py:1043
 #, python-format
-msgid ""
-"No signature chain for the requested time. Using oldest available chain, "
-"starting at time %s."
+msgid "No signature chain for the requested time. Using oldest available chain, starting at time %s."
 msgstr ""
 
 #: ../duplicity/dup_collections.py:1229
@@ -1078,26 +1042,21 @@ msgid "First and second passphrases do not match!  Please try again."
 msgstr "两次输入的密码不匹配，请重试!"
 
 #: ../duplicity/dup_main.py:204
-msgid ""
-"Cannot use empty passphrase with symmetric encryption!  Please try again."
+msgid "Cannot use empty passphrase with symmetric encryption!  Please try again."
 msgstr "对称加密不能使用空密码，请重试！"
 
 #: ../duplicity/dup_main.py:261
 #, python-format
-msgid ""
-"File %s complete in backup set.\n"
+msgid "File %s complete in backup set.\n"
 "Continuing restart on file %s."
-msgstr ""
-"文件 %s 已完成备份。\n"
+msgstr "文件 %s 已完成备份。\n"
 "从文件 %s 开始重启备份。"
 
 #: ../duplicity/dup_main.py:270
 #, python-format
-msgid ""
-"File %s missing in backup set.\n"
+msgid "File %s missing in backup set.\n"
 "Continuing restart on file %s."
-msgstr ""
-"文件 %s 未完成备份。\n"
+msgstr "文件 %s 未完成备份。\n"
 "从文件 %s 开始重启备份。"
 
 #: ../duplicity/dup_main.py:319
@@ -1106,9 +1065,7 @@ msgid "File %s was corrupted during upload."
 msgstr "文件 %s 上传时出错。"
 
 #: ../duplicity/dup_main.py:359
-msgid ""
-"Restarting backup, but current encryption settings do not match original "
-"settings"
+msgid "Restarting backup, but current encryption settings do not match original settings"
 msgstr "正在重启备份，然而当前加密设置与原设置不匹配"
 
 #: ../duplicity/dup_main.py:382
@@ -1122,9 +1079,7 @@ msgid "Processed volume %d"
 msgstr "已处理的卷 %d"
 
 #: ../duplicity/dup_main.py:602
-msgid ""
-"Fatal Error: Unable to start incremental backup.  Old signatures not found "
-"and incremental specified"
+msgid "Fatal Error: Unable to start incremental backup.  Old signatures not found and incremental specified"
 msgstr "致命错误：没有旧签名，无法启动增量备份。"
 
 #: ../duplicity/dup_main.py:606
@@ -1213,12 +1168,8 @@ msgid "Which can't be deleted because newer sets depend on them."
 msgstr "这些备份集被新的备份所依赖，不能被删除。"
 
 #: ../duplicity/dup_main.py:966
-msgid ""
-"Current active backup chain is older than specified time.  However, it will "
-"not be deleted.  To remove all your backups, manually purge the repository."
-msgstr ""
-"当前活动备份链已超出指定的寿命，但是不会被删除。要删除所有备份，请手动清理仓"
-"库。"
+msgid "Current active backup chain is older than specified time.  However, it will not be deleted.  To remove all your backups, manually purge the repository."
+msgstr "当前活动备份链已超出指定的寿命，但是不会被删除。要删除所有备份，请手动清理仓库。"
 
 #: ../duplicity/dup_main.py:979
 msgid "No old backup sets found, nothing deleted."
@@ -1333,56 +1284,43 @@ msgstr "无法获取打开文件数的上限。"
 
 #: ../duplicity/dup_main.py:1420
 #, python-format
-msgid ""
-"Max open files of %s is too low, should be >= 1024.\n"
+msgid "Max open files of %s is too low, should be >= 1024.\n"
 "Use 'ulimit -n 1024' or higher to correct.\n"
-msgstr ""
-"%s 的打开文件数上限太低，该数值需要 >= 1024。\n"
+msgstr "%s 的打开文件数上限太低，该数值需要 >= 1024。\n"
 "请通过 ulimit -n 1024 更正设置。\n"
 
 #: ../duplicity/dup_main.py:1472
-msgid ""
-"RESTART: The first volume failed to upload before termination.\n"
+msgid "RESTART: The first volume failed to upload before termination.\n"
 "         Restart is impossible...starting backup from beginning."
-msgstr ""
-"重启备份：第一个卷未能在结束前完成上传。\n"
+msgstr "重启备份：第一个卷未能在结束前完成上传。\n"
 "         无法重启... 重头开始备份。"
 
 #: ../duplicity/dup_main.py:1478
 #, python-format
-msgid ""
-"RESTART: Volumes %d to %d failed to upload before termination.\n"
+msgid "RESTART: Volumes %d to %d failed to upload before termination.\n"
 "         Restarting backup at volume %d."
-msgstr ""
-"重启备份：卷 %d 到 %d 未能在结束前完成上传。\n"
+msgstr "重启备份：卷 %d 到 %d 未能在结束前完成上传。\n"
 "         从卷 %d 开始重启备份。"
 
 #: ../duplicity/dup_main.py:1485
 #, python-format
-msgid ""
-"RESTART: Impossible backup state: manifest has %d vols, remote has %d vols.\n"
-"         Restart is impossible ... duplicity will clean off the last "
-"partial\n"
+msgid "RESTART: Impossible backup state: manifest has %d vols, remote has %d vols.\n"
+"         Restart is impossible ... duplicity will clean off the last partial\n"
 "         backup then restart the backup from the beginning."
-msgstr ""
-"重启备份：无法备份的状态：清单上有 %d 卷，远程有 %d 卷。\n"
+msgstr "重启备份：无法备份的状态：清单上有 %d 卷，远程有 %d 卷。\n"
 "         无法重启备份 ... duplicity 将会清除最近一部分备份 \n"
 "         然后重头开始备份。"
 
 #: ../duplicity/dup_main.py:1506
-msgid ""
-"\n"
+msgid "\n"
 "PYTHONOPTIMIZE in the environment causes duplicity to fail to\n"
 "recognize its own backups.  Please remove PYTHONOPTIMIZE from\n"
-"the environment and rerun the backup.\n"
-"\n"
+"the environment and rerun the backup.\n\n"
 "See https://bugs.launchpad.net/duplicity/+bug/931175\n"
-msgstr ""
-"\n"
+msgstr "\n"
 "环境变量 PYTHONOPTIMIZE 导致 duplicity 无法 \n"
 "识别其备份。请从环境变量中删除 PYTHONOPTIMIZE\n"
-"然后重新运行备份。\n"
-"\n"
+"然后重新运行备份。\n\n"
 "具体请查阅 https://bugs.launchpad.net/duplicity/+bug/931175\n"
 
 #: ../duplicity/dup_main.py:1529
@@ -1413,40 +1351,30 @@ msgid "Last full backup is too old, forcing full backup"
 msgstr "最后一次完全备份已过期，强制完全备份"
 
 #: ../duplicity/dup_main.py:1657
-msgid ""
-"When using symmetric encryption, the signing passphrase must equal the "
-"encryption passphrase."
+msgid "When using symmetric encryption, the signing passphrase must equal the encryption passphrase."
 msgstr "使用对称加密时，必须采用相同的签名密码与加密密码。"
 
 #: ../duplicity/dup_time.py:63
 #, python-format
-msgid ""
-"Bad interval string \"%s\"\n"
-"\n"
+msgid "Bad interval string \"%s\"\n\n"
 "Intervals are specified like 2Y (2 years) or 2h30m (2.5 hours).  The\n"
 "allowed special characters are s, m, h, D, W, M, and Y.  See the man\n"
 "page for more information."
-msgstr ""
-"无效的间隔时间 %s \n"
-"\n"
+msgstr "无效的间隔时间 %s \n\n"
 "间隔时间应当为 2Y (代表 2 年) 或 2h30m (代表 2.5 小时) 的形式。\n"
 "可用的字符包括 s, m, h, D, W, M 和 Y。请查阅 man 手册获取更多\n"
 "信息。"
 
 #: ../duplicity/dup_time.py:69
 #, python-format
-msgid ""
-"Bad time string \"%s\"\n"
-"\n"
+msgid "Bad time string \"%s\"\n\n"
 "The acceptible time strings are intervals (like \"3D64s\"), w3-datetime\n"
 "strings, like \"2002-04-26T04:22:01-07:00\" (strings like\n"
 "\"2002-04-26T04:22:01\" are also acceptable - duplicity will use the\n"
 "current time zone), or ordinary dates like 2/4/1997 or 2001-04-23\n"
 "(various combinations are acceptable, but the month always precedes\n"
 "the day)."
-msgstr ""
-"无效的时间 %s \n"
-"\n"
+msgstr "无效的时间 %s \n\n"
 "应当设置为时间间隔 ，如“3D64s”；或 w3-datetime 格式字符串，如\n"
 "“2002-04-26T04:22:01-07:00” (“2002-04-26T04:22:01”的形式\n"
 "也可以，duplicity 会默认使用当前时区)；或常用日期形式，如\n"
@@ -1477,42 +1405,30 @@ msgid "Skipping %s because of previous error"
 msgstr "由于之前的错误，跳过 %s"
 
 #: ../duplicity/librsync.py:195
-msgid ""
-"basis_file must be a (true) file or an object whose file attribute is the "
-"underlying true file object"
+msgid "basis_file must be a (true) file or an object whose file attribute is the underlying true file object"
 msgstr ""
 
 #: ../duplicity/manifest.py:96
 #, python-format
-msgid ""
-"Fatal Error: Backup source host has changed.\n"
+msgid "Fatal Error: Backup source host has changed.\n"
 "Current hostname: %s\n"
 "Previous hostname: %s"
-msgstr ""
-"致命错误：备份源主机已更改。\n"
+msgstr "致命错误：备份源主机已更改。\n"
 "当前主机名：%s\n"
 "之前的主机名：%s"
 
 #: ../duplicity/manifest.py:103
 #, python-format
-msgid ""
-"Fatal Error: Backup source directory has changed.\n"
+msgid "Fatal Error: Backup source directory has changed.\n"
 "Current directory: %s\n"
 "Previous directory: %s"
-msgstr ""
-"致命错误：备份源目录已更改。\n"
+msgstr "致命错误：备份源目录已更改。\n"
 "当前文件夹：%s\n"
 "之前的文件夹：%s"
 
 #: ../duplicity/manifest.py:113
-msgid ""
-"Aborting because you may have accidentally tried to backup two different "
-"data sets to the same remote location, or using the same archive directory.  "
-"If this is not a mistake, use the --allow-source-mismatch switch to avoid "
-"seeing this message"
-msgstr ""
-"由于您试图在相同远程路径或相同的存档目录备份两个不同的数据集，所以操作被取"
-"消。如果这不是一个错误，请使用 --allow-source-mismatch 开关禁用此通知"
+msgid "Aborting because you may have accidentally tried to backup two different data sets to the same remote location, or using the same archive directory.  If this is not a mistake, use the --allow-source-mismatch switch to avoid seeing this message"
+msgstr "由于您试图在相同远程路径或相同的存档目录备份两个不同的数据集，所以操作被取消。如果这不是一个错误，请使用 --allow-source-mismatch 开关禁用此通知"
 
 #: ../duplicity/manifest.py:215
 #, python-format
@@ -1526,8 +1442,7 @@ msgstr ""
 
 #: ../duplicity/manifest.py:239
 #, python-format
-msgid ""
-"Manifest file '%s' is corrupt: File count says %d, File list contains %d"
+msgid "Manifest file '%s' is corrupt: File count says %d, File list contains %d"
 msgstr ""
 
 #: ../duplicity/manifest.py:258
@@ -1689,15 +1604,13 @@ msgstr "选择 %s"
 
 #: ../duplicity/selection.py:290
 #, python-format
-msgid ""
-"Fatal Error: The file specification\n"
+msgid "Fatal Error: The file specification\n"
 "    %s\n"
 "cannot match any files in the base directory\n"
 "    %s\n"
 "Useful file specifications begin with the base directory or some\n"
 "pattern (such as '**') which matches the base directory."
-msgstr ""
-"致命错误：指定的文件匹配符\n"
+msgstr "致命错误：指定的文件匹配符\n"
 "    %s\n"
 "不能匹配基本目录\n"
 "    %s\n"
@@ -1706,23 +1619,19 @@ msgstr ""
 
 #: ../duplicity/selection.py:299
 #, python-format
-msgid ""
-"Fatal Error while processing expression\n"
+msgid "Fatal Error while processing expression\n"
 "%s"
-msgstr ""
-"处理正则表达式时发生致命错误\n"
+msgstr "处理正则表达式时发生致命错误\n"
 "%s"
 
 #: ../duplicity/selection.py:308
 #, python-format
-msgid ""
-"Last selection expression:\n"
+msgid "Last selection expression:\n"
 "    %s\n"
 "only specifies that files be included.  Because the default is to\n"
 "include all files, the expression is redundant.  Exiting because this\n"
 "probably isn't what you meant."
-msgstr ""
-"最近选择的表达式：\n"
+msgstr "最近选择的表达式：\n"
 "    %s\n"
 "仅指定了应当包含的文件。由于默认会包含\n"
 "所有文件，所以表达式无效。鉴于表达式与\n"
@@ -1788,12 +1697,3 @@ msgstr "忽略的错误：警告：根据设置忽略错误：%s: %s"
 msgid "Releasing lockfile %s"
 msgstr "释放锁文件 %s"
 
-#~ msgid ""
-#~ "Warning: exclude-device-files is not the first selector.\n"
-#~ "This may not be what you intended"
-#~ msgstr ""
-#~ "警告：exclude-device-files 不是第一个选择器。\n"
-#~ "这可能不是您的意图"
-
-#~ msgid "MultiBackend: list from %s: %s"
-#~ msgstr "多后台：从 %s 列出：%s"
