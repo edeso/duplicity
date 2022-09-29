@@ -1,23 +1,23 @@
-# Italian translation for duplicity
-# Copyright (c) 2009 Rosetta Contributors and Canonical Ltd 2009
-# This file is distributed under the same license as the duplicity package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2009.
-#
 msgid ""
 msgstr ""
 "Project-Id-Version: duplicity\n"
 "Report-Msgid-Bugs-To: Kenneth Loafman <kenneth@loafman.com>\n"
-"POT-Creation-Date: 2020-03-07 09:49-0600\n"
-"PO-Revision-Date: 2018-02-23 13:10+0000\n"
-"Last-Translator: Milo Casagrande <milo.casagrande@gmail.com>\n"
-"Language-Team: Italian <it@li.org>\n"
-"Language: it\n"
+"POT-Creation-Date: 2020-03-19 14:16-0500\n"
+"PO-Revision-Date: 2022-09-24 17:30\n"
+"Last-Translator: \n"
+"Language-Team: Italian\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Launchpad-Export-Date: 2020-03-18 06:31+0000\n"
-"X-Generator: Launchpad (build 3a6db24bbe7280ec09bae73384238390fcc98ad3)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Launchpad-Export-Date: 2021-11-21 16:40+0000\n"
+"X-Generator: Launchpad (build ad4ef5362dff26fb27989d006230bae6da62d38c)\n"
+"Language: it_IT\n"
+"X-Crowdin-Project: duplicity\n"
+"X-Crowdin-Project-ID: 539508\n"
+"X-Crowdin-Language: it\n"
+"X-Crowdin-File: /main/po/duplicity.pot\n"
+"X-Crowdin-File-ID: 6\n"
 
 #: ../bin/duplicity:120
 msgid "INT intercepted...exiting."
@@ -70,11 +70,8 @@ msgid "task completed successfully"
 msgstr "attività completata con successo"
 
 #: ../duplicity/asyncscheduler.py:192
-msgid ""
-"a previously scheduled task has failed; propagating the result immediately"
-msgstr ""
-"una precedente attività programmata non è riuscita; propagazione immediata "
-"del risultato"
+msgid "a previously scheduled task has failed; propagating the result immediately"
+msgstr "una precedente attività programmata non è riuscita; propagazione immediata del risultato"
 
 #: ../duplicity/asyncscheduler.py:215 ../duplicity/asyncscheduler.py:236
 #, python-format
@@ -194,8 +191,7 @@ msgstr ""
 
 #: ../duplicity/backends/multibackend.py:276
 #, python-format
-msgid ""
-"MultiBackend: failed to write %s. Tried all backing stores and none succeeded"
+msgid "MultiBackend: failed to write %s. Tried all backing stores and none succeeded"
 msgstr ""
 
 #: ../duplicity/backends/multibackend.py:295
@@ -205,8 +201,7 @@ msgstr ""
 
 #: ../duplicity/backends/multibackend.py:298
 #, python-format
-msgid ""
-"MultiBackend: failed to get %s. Tried all backing stores and none succeeded"
+msgid "MultiBackend: failed to get %s. Tried all backing stores and none succeeded"
 msgstr ""
 
 #: ../duplicity/backends/multibackend.py:308
@@ -231,9 +226,7 @@ msgstr ""
 
 #: ../duplicity/backends/multibackend.py:350
 #, python-format
-msgid ""
-"MultiBackend: failed to delete %s. Tried all backing stores and none "
-"succeeded"
+msgid "MultiBackend: failed to delete %s. Tried all backing stores and none succeeded"
 msgstr ""
 
 #: ../duplicity/backends/pydrivebackend.py:150
@@ -251,14 +244,12 @@ msgid "Cacert database file '%s' is not readable."
 msgstr ""
 
 #: ../duplicity/backends/webdavbackend.py:105
-msgid ""
-"Option '--ssl-cacert-path' is not supported with python 2.7.8 and below."
+msgid "Option '--ssl-cacert-path' is not supported with python 2.7.8 and below."
 msgstr ""
 
 #: ../duplicity/backends/webdavbackend.py:109
 #, python-format
-msgid ""
-"For certificate verification with python 2.7.8 or earlier a cacert database\n"
+msgid "For certificate verification with python 2.7.8 or earlier a cacert database\n"
 "file is needed in one of these locations: %s\n"
 "Hints:\n"
 "Consult the man page, chapter 'SSL Certificate Verification'.\n"
@@ -334,16 +325,12 @@ msgid "WebDAV response2 status %s with reason '%s'."
 msgstr ""
 
 #: ../duplicity/backends/webdavbackend.py:263
-msgid ""
-"python-kerberos needed to use kerberos                           "
-"authorization, falling back to basic auth."
+msgid "python-kerberos needed to use kerberos                           authorization, falling back to basic auth."
 msgstr ""
 
 #: ../duplicity/backends/webdavbackend.py:267
 #, python-format
-msgid ""
-"Kerberos authorization failed: %s.                          Falling back to "
-"basic auth."
+msgid "Kerberos authorization failed: %s.                          Falling back to basic auth."
 msgstr ""
 
 #: ../duplicity/backends/webdavbackend.py:365
@@ -378,29 +365,20 @@ msgstr ""
 
 #: ../duplicity/commandline.py:79
 #, python-format
-msgid ""
-"Warning: Option %s is pending deprecation and will be removed in a future "
-"release.\n"
+msgid "Warning: Option %s is pending deprecation and will be removed in a future release.\n"
 "Use of default filenames is strongly suggested."
-msgstr ""
-"Attenzione: l'opzione %s è in attesa di essere deprecata e verrà rimossa nei "
-"rilasci futuri.\n"
+msgstr "Attenzione: l'opzione %s è in attesa di essere deprecata e verrà rimossa nei rilasci futuri.\n"
 "L'uso del nome file predefinito è fortemente raccomandato."
 
 #: ../duplicity/commandline.py:86
 #, python-format
-msgid ""
-"Warning: Option %s is pending deprecation and will be removed in a future "
-"release.\n"
-"--include-filelist and --exclude-filelist now accept globbing characters and "
-"should be used instead."
+msgid "Warning: Option %s is pending deprecation and will be removed in a future release.\n"
+"--include-filelist and --exclude-filelist now accept globbing characters and should be used instead."
 msgstr ""
 
 #: ../duplicity/commandline.py:96
 #, python-format
-msgid ""
-"Warning: Option %s is pending deprecation and will be removed in a future "
-"release.\n"
+msgid "Warning: Option %s is pending deprecation and will be removed in a future release.\n"
 "On many GNU/Linux systems, stdin is represented by /dev/stdin and\n"
 "--include-filelist=/dev/stdin or --exclude-filelist=/dev/stdin could\n"
 "be used as a substitute."
@@ -469,12 +447,8 @@ msgstr "opzioni"
 
 #: ../duplicity/commandline.py:394
 #, python-format
-msgid ""
-"Running in 'ignore errors' mode due to %s; please re-consider if this was "
-"not intended"
-msgstr ""
-"Esecuzione in modalità \"ignora errori\" fino a %s; riconsiderare se questo "
-"non era previsto"
+msgid "Running in 'ignore errors' mode due to %s; please re-consider if this was not intended"
+msgstr "Esecuzione in modalità \"ignora errori\" fino a %s; riconsiderare se questo non era previsto"
 
 #. Used in usage help to represent an imap mailbox
 #: ../duplicity/commandline.py:406
@@ -518,7 +492,7 @@ msgstr "comando"
 
 #: ../duplicity/commandline.py:583
 msgid "pyrax|cloudfiles"
-msgstr "pyrax|cloudfiles"
+msgstr ""
 
 #: ../duplicity/commandline.py:604
 msgid "pem formatted bundle of certificate authorities"
@@ -573,7 +547,7 @@ msgstr "percorso_assoluto"
 #. tahoe://alias/some_dir
 #: ../duplicity/commandline.py:798
 msgid "alias"
-msgstr "alias"
+msgstr ""
 
 #. Used in help to represent a "bucket name" for Amazon Web
 #. Services' Simple Storage Service (S3). Example:
@@ -597,7 +571,7 @@ msgstr "conteggio"
 #. Used in usage help to represent the name of a file directory
 #: ../duplicity/commandline.py:820
 msgid "directory"
-msgstr "directory"
+msgstr ""
 
 #. Used in usage help, e.g. to represent the name of a code
 #. module. Example:
@@ -616,7 +590,7 @@ msgstr "altro.host"
 #. ftp://user[:password]@other.host[:port]/some_dir
 #: ../duplicity/commandline.py:851
 msgid "password"
-msgstr "password"
+msgstr ""
 
 #. Used in usage help to represent a TCP port number. Example:
 #. ftp://user[:password]@other.host[:port]/some_dir
@@ -711,24 +685,19 @@ msgstr "Comandi:"
 #: ../duplicity/commandline.py:1003
 #, python-format
 msgid "Specified archive directory '%s' does not exist, or is not a directory"
-msgstr ""
-"La directory \"%s\", specificata per l'archiviazione, non esiste o non è una "
-"directory"
+msgstr "La directory \"%s\", specificata per l'archiviazione, non esiste o non è una directory"
 
 #: ../duplicity/commandline.py:1012
 #, python-format
-msgid ""
-"Sign key should be an 8, 16 alt. 40 character hex string, like 'AA0E73D2'.\n"
+msgid "Sign key should be an 8, 16 alt. 40 character hex string, like 'AA0E73D2'.\n"
 "Received '%s' instead."
 msgstr ""
 
 #: ../duplicity/commandline.py:1072
 #, python-format
-msgid ""
-"Restore destination directory %s already exists.\n"
+msgid "Restore destination directory %s already exists.\n"
 "Will not overwrite."
-msgstr ""
-"La directory di destinazione da ripristinare %s esiste già.\n"
+msgstr "La directory di destinazione da ripristinare %s esiste già.\n"
 "Non verrà sovrascritta."
 
 #: ../duplicity/commandline.py:1077
@@ -747,11 +716,9 @@ msgid "Command line warning: %s"
 msgstr "Avviso riga di comando: %s"
 
 #: ../duplicity/commandline.py:1114
-msgid ""
-"Selection options --exclude/--include\n"
+msgid "Selection options --exclude/--include\n"
 "currently work only when backing up,not restoring."
-msgstr ""
-"Le opzioni di selezione --exclude e --include\n"
+msgstr "Le opzioni di selezione --exclude e --include\n"
 "attualmente funzionano solo per il backup, non per il ripristino."
 
 #: ../duplicity/commandline.py:1150
@@ -761,12 +728,10 @@ msgstr ""
 
 #: ../duplicity/commandline.py:1177
 #, python-format
-msgid ""
-"Bad URL '%s'.\n"
+msgid "Bad URL '%s'.\n"
 "Examples of URL strings are \"scp://user@host.net:1234/path\" and\n"
 "\"file:///usr/local\".  See the man page for more information."
-msgstr ""
-"URL \"%s\" errato.\n"
+msgstr "URL \"%s\" errato.\n"
 "Esempi di stringhe URL sono \"scp://utente@host.net:1234/percorso\" e\n"
 "\"file:///usr/local\". Consultare il manuale per ulteriori informazioni."
 
@@ -787,12 +752,12 @@ msgstr "Ottenimento del delta di %s e %s"
 #: ../duplicity/diffdir.py:181
 #, python-format
 msgid "A %s"
-msgstr "A %s"
+msgstr ""
 
 #: ../duplicity/diffdir.py:188
 #, python-format
 msgid "M %s"
-msgstr "M %s"
+msgstr ""
 
 #: ../duplicity/diffdir.py:210
 #, python-format
@@ -814,18 +779,12 @@ msgid "Fatal Error: No manifests found for most recent backup"
 msgstr "Errore fatale: nessun file manifest trovato per il backup più recente"
 
 #: ../duplicity/dup_collections.py:228
-msgid ""
-"Fatal Error: Remote manifest does not match local one.  Either the remote "
-"backup set or the local archive directory has been corrupted."
-msgstr ""
-"Errore fatale: il file manifest remoto non corrisponde a quello locale. "
-"Oppure il set di backup remoto o la directory di archiviazione locale sono "
-"danneggiati."
+msgid "Fatal Error: Remote manifest does not match local one.  Either the remote backup set or the local archive directory has been corrupted."
+msgstr "Errore fatale: il file manifest remoto non corrisponde a quello locale. Oppure il set di backup remoto o la directory di archiviazione locale sono danneggiati."
 
 #: ../duplicity/dup_collections.py:236
 msgid "Fatal Error: Neither remote nor local manifest is readable."
-msgstr ""
-"Errore fatale: né il file manifest remoto né quello locale sono leggibili."
+msgstr "Errore fatale: né il file manifest remoto né quello locale sono leggibili."
 
 #: ../duplicity/dup_collections.py:247
 #, python-format
@@ -949,9 +908,7 @@ msgstr[1] "e %d set di backup incompleti."
 #. "cleanup" is a hard-coded command, so do not translate it
 #: ../duplicity/dup_collections.py:700
 msgid "These may be deleted by running duplicity with the \"cleanup\" command."
-msgstr ""
-"Questi possono essere eliminati eseguendo duplicity con il comando \"cleanup"
-"\""
+msgstr "Questi possono essere eliminati eseguendo duplicity con il comando \"cleanup\""
 
 #: ../duplicity/dup_collections.py:703
 msgid "No orphaned or incomplete backup sets found."
@@ -973,9 +930,7 @@ msgstr[1] "%d file esistenti nella cache"
 
 #: ../duplicity/dup_collections.py:782
 msgid "Warning, discarding last backup set, because of missing signature file."
-msgstr ""
-"Attenzione, scartato l'ultimo set di backup in quanto privo del file di "
-"firma."
+msgstr "Attenzione, scartato l'ultimo set di backup in quanto privo del file di firma."
 
 #: ../duplicity/dup_collections.py:805
 msgid "Warning, found the following local orphaned signature file:"
@@ -991,15 +946,11 @@ msgstr[1] "Attenzione, trovati i seguenti file remoti privi della firma:"
 
 #: ../duplicity/dup_collections.py:823
 msgid "Warning, found signatures but no corresponding backup files"
-msgstr ""
-"Attenzione, trovate le firme ma nessuna corrispondenza con i file di backup"
+msgstr "Attenzione, trovate le firme ma nessuna corrispondenza con i file di backup"
 
 #: ../duplicity/dup_collections.py:827
-msgid ""
-"Warning, found incomplete backup sets, probably left from aborted session"
-msgstr ""
-"Attenzione, trovati set di backup incompleti, probabilmente lasciati dalla "
-"sessione interrotta"
+msgid "Warning, found incomplete backup sets, probably left from aborted session"
+msgstr "Attenzione, trovati set di backup incompleti, probabilmente lasciati dalla sessione interrotta"
 
 #: ../duplicity/dup_collections.py:831
 msgid "Warning, found the following orphaned backup file:"
@@ -1020,8 +971,7 @@ msgstr "Il file %s fa parte di un set conosciuto"
 #: ../duplicity/dup_collections.py:863
 #, python-format
 msgid "File %s is not part of a known set; creating new set"
-msgstr ""
-"Il file %s non fa parte di un set conosciuto; creazione di un nuovo set"
+msgstr "Il file %s non fa parte di un set conosciuto; creazione di un nuovo set"
 
 #: ../duplicity/dup_collections.py:868
 #, python-format
@@ -1045,15 +995,13 @@ msgstr "Trovato set orfano %s"
 
 #: ../duplicity/dup_collections.py:1043
 #, python-format
-msgid ""
-"No signature chain for the requested time. Using oldest available chain, "
-"starting at time %s."
+msgid "No signature chain for the requested time. Using oldest available chain, starting at time %s."
 msgstr ""
 
 #: ../duplicity/dup_collections.py:1229
 #, python-format
 msgid "File: %s"
-msgstr "File: %s"
+msgstr ""
 
 #: ../duplicity/dup_collections.py:1230
 #, python-format
@@ -1097,27 +1045,21 @@ msgid "First and second passphrases do not match!  Please try again."
 msgstr "La prima e la seconda passphrase non corrispondono. Riprovare."
 
 #: ../duplicity/dup_main.py:204
-msgid ""
-"Cannot use empty passphrase with symmetric encryption!  Please try again."
-msgstr ""
-"Impossibile usare una passphrase vuota con cifratura simmetrica. Riprovare."
+msgid "Cannot use empty passphrase with symmetric encryption!  Please try again."
+msgstr "Impossibile usare una passphrase vuota con cifratura simmetrica. Riprovare."
 
 #: ../duplicity/dup_main.py:261
 #, python-format
-msgid ""
-"File %s complete in backup set.\n"
+msgid "File %s complete in backup set.\n"
 "Continuing restart on file %s."
-msgstr ""
-"File %s completo nel set di backup.\n"
+msgstr "File %s completo nel set di backup.\n"
 "Continuare ripartendo dal file %s."
 
 #: ../duplicity/dup_main.py:270
 #, python-format
-msgid ""
-"File %s missing in backup set.\n"
+msgid "File %s missing in backup set.\n"
 "Continuing restart on file %s."
-msgstr ""
-"File %s mancante nel set di backup.\n"
+msgstr "File %s mancante nel set di backup.\n"
 "Continuare ripartendo dal file %s."
 
 #: ../duplicity/dup_main.py:319
@@ -1126,12 +1068,8 @@ msgid "File %s was corrupted during upload."
 msgstr "Il file %s è stato danneggiato durante il caricamento."
 
 #: ../duplicity/dup_main.py:359
-msgid ""
-"Restarting backup, but current encryption settings do not match original "
-"settings"
-msgstr ""
-"Il backup verrà riavviato, ma le impostazioni di cifratura attuali non "
-"corrispondono a quelle originali"
+msgid "Restarting backup, but current encryption settings do not match original settings"
+msgstr "Il backup verrà riavviato, ma le impostazioni di cifratura attuali non corrispondono a quelle originali"
 
 #: ../duplicity/dup_main.py:382
 #, python-format
@@ -1144,12 +1082,8 @@ msgid "Processed volume %d"
 msgstr "Volume %d elaborato"
 
 #: ../duplicity/dup_main.py:602
-msgid ""
-"Fatal Error: Unable to start incremental backup.  Old signatures not found "
-"and incremental specified"
-msgstr ""
-"Errore fatale: impossibile avviare il backup incrementale. Vecchie firme non "
-"trovate per il backup specificato"
+msgid "Fatal Error: Unable to start incremental backup.  Old signatures not found and incremental specified"
+msgstr "Errore fatale: impossibile avviare il backup incrementale. Vecchie firme non trovate per il backup specificato"
 
 #: ../duplicity/dup_main.py:606
 msgid "No signatures found, switching to full backup."
@@ -1214,9 +1148,7 @@ msgstr[1] "%d differenze trovate"
 
 #: ../duplicity/dup_main.py:898
 msgid "No extraneous files found, nothing deleted in cleanup."
-msgstr ""
-"Non sono stati trovati file estranei, non è stato eliminato nulla durante la "
-"pulizia."
+msgstr "Non sono stati trovati file estranei, non è stato eliminato nulla durante la pulizia."
 
 #: ../duplicity/dup_main.py:903
 msgid "Deleting this file from backend:"
@@ -1232,9 +1164,7 @@ msgstr[1] "Trovati i seguenti file da eliminare:"
 
 #: ../duplicity/dup_main.py:917
 msgid "Run duplicity again with the --force option to actually delete."
-msgstr ""
-"Eseguire nuovamente duplicity con l'opzione --force per la reale "
-"eliminazione."
+msgstr "Eseguire nuovamente duplicity con l'opzione --force per la reale eliminazione."
 
 #: ../duplicity/dup_main.py:960
 msgid "There are backup set(s) at time(s):"
@@ -1242,18 +1172,11 @@ msgstr "Ci sono set di backup alla data:"
 
 #: ../duplicity/dup_main.py:962
 msgid "Which can't be deleted because newer sets depend on them."
-msgstr ""
-"che non possono essere eliminati in quanto i set più recenti dipendono da "
-"questi."
+msgstr "che non possono essere eliminati in quanto i set più recenti dipendono da questi."
 
 #: ../duplicity/dup_main.py:966
-msgid ""
-"Current active backup chain is older than specified time.  However, it will "
-"not be deleted.  To remove all your backups, manually purge the repository."
-msgstr ""
-"La catena di backup attualmente attiva è più vecchia della data specificata. "
-"Tuttavia non verrà eliminata. Per rimuovere tutti i backup, ripulire "
-"manualmente il repository."
+msgid "Current active backup chain is older than specified time.  However, it will not be deleted.  To remove all your backups, manually purge the repository."
+msgstr "La catena di backup attualmente attiva è più vecchia della data specificata. Tuttavia non verrà eliminata. Per rimuovere tutti i backup, ripulire manualmente il repository."
 
 #: ../duplicity/dup_main.py:979
 msgid "No old backup sets found, nothing deleted."
@@ -1293,9 +1216,7 @@ msgstr[1] "Trovate vecchie catene di backup alle seguenti date:"
 
 #: ../duplicity/dup_main.py:1011
 msgid "Rerun command with --force option to actually delete."
-msgstr ""
-"Eseguire nuovamente il comando con l'opzione --force per la reale "
-"eliminazione."
+msgstr "Eseguire nuovamente il comando con l'opzione --force per la reale eliminazione."
 
 #: ../duplicity/dup_main.py:1034
 msgid "No old backup sets found."
@@ -1338,9 +1259,7 @@ msgstr "Copia di %s nella cache locale."
 
 #: ../duplicity/dup_main.py:1332
 msgid "Local and Remote metadata are synchronized, no sync needed."
-msgstr ""
-"I metadati locali e remoti sono sincronizzati, non è necessario "
-"sincronizzare nuovamente."
+msgstr "I metadati locali e remoti sono sincronizzati, non è necessario sincronizzare nuovamente."
 
 #: ../duplicity/dup_main.py:1337
 msgid "Synchronizing remote metadata to local cache..."
@@ -1361,16 +1280,12 @@ msgstr "Impossibile ottenere spazio libero nella directory temporanea."
 #: ../duplicity/dup_main.py:1405
 #, python-format
 msgid "Temp space has %d available, backup needs approx %d."
-msgstr ""
-"La directory temporanea ha %d di spazio disponibile, il backup richiede "
-"approssimativamente %d."
+msgstr "La directory temporanea ha %d di spazio disponibile, il backup richiede approssimativamente %d."
 
 #: ../duplicity/dup_main.py:1408
 #, python-format
 msgid "Temp has %d available, backup will use approx %d."
-msgstr ""
-"La directory temporanea dispone di %d, il backup userà approssimativamente "
-"%d."
+msgstr "La directory temporanea dispone di %d, il backup userà approssimativamente %d."
 
 #: ../duplicity/dup_main.py:1416
 msgid "Unable to get max open files."
@@ -1378,51 +1293,38 @@ msgstr "Impossibile ottenere il massimo numero di file aperti."
 
 #: ../duplicity/dup_main.py:1420
 #, python-format
-msgid ""
-"Max open files of %s is too low, should be >= 1024.\n"
+msgid "Max open files of %s is too low, should be >= 1024.\n"
 "Use 'ulimit -n 1024' or higher to correct.\n"
-msgstr ""
-"Numero massimo di file aperti in %s è troppo basso, dovrebbe essere >= "
-"1024.\n"
+msgstr "Numero massimo di file aperti in %s è troppo basso, dovrebbe essere >= 1024.\n"
 "Usare \"ulimit -n 1024\" o superiore per correggere.\n"
 
 #: ../duplicity/dup_main.py:1472
-msgid ""
-"RESTART: The first volume failed to upload before termination.\n"
+msgid "RESTART: The first volume failed to upload before termination.\n"
 "         Restart is impossible...starting backup from beginning."
-msgstr ""
-"RIAVVIO: caricamento del primo volume non riuscito prima del termine.\n"
+msgstr "RIAVVIO: caricamento del primo volume non riuscito prima del termine.\n"
 "          Riavvio impossibile...avvio del backup dall'inizio."
 
 #: ../duplicity/dup_main.py:1478
 #, python-format
-msgid ""
-"RESTART: Volumes %d to %d failed to upload before termination.\n"
+msgid "RESTART: Volumes %d to %d failed to upload before termination.\n"
 "         Restarting backup at volume %d."
-msgstr ""
-"RIAVVIO: caricamento dei volumi da %d a %d non riuscito prima del termine.\n"
+msgstr "RIAVVIO: caricamento dei volumi da %d a %d non riuscito prima del termine.\n"
 "          Riavvio del backup dal volume %d."
 
 #: ../duplicity/dup_main.py:1485
 #, python-format
-msgid ""
-"RESTART: Impossible backup state: manifest has %d vols, remote has %d vols.\n"
-"         Restart is impossible ... duplicity will clean off the last "
-"partial\n"
+msgid "RESTART: Impossible backup state: manifest has %d vols, remote has %d vols.\n"
+"         Restart is impossible ... duplicity will clean off the last partial\n"
 "         backup then restart the backup from the beginning."
-msgstr ""
-"RIAVVIO: stato del backup impossibile: il file manifest ha %d volumi, la "
-"destinazione remota ne contiene %d.\n"
+msgstr "RIAVVIO: stato del backup impossibile: il file manifest ha %d volumi, la destinazione remota ne contiene %d.\n"
 "         Riavvio impossibile...duplicity ripulirà l'ultimo backup\n"
 "         parziale quindi verrà riavviato il backup dall'inizio."
 
 #: ../duplicity/dup_main.py:1506
-msgid ""
-"\n"
+msgid "\n"
 "PYTHONOPTIMIZE in the environment causes duplicity to fail to\n"
 "recognize its own backups.  Please remove PYTHONOPTIMIZE from\n"
-"the environment and rerun the backup.\n"
-"\n"
+"the environment and rerun the backup.\n\n"
 "See https://bugs.launchpad.net/duplicity/+bug/931175\n"
 msgstr ""
 
@@ -1451,47 +1353,33 @@ msgstr "Data dell'ultimo backup completo: nessuna"
 
 #: ../duplicity/dup_main.py:1608
 msgid "Last full backup is too old, forcing full backup"
-msgstr ""
-"L'ultimo backup completo è troppo vecchio, viene forzato il backup completo"
+msgstr "L'ultimo backup completo è troppo vecchio, viene forzato il backup completo"
 
 #: ../duplicity/dup_main.py:1657
-msgid ""
-"When using symmetric encryption, the signing passphrase must equal the "
-"encryption passphrase."
-msgstr ""
-"Quando si usa la cifratura simmetrica, la passphrase di firma deve "
-"corrispondere alla passphrase di cifratura."
+msgid "When using symmetric encryption, the signing passphrase must equal the encryption passphrase."
+msgstr "Quando si usa la cifratura simmetrica, la passphrase di firma deve corrispondere alla passphrase di cifratura."
 
 #: ../duplicity/dup_time.py:63
 #, python-format
-msgid ""
-"Bad interval string \"%s\"\n"
-"\n"
+msgid "Bad interval string \"%s\"\n\n"
 "Intervals are specified like 2Y (2 years) or 2h30m (2.5 hours).  The\n"
 "allowed special characters are s, m, h, D, W, M, and Y.  See the man\n"
 "page for more information."
-msgstr ""
-"Stringa dell'intervallo \"%s\" errata\n"
-"\n"
+msgstr "Stringa dell'intervallo \"%s\" errata\n\n"
 "Gli intervalli sono specificati come 2Y (2 anni) o 2h30m (2.5 ore). I\n"
-"caratteri speciali consentiti sono s, m, h, D, W, M e Y. Per maggiori "
-"informazioni, consultare il\n"
+"caratteri speciali consentiti sono s, m, h, D, W, M e Y. Per maggiori informazioni, consultare il\n"
 "manuale."
 
 #: ../duplicity/dup_time.py:69
 #, python-format
-msgid ""
-"Bad time string \"%s\"\n"
-"\n"
+msgid "Bad time string \"%s\"\n\n"
 "The acceptible time strings are intervals (like \"3D64s\"), w3-datetime\n"
 "strings, like \"2002-04-26T04:22:01-07:00\" (strings like\n"
 "\"2002-04-26T04:22:01\" are also acceptable - duplicity will use the\n"
 "current time zone), or ordinary dates like 2/4/1997 or 2001-04-23\n"
 "(various combinations are acceptable, but the month always precedes\n"
 "the day)."
-msgstr ""
-"Stringa della data \"%s\" errata\n"
-"\n"
+msgstr "Stringa della data \"%s\" errata\n\n"
 "Le stringhe della data ammesse sono intervalli (come \"3D64s\"), stringhe\n"
 "w3-datetime, come \"2002-04-26T04:22:01-07:00\" (sono anche ammesse\n"
 "stringhe come \"2002-04-26T04:22:01\" - duplicity utilizzerà l'attuale\n"
@@ -1524,45 +1412,30 @@ msgid "Skipping %s because of previous error"
 msgstr "Saltato %s a causa del precedente errore"
 
 #: ../duplicity/librsync.py:195
-msgid ""
-"basis_file must be a (true) file or an object whose file attribute is the "
-"underlying true file object"
+msgid "basis_file must be a (true) file or an object whose file attribute is the underlying true file object"
 msgstr ""
 
 #: ../duplicity/manifest.py:96
 #, python-format
-msgid ""
-"Fatal Error: Backup source host has changed.\n"
+msgid "Fatal Error: Backup source host has changed.\n"
 "Current hostname: %s\n"
 "Previous hostname: %s"
-msgstr ""
-"Errore fatale: l'host sorgente del backup è cambiato.\n"
+msgstr "Errore fatale: l'host sorgente del backup è cambiato.\n"
 "Nome host attuale: %s\n"
 "Nome host precedente: %s"
 
 #: ../duplicity/manifest.py:103
 #, python-format
-msgid ""
-"Fatal Error: Backup source directory has changed.\n"
+msgid "Fatal Error: Backup source directory has changed.\n"
 "Current directory: %s\n"
 "Previous directory: %s"
-msgstr ""
-"Errore fatale: la directory sorgente del backup è cambiata.\n"
+msgstr "Errore fatale: la directory sorgente del backup è cambiata.\n"
 "Directory attuale: %s\n"
 "Directory precedente: %s"
 
 #: ../duplicity/manifest.py:113
-msgid ""
-"Aborting because you may have accidentally tried to backup two different "
-"data sets to the same remote location, or using the same archive directory.  "
-"If this is not a mistake, use the --allow-source-mismatch switch to avoid "
-"seeing this message"
-msgstr ""
-"Annullato in quanto probabilmente si è tentato accidentalmente di eseguire "
-"il backup di due differenti set di dati nella stessa posizione remota o "
-"utilizzando la stessa directory di archiviazione. Se non è un errore, usare "
-"l'opzione --allow-source-mismatch per evitare di visualizzare questo "
-"messaggio."
+msgid "Aborting because you may have accidentally tried to backup two different data sets to the same remote location, or using the same archive directory.  If this is not a mistake, use the --allow-source-mismatch switch to avoid seeing this message"
+msgstr "Annullato in quanto probabilmente si è tentato accidentalmente di eseguire il backup di due differenti set di dati nella stessa posizione remota o utilizzando la stessa directory di archiviazione. Se non è un errore, usare l'opzione --allow-source-mismatch per evitare di visualizzare questo messaggio."
 
 #: ../duplicity/manifest.py:215
 #, python-format
@@ -1576,8 +1449,7 @@ msgstr ""
 
 #: ../duplicity/manifest.py:239
 #, python-format
-msgid ""
-"Manifest file '%s' is corrupt: File count says %d, File list contains %d"
+msgid "Manifest file '%s' is corrupt: File count says %d, File list contains %d"
 msgstr ""
 
 #: ../duplicity/manifest.py:258
@@ -1739,15 +1611,13 @@ msgstr "Selezione di %s"
 
 #: ../duplicity/selection.py:290
 #, python-format
-msgid ""
-"Fatal Error: The file specification\n"
+msgid "Fatal Error: The file specification\n"
 "    %s\n"
 "cannot match any files in the base directory\n"
 "    %s\n"
 "Useful file specifications begin with the base directory or some\n"
 "pattern (such as '**') which matches the base directory."
-msgstr ""
-"Errore fatale: la specifica del file\n"
+msgstr "Errore fatale: la specifica del file\n"
 "    %s\n"
 "non corrisponde ad alcuno dei file nella directory di base\n"
 "    %s\n"
@@ -1756,28 +1626,22 @@ msgstr ""
 
 #: ../duplicity/selection.py:299
 #, python-format
-msgid ""
-"Fatal Error while processing expression\n"
+msgid "Fatal Error while processing expression\n"
 "%s"
-msgstr ""
-"Errore fatale durante l'elaborazione dell'espressione\n"
+msgstr "Errore fatale durante l'elaborazione dell'espressione\n"
 "%s"
 
 #: ../duplicity/selection.py:308
 #, python-format
-msgid ""
-"Last selection expression:\n"
+msgid "Last selection expression:\n"
 "    %s\n"
 "only specifies that files be included.  Because the default is to\n"
 "include all files, the expression is redundant.  Exiting because this\n"
 "probably isn't what you meant."
-msgstr ""
-"L'ultima espressione di selezione:\n"
+msgstr "L'ultima espressione di selezione:\n"
 "    %s\n"
-"specifica solo che i file verranno inclusi. Dato che l'impostazione "
-"predefinita\n"
-"prevede l'inclusione di tutti i file, l'espressione è ridondante. Uscita in "
-"quanto\n"
+"specifica solo che i file verranno inclusi. Dato che l'impostazione predefinita\n"
+"prevede l'inclusione di tutti i file, l'espressione è ridondante. Uscita in quanto\n"
 "probabilmente non è ciò che si voleva fare."
 
 #: ../duplicity/selection.py:364
@@ -1813,9 +1677,7 @@ msgstr "File temporaneo %s dimenticato"
 #: ../duplicity/tempdir.py:261
 #, python-format
 msgid "Attempt to forget unknown tempfile %s - this is probably a bug."
-msgstr ""
-"Tentativo di dimenticare il file temporaneo sconosciuto %s - questo è "
-"probabilmente un bug."
+msgstr "Tentativo di dimenticare il file temporaneo sconosciuto %s - questo è probabilmente un bug."
 
 #: ../duplicity/tempdir.py:280
 #, python-format
@@ -1830,9 +1692,7 @@ msgstr "Pulizia del file temporaneo %s non riuscita"
 #: ../duplicity/tempdir.py:288
 #, python-format
 msgid "Cleanup of temporary directory %s failed - this is probably a bug."
-msgstr ""
-"Pulizia della directory temporanea %s non riuscita - probabilmente si tratta "
-"di un bug."
+msgstr "Pulizia della directory temporanea %s non riuscita - probabilmente si tratta di un bug."
 
 #: ../duplicity/util.py:144
 #, python-format
@@ -1844,9 +1704,3 @@ msgstr "ERRORE_IGNORATO: attenzione, errore ignorato come richiesto: %s: %s"
 msgid "Releasing lockfile %s"
 msgstr ""
 
-#~ msgid ""
-#~ "Warning: exclude-device-files is not the first selector.\n"
-#~ "This may not be what you intended"
-#~ msgstr ""
-#~ "Attenzione: esclusione file del dispositivo non è il primo selettore.\n"
-#~ "Questo potrebbe non essere previsto"
