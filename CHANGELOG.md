@@ -1,4 +1,26 @@
-## rel.1.0.0 (2022-09-23)
+## rel.1.0.1 (2022-10-03)
+
+### Changes
+
+* Pkg New Crowdin updates. [Kenneth Loafman]
+
+### Fix
+
+* Revert changes to gpg\_failed(). [Kenneth Loafman]
+
+  - fixes #147 - Regression: change of encryption password.   - note -
+  GPG only returns 0,1,2.  Not sufficient for errors.   - also added
+  testing/manual/issue147.sh.
+
+### Other
+
+* Update Crowdin configuration file. [Kenneth Loafman]
+
+  Update Crowdin configuration file
+  Update Crowdin configuration file
+
+
+## rel.1.0.0 (2022-09-25)
 
 ### Changes
 
@@ -69,6 +91,12 @@
 * Add missing double quote. [ede]
 
 ### Other
+
+* Update Crowdin configuration file. [Kenneth Loafman]
+
+* Update Crowdin configuration file. [Kenneth Loafman]
+
+* Update Crowdin configuration file. [Kenneth Loafman]
 
 * Doc: some reformatting for better readability. [ede]
 
