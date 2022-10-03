@@ -265,20 +265,16 @@ class GPGFile(object):
             self.read(offset - self.byte_count)
 
     def gpg_failed(self):
-        if self.gpg_process.returned:
-            retcode = self.gpg_process.returned >> 8
-            msg = gpg_error_codes.get(retcode,
-                                      u"GPG returned an unknown error code: %d" % retcode) + u"\n"
-        if retcode != 2:
-            msg += u"GPG Failed, see log below:\n"
-            msg += u"===== Begin GnuPG log =====\n"
-            self.stderr_fp.seek(0)
-            for line in self.stderr_fp:
-                try:
-                    msg += str(line.strip(), locale.getpreferredencoding(), u'replace') + u"\n"
-                except Exception as e:
-                    msg += line.strip() + u"\n"
-            msg += u"===== End GnuPG log =====\n"
+        msg = u"GPG Failed, see log below:\n"
+        msg += u"===== Begin GnuPG log =====\n"
+        self.stderr_fp.seek(0)
+        for line in self.stderr_fp:
+            try:
+                msg += str(line.strip(), locale.getpreferredencoding(), u'replace') + u"\n"
+            except Exception as e:
+                msg += line.strip() + u"\n"
+        msg += u"===== End GnuPG log =====\n"
+        if not (msg.find(u"invalid packet (ctb=14)") > -1):
             raise GPGError(msg)
         else:
             return u""
