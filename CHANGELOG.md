@@ -1,6 +1,42 @@
-## (unreleased)
+## rel.1.0.1 (2022-10-03)
 
 ### Changes
+
+* Pkg New Crowdin updates. [Kenneth Loafman]
+
+### Fix
+
+* Revert changes to gpg\_failed(). [Kenneth Loafman]
+
+  - fixes #147 - Regression: change of encryption password.   - note -
+  GPG only returns 0,1,2.  Not sufficient for errors.   - also added
+  testing/manual/issue147.sh.
+
+### Other
+
+* Update Crowdin configuration file. [Kenneth Loafman]
+
+  Update Crowdin configuration file
+  Update Crowdin configuration file
+
+
+## rel.1.0.0 (2022-09-25)
+
+### Changes
+
+* Extend code\_test to testing directory. [Kenneth Loafman]
+
+  - Fix or mark issues found.   - Will not run under py27.
+
+* Fix .md formatting. [Kenneth Loafman]
+
+* Mark slow tests > 10sec.  Use -m "not slow". [Kenneth Loafman]
+
+* Ref requirements.dev in install. [Kenneth Loafman]
+
+* Ref requirements files instead of listing in duplicate. [Kenneth Loafman]
+
+* Nuke skip tests and skip ci in CHANGELOG.md. [Kenneth Loafman]
 
 * New os\_options for SWIFT backend. [Florian Perrot]
 
@@ -24,6 +60,18 @@
 
 ### Fix
 
+* Replace pydrive with pydrive2. Fixes #62. [Kenneth Loafman]
+
+* GDrive backend: Add environment args for configuring oauth flow. [Patrick Riley]
+
+* GDrive backend: For Google OAuth, switch to loopback flow. [Patrick Riley]
+
+* Reduce number of GPG file descriptors, add GPG translatable errors. [Kenneth Loafman]
+
+* Add back overzealous removal of 'import re'. [Kenneth Loafman]
+
+* Webdav listing failed on responses with namespace 'ns0' [Felix Prüter]
+
 * Make sure that FileChunkIO#name is a string, not a bytes-like object. [Josh Goebel]
 
 * Fix possible memory leaks.  Fixes #128.  Fixes #129. [Kenneth Loafman]
@@ -44,11 +92,15 @@
 
 ### Other
 
-* Merge branch 'main' of gitlab.com:duplicity/duplicity. [Kenneth Loafman]
+* Update Crowdin configuration file. [Kenneth Loafman]
+
+* Update Crowdin configuration file. [Kenneth Loafman]
+
+* Update Crowdin configuration file. [Kenneth Loafman]
+
+* Doc: some reformatting for better readability. [ede]
 
 * Doc: clarify when --s3-endpoint-url,-region-name are need. [ede]
-
-* Merge branch 'master' of gitlab.com:duplicity/duplicity. [Kenneth Loafman]
 
 
 ## rel.0.8.23 (2022-05-15)
@@ -104,28 +156,9 @@
   debug script   use shell wrapper as snap binary ignores PATH for
   python binary on debian
 
-* Merge remote-tracking branch 'origin/clean-dist' [Kenneth Loafman]
-
 * Optimize CI/CD to only run when needed. [Kenneth Loafman]
 
-* Merge remote-tracking branch 'origin/rclone\_options' [Kenneth Loafman]
-
-* Merge branch 'duplicity-core20' of
-git@gitlab.com:duplicity/duplicity.git into duplicity-core20. [Kenneth Loafman]
-
-* Merge remote-tracking branch 'origin/master' into duplicity-core20. [Kenneth Loafman]
-
-* Merge branch 'duplicity-core20' into 'master' [Kenneth Loafman]
-
-  upgrade to base core20
-  See merge request duplicity/duplicity!80
-
 * Upgrade to base core20. [Kenneth Loafman]
-
-* Merge branch 'website\_links' into 'master' [Kenneth Loafman]
-
-  switch website to gitlab.io, promote duplicity.us
-  See merge request duplicity/duplicity!79
 
 * Switch website to gitlab.io, promote duplicity.us. [ede]
 
@@ -174,20 +207,11 @@ git@gitlab.com:duplicity/duplicity.git into duplicity-core20. [Kenneth Loafman]
 
 ### Other
 
-* Merge branch 'master' of gitlab.com:duplicity/duplicity. [Kenneth Loafman]
-
 * Revert "chg:dev:core20 usess py38, not py36." [Kenneth Loafman]
 
   This reverts commit 05eda5828c7bdde1003357439cfcb4d93124a377.
 
-* Merge branch 'filecoin-backend' into 'master' [Kenneth Loafman]
-
-  Slate Backend
-  See merge request duplicity/duplicity!42
-
 * Slate Backend. [Shr1ftyy]
-
-* Merge branch 'mr-origin-75' [Kenneth Loafman]
 
 * Skip tests for ppc64le also. [Mikel Olasagasti Uranga]
 
@@ -254,83 +278,27 @@ git@gitlab.com:duplicity/duplicity.git into duplicity-core20. [Kenneth Loafman]
 
 ### Other
 
-* Merge branch 'master' of gitlab.com:duplicity/duplicity. [Kenneth Loafman]
-
-* Merge branch 'issue73' into 'master' [Kenneth Loafman]
-
-  resolve os option key naming mismatch
-  See merge request duplicity/duplicity!74
-
 * Resolve os option key naming mismatch. [Johannes Winter]
-
-* Merge branch 'master' into 'master' [Kenneth Loafman]
-
-  Set up gdrive client credentials scope correctly to allow refreshing
-  token
-  See merge request duplicity/duplicity!72
 
 * Set up gdrive client credentials scope correctly. [Christopher Haglund]
 
-* Merge branch 'master' of git@gitlab.com:duplicity/duplicity.git. [Kenneth Loafman]
-
-* Merge branch 'y0va-master-patch-75623' into 'master' [Kenneth Loafman]
-
-  don't query for filesize.
-  See merge request duplicity/duplicity!71
-
 * Don't query for filesize. [Johannes Winter]
-
-* Merge branch 'issue85' into 'master' [Kenneth Loafman]
-
-  upgrade docker test environment
-  See merge request duplicity/duplicity!70
 
 * Upgrade docker test environment. [Johannes Winter]
 
 * Merge branch 'master' of gitlab.com:duplicity/duplicity. [Kenneth Loafman]
 
-* Merge branch 'master' of gitlab.com:duplicity/duplicity. [Kenneth Loafman]
-
-* Merge branch 'mr4' into 'master' [Kenneth Loafman]
-
-  Fix TypeError.
-  See merge request duplicity/duplicity!69
-
 * Fix TypeError. [Clemens Fuchslocher]
-
-* Merge branch 'mr3' into 'master' [Kenneth Loafman]
 
 * SSHPExpectBackend: Implement \_delete\_list method. [Clemens Fuchslocher]
 
-* Merge branch 'mr2' into 'master' [Kenneth Loafman]
-
 * MultiBackend: Don't log username and password. [Clemens Fuchslocher]
-
-* Merge branch 'mr1' into 'master' [Kenneth Loafman]
-
-  Fix NameError.
-  See merge request duplicity/duplicity!66
 
 * Fix NameError. [Clemens Fuchslocher]
 
-* Merge branch 'onedrive-token-take2' into 'master' [Kenneth Loafman]
-
-  onedrive: Support using an external client id / refresh token
-  See merge request duplicity/duplicity!65
-
 * Onedrive: Support using an external client id / refresh token. [Michael Terry]
 
-* Merge branch 'fix-tmdir' into 'master' [Kenneth Loafman]
-
-  fix functional tests when _runtest_dir is not /tmp
-  See merge request duplicity/duplicity!64
-
 * Fix functional tests when \_runtestdir is not /tmp. [Guillaume Girol]
-
-* Merge branch 'date' into 'master' [Kenneth Loafman]
-
-  Allow to override manpage date with SOURCE_DATE_EPOCH
-  See merge request duplicity/duplicity!63
 
 * Allow to override manpage date with SOURCE\_DATE\_EPOCH. [Bernhard M. Wiedemann]
 
@@ -339,8 +307,6 @@ git@gitlab.com:duplicity/duplicity.git into duplicity-core20. [Kenneth Loafman]
   builds.org/specs/source-date-epoch/   for the definition of this
   variable.
   Also use UTC/gmtime to be independent of timezone.
-
-* Merge branch 'origin/merge-requests/61' [Kenneth Loafman]
 
 * Improved management of volumes unsealing for PCA backend For PCA
 backend, unseal all volumes at once when restoring them instead of
@@ -394,42 +360,14 @@ Multibackend as well. [Erwan B]
 
 * Don't skip CI. [Kenneth Loafman]
 
-* Merge branch 'master' into 'master' [Kenneth Loafman]
-
-  Add support for new b2sdk V2 API
-  See merge request duplicity/duplicity!60
-
 * Add support for new b2sdk V2 API. [Adam Jacobs]
-
-* Merge branch 'master' into 'master' [Kenneth Loafman]
-
-  chg:dev:Fix Support DynamicLargeObjects inside swift backend
-  See merge request duplicity/duplicity!59
-
-* Merge branch 'issue#68' into 'master' [Kenneth Loafman]
-
-  have duplicity retry validate_block so object storage can report
-  correct size
-  See merge request duplicity/duplicity!58
 
 * Have duplicity retry validate\_block so object storage can report
 correct size. [Doug Thompson]
 
-* Merge branch 'master' into 'master' [Kenneth Loafman]
-
-  Replace b2sdk private API references in b2backend with public API
-  See merge request duplicity/duplicity!57
-
 * Replace b2sdk private API references in b2backend with public API. [Adam Jacobs]
 
-* Merge branch 'master' into 'master' [Kenneth Loafman]
-
-  Update b2 backend to use *public* b2sdk API.
-  See merge request duplicity/duplicity!55
-
 * Update b2 backend to use *public* b2sdk API. [Adam Jacobs]
-
-* Merge branch 'bullfrogalj/duplicity-master' [Kenneth Loafman]
 
 * B2sdk 1.8.0 refactored minimum\_part\_size to recommended\_part\_size
 (the value used stays the same) [Adam Jacobs]
@@ -438,22 +376,10 @@ correct size. [Doug Thompson]
   This fix makes duplicity compatible with both pre- and post- 1.8.0
   SDKs.
 
-* Merge branch 'PR-backend-gdrive-mydrive' into 'master' [Kenneth Loafman]
-
-  backend gdrive, added Google MyDrive support
-  See merge request duplicity/duplicity!52
-
 * Added Google MyDrive support updated man pages and --help text. [Anthony Uphof]
 
 
 ## rel.0.8.19 (2021-04-29)
-
-### New
-
-* Merge branch 'google-drive-v3' into 'master' [Kenneth Loafman]
-
-  Add a new Google Drive backend (gdrive:)
-  See merge request duplicity/duplicity!41
 
 ### Changes
 
@@ -483,70 +409,22 @@ correct size. [Doug Thompson]
 
 ### Other
 
-* Merge branch 'develop' into 'master' [Kenneth Loafman]
-
-  Fix Google Drive timeout
-  See merge request duplicity/duplicity!51
-
 * Fix "Giving up after 5 attempts. timeout: The read operation timed
 out" [Christian Perreault]
 
-* Merge branch 'master' into 'master' [Kenneth Loafman]
-
-  Don't sync when removing old backups
-  See merge request duplicity/duplicity!50
-
 * Don't sync when removing old backups. [Matthew Marting]
-
-* Merge branch 'fix-uexec-returns-None' into 'master' [Kenneth Loafman]
-
-  fix util.uexc: do not return None
-  See merge request duplicity/duplicity!49
 
 * Fix util.uexc: do not return None. [Michael Kopp]
 
-* Merge branch 'boxbackend' into 'master' [Kenneth Loafman]
-
-  Implement Box backend
-  See merge request duplicity/duplicity!48
-
 * Implement Box backend. [Jason Wu]
-
-* Merge branch 'megav3' into 'master' [Kenneth Loafman]
-
-  Implement megav3 backend to to cater for change in MEGACmd
-  See merge request duplicity/duplicity!47
 
 * Implement megav3 backend to to cater for change in MEGACmd. [Jason Wu]
 
-* Merge branch 'master' of git@gitlab.com:duplicity/duplicity.git. [Kenneth Loafman]
-
-* Merge branch 'use-new-azure-python-packages' into 'master' [Kenneth Loafman]
-
-  fix documentation for azure backend
-  See merge request duplicity/duplicity!46
-
 * Fix documentation for azure backend. [Michael Kopp]
-
-* Merge branch 'master' into 'master' [Kenneth Loafman]
-
-  Fix typo
-  See merge request duplicity/duplicity!45
 
 * Fix typo. [Moses Miller]
 
-* Merge branch 'master' into 'master' [Kenneth Loafman]
-
-  Add IDrive backend
-  See merge request duplicity/duplicity!43
-
 * Add IDrive backend. [SmilingM]
-
-* Merge branch 'master' into 'master' [Kenneth Loafman]
-
-  Progress bar improvements
-  Closes #49
-  See merge request duplicity/duplicity!44
 
 * Progress bar improvements. [Moses Miller]
 
@@ -559,11 +437,6 @@ out" [Christian Perreault]
   - Uses unchanged JSON secret files as downloaded from GCP
   - Updates the Google Drive API to V3
 
-* Merge branch 'azurev12' into 'master' [Kenneth Loafman]
-
-  Azurev12
-  See merge request duplicity/duplicity!40
-
 * Replaced original azure implementation. [Erwin Bovendeur]
 
 * Fixed code smells. [Erwin Bovendeur]
@@ -574,12 +447,6 @@ out" [Christian Perreault]
 used." [Kenneth Loafman]
 
   This reverts commit 90e7e2acb6d158437cab3210114da46df72a7c85.
-
-* Merge branch 'feature/list-required-volumes-on-restore-dry-run' into
-'master' [Kenneth Loafman]
-
-  List required volumes when called with 'restore --dry-run'
-  See merge request duplicity/duplicity!38
 
 * List required volumes when called with 'restore --dry-run' [Matthias Blankertz]
 
@@ -593,27 +460,12 @@ used." [Kenneth Loafman]
   restore process for all the listed volumes   3. duplicity restore
   [--file-to-restore <file/dir>] [--time <time>] boto3+s3://...
 
-* Merge branch 'swrmr-master-patch-23969' into 'master' [Kenneth Loafman]
-
-  Fix sorting of BackupSets by avoiding direct comparison
-  Closes #42
-  See merge request duplicity/duplicity!37
-
 * Fix sorting of BackupSets by avoiding direct comparison. [Stefan Wehrmeyer]
 
   Sorting should only compare their time/end_time, not BackupSets
   directly   Closes #42
 
-* Merge branch 'master' of gitlab.com:duplicity/duplicity. [Kenneth Loafman]
-
-* Merge branch 'master' into 'master' [Kenneth Loafman]
-
-  Update mailing list link
-  See merge request duplicity/duplicity!36
-
 * Update mailing list link. [Chris Coutinho]
-
-* Merge branch 'master' of gitlab.com:duplicity/duplicity. [Kenneth Loafman]
 
 * Fixes #16 - Move from boto to boto3. [Kenneth Loafman]
 
@@ -645,8 +497,6 @@ used." [Kenneth Loafman]
 
 * Rename pylintrc to .pylintrc. [Kenneth Loafman]
 
-* Merge branch 'fix-prefix-affinity-registration' into 'master' [Kenneth Loafman]
-
 * Multibackend: fix indentation error that was preventing from
 registering more than one affinity prefix per backend. [KheOps]
 
@@ -656,8 +506,6 @@ registering more than one affinity prefix per backend. [KheOps]
   only Darwin and Linux are supported, default Linux.   - Darwin uses
   'getconf DARWIN_USER_TEMP_DIR' for temp dir.   - Linux uses TMPDIR,
   TEMP, or defaults to /tmp.
-
-* Merge remote-tracking branch 'alpha/testfiles' [Kenneth Loafman]
 
 * Update .gitlab-ci.yml to need code test to pass. [Kenneth Loafman]
 
@@ -674,27 +522,15 @@ registering more than one affinity prefix per backend. [KheOps]
 
 ### Other
 
-* Merge branch 'onedrive-token' into 'master' [Kenneth Loafman]
-
-  onedrive: Support using an external client id / refresh token
-  See merge request duplicity/duplicity!34
-
 * Onedrive: Support using an external client id / refresh token. [Michael Terry]
 
 * Update .gitlab-ci.yml to need code test to pass. [Kenneth Loafman]
-
-* Merge branch 'master' of git@gitlab.com:duplicity/duplicity.git. [Kenneth Loafman]
 
 * Fix issue #26 Backend b2 backblaze fails with nameprefix restrictions. [Kenneth Loafman]
 
 * Fix issue #29 Backend b2 backblaze fails with nameprefix restrictions. [Kenneth Loafman]
 
 * Fix unadorned strings. [Kenneth Loafman]
-
-* Merge branch 'Rufflewind-master-patch-11811' into 'master' [Kenneth Loafman]
-
-  Report errors if B2 backend does exist but otherwise fails to import
-  See merge request duplicity/duplicity!33
 
 * Report errors if B2 backend does exist but otherwise fails to import. [Phil Ruffwind]
 
@@ -718,13 +554,6 @@ registering more than one affinity prefix per backend. [KheOps]
   option is present.  A Catch-22 hack was made since we had to get
   options   for the log before adding a formatter, yet the commandline
   parser needs   the logger.  Went old school on it.
-
-* Merge branch 'master' of gitlab.com:duplicity/duplicity. [Kenneth Loafman]
-
-* Merge branch 'master' into 'master' [Kenneth Loafman]
-
-  Patch for Python 3.10.
-  See merge request duplicity/duplicity!32
 
 * Improve. [Gwyn Ciesla]
 
@@ -755,22 +584,12 @@ registering more than one affinity prefix per backend. [KheOps]
 
   $ [sudo] pip install gitchangelog
 
-* Merge branch 'exc-if-present-robust' into 'master' [Kenneth Loafman]
-
-  Make exclude-if-present more robust
-  See merge request duplicity/duplicity!31
-
 * Make exclude-if-present more robust. [Michael Terry]
 
   Specifically, handle all the "common errors" when listing a directory
   to see if the mentioned file is in it. Previously, we had done a
   check for read access before listing. But it's safe to try to list
   and just catch the errors that happen.
-
-* Merge branch 'no-umask' into 'master' [Kenneth Loafman]
-
-  Drop default umask of 0077
-  See merge request duplicity/duplicity!30
 
 * Drop default umask of 0077. [Michael Terry]
 
@@ -787,12 +606,6 @@ registering more than one affinity prefix per backend. [KheOps]
 
 * Fixed RsyncBackendTeest with proper URL. [Kenneth Loafman]
 
-* Merge branch 'Yump-issue-23' into 'master' [Kenneth Loafman]
-
-  Fix issue #23
-  Closes #23
-  See merge request duplicity/duplicity!29
-
 * Fix issue #23. [Yump]
 
   Fix unicode crash on verify under python3, when symlinks have changed
@@ -802,19 +615,9 @@ registering more than one affinity prefix per backend. [KheOps]
 
 * Allow sign-build to fail on walk away.  Need passwordless option. [Kenneth Loafman]
 
-* Merge branch 'fix-rename' into 'master' [Kenneth Loafman]
-
-  Fix --rename typo
-  See merge request duplicity/duplicity!28
-
 * Fix --rename typo. [Michael Terry]
 
 * Move back to VM build, not remote.  Too many issues with remote. [Kenneth Loafman]
-
-* Merge branch 'escape-quote' into 'master' [Kenneth Loafman]
-
-  Escape single quotes in machine-readable log messages
-  See merge request duplicity/duplicity!27
 
 * Escape single quotes in machine-readable log messages. [Michael Terry]
 
@@ -855,11 +658,6 @@ registering more than one affinity prefix per backend. [KheOps]
 
 * Merged in s3-unfreeze-all. [Kenneth Loafman]
 
-* Merge branch 's3-unfreeze-all' into 'master' [Kenneth Loafman]
-
-  S3 unfreeze all
-  See merge request duplicity/duplicity!20
-
 * Wait for Glacier batch unfreeze to finish. [Marco Herrn]
 
   The ThreadPoolExecutor starts the unfreezing of volumes in parallel.
@@ -897,37 +695,17 @@ registering more than one affinity prefix per backend. [KheOps]
 
 * Merged in OutlawPlz:paramiko-progress. [Kenneth Loafman]
 
-* Merge branch 'paramiko-progress' into 'master' [Kenneth Loafman]
-
-  Fixes paramiko backend progress bar
-  See merge request duplicity/duplicity!26
-
 * Fixes paramiko backend progress bar. [Matteo Palazzo]
 
 * Merged in lazy init for Boto3 network connections. [Kenneth Loafman]
 
-* Merge branch 'feature/lazy\_init\_boto3' into 'master' [Kenneth Loafman]
-
-  lazy init for Boto3 network connections
-  See merge request duplicity/duplicity!25
-
 * Initial crack at lazy init for Boto3. [Carl Alexander Adams]
-
-* Merge branch 'hostname' into 'master' [Kenneth Loafman]
-
-  Record the hostname, not the fqdn, in manifest files
-  See merge request duplicity/duplicity!24
 
 * Record the hostname, not the fqdn, in manifest files. [Michael Terry]
 
   We continue to check the fqdn as well, to keep backward
   compatibility.
   https://bugs.launchpad.net/duplicity/+bug/667885
-
-* Merge branch 'listdir-contains' into 'master' [Kenneth Loafman]
-
-  Avoid calling stat when checking for exclude-if-present files
-  See merge request duplicity/duplicity!23
 
 * Avoid calling stat when checking for exclude-if-present files. [Michael Terry]
 
@@ -943,12 +721,6 @@ registering more than one affinity prefix per backend. [KheOps]
 * Recover some changes lost after using web-ide. [Kenneth Loafman]
 
 * Paperwork. [Kenneth Loafman]
-
-* Merge branch 's3-boto3-region-and-endpoint' into 'master' [Kenneth Loafman]
-
-  Allow setting s3 region and endpoint
-  Closes #12
-  See merge request duplicity/duplicity!21
 
 * Set default values for s3\_region\_name and s3\_endpoint\_url. [Marco Herrn]
 
@@ -986,11 +758,6 @@ registering more than one affinity prefix per backend. [KheOps]
 
 * Always paperwork. [Kenneth Loafman]
 
-* Merge branch 's3-boto3-region-and-endpoint' into 'master' [Kenneth Loafman]
-
-  Allow setting s3 region and endpoint
-  See merge request duplicity/duplicity!19
-
 * Allow setting s3 region and endpoint. [Marco Herrn]
 
   This commit introduces the new commandline options     --s3-region-
@@ -999,21 +766,11 @@ registering more than one affinity prefix per backend. [KheOps]
   It is probably useful for Amazon accounts, too, to have more fine
   grained influence on the region to use.
 
-* Merge branch 'pydrive-notfound' into 'master' [Kenneth Loafman]
-
-  Fix missing FileNotUploadedError in pydrive backend
-  See merge request duplicity/duplicity!18
-
 * Fix missing FileNotUploadedError in pydrive backend. [Martin Sucha]
 
   Since dadbe2d2c22751f68f179833d36c94f2777ba425, FileNotUploadedError
   is not imported anymore, resulting in an exception in case   some of
   the files failed to upload. Adding the import back.
-
-* Merge branch 'pydriveshared' into 'master' [Kenneth Loafman]
-
-  Backend for Shared Drives on Google
-  See merge request duplicity/duplicity!17
 
 * Fixed indentation. [Joshua Chan]
 
@@ -1031,11 +788,6 @@ use it to pass supplementary info to the backend. [Joshua Chan]
 * Fix issue #10 - ppa:duplicity-*-git fails to install on Focal Fossa. [Kenneth Loafman]
 
   - Set correct version requirements in debian/control.
-
-* Merge branch 'patch-2' into 'master' [Kenneth Loafman]
-
-  Remove python-cloudfiles from suggestions
-  See merge request duplicity/duplicity!16
 
 * Remove python-cloudfiles from suggestions. [Jairo Llopis]
 
@@ -1067,11 +819,6 @@ use it to pass supplementary info to the backend. [Joshua Chan]
   logs for full command output.   ```
   Also, it is no longer supported. Rackspace uses `pyrax` nowadays.
   Removing to avoid confusions.
-
-* Merge branch 'patch-1' into 'master' [Kenneth Loafman]
-
-  Update azure requirement
-  See merge request duplicity/duplicity!15
 
 * Update azure requirement. [Jairo Llopis]
 
@@ -1120,11 +867,6 @@ use it to pass supplementary info to the backend. [Joshua Chan]
   do not       support Unix ownership or when root privileges are not
   available.
 
-* Merge branch 'master' into 'master' [Kenneth Loafman]
-
-  Added `--do-not-restore-ownership` option
-  See merge request duplicity/duplicity!14
-
 * Added `--do-not-restore-ownership` option. [Jacotsu]
 
   Ignores the uid/gid from the archive and keeps the current user's one.
@@ -1138,11 +880,6 @@ use it to pass supplementary info to the backend. [Joshua Chan]
   filename byte decoding
 
 * Bump version for LP build. [Kenneth Loafman]
-
-* Merge branch 'fix-glacier-check' into 'master' [Kenneth Loafman]
-
-  Fix check for s3 glacier/deep
-  See merge request duplicity/duplicity!13
 
 * Fix check for s3 glacier/deep. [Michael Terry]
 
@@ -1172,14 +909,7 @@ use it to pass supplementary info to the backend. [Joshua Chan]
 
 * Catch up on paperwork. [Kenneth Loafman]
 
-* Merge branch 'mikix/rename-fix' into 'master' [Kenneth Loafman]
-
-  Fix --rename encoding
-  See merge request duplicity/duplicity!11
-
 * Fix --rename encoding. [Michael Terry]
-
-* Merge remote-tracking branch 'team/fix-py27-testing' [Kenneth Loafman]
 
 * Skip tests failing on py27 under 18.04 (timing error). [Kenneth Loafman]
 
@@ -1199,24 +929,11 @@ use it to pass supplementary info to the backend. [Joshua Chan]
 
 * Don't collect coverage unless needed. [Kenneth Loafman]
 
-* Merge branch 'master' into 'master' [Kenneth Loafman]
-
-  Support PyDrive2 library in the pydrive backend
-  Unlike PyDrive, the PyDrive2 fork is actively maintained.
-  See merge request duplicity/duplicity!9
-
 * Support PyDrive2 library in the pydrive backend. [Jindrich Makovicka]
 
   Unlike PyDrive, the PyDrive2 fork is actively maintained.
 
-* Merge branch 'Tidy\_up\_gitlab\_CI\_doc' into 'master' [Kenneth Loafman]
-
-  Tidy .gitlab-ci.yml, fix py3.5 test, add py2.7 test (allowed to fail)
-  See merge request duplicity/duplicity!7
-
 * Tidy .gitlab-ci.yml, fix py3.5 test, add py2.7 test (allowed to fail) [Aaron Whitehouse]
-
-* Merge branch 'fix-py27-CI' [Kenneth Loafman]
 
 * Test code instead of py27 since py27 is tested elsewhere. [Kenneth Loafman]
 
@@ -1260,22 +977,11 @@ use it to pass supplementary info to the backend. [Joshua Chan]
 
 * Fix duplicity to run under Python 3.5. [Kenneth Loafman]
 
-* Merge branch 'add\_gitlab\_testing' into 'master' [Kenneth Loafman]
-
-  Add gitlab CI testing
-  See merge request duplicity/duplicity!3
-
 * Update .gitlab-ci.yml to update pip before installing other pip
 packages (to try to fix more-itertools issue:
 https://github.com/pytest-dev/pytest/issues/4770 ) [Aaron Whitehouse]
 
 * Don't include .git dir when building docker images. [Kenneth Loafman]
-
-* Merge branch 'update\_pip\_before\_install' into 'master' [Kenneth Loafman]
-
-  Upgrade pip before installing requirements with it. Fixes more-
-  itertools error...
-  See merge request duplicity/duplicity!2
 
 * Upgrade pip before installing requirements with it. Fixes more-
 itertools error as newer versions of pip identify that the latest
@@ -1379,14 +1085,6 @@ glacier. [Kenneth Loafman]
 
 * Fixed bug #1869921 - B2 backup resume fails for TypeError. [ken]
 
-* Merged in lp:\~kenneth-loafman/duplicity/duplicity-pylint   - Enable
-additional pylint warnings. Make 1st pass at correction.       unused-
-argument,       unused-wildcard-import,       redefined-builtin,
-bad-indentation,       mixed-indentation,      unreachable   - Renamed
-globals to config to fix conflict with \_\_builtin\_\_.glogals()   -
-Resolved conflict between duplicity.config and testing.manual.config
-- Normalized emacs mode line to have encoding:utf8 on all *.py files. [ken]
-
 * More changes for pylint. * Resolved conflict between duplicity.config
 and testing.manual.config * Normalized emacs mode line to have
 encoding:utf8 on all *.py files. [Kenneth Loafman]
@@ -1408,8 +1106,6 @@ Azure backend. [Kenneth Loafman]
 ## rel.0.8.12 (2020-03-19)
 
 ### Other
-
-* Merged in translation updates * Prep for 0.8.12. [Kenneth Loafman]
 
 * Fixed bug #1867742 - TypeError: fsdecode()   takes 1 positional
 argument but 2 were given   with PCA backend. [Kenneth Loafman]
@@ -1460,8 +1156,6 @@ finding filename. [ken]
 
 ### Other
 
-* Merged in translation updates. [ken]
-
 * Fixed to work around par2 0.8.1 core dump on short name   -
 https://github.com/Parchive/par2cmdline/issues/145. [ken]
 
@@ -1510,10 +1204,6 @@ python3-boto3 requirement to snapcraft.yaml. [ken]
 
 * Renamed botobackend.py to s3\_boto\_backend.py. [ken]
 
-* Renamed botobackend.py to s3\_boto\_backend.py. [ken]
-
-* Merged from parent to bring in changes. [Byron Hammond]
-
 * Renamed MulitGzipFile to GzipFile to avoid future problems with
 upstream author of mgzip fixing the Mulit -> Multi typo. [Byron Hammond]
 
@@ -1557,8 +1247,6 @@ for release or final. [Kenneth Loafman]
 ## rel.0.8.10 (2020-01-23)
 
 ### Other
-
-* Merged in translation updates * Prep for 0.8.10. [Kenneth Loafman]
 
 * Fixed bug #1858207 missing targets in multibackend   - Made it
 possible to return default value instead     of taking a fatal
@@ -1605,8 +1293,6 @@ allowances. [kenneth@loafman.com]
 
 ### Other
 
-* Merged in translation updates * Prep for 0.8.09. [kenneth@loafman.com]
-
 * Change of plans.  Skip test if rclone not present. [kenneth@loafman.com]
 
 * Add rclone to setup testing requirements. [kenneth@loafman.com]
@@ -1637,10 +1323,6 @@ replaced by open() in 3 places. [kenneth@loafman.com]
 
 * Original rclonebackend.py from Francesco Magno for Python 2.7. [kenneth@loafman.com]
 
-* Merged in lp:\~ed.so/duplicity/boto.fixup   - fix manpage indention
-- clarify difference between boto backends   - add boto+s3:// for
-future use when boto3+s3://     will become default s3 backend. [kenneth@loafman.com]
-
 * Fix manpage indention clarify difference between boto backends add
 boto+s3:// for future use when boto3+s3:// will become default s3
 backend. [ed.so]
@@ -1670,8 +1352,6 @@ returned on error.  Make bytes. [kenneth@loafman.com]
 
 * Merged in translation updates. [kenneth@loafman.com]
 
-* Merged in translation updates. [kenneth@loafman.com]
-
 * Removed abandoned ref in README * Comment out signing in makesnap. [kenneth@loafman.com]
 
 * Fixed bug #1854554 with help from Tommy Nguyen   - Fixed a typo made
@@ -1685,10 +1365,6 @@ errors. [kenneth@loafman.com]
 releases since 18.04, so the code works.  To run tests manually, run
 tox from the main directory.  Maybe LP build will work again soon. [kenneth@loafman.com]
 
-* Merged in lp:\~carlalex/duplicity/duplicity   - Fixes bug #1840044:
-Migrate boto backend to boto3   - New module uses boto3+s3:// as
-schema. [kenneth@loafman.com]
-
 * Update to manpage. [Carl A. Adams]
 
 * BUGFIX: list should retun byte strings, not unicode strings. [Carl A. Adams]
@@ -1699,8 +1375,6 @@ schema. [kenneth@loafman.com]
 changes to support this. [Carl A. Adams]
 
 * Renaming boto3 backend file. [Carl A. Adams]
-
-* Merging from parent. [Carl A. Adams]
 
 * Adding support for AWS Glacier Deep Archive.  Fixing some typos. [Carl A. Adams]
 
@@ -1784,28 +1458,10 @@ order to keep backward compatibility with older installations. [kenneth@loafman.
 
 ### Other
 
-* Merged in translation updates * Prep for 0.8.07. [kenneth@loafman.com]
-
 * Fixed bug #1851727 - InvalidBackendURL for multi backend   - Encode to
 utf8 only on Python2, otherwise leave as unicode. [kenneth@loafman.com]
 
-* Merged in lp:\~mterry/duplicity/resume-encrypt-no-pass   - This branch
-arose from a Debian patch that has been disabling the     encryption
-validation of volume1 during restarts for years.   - Debian has been
-preserving the ability to back up with just an encrypt     key and no
-password (i.e. to have no secrets on the backup machine). [kenneth@loafman.com]
-
 * Fix resuming without a passphrase when using just an encryption key. [Michael Terry]
-
-* Merged in lp:\~mterry/duplicity/pydrive-cache-fix   - The pydrive
-backend had another of the ongoing bytes/string issues. :)   - This
-time, it was saving a bytes filename in its internal cache after
-each volume upload. Then when asked for a list of files later, it
-would add the byte-filenames from its cache to the results.     And
-we'd end up thinking there were two of the same filename on the
-backend,     which would cause a crash at the end of an otherwise
-successful backup,     because the collections code would assert on
-the filenames being unique. [kenneth@loafman.com]
 
 * Fix bytes/string issue in pydrive backend upload. [Michael Terry]
 
@@ -1826,8 +1482,6 @@ and bytes. [kenneth@loafman.com]
 ## rel.0.8.06 (2019-11-05)
 
 ### Other
-
-* Merged in translation updates. [kenneth@loafman.com]
 
 * Updated snapcraft.yaml to remove python-lockfile and fix spelling. [kenneth@loafman.com]
 
@@ -1885,11 +1539,6 @@ integer division. [kenneth@loafman.com]
 
 * Fix unadorned string. [kenneth@loafman.com]
 
-* Updated b2 backend to work with both v0 and v1 of b2sdk * Fixed bug
-#1847885 - B2 fails on string concatenation.   - use util.fsdecode()
-to get a string not bytes.   - Partially fixed in bug #1843995, this
-applies same fix to     remaining instances of the problem. [kenneth@loafman.com]
-
 * Update changelogs. [Adam Jacobs]
 
 * In version 1 of the B2sdk, the list\_file\_names method is removed
@@ -1917,8 +1566,6 @@ default to off. [kenneth@loafman.com]
 
 * Removed a setting in tox.ini that causes coverage to   be activated
 during testing duplicity. [kenneth@loafman.com]
-
-* Merged in translation updates * Prep for 0.8.05. [kenneth@loafman.com]
 
 * Fixed bug #1846678 - --exclude-device-files and -other-filesystems
 crashes   - assuming all options had arguments was fixed. [kenneth@loafman.com]
@@ -1974,8 +1621,6 @@ translations. [kenneth@loafman.com]
 
 ### Other
 
-* Merged in translation updates * Prep for 0.8.04. [kenneth@loafman.com]
-
 * Made some changes to the Docker infrastructure:   - All scripts run
 from any directory, assuming directory     structure remains the same.
 - Changed from Docker's COPY internal command which is slow to
@@ -1983,14 +1628,6 @@ using external rsync which is faster and allows excludes.   - Removed
 a couple of unused files. [kenneth@loafman.com]
 
 * Run compilec.py for code tests, it needs the import. [kenneth@loafman.com]
-
-* Merged in lp:\~aaron-whitehouse/duplicity/08-docker-local-import   -
-Convert the Docker infrastructure to pull the local branch into
-duplicity\_test. This allows testing the local branch with the
-known-good Docker environment, even if it has not yet been
-committed to trunk.   - As a consequence, remove the -r option to
-build-duplicity\_test.sh.     This functionality can be achieved by
-branching that revision     before running the script. [kenneth@loafman.com]
 
 * Simplify README-TESTING and change this to recommend using the Docker
 images to test local branches in a known-good environment. [Aaron A Whitehouse]
@@ -2023,18 +1660,9 @@ TestUnicode.test\_unicode\_paths\_asterisks;
 TestUnicode.test\_unicode\_paths\_non\_globbing;
 TestUnicode.test\_unicode\_paths\_square\_brackets) [Aaron A Whitehouse]
 
-* Merge with trunk. [Aaron A Whitehouse]
-
 * Fix .bzrignore. [kenneth@loafman.com]
 
-* Merged in lp:\~kaffeekiffer/duplicity/azure-filename   - Encode Azure
-back-end paths. [kenneth@loafman.com]
-
 * Encode Azure backend file names. [Frank Fischer]
-
-* Merged in lp:\~aaron-whitehouse/duplicity/08-README-TESTING   - Change
-README-TESTING to be correct for running individual tests     now that
-we have moved to Tox/Pytest. [kenneth@loafman.com]
 
 * Change README-TESTING to be correct for running individual tests now
 that we have moved to Pytest. [Aaron A Whitehouse]
@@ -2078,9 +1706,6 @@ https://launchpad.net/\~duplicity-team/+archive/ubuntu/daily-dev-trunk. [kenneth
 
 * Fix debian/control file. [kenneth@loafman.com]
 
-* Merged in lp:\~aaron-whitehouse/duplicity/08-snap-python2   - Add
-packaging code for Snapcraft/Snap packages. [kenneth@loafman.com]
-
 * Add snap package creation files * Modify dist/makedist to version the
 snapcraft.yaml. [Aaron A Whitehouse]
 
@@ -2108,8 +1733,6 @@ build-duplicity\_test.sh now that the whole folder is copied
 ## rel.0.8.03 (2019-08-09)
 
 ### Other
-
-* Merged in translation updates * Prep for 0.8.03. [kenneth@loafman.com]
 
 * More changes to provide Python test coverage:   - Moved bulk of code
 from bin/duplicity to     duplicity/dup\_main.py for coverage. * Fixed
@@ -2152,9 +1775,6 @@ shows up in htmlcov/index.html. [kenneth@loafman.com]
 
 * One last change for bug #1829416 from charlie4096. [kenneth@loafman.com]
 
-* Merged in po-updates. * Fixed bug #1829416 with help from charlie4096
-- onedrive: Can’t convert ‘bytes’ object to str implicitly. [kenneth@loafman.com]
-
 * Enhanced build\_duplicity\_test.sh   - Use -h to get help and defaults
 - Takes arguments for distro, revno, help   - Distros supported are
 18.04, 18.10, 19.04, 19.10   - Revnos are passed to bzr -r option. [kenneth@loafman.com]
@@ -2165,14 +1785,9 @@ revisions if changed since last build. [kenneth@loafman.com]
 * Remove speedup in testing backup.  The math was correct,   but it's
 failing on Docker and Launchpad testing. [kenneth@loafman.com]
 
-* Fix language classifiers in setup.py. [kenneth@loafman.com]
-
 * Move pytest-runner setup requirement to a test requirement. [Michael Terry]
 
 * Removed python-gettext from setup.py.  Whoops! [kenneth@loafman.com]
-
-* Merged in lp:\~stragerneds/duplicity/duplicity   - Cache results of
-filename parsing for speedup. [kenneth@loafman.com]
 
 * Optimize loading backup chains; reduce file\_naming.parse calls. [Matthew Glazar]
 
@@ -2196,9 +1811,6 @@ filename parsing for speedup. [kenneth@loafman.com]
   Aside from improving performance, this commit should not   change
   behavior.
 
-* Merged in lp:\~limburgher/duplicity/dropbox   - Fixes bug #1836611
-dropbox mixing bytes and strings. [kenneth@loafman.com]
-
 * Correct types for os.join in Dropbox backend. [Gwyn Ciesla]
 
 * Fixed bug #1836829 progress.py: old\_div not defined   - also fixed
@@ -2215,8 +1827,6 @@ installation includes gettext. * Mod README to include Python 3.6 and
 ## rel.0.8.01 (2019-07-14)
 
 ### Other
-
-* Merged in po-updates. [kenneth@loafman.com]
 
 * Comment out HSIBackendTest since shim is not up-to-date. [kenneth@loafman.com]
 
@@ -2252,17 +1862,7 @@ test\_glob\_to\_regex to work on Python 3.7. [kenneth@loafman.com]
 the differently than "from builtins".  They are both the same, so
 converted to shorter form "from builtins" and removed duplicates. [kenneth@loafman.com]
 
-* Merged in lp:\~mterry/duplicity/s3fsdecode   - Fix s3 backups by
-encoding remote filenames. [kenneth@loafman.com]
-
 * Fix s3 backups by encoding remote filenames. [Michael Terry]
-
-* Merged in lp:\~aaron-whitehouse/duplicity/08-dockerfixes   - Update
-duplicity\_test Dockerfile:     * Use 18.04 instead of 16.04     * Use
-Ubuntu 18.04 version of pip     * Add Python3 and 2to3 as a
-dependencies     * Set docker locale as UTF-8. [kenneth@loafman.com]
-
-* Merge with trunk. [Aaron A. Whitehouse]
 
 * Add 2to3 as a dependency to dockerfile. [Aaron A. Whitehouse]
 
@@ -2272,10 +1872,6 @@ DEBIAN\_FRONTEND=noninteractive so no tzdata prompt. [Aaron A. Whitehouse]
 * Set docker container locale to prevent UTF-8 errors. [Aaron A. Whitehouse]
 
 * Change dockerfile to use 18.04 instead of 16.04 and other fixes. [Aaron A. Whitehouse]
-
-* Merged lp:\~mterry/duplicity/boto-import   - A couple functions in the
-boto backend were using the boto module     without importing it
-first. [kenneth@loafman.com]
 
 * Fix s3 backups by importing the boto module. [Michael Terry]
 
@@ -2296,9 +1892,6 @@ to use /usr/bin/python instead of python2. [kenneth@loafman.com]
 
 * Fix some test\_code errors that slipped by. [kenneth@loafman.com]
 
-* Merged in lp:\~kaffeekiffer/duplicity/azure-python3-fix   - Use
-util.fsencode to encode file string. [kenneth@loafman.com]
-
 * Fix Azure backend for python 3. [Frank Fischer]
 
   By definition, the list of keys from "list" is byte-formatted.   As
@@ -2317,22 +1910,13 @@ The new     import fail is "from future import standard\_library" [kenneth@loafm
 
 * Change to python3 for build. [kenneth@loafman.com]
 
-* Merged in lp:\~mterry/duplicity/uexc-string   - The return type of
-util.uexc should always be a string. [kenneth@loafman.com]
-
 * Have uexc to always return a string. [Michael Terry]
 
   This fixes unhandled exception reporting
 
 * Add requirements for python-gettext. [kenneth@loafman.com]
 
-* Merged in lp:\~mterry/duplicity/gio-pydrive-fsdecode   - Fix gio and
-pydrive backends to use fsdecode. [kenneth@loafman.com]
-
 * Fix gio and pydrive backends to use fsdecode. [Michael Terry]
-
-* Merged in lp:\~stragerneds/duplicity/duplicity   - improve test backup
-speed   - insure all test output is read. [kenneth@loafman.com]
 
 * Remove unnecessary sleeping after running backups in tests. [Matthew Glazar]
 
@@ -2382,10 +1966,6 @@ unadorned strings have now been adorned. [kenneth@loafman.com]
 * Fixed bug #1828662 with patch from Bas Hulsken   - string.split() had
 been deprecated in 2, removed in 3.7. [kenneth@loafman.com]
 
-* Merged in lp:\~mgorse/duplicity/0.8-series   - Python 3 fixes to
-imapbackend.py   - Fix bug 1828869: refresh CollectionsStatus after
-sync. [kenneth@loafman.com]
-
 * Setup.py: allow python 2.7 again. [Mike Gorse]
 
 * Bug #1828869: update CollectionsStatus after sync. [Mike Gorse]
@@ -2420,9 +2000,6 @@ chains are found. [kenneth@loafman.com]
 
 * Change to Python >= 3.5. [kenneth@loafman.com]
 
-* Merged in lp:\~brandon753-ba/duplicity/aws-glacier   - Adds support
-for for a command line option to store data on AWS S3 Glacier. [kenneth@loafman.com]
-
 * Added documentation on how to use the new AWS S3 Glacier option. [Brandon Anderson]
 
 * Fixed a typo in prior commit. [Brandon Anderson]
@@ -2434,18 +2011,9 @@ Adapt to new Microsoft Graph API. [kenneth@loafman.com]
 
 * Removed last mention of copy.com from man page with help from edso. [kenneth@loafman.com]
 
-* Merged in lp:\~aaron-whitehouse/duplicity/08-style-fixes   - Fix
-pylint style issues (over-indented text, whitespace on blank lines
-etc)   - Removed "pylint: disable=bad-string-format-type" comment,
-which was throwing     an error and does not seem to be needed. [kenneth@loafman.com]
-
 * Fix pylint style issues (over-indented text, whitespace on blank lines
 etc) * Removed "pylint: disable=bad-string-format-type" comment, which
 was throwing an error and does not seem to be needed. [Aaron A Whitehouse]
-
-* Merged in lp:\~aaron-whitehouse/duplicity/08-uexc-fix   - Fix for Bug
-#1770929 with associated test cases (thanks to Pete Zaitcev (zaitcev)
-in Bug #1797928 for the head start). [kenneth@loafman.com]
 
 * Accomodate unicode input for uexc and add test for this. [Aaron A Whitehouse]
 
@@ -2453,8 +2021,6 @@ in Bug #1797928 for the head start). [kenneth@loafman.com]
 
 * Add test case for lp:1770929 * Added fix (though using deprecated
 .message syntax) [Aaron A Whitehouse]
-
-* Merged in lp:\~mgorse/duplicity/0.8-series   - More python 3 fixes. [kenneth@loafman.com]
 
 * Attempt to port sx backend to python 3. [Mike Gorse]
 
@@ -2473,8 +2039,6 @@ in Bug #1797928 for the head start). [kenneth@loafman.com]
   comparisons   were failing.
 
 * Ssh\_pexpect: py3 fixes. [Mike Gorse]
-
-* Pull from main branch. [Mike Gorse]
 
 * Fixed bug #1817375 with hint from mgorse   - Added 'global pexpect' at
 end of imports. [kenneth@loafman.com]

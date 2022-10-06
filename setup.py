@@ -52,7 +52,7 @@ try:
 
     Version = get_version(**scm_version_args)
 except Exception as e:
-    Version = u"0.8.24.dev"
+    Version = u"1.0.1"
     print(u"Unable to get SCM version: defaulting to %s" % (Version,))
 Reldate = time.strftime(u"%B %d, %Y", time.gmtime(int(os.environ.get(u'SOURCE_DATE_EPOCH', time.time()))))
 
@@ -82,7 +82,7 @@ if not os.environ.get(u'READTHEDOCS') == u'True':
 
 
 def get_data_files():
-    u'''gen list of data files'''
+    u"""gen list of data files"""
 
     # static data files
     data_files = [
@@ -154,7 +154,7 @@ class SdistCommand(sdist):
         sdist.run(self)
 
         orig = u"%s/duplicity-%s.tar.gz" % (self.dist_dir, Version)
-        tardir = u"duplicity-%s" % (Version)
+        tardir = u"duplicity-%s" % Version
         tarfile = u"%s/duplicity-%s.tar.gz" % (self.dist_dir, Version)
 
         assert not os.system(u"tar -xf %s" % orig)
@@ -255,7 +255,7 @@ class InstallDataCommand(install_data):
 
 
 class BuildExtCommand(build_ext):
-    u'''Build extension modules.'''
+    u"""Build extension modules."""
 
     def run(self):
         # build the _librsync.so module

@@ -46,5 +46,5 @@ if [ $CNT -ne 0 ]; then
 fi
 
 # finally commit and push
-git commit -m"Update changelog." -m"[skip tests]" CHANGELOG.md
+git commit -m"chg:pkg: Update changelog." -m"[skip tests]" CHANGELOG.md
 git push

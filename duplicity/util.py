@@ -235,7 +235,7 @@ def which(program):
 
 
 def start_debugger(remote=False):
-    if (not os.getenv(u'DEBUG_RUNNING', None) and (u'--pydevd' in sys.argv or os.getenv(u'PYDEVD', None))):
+    if not os.getenv(u'DEBUG_RUNNING', None) and (u'--pydevd' in sys.argv or os.getenv(u'PYDEVD', None)):
         if remote:
             # modify this for your configuration.
             # client = base path in machine that Liclipse is on
@@ -257,8 +257,21 @@ def start_debugger(remote=False):
                          os.path.normpath(os.path.join(server, p))) for p in duppaths]
             os.environ[u'PATHS_FROM_ECLIPSE_TO_PYTHON'] = json.dumps(pathlist)
 
-        import pycharm_pydevd  # pylint: disable=import-error
-        pydevd.settrace(u'dione.local', port=6700, stdoutToServer=True, stderrToServer=True)
+        try:
+            import pydevd_pycharm as pydevd  # pylint: disable=import-error
+        except ImportError:
+            try:
+                import pydevd  # pylint: disable=import-error
+            except ImportError:
+                log.FatalError(u"Module pydevd_pycharm or pydevd must be available for debugging.\n"
+                               u"Remove '--pydevd' from command line and PYDEVD from environment\n"
+                               u"to avoid activating the debugger.")
+
+        try:
+            # NOTE: this needs to be customized for your system
+            pydevd.settrace(u'dione.local', port=6700, stdoutToServer=True, stderrToServer=True)
+        except ConnectionRefusedError as e:
+            log.FatalError(u"Connection refused for debug.  Check your setup.")
 
         # In a dev environment the path is screwed so fix it.
         base = sys.path.pop(0)
