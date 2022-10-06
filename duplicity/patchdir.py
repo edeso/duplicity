@@ -179,8 +179,8 @@ def get_index_from_tarinfo(tarinfo):
         index = tuple(os.fsencode(name).split(b"/"))
         if b'..' in index:
             raise PatchDirException(u"Tar entry %s contains '..'.  Security "
-                                    u"violation" % os.fsdecode(tiname))
-    return (index, difftype, multivol)
+                                    u"violation" % util.fsdecode(tiname))
+    return index, difftype, multivol
 
 
 class Multivol_Filelike(object):
@@ -196,7 +196,7 @@ class Multivol_Filelike(object):
         self.tarinfo_list = tarinfo_list  # must store as list for write access
         self.index = index
         self.buffer = b""
-        self.at_end = 0
+        self.at_end = False
 
     def read(self, length=-1):
         u"""Read length bytes from file"""
@@ -217,13 +217,13 @@ class Multivol_Filelike(object):
     def addtobuffer(self):
         u"""Add next chunk to buffer"""
         if self.at_end:
-            return None
+            return False
         index, difftype, multivol = get_index_from_tarinfo(self.tarinfo_list[0])
         if not multivol or index != self.index:
             # we've moved on
             # the following communicates next tarinfo to difftar2path_iter
-            self.at_end = 1
-            return None
+            self.at_end = True
+            return False
 
         fp = self.tf.extractfile(self.tarinfo_list[0])
         self.buffer += fp.read()
@@ -233,24 +233,25 @@ class Multivol_Filelike(object):
             self.tarinfo_list[0] = next(self.tar_iter)
         except StopIteration:
             self.tarinfo_list[0] = None
-            self.at_end = 1
-            return None
-        return 1
+            self.at_end = True
+            return False
+        return True
 
     def close(self):
         u"""If not at end, read remaining data"""
         if not self.at_end:
-            while 1:
+            while True:
                 self.buffer = b""
                 if not self.addtobuffer():
                     break
-        self.at_end = 1
+        self.at_end = True
 
 
 class PathPatcher(ITRBranch):
     u"""Used by DirPatch, process the given basis and diff"""
     def __init__(self, base_path):
         u"""Set base_path, Path of root of tree"""
+        self.dir_basis_path = None
         self.base_path = base_path
         self.dir_diff_ropath = None
 
@@ -453,7 +454,7 @@ class IndexedTuple(object):
         elif isinstance(other, tuple):
             return self.data == other
         else:
-            return None
+            return False
 
     def __str__(self):
         return u"(%s).%s" % (u", ".join(map(str, self.data)), self.index)

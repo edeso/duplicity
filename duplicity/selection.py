@@ -295,7 +295,7 @@ pattern (such as '**') which matches the base directory.""") %
     def parse_last_excludes(self):
         u"""Exit with error if last selection function isn't an exclude"""
         # Internal. Used by ParseArgs.
-        if (self.selection_functions and not self.selection_functions[-1].exclude):
+        if self.selection_functions and not self.selection_functions[-1].exclude:
             log.FatalError(_(u"""\
 Last selection expression:
     %s
