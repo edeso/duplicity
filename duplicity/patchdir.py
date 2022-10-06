@@ -179,7 +179,7 @@ def get_index_from_tarinfo(tarinfo):
         index = tuple(os.fsencode(name).split(b"/"))
         if b'..' in index:
             raise PatchDirException(u"Tar entry %s contains '..'.  Security "
-                                    u"violation" % util.fsdecode(tiname))
+                                    u"violation" % os.fsdecode(tiname))
     return index, difftype, multivol
 
 
