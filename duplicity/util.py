@@ -61,7 +61,7 @@ def escape(string):
 
 
 def uindex(index):
-    u"Convert an index (a tuple of path parts) to unicode for printing"
+    u"""Convert an index (a tuple of path parts) to unicode for printing"""
     if index:
         return os.path.join(*list(map(os.fsdecode, index)))
     else:

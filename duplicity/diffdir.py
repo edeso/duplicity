@@ -271,9 +271,9 @@ def collate2iters(riter1, riter2):
                 relem1 = next(riter1)
             except StopIteration:
                 if relem2:
-                    yield (None, relem2)
+                    yield None, relem2
                 for relem2 in riter2:
-                    yield (None, relem2)
+                    yield None, relem2
                 break
             index1 = relem1.index
         if not relem2:
@@ -281,21 +281,21 @@ def collate2iters(riter1, riter2):
                 relem2 = next(riter2)
             except StopIteration:
                 if relem1:
-                    yield (relem1, None)
+                    yield relem1, None
                 for relem1 in riter1:
-                    yield (relem1, None)
+                    yield relem1, None
                 break
             index2 = relem2.index
 
         if index1 < index2:
-            yield (relem1, None)
+            yield relem1, None
             relem1 = None
         elif index1 == index2:
-            yield (relem1, relem2)
+            yield relem1, relem2
             relem1, relem2 = None, None
         else:
             # index2 is less
-            yield (None, relem2)
+            yield None, relem2
             relem2 = None
 
 
@@ -322,7 +322,7 @@ def combine_path_iters(path_iter_list):
             path = next(path_iter_list[iter_index])
         except StopIteration:
             return None
-        return (path.index, iter_index, path)
+        return path.index, iter_index, path
 
     def refresh_triple_list(triple_list):
         u"""
@@ -627,6 +627,13 @@ class DeltaTarBlockIter(TarBlockIter):
     delta_path_iter, so the delta information has already been
     calculated.
     """
+
+    def __init__(self, input_iter):
+        super().__init__(input_iter)
+        self.process_ropath = None
+        self.process_fp = None
+        self.process_prefix = None
+
     def process(self, delta_ropath):
         u"""
         Get a tarblock from delta_ropath
@@ -683,9 +690,9 @@ class DeltaTarBlockIter(TarBlockIter):
         if len(buf) < read_size:
             if fp.close():
                 raise DiffDirException(u"Error closing file")
-            return (buf, True)
+            return buf, True
         else:
-            return (buf, False)
+            return buf, False
 
     def process_continued(self):
         u"""

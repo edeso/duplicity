@@ -77,6 +77,9 @@ class StatsObj(object):
 
     def __init__(self):
         u"""Set attributes to None"""
+        self.EndTime = None
+        self.StartTime = None
+        self.ElapsedTime = None
         for attr in self.stat_attrs:
             self.__dict__[attr] = None
 

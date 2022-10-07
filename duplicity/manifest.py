@@ -97,7 +97,7 @@ class Manifest(object):
             code = log.ErrorCode.hostname_mismatch
             code_extra = u"%s %s" % (util.escape(config.hostname), util.escape(self.hostname))
 
-        elif (self.local_dirname and self.local_dirname != config.local_path.name):
+        elif self.local_dirname and self.local_dirname != config.local_path.name:
             errmsg = _(u"Fatal Error: Backup source directory has changed.\n"
                        u"Current directory: %s\n"
                        u"Previous directory: %s") % (config.local_path.name, self.local_dirname)
@@ -230,7 +230,7 @@ class Manifest(object):
             if filecount > 0:
                 def parse_fileinfo(line):
                     fileinfo = line.strip().split()
-                    return (fileinfo[0], b''.join(fileinfo[1:]))
+                    return fileinfo[0], b''.join(fileinfo[1:])
 
                 self.files_changed = list(map(parse_fileinfo, match.group(3).split(b'\n')))
 
@@ -353,11 +353,11 @@ class VolumeInfo(object):
         if not self.hashes:
             return None
         try:
-            return (u"SHA1", self.hashes[u'SHA1'])
+            return u"SHA1", self.hashes[u'SHA1']
         except KeyError:
             pass
         try:
-            return (u"MD5", self.hashes[u'MD5'])
+            return u"MD5", self.hashes[u'MD5']
         except KeyError:
             pass
         return list(self.hashes.items())[0]

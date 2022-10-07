@@ -239,7 +239,7 @@ def restart_position_iterator(tarblock_iter):
         # Just spin our wheels
         iter_result = next(tarblock_iter)
         while iter_result:
-            if (tarblock_iter.previous_index == last_index):
+            if tarblock_iter.previous_index == last_index:
                 # If both the previous index and this index are done, exit now
                 # before we hit the next index, to prevent skipping its first
                 # block.
@@ -1261,7 +1261,7 @@ def sync_archive(col_stats):
         suffix = file_naming.get_suffix(False, not pr.manifest)
         loc_name = base + suffix
 
-        return (pr, loc_name, fn)
+        return pr, loc_name, fn
 
     def remove_local(fn):
         del_name = config.archive_dir_path.append(fn).name
@@ -1479,6 +1479,7 @@ class Restart(object):
     """
 
     def __init__(self, last_backup):
+        self.time = None
         self.type = None
         self.start_time = None
         self.end_time = None
