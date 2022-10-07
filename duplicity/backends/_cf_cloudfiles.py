@@ -31,6 +31,7 @@ class CloudFilesBackend(duplicity.backend.Backend):
     Backend for Rackspace's CloudFiles
     """
     def __init__(self, parsed_url):
+        super().__init__(parsed_url)
         try:
             from cloudfiles import Connection
             from cloudfiles.errors import ResponseError

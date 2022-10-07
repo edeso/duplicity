@@ -96,7 +96,7 @@ class SlateBackend(duplicity.backend.Backend):
         log.Debug(u"response handled")
 
         if not response.ok:
-            raise BackendException(u"An error occured whilst attempting to upload a file: %s" % (response))
+            raise BackendException(u"An error occured whilst attempting to upload a file: %s" % response)
         else:
             log.Debug(u"File successfully uploaded to slate with id:" + self.slate_id)
 
@@ -106,7 +106,7 @@ class SlateBackend(duplicity.backend.Backend):
     def _list(self):
 
         # Checks if a specific slate has been selected, otherwise lists all slates
-        log.Debug(u"Slate ID: %s" % (self.slate_id))
+        log.Debug(u"Slate ID: %s" % self.slate_id)
         data = json.dumps({u'data': {u'private': u'true'}})
         headers = {
             u'Content-Type': u'application/json',
@@ -172,8 +172,8 @@ class SlateBackend(duplicity.backend.Backend):
             raise BackendException(u"A slate with id " + self.slate_id + u" does not exist")
 
         try:
-            urllib.request.urlretrieve(u'http://ipfs.io/ipfs/%s' % (cid), os.fsdecode(local_path.name))
-            log.Debug(u'Downloaded file with cid: %s' % (cid))
+            urllib.request.urlretrieve(u'http://ipfs.io/ipfs/%s' % cid, os.fsdecode(local_path.name))
+            log.Debug(u'Downloaded file with cid: %s' % cid)
         except NameError as e:
             raise BackendException(u"Couldn't download file")
 

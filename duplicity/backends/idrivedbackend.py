@@ -145,7 +145,7 @@ class IDriveBackend(duplicity.backend.Backend):
             log.Warn(u"-" * 72)
             raise BackendException(u"No IDEVSPATH env var set. Should contain folder to idevsutil_dedup")
         self.cmd = os.path.join(path, u"idevsutil_dedup")
-        log.Debug(u"IDrive command base: %s" % (self.cmd))
+        log.Debug(u"IDrive command base: %s" % self.cmd)
 
         # get the account-id
         self.idriveid = os.environ.get(u"IDRIVEID")
@@ -155,7 +155,7 @@ class IDriveBackend(duplicity.backend.Backend):
             log.Warn(u"Create an environment variable IDriveID with your IDrive logon ID")
             log.Warn(u"-" * 72)
             raise BackendException(u"No IDRIVEID env var set. Should contain IDrive id")
-        log.Debug(u"IDrive id: %s" % (self.idriveid))
+        log.Debug(u"IDrive id: %s" % self.idriveid)
 
         # Get the full-path to the account password file
         filepath = os.environ.get(u"IDPWDFILE")
@@ -166,7 +166,7 @@ class IDriveBackend(duplicity.backend.Backend):
             log.Warn(u"Then create an environment variable IDPWDFILE with path/filename of said file")
             log.Warn(u"-" * 72)
             raise BackendException(u"No IDPWDFILE env var set. Should contain file with password")
-        log.Debug(u"IDrive pwdpath: %s" % (filepath))
+        log.Debug(u"IDrive pwdpath: %s" % filepath)
         self.auth_switch = u" --password-file={0}".format(filepath)
 
         # fakeroot set? Create directory and mark for cleanup
@@ -201,7 +201,7 @@ class IDriveBackend(duplicity.backend.Backend):
             log.Warn(u"Create an environment variable IDBUCKET specifying the target bucket")
             log.Warn(u"-" * 72)
             raise BackendException(u"No IDBUCKET env var set. Should contain IDrive backup bucket")
-        log.Debug(u"IDrive bucket: %s" % (self.bucket))
+        log.Debug(u"IDrive bucket: %s" % self.bucket)
 
         # check account / get config status and config type
         el = self.request(self.cmd + self.auth_switch + u" --validate --user={0}".format(self.idriveid)).find(u'tree')
@@ -223,7 +223,7 @@ class IDriveBackend(duplicity.backend.Backend):
                 log.Warn(u"Then create an environment variable IDKEYFILE with path/filename of said file")
                 log.Warn(u"-" * 72)
                 raise BackendException(u"No IDKEYFILE env var set. Should contain file with encription key")
-            log.Debug(u"IDrive keypath: %s" % (filepath))
+            log.Debug(u"IDrive keypath: %s" % filepath)
             self.auth_switch += u" --pvt-key={0}".format(filepath)
 
         # get the server address

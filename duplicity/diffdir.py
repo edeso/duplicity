@@ -490,7 +490,7 @@ class TarBlockIter(object):
         Turn next value of input_iter into a TarBlock
         """
         assert not self.process_waiting
-        XXX  # Override in subclass @UndefinedVariable
+        raise NotImplementedError(u"'process' not implemented.")
 
     def process_continued(self):
         u"""
@@ -500,7 +500,7 @@ class TarBlockIter(object):
         get the rest of them by calling process_continue.
         """
         assert self.process_waiting
-        XXX  # Override in subclass @UndefinedVariable
+        raise NotImplementedError(u"'process_continues' not implemented.")
 
     def __next__(self):
         u"""

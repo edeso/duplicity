@@ -103,7 +103,7 @@ class LFTPBackend(duplicity.backend.Backend):
             if not self.cacert_file:
                 for path in cacert_candidates:
                     path = os.path.expanduser(path)
-                    if (os.path.isfile(path)):
+                    if os.path.isfile(path):
                         self.cacert_file = path
                         break
 
@@ -156,9 +156,9 @@ class LFTPBackend(duplicity.backend.Backend):
         s, l, e = self.subprocess_popen(commandline)
         log.Debug(u"STATUS: %s" % s)
         log.Debug(u"STDERR:\n"
-                  u"%s" % (e))
+                  u"%s" % e)
         log.Debug(u"STDOUT:\n"
-                  u"%s" % (l))
+                  u"%s" % l)
 
     def _get(self, remote_filename, local_path):
         if isinstance(remote_filename, b"".__class__):
@@ -171,9 +171,9 @@ class LFTPBackend(duplicity.backend.Backend):
         log.Debug(u"CMD: %s" % commandline)
         _, l, e = self.subprocess_popen(commandline)
         log.Debug(u"STDERR:\n"
-                  u"%s" % (e))
+                  u"%s" % e)
         log.Debug(u"STDOUT:\n"
-                  u"%s" % (l))
+                  u"%s" % l)
 
     def _list(self):
         # Do a long listing to avoid connection reset
@@ -189,9 +189,9 @@ class LFTPBackend(duplicity.backend.Backend):
         log.Debug(u"CMD: %s" % commandline)
         _, l, e = self.subprocess_popen(commandline)
         log.Debug(u"STDERR:\n"
-                  u"%s" % (e))
+                  u"%s" % e)
         log.Debug(u"STDOUT:\n"
-                  u"%s" % (l))
+                  u"%s" % l)
 
         # Look for our files as the last element of a long list line
         return [os.fsencode(x.split()[-1]) for x in l.split(u'\n') if x]
@@ -205,9 +205,9 @@ class LFTPBackend(duplicity.backend.Backend):
         log.Debug(u"CMD: %s" % commandline)
         _, l, e = self.subprocess_popen(commandline)
         log.Debug(u"STDERR:\n"
-                  u"%s" % (e))
+                  u"%s" % e)
         log.Debug(u"STDOUT:\n"
-                  u"%s" % (l))
+                  u"%s" % l)
 
 
 duplicity.backend.register_backend(u"ftp", LFTPBackend)

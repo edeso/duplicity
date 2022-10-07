@@ -182,7 +182,7 @@ class MultiBackend(duplicity.backend.Backend):
         for config in configs:
             url = config[u'url'] + self.__subpath
             log.Log(_(u"MultiBackend: use store %s")
-                    % (url),
+                    % url,
                     log.INFO)
             if u'env' in config:
                 for env in config[u'env']:
@@ -238,7 +238,7 @@ class MultiBackend(duplicity.backend.Backend):
             store = stores[self.__write_cursor]
             try:
                 next = self.__write_cursor + 1  # pylint: disable=redefined-builtin
-                if (next > len(stores) - 1):
+                if next > len(stores) - 1:
                     next = 0
                 log.Log(_(u"MultiBackend: _put: write to store #%s (%s)")
                         % (self.__write_cursor, store.backend.parsed_url.strip_auth()),
@@ -261,14 +261,14 @@ class MultiBackend(duplicity.backend.Backend):
                 # If we consider write failure as abort, abort
                 if self.__onfail_mode == u'abort':
                     log.Log(_(u"MultiBackend: failed to write %s. Aborting process.")
-                            % (source_path),
+                            % source_path,
                             log.ERROR)
                     raise BackendException(u"failed to write")
 
                 # If we've looped around, and none of them passed, fail
                 if (self.__write_cursor == first) and not passed:
                     log.Log(_(u"MultiBackend: failed to write %s. Tried all backing stores and none succeeded")
-                            % (source_path),
+                            % source_path,
                             log.ERROR)
                     raise BackendException(u"failed to write")
 
@@ -290,7 +290,7 @@ class MultiBackend(duplicity.backend.Backend):
                     % (remote_filename, local_path, s.backend.parsed_url.strip_auth()),
                     log.INFO)
         log.Log(_(u"MultiBackend: failed to get %s. Tried all backing stores and none succeeded")
-                % (remote_filename),
+                % remote_filename,
                 log.ERROR)
         raise BackendException(u"failed to get")
 
@@ -310,7 +310,7 @@ class MultiBackend(duplicity.backend.Backend):
         # combine the lists into a single flat list w/o duplicates via set:
         result = list({item for sublist in lists for item in sublist})
         log.Log(_(u"MultiBackend: combined list: %s")
-                % (result),
+                % result,
                 log.DEBUG)
         return result
 
@@ -339,7 +339,7 @@ class MultiBackend(duplicity.backend.Backend):
                     return
         if not passed:
             log.Log(_(u"MultiBackend: failed to delete %s. Tried all backing stores and none succeeded")
-                    % (filename),
+                    % filename,
                     log.ERROR)
 
     def _delete_list(self, filenames):
@@ -368,7 +368,7 @@ class MultiBackend(duplicity.backend.Backend):
                 return
         if not passed:
             log.Log(_(u"MultiBackend: failed to delete %s. Tried all backing stores and none succeeded")
-                    % (filenames),
+                    % filenames,
                     log.ERROR)
 
     def pre_process_download(self, filename):

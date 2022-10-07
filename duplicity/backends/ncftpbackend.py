@@ -93,7 +93,7 @@ class NCFTPBackend(duplicity.backend.Backend):
         self.flags = u"-f %s %s -t %s -o useCLNT=0,useHELP_SITE=0 " % \
             (self.tempname, self.conn_opt, config.timeout)
         if parsed_url.port is not None and parsed_url.port != 21:
-            self.flags += u" -P '%s'" % (parsed_url.port)
+            self.flags += u" -P '%s'" % parsed_url.port
 
     def _put(self, source_path, remote_filename):
         remote_filename = os.fsdecode(remote_filename)

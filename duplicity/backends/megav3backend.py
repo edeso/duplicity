@@ -99,7 +99,7 @@ class Megav3Backend(duplicity.backend.Backend):
             self._makedir(self._folder)
 
     def _check_binary_exists(self, cmd):
-        u'Checks that a specified command exists in the running user command path'
+        u"""Checks that a specified command exists in the running user command path"""
 
         try:
             # Ignore the output, as we only need the return code
@@ -112,7 +112,7 @@ class Megav3Backend(duplicity.backend.Backend):
             )
 
     def ensure_mega_cmd_running(self):
-        u'Trigger any mega command to ensure mega-cmd server is running'
+        u"""Trigger any mega command to ensure mega-cmd server is running"""
         try:
             subprocess.run(
                 u"mega-help",
@@ -123,7 +123,7 @@ class Megav3Backend(duplicity.backend.Backend):
             raise BackendException(u'Cannot execute mega command')
 
     def _makedir(self, path):
-        u'Creates a remote directory (recursively if necessary)'
+        u"""Creates a remote directory (recursively if necessary)"""
 
         self.mega_login()
         cmd = [u'mega-mkdir', u'-p', path]
@@ -157,7 +157,7 @@ class Megav3Backend(duplicity.backend.Backend):
         )
 
     def _get(self, remote_filename, local_path):
-        u'Downloads file from the specified remote path'
+        u"""Downloads file from the specified remote path"""
 
         self.download(
             remote_file=remote_filename.decode(),
@@ -165,17 +165,17 @@ class Megav3Backend(duplicity.backend.Backend):
         )
 
     def _list(self):
-        u'Lists files in the specified remote path'
+        u"""Lists files in the specified remote path"""
 
         return self.folder_contents(files_only=True)
 
     def _delete(self, filename):
-        u'Deletes file from the specified remote path'
+        u"""Deletes file from the specified remote path"""
 
         self.delete(remote_file=filename.decode())
 
     def _close(self):
-        u'Function called when backend is done being used'
+        u"""Function called when backend is done being used"""
 
         if not self._no_logout:
             cmd = [u'mega-logout']
@@ -221,7 +221,7 @@ class Megav3Backend(duplicity.backend.Backend):
                 )
 
     def folder_contents(self, files_only=False):
-        u'Lists contents of a remote MEGA path, optionally ignoring subdirectories'
+        u"""Lists contents of a remote MEGA path, optionally ignoring subdirectories"""
 
         cmd = [u'mega-ls', u'-l', self._folder]
 
@@ -236,14 +236,14 @@ class Megav3Backend(duplicity.backend.Backend):
         return files
 
     def download(self, remote_file, local_file):
-        u'Downloads a file from a remote MEGA path'
+        u"""Downloads a file from a remote MEGA path"""
 
         cmd = [u'mega-get', self._folder + u'/' + remote_file, local_file]
         self.mega_login()
         self.subprocess_popen(cmd)
 
     def upload(self, local_file, remote_file):
-        u'Uploads a file to a remote MEGA path'
+        u"""Uploads a file to a remote MEGA path"""
 
         cmd = [u'mega-put', local_file, self._folder + u'/' + remote_file]
         self.mega_login()
@@ -264,7 +264,7 @@ class Megav3Backend(duplicity.backend.Backend):
                 )
 
     def delete(self, remote_file):
-        u'Deletes a file from a remote MEGA path'
+        u"""Deletes a file from a remote MEGA path"""
 
         cmd = [u'mega-rm', u'-f', self._folder + u'/' + remote_file]
         self.mega_login()

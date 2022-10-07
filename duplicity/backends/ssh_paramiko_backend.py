@@ -163,7 +163,7 @@ Are you sure you want to continue connecting (yes/no)? """ % (hostname,
                       )
                       """,
                       config.ssh_options, re.VERBOSE)
-        if (m is not None):
+        if m is not None:
             global_known_hosts = m.group(3) if m.group(3) else m.group(1)
         try:
             if os.path.isfile(global_known_hosts):
@@ -184,7 +184,7 @@ Are you sure you want to continue connecting (yes/no)? """ % (hostname,
                       )
                       """,
                       config.ssh_options, re.VERBOSE)
-        if (m is not None):
+        if m is not None:
             user_known_hosts = m.group(3) if m.group(3) else m.group(1)
         try:
             # use load_host_keys() to signal it's writable to paramiko
@@ -236,7 +236,7 @@ Are you sure you want to continue connecting (yes/no)? """ % (hostname,
                       )
                       """,
                       config.ssh_options, re.VERBOSE)
-        if (m is not None):
+        if m is not None:
             keyfilename = m.group(3) if m.group(3) else m.group(1)
             self.config[u'identityfile'] = keyfilename.strip(u'\'\"')
         # ensure ~ is expanded and identity exists in dictionary
@@ -277,16 +277,16 @@ Are you sure you want to continue connecting (yes/no)? """ % (hostname,
                 self.config[u'user'],
                 self.config[u'hostname'],
                 self.config[u'port'], e))
-        self.client.get_transport().set_keepalive((int)(config.timeout / 2))
+        self.client.get_transport().set_keepalive(int(config.timeout / 2))
 
         self.scheme = duplicity.backend.strip_prefix(parsed_url.scheme,
                                                      u'paramiko')
         self.use_scp = (self.scheme == u'scp')
 
         # scp or sftp?
-        if (self.use_scp):
+        if self.use_scp:
             # sanity-check the directory name
-            if (re.search(u"'", self.remote_dir)):
+            if re.search(u"'", self.remote_dir):
                 raise BackendException(u"cannot handle directory names with single quotes with scp")
 
             # make directory if needed
@@ -303,7 +303,7 @@ Are you sure you want to continue connecting (yes/no)? """ % (hostname,
                 if dirs[0] == u'':
                     dirs[0] = u'/'
                 for d in dirs:
-                    if (d == u''):
+                    if d == u'':
                         continue
                     try:
                         attrs = self.sftp.stat(d)
@@ -339,13 +339,13 @@ Are you sure you want to continue connecting (yes/no)? """ % (hostname,
             # one after saving if there's a problem: 0x1 or 0x02 and some error
             # text
             response = chan.recv(1)
-            if (response != b"\0"):
+            if response != b"\0":
                 raise BackendException(b"scp remote error: %b" % chan.recv(-1))
             fstat = os.stat(source_path.name)
             chan.send(u'C%s %d %s\n' % (oct(fstat.st_mode)[-4:], fstat.st_size,
                                         remote_filename))
             response = chan.recv(1)
-            if (response != b"\0"):
+            if response != b"\0":
                 raise BackendException(b"scp remote error: %b" % chan.recv(-1))
             file_pos = 0
             file_size = fstat.st_size
@@ -356,7 +356,7 @@ Are you sure you want to continue connecting (yes/no)? """ % (hostname,
             chan.sendall(b'\0')
             f.close()
             response = chan.recv(1)
-            if (response != b"\0"):
+            if response != b"\0":
                 raise BackendException(u"scp remote error: %s" % chan.recv(-1))
             chan.close()
         else:
@@ -379,7 +379,7 @@ Are you sure you want to continue connecting (yes/no)? """ % (hostname,
             if isinstance(msg, bytes):  # make msg into str
                 msg = msg.decode()
             m = re.match(r"C([0-7]{4})\s+(\d+)\s+(\S.*)$", msg)
-            if (m is None or m.group(3) != remote_filename):
+            if m is None or m.group(3) != remote_filename:
                 raise BackendException(u"scp get %s failed: incorrect response '%s'" %
                                        (remote_filename, msg))
             chan.recv(1)  # dispose of the newline trailing the C message
@@ -453,7 +453,7 @@ Are you sure you want to continue connecting (yes/no)? """ % (hostname,
         try:
             sshconfig.parse(open(file))
         except Exception as e:
-            raise BackendException(u"could not load '%s', maybe corrupt?" % (file))
+            raise BackendException(u"could not load '%s', maybe corrupt?" % file)
 
         return sshconfig.lookup(host)
 

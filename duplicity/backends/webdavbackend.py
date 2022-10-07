@@ -75,7 +75,7 @@ class VerifiedHTTPSConnection(http.client.HTTPSConnection):
         if not self.cacert_file:
             for path in self.cacert_candidates:
                 path = os.path.expanduser(path)
-                if (os.path.isfile(path)):
+                if os.path.isfile(path):
                     self.cacert_file = path
                     break
 
@@ -183,7 +183,7 @@ class WebDAVBackend(duplicity.backend.Backend):
                 and self.conn.host == self.parsed_url.hostname:
             return
 
-        log.Info(_(u"WebDAV create connection on '%s'") % (self.parsed_url.hostname))
+        log.Info(_(u"WebDAV create connection on '%s'") % self.parsed_url.hostname)
         self._close()
         # http schemes needed for redirect urls from servers
         if self.parsed_url.scheme in [u'webdav', u'http']:
@@ -194,7 +194,7 @@ class WebDAVBackend(duplicity.backend.Backend):
             else:
                 self.conn = VerifiedHTTPSConnection(self.parsed_url.hostname, self.parsed_url.port)
         else:
-            raise FatalBackendException(_(u"WebDAV Unknown URI scheme: %s") % (self.parsed_url.scheme))
+            raise FatalBackendException(_(u"WebDAV Unknown URI scheme: %s") % self.parsed_url.scheme)
 
     def _close(self):
         if self.conn:
