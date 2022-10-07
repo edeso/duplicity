@@ -76,6 +76,7 @@ class Select(object):
 
     def __init__(self, path):
         u"""Initializer, called with Path of root directory"""
+        self.iter = None
         assert isinstance(path, Path), str(path)
         self.selection_functions = []
         self.rootpath = path
@@ -150,10 +151,10 @@ class Select(object):
                             diffdir.stats.Errors += 1
                     elif s == 1:
                         # Should be included
-                        yield (new_path, 0)
+                        yield new_path, 0
                     elif s == 2 and new_path.isdir():
                         # Is a directory that should be scanned
-                        yield (new_path, 1)
+                        yield new_path, 1
 
         if not path.type:
             # base doesn't exist

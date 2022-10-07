@@ -68,6 +68,7 @@ class ROPath(object):
     """
     def __init__(self, index, stat=None):  # pylint: disable=unused-argument
         u"""ROPath initializer"""
+        self.symtext = None
         self.opened, self.fileobj = None, None
         self.index = index
         self.stat, self.type = None, None
@@ -235,7 +236,7 @@ class ROPath(object):
         self.stat.st_mtime = int(tarinfo.mtime)
         if self.stat.st_mtime < 0:
             log.Warn(_(u"Warning: %s has negative mtime, treating as 0.")
-                     % (tarinfo.uc_name))
+                     % tarinfo.uc_name)
             self.stat.st_mtime = 0
         self.stat.st_size = tarinfo.size
 
@@ -606,7 +607,7 @@ class Path(ROPath):
         try:
             os.makedirs(self.name)
         except OSError:
-            if (not config.force):
+            if not config.force:
                 raise PathException(u"Error creating directory %s" % self.uc_name, 7)
         self.setdata()
 
@@ -810,6 +811,10 @@ class DupPath(Path):
 
 class PathDeleter(ITRBranch):
     u"""Delete a directory.  Called by Path.deltree"""
+
+    def __init__(self):
+        self.path = None
+
     def start_process(self, index, path):  # pylint: disable=unused-argument
         self.path = path
 

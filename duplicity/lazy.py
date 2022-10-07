@@ -159,7 +159,7 @@ class Iter(object):
         """
         if num_of_forks == 2 and not final_func and not closing_func:
             im2 = IterMultiplex2(iter)
-            return (im2.yielda(), im2.yieldb())
+            return im2.yielda(), im2.yieldb()
         if not final_func:
             final_func = lambda i: None
         if not closing_func:

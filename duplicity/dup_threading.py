@@ -211,7 +211,7 @@ def async_split(fn):
             cv.notify()
             cv.release()
 
-            return (True, waiter)
+            return True, waiter
         except Exception as e:
             cv.acquire()
             state[u'done'] = True
@@ -220,9 +220,9 @@ def async_split(fn):
             cv.notify()
             cv.release()
 
-            return (False, waiter)
+            return False, waiter
 
-    return (waiter, caller)
+    return waiter, caller
 
 
 class Value(object):

@@ -890,7 +890,7 @@ class CollectionsStatus(object):
                     orphaned_sets.append(set)
         for s in sets:
             add_to_chains(s)
-        return (chains, orphaned_sets, incomplete_sets)
+        return chains, orphaned_sets, incomplete_sets
 
     def get_sorted_sets(self, set_list):
         u"""
@@ -905,7 +905,7 @@ class CollectionsStatus(object):
             else:
                 time_set_pairs.append((set.end_time, set))
         time_set_pairs.sort(key=lambda x: x[0])
-        return ([p[1] for p in time_set_pairs], incomplete_sets)
+        return [p[1] for p in time_set_pairs], incomplete_sets
 
     def get_signature_chains(self, local, filelist=None):
         u"""
@@ -956,7 +956,7 @@ class CollectionsStatus(object):
                     break
             else:
                 orphaned_filenames.append(sig_filename)
-        return (chains, orphaned_filenames)
+        return chains, orphaned_filenames
 
     def get_sorted_chains(self, chain_list):
         u"""
@@ -1232,7 +1232,7 @@ class FileChangedStatus(object):
     def __str__(self):
         set_schema = u"%20s   %30s  %20s"
         l = [u"-------------------------",
-             _(u"File: %s") % (self.filepath),
+             _(u"File: %s") % self.filepath,
              _(u"Total number of backup: %d") % len(self.fileinfo_list),
              set_schema % (_(u"Type of backup set:"), _(u"Time:"), _(u"Type of file change:"))]
 
@@ -1256,7 +1256,7 @@ class BackupSetChangesStatus(object):
     def __str__(self):
         changed_files = self.backup_set.get_files_changed()
         max_file_path_len = max([len(c[1]) for c in changed_files] + [5])
-        set_schema = u"%%-%ds  %%20s" % (max_file_path_len)
+        set_schema = u"%%-%ds  %%20s" % max_file_path_len
         l = [u"-------------------------",
              _(u" Backup set time: %s") % (self.backup_set.get_timestr()),
              _(u"Total number of changes: %d") % len(changed_files),

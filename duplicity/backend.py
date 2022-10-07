@@ -328,7 +328,7 @@ class ParsedUrl(object):
         if self.scheme in uses_netloc and not self.hostname:
             raise InvalidBackendURL(u"Missing hostname in a backend URL which "
                                     u"requires an explicit hostname: %s"
-                                    u"" % (url_string))
+                                    u"" % url_string)
 
         # Our backends do not handle implicit relative paths.
         if self.scheme not in uses_netloc and not self.path.startswith(u'//'):
@@ -583,7 +583,7 @@ class BackendWrapper(object):
         Return list of filenames (byte strings) present in backend
         """
         def tobytes(filename):
-            u"Convert a (maybe unicode) filename to bytes"
+            u"""Convert a (maybe unicode) filename to bytes"""
             if isinstance(filename, str):
                 # There shouldn't be any encoding errors for files we care
                 # about, since duplicity filenames are ascii.  But user files

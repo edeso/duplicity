@@ -125,7 +125,7 @@ class TemporaryDirectory(object):
         default (recommended).
         """
         def defaults_to_tmp(path):
-            u'''Determine if path point to a MAcOS system tmp'''
+            u"""Determine if path point to a MAcOS system tmp"""
             sys_temps = [
                 os.path.realpath(u"/tmp"),
                 os.path.realpath(u"/var/tmp"),
@@ -146,7 +146,7 @@ class TemporaryDirectory(object):
         if isinstance(temproot, b"".__class__):
             temproot = os.fsdecode(temproot)
 
-        if (platform.system().startswith(u'Darwin') and defaults_to_tmp(temproot)):
+        if platform.system().startswith(u'Darwin') and defaults_to_tmp(temproot):
             # Use temp space from getconf, never /tmp
             temproot = subprocess.check_output([u'getconf', u'DARWIN_USER_TEMP_DIR'])
             temproot = os.fsdecode(temproot).rstrip()

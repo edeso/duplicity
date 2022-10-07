@@ -314,7 +314,7 @@ class GPGFile(object):
         """
         self.status_fp.seek(0)
         status_buf = self.status_fp.read()
-        match = re.search(b"^\\[GNUPG:\\] GOODSIG ([0-9A-F]*)",
+        match = re.search(b"GOODSIG ([0-9A-F]*)",
                           status_buf, re.M)
         if not match:
             self.signature = None

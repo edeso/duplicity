@@ -144,7 +144,7 @@ class ProgressTracker(object):
         Returns true if the progress computation is on and duplicity has not
         yet started the first dry-run pass to collect some information
         """
-        return (self.total_stats is not None)
+        return self.total_stats is not None
 
     def log_upload_progress(self):
         u"""

@@ -234,7 +234,7 @@ def parse_cmdline_options(arglist):
                            log.ErrorCode.cant_open_filelist)
 
     def print_ver(o, s, v, p):  # pylint: disable=unused-argument
-        print(u"duplicity %s" % (config.version))
+        print(u"duplicity %s" % config.version)
         sys.exit(0)
 
     def add_rename(o, s, v, p):  # pylint: disable=unused-argument
@@ -1101,9 +1101,9 @@ page for more information.""")
         command_line_error(u"Two URLs specified.  "
                            u"One argument should be a path.")
     if arg1_is_backend:
-        return (arg2, arg1)
+        return arg2, arg1
     elif arg2_is_backend:
-        return (arg1, arg2)
+        return arg1, arg2
     else:
         raise AssertionError(u'should not be reached')
 
@@ -1120,9 +1120,9 @@ def set_backend(arg1, arg2):
     config.backend = backend.get_backend(bend)
 
     if path == arg2:
-        return (None, arg2)  # False?
+        return None, arg2  # False?
     else:
-        return (1, arg1)  # True?
+        return 1, arg1  # True?
 
 
 def process_local_dir(action, local_pathname):
@@ -1216,7 +1216,7 @@ def ProcessCommandLine(cmdline_list):
 
     # parse_cmdline_options already verified that we got exactly 1 or 2
     # non-options arguments
-    assert len(args) >= 1 and len(args) <= 2, u"arg count should have been checked already"
+    assert 1 <= len(args) <= 2, u"arg count should have been checked already"
 
     if len(args) == 1:
         if list_current:

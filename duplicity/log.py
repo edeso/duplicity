@@ -71,7 +71,7 @@ def Log(s, verb_level, code=1, extra=None, force_print=False, transfer_progress=
     if extra:
         controlLine = u'%d %s' % (code, extra)
     else:
-        controlLine = u'%d' % (code)
+        controlLine = u'%d' % code
     if not s:
         s = u''  # If None is passed, standard logging would render it as 'None'
 
@@ -142,7 +142,7 @@ def _ElapsedSecs2Str(secs):
     minutes, seconds = divmod(rem, 60)
     fmt = u""
     if tdelta.days > 0:
-        fmt = u"%dd," % (tdelta.days)
+        fmt = u"%dd," % tdelta.days
     fmt = u"%s%02d:%02d:%02d" % (fmt, hours, minutes, seconds)
     return fmt
 
@@ -153,7 +153,7 @@ def _RemainingSecs2Str(secs):
     minutes, seconds = divmod(rem, 60)
     fmt = u""
     if tdelta.days > 0:
-        fmt = u"%dd" % (tdelta.days)
+        fmt = u"%dd" % tdelta.days
         if hours > 0:
             fmt = u"%s %dh" % (fmt, hours)
         if minutes > 0:
