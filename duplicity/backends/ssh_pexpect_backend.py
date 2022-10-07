@@ -85,7 +85,7 @@ class SSHPExpectBackend(duplicity.backend.Backend):
             config.ssh_options = config.ssh_options + u" -oPort=%s" % parsed_url.port
         # set some defaults if user has not specified already.
         if u"ServerAliveInterval" not in config.ssh_options:
-            config.ssh_options += u" -oServerAliveInterval=%d" % ((int)(config.timeout / 2))
+            config.ssh_options += u" -oServerAliveInterval=%d" % (int(config.timeout / 2))
         if u"ServerAliveCountMax" not in config.ssh_options:
             config.ssh_options += u" -oServerAliveCountMax=2"
 
@@ -171,7 +171,7 @@ class SSHPExpectBackend(duplicity.backend.Backend):
                      u"Couldn't delete file",
                      u"open(.*): Failure"]
         max_response_len = max([len(p) for p in responses[1:]])
-        log.Info(u"Running '%s'" % (commandline))
+        log.Info(u"Running '%s'" % commandline)
         child = pexpect.spawn(commandline, timeout=None, maxread=maxread, encoding=config.fsencoding, use_poll=True)
         cmdloc = 0
         passprompt = 0
@@ -198,7 +198,7 @@ class SSHPExpectBackend(duplicity.backend.Backend):
             elif match == 3:
                 passprompt += 1
                 child.sendline(self.password)
-                if (passprompt > 1):
+                if passprompt > 1:
                     raise BackendException(u"Invalid SSH password.")
             elif match == 4:
                 if not child.before.strip().startswith(u"mkdir"):
@@ -281,7 +281,7 @@ class SSHPExpectBackend(duplicity.backend.Backend):
                 dirs[0] = u'/'
         mkdir_commands = []
         for d in dirs:
-            mkdir_commands += [u"mkdir \"%s\"" % (d)] + [u"cd \"%s\"" % (d)]
+            mkdir_commands += [u"mkdir \"%s\"" % d] + [u"cd \"%s\"" % d]
 
         commands = mkdir_commands + [u"ls -1"]
         commandline = (u"%s %s %s" % (self.sftp_command,

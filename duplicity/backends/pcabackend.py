@@ -228,7 +228,7 @@ Exception: %s""" % str(e))
             policy_retrieval_state = o[u'policy_retrieval_state']
             log.Info(u"Volume %s. State : %s. " % (filename, policy_retrieval_state))
             if policy_retrieval_state == u'sealed':
-                log.Notice(u"Launching unseal of volume %s." % (filename))
+                log.Notice(u"Launching unseal of volume %s." % filename)
                 self.unseal(o[u'name'])
                 one_object_not_unsealed = True
             elif policy_retrieval_state == u"unsealing":
@@ -253,8 +253,8 @@ Exception: %s""" % str(e))
             policy_retrieval_state = o[u'policy_retrieval_state']
             filename = os.fsdecode(o[u'name'])
             if policy_retrieval_state == u'sealed':
-                log.Notice(u"Error: volume is still in sealed state : %s." % (filename))
-                log.Notice(u"Launching unseal of volume %s." % (filename))
+                log.Notice(u"Error: volume is still in sealed state : %s." % filename)
+                log.Notice(u"Launching unseal of volume %s." % filename)
                 self.unseal(o[u'name'])
                 one_object_not_unsealed = True
             elif policy_retrieval_state == u"unsealing":
@@ -267,7 +267,7 @@ Exception: %s""" % str(e))
         m, s = divmod(max_duration, 60)
         h, m = divmod(m, 60)
         max_duration_eta = u"%dh%02dm%02ds" % (h, m, s)
-        log.Notice(u"Need to wait %s before all volumes are unsealed." % (max_duration_eta))
+        log.Notice(u"Need to wait %s before all volumes are unsealed." % max_duration_eta)
         return one_object_not_unsealed
 
 

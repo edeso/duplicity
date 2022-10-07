@@ -53,7 +53,7 @@ class Iterators(UnitTestCase):
     def trueerror_maker(self):
         yield 1
         yield u"hello"
-        yield (2, 3)
+        yield 2, 3
         raise Exception
 
     def nameerror_maker(self):

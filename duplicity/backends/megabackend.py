@@ -58,7 +58,7 @@ class MegaBackend(duplicity.backend.Backend):
         self._makedir_recursive(parsed_url.path[1:].split(u'/'))
 
     def _check_binary_exists(self, cmd):
-        u'checks that a specified command exists in the current path'
+        u"""checks that a specified command exists in the current path"""
 
         try:
             # ignore the output, we only need the return code
@@ -67,7 +67,7 @@ class MegaBackend(duplicity.backend.Backend):
             raise BackendException(u"command '%s' not found, make sure megatools are installed" % (cmd,))
 
     def _makedir(self, path):
-        u'creates a remote directory'
+        u"""creates a remote directory"""
 
         if self._megarc:
             cmd = [u'megamkdir', u'--config', self._megarc, path]
@@ -77,7 +77,7 @@ class MegaBackend(duplicity.backend.Backend):
         self.subprocess_popen(cmd)
 
     def _makedir_recursive(self, path):
-        u'creates a remote directory (recursively the whole path), ingores errors'
+        u"""creates a remote directory (recursively the whole path), ingores errors"""
 
         print(u"mkdir: %s" % (u'/'.join(path),))
 
@@ -91,7 +91,7 @@ class MegaBackend(duplicity.backend.Backend):
                 pass
 
     def _put(self, source_path, remote_filename):
-        u'uploads file to Mega (deletes it first, to ensure it does not exist)'
+        u"""uploads file to Mega (deletes it first, to ensure it does not exist)"""
 
         try:
             self.delete(os.fsdecode(remote_filename))
@@ -102,23 +102,23 @@ class MegaBackend(duplicity.backend.Backend):
                     remote_file=os.fsdecode(remote_filename))
 
     def _get(self, remote_filename, local_path):
-        u'downloads file from Mega'
+        u"""downloads file from Mega"""
 
         self.download(remote_file=os.fsdecode(remote_filename),
                       local_file=os.fsdecode(local_path.name))
 
     def _list(self):
-        u'list files in the backup folder'
+        u"""list files in the backup folder"""
 
         return self.folder_contents(files_only=True)
 
     def _delete(self, filename):
-        u'deletes remote '
+        u"""deletes remote """
 
         self.delete(remote_file=os.fsdecode(filename))
 
     def folder_contents(self, files_only=False):
-        u'lists contents of a folder, optionally ignoring subdirectories'
+        u"""lists contents of a folder, optionally ignoring subdirectories"""
 
         print(u"megals: %s" % (self._folder,))
 

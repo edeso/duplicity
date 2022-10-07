@@ -55,7 +55,7 @@ def exception_traceback(limit=50):
 
 
 def escape(string):
-    u"Convert a (bytes) filename to a format suitable for logging (quoted utf8)"
+    u"""Convert a (bytes) filename to a format suitable for logging (quoted utf8)"""
     string = os.fsdecode(string).encode(u'unicode-escape', u'replace')
     return u"'%s'" % string.decode(u'utf8', u'replace').replace(u"'", u'\\x27')
 

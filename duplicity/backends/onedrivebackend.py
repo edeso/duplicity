@@ -119,7 +119,7 @@ class OneDriveBackend(duplicity.backend.Backend):
         start = time.time()
         response = self.http_client.get(self.API_URI + u'me/drive?$select=quota')
         response.raise_for_status()
-        if (u'quota' in response.json()):
+        if u'quota' in response.json():
             available = response.json()[u'quota'].get(u'remaining', None)
             if available:
                 log.Debug(u'Bytes available: %d' % available)
