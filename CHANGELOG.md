@@ -60,6 +60,8 @@
 
 ### Other
 
+* Merge branch cleanup into branch duplicity-py3. [Kenneth Loafman]
+
 * Merge main into duplicity-py3. [Kenneth Loafman]
 
 * Merge main into branch duplicity-py3. [Kenneth Loafman]
