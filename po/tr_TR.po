@@ -3,17 +3,17 @@ msgstr ""
 "Project-Id-Version: duplicity\n"
 "Report-Msgid-Bugs-To: Kenneth Loafman <kenneth@loafman.com>\n"
 "POT-Creation-Date: 2022-10-08 14:14-0500\n"
-"PO-Revision-Date: 2022-10-08 19:23\n"
+"PO-Revision-Date: 2022-10-08 19:22\n"
 "Last-Translator: \n"
-"Language-Team: Norwegian\n"
-"Language: no_NO\n"
+"Language-Team: Turkish\n"
+"Language: tr_TR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: duplicity\n"
 "X-Crowdin-Project-ID: 539508\n"
-"X-Crowdin-Language: no\n"
+"X-Crowdin-Language: tr\n"
 "X-Crowdin-File: /main/po/duplicity.pot\n"
 "X-Crowdin-File-ID: 6\n"
 
@@ -24,12 +24,12 @@ msgstr ""
 #: ../bin/duplicity:115
 #, python-format
 msgid "GPG error detail: %s"
-msgstr ""
+msgstr "GPG hata ayrıntıları: %s"
 
 #: ../bin/duplicity:125
 #, python-format
 msgid "User error detail: %s"
-msgstr ""
+msgstr "Kullanıcı hata ayrıntıları: %s"
 
 #: ../bin/duplicity:135
 #, python-format
@@ -39,7 +39,7 @@ msgstr ""
 #: ../bin/rdiffdir:64 ../duplicity/commandline.py:240
 #, python-format
 msgid "Error opening file %s"
-msgstr ""
+msgstr "%s dosyası açılırken hata"
 
 #: ../bin/rdiffdir:131
 #, python-format
@@ -49,7 +49,7 @@ msgstr ""
 #: ../duplicity/tempdir.py:160
 #, python-format
 msgid "Using temporary directory %s"
-msgstr ""
+msgstr "%s geçici dizini kullanılıyor"
 
 #: ../duplicity/tempdir.py:204
 #, python-format
@@ -119,7 +119,7 @@ msgstr ""
 #: ../duplicity/backend.py:543
 #, python-format
 msgid "Writing %s"
-msgstr ""
+msgstr "%s yazılıyor"
 
 #: ../duplicity/backend.py:584
 #, python-format
@@ -2178,7 +2178,7 @@ msgstr ""
 #: ../duplicity/commandline.py:641 ../duplicity/commandline.py:689
 #: ../duplicity/commandline.py:917
 msgid "path"
-msgstr ""
+msgstr "yol"
 
 #. Used in usage help to represent an ID for a GnuPG key. Example:
 #. --encrypt-key <gpg_key_id>
@@ -2208,7 +2208,7 @@ msgstr ""
 #: ../duplicity/commandline.py:425 ../duplicity/commandline.py:438
 #: ../duplicity/commandline.py:886
 msgid "filename"
-msgstr ""
+msgstr "dosyaadı"
 
 #. Used in usage help to represent a regular expression (regexp).
 #: ../duplicity/commandline.py:332 ../duplicity/commandline.py:429
@@ -2221,7 +2221,7 @@ msgstr ""
 #: ../duplicity/commandline.py:336 ../duplicity/commandline.py:376
 #: ../duplicity/commandline.py:516 ../duplicity/commandline.py:972
 msgid "time"
-msgstr ""
+msgstr "saat"
 
 #. Used in usage help. (Should be consistent with the "Options:"
 #. header.) Example:
@@ -2230,7 +2230,7 @@ msgstr ""
 #: ../duplicity/commandline.py:519 ../duplicity/commandline.py:630
 #: ../duplicity/commandline.py:905
 msgid "options"
-msgstr ""
+msgstr "seçenekler"
 
 #: ../duplicity/commandline.py:402
 #, python-format
@@ -2263,7 +2263,7 @@ msgstr ""
 #. Used in usage help (noun)
 #: ../duplicity/commandline.py:450
 msgid "backup name"
-msgstr ""
+msgstr "yedek adı"
 
 #: ../duplicity/commandline.py:582
 msgid "policy"
@@ -2277,7 +2277,7 @@ msgstr ""
 #: ../duplicity/commandline.py:603 ../duplicity/commandline.py:606
 #: ../duplicity/commandline.py:871
 msgid "command"
-msgstr ""
+msgstr "komut"
 
 #: ../duplicity/commandline.py:609
 msgid "pyrax|cloudfiles"
@@ -2304,12 +2304,12 @@ msgstr ""
 #: ../duplicity/commandline.py:646 ../duplicity/commandline.py:702
 #: ../duplicity/commandline.py:934
 msgid "seconds"
-msgstr ""
+msgstr "saniyeler"
 
 #. abbreviation for "character" (noun)
 #: ../duplicity/commandline.py:652 ../duplicity/commandline.py:868
 msgid "char"
-msgstr ""
+msgstr "karakter"
 
 #: ../duplicity/commandline.py:834
 #, python-format
@@ -2319,12 +2319,12 @@ msgstr ""
 #: ../duplicity/commandline.py:835
 #, python-format
 msgid "Using backup name: %s"
-msgstr ""
+msgstr "Kullanılan yedek adı: %s"
 
 #: ../duplicity/commandline.py:842
 #, python-format
 msgid "Command line error: %s"
-msgstr ""
+msgstr "Komut satırı hatası: %s"
 
 #: ../duplicity/commandline.py:843
 msgid "Enter 'duplicity --help' for help screen."
@@ -2364,14 +2364,14 @@ msgstr ""
 #. Used in usage help to represent the name of a file directory
 #: ../duplicity/commandline.py:882
 msgid "directory"
-msgstr ""
+msgstr "dizin"
 
 #. Used in usage help, e.g. to represent the name of a code
 #. module. Example:
 #. rsync://user[:password]@other.host[:port]::/module/some_dir
 #: ../duplicity/commandline.py:895
 msgid "module"
-msgstr ""
+msgstr "modül"
 
 #. Used in usage help to represent an internet hostname. Example:
 #. ftp://user[:password]@other.host[:port]/some_dir
@@ -2383,20 +2383,20 @@ msgstr ""
 #. ftp://user[:password]@other.host[:port]/some_dir
 #: ../duplicity/commandline.py:913
 msgid "password"
-msgstr ""
+msgstr "parola"
 
 #. Used in usage help to represent a TCP port number. Example:
 #. ftp://user[:password]@other.host[:port]/some_dir
 #: ../duplicity/commandline.py:921
 msgid "port"
-msgstr ""
+msgstr "bağlantı noktası"
 
 #. Used in usage help. This represents a string to be used as a
 #. prefix to names for backup files created by Duplicity. Example:
 #. s3://other.host/bucket_name[/prefix]
 #: ../duplicity/commandline.py:926
 msgid "prefix"
-msgstr ""
+msgstr "önek"
 
 #. Used in usage help to represent a Unix-style path name. Example:
 #. rsync://user[:password]@other.host[:port]/relative_path
@@ -2424,7 +2424,7 @@ msgstr ""
 #. duplicity [restore] [options] source_url target_dir
 #: ../duplicity/commandline.py:956
 msgid "source_url"
-msgstr ""
+msgstr "kaynak_url"
 
 #. Used in usage help to represent the name of a single file
 #. directory or a Unix-style path to a directory. where files will be
@@ -2432,21 +2432,21 @@ msgstr ""
 #. duplicity [restore] [options] source_url target_dir
 #: ../duplicity/commandline.py:962
 msgid "target_dir"
-msgstr ""
+msgstr "hedef_dir"
 
 #. Used in usage help to represent a URL files will be going TO.
 #. Example:
 #. duplicity [full|incremental] [options] source_dir target_url
 #: ../duplicity/commandline.py:967
 msgid "target_url"
-msgstr ""
+msgstr "hedef_url"
 
 #. Used in usage help to represent a user name (i.e. login).
 #. Example:
 #. ftp://user[:password]@other.host[:port]/some_dir
 #: ../duplicity/commandline.py:977
 msgid "user"
-msgstr ""
+msgstr "kullanıcı"
 
 #. account id for b2. Example: b2://account_id@bucket/
 #: ../duplicity/commandline.py:980
@@ -2463,7 +2463,7 @@ msgstr ""
 #. Example: rclone://remote:/some_dir
 #: ../duplicity/commandline.py:988 ../duplicity/dup_collections.py:517
 msgid "remote"
-msgstr ""
+msgstr "uzak"
 
 #. Header in usage help
 #: ../duplicity/commandline.py:1007
@@ -2473,7 +2473,7 @@ msgstr ""
 #. Header in usage help
 #: ../duplicity/commandline.py:1045
 msgid "Commands:"
-msgstr ""
+msgstr "Komutlar:"
 
 #: ../duplicity/commandline.py:1072
 #, python-format
@@ -2495,7 +2495,7 @@ msgstr ""
 #: ../duplicity/commandline.py:1146
 #, python-format
 msgid "Verify directory %s does not exist"
-msgstr ""
+msgstr "%s doğrulama dizini yok"
 
 #: ../duplicity/commandline.py:1152
 #, python-format
@@ -2505,7 +2505,7 @@ msgstr ""
 #: ../duplicity/commandline.py:1183
 #, python-format
 msgid "Command line warning: %s"
-msgstr ""
+msgstr "Komut satırı uyarısı: %s"
 
 #: ../duplicity/commandline.py:1183
 msgid "Selection options --exclude/--include\n"
@@ -2581,7 +2581,7 @@ msgstr ""
 
 #: ../duplicity/dup_main.py:198
 msgid "First and second passphrases do not match!  Please try again."
-msgstr ""
+msgstr "İlk ve ikinci parolalar eşleşmiyor! Lütfen tekrar deneyin."
 
 #: ../duplicity/dup_main.py:205
 msgid "Cannot use empty passphrase with symmetric encryption!  Please try again."
@@ -2607,11 +2607,11 @@ msgstr ""
 #: ../duplicity/dup_main.py:331
 #, python-format
 msgid "File %s was corrupted during upload."
-msgstr ""
+msgstr "%s dosyası yükleme sırasında bozuldu."
 
 #: ../duplicity/dup_main.py:371
 msgid "Restarting backup, but current encryption settings do not match original settings"
-msgstr ""
+msgstr "Yedekleme tekrar başlatılıyor ama şu anki şifreleme ayarları orijinal ayarlarla eşleşmiyor."
 
 #: ../duplicity/dup_main.py:394
 msgid "Skipping encryption validation due to glacier/deep storage"
@@ -2633,11 +2633,11 @@ msgstr ""
 
 #: ../duplicity/dup_main.py:629
 msgid "No signatures found, switching to full backup."
-msgstr ""
+msgstr "Hiçbir imza bulunamadı, tam yedeklemeye geçiyor."
 
 #: ../duplicity/dup_main.py:643
 msgid "Backup Statistics"
-msgstr ""
+msgstr "Yedekleme İstatistikleri"
 
 #: ../duplicity/dup_main.py:751
 #, python-format
@@ -2646,7 +2646,7 @@ msgstr ""
 
 #: ../duplicity/dup_main.py:755
 msgid "No files found in archive - nothing restored."
-msgstr ""
+msgstr "Arşivde hiçbir dosya bulunamadı - hiçbir şey geri yüklenemedi."
 
 #: ../duplicity/dup_main.py:792
 #, python-format
@@ -2676,25 +2676,25 @@ msgstr ""
 #: ../duplicity/dup_main.py:924
 #, python-format
 msgid "Verify complete: %s, %s."
-msgstr ""
+msgstr "Doğrulama tamamlandı: %s, %s."
 
 #: ../duplicity/dup_main.py:925
 #, python-format
 msgid "%d file compared"
 msgid_plural "%d files compared"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d dosya karşılaştırıldı"
+msgstr[1] "%d dosya karşılaştırıldı"
 
 #: ../duplicity/dup_main.py:927
 #, python-format
 msgid "%d difference found"
 msgid_plural "%d differences found"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d fark bulundu"
+msgstr[1] "%d fark bulundu"
 
 #: ../duplicity/dup_main.py:946
 msgid "No extraneous files found, nothing deleted in cleanup."
-msgstr ""
+msgstr "Hiçbir yabancı dosya bulunamadı, temizlik işleminde hiçbir şey silinmedi."
 
 #: ../duplicity/dup_main.py:951
 msgid "Deleting this file from backend:"
@@ -2705,8 +2705,8 @@ msgstr[1] ""
 #: ../duplicity/dup_main.py:962
 msgid "Found the following file to delete:"
 msgid_plural "Found the following files to delete:"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Silinecek şu dosya bulundu:"
+msgstr[1] "Silinecek şu dosyalar bulundu:"
 
 #: ../duplicity/dup_main.py:965
 msgid "Run duplicity again with the --force option to actually delete."
@@ -2722,7 +2722,7 @@ msgstr ""
 
 #: ../duplicity/dup_main.py:1014
 msgid "Current active backup chain is older than specified time.  However, it will not be deleted.  To remove all your backups, manually purge the repository."
-msgstr ""
+msgstr "Şu anki yedekleme zinciri belirlenen zamandan daha eski ama silinmeyecek. Tüm yedeklemelerinizi kaldırmak için kaynağı elle kaldırın."
 
 #: ../duplicity/dup_main.py:1027
 msgid "No old backup sets found, nothing deleted."
@@ -2791,17 +2791,17 @@ msgstr ""
 #: ../duplicity/dup_main.py:1284
 #, python-format
 msgid "Unable to delete %s: %s"
-msgstr ""
+msgstr "%s silinemedi: %s"
 
 #: ../duplicity/dup_main.py:1318 ../duplicity/dup_temp.py:271
 #, python-format
 msgid "Failed to read %s: %s"
-msgstr ""
+msgstr "%s okuma hatası: %s"
 
 #: ../duplicity/dup_main.py:1331
 #, python-format
 msgid "Copying %s to local cache."
-msgstr ""
+msgstr "%s yerel önbelleğe kopyalanıyor."
 
 #: ../duplicity/dup_main.py:1379
 msgid "Local and Remote metadata are synchronized, no sync needed."
@@ -2886,15 +2886,15 @@ msgstr ""
 
 #: ../duplicity/dup_main.py:1655
 msgid "Last full backup date:"
-msgstr ""
+msgstr "En son tam yedekleme tarihi:"
 
 #: ../duplicity/dup_main.py:1657
 msgid "Last full backup date: none"
-msgstr ""
+msgstr "En son tam yedekleme tarihi: Yok"
 
 #: ../duplicity/dup_main.py:1660
 msgid "Last full backup is too old, forcing full backup"
-msgstr ""
+msgstr "En son tam yedekleme çok eski. Tam yedekleme zorlanıyor"
 
 #: ../duplicity/dup_main.py:1709
 msgid "When using symmetric encryption, the signing passphrase must equal the encryption passphrase."
@@ -2919,7 +2919,7 @@ msgstr ""
 
 #: ../duplicity/asyncscheduler.py:181
 msgid "task completed successfully"
-msgstr ""
+msgstr "görev başarıyla tamamlandı"
 
 #: ../duplicity/asyncscheduler.py:192
 msgid "a previously scheduled task has failed; propagating the result immediately"
@@ -2947,7 +2947,7 @@ msgstr ""
 #: ../duplicity/robust.py:64
 #, python-format
 msgid "Error listing directory %s"
-msgstr ""
+msgstr "%s dizini listeleme hatası"
 
 #: ../duplicity/dup_collections.py:186 ../duplicity/dup_collections.py:200
 #, python-format
@@ -3027,7 +3027,7 @@ msgstr ""
 
 #: ../duplicity/dup_collections.py:452 ../duplicity/dup_collections.py:1253
 msgid "Full"
-msgstr ""
+msgstr "Tüm"
 
 #: ../duplicity/dup_collections.py:455 ../duplicity/dup_collections.py:1255
 msgid "Incremental"
@@ -3035,7 +3035,7 @@ msgstr ""
 
 #: ../duplicity/dup_collections.py:515
 msgid "local"
-msgstr ""
+msgstr "yerel"
 
 #: ../duplicity/dup_collections.py:672
 msgid "Collection Status"
@@ -3246,7 +3246,7 @@ msgstr ""
 #: ../duplicity/selection.py:189
 #, python-format
 msgid "Selecting %s"
-msgstr ""
+msgstr "%s seçiliyor"
 
 #: ../duplicity/selection.py:286
 #, python-format
@@ -3310,17 +3310,17 @@ msgstr ""
 
 #: ../duplicity/path.py:370
 msgid "Difference found:"
-msgstr ""
+msgstr "Farklılık bulundu:"
 
 #: ../duplicity/path.py:379
 #, python-format
 msgid "New file %s"
-msgstr ""
+msgstr "Yeni dosya %s"
 
 #: ../duplicity/path.py:382
 #, python-format
 msgid "File %s is missing"
-msgstr ""
+msgstr "%s dosyası eksik"
 
 #: ../duplicity/path.py:385
 #, python-format
@@ -3355,12 +3355,12 @@ msgstr ""
 #: ../duplicity/path.py:613
 #, python-format
 msgid "Making directory %s"
-msgstr ""
+msgstr "%s dizini yapılıyor"
 
 #: ../duplicity/path.py:623
 #, python-format
 msgid "Deleting %s"
-msgstr ""
+msgstr "%s siliniyor"
 
 #: ../duplicity/path.py:632
 #, python-format

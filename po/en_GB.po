@@ -3,17 +3,17 @@ msgstr ""
 "Project-Id-Version: duplicity\n"
 "Report-Msgid-Bugs-To: Kenneth Loafman <kenneth@loafman.com>\n"
 "POT-Creation-Date: 2022-10-08 14:14-0500\n"
-"PO-Revision-Date: 2022-10-08 19:23\n"
+"PO-Revision-Date: 2022-10-08 19:22\n"
 "Last-Translator: \n"
-"Language-Team: Norwegian\n"
-"Language: no_NO\n"
+"Language-Team: English, United Kingdom\n"
+"Language: en_GB\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: duplicity\n"
 "X-Crowdin-Project-ID: 539508\n"
-"X-Crowdin-Language: no\n"
+"X-Crowdin-Language: en-GB\n"
 "X-Crowdin-File: /main/po/duplicity.pot\n"
 "X-Crowdin-File-ID: 6\n"
 
@@ -94,7 +94,7 @@ msgstr ""
 #: ../duplicity/backend.py:211
 #, python-format
 msgid "Could not initialize backend: %s"
-msgstr ""
+msgstr "Could not initialise backend: %s"
 
 #: ../duplicity/backend.py:403
 #, python-format
@@ -1998,7 +1998,7 @@ msgstr ""
 
 #: ../duplicity/backends/webdavbackend.py:67
 msgid "Missing socket or ssl python modules."
-msgstr ""
+msgstr "Missing socket or SSL Python modules."
 
 #: ../duplicity/backends/webdavbackend.py:85
 #, python-format
@@ -2007,7 +2007,7 @@ msgstr ""
 
 #: ../duplicity/backends/webdavbackend.py:106
 msgid "Option '--ssl-cacert-path' is not supported with python 2.7.8 and below."
-msgstr ""
+msgstr "Option '--ssl-cacert-path' is not supported with Python 2.7.8 and below."
 
 #: ../duplicity/backends/webdavbackend.py:110
 #, python-format
@@ -2083,12 +2083,12 @@ msgstr ""
 
 #: ../duplicity/backends/webdavbackend.py:275
 msgid "python-kerberos needed to use kerberos                           authorization, falling back to basic auth."
-msgstr ""
+msgstr "python-kerberos needed to use kerberos                           authorisation, falling back to basic auth."
 
 #: ../duplicity/backends/webdavbackend.py:279
 #, python-format
 msgid "Kerberos authorization failed: %s.                          Falling back to basic auth."
-msgstr ""
+msgstr "Kerberos authorisation failed: %s.                          Falling back to basic auth."
 
 #: ../duplicity/backends/webdavbackend.py:377
 #, python-format
@@ -2538,7 +2538,10 @@ msgid "Bad interval string \"%s\"\n\n"
 "Intervals are specified like 2Y (2 years) or 2h30m (2.5 hours).  The\n"
 "allowed special characters are s, m, h, D, W, M, and Y.  See the man\n"
 "page for more information."
-msgstr ""
+msgstr "Bad interval string \"%s\"\n\n"
+"Intervals are specified like 2Y (2 years) or 2h30m (2.5 hours).  The\n"
+"allowed special characters are s, m, h, D, W, M, and Y.  See the manual\n"
+"page for more information."
 
 #: ../duplicity/dup_time.py:69
 #, python-format
@@ -2591,13 +2594,15 @@ msgstr ""
 #, python-format
 msgid "File %s complete in backup set.\n"
 "Continuing restart on file %s."
-msgstr ""
+msgstr "File %s complete in back-up set.\n"
+"Continuing restart on file %s."
 
 #: ../duplicity/dup_main.py:272
 #, python-format
 msgid "File %s missing in backup set.\n"
 "Continuing restart on file %s."
-msgstr ""
+msgstr "File %s missing in back-up set.\n"
+"Continuing restart on file %s."
 
 #: ../duplicity/dup_main.py:326
 #, python-format
@@ -2809,7 +2814,7 @@ msgstr ""
 
 #: ../duplicity/dup_main.py:1384
 msgid "Synchronizing remote metadata to local cache..."
-msgstr ""
+msgstr "Synchronising remote metadata to local cache..."
 
 #: ../duplicity/dup_main.py:1397
 msgid "Sync would copy the following from remote to local:"
@@ -2821,7 +2826,7 @@ msgstr ""
 
 #: ../duplicity/dup_main.py:1444
 msgid "Unable to get free space on temp."
-msgstr ""
+msgstr "Unable to get free space in temp."
 
 #: ../duplicity/dup_main.py:1452
 #, python-format
@@ -2859,7 +2864,9 @@ msgstr ""
 msgid "RESTART: Impossible backup state: manifest has %d vols, remote has %d vols.\n"
 "         Restart is impossible ... duplicity will clean off the last partial\n"
 "         backup then restart the backup from the beginning."
-msgstr ""
+msgstr "RESTART: Impossible backup state: manifest has %d vols, remote has %d vols.\n"
+"         Restart is impossible ... Duplicity will clean off the last partial\n"
+"         backup then restart the backup from the beginning."
 
 #: ../duplicity/dup_main.py:1553
 msgid "\n"
@@ -2867,7 +2874,11 @@ msgid "\n"
 "recognize its own backups.  Please remove PYTHONOPTIMIZE from\n"
 "the environment and rerun the backup.\n\n"
 "See https://bugs.launchpad.net/duplicity/+bug/931175\n"
-msgstr ""
+msgstr "\n"
+"PYTHONOPTIMIZE in the environment causes duplicity to fail to\n"
+"recognise its own backups.  Please remove PYTHONOPTIMIZE from\n"
+"the environment and rerun the backup.\n\n"
+"See https://bugs.launchpad.net/duplicity/+bug/931175\n"
 
 #: ../duplicity/dup_main.py:1576
 #, python-format
@@ -2956,7 +2967,7 @@ msgstr ""
 
 #: ../duplicity/dup_collections.py:225
 msgid "Fatal Error: No manifests found for most recent backup"
-msgstr ""
+msgstr "Fatal Error: No manifest found for most recent backup"
 
 #: ../duplicity/dup_collections.py:234
 msgid "Fatal Error: Remote manifest does not match local one.  Either the remote backup set or the local archive directory has been corrupted."
@@ -3023,7 +3034,7 @@ msgstr ""
 
 #: ../duplicity/dup_collections.py:448
 msgid "Num volumes:"
-msgstr ""
+msgstr "Number of volumes:"
 
 #: ../duplicity/dup_collections.py:452 ../duplicity/dup_collections.py:1253
 msgid "Full"
@@ -3049,7 +3060,7 @@ msgstr ""
 #: ../duplicity/dup_collections.py:676
 #, python-format
 msgid "Archive dir: %s"
-msgstr ""
+msgstr "Archive directory: %s"
 
 #: ../duplicity/dup_collections.py:679
 #, python-format
