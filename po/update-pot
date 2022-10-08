@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 
-cd `dirname $0`/..
+cd `dirname "$0"`/..
 
 echo bin/duplicity > po/POTFILES.in
 echo bin/rdiffdir >> po/POTFILES.in
@@ -8,9 +8,9 @@ find duplicity -name '*.py' >> po/POTFILES.in
 
 find testing -name '*.py' > po/POTFILES.skip
 
-cd `dirname $0`
+cd `dirname "$0"`
 
-for f in *.po; do echo `basename $f .po`; done > po/LINGUAS
+(for f in *.po; do echo `basename "$f" .po`; done) > LINGUAS
 
 intltool-update --pot -g duplicity
 sed -i -e 's/^#\. TRANSL:/#./' duplicity.pot
