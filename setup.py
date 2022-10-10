@@ -40,8 +40,8 @@ from setuptools.command.test import test
 
 
 # check that we can function here
-if not (sys.version_info[:2] >= (3, 5) or (sys.version_info[0] == 2 and sys.version_info[:2] >= (2, 7))):
-    print(u"Sorry, duplicity requires version 2.7 or version 3.5 or later of Python.")
+if not sys.version_info[:2] >= (3, 6):
+    print(u"Sorry, duplicity requires version 3.6 or later of Python.")
     sys.exit(1)
 
 

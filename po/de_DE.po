@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: duplicity\n"
 "Report-Msgid-Bugs-To: Kenneth Loafman <kenneth@loafman.com>\n"
-"POT-Creation-Date: 2022-09-26 07:58-0500\n"
-"PO-Revision-Date: 2022-09-28 19:56\n"
+"POT-Creation-Date: 2022-10-08 14:14-0500\n"
+"PO-Revision-Date: 2022-10-08 19:22\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -1883,12 +1883,12 @@ msgstr "Endindex stimmt nicht überein"
 msgid "Hashes don't match"
 msgstr "Prüfsummen stimmen nicht überein"
 
-#: ../duplicity/util.py:159 ../duplicity/dup_main.py:847
+#: ../duplicity/util.py:160 ../duplicity/dup_main.py:847
 #, python-format
 msgid "IGNORED_ERROR: Warning: ignoring error as requested: %s: %s"
 msgstr "VERNACHLÄSSIGTER FEHLER: Achtung: Fehler wird wie verlangt vernachlässigt: %s: %s"
 
-#: ../duplicity/util.py:226
+#: ../duplicity/util.py:227
 #, python-format
 msgid "Releasing lockfile %s"
 msgstr "Sperrdatei »%s« wird freigegeben"
@@ -2972,11 +2972,11 @@ msgstr "Aktive Arbeiter = %d"
 msgid "task execution done (success: %s)"
 msgstr "Aufgabenausführung abgeschlossen (erfolgreich: %s)"
 
-#: ../duplicity/gpginterface.py:240
+#: ../duplicity/gpginterface.py:241
 msgid "Threading not available -- zombie processes may appear"
 msgstr "Einfädelung ist nicht verfügbar – Zombieprozesse können auftreten."
 
-#: ../duplicity/gpginterface.py:707
+#: ../duplicity/gpginterface.py:710
 #, python-format
 msgid "GPG process %d terminated before wait()"
 msgstr "GPG-Prozess %d beendet vor »wait()«."
@@ -3248,12 +3248,12 @@ msgstr ""
 msgid "Patching %s"
 msgstr "%s wird repariert"
 
-#: ../duplicity/patchdir.py:557
+#: ../duplicity/patchdir.py:558
 #, python-format
 msgid "Error '%s' patching %s"
 msgstr "Fehler »%s« beim Reparieren von %s"
 
-#: ../duplicity/patchdir.py:632
+#: ../duplicity/patchdir.py:633
 #, python-format
 msgid "Writing %s of type %s"
 msgstr "Schreibvorgang von %s des Typs %s"
