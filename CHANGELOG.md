@@ -1,73 +1,8 @@
-## (unreleased)
+## rel.1.0.1 (2022-10-03)
 
 ### Changes
 
-* Remove par2+ from target schema.  Does not matter. [Kenneth Loafman]
-
-* Lower test to ulimit 2048 and reverse filename order. [Kenneth Loafman]
-
-### Fix
-
-* Fix pylint code issue. [Kenneth Loafman]
-
-* Fix case where gpg return code is None. [Kenneth Loafman]
-
-* Add pydevd-pycharm to requirements.txt. [Kenneth Loafman]
-
-* Fix to allow using PyCharm or LiClipse pydevd. [Kenneth Loafman]
-
-* Fix doctests to run again. [Kenneth Loafman]
-
-* Remove redundant code. [Kenneth Loafman]
-
-* Print stderr on gpg fail plus error code and string. [Kenneth Loafman]
-
-* Add \_() for translations of msgs in gpg\_error\_codes.py. [Kenneth Loafman]
-
-* Add stderr\_fp back in.  Too much noise otherwise. [Kenneth Loafman]
-
-* Remove stderr\_fp and use process return code to report errors. [Kenneth Loafman]
-
-  - Added file make_gpg_error_codes.py which creates gpg_error_codes.py.
-  - Modded gpg.py to remove use of stderr_fp, thus reducing FDs used.
-
-* Remove status\_fd if no sign\_key in gpg.py. [Kenneth Loafman]
-
-  - updated issue125.sh to use testing/gnupg keys   - issue125.sh passes
-  with `ulimit 1024`
-
-* Cleanup, remove all uses of logger\_fd. [Kenneth Loafman]
-
-* Add back status\_fd for signature verification. [Kenneth Loafman]
-
-* Remove unused GPG file handles. [Kenneth Loafman]
-
-  - removed status and logger filehandles for decrypt   -
-  testing/manual/issue125 now runs with 'ulimit -n 1536'
-
-* Cleanup, remove test\_2to3. [Kenneth Loafman]
-
-* Remove support for Python 2.7.  Second pass. [Kenneth Loafman]
-
-  - remove test_unadorned_string_literals   - remove
-  find/fix_unadorned_strings.py   - fix u'string' to be just 'string'
-
-* Remove support for Python 2.7.  First pass. [Kenneth Loafman]
-
-  - remove 'import future' and its call   - remove 'import builtin *'
-  - remove conditionals based on sys.version_info   - remove mentions in
-  readme and other docs
-
-### Other
-
-* Merge branch cleanup into branch duplicity-py3. [Kenneth Loafman]
-
-* Merge main into duplicity-py3. [Kenneth Loafman]
-
-* Merge main into branch duplicity-py3. [Kenneth Loafman]
-
-
-## rel.1.0.1 (2022-10-03)
+* Pkg New Crowdin updates. [Kenneth Loafman]
 
 ### Fix
 
