@@ -23,6 +23,7 @@
 from __future__ import print_function
 
 import os
+import glob
 import re
 import shutil
 import subprocess
@@ -111,17 +112,15 @@ def get_data_files():
         # msgfmt the translation files
         assert os.path.exists(u"po"), u"Missing 'po' directory."
 
-        if os.path.exists(u'po/LINGUAS'):
-            linguas = open(u'po/LINGUAS').readlines()
-            for line in linguas:
-                langs = line.split()
-                for lang in langs:
-                    try:
-                        os.mkdir(os.path.join(u"po", lang))
-                    except os.error:
-                        pass
-                    assert not os.system(u"cp po/%s.po po/%s" % (lang, lang)), lang
-                    assert not os.system(u"msgfmt po/%s.po -o po/%s/duplicity.mo" % (lang, lang)), lang
+        linguas = glob.glob(u'po/*.po')
+        for lang in linguas:
+            lang = lang[3:-3]
+            try:
+                os.mkdir(os.path.join(u"po", lang))
+            except os.error:
+                pass
+            assert not os.system(u"cp po/%s.po po/%s" % (lang, lang)), lang
+            assert not os.system(u"msgfmt po/%s.po -o po/%s/duplicity.mo" % (lang, lang)), lang
 
         for root, dirs, files in os.walk(u"po"):
             for file in files:
@@ -344,12 +343,10 @@ setup(name=u"duplicity",
 
 
 # TODO: Find best way to clean up afterwards.
-if os.path.exists(u'po/LINGUAS'):
-    linguas = open(u'po/LINGUAS').readlines()
-    for line in linguas:
-        langs = line.split()
-        for lang in langs:
-            try:
-                shutil.rmtree(os.path.join(u"po", lang))
-            except Exception:
-                pass
+linguas = glob.glob(u'po/*.po')
+for lang in linguas:
+    lang = lang[3:-3]
+    try:
+        shutil.rmtree(os.path.join(u"po", lang))
+    except Exception:
+        pass
