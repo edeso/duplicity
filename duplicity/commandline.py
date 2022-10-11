@@ -296,11 +296,11 @@ def parse_cmdline_options(arglist):
                       dest=u"", action=u"callback",
                       callback=lambda o, s, v, p: (config.gpg_profile.recipients.append(v), set_sign_key(v)))
 
-    # TRANSL: Used in usage help to represent a "glob" style pattern for
+    # TRANSL: Used in usage help to represent a pattern for
     # matching one or more files, as described in the documentation.
     # Example:
-    # --exclude <shell_pattern>
-    parser.add_option(u"--exclude", action=u"callback", metavar=_(u"shell_pattern"),
+    # --exclude <pattern>
+    parser.add_option(u"--exclude", action=u"callback", metavar=_(u"pattern"),
                       dest=u"", type=u"string", callback=add_selection)
 
     parser.add_option(u"--exclude-device-files", action=u"callback",
@@ -340,7 +340,7 @@ def parse_cmdline_options(arglist):
     parser.add_option(u"--fail-on-volume", type=u"int",
                       help=optparse.SUPPRESS_HELP)
 
-    # used to provide a prefix on top of the defaul tar file name
+    # used to provide a prefix on top of the default tar file name
     parser.add_option(u"--file-prefix", type=u"string", dest=u"file_prefix", action=u"store")
 
     # used to provide a suffix for manifest files only
@@ -351,6 +351,31 @@ def parse_cmdline_options(arglist):
 
     # used to provide a suffix for sigature files only
     parser.add_option(u"--file-prefix-signature", type=u"string", dest=u"file_prefix_signature", action=u"store")
+
+    # File selection mode switch, changes the interpretation of any subsequent
+    # --exclude* or --include* options to shell globbing.
+    parser.add_option(u"--filter-globbing", action=u"callback",
+                      callback=lambda o, s, v, p: select_opts.append((s, None)))
+
+    # File selection mode switch, changes the interpretation of any subsequent
+    # --exclude* or --include* options to case-insensitive matching.
+    parser.add_option(u"--filter-ignorecase", action=u"callback",
+                      callback=lambda o, s, v, p: select_opts.append((s, None)))
+
+    # File selection mode switch, changes the interpretation of any subsequent
+    # --exclude* or --include* options to literal strings.
+    parser.add_option(u"--filter-literal", action=u"callback",
+                      callback=lambda o, s, v, p: select_opts.append((s, None)))
+
+    # File selection mode switch, changes the interpretation of any subsequent
+    # --exclude* or --include* options to regular expressions.
+    parser.add_option(u"--filter-regexp", action=u"callback",
+                      callback=lambda o, s, v, p: select_opts.append((s, None)))
+
+    # File selection mode switch, changes the interpretation of any subsequent
+    # --exclude* or --include* options to case-sensitive matching.
+    parser.add_option(u"--filter-strictcase", action=u"callback",
+                      callback=lambda o, s, v, p: select_opts.append((s, None)))
 
     # used in testing only - skips upload for a given volume
     parser.add_option(u"--skip-volume", type=u"int",
@@ -413,7 +438,7 @@ def parse_cmdline_options(arglist):
     # TRANSL: Used in usage help to represent an imap mailbox
     parser.add_option(u"--imap-mailbox", metavar=_(u"imap_mailbox"))
 
-    parser.add_option(u"--include", action=u"callback", metavar=_(u"shell_pattern"),
+    parser.add_option(u"--include", action=u"callback", metavar=_(u"pattern"),
                       dest=u"", type=u"string", callback=add_selection)
     parser.add_option(u"--include-filelist", type=u"file", metavar=_(u"filename"),
                       dest=u"", action=u"callback", callback=add_filelist)
@@ -916,6 +941,12 @@ def usage():
         # --archive-dir <path>
         u'path': _(u"path"),
 
+        # TRANSL: Used in usage help to represent a pattern for
+        # matching one or more files, as described in the documentation.
+        # Example:
+        # --exclude <pattern>
+        u'pattern': _(u"pattern"),
+
         # TRANSL: Used in usage help to represent a TCP port number. Example:
         # ftp://user[:password]@other.host[:port]/some_dir
         u'port': _(u"port"),
@@ -932,12 +963,6 @@ def usage():
         # TRANSL: Used in usage help. Example:
         # --timeout <seconds>
         u'seconds': _(u"seconds"),
-
-        # TRANSL: Used in usage help to represent a "glob" style pattern for
-        # matching one or more files, as described in the documentation.
-        # Example:
-        # --exclude <shell_pattern>
-        u'shell_pattern': _(u"shell_pattern"),
 
         # TRANSL: Used in usage help to represent the name of a single file
         # directory or a Unix-style path to a directory. Example:

@@ -358,3 +358,16 @@ def csv_args_to_dict(arg):
             for i in range(0, len(row), 2):
                 mydict[row[i]] = row[i + 1]
     return mydict
+
+
+# TODO: just use util.fsdecode().casefold() directly when python27 is gone
+def casefold_compat(s):
+    u"""
+    Compatability function for casefolding which provides an acceptable for
+    older pythons. Can likely be removed once python2 support is no longer o
+    any interest.
+    """
+    if sys.version_info.major >= 3 and sys.version_info.minor >= 3:
+        return s.casefold()
+    else:
+        return s.lower()

@@ -518,6 +518,38 @@ to be restored instead of the entire contents of the backup archive.
 should be given relative to the root of the directory backed up.
 
 .TP
+.BI --filter-globbing
+.PD 0
+.TP
+.BI --filter-ignorecase
+.PD 0
+.TP
+.BI --filter-literal
+.PD 0
+.TP
+.BI --filter-regexp
+.PD 0
+.TP
+.BI --filter-strictcase
+.RS
+Change the interpretation of patterns passed to the file selection condition
+option arguments
+.BI --exclude
+and
+.BI --include
+(and variations thereof, including file lists). These options can appear multiple
+times to switch between shell globbing (default), literal strings, and regular
+expressions, case sensitive (default) or not. The specified interpretation applies
+for all subsequent selection conditions up until the next
+.BI --filter
+option.
+
+See the
+.B FILE SELECTION
+section for more information.
+.RE
+
+.TP
 .BI "--full-if-older-than " time
 Perform a full backup if an incremental backup is requested, but the
 latest full backup in the collection is older than the given
@@ -1665,8 +1697,9 @@ to the current time zone settings.  For instance, "2002/3/5",
 When duplicity is run, it searches through the given source
 directory and backs up all the files specified by the file selection
 system.  The file selection system comprises a number of file
-selection conditions, which are set using one of the following command
-line options:
+selection conditions, which are set using a combination of the following
+command line options:
+
 .RS
 --exclude
 .br
@@ -1684,45 +1717,106 @@ line options:
 .br
 --include-regexp
 .RE
-Each file selection condition either matches or doesn't match a given
-file.  A given file is excluded by the file selection system exactly
-when the first matching file selection condition specifies that the
-file be excluded; otherwise the file is included.
 
-For instance,
-.PP
+For each individual file found in the source directory, the file selection
+conditions are checked in the order they are specified on the command line. 
+Should a selection condition match, the file will be included or excluded
+accordingly and the file selection system will proceed to the next file
+without checking the remaining conditions.
+
+Earlier arguments therefore take precedence where multiple conditions
+match any given file, and are thus usually given in order of decreasing
+specificity.  If no selection conditions match a given file, then the file
+is implicitly included.
+
+For example,
+
 .RS
 duplicity --include /usr --exclude /usr /usr scp://user@host/backup
-.PP
 .RE
+
 is exactly the same as
-.PP
+
 .RS
 duplicity /usr scp://user@host/backup
-.PP
 .RE
-because the include and exclude directives match exactly the same
-files, and the
+
+because the
 .BI --include
-comes first, giving it precedence.  Similarly,
-.PP
+directive matches all files in the backup source directory, and takes
+precedence over the contradicting
+.BI --exclude
+option as it comes first.
+
+As a more meaningful example,
+
 .RS
 duplicity --include /usr/local/bin --exclude /usr/local /usr
 scp://user@host/backup
-.PP
 .RE
-would backup the /usr/local/bin directory (and its contents), but not
-/usr/local/doc.
 
-The
-.BR include ,
-.BR exclude ,
-.BR include-filelist ,
+would backup the /usr/local/bin directory (and its contents), but not
+/usr/local/doc. Note that this is not the same as simply specifying
+/usr/local/bin as the backup source, as other files and folders under
+/usr will also be (implicitly) included.
+
+The order of the
+.BI --include
 and
-.B exclude-filelist
-options accept some
-.IR "extended shell globbing patterns" .
-These patterns can contain
+.BI --exclude
+arguments is important. In the previous example, if the less specific
+.BI --exclude
+directive had precedence it would prevent the more specific
+.BI --include
+from matching any files.
+
+The patterns passed to the
+.BR --include ,
+.BR --exclude ,
+.BR --include-filelist ,
+and
+.BR --exclude-filelist
+options are interpretted as
+.IR "extended shell globbing patterns"
+by default. This behaviour can be changed with the following filter
+mode arguments:
+
+.RS
+.br
+--filter-globbing
+.br
+--filter-literal
+.br
+--filter-regexp
+.RE
+
+These arguments change the interpretation of the patterns used in selection
+conditions, affecting all subsequent file selection options passed on the
+command line. They may be specified multiple times in order to switch pattern
+interpretations as needed.
+
+Literal strings differ from globs in that the pattern must match the filename
+exactly. This can be useful where filenames contain characters which have
+special meaning in shell globs or regular expressions. If passing dynamically
+generated file lists to duplicity using the
+.BR --include-filelist
+or
+.BR --exclude-filelist
+options, then the use of
+.BR --filter-literal
+is recommended unless regular expression or globbing is specifically
+required.
+
+The regular expression language used for selection conditions specified with
+.B "--include-regexp"
+,
+.B "--exclude-regexp"
+,
+or when
+.B --filter-regexp
+is in effect is as implemented by the Python standard library.
+
+Extended shell globbing pattenrs may contain:
 .BR * ,
 .BR ** ,
 .BR ? ,
@@ -1732,36 +1826,83 @@ and
 .B *
 can be expanded to any string of characters not containing "/",
 .B ?
-expands to any character except "/", and
+expands to any single character except "/", and
 .B [...]
 expands to a single character of those characters specified (ranges
-are acceptable).  The new special pattern,
-.BR ** ,
+are acceptable).  The pattern
+.BR **
 expands to any string of characters whether or not it contains "/".
-Furthermore, if the pattern starts with "ignorecase:" (case
-insensitive), then this prefix will be removed and any character in
-the string can be replaced with an upper- or lowercase version of
-itself.
 
-Remember that you may need to quote these characters when typing them
-into a shell, so the shell does not interpret the globbing patterns
-before duplicity sees them.
+In addition to the above filter mode arguments, the following can be used
+in the same fashion to enable (default) or disable case sensitivity in the
+evaluation of file sslection conditions:
 
-The
+.RS
+.br
+--filter-ignorecase
+.br
+--filter-strictcase
+.RE
+
+An example of filter mode switching including case insensitivity is
+
+.RS
+.BI --filter-ignorecase
+.BI --include
+/usr/bin/*.PY
+.BI --filter-literal
+.BI --filter-include
+/usr/bin/special?file*name
+.BI --filter-strictcase
 .BI --exclude
-pattern option matches a file if:
-.PP
+/usr/bin
+.RE
+
+which would backup *.py, *.pY, *.Py, and *.PY files under /usr/bin and also the
+single literally specified file with globbing characters in the name. The use
+of
+.B --filter-strictcase
+is not technically necessary here, but is included as an example which may
+(depending on the backup source path) cause unexpected interactions between
+.B --include
+and
+.B --exclude
+options, should the directory portion of the path (/usr/bin) contain any
+uppercase characters.
+
+If the pattern starts with "ignorecase:" (case insensitive), then
+this prefix will be removed and any character in the string can be
+replaced with an upper- or lowercase version of itself. This prefix is a
+legacy feature supported for shell globbing selection conditions only,
+but for backward compatability reasons is otherwise considered part of
+the pattern itself (use
+.B --filter-ignorecase
+instead).
+
+Remember that you may need to quote patterns when typing them
+into a shell, so the shell does not interpret the globbing patterns
+or whitespace characters before duplicity sees them.
+
+Selection patterns should generally be thought of
+.I as filesystem paths
+rather than arbitrary strings. For selection conditions using extended shell
+globbing patterns, the
+.BI --exclude
+.I pattern
+option matches a file if:
+
 .B 1.
 .I pattern
 can be expanded into the file's filename, or
 .br
 .B 2.
 the file is inside a directory matched by the option.
-.PP
+
 Conversely, the
 .B "--include "
-pattern matches a file if:
-.PP
+.I pattern
+option matches a file if:
+
 .B 1.
 .I pattern
 can be expanded into the file's filename, or
@@ -1771,7 +1912,7 @@ the file is inside a directory matched by the option, or
 .br
 .B 3.
 the file is a directory which contains a file matched by the option.
-.PP
+
 For example,
 
 .RS
@@ -1793,7 +1934,7 @@ specifies that /usr, /usr/local, /usr/local/lib, and
 /usr/local/lib/netscape (but not /usr/doc) all be backed up. Thus you
 don't have to worry about including parent directories to make sure
 that included subdirectories have somewhere to go.
-.PP
+
 Finally,
 
 .RS
@@ -1806,6 +1947,25 @@ match anything, it would also match /usr.  If there is no existing
 file that the given pattern can be expanded into, the option will not
 match /usr alone.
 
+This treatment of patterns in globbing and literal selection conditions as
+filesystem paths reduces the number of explicit conditions required.
+However, it does require that the paths described by all variants of the
+.B "--include "
+or
+.B "--include "
+option are fully specified relative to the backup source directory.
+
+For selection conditions using literal strings, the same logic applies except
+that scenario
+.B 1
+is for an exact match of the pattern.
+
+For selection conditions using regular expressions the pattern is evaluated
+as a regular expression rather than a filesystem path. Scenario
+.B 3
+in the above therefore does not apply, the implications of which are
+discussed at the end of this section.
+
 The
 .BR --include-filelist ,
 and
@@ -1814,17 +1974,19 @@ options also introduce file selection conditions.  They direct
 duplicity to read in a text file (either ASCII or UTF-8), each line
 of which is a file specification, and to include or exclude the
 matching files.  Lines are separated by newlines or nulls, depending
-on whether the --null-separator switch was given.  Each line in the
-filelist will be interpreted as a globbing pattern the way
+on whether the --null-separator switch was given.
+
+Each line in the filelist will be interpreted as a selection pattern
+in the same way
 .BI --include
 and
 .BI --exclude
-options are interpreted, except that lines starting with "+ " are interpreted as include directives, even
-if found in a filelist referenced by
+options are interpreted, except that lines starting with "+ " are interpreted
+as include directives, even if found in a filelist referenced by
 .BR --exclude-filelist .
 Similarly, lines starting with "- " exclude files even if they are
 found within an include filelist.
-.PP
+
 For example, if file "list.txt" contains the lines:
 
 .RS
@@ -1842,20 +2004,17 @@ For example, if file "list.txt" contains the lines:
 then
 .B "--include-filelist list.txt"
 would include /usr, /usr/local, and
-/usr/local/bin.  It would exclude /usr/local/doc,
-/usr/local/doc/python, etc.  It would also include
-/usr/local/man, as this is included within /user/local.  Finally, it is undefined what happens with
-/var.  A single file list should not contain conflicting file
-specifications.
+/usr/local/bin.  It would exclude /usr/local/doc, /usr/local/doc/python,
+etc.  It would also include /usr/local/man, as this is included within
+/usr/local.  Finally, it is undefined what happens with /var.  A single
+file list should not contain conflicting file specifications.
 
-Each line in the filelist will also be
-interpreted as a globbing pattern the way
+Each line in the filelist will be interpreted as per the current filter
+mode in the same way
 .BI --include
 and
 .BI --exclude
-options are interpreted.
-For instance, if the file "list.txt" contains the
-lines:
+options are interpreted. For instance, if the file "list.txt" contains the lines:
 
 .RS
 dir/foo
@@ -1876,18 +2035,17 @@ Finally, the
 and
 .BI --exclude-regexp
 options allow files to be included and excluded if their filenames match a
-python regular expression.  Regular expression syntax is too
-complicated to explain here, but is covered in Python's library
-reference.  Unlike the
+regular expression.  Regular expression syntax is too complicated to explain
+here, but is covered in Python's library reference.  Unlike the
 .BI --include
 and
 .BI --exclude
 options, the regular expression options don't match files containing
 or contained in matched files.  So for instance
-.PP
+
 .RS
---include '[0-9]{7}(?!foo)'
-.PP
+--include-regexp '[0-9]{7}(?!foo)'
+
 .RE
 matches any files whose full pathnames contain 7 consecutive digits
 which aren't followed by 'foo'.  However, it wouldn't match /home even

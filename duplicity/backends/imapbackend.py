@@ -105,7 +105,7 @@ class ImapBackend(duplicity.backend.Backend):
         self.remote_dir = re.sub(r'^/', r'', parsed_url.path, 1)
 
         #  Login
-        if not (config.imap_full_address):
+        if (not config.imap_full_address):
             self.conn.login(self.username, self.password)
             self.conn.select(config.imap_mailbox)
             log.Info(u"IMAP connected")

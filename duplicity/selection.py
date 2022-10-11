@@ -73,7 +73,7 @@ class Select(object):
     2 - the test says the file (must be directory) should be scanned
 
     Also, a selection function f has a variable f.exclude which should
-    be true iff f could potentially exclude some file.  This is used
+    be true if f could potentially exclude some file. This is used
     to signal an error if the last function only includes, which would
     be redundant and presumably isn't what the user intends.
 
@@ -240,38 +240,77 @@ class Select(object):
         (option-string, (additional argument, filelist_fp)).
 
         """
+        # Sanity checks on --filter-* options for the benefit of users
+        if argtuples and argtuples[-1][0].startswith(u"--filter-"):
+            log.FatalError(_(u"""\
+The last file selection option is the filter option %s, which will have no
+effect as there are no subsequent file selection options. Exiting because
+this probably isn't what you meant.""") %
+                           (argtuples[-1][0],),
+                           log.ErrorCode.trailing_filter)
+        f_opt = set(opt[0] for opt in argtuples if opt[0].startswith(u"--filter-"))
+        f_def = (u"--filter-globbing", u"--filter-strictcase")
+        if f_opt and all(opt in f_def for opt in f_opt):
+            log.FatalError(_(u"""\
+Only these filter mode options were specified:
+    %s
+Case sensitive globbing is the default behaviour and so this has no effect.
+Exiting because this probably isn't what you meant.""") %
+                           (u", ".join(f_opt),),
+                           log.ErrorCode.redundant_filter)
+
         # Called by commandline.py set_selection. External.
         filelists_index = 0
+        mode = u"globbing"
+        no_case = False
         try:
             for opt, arg in argtuples:
                 if opt == u"--exclude":
-                    self.add_selection_func(self.glob_get_sf(arg, 0))
+                    self.add_selection_func(self.general_get_sf(arg, 0, mode, ignore_case=no_case))
                 elif opt == u"--exclude-if-present":
                     self.add_selection_func(self.present_get_sf(arg, 0), add_to_start=True)
                 elif opt == u"--exclude-device-files":
                     self.add_selection_func(self.devfiles_get_sf(), add_to_start=True)
-                elif (opt == u"--exclude-filelist") or (opt == u"--exclude-globbing-filelist"):
-                    # --exclude-globbing-filelist is now deprecated, as all filelists are globbing
-                    # but keep this here for the short term for backwards-compatibility
-                    for sf in self.filelist_globbing_get_sfs(filelists[filelists_index], 0, arg):
+                elif opt == u"--exclude-filelist":
+                    for sf in self.filelist_general_get_sfs(filelists[filelists_index], 0, arg, mode, no_case):
+                        self.add_selection_func(sf)
+                    filelists_index += 1
+                elif opt == u"--exclude-globbing-filelist":
+                    # --exclude-globbing-filelist is now deprecated, but if it
+                    # turns up then it needs to always work in globbing mode...
+                    for sf in self.filelist_general_get_sfs(filelists[filelists_index], 0, arg, u"globbing", no_case):
                         self.add_selection_func(sf)
                     filelists_index += 1
                 elif opt == u"--exclude-other-filesystems":
                     self.add_selection_func(self.other_filesystems_get_sf(0))
                 elif opt == u"--exclude-regexp":
-                    self.add_selection_func(self.regexp_get_sf(arg, 0))
+                    self.add_selection_func(self.regexp_get_sf(arg, 0, no_case))
                 elif opt == u"--exclude-older-than":
                     self.add_selection_func(self.exclude_older_get_sf(arg))
+                elif opt == u"--filter-strictcase":
+                    no_case = False
+                elif opt == u"--filter-globbing":
+                    mode = u"globbing"
+                elif opt == u"--filter-ignorecase":
+                    no_case = True
+                elif opt == u"--filter-literal":
+                    mode = u"literal"
+                elif opt == u"--filter-regexp":
+                    mode = u"regex"
                 elif opt == u"--include":
-                    self.add_selection_func(self.glob_get_sf(arg, 1))
-                elif (opt == u"--include-filelist") or (opt == u"--include-globbing-filelist"):
-                    # --include-globbing-filelist is now deprecated, as all filelists are globbing
-                    # but keep this here for the short term for backwards-compatibility
-                    for sf in self.filelist_globbing_get_sfs(filelists[filelists_index], 1, arg):
+                    self.add_selection_func(self.general_get_sf(arg, 1, mode, no_case))
+                elif opt == u"--include-filelist":
+                    for sf in self.filelist_general_get_sfs(filelists[filelists_index], 1, arg, mode, no_case):
+                        self.add_selection_func(sf)
+                    filelists_index += 1
+                elif opt == u"--include-globbing-filelist":
+                    # --include-globbing-filelist is now deprecated, but if it
+                    # turns up then it needs to always work in globbing mode...
+                    for sf in self.filelist_general_get_sfs(filelists[filelists_index], 1, arg, u"globbing", no_case):
                         self.add_selection_func(sf)
                     filelists_index += 1
                 elif opt == u"--include-regexp":
-                    self.add_selection_func(self.regexp_get_sf(arg, 1))
+                    self.add_selection_func(self.regexp_get_sf(arg, 1, no_case))
                 else:
                     assert 0, u"Bad selection option %s" % opt
         except GlobbingError as e:
@@ -320,12 +359,15 @@ probably isn't what you meant.""") %
 
     def filelist_sanitise_line(self, line, include_default):
         u"""
-        Sanitises lines of both normal and globbing filelists, returning (line, include) and line=None if blank/comment
+        Sanitises lines of both normal and globbing filelists, returning
+        (line, include) and line=None if blank/comment
 
-        The aim is to parse filelists in a consistent way, prior to the interpretation of globbing statements.
-        The function removes whitespace, comment lines and processes modifiers (leading +/-) and quotes.
+        The aim is to parse filelists in a consistent way, prior to the
+        interpretation of globbing statements. The function removes
+        whitespace, comment lines and processes modifiers (leading +/-)
+        and quotes.
         """
-        # Internal. Used by filelist_globbing_get_sfs
+        # Internal. Used by filelist_general_get_sfs
 
         line = line.strip()
         if not line:  # skip blanks
@@ -347,13 +389,13 @@ probably isn't what you meant.""") %
 
         return line, include
 
-    def filelist_globbing_get_sfs(self, filelist_fp, inc_default, list_name):
+    def filelist_general_get_sfs(self, filelist_fp, inc_default, list_name, mode=u"globbing", ignore_case=False):
         u"""Return list of selection functions by reading fileobj
 
         filelist_fp should be an open file object
-        inc_default is true iff this is an include list
+        inc_default is true if this is an include list
         list_name is just the name of the list, used for logging
-        See the man page on --[include/exclude]-globbing-filelist
+        mode indicates whether to glob, regex, or not
 
         """
         # Internal. Used by ParseArgs.
@@ -368,7 +410,7 @@ probably isn't what you meant.""") %
             if not line:
                 # Skip blanks and comment lines
                 continue
-            yield self.glob_get_sf(line, include)
+            yield self.general_get_sf(line, include, mode, ignore_case)
 
     def other_filesystems_get_sf(self, include):
         u"""Return selection function matching files on other filesystems"""
@@ -386,12 +428,17 @@ probably isn't what you meant.""") %
         sel_func.name = u"Match other filesystems"
         return sel_func
 
-    def regexp_get_sf(self, regexp_string, include):
+    def regexp_get_sf(self, regexp_string, include, ignore_case=False):
         u"""Return selection function given by regexp_string"""
         # Internal. Used by ParseArgs and unit tests.
         assert include == 0 or include == 1
+
+        flags = 0
+        if ignore_case:
+            flags = re.IGNORECASE
+
         try:
-            regexp = re.compile(regexp_string)
+            regexp = re.compile(regexp_string, flags)
         except Exception:
             log.Warn(_(u"Error compiling regular expression %s") % regexp_string)
             raise
@@ -403,7 +450,8 @@ probably isn't what you meant.""") %
                 return None
 
         sel_func.exclude = not include
-        sel_func.name = u"Regular expression: %s" % regexp_string
+        sel_func.name = u"regular expression %s %scase: %s" % \
+            (include and u"include" or u"exclude", ignore_case and u"no-" or u"", regexp_string)
         return sel_func
 
     def devfiles_get_sf(self):
@@ -419,20 +467,34 @@ probably isn't what you meant.""") %
         sel_func.name = u"Exclude device files"
         return sel_func
 
-    def glob_get_sf(self, glob_str, include):
-        u"""Return selection function given by glob string"""
-        # Internal. Used by ParseArgs, filelist_globbing_get_sfs and unit tests.
-        assert include == 0 or include == 1
-        assert isinstance(glob_str, str)
-        if glob_str == u"**":
-            sel_func = lambda path: include
-        else:
-            sel_func = self.glob_get_normal_sf(glob_str, include)
+    def general_get_sf(self, pattern_str, include, mode=u"globbing", ignore_case=False):
+        u"""Return selection function given by a pattern string
 
-        sel_func.exclude = not include
-        sel_func.name = u"Command-line %s glob: %s" % \
-                        (include and u"include" or u"exclude", glob_str)
-        return sel_func
+        The selection patterns are interpretted in accordance with the mode
+        argument, "globbing", "literal", or "regex".
+
+        The 'ignorecase:' prefix is a legacy feature which historically lived on
+        the globbing code path and was only ever documented as working for globs.
+        """
+
+        # Internal. Used by ParseArgs, filelist_general_get_sfs and unit tests.
+        assert include == 0 or include == 1
+        assert isinstance(pattern_str, str)
+
+        # legacy prefix applies *only* in globbing mode
+        if mode == u"globbing" and pattern_str.lower().startswith(u"ignorecase:"):
+            pattern_str = pattern_str[len(u"ignorecase:"):]
+            pattern_str = util.casefold_compat(util.fsdecode(pattern_str))
+            ignore_case = True
+
+        if mode == u"globbing":
+            return self.glob_get_sf(pattern_str, include, ignore_case)
+        elif mode == u"literal":
+            return self.literal_get_sf(pattern_str, include, ignore_case)
+        elif mode == u"regex":
+            return self.regexp_get_sf(pattern_str, include, ignore_case)
+        else:
+            assert 0, u"Bad selection mode %s" % mode
 
     def present_get_sf(self, filename, include):
         u"""Return selection function given by existence of a file in a directory"""
@@ -473,39 +535,42 @@ probably isn't what you meant.""") %
                         (include and u"include-if-present" or u"exclude-if-present", filename)
         return sel_func
 
-    def glob_get_normal_sf(self, glob_str, include):
-        u"""Return selection function based on glob_str
-
-        The basic idea is to turn glob_str into a regular expression,
-        and just use the normal regular expression.  There is a
-        complication because the selection function should return '2'
-        (scan) for directories which may contain a file which matches
-        the glob_str.  So we break up the glob string into parts, and
-        any file which matches an initial sequence of glob parts gets
-        scanned.
-
-        Thanks to Donovan Baarda who provided some code which did some
-        things similar to this.
-
-        """
+    def glob_get_sf(self, glob_str, include, ignore_case=False):
+        u"""Return selection function based on glob_str"""
         assert isinstance(glob_str, str), \
             u"The glob string " + glob_str.decode(sys.getfilesystemencoding(), u"ignore") + u" is not unicode"
-        ignore_case = False
-
-        if glob_str.lower().startswith(u"ignorecase:"):
-            # Glob string starts with ignorecase, so remove that from the
-            # string and change it to lowercase.
-            glob_str = glob_str[len(u"ignorecase:"):].lower()
-            ignore_case = True
 
         # Check to make sure prefix is ok, i.e. the glob string is within
         # the root folder being backed up
-        file_prefix_selection = select_fn_from_glob(glob_str, include=1)(self.rootpath)
-        if not file_prefix_selection:
+        if not select_fn_from_glob(glob_str, 1, ignore_case)(self.rootpath):
             # file_prefix_selection == 1 (include) or 2 (scan)
             raise FilePrefixError(glob_str)
 
-        return select_fn_from_glob(glob_str, include, ignore_case)
+        if glob_str == u"**":
+            sel_func = lambda path: include
+        else:
+            sel_func = select_fn_from_glob(glob_str, include, ignore_case)
+
+        sel_func.exclude = not include
+        sel_func.name = u"shell glob %s %scase: %s" % \
+                        (include and u"include" or u"exclude", ignore_case and u"no-" or u"", glob_str)
+
+        return sel_func
+
+    def literal_get_sf(self, lit_str, include, ignore_case=False):
+        u"""Return a selection function that matches a literal string while
+        still including the contents of any folders which are matched
+        """
+
+        # Check to make sure prefix is ok, see also glob_get_sf()
+        if not self.select_fn_from_literal(lit_str, 1, ignore_case)(self.rootpath):
+            raise FilePrefixError(lit_str)
+
+        sel_func = self.select_fn_from_literal(lit_str, include, ignore_case)
+        sel_func.exclude = not include
+        sel_func.name = u"literal string %s %scase: %s" % \
+                        (include and u"include" or u"exclude", ignore_case and u"no-" or u"", lit_str)
+        return sel_func
 
     def exclude_older_get_sf(self, date):
         u"""Return selection function based on files older than modification date """
@@ -524,3 +589,37 @@ probably isn't what you meant.""") %
         sel_func.exclude = True
         sel_func.name = u"Select older than %s" % (date,)
         return sel_func
+
+    def select_fn_from_literal(self, lit_str, include, ignore_case=False):
+        u"""Return a function test_fn(path) which test where a path matches a
+        literal string. See also select_fn_from_blog() in globmatch.py
+
+        This function is separated from literal_get_sf() so that it can be used
+        to test the prefix without creating a loop.
+
+        TODO: this doesn't need to be part of the Select class type, but not
+        sure where else to put it?
+        """
+        if lit_str != u"/" and lit_str[-1] == u"/":
+            lit_str = lit_str[:-1]
+
+        if ignore_case:
+            lit_str = util.casefold_compat(util.fsdecode(lit_str))
+
+        def test_fn(path):
+            # FIXME: caller to do this once, rather than for every path?
+            if ignore_case:
+                uc_name = util.casefold_compat(util.fsdecode(path.uc_name))
+            else:
+                uc_name = path.uc_name
+
+            if uc_name == lit_str:
+                return include
+            elif uc_name.startswith(lit_str) and uc_name[len(lit_str)] == u"/":
+                return include
+            elif lit_str.startswith(uc_name) and lit_str[len(uc_name)] == u"/" and include == 1:
+                return 2
+            else:
+                return None
+
+        return test_fn
