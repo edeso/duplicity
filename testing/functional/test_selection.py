@@ -215,7 +215,8 @@ class TestIncludeExcludeOptions(IncludeExcludeFunctionalTest):
         # would correctly interpret commandline options with spaces. However, bin/duplicity uses sys.argv[1:], which
         # should return a list of strings after having correctly processed quotes etc.
         self.backup(u"full", u"testfiles/select2",
-                    options=[u"--include", u"testfiles/select2/trailing_space /trailing_space sub2/trailing_space sub2_file.txt",
+                    options=[u"--include", u"testfiles/select2/trailing_space /trailing_space "
+                                           u"sub2/trailing_space sub2_file.txt",
                              u"--exclude", u"testfiles/select2/trailing_space /trailing_space sub2",
                              u"--include", u"testfiles/select2/trailing_space ",
                              u"--include", u"testfiles/select2/3/3sub3/3sub3sub2/3sub3sub2_file.txt",
@@ -241,6 +242,7 @@ class TestIncludeExcludeOptions(IncludeExcludeFunctionalTest):
         restore_dir = u"testfiles/restore_out"
         restored = self.directory_tree_to_list_of_lists(restore_dir)
         self.assertEqual(restored, self.expected_restored_tree_with_trailing_space)
+
 
 class TestIncludeExcludeFilterModes(IncludeExcludeFunctionalTest):
     u"""
@@ -292,7 +294,8 @@ class TestIncludeExcludeFilterModes(IncludeExcludeFunctionalTest):
         # should return a list of strings after having correctly processed quotes etc.
         self.backup(u"full", u"testfiles/select2",
                     options=[u"--filter-literal",
-                             u"--include", u"testfiles/select2/trailing_space /trailing_space sub2/trailing_space sub2_file.txt",
+                             u"--include", u"testfiles/select2/trailing_space /trailing_space sub2/trailing_space "
+                                           u"sub2_file.txt",
                              u"--exclude", u"testfiles/select2/trailing_space /trailing_space sub2",
                              u"--include", u"testfiles/select2/trailing_space ",
                              u"--include", u"testfiles/select2/3/3sub3/3sub3sub2/3sub3sub2_file.txt",
@@ -337,14 +340,14 @@ class TestIncludeExcludeFilterModes(IncludeExcludeFunctionalTest):
                              u"--include", u"testfiles/select2/1/1sub[13]/1sub[13]sub[123]",
                              u"--include", u"testfiles/select2/2/2sub1/2sub1sub[12]",
                              u"--filter-literal",
-                             u"--include", u"testfiles/select2/trailing_space /trailing_space sub2/trailing_space sub2_file.txt",
+                             u"--include", u"testfiles/select2/trailing_space /trailing_space sub2/trailing_space "
+                                           u"sub2_file.txt",
                              u"--include", u"testfiles/select2/3/3sub3/3sub3sub2/3sub3sub2_file.txt",
                              u"--filter-globbing",
                              u"--exclude", u"testfiles/select2/*"])
         self.restore()
         restore_dir = u"testfiles/restore_out"
         restored = self.directory_tree_to_list_of_lists(restore_dir)
-        print( restored )
         self.assertEqual(restored, [[u"1", u"2", u"3", u"trailing_space ", u"1.doc"],
                                     [u"1sub1", u"1sub3"],
                                     [u"1sub1sub1", u"1sub1sub2", u"1sub1sub3"],
@@ -369,14 +372,14 @@ class TestIncludeExcludeFilterModes(IncludeExcludeFunctionalTest):
                              u"--include", u"testfiles/select2/1/1sub[13]/1sub[13]sub[123]",
                              u"--include", u"testfiles/select2/2/2sub1/2sub1sub[12]",
                              u"--filter-literal",
-                             u"--include", u"testfiles/select2/trailing_space /trailing_space sub2/trailing_space sub2_file.txt",
+                             u"--include", u"testfiles/select2/trailing_space /trailing_space "
+                                           u"sub2/trailing_space sub2_file.txt",
                              u"--include", u"testfiles/select2/3/3sub3/3sub3sub2/3sub3sub2_file.txt",
                              u"--filter-globbing",
                              u"--exclude", u"ignorecase:TestFiles/SELECT2/*"])
         self.restore()
         restore_dir = u"testfiles/restore_out"
         restored = self.directory_tree_to_list_of_lists(restore_dir)
-        print( restored )
         self.assertEqual(restored, [[u"1", u"2", u"3", u"trailing_space ", u"1.doc"],
                                     [u"1sub1", u"1sub3"],
                                     [u"1sub1sub1", u"1sub1sub2", u"1sub1sub3"],
@@ -401,7 +404,8 @@ class TestIncludeExcludeFilterModes(IncludeExcludeFunctionalTest):
                              u"--include", u"testfiles/select2/1/1sub[13]/1sub[13]sub[123]",
                              u"--include", u"testfiles/select2/2/2sub1/2SUB1SUB[12]",
                              u"--filter-literal",
-                             u"--include", u"TESTFILES/select2/trailing_space /trailing_space sub2/trailing_space sub2_file.txt",
+                             u"--include", u"TESTFILES/select2/trailing_space /trailing_space sub2/trailing_space "
+                                           u"sub2_file.txt",
                              u"--include", u"TestFiles/select2/3/3sub3/3sub3sub2/3sub3sub2_file.txt",
                              u"--filter-globbing",
                              u"--filter-strictcase",
@@ -409,7 +413,6 @@ class TestIncludeExcludeFilterModes(IncludeExcludeFunctionalTest):
         self.restore()
         restore_dir = u"testfiles/restore_out"
         restored = self.directory_tree_to_list_of_lists(restore_dir)
-        print( restored )
         self.assertEqual(restored, [[u"1", u"2", u"3", u"trailing_space ", u"1.doc"],
                                     [u"1sub1", u"1sub3"],
                                     [u"1sub1sub1", u"1sub1sub2", u"1sub1sub3"],
@@ -461,7 +464,7 @@ class TestIncludeSpecialGlobChars(IncludeExcludeFunctionalTest):
         self.assertEqual(restored, [[u"0*1", u"0?1", u"[01]"],
                                     [u"2*2", u"2?2", u"[02]"], [u"0*1sub2?2_file.txt"], [u"0*1sub[02]_file.txt"],
                                     [u"1?1"], [u"0?1sub1?1_file.txt"],
-                                    [u"3*3",u"3?3", u"[03]"], [u"[01]sub3*3_file.txt"], [u"[01]sub[03]_file.txt"]])
+                                    [u"3*3", u"3?3", u"[03]"], [u"[01]sub3*3_file.txt"], [u"[01]sub[03]_file.txt"]])
 
     def test_globbing_special_shell_chars(self):
         u""" Selecting files using both literal and globbing selection functions
@@ -477,7 +480,8 @@ class TestIncludeSpecialGlobChars(IncludeExcludeFunctionalTest):
         restored = self.directory_tree_to_list_of_lists(restore_dir)
         self.assertEqual(restored, [[u"0*1", u"[01]"],
                                     [u"2*2"], [u"0*1sub2*2_file.txt"],
-                                    [u"3*3", u"3?3", u"[03]"], [u"[01]sub3*3_file.txt"], [u"[01]sub3?3_file.txt"], [u"[01]sub[03]_file.txt"]])
+                                    [u"3*3", u"3?3", u"[03]"], [u"[01]sub3*3_file.txt"], [u"[01]sub3?3_file.txt"],
+                                    [u"[01]sub[03]_file.txt"]])
 
     def test_filelist_special_shell_chars(self):
         u""" This test is the same as test_literal_special_shell_chars() except that
@@ -497,7 +501,7 @@ class TestIncludeSpecialGlobChars(IncludeExcludeFunctionalTest):
         self.assertEqual(restored, [[u"0*1", u"0?1", u"[01]"],
                                     [u"2*2", u"2?2", u"[02]"], [u"0*1sub2?2_file.txt"], [u"0*1sub[02]_file.txt"],
                                     [u"1?1"], [u"0?1sub1?1_file.txt"],
-                                    [u"3*3",u"3?3", u"[03]"], [u"[01]sub3*3_file.txt"], [u"[01]sub[03]_file.txt"]])
+                                    [u"3*3", u"3?3", u"[03]"], [u"[01]sub3*3_file.txt"], [u"[01]sub[03]_file.txt"]])
 
 
 class TestExcludeFilelistTest(IncludeExcludeFunctionalTest):

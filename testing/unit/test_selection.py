@@ -172,7 +172,8 @@ class MatchingTest(UnitTestCase):
         assert sf(self.makeext(u"FOO/BAR")) == 1
         assert sf(self.makeext(u"foo/bar")) == 1
         assert sf(self.makeext(u"fOo/BaR")) == 1
-        self.assertRaises(FilePrefixError, self.Select.general_get_sf, u"ignorecase:tesfiles/sect/foo/bar", 1, ignore_case=False)
+        self.assertRaises(FilePrefixError, self.Select.general_get_sf, u"ignorecase:tesfiles/sect/foo/bar",
+                          1, ignore_case=False)
 
     def test_root(self):
         u"""test_root - / may be a counterexample to several of these.."""
@@ -220,13 +221,13 @@ class MatchingTest(UnitTestCase):
     def test_literal_special_chars(self):
         u"""Test literal match with globbing and regex special characters"""
         select = Select(Path(u"/foo"))
-        assert select.literal_get_sf(u"/foo/b*r", 1)(Path(u"/foo/bar")) == None
+        assert select.literal_get_sf(u"/foo/b*r", 1)(Path(u"/foo/bar")) is None
         assert select.literal_get_sf(u"/foo/b*r", 1)(Path(u"/foo/b*r")) == 1
-        assert select.literal_get_sf(u"/foo/b[a-b]r", 1)(Path(u"/foo/bar")) == None
+        assert select.literal_get_sf(u"/foo/b[a-b]r", 1)(Path(u"/foo/bar")) is None
         assert select.literal_get_sf(u"/foo/b[a-b]r", 1)(Path(u"/foo/b[a-b]r")) == 1
-        assert select.literal_get_sf(u"/foo/b\ar", 0)(Path(u"/foo/bar")) == None
+        assert select.literal_get_sf(u"/foo/b\ar", 0)(Path(u"/foo/bar")) is None
         assert select.literal_get_sf(u"/foo/b\ar", 0)(Path(u"/foo/b\ar")) == 0
-        assert select.literal_get_sf(u"/foo/b?r", 0)(Path(u"/foo/bar")) == None
+        assert select.literal_get_sf(u"/foo/b?r", 0)(Path(u"/foo/bar")) is None
         assert select.literal_get_sf(u"/foo/b?r", 0)(Path(u"/foo/b?r")) == 0
 
 
