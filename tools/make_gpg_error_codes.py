@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# -*- Mode:Shell; indent-tabs-mode:nil; tab-width -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
 # Copyright 2022 Kenneth Loafman <kenneth@loafman.com>
 #

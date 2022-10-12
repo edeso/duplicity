@@ -1,3 +1,4 @@
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 # *******************************************************
 # *** This is a generated file from project duplicity ***
 # ***                 DO NOT MODIFY!                  ***
