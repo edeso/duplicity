@@ -399,7 +399,7 @@ probably isn't what you meant.""") %
 
         """
         # Internal. Used by ParseArgs.
-        log.Notice(_(u"Reading globbing filelist %s") % list_name)
+        log.Notice(_(u"Reading %s filelist %s") % (mode, list_name))
         separator = config.null_separator and u"\0" or u"\n"
         try:
             filelist_fp.seek(0)
