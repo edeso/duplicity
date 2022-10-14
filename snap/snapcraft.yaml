@@ -1,5 +1,5 @@
 name: duplicity
-version: $version
+version: 1.0.1
 license: GPL-2.0
 summary: Efficient, encrypted backup to local or remote hosts
 description: |
@@ -48,8 +48,24 @@ apps:
 parts:
     duplicity:
         plugin: python
+        override-pull: |
+            snapcraftctl pull
         override-build: |
+            # add pip upgrade install location to path
+            export PATH="$SNAPCRAFT_PART_INSTALL/usr/local/bin/:$PATH"
+            # show env vars for debugging
+            #env
+            # upgrade used pip to latestless
+            pip install --upgrade pip
             snapcraftctl build
+            # python module tahoe-lafs dies trying to compile really old pycddl 
+            # on other archs than amd64, as python plugin does not support 
+            # conditions we only include it in amd64 snaps manually here
+            if [ "$SNAPCRAFT_BUILD_FOR" != "amd64" ]; then
+              echo "Skipping tahoe-lafs integration on arch '$SNAPCRAFT_BUILD_FOR'!='amd64'"
+            else
+              pip install tahoe-lafs
+            fi
             rm -rfv "$SNAPCRAFT_PART_INSTALL/usr/lib/python3.9"
         override-prime: |
             snapcraftctl prime
@@ -66,11 +82,10 @@ parts:
             - intltool
             - librsync-dev
             - python3-dev
-            # dependencies needed to pip build on non amd64 archs
+            # dependencies needed to build missing pip wheels on non amd64 archs
             - libffi-dev
             - libxslt1-dev
             - libxml2-dev
-            - rust-all
             - libssl-dev
             - cargo
         stage-packages:
@@ -133,7 +148,6 @@ parts:
             - setuptools
             - setuptools-scm
             - sx
-            - tahoe-lafs
             - urllib3
             - wheel
         source: .
