@@ -150,6 +150,18 @@ def VersionedCopy(source, dest):
         fd.write(buffer)
 
 
+def cleanup():
+    if os.path.exists(u'po/LINGUAS'):
+        linguas = open(u'po/LINGUAS').readlines()
+        for line in linguas:
+            langs = line.split()
+            for lang in langs:
+                try:
+                    shutil.rmtree(os.path.join(u"po", lang))
+                except Exception:
+                    pass
+
+
 class SdistCommand(sdist):
 
     def run(self):
@@ -195,6 +207,8 @@ class SdistCommand(sdist):
                               """ % (tarfile, tardir))
         assert not shutil.rmtree(tardir)
 
+        cleanup()
+
 
 class TestCommand(test):
 
@@ -222,6 +236,8 @@ class TestCommand(test):
 
         test.run(self)
 
+        cleanup()
+
 
 class InstallCommand(install):
 
@@ -240,6 +256,8 @@ class InstallCommand(install):
 
         install.run(self)
 
+        cleanup()
+
 
 class InstallDataCommand(install_data):
 
@@ -255,6 +273,7 @@ class InstallDataCommand(install_data):
                     path = os.path.join(self.install_dir, base, fn)
                     VersionedCopy(path, path)
 
+        cleanup()
 
 class BuildExtCommand(build_ext):
     u"""Build extension modules."""
@@ -264,6 +283,8 @@ class BuildExtCommand(build_ext):
         print(u"Building extension for librsync...")
         self.inplace = True
         build_ext.run(self)
+
+        cleanup()
 
 
 with open(u"README.md") as fh:
@@ -341,15 +362,3 @@ setup(name=u"duplicity",
         u"Topic :: System :: Archiving :: Backup"
         ],
     )
-
-
-# TODO: Find best way to clean up afterwards.
-if os.path.exists(u'po/LINGUAS'):
-    linguas = open(u'po/LINGUAS').readlines()
-    for line in linguas:
-        langs = line.split()
-        for lang in langs:
-            try:
-                shutil.rmtree(os.path.join(u"po", lang))
-            except Exception:
-                pass

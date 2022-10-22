@@ -55,16 +55,16 @@ parts:
             export PATH="$SNAPCRAFT_PART_INSTALL/usr/local/bin/:$PATH"
             # show env vars for debugging
             #env
-            # upgrade used pip to latestless
+            # upgrade pip to latest
             pip install --upgrade pip
             snapcraftctl build
             # python module tahoe-lafs dies trying to compile really old pycddl 
             # on other archs than amd64, as python plugin does not support 
             # conditions we only include it in amd64 snaps manually here
             if [ "$SNAPCRAFT_BUILD_FOR" != "amd64" ]; then
-              echo "Skipping tahoe-lafs integration on arch '$SNAPCRAFT_BUILD_FOR'!='amd64'"
+                echo "Skipping tahoe-lafs integration on arch '$SNAPCRAFT_BUILD_FOR'!='amd64'"
             else
-              pip install tahoe-lafs
+                pip install tahoe-lafs
             fi
             rm -rfv "$SNAPCRAFT_PART_INSTALL/usr/lib/python3.9"
         override-prime: |
