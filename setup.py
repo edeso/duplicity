@@ -207,8 +207,6 @@ class SdistCommand(sdist):
                               """ % (tarfile, tardir))
         assert not shutil.rmtree(tardir)
 
-        cleanup()
-
 
 class TestCommand(test):
 
@@ -256,8 +254,6 @@ class InstallCommand(install):
 
         install.run(self)
 
-        cleanup()
-
 
 class InstallDataCommand(install_data):
 
@@ -273,8 +269,6 @@ class InstallDataCommand(install_data):
                     path = os.path.join(self.install_dir, base, fn)
                     VersionedCopy(path, path)
 
-        cleanup()
-
 class BuildExtCommand(build_ext):
     u"""Build extension modules."""
 
@@ -283,8 +277,6 @@ class BuildExtCommand(build_ext):
         print(u"Building extension for librsync...")
         self.inplace = True
         build_ext.run(self)
-
-        cleanup()
 
 
 with open(u"README.md") as fh:
@@ -362,3 +354,5 @@ setup(name=u"duplicity",
         u"Topic :: System :: Archiving :: Backup"
         ],
     )
+
+cleanup()
