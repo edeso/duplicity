@@ -99,7 +99,7 @@ Exception: %s""" % str(e))
 
     def _put(self, source_path, remote_filename):
         remote_filename = fsdecode(remote_filename)
-        kwargs = {}
+        kwargs = {u"overwrite": True}
 
         if config.azure_max_connections:
             kwargs[u'max_concurrency'] = config.azure_max_connections
