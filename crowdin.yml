@@ -1,3 +1,6 @@
+commit_message: "chg:pkg: New Crowdin updates."
+append_commit_message: false
+
 files:
   - source: /po/duplicity.pot
     translation: /po/%locale_with_underscore%.po
