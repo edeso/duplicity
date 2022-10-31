@@ -4,8 +4,7 @@ help:
 	@echo	"clean        -- remove generated files"
 	@echo 	"docs         -- build Sphinx docs"
 	@echo	"ext          -- build C extensions"
-	@echo   "xlate-export -- update pot and make tar to export to LP translators"
-	@echo   "xlate-import -- process LP tranlator's export file into duplicity"
+	@echo   "pot          -- update pot"
 
 clean:
 	for i in '.tox' '_build' 'build' 'dist' 'apsw' 'work' 'megatestresults' '.eggs' '*.egg-info' \
