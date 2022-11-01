@@ -75,28 +75,27 @@ commands = [u"cleanup",
 
 
 def old_fn_deprecation(opt):
-    log.Log(_(u"Warning: Option %s is pending deprecation "
-              u"and will be removed in version 0.9.0.\n"
+    log.Log(_(u"Warning: Option %s is pending deprecation and will be removed in version 2.0.\n"
               u"Use of default filenames is strongly suggested.") % opt,
-            log.ERROR, force_print=True)
+            log.WARNING, force_print=True)
 
 
 def old_globbing_filelist_deprecation(opt):
-    log.Log(_(u"Warning: Option %s is pending deprecation and will be removed in a future release.\n"
+    log.Log(_(u"Warning: Option %s is pending deprecation and will be removed in version 2.0.\n"
               u"--include-filelist and --exclude-filelist now accept globbing characters and should "
               u"be used instead.") % opt,
-            log.ERROR, force_print=True)
+            log.WARNING, force_print=True)
 
 
 def stdin_deprecation(opt):
     # See https://bugs.launchpad.net/duplicity/+bug/1423367
     # In almost all Linux distros stdin is a file represented by /dev/stdin,
     # so --exclude-file=/dev/stdin will work as a substitute.
-    log.Log(_(u"Warning: Option %s is pending deprecation and will be removed in a future release.\n"
+    log.Log(_(u"Warning: Option %s is pending deprecation and will be removed in version 2.0.\n"
               u"On many GNU/Linux systems, stdin is represented by /dev/stdin and\n"
               u"--include-filelist=/dev/stdin or --exclude-filelist=/dev/stdin could\n"
               u"be used as a substitute.") % opt,
-            log.ERROR, force_print=True)
+            log.WARNING, force_print=True)
 
 
 # log options handled in log.py.  Add noop to make optparse happy
@@ -241,7 +240,7 @@ def parse_cmdline_options(arglist):
                            log.ErrorCode.cant_open_filelist)
 
     def print_ver(o, s, v, p):  # pylint: disable=unused-argument
-        print(u"duplicity %s" % (config.version))
+        print(u"duplicity %s" % config.version)
         sys.exit(0)
 
     def add_rename(o, s, v, p):  # pylint: disable=unused-argument
@@ -814,12 +813,11 @@ def parse_cmdline_options(arglist):
         num_expect = 2
 
     if cmd == u'replicate':
-        log.Warn(u'''
-WARNING: Replicate is only minimally functional at this time
-         See https://gitlab.com/duplicity/duplicity/-/issues/98
-         for further details.  Please consider using rsync,
-         rclone, or other copy utilities to make a replication.
-''')
+        log.Warn(u'WARNING: Replicate is only minimally functional at this time\n'
+                 u'See https://gitlab.com/duplicity/duplicity/-/issues/98\n'
+                 u'for further details.  Please consider using rsync,\n'
+                 u'rclone, or other copy utilities to make a replication.\n'
+                 u'Replicate will be removed in version 2.0.\n')
 
     if len(args) != num_expect:
         command_line_error(u"Expected %d args, got %d" % (num_expect, len(args)))
@@ -1134,9 +1132,9 @@ page for more information.""")
         command_line_error(u"Two URLs specified.  "
                            u"One argument should be a path.")
     if arg1_is_backend:
-        return (arg2, arg1)
+        return arg2, arg1
     elif arg2_is_backend:
-        return (arg1, arg2)
+        return arg1, arg2
     else:
         raise AssertionError(u'should not be reached')
 
@@ -1153,9 +1151,9 @@ def set_backend(arg1, arg2):
     config.backend = backend.get_backend(bend)
 
     if path == arg2:
-        return (None, arg2)  # False?
+        return None, arg2  # False?
     else:
-        return (1, arg1)  # True?
+        return 1, arg1  # True?
 
 
 def process_local_dir(action, local_pathname):
@@ -1249,7 +1247,7 @@ def ProcessCommandLine(cmdline_list):
 
     # parse_cmdline_options already verified that we got exactly 1 or 2
     # non-options arguments
-    assert len(args) >= 1 and len(args) <= 2, u"arg count should have been checked already"
+    assert 1 <= len(args) <= 2, u"arg count should have been checked already"
 
     if len(args) == 1:
         if list_current:
