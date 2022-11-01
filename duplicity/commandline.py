@@ -51,7 +51,6 @@ list_current = None  # Will be set to true if list-current command given
 collection_status = None  # Will be set to true if collection-status command given
 cleanup = None  # Set to true if cleanup command given
 verify = None  # Set to true if verify command given
-replicate = None  # Set to true if replicate command given
 
 commands = [u"cleanup",
             u"collection-status",
@@ -63,7 +62,6 @@ commands = [u"cleanup",
             u"remove-all-inc-of-but-n-full",
             u"restore",
             u"verify",
-            u"replicate"
             ]
 
 
@@ -205,7 +203,7 @@ class DupOption(optparse.Option):
 def parse_cmdline_options(arglist):
     u"""Parse argument list"""
     global select_opts, select_files, full_backup
-    global list_current, collection_status, cleanup, remove_time, verify, replicate
+    global list_current, collection_status, cleanup, remove_time, verify
 
     def set_log_fd(fd):
         if fd < 1:
@@ -776,17 +774,7 @@ def parse_cmdline_options(arglist):
         num_expect = 1
     elif cmd == u"verify":
         verify = True
-    elif cmd == u"replicate":
-        replicate = True
         num_expect = 2
-
-    if cmd == u'replicate':
-        log.Warn(u'''
-WARNING: Replicate is only minimally functional at this time
-         See https://gitlab.com/duplicity/duplicity/-/issues/98
-         for further details.  Please consider using rsync,
-         rclone, or other copy utilities to make a replication.
-''')
 
     if len(args) != num_expect:
         command_line_error(u"Expected %d args, got %d" % (num_expect, len(args)))
@@ -807,12 +795,7 @@ WARNING: Replicate is only minimally functional at this time
     elif len(args) == 1:
         backend_url = args[0]
     elif len(args) == 2:
-        if replicate:
-            if not backend.is_backend_url(args[0]) or not backend.is_backend_url(args[1]):
-                command_line_error(u"Two URLs expected for replicate.")
-            src_backend_url, backend_url = args[0], args[1]
-        else:
-            lpath, backend_url = args_to_path_backend(args[0], args[1])
+        lpath, backend_url = args_to_path_backend(args[0], args[1])
     else:
         command_line_error(u"Too many arguments")
 
@@ -991,7 +974,6 @@ def usage():
   duplicity remove-older-than %(time)s [%(options)s] %(target_url)s
   duplicity remove-all-but-n-full %(count)s [%(options)s] %(target_url)s
   duplicity remove-all-inc-of-but-n-full %(count)s [%(options)s] %(target_url)s
-  duplicity replicate %(source_url)s %(target_url)s
 
 """ % trans
 
@@ -1043,7 +1025,6 @@ def usage():
   remove-all-but-n-full <%(count)s> <%(target_url)s>
   remove-all-inc-of-but-n-full <%(count)s> <%(target_url)s>
   remove-older-than <%(time)s> <%(target_url)s>
-  replicate <%(source_url)s> <%(target_url)s>
   restore <%(source_url)s> <%(target_dir)s>
   verify <%(target_url)s> <%(source_dir)s>
 
@@ -1150,7 +1131,7 @@ def process_local_dir(action, local_pathname):
 
 def check_consistency(action):
     u"""Final consistency check, see if something wrong with command line"""
-    global full_backup, select_opts, list_current, collection_status, cleanup, replicate
+    global full_backup, select_opts, list_current, collection_status, cleanup
 
     def assert_only_one(arglist):
         u"""Raises error if two or more of the elements of arglist are true"""
@@ -1161,8 +1142,8 @@ def check_consistency(action):
         assert n <= 1, u"Invalid syntax, two conflicting modes specified"
 
     if action in [u"list-current", u"collection-status",
-                  u"cleanup", u"remove-old", u"remove-all-but-n-full", u"remove-all-inc-of-but-n-full", u"replicate"]:
-        assert_only_one([list_current, collection_status, cleanup, replicate,
+                  u"cleanup", u"remove-old", u"remove-all-but-n-full", u"remove-all-inc-of-but-n-full"]:
+        assert_only_one([list_current, collection_status, cleanup,
                          config.remove_time is not None])
     elif action == u"restore" or action == u"verify":
         if full_backup:
@@ -1240,27 +1221,22 @@ Examples of URL strings are "scp://user@host.net:1234/path" and
 "file:///usr/local".  See the man page for more information.""") % (args[0],),
                            log.ErrorCode.bad_url)
     elif len(args) == 2:
-        if replicate:
-            config.src_backend = backend.get_backend(args[0])
-            config.backend = backend.get_backend(args[1])
-            action = u"replicate"
-        else:
-            # Figure out whether backup or restore
-            backup, local_pathname = set_backend(args[0], args[1])
-            if backup:
-                if full_backup:
-                    action = u"full"
-                else:
-                    action = u"inc"
+        # Figure out whether backup or restore
+        backup, local_pathname = set_backend(args[0], args[1])
+        if backup:
+            if full_backup:
+                action = u"full"
             else:
-                if verify:
-                    action = u"verify"
-                else:
-                    action = u"restore"
+                action = u"inc"
+        else:
+            if verify:
+                action = u"verify"
+            else:
+                action = u"restore"
 
-            process_local_dir(action, local_pathname)
-            if action in [u'full', u'inc', u'verify']:
-                set_selection()
+        process_local_dir(action, local_pathname)
+        if action in [u'full', u'inc', u'verify']:
+            set_selection()
     elif len(args) > 2:
         raise AssertionError(u"this code should not be reachable")
 

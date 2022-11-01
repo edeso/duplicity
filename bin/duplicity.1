@@ -48,10 +48,6 @@ target_url
 .I [options] [--force]
 target_url
 
-.B duplicity replicate
-.I [options] [--time time]
-source_url target_url
-
 .SH DESCRIPTION
 Duplicity incrementally backs up files and folders into
 tar-format volumes encrypted with GnuPG and places them to a
@@ -258,19 +254,6 @@ deleted.  This should only be necessary after a duplicity session
 fails or is aborted prematurely.  Note that
 .I --force
 will be needed to delete the files instead of just listing them.
-
-.TP
-.BI "replicate " "[--time time] <source_url> <target_url>"
-Replicate backup sets from source to target backend. Files will be
-(re)-encrypted and (re)-compressed depending on normal backend
-options. Signatures and volumes will not get recomputed, thus options like
-.BI --volsize
-or
-.BI --max-blocksize
-have no effect.
-When
-.I --time time
-is given, only backup sets older than time will be replicated.
 
 .SH OPTIONS
 
@@ -2343,18 +2326,18 @@ above.
 
 During the first run, you will be prompted to visit an URL in your
 browser to grant access to your Google Drive. A temporary HTTP-service will be
-started on a 
+started on a
 .B local network interface
 for this purpose (by default on http://localhost:8080/).
 Ip-address/host and port can be adjusted if need be by providing the environment variables
 GOOGLE_OAUTH_LOCAL_SERVER_HOST, GOOGLE_OAUTH_LOCAL_SERVER_PORT respectively.
 
-If you are running duplicity in a remote location, you will 
-need to make sure that you will be able to access the above 
-HTTP-service with a browser utilizing e.g. port forwarding 
+If you are running duplicity in a remote location, you will
+need to make sure that you will be able to access the above
+HTTP-service with a browser utilizing e.g. port forwarding
 or temporary firewall permission.
 
-The access credentials will be saved in the JSON file mentioned 
+The access credentials will be saved in the JSON file mentioned
 above for future use after a successful authorization.
 
 .SH A NOTE ON HUBIC

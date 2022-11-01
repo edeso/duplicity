@@ -148,10 +148,7 @@ class BackupSet(object):
             )
         self.remote_manifest_name = remote_filename
 
-        if self.action != u"replicate":
-            local_filename_list = config.archive_dir_path.listdir()
-        else:
-            local_filename_list = []
+        local_filename_list = config.archive_dir_path.listdir()
         for local_filename in local_filename_list:
             pr = file_naming.parse(local_filename)
             if (pr and pr.manifest and pr.type == self.type and
@@ -175,10 +172,7 @@ class BackupSet(object):
         except Exception:
             log.Debug(_(u"BackupSet.delete: missing %s") % [os.fsdecode(f) for f in rfn])
             pass
-        if self.action != u"replicate":
-            local_filename_list = config.archive_dir_path.listdir()
-        else:
-            local_filename_list = []
+        local_filename_list = config.archive_dir_path.listdir()
         for lfn in local_filename_list:
             pr = file_naming.parse(lfn)
             if (pr and pr.time == self.time and
@@ -718,10 +712,7 @@ class CollectionsStatus(object):
                   len(backend_filename_list))
 
         # get local filename list
-        if self.action != u"replicate":
-            local_filename_list = self.archive_dir_path.listdir()
-        else:
-            local_filename_list = []
+        local_filename_list = self.archive_dir_path.listdir()
         log.Debug(ngettext(u"%d file exists in cache",
                            u"%d files exist in cache",
                            len(local_filename_list)) %
@@ -919,10 +910,7 @@ class CollectionsStatus(object):
             if filelist is not None:
                 return filelist
             elif local:
-                if self.action != u"replicate":
-                    return self.archive_dir_path.listdir()
-                else:
-                    return []
+                return self.archive_dir_path.listdir()
             else:
                 return self.backend.list()
 
