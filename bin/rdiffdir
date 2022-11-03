@@ -66,10 +66,10 @@ def parse_cmdline_options(arglist):
     try:
         optlist, args = getopt.getopt(arglist, u"v:Vz",
                                       [u"gzip-compress", u"exclude=", u"exclude-device-files",
-                                       u"exclude-filelist=", u"exclude-filelist-stdin",
+                                       u"exclude-filelist=",
                                        u"exclude-globbing-filelist", u"exclude-other-filesystems",
                                        u"exclude-regexp=", u"include=", u"include-filelist=",
-                                       u"include-filelist-stdin", u"include-globbing-filelist",
+                                       u"include-globbing-filelist",
                                        u"include-regexp=", u"max-blocksize", u"null-separator",
                                        u"verbosity=", u"write-sig-to=", u"ignore-errors"])
     except getopt.error as e:
@@ -89,12 +89,6 @@ def parse_cmdline_options(arglist):
               opt == u"--include-globbing-filelist"):
             select_opts.append((opt, arg))
             select_files.append(sel_fl(arg))
-        elif opt == u"--exclude-filelist-stdin":
-            select_opts.append((u"--exclude-filelist", u"standard input"))
-            select_files.append(sys.stdin)
-        elif opt == u"--include-filelist-stdin":
-            select_opts.append((u"--include-filelist", u"standard input"))
-            select_files.append(sys.stdin)
         elif opt == u"--max-blocksize":
             config.max_blocksize = int(arg)
         elif opt == u"--null-separator":
