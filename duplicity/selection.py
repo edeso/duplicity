@@ -246,9 +246,7 @@ class Select(object):
                     self.add_selection_func(self.present_get_sf(arg, 0), add_to_start=True)
                 elif opt == u"--exclude-device-files":
                     self.add_selection_func(self.devfiles_get_sf(), add_to_start=True)
-                elif (opt == u"--exclude-filelist") or (opt == u"--exclude-globbing-filelist"):
-                    # --exclude-globbing-filelist is now deprecated, as all filelists are globbing
-                    # but keep this here for the short term for backwards-compatibility
+                elif opt == u"--exclude-filelist":
                     for sf in self.filelist_globbing_get_sfs(filelists[filelists_index], 0, arg):
                         self.add_selection_func(sf)
                     filelists_index += 1
@@ -260,9 +258,7 @@ class Select(object):
                     self.add_selection_func(self.exclude_older_get_sf(arg))
                 elif opt == u"--include":
                     self.add_selection_func(self.glob_get_sf(arg, 1))
-                elif (opt == u"--include-filelist") or (opt == u"--include-globbing-filelist"):
-                    # --include-globbing-filelist is now deprecated, as all filelists are globbing
-                    # but keep this here for the short term for backwards-compatibility
+                elif opt == u"--include-filelist":
                     for sf in self.filelist_globbing_get_sfs(filelists[filelists_index], 1, arg):
                         self.add_selection_func(sf)
                     filelists_index += 1
@@ -349,11 +345,9 @@ probably isn't what you meant.""") %
         filelist_fp should be an open file object
         inc_default is true iff this is an include list
         list_name is just the name of the list, used for logging
-        See the man page on --[include/exclude]-globbing-filelist
-
         """
         # Internal. Used by ParseArgs.
-        log.Notice(_(u"Reading globbing filelist %s") % list_name)
+        log.Notice(_(u"Reading filelist %s") % list_name)
         separator = config.null_separator and u"\0" or u"\n"
         try:
             filelist_fp.seek(0)

@@ -72,13 +72,6 @@ def old_fn_deprecation(opt):
             log.ERROR, force_print=True)
 
 
-def old_globbing_filelist_deprecation(opt):
-    log.Log(_(u"Warning: Option %s is pending deprecation and will be removed in a future release.\n"
-              u"--include-filelist and --exclude-filelist now accept globbing characters and should "
-              u"be used instead.") % opt,
-            log.ERROR, force_print=True)
-
-
 # log options handled in log.py.  Add noop to make optparse happy
 def noop():
     pass
@@ -248,17 +241,9 @@ def parse_cmdline_options(arglist):
 
     parser.add_option(u"--compare-data", action=u"store_true")
 
-    # config dir for future use
-    parser.add_option(u"--config-dir", type=u"file", metavar=_(u"path"),
-                      help=optparse.SUPPRESS_HELP)
-
     # When symlinks are encountered, the item they point to is copied rather than
     # the symlink.
     parser.add_option(u"--copy-links", action=u"store_true")
-
-    # for testing -- set current time
-    parser.add_option(u"--current-time", type=u"int",
-                      dest=u"current_time", help=optparse.SUPPRESS_HELP)
 
     # Don't actually do anything, but still report what would be done
     parser.add_option(u"--dry-run", action=u"store_true")
@@ -289,11 +274,6 @@ def parse_cmdline_options(arglist):
     parser.add_option(u"--exclude-filelist", type=u"file", metavar=_(u"filename"),
                       dest=u"", action=u"callback", callback=add_filelist)
 
-    parser.add_option(u"--exclude-globbing-filelist", type=u"file", metavar=_(u"filename"),
-                      dest=u"", action=u"callback", callback=lambda o, s, v, p: (add_filelist(o, s, v, p),
-                                                                                 old_globbing_filelist_deprecation(s)),
-                      help=optparse.SUPPRESS_HELP)
-
     # TRANSL: Used in usage help to represent the name of a file. Example:
     # --log-file <filename>
     parser.add_option(u"--exclude-if-present", metavar=_(u"filename"), dest=u"",
@@ -310,10 +290,6 @@ def parse_cmdline_options(arglist):
     parser.add_option(u"--exclude-older-than", type=u"time", metavar=_(u"time"),
                       dest=u"", action=u"callback", callback=add_selection)
 
-    # used in testing only - raises exception after volume
-    parser.add_option(u"--fail-on-volume", type=u"int",
-                      help=optparse.SUPPRESS_HELP)
-
     # used to provide a prefix on top of the defaul tar file name
     parser.add_option(u"--file-prefix", type=u"string", dest=u"file_prefix", action=u"store")
 
@@ -325,10 +301,6 @@ def parse_cmdline_options(arglist):
 
     # used to provide a suffix for sigature files only
     parser.add_option(u"--file-prefix-signature", type=u"string", dest=u"file_prefix_signature", action=u"store")
-
-    # used in testing only - skips upload for a given volume
-    parser.add_option(u"--skip-volume", type=u"int",
-                      help=optparse.SUPPRESS_HELP)
 
     # If set, restore only the subdirectory or file specified, not the
     # whole root.
@@ -343,6 +315,7 @@ def parse_cmdline_options(arglist):
 
     # FTP data connection type
     parser.add_option(u"--ftp-passive", action=u"store_const", const=u"passive", dest=u"ftp_connection")
+
     parser.add_option(u"--ftp-regular", action=u"store_const", const=u"regular", dest=u"ftp_connection")
 
     # If set, forces a full backup if the last full backup is older than
@@ -389,12 +362,10 @@ def parse_cmdline_options(arglist):
 
     parser.add_option(u"--include", action=u"callback", metavar=_(u"shell_pattern"),
                       dest=u"", type=u"string", callback=add_selection)
+
     parser.add_option(u"--include-filelist", type=u"file", metavar=_(u"filename"),
                       dest=u"", action=u"callback", callback=add_filelist)
-    parser.add_option(u"--include-globbing-filelist", type=u"file", metavar=_(u"filename"),
-                      dest=u"", action=u"callback", callback=lambda o, s, v, p: (add_filelist(o, s, v, p),
-                                                                                 old_globbing_filelist_deprecation(s)),
-                      help=optparse.SUPPRESS_HELP)
+
     parser.add_option(u"--include-regexp", metavar=_(u"regular_expression"), dest=u"",
                       type=u"string", action=u"callback", callback=add_selection)
 
@@ -470,9 +441,6 @@ def parse_cmdline_options(arglist):
     # Used to control the progress option update rate in seconds. Default: prompts each 3 seconds
     parser.add_option(u"--progress-rate", type=u"int", metavar=_(u"number"))
 
-    # option to trigger Pydev debugger
-    parser.add_option(u"--pydevd", action=u"store_true")
-
     # option to rename files during restore
     parser.add_option(u"--rename", type=u"file", action=u"callback", nargs=2,
                       callback=add_rename)
@@ -540,11 +508,14 @@ def parse_cmdline_options(arglist):
 
     # Options to allow use of server side KMS encryption
     parser.add_option(u"--s3-use-server-side-kms-encryption", action=u"store_true", dest=u"s3_use_sse_kms")
+
     parser.add_option(u"--s3-kms-key-id", action=u"store", dest=u"s3_kms_key_id")
+
     parser.add_option(u"--s3-kms-grant", action=u"store", dest=u"s3_kms_grant")
 
     # Options for specifying region and endpoint of s3
     parser.add_option(u"--s3-region-name", type=u"string", dest=u"s3_region_name", action=u"store")
+
     parser.add_option(u"--s3-endpoint-url", type=u"string", dest=u"s3_endpoint_url", action=u"store")
 
     # Option to specify a Swift container storage policy.
@@ -600,7 +571,9 @@ def parse_cmdline_options(arglist):
 
     # user added ssl options (used by webdav, lftp backend)
     parser.add_option(u"--ssl-cacert-file", metavar=_(u"pem formatted bundle of certificate authorities"))
+
     parser.add_option(u"--ssl-cacert-path", metavar=_(u"path to a folder with certificate authority files"))
+
     parser.add_option(u"--ssl-no-check-certificate", action=u"store_true")
 
     # header options for Webdav
@@ -669,6 +642,28 @@ def parse_cmdline_options(arglist):
     # TRANSL: Used in usage help. Example:
     # --backend-retry-delay <seconds>
     parser.add_option(u"--backend-retry-delay", type=u"int", metavar=_(u"seconds"))
+
+    # TODO: Find a way to nuke these test options in production.
+
+    # TESTING ONLY - trigger Pydev debugger
+    parser.add_option(u"--pydevd", action=u"store_true",
+                      help=optparse.SUPPRESS_HELP)
+
+    # TESTING ONLY - skips upload for a given volume
+    parser.add_option(u"--skip-volume", type=u"int",
+                      help=optparse.SUPPRESS_HELP)
+
+    # TESTING ONLY - raises exception after volume
+    parser.add_option(u"--fail-on-volume", type=u"int",
+                      help=optparse.SUPPRESS_HELP)
+
+    # TESTING ONLY - set current time
+    parser.add_option(u"--current-time", type=u"int",
+                      help=optparse.SUPPRESS_HELP)
+
+    # config dir for future use
+    parser.add_option(u"--config-dir", type=u"file", metavar=_(u"path"),
+                      help=optparse.SUPPRESS_HELP)
 
     # parse the options
     (options, args) = parser.parse_args(arglist)
