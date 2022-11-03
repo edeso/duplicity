@@ -79,17 +79,6 @@ def old_globbing_filelist_deprecation(opt):
             log.ERROR, force_print=True)
 
 
-def stdin_deprecation(opt):
-    # See https://bugs.launchpad.net/duplicity/+bug/1423367
-    # In almost all Linux distros stdin is a file represented by /dev/stdin,
-    # so --exclude-file=/dev/stdin will work as a substitute.
-    log.Log(_(u"Warning: Option %s is pending deprecation and will be removed in a future release.\n"
-              u"On many GNU/Linux systems, stdin is represented by /dev/stdin and\n"
-              u"--include-filelist=/dev/stdin or --exclude-filelist=/dev/stdin could\n"
-              u"be used as a substitute.") % opt,
-            log.ERROR, force_print=True)
-
-
 # log options handled in log.py.  Add noop to make optparse happy
 def noop():
     pass
@@ -300,12 +289,6 @@ def parse_cmdline_options(arglist):
     parser.add_option(u"--exclude-filelist", type=u"file", metavar=_(u"filename"),
                       dest=u"", action=u"callback", callback=add_filelist)
 
-    parser.add_option(u"--exclude-filelist-stdin", action=u"callback", dest=u"",
-                      callback=lambda o, s, v, p: (select_opts.append((u"--exclude-filelist", u"standard input")),
-                                                   select_files.append(sys.stdin),
-                                                   stdin_deprecation(o)),
-                      help=optparse.SUPPRESS_HELP)
-
     parser.add_option(u"--exclude-globbing-filelist", type=u"file", metavar=_(u"filename"),
                       dest=u"", action=u"callback", callback=lambda o, s, v, p: (add_filelist(o, s, v, p),
                                                                                  old_globbing_filelist_deprecation(s)),
@@ -408,11 +391,6 @@ def parse_cmdline_options(arglist):
                       dest=u"", type=u"string", callback=add_selection)
     parser.add_option(u"--include-filelist", type=u"file", metavar=_(u"filename"),
                       dest=u"", action=u"callback", callback=add_filelist)
-    parser.add_option(u"--include-filelist-stdin", action=u"callback", dest=u"",
-                      callback=lambda o, s, v, p: (select_opts.append((u"--include-filelist", u"standard input")),
-                                                   select_files.append(sys.stdin),
-                                                   stdin_deprecation(o)),
-                      help=optparse.SUPPRESS_HELP)
     parser.add_option(u"--include-globbing-filelist", type=u"file", metavar=_(u"filename"),
                       dest=u"", action=u"callback", callback=lambda o, s, v, p: (add_filelist(o, s, v, p),
                                                                                  old_globbing_filelist_deprecation(s)),
