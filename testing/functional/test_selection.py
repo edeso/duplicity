@@ -317,51 +317,6 @@ class TestExcludeFilelistTest(IncludeExcludeFunctionalTest):
         restored = self.directory_tree_to_list_of_lists(restore_dir)
         self.assertEqual(restored, self.expected_restored_tree)
 
-    def test_exclude_globbing_filelist_combined_imperfections(self):
-        u"""Test that exclude globbing filelist works with imperfections in the input file"""
-        # Identical to test_exclude_filelist_combined_imperfections and included to ensure that
-        # the deprecated --exclude-globbing-filelist function works as expected until it is deliberately removed.
-        # This is a combined test for speed reasons. The individual imperfections are tested as unittests in
-        # unit/test_selection.
-        # Imperfections tested are;
-        # * Leading space/spaces before the modifier
-        # * Trailing space/spaces after the filename (but before the newline)
-        # * Blank lines (newline character only)
-        # * Line only containing spaces
-        # * Full-line comments with # as the first character and with leading/trailing spaces
-        # * Unnecessarily quoted filenames with/without modifier (both " and ')
-
-        # Create a filelist
-        with io.open(u"testfiles/exclude.txt", u"w") as f:
-            f.write(u"+ testfiles/select2/3/3sub3/3sub3sub2/3sub3sub2_file.txt\n"
-                    u"testfiles/select2/3/3sub3/3sub3sub2\n"
-                    u"+ testfiles/select2/3/3sub2/3sub2sub2\n"
-                    u" + testfiles/select2/3/3sub3\n"  # Note leading space added here
-                    u"- testfiles/select2/3/3sub1\n"
-                    u"  testfiles/select2/2/2sub1/2sub1sub3\n"  # Note leading spaces added here
-                    u"\n"
-                    u"testfiles/select2/2/2sub1/2sub1sub2\n"
-                    u" + testfiles/select2/2/2sub1 \n"  # Note added trailing/leading space here
-                    u'- "testfiles/select2/1/1sub3/1sub3sub2"\n'  # Unnecessary quotes
-                    u"# Testing a full-line comment\n"
-                    u"'testfiles/select2/1/1sub3/1sub3sub1'  \n"  # Note added spaces and quotes here
-                    u"testfiles/select2/1/1sub2/1sub2sub3\n"
-                    u"    \n"
-                    u"+ testfiles/select2/1/1sub2/1sub2sub1\n"
-                    u"- testfiles/select2/1/1sub1/1sub1sub3/1sub1sub3_file.txt\n"
-                    u"testfiles/select2/1/1sub1/1sub1sub2\n"
-                    u"     # Testing a full-line comment with leading and trailing spaces     \n"
-                    u"testfiles/select2/1/1sub2  \n"  # Note added spaces here
-                    u"+ testfiles/select2/1.py\n"
-                    u"+ testfiles/select2/3 \n"  # Note added space here
-                    u"+ testfiles/select2/1\n"
-                    u"- testfiles/select2/**")
-        self.backup(u"full", u"testfiles/select2", options=[u"--exclude-globbing-filelist=testfiles/exclude.txt"])
-        self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
-        self.assertEqual(restored, self.expected_restored_tree)
-
     def test_exclude_filelist_trailing_whitespace_folders_work_with_quotes(self):
         u"""Test that folders with trailing whitespace in the names work correctly if they are enclosed in quotes"""
         # Create a filelist
@@ -555,50 +510,6 @@ class TestIncludeFilelistTest(IncludeExcludeFunctionalTest):
         restored = self.directory_tree_to_list_of_lists(restore_dir)
         self.assertEqual(restored, self.expected_restored_tree)
 
-    def test_include_globbing_filelist_combined_imperfections(self):
-        u"""Test that include globbing filelist works with imperfections in the input file"""
-        # Identical to test_include_filelist_combined_imperfections and included to ensure that
-        # the deprecated --include-globbing-filelist function works as expected until it is deliberately removed.
-        # This is a combined test for speed reasons. The individual imperfections are tested as unittests in
-        # unit/test_selection.
-        # Imperfections tested are;
-        # * Leading space/spaces before the modifier
-        # * Trailing space/spaces after the filename (but before the newline)
-        # * Blank lines (newline character only)
-        # * Line only containing spaces
-        # * Full-line comments with # as the first character and with leading/trailing spaces
-        # * Unnecessarily quoted filenames with/without modifier  (both " and ')
-        # Create a filelist
-        with io.open(u"testfiles/include.txt", u"w") as f:
-            f.write(u"testfiles/select2/3/3sub3/3sub3sub2/3sub3sub2_file.txt\n"
-                    u"- testfiles/select2/3/3sub3/3sub3sub2\n"
-                    u'"testfiles/select2/3/3sub2/3sub2sub2"\n'
-                    u"  + testfiles/select2/3/3sub3\n"  # + added to ensure it makes no difference
-                    u"- testfiles/select2/3/3sub1\n"
-                    u"- testfiles/select2/2/2sub1/2sub1sub3\n"
-                    u' - "testfiles/select2/2/2sub1/2sub1sub2"\n'
-                    u"testfiles/select2/2/2sub1  \n"
-                    u"\n"
-                    u"- testfiles/select2/1/1sub3/1sub3sub2\n"
-                    u"- testfiles/select2/1/1sub3/1sub3sub1 \n"
-                    u"- 'testfiles/select2/1/1sub2/1sub2sub3'\n"
-                    u"             \n"
-                    u" + testfiles/select2/1/1sub2/1sub2sub1 \n"  # + added to ensure it makes no difference
-                    u"- testfiles/select2/1/1sub1/1sub1sub3/1sub1sub3_file.txt\n"
-                    u"  - testfiles/select2/1/1sub1/1sub1sub2  \n"
-                    u"# Testing full-line comment\n"
-                    u"- testfiles/select2/1/1sub2\n"
-                    u"'testfiles/select2/1.py'\n"
-                    u"testfiles/select2/3\n"
-                    u"        #  Testing another full-line comment      \n"
-                    u"testfiles/select2/1\n"
-                    u"- testfiles/select2/**")
-        self.backup(u"full", u"testfiles/select2", options=[u"--include-globbing-filelist=testfiles/include.txt"])
-        self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
-        self.assertEqual(restored, self.expected_restored_tree)
-
 
 class TestIncludeExcludedForContents(IncludeExcludeFunctionalTest):
     u""" Test to check that folders that are excluded are included if they contain includes of higher priority.
@@ -627,20 +538,6 @@ class TestIncludeExcludedForContents(IncludeExcludeFunctionalTest):
                              u"--exclude", u"testfiles/select/1/2",
                              u"--exclude", u"testfiles/select/1/1",
                              u"--exclude", u"testfiles/select/1/3"])
-        self.restore_and_check()
-
-    def test_include_globbing_filelist(self):
-        u"""test an excluded folder is included for included contents with an include-globbing-filelist """
-        # Deprecated, but include for now to ensure it keeps working until it is deliberately removed.
-        self.write_filelist(u"testfiles/include.txt")
-        self.backup(u"full", u"testfiles/select/1", options=[u"--include-globbing-filelist=testfiles/include.txt"])
-        self.restore_and_check()
-
-    def test_exclude_globbing_filelist(self):
-        u"""test an excluded folder is included for included contents with an exclude-globbing-filelist """
-        # Deprecated, but include for now to ensure it keeps working until it is deliberately removed.
-        self.write_filelist(u"testfiles/exclude.txt")
-        self.backup(u"full", u"testfiles/select/1", options=[u"--exclude-globbing-filelist=testfiles/exclude.txt"])
         self.restore_and_check()
 
     def test_include_filelist(self):
@@ -739,24 +636,6 @@ class TestAsterisks(IncludeExcludeFunctionalTest):
                              u"--exclude", u"**/1/1",
                              u"--exclude", u"**/1/3"])
         self.restore_and_check()
-
-    def test_single_and_double_asterisks(self):
-        u"""This compares a backup using --include-globbing-filelist with a single and double *."""
-        with io.open(u"testfiles/filelist.txt", u"w") as f:
-            f.write(u"+ testfiles/select2/*\n"
-                    u"- testfiles/select")
-        self.backup(u"full", u"testfiles/", options=[u"--include-globbing-filelist=testfiles/filelist.txt"])
-        self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir + u"/select2")
-        with io.open(u"testfiles/filelist2.txt", u"w") as f:
-            f.write(u"+ testfiles/select2/**\n"
-                    u"- testfiles/select")
-        self.backup(u"full", u"testfiles/", options=[u"--include-globbing-filelist=testfiles/filelist2.txt"])
-        self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored2 = self.directory_tree_to_list_of_lists(restore_dir + u"/select2")
-        self.assertEqual(restored, restored2)
 
     def test_single_and_double_asterisks_includes_excludes(self):
         u"""This compares a backup using --includes/--excludes with a single and double *."""
