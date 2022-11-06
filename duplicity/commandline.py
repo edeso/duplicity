@@ -65,12 +65,6 @@ commands = [u"cleanup",
             ]
 
 
-def old_fn_deprecation(opt):
-    log.Log(_(u"Warning: Option %s is pending deprecation and will be removed in version 2.0.0.\n"
-              u"Use of default filenames is strongly suggested.") % opt,
-            log.ERROR, force_print=True)
-
-
 # log options handled in log.py.  Add noop to make optparse happy
 def noop():
     pass
@@ -195,7 +189,6 @@ def parse_cmdline_options(arglist):
         if sep == u'-':
             raise optparse.OptionValueError(u"Dash ('-') not valid for time-separator.")
         config.time_separator = sep
-        old_fn_deprecation(opt)
 
     def add_selection(o, option, additional_arg, p):  # pylint: disable=unused-argument
         if o.type in (u"string", u"file"):
@@ -539,12 +532,6 @@ def parse_cmdline_options(arglist):
 
     # Option that causes the B2 backend to hide files instead of deleting them
     parser.add_option(u"--b2-hide-files", action=u"store_true")
-
-    # If set, use short (< 30 char) filenames for all the remote files.
-    parser.add_option(u"--short-filenames", action=u"callback",
-                      dest=u"short_filenames",
-                      callback=lambda o, s, v, p: (setattr(p.values, o.dest, True),
-                                                   old_fn_deprecation(s)))
 
     # TRANSL: Used in usage help to represent an ID for a GnuPG key. Example:
     # --encrypt-key <gpg_key_id>
