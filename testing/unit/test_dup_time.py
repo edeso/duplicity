@@ -143,19 +143,5 @@ class TimeTest(object):
         assert dup_time.stringtotime(dup_time.timetostring(t)) == t
 
 
-class TimeTest1(TimeTest, UnitTestCase):
-
-    def setUp(self):
-        super(TimeTest1, self).setUp()
-        self.set_config(u'old_filenames', False)
-
-
-class TimeTest2(TimeTest, UnitTestCase):
-
-    def setUp(self):
-        super(TimeTest2, self).setUp()
-        self.set_config(u'old_filenames', True)
-
-
 if __name__ == u'__main__':
     unittest.main()

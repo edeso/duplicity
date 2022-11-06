@@ -86,18 +86,9 @@ def setprevtime(time_in_secs):
 def timetostring(timeinseconds):
     u"""Return w3 or duplicity datetime compliant listing of timeinseconds"""
 
-    if config.old_filenames:
-        # We need to know if DST applies to append the correct offset. So
-        #    1. Save the tuple returned by localtime.
-        #    2. Pass the DST flag into gettzd
-        lcltime = time.localtime(timeinseconds)
-        return time.strftime(u"%Y-%m-%dT%H" + config.time_separator +
-                             u"%M" + config.time_separator + u"%S",
-                             lcltime) + gettzd(lcltime[-1])
-    else:
-        # DST never applies to UTC
-        lcltime = time.gmtime(timeinseconds)
-        return time.strftime(u"%Y%m%dT%H%M%SZ", lcltime)
+    # DST never applies to UTC
+    lcltime = time.gmtime(timeinseconds)
+    return time.strftime(u"%Y%m%dT%H%M%SZ", lcltime)
 
 
 def stringtotime(timestring):

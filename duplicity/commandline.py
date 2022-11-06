@@ -410,12 +410,6 @@ def parse_cmdline_options(arglist):
     # data without having root privileges or Unix users support
     parser.add_option(u"--do-not-restore-ownership", action=u"store_true")
 
-    # Whether the old filename format is in effect.
-    parser.add_option(u"--old-filenames", action=u"callback",
-                      dest=u"old_filenames",
-                      callback=lambda o, s, v, p: (setattr(p.values, o.dest, True),
-                                                   old_fn_deprecation(s)))
-
     # Sync only required metadata
     parser.add_option(u"--metadata-sync-mode",
                       default=u"partial",
