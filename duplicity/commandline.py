@@ -66,8 +66,7 @@ commands = [u"cleanup",
 
 
 def old_fn_deprecation(opt):
-    log.Log(_(u"Warning: Option %s is pending deprecation "
-              u"and will be removed in version 0.9.0.\n"
+    log.Log(_(u"Warning: Option %s is pending deprecation and will be removed in version 2.0.0.\n"
               u"Use of default filenames is strongly suggested.") % opt,
             log.ERROR, force_print=True)
 
@@ -321,10 +320,6 @@ def parse_cmdline_options(arglist):
     # If set, forces a full backup if the last full backup is older than
     # the time specified
     parser.add_option(u"--full-if-older-than", type=u"time", dest=u"full_force_time", metavar=_(u"time"))
-
-    parser.add_option(u"--gio", action=u"callback", dest=u"use_gio",
-                      callback=lambda o, s, v, p: (setattr(p.values, o.dest, True),
-                                                   old_fn_deprecation(s)))
 
     parser.add_option(u"--gpg-binary", type=u"file", metavar=_(u"path"))
 
