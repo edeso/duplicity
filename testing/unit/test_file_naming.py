@@ -92,13 +92,12 @@ class FileNamingBase(object):
         assert pr.type == u"new-sig"
         assert pr.end_time == 1029826800
 
-        if not config.short_filenames:
-            pr = file_naming.parse(config.file_prefix +
-                                   config.file_prefix_signature +
-                                   b"duplicity-new-signatures.2002-08-18T00:04:30-07:00.to.2002-08-20T00:00:00-07:00.sigtar.gpg")  # noqa
-            assert pr, pr
-            assert pr.type == u"new-sig"
-            assert pr.end_time == 1029826800
+        pr = file_naming.parse(config.file_prefix +
+                               config.file_prefix_signature +
+                               b"duplicity-new-signatures.2002-08-18T00:04:30-07:00.to.2002-08-20T00:00:00-07:00.sigtar.gpg")  # noqa
+        assert pr, pr
+        assert pr.type == u"new-sig"
+        assert pr.end_time == 1029826800
 
         pr = file_naming.parse(config.file_prefix + config.file_prefix_signature + b"dfs.h5dixs.st.g")
         assert pr, pr
@@ -114,12 +113,11 @@ class FileNamingBase(object):
         assert pr.type == u"new-sig"
         assert pr.end_time == 1029826800
 
-        if not config.short_filenames:
-            pr = file_naming.parse(config.file_prefix + config.file_prefix_signature + b"duplicity-new-signatures.2002-08-18T00:04:30-07:00.to.2002-08-20T00:00:00-07:00.sigtar.part.gpg")  # noqa
-            assert pr, pr
-            assert pr.partial
-            assert pr.type == u"new-sig"
-            assert pr.end_time == 1029826800
+        pr = file_naming.parse(config.file_prefix + config.file_prefix_signature + b"duplicity-new-signatures.2002-08-18T00:04:30-07:00.to.2002-08-20T00:00:00-07:00.sigtar.part.gpg")  # noqa
+        assert pr, pr
+        assert pr.partial
+        assert pr.type == u"new-sig"
+        assert pr.end_time == 1029826800
 
         pr = file_naming.parse(config.file_prefix + config.file_prefix_signature + b"dfs.h5dixs.st.p.g")
         assert pr, pr
@@ -128,18 +126,10 @@ class FileNamingBase(object):
         assert pr.time == 1036954144, repr(pr.time)
 
 
-class FileNamingLong(UnitTestCase, FileNamingBase):
+class FileNaming(UnitTestCase, FileNamingBase):
     u"""Test long filename parsing and generation"""
     def setUp(self):
-        super(FileNamingLong, self).setUp()
-        self.set_config(u'short_filenames', 0)
-
-
-class FileNamingShort(UnitTestCase, FileNamingBase):
-    u"""Test short filename parsing and generation"""
-    def setUp(self):
-        super(FileNamingShort, self).setUp()
-        self.set_config(u'short_filenames', 1)
+        super(FileNaming, self).setUp()
 
 
 class FileNamingPrefixes(UnitTestCase, FileNamingBase):
