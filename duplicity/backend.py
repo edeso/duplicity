@@ -209,8 +209,6 @@ def get_backend(url_string):
 
     Raise InvalidBackendURL if the URL is not a valid URL.
     """
-    if config.use_gio:
-        url_string = u'gio+' + url_string
     obj = get_backend_object(url_string)
     if obj:
         obj = BackendWrapper(obj)

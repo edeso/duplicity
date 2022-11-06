@@ -362,9 +362,6 @@ par2_options = u""
 # Number of par2 volumes
 par2_volumes = 1
 
-# Whether to enable gio backend
-use_gio = False
-
 # If set, log the chnages is the set instead of the normal collection status
 show_changes_in_set = None
 
