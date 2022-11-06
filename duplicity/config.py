@@ -290,9 +290,6 @@ imap_mailbox = u"INBOX"
 # Sync partial metadata by default
 metadata_sync_mode = u"partial"
 
-# Whether the old filename format is in effect.
-old_filenames = False
-
 # Wheter to specify --use-agent in GnuPG options
 use_agent = False
 
