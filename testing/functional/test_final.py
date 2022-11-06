@@ -176,19 +176,5 @@ class FinalTest(FunctionalTestCase):
         self.restore(passphrase_input=[self.sign_passphrase])
 
 
-class OldFilenamesFinalTest(FinalTest):
-
-    def setUp(self):
-        super(OldFilenamesFinalTest, self).setUp()
-        self.class_args.extend([u"--old-filenames"])
-
-
-class ShortFilenamesFinalTest(FinalTest):
-
-    def setUp(self):
-        super(ShortFilenamesFinalTest, self).setUp()
-        self.class_args.extend([u"--short-filenames"])
-
-
 if __name__ == u"__main__":
     unittest.main()

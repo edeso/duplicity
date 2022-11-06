@@ -179,8 +179,7 @@ def from_base36(s):
 
 def get_suffix(encrypted, gzipped):
     u"""
-    Return appropriate suffix depending on status of
-    encryption, compression, and short_filenames.
+    Return appropriate suffix depending on status of encryption or compression or neither.
     """
     if encrypted:
         gzipped = False
@@ -280,7 +279,7 @@ def parse(filename):
         short = True
         m1 = full_vol_re_short.search(filename)
         m2 = full_manifest_re_short.search(filename)
-        if not m1 and not m2 and not config.short_filenames:
+        if not m1 and not m2:
             short = False
             m1 = full_vol_re.search(filename)
             m2 = full_manifest_re.search(filename)

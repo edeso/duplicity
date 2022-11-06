@@ -706,11 +706,6 @@ support Unix ownership or when root privileges are not available.
 Number of retries to make on errors before giving up.
 
 .TP
-.BI --old-filenames
-Use the old filename format (incompatible with Windows/Samba) rather than
-the new filename format.
-
-.TP
 .BI "--par2-options " options
 Verbatim options to pass to par2.
 
@@ -1025,13 +1020,6 @@ See also
 .B "A NOTE ON SSH BACKENDS"
 section
 .BR "SSH pexpect backend" .
-
-.TP
-.BI --short-filenames
-If this option is specified, the names of the files duplicity writes
-will be shorter (about 30 chars) but less understandable.  This may be
-useful when backing up to MacOS or another OS or FS that doesn't
-support long filenames.
 
 .TP
 .BI "--sign-key " key-id

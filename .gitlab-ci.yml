@@ -62,19 +62,6 @@ code:
     script:
         - tox -e code
 
-py35:
-    <<: *test-template
-    stage: test
-    script:
-        - tox -e py35
-    allow_failure: true
-
-py36:
-    <<: *test-template
-    stage: test
-    script:
-        - tox -e py36
-
 py37:
     <<: *test-template
     stage: test
