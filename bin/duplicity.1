@@ -1153,6 +1153,11 @@ Use
 .IR char
 as the time separator in filenames instead of colon (":").
 
+.B NOTE:
+This option only applies to recovery and status style commands.
+We no longer create or write filenames with time separators,
+but will read older backups that may need this option.
+
 .TP
 .BI "--timeout " seconds
 Use
