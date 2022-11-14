@@ -157,7 +157,8 @@ class MatchingTest(UnitTestCase):
         assert sf(self.makeext(u"FOO/BAR")) == 1
         assert sf(self.makeext(u"foo/bar")) == 1
         assert sf(self.makeext(u"fOo/BaR")) == 1
-        self.assertRaises(FilePrefixError, self.Select.general_get_sf, u"ignorecase:tesfiles/sect/foo/bar", 1)
+        self.assertRaises(FilePrefixError,
+                          self.Select.general_get_sf, u"ignorecase:tesfiles/sect/foo/bar", 1)
 
     def test_ignore_case_prefix_override(self):
         u"""test_ignore_case - confirm that ignorecase: overrides default. might
@@ -264,7 +265,6 @@ class ParseArgsTest(UnitTestCase):
         # Create a list of the paths returned by the select function, converted
         # into path.index styled tuples
         results_as_list = list(Iter.map(self.uc_index_from_path, self.Select))
-        # print(results_as_list)
         self.assertEqual(indicies, results_as_list)
 
     def remake_filelists(self, filelist):
@@ -302,6 +302,96 @@ class ParseArgsTest(UnitTestCase):
                         u"testfiles/select/1/1\n"
                         u"- testfiles/select/1\n"
                         u"- **"])
+
+    def test_files_from_no_selections(self):
+        u"""Confirm that --files-from works in isolation"""
+        self.ParseTest([(u"--files-from", u"file")],
+                       [(), (u"1.doc",), (u"1.py",),
+                        (u"efools",), (u"efools", u"ping"),
+                        (u"foobar",), (u"foobar", u"pong")],
+                       [u"1.doc\n"
+                        u"1.py\n"
+                        u"efools/ping\n"
+                        u"foobar/pong"])
+
+    def test_files_from_implicit_parents(self):
+        u"""Confirm that --files-from includes parent directories implicitly"""
+        self.ParseTest([(u"--files-from", u"file")],
+                       [(), (u"1",), (u"1", u"1"), (u"1", u"1", u"1"), (u"2",)],
+                       [u"1/1/1\n"
+                        u"2"])
+
+    def test_files_from_with_exclusions(self):
+        u"""Confirm that --files-from still respects the usual file selection rules"""
+        self.ParseTest([(u"--files-from", u"file"),
+                        (u"--exclude", u"testfiles/select/*.py"),
+                        (u"--exclude", u"testfiles/select/3/3/3")],
+                       [(),
+                        (u"1",), (u"1", u"1"), (u"1", u"1", u"1"),
+                        (u"1.doc",),
+                        (u"2",), (u"2", u"2"), (u"2", u"2", u"2"),
+                        (u"3",), (u"3", u"3")],
+                       [u"1.doc\n"
+                        u"1.py\n"
+                        u"1/1/1\n"
+                        u"2/2/2\n"
+                        u"3/3/3"])
+
+    def test_files_from_with_inclusions(self):
+        u"""Confirm that --files-from still respects the usual file selection rules"""
+        self.ParseTest([(u"--files-from", u"file"),
+                        (u"--include", u"testfiles/select/1.*"),
+                        (u"--exclude", u"**")],
+                       [(), (u"1.doc",), (u"1.py",)],
+                       [u"1.doc\n"
+                        u"1.py\n"
+                        u"1\n"
+                        u"2\n"
+                        u"3"])
+
+    def test_files_from_multiple_filelists(self):
+        u"""Check that --files-from can co-exist with other options using file lists"""
+        self.ParseTest([(u"--files-from", u"file"),
+                        (u"--include-filelist", u"file")],
+                       [(), (u"1",), (u"1", u"2"), (u"1", u"2", u"3"),
+                        (u"1.doc",)],
+                       [u"1.doc\n"                      # --files-from
+                        u"1.py\n"
+                        u"1/1/1\n"
+                        u"1/1/2\n"
+                        u"1/1/3\n"
+                        u"1/2/1\n"
+                        u"1/2/2\n"
+                        u"1/2/3\n"
+                        u"1/3/1\n"
+                        u"1/3/2\n"
+                        u"1/3/3\n"
+                        u"2",
+                        u"+ testfiles/select/*.doc\n"   # --include-filelist
+                        u"+ testfiles/select/1/2/3\n"
+                        u"- **"])
+
+    def test_files_from_null_separator(self):
+        u"""Check that --files-from works with null separators when requested"""
+        self.set_config(u"null_separator", 1)
+        self.ParseTest([(u"--files-from", u"file"),
+                        (u"--include", u"testfiles/select/*.doc"),
+                        (u"--include", u"testfiles/select/1/2/3"),
+                        (u"--exclude", u"**")],
+                       [(), (u"1",), (u"1", u"2"), (u"1", u"2", u"3"),
+                        (u"1.doc",)],
+                       [u"1.doc\0"
+                        u"1.py\0"
+                        u"1/1/1\0"
+                        u"1/1/2\0"
+                        u"1/1/3\0"
+                        u"1/2/1\0"
+                        u"1/2/2\0"
+                        u"1/2/3\0"
+                        u"1/3/1\0"
+                        u"1/3/2\0"
+                        u"1/3/3\0"
+                        u"2"])
 
     def test_include_filelist_1_trailing_whitespace(self):
         u"""Filelist glob test similar to globbing filelist, but with 1 trailing whitespace on include"""

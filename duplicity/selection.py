@@ -78,13 +78,13 @@ class Select(object):
     be redundant and presumably isn't what the user intends.
 
     """
-
     def __init__(self, path):
         u"""Initializer, called with Path of root directory"""
         assert isinstance(path, Path), str(path)
         self.selection_functions = []
         self.rootpath = path
         self.prefix = self.rootpath.uc_name
+        self.files_from = None
 
     def __iter__(self):  # pylint: disable=non-iterator-returned
         return self
@@ -126,18 +126,32 @@ class Select(object):
                          log.WarningCode.cannot_stat, util.escape(fullpath))
             return None
 
-        def diryield(path):
-            u"""Generate relevant files in directory path
+        def dir_scanner(path):
+            u"""Generator of files to be included under from filesystems
 
-            Returns (path, num) where num == 0 means path should be
-            generated normally, num == 1 means the path is a directory
-            and should be included iff something inside is included.
+            Yields (subpath, scan) where scan indicates that path is a
+            directory and should be included *if* something inside is
+            subsequently included (i.e. generated later)
+
+            This generator applies the configured selection functions and
+            so will not yield paths which are to be excluded.
+
+            If --files-from has been specified, this will yield paths from
+            that filelist only, subject to any selection functions.
 
             """
             # Only called by Iterate. Internal.
             # todo: get around circular dependency issue by importing here
             from duplicity import robust
-            for filename in robust.listpath(path):
+
+            if self.files_from is None:
+                files = robust.listpath(path)
+            elif path.uc_name in self.files_from:
+                files = self.files_from[path.uc_name]
+            else:
+                return
+
+            for filename in files:
                 new_path = robust.check_common_error(
                     error_handler, Path.append, (path, filename))
                 if new_path:
@@ -155,10 +169,10 @@ class Select(object):
                             diffdir.stats.Errors += 1
                     elif s == 1:
                         # Should be included
-                        yield (new_path, 0)
+                        yield (new_path, False)
                     elif s == 2 and new_path.isdir():
                         # Is a directory that should be scanned
-                        yield (new_path, 1)
+                        yield (new_path, True)
 
         if not path.type:
             # base doesn't exist
@@ -169,30 +183,30 @@ class Select(object):
         yield path
         if not path.isdir():
             return
-        diryield_stack = [diryield(path)]
-        delayed_path_stack = []
 
-        while diryield_stack:
+        dirs_to_scan = [dir_scanner(path)]
+        dirs_deferred = []
+        while dirs_to_scan:
             try:
-                subpath, val = next(diryield_stack[-1])
+                subpath, scan = next(dirs_to_scan[-1])
             except StopIteration:
-                diryield_stack.pop()
-                if delayed_path_stack:
-                    delayed_path_stack.pop()
+                dirs_to_scan.pop()
+                if dirs_deferred:
+                    dirs_deferred.pop()
                 continue
-            if val == 0:
-                if delayed_path_stack:
-                    for delayed_path in delayed_path_stack:
+            if scan:
+                dirs_deferred.append(subpath)
+                dirs_to_scan.append(dir_scanner(subpath))
+            else:
+                if dirs_deferred:
+                    for delayed_path in dirs_deferred:
                         log.Log(_(u"Selecting %s") % delayed_path.uc_name, 6)
                         yield delayed_path
-                    del delayed_path_stack[:]
+                    del dirs_deferred[:]
                 log.Debug(_(u"Selecting %s") % subpath.uc_name)
                 yield subpath
                 if subpath.isdir():
-                    diryield_stack.append(diryield(subpath))
-            elif val == 1:
-                delayed_path_stack.append(subpath)
-                diryield_stack.append(diryield(subpath))
+                    dirs_to_scan.append(dir_scanner(subpath))
 
     def Select(self, path):
         u"""Run through the selection functions and return dominant val 0/1/2"""
@@ -297,6 +311,9 @@ Exiting because this probably isn't what you meant.""") %
                     mode = u"literal"
                 elif opt == u"--filter-regexp":
                     mode = u"regex"
+                elif opt == u"--files-from":
+                    self.parse_files_from(filelists[filelists_index], arg)
+                    filelists_index += 1
                 elif opt == u"--include":
                     self.add_selection_func(self.general_get_sf(arg, 1, mode, no_case))
                 elif opt == u"--include-filelist":
@@ -335,6 +352,52 @@ pattern (such as '**') which matches the base directory.""") %
                              u"%s") % exc, log.ErrorCode.globbing_error)
         else:
             raise  # pylint: disable=misplaced-bare-raise
+
+    def parse_files_from(self, filelist_fp, list_name):
+        u"""Loads an explicit list of files to backup from a filelist, building
+        a dictionary of directories and their contents which can be used later
+        to emulate a filesystem walk over the listed files only.
+
+        Each specified path is unwound to identify the parents folder(s) as these
+        are implicitly to be included.
+
+        Paths read are not to be stripped, checked for comments, etc. Every
+        character on each line is significant and treated as part of the path.
+        """
+        # Internal. Used by ParseArgs.
+        log.Notice(_(u"Reading files to backup from list %s") % list_name)
+        separator = config.null_separator and u"\0" or u"\n"
+        filelist = {}
+        absolute_path = None
+        for line in filelist_fp.read().split(separator):
+            if not line:                # skip blanks
+                continue
+            if line.startswith(u"/"):   # no absolute paths thanks
+                absolute_path = line
+                break
+            while line:
+                dirname, basename = os.path.split(line)
+                path = os.path.join(self.rootpath.uc_name, dirname).rstrip(os.path.sep)
+                if path not in filelist:
+                    filelist[path] = set()
+                filelist[path].add(basename)
+                line = dirname
+
+        if absolute_path:
+            log.FatalError(_(u"""\
+Files-from list contains the absolute path:
+    %s
+All paths specified in a files-from list must be given relative to the backup
+source path.""") %
+                           (absolute_path,),
+                           log.ErrorCode.absolute_files_from)
+
+        if not filelist:
+            log.FatalError(_(u"""\
+Files-from list specified which contains no files, the backup will be empty as
+a result. Exiting as this probably isn't what you meant,"""), log.ErrorCode.empty_files_from)
+
+        self.files_from = {d: sorted(f) for d, f in filelist.items()}
 
     def parse_last_excludes(self):
         u"""Exit with error if last selection function isn't an exclude"""

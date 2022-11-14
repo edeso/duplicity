@@ -30,7 +30,8 @@ import io
 
 import unittest
 
-from . import FunctionalTestCase
+from . import FunctionalTestCase, CmdError
+from duplicity import log
 
 
 class IncludeExcludeFunctionalTest(FunctionalTestCase):
@@ -174,8 +175,233 @@ class TestCheckTestFiles(IncludeExcludeFunctionalTest):
     def test_files_are_as_expected(self):
         u"""Test that the contents of testfiles/select are as expected."""
         testfiles = self.directory_tree_to_list_of_lists(u"testfiles/select2")
-        # print(testfiles)
         self.assertEqual(testfiles, self.complete_directory_tree)
+
+
+class TestFilesFrom(IncludeExcludeFunctionalTest):
+    u""" Tests behaviours when --files-from is used """
+
+    # all the files in testfiles/select2 which are named with numbers
+    testfiles_numbers = [u"2",
+                         u"2/2sub3",
+                         u"2/2sub3/2sub3sub2",
+                         u"2/2sub3/2sub3sub1",
+                         u"2/2sub3/2sub3sub3",
+                         u"2/2sub1",
+                         u"2/2sub1/2sub1sub3",
+                         u"2/2sub1/2sub1sub2",
+                         u"2/2sub1/2sub1sub1",
+                         u"2/2sub1/2sub1sub1/2sub1sub1_file.txt",
+                         u"2/2sub2",
+                         u"2/2sub2/2sub2sub3",
+                         u"2/2sub2/2sub2sub1",
+                         u"2/2sub2/2sub2sub2",
+                         u"1.doc",
+                         u"1.py",
+                         u"1",
+                         u"1/1sub3",
+                         u"1/1sub3/1sub3sub2",
+                         u"1/1sub3/1sub3sub1",
+                         u"1/1sub3/1sub3sub3",
+                         u"1/1sub1",
+                         u"1/1sub1/1sub1sub2",
+                         u"1/1sub1/1sub1sub2/1sub1sub2_file.txt",
+                         u"1/1sub1/1sub1sub3",
+                         u"1/1sub1/1sub1sub3/1sub1sub3_file.txt",
+                         u"1/1sub1/1sub1sub1",
+                         u"1/1sub1/1sub1sub1/1sub1sub1_file.txt",
+                         u"1/1sub2",
+                         u"1/1sub2/1sub2sub3",
+                         u"1/1sub2/1sub2sub2",
+                         u"1/1sub2/1sub2sub1",
+                         u"3",
+                         u"3/3sub3",
+                         u"3/3sub3/3sub3sub3",
+                         u"3/3sub3/3sub3sub1",
+                         u"3/3sub3/3sub3sub2",
+                         u"3/3sub3/3sub3sub2/3sub3sub2_file.txt",
+                         u"3/3sub2",
+                         u"3/3sub2/3sub2sub1",
+                         u"3/3sub2/3sub2sub3",
+                         u"3/3sub2/3sub2sub2",
+                         u"3/3sub1",
+                         u"3/3sub1/3sub1sub3",
+                         u"3/3sub1/3sub1sub1",
+                         u"3/3sub1/3sub1sub2"]
+
+    def test_error_on_files_from_absolute_path(self):
+        u""" Check expected failure on absolute paths """
+        with io.open(u"testfiles/files_from.txt", u"w") as f:
+            f.write(u"/testfiles/select2/1/1sub1/1sub1sub1/1sub1sub1_file.txt\n"
+                    u"/testfiles/select2/1/1sub1/1sub1sub2/1sub1sub2_file.txt\n"
+                    u"/testfiles/select2/1/1sub1/1sub1sub3/1sub1sub3_file.txt\n"
+                    u"/testfiles/select2/2/2sub1/2sub1sub1/2sub1sub1_file.txt\n"
+                    u"/testfiles/select2/3/3sub3/3sub3sub2/3sub3sub2_file.txt")
+        with self.assertRaises(CmdError) as context:
+            self.backup(u"full", u"testfiles/select2",
+                        options=[u"--files-from", u"testfiles/files_from.txt"])
+        self.assertEqual(context.exception.exit_status, log.ErrorCode.absolute_files_from)
+
+    def test_error_on_files_from_empty(self):
+        u""" Check expected failure if file list is empty """
+        with io.open(u"testfiles/files_from.txt", u"w") as f:
+            pass
+        with self.assertRaises(CmdError) as context:
+            self.backup(u"full", u"testfiles/select2",
+                        options=[u"--files-from", u"testfiles/files_from.txt"])
+        self.assertEqual(context.exception.exit_status, log.ErrorCode.empty_files_from)
+
+    def test_files_from_no_selections(self):
+        u""" Simplest use case, with no additional selection functions """
+        with io.open(u"testfiles/files_from.txt", u"w") as f:
+            f.write(u"1.doc\n"
+                    u"1.py")
+        self.backup(u"full", u"testfiles/select2",
+                    options=[u"--files-from", u"testfiles/files_from.txt"])
+        self.restore()
+        restore_dir = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        self.assertEqual(restored, [[u"1.doc", u"1.py"]])
+
+    def test_files_from_implicit_parents(self):
+        u""" Confirm that parent directories get included implicitly """
+        with io.open(u"testfiles/files_from.txt", u"w") as f:
+            f.write(u"1/1sub1/1sub1sub1/1sub1sub1_file.txt\n"
+                    u"1/1sub1/1sub1sub2/1sub1sub2_file.txt\n"
+                    u"1/1sub1/1sub1sub3/1sub1sub3_file.txt\n"
+                    u"2/2sub1/2sub1sub1/2sub1sub1_file.txt\n"
+                    u"3/3sub3/3sub3sub2/3sub3sub2_file.txt")
+        self.backup(u"full", u"testfiles/select2",
+                    options=[u"--files-from", u"testfiles/files_from.txt"])
+        self.restore()
+        restore_dir = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        self.assertEqual(restored, [[u"1", u"2", u"3"],
+                                    [u"1sub1"], [u"1sub1sub1", u"1sub1sub2", u"1sub1sub3"],
+                                    [u"1sub1sub1_file.txt"], [u"1sub1sub2_file.txt"], [u"1sub1sub3_file.txt"],
+                                    [u"2sub1"], [u"2sub1sub1"], [u"2sub1sub1_file.txt"],
+                                    [u"3sub3"], [u"3sub3sub2"], [u"3sub3sub2_file.txt"]])
+
+    def test_files_from_trailing_space(self):
+        u""" Check that trailing space is preserved """
+        with io.open(u"testfiles/files_from.txt", u"w") as f:
+            f.write(u"trailing_space /trailing_space sub1\n"
+                    u"trailing_space /trailing_space sub2/trailing_space sub2_file.txt")
+        self.backup(u"full", u"testfiles/select2",
+                    options=[u"--files-from", u"testfiles/files_from.txt"])
+        self.restore()
+        restore_dir = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        self.assertEqual(restored, [[u"trailing_space "],
+                                    [u"trailing_space sub1", u"trailing_space sub2"],
+                                    [u"trailing_space sub2_file.txt"]])
+
+    def test_files_from_trailing_space_folder(self):
+        u""" Check that trailing space is preserved where it isn't delimited
+        by another path component or implied by another path in the same file
+        """
+        with io.open(u"testfiles/files_from.txt", u"w") as f:
+            f.write(u"trailing_space ")
+        self.backup(u"full", u"testfiles/select2",
+                    options=[u"--files-from", u"testfiles/files_from.txt"])
+        self.restore()
+        restore_dir = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        self.assertEqual(restored, [[u"trailing_space "]])
+
+    def test_files_from_with_exclusions(self):
+        u""" Apply some --exclude rules to a backup fileset defined by --files-from"""
+        with io.open(u"testfiles/files_from.txt", u"w") as f:
+            f.write(u"\n".join(self.testfiles_numbers))
+        self.backup(u"full", u"testfiles/select2",
+                    options=[u"--files-from", u"testfiles/files_from.txt",
+                             u"--exclude", u"testfiles/select2/2",
+                             u"--exclude", u"testfiles/select2/3",
+                             u"--exclude", u"**.txt"])
+        self.restore()
+        restore_dir = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        self.assertEqual(restored, [[u"1", u"1.doc", u"1.py"],
+                                    [u"1sub1", u"1sub2", u"1sub3"],
+                                    [u"1sub1sub1", u"1sub1sub2", u"1sub1sub3"],
+                                    [u"1sub2sub1", u"1sub2sub2", u"1sub2sub3"],
+                                    [u"1sub3sub1", u"1sub3sub2", u"1sub3sub3"]])
+
+    def test_files_from_with_inclusions(self):
+        u""" Apply some --exclude rules to a backup fileset defined by --files-from"""
+        with io.open(u"testfiles/files_from.txt", u"w") as f:
+            f.write(u"\n".join(self.testfiles_numbers))
+        self.backup(u"full", u"testfiles/select2",
+                    options=[u"--files-from", u"testfiles/files_from.txt",
+                             u"--include", u"testfiles/select2/1.*",
+                             u"--include", u"**.txt",
+                             u"--exclude", u"**"])
+        self.restore()
+        restore_dir = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        self.assertEqual(restored, [[u"1", u"2", u"3", u"1.doc", u"1.py"],
+                                    [u"1sub1"], [u"1sub1sub1", u"1sub1sub2", u"1sub1sub3"],
+                                    [u"1sub1sub1_file.txt"], [u"1sub1sub2_file.txt"], [u"1sub1sub3_file.txt"],
+                                    [u"2sub1"], [u"2sub1sub1"], [u"2sub1sub1_file.txt"],
+                                    [u"3sub3"], [u"3sub3sub2"], [u"3sub3sub2_file.txt"]])
+
+    def test_files_from_multiple_filelists(self):
+        u""" Use filelists for both --files-from and --include-filelist """
+        with io.open(u"testfiles/files_from.txt", u"w") as f:
+            f.write(u"\n".join(self.testfiles_numbers))
+        with io.open(u"testfiles/include.txt", u"w") as f:
+            f.write(u"testfiles/select2/1/1sub2\n"
+                    u"testfiles/select2/1/1sub3\n"
+                    u"testfiles/select2/2/2sub2\n"
+                    u"testfiles/select2/2/2sub3\n"
+                    u"testfiles/select2/3/3sub1\n"
+                    u"testfiles/select2/3/3sub2\n"
+                    u"testfiles/select2/trailing_space*")  # last include does nothing due to --files-from
+        self.backup(u"full", u"testfiles/select2",
+                    options=[u"--files-from", u"testfiles/files_from.txt",
+                             u"--include-filelist", u"testfiles/include.txt",
+                             u"--exclude", u"**"])
+        self.restore()
+        restore_dir = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        self.assertEqual(restored, [[u"1", u"2", u"3"],
+                                    [u"1sub2", u"1sub3"],
+                                    [u"1sub2sub1", u"1sub2sub2", u"1sub2sub3"],
+                                    [u"1sub3sub1", u"1sub3sub2", u"1sub3sub3"],
+                                    [u"2sub2", u"2sub3"],
+                                    [u"2sub2sub1", u"2sub2sub2", u"2sub2sub3"],
+                                    [u"2sub3sub1", u"2sub3sub2", u"2sub3sub3"],
+                                    [u"3sub1", u"3sub2"],
+                                    [u"3sub1sub1", u"3sub1sub2", u"3sub1sub3"],
+                                    [u"3sub2sub1", u"3sub2sub2", u"3sub2sub3"]])
+
+    def test_files_from_null_separator(self):
+        u""" Using nulls to separate --files-from """
+        with io.open(u"testfiles/files_from.txt", u"w") as f:
+            f.write(u"\0".join(self.testfiles_numbers))
+        self.backup(u"full", u"testfiles/select2",
+                    options=[u"--null-separator",
+                             u"--files-from", u"testfiles/files_from.txt",
+                             u"--include", u"testfiles/select2/1/1sub2",
+                             u"--include", u"testfiles/select2/1/1sub3",
+                             u"--include", u"testfiles/select2/2/2sub2",
+                             u"--include", u"testfiles/select2/2/2sub3",
+                             u"--include", u"testfiles/select2/3/3sub1",
+                             u"--include", u"testfiles/select2/3/3sub2",
+                             u"--exclude", u"**"])
+        self.restore()
+        restore_dir = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        self.assertEqual(restored, [[u"1", u"2", u"3"],
+                                    [u"1sub2", u"1sub3"],
+                                    [u"1sub2sub1", u"1sub2sub2", u"1sub2sub3"],
+                                    [u"1sub3sub1", u"1sub3sub2", u"1sub3sub3"],
+                                    [u"2sub2", u"2sub3"],
+                                    [u"2sub2sub1", u"2sub2sub2", u"2sub2sub3"],
+                                    [u"2sub3sub1", u"2sub3sub2", u"2sub3sub3"],
+                                    [u"3sub1", u"3sub2"],
+                                    [u"3sub1sub1", u"3sub1sub2", u"3sub1sub3"],
+                                    [u"3sub2sub1", u"3sub2sub2", u"3sub2sub3"]])
 
 
 class TestIncludeExcludeOptions(IncludeExcludeFunctionalTest):
@@ -247,6 +473,31 @@ class TestIncludeExcludeFilterModes(IncludeExcludeFunctionalTest):
     u"""
     Direct use of --include/--exclude with --filter-* mode switches used.
     """
+
+    def test_error_on_redundant_filter_option(self):
+        u""" Test for explicit specification of default filter options _only_.
+        """
+        with self.assertRaises(CmdError) as context:
+            self.backup(u"full", u"testfiles/select2",
+                        options=[u"--filter-globbing", u"--filter-strictcase",
+                                 u"--include", u"testfiles/dir1/fifo",
+                                 u"--include", u"testfiles/dir1/symbolic_link",
+                                 u"--include", u"testfiles/dir1/largefile",
+                                 u"--exclude", u"testfiles/dir1"])
+        self.assertEqual(context.exception.exit_status, log.ErrorCode.redundant_filter)
+
+    def test_error_on_trailing_filter_option(self):
+        u""" Test --filter-* as the last file selection option, which has no
+        effect and should result in an error.
+        """
+        with self.assertRaises(CmdError) as context:
+            self.backup(u"full", u"testfiles/select2",
+                        options=[u"--include", u"testfiles/dir1/fifo",
+                                 u"--include", u"testfiles/dir1/symbolic_link",
+                                 u"--include", u"testfiles/dir1/largefile",
+                                 u"--exclude", u"testfiles/dir1",
+                                 u"--filter-literal"])
+        self.assertEqual(context.exception.exit_status, log.ErrorCode.trailing_filter)
 
     def test_include_exclude_basic_with_modes(self):
         u""" Test --include and --exclude work in the same way as done by

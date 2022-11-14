@@ -388,6 +388,10 @@ def parse_cmdline_options(arglist):
                       metavar=_(u"path"), dest=u"restore_dir",
                       callback=lambda o, s, v, p: setattr(p.values, u"restore_dir", util.fsencode(v.strip(u'/'))))
 
+    # Defines the backup source as a sub-set of the source folder
+    parser.add_option(u"--files-from", type=u"file", metavar=_(u"filename"),
+                      dest=u"", action=u"callback", callback=add_filelist)
+
     # Used to confirm certain destructive operations like deleting old files.
     parser.add_option(u"--force", action=u"store_true")
 
