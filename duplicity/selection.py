@@ -236,7 +236,7 @@ class Select(object):
         (option-string, (additional argument, filelist_fp)).
 
         """
-        # Called by commandline.py set_selection. External.
+        # Called by cli_main.py set_selection. External.
         filelists_index = 0
         try:
             for opt, arg in argtuples:
