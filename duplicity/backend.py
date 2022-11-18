@@ -29,6 +29,7 @@ import errno
 import getpass
 import os
 import re
+import socket
 import sys
 import time
 import urllib.error
@@ -66,6 +67,9 @@ _last_exception = None
 #
 # NOTE: this is filled by the respective backends during registering
 uses_netloc = []
+
+# set timeout for backends
+socket.setdefaulttimeout(config.timeout)
 
 
 def import_backends():
