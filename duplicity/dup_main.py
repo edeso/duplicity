@@ -44,7 +44,7 @@ import duplicity.config as config
 import duplicity.errors
 from duplicity import __version__
 from duplicity import asyncscheduler
-from duplicity import commandline
+from duplicity import cli_main
 from duplicity import diffdir
 from duplicity import dup_collections
 from duplicity import dup_temp

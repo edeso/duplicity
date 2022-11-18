@@ -26,9 +26,33 @@ import socket
 import sys
 
 from duplicity import __version__
+from duplicity import gpg
 
 # The current version of duplicity
 version = __version__
+
+# The following args are set by ommandline processing
+# they correspond to the args in commandline.commands
+positional = None
+source_url = None
+target_url = None
+source_dir = None
+target_dir = None
+remove_time = None
+count = None
+
+# the following contain the argument to each command
+# all resolve to False until filled, then areTrue
+cleanup = []
+collection_status = []
+full = []
+incremental = []
+list_current_files = []
+remove_older_than = []
+remove_all_but_n_full = []
+remove_all_inc_of_but_n_full = []
+restore = []
+verify = []
 
 # Prefix for all files (appended before type-specific prefixes)
 file_prefix = b""
@@ -70,6 +94,7 @@ archive_dir_path = None
 # config dir for future use
 os.environ[u"XDG_CONFIG_HOME"] = os.getenv(u"XDG_CONFIG_HOME", os.path.expanduser(u"~/.config"))
 config_dir = os.path.expandvars(u"$XDG_CONFIG_HOME/duplicity")
+config_dir_path = None
 
 # Restores will try to bring back the state as of the following time.
 # If it is None, default to current time.
