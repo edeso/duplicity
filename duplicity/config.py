@@ -30,6 +30,13 @@ from duplicity import __version__
 # The current version of duplicity
 version = __version__
 
+# command and args
+positional = []
+source_url = u""
+target_url = u""
+source_dir = b""
+target_dir = b""
+
 # Prefix for all files (appended before type-specific prefixes)
 file_prefix = b""
 
@@ -70,6 +77,7 @@ archive_dir_path = None
 # config dir for future use
 os.environ[u"XDG_CONFIG_HOME"] = os.getenv(u"XDG_CONFIG_HOME", os.path.expanduser(u"~/.config"))
 config_dir = os.path.expandvars(u"$XDG_CONFIG_HOME/duplicity")
+config_dir_path = None
 
 # Restores will try to bring back the state as of the following time.
 # If it is None, default to current time.
