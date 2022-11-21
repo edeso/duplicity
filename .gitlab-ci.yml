@@ -81,6 +81,7 @@ py36:
     stage: test
     script:
         - tox -e py36
+    allow_failure: true
 
 py37:
     <<: *test-template
@@ -105,6 +106,12 @@ py310:
     stage: test
     script:
         - tox -e py310
+
+py311:
+    <<: *test-template
+    stage: test
+    script:
+        - tox -e py311
 
 build_pip:
     stage: deploy
