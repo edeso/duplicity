@@ -35,8 +35,8 @@ class CommandlineTest(UnitTestCase):
     Test parse_commandline_options
     """
     good_args = {
-        u"count": 5,
-        u"remove_time": u"1M",
+        u"count": u"5",
+        u"remove_time": u"100",
         u"source_dir": u"foo/bar",
         u"source_url": u"file://duptest",
         u"target_dir": u"foo/bar",
