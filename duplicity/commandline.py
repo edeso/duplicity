@@ -27,10 +27,14 @@ import os
 import re
 import sys
 from hashlib import md5
+from pathvalidate import sanitize_filepath
+from pathvalidate import is_valid_filepath
 
+import errors
 from duplicity import commandline
 from duplicity import config
 from duplicity import dup_time
+from duplicity import errors
 from duplicity import log
 from duplicity import path
 
@@ -39,17 +43,21 @@ select_files = []  # Will hold file objects when filelist given
 
 # commands and type of positional args expected
 commands = {
-    u"cleanup":[u"target_url"],
-    u"collection-status":[u"target_url"],
-    u"full":[u"source_dir", u"target_url"],
-    u"incremental":[u"source_dir", u"target_url"],
-    u"list-current-files":[u"target_url"],
-    u"remove-older-than":[u"remove_time", u"target_url"],
-    u"remove-all-but-n-full":[u"count", u"target_url"],
-    u"remove-all-inc-of-but-n-full":[u"count", u"target_url"],
-    u"restore":[u"source_url", u"target_dir"],
-    u"verify":[u"source_url", u"target_dir"],
+    u"cleanup": [u"target_url"],
+    u"collection-status": [u"target_url"],
+    u"full": [u"source_dir", u"target_url"],
+    u"incremental": [u"source_dir", u"target_url"],
+    u"list-current-files": [u"target_url"],
+    u"remove-older-than": [u"remove_time", u"target_url"],
+    u"remove-all-but-n-full": [u"count", u"target_url"],
+    u"remove-all-inc-of-but-n-full": [u"count", u"target_url"],
+    u"restore": [u"source_url", u"target_dir"],
+    u"verify": [u"source_url", u"target_dir"],
 }
+
+class CommandLineError(errors.UserError):
+    pass
+
 
 class AddSelectionAction(argparse.Action):
     def __init__(self, option_strings, dest, nargs=None, **kwargs):
@@ -81,40 +89,54 @@ class AddRenameAction(argparse.Action):
         config.rename[key] = os.fsencode(values[1])
 
 
-def check_args(cmd, args):
-    targets = commands[cmd]
-    for n in range(len(targets)):
-        name = f"check_{targets[n]}"
-        func = getattr(commandline, name)
-        setattr(config, targets[n], func(args[n]))
-
-
 def check_count(val):
     return int(val)
 
 
 def check_remove_time(val):
-    return dup_time.genstrtotime()
+     return dup_time.genstrtotime(val)
 
 
 def check_source_dir(val):
-    return expand_fn(val)
+    if u"://" in val:
+        command_line_error(f"Source should be directory, not url.  Got '{val}' instead.")
+    if is_valid_filepath(val):
+        val = sanitize_filepath(val)
+        val = expand_fn(val)
+    else:
+        command_line_error(f"Source '{val}' is not a valid file path.")
+    if not os.path.isdir(val):
+        command_line_error(f"Argument source_dir '{val}' does not exist or is not a directory.")
+    return val
 
 
 def check_source_url(val):
+    if u"://" not in val:
+        command_line_error(f"Source should be url, not directory.  Got '{val}' instead.")
     return val
 
 
 def check_target_dir(val):
-    return expand_fn(val)
+    if u"://" in val:
+        command_line_error(f"Target should be directory, not url.  Got '{val}' instead.")
+    if is_valid_filepath(val):
+        val = sanitize_filepath(val)
+        val = expand_fn(val)
+    else:
+        command_line_error(f"Target '{val}' is not a valid file path.")
+    if not os.path.isdir(val):
+        command_line_error(f"Argument target_dir '{val}' does not exist or or is not a directory.")
+    return val
 
 
 def check_target_url(val):
+    if u"://" not in val:
+        command_line_error(f"Source should be url, not directory.  Got '{val}' instead.")
     return val
 
 
 def expand_fn(filename):
-    return os.path.normpath(os.path.expanduser(os.path.expandvars(filename)))
+    return os.path.expanduser(os.path.expandvars(filename))
 
 
 def expand_archive_dir(archdir, backname):
@@ -613,20 +635,16 @@ def parse_cmdline_options(arglist):
     # TODO: Find a way to nuke these test options in production.
 
     # TESTING ONLY - trigger Pydev debugger
-    parser.add_argument(u"--pydevd", action=u"store_true",
-                        help=argparse.SUPPRESS)
+    parser.add_argument(u"--pydevd", action=u"store_true", help=argparse.SUPPRESS)
 
     # TESTING ONLY - skips upload for a given volume
-    parser.add_argument(u"--skip-volume", type=int,
-                        help=argparse.SUPPRESS)
+    parser.add_argument(u"--skip-volume", type=int, help=argparse.SUPPRESS)
 
     # TESTING ONLY - raises exception after volume
-    parser.add_argument(u"--fail-on-volume", type=int,
-                        help=argparse.SUPPRESS)
+    parser.add_argument(u"--fail-on-volume", type=int, help=argparse.SUPPRESS)
 
     # TESTING ONLY - set current time
-    parser.add_argument(u"--current-time", type=int,
-                        help=argparse.SUPPRESS)
+    parser.add_argument(u"--current-time", type=int, help=argparse.SUPPRESS)
 
     # parse the options
     args = parser.parse_args(arglist)
@@ -647,25 +665,31 @@ def parse_cmdline_options(arglist):
         possible = [c for c in commands.keys() if c.startswith(cmd)]
         # no unique match, that's an error
         if len(possible) > 1:
-            command_line_error(f"command '{cmd}' not unique: could be {possible}")
+            command_line_error(f"command '{cmd}' not unique: could be {' or '.join(possible)}")
         # only one match, that's a keeper, maybe
         elif len(possible) == 1:
             cmd = possible[0]
             if cmd not in commands.keys():
                 command_line_error(f"command '{cmd}' is not a duplicity command.")
-        # no matches, assume no cmd
+        # no matches, assume implied cmd
         elif not possible:
             args.insert(0, cmd)
-            cmd = u"full"
+            cmd = u"implied"
+            commands[cmd] = [u"defer", u"defer"]
 
     # commands just need standard checks
     setattr(config, cmd, args)
     num_expect = len(commands[cmd])
     if len(args) != num_expect:
         command_line_error(f"Expected {num_expect} args, got {len(args)}.")
-    check_args(cmd, args)
 
-    arg = args[0]
+    targets = commands[cmd]
+    for n in range(len(targets)):
+        if targets[n] != u"defer":
+            name = f"check_{targets[n]}"
+            func = getattr(commandline, name)
+            setattr(config, targets[n], func(args[n]))
+
     # other commands need added processing
     if cmd == u"remove-older-than":
         config.remove_time = dup_time.genstrtotime(arg)
@@ -710,9 +734,9 @@ def parse_cmdline_options(arglist):
 
 def command_line_error(message):
     u"""Indicate a command line error and exit"""
-    log.FatalError(_(u"Command line error: %s") % (message,) + u"\n" +
-                   _(u"Enter 'duplicity --help' for help screen."),
-                   log.ErrorCode.command_line)
+    raise CommandLineError(_(f"Command line error: {message}\n") +
+                           _(u"Enter 'duplicity --help' for help screen."),
+                           log.ErrorCode.command_line)
 
 
 def set_archive_dir(dirstring):
@@ -786,7 +810,7 @@ def check_consistency(action):
         for m in arglist:
             if m:
                 n += 1
-        assert n <= 1, u"Invalid syntax, two conflicting modes specified"
+        command_line_error(u"Invalid syntax, two conflicting modes specified")
 
     if action in [u"list-current", u"collection-status",
                   u"cleanup", u"remove-old", u"remove-all-but-n-full", u"remove-all-inc-of-but-n-full"]:
@@ -843,9 +867,7 @@ def ProcessCommandLine(cmdline_list):
     backend.import_backends()
 
     # parse_cmdline_options already verified that we got exactly 1 or 2
-    # non-options arguments
-    assert 1 <= len(args) <= 2, u"arg count should have been checked already"
-
+    # positional arguments.  Convert to action
     if len(args) == 1:
         if list_current:
             action = u"list-current"
@@ -861,12 +883,12 @@ def ProcessCommandLine(cmdline_list):
             action = u"remove-all-inc-of-but-n-full"
         else:
             command_line_error(u"Too few arguments")
+
         config.backend = backend.get_backend(args[0])
         if not config.backend:
-            log.FatalError(_(u"""Bad URL '%s'.
-Examples of URL strings are "scp://user@host.net:1234/path" and
-"file:///usr/local".  See the man page for more information.""") % (args[0],),
-                           log.ErrorCode.bad_url)
+            command_line_error(_(f"Bad URL '{args[0]})'.\n"
+                                 "Examples of URL strings are 'scp://user@host.net:1234/path' and\n"
+                                 "'file:///usr/local'.  See the man page for more information."""))
     elif len(args) == 2:
         # Figure out whether backup or restore
         backup, local_pathname = set_backend(args[0], args[1])
