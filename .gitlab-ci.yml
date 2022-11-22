@@ -54,7 +54,7 @@ default:
         - export LC_ALL=C.UTF-8
         - apt-get update
         - apt-get install -y build-essential git intltool lftp librsync-dev
-          libffi-dev libssl-dev openssl par2 rdiff tzdata python3-pip
+          libffi-dev libssl-dev openssl par2 rdiff tzdata
     interruptible: true
 
 code:
@@ -102,7 +102,7 @@ py36:
 
 py37:
     <<: *test-template
-    image: ubuntu:22.04
+    image: ubuntu:20.04
     stage: test
     script:
         - apt-get install -y python3.7 python3.7-dev
