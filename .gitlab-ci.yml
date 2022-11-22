@@ -54,99 +54,54 @@ default:
         - export LC_ALL=C.UTF-8
         - apt-get update
         - apt-get install -y build-essential git intltool lftp librsync-dev
-          libffi-dev libssl-dev openssl par2 rdiff tzdata
+                             libffi-dev libssl-dev openssl par2 rdiff tzdata
     interruptible: true
 
 code:
     <<: *test-template
-    image: ubuntu:18.04
+    image: python:3.11
     stage: qual
     script:
-        - apt-get install -y python3.8 python3.8-dev
-        - python3 -m pip install --upgrade pip
         - python3 -m pip install -r requirements.txt
         - tox -e code
 
-py27:
-    <<: *test-template
-    image: ubuntu:16.04
-    stage: test
-    script:
-        - apt-get install -y python2.7 python2.7-dev
-        - python2 -m pip install --upgrade pip
-        - python2 -m pip install -r requirements.txt
-        - tox -e py27
-    allow_failure: true
-
-py35:
-    image: ubuntu:16.04
-    <<: *test-template
-    stage: test
-    script:
-        - apt-get install -y python3.5 python3.5-dev
-        - python3 -m pip install --upgrade pip
-        - python3 -m pip install -r requirements.txt
-        - tox -e py35
-    allow_failure: true
-
-py36:
-    image: ubuntu:18.04
-    <<: *test-template
-    stage: test
-    script:
-        - apt-get install -y python3.6 python3.6-dev
-        - python3 -m pip install --upgrade pip
-        - python3 -m pip install -r requirements.txt
-        - tox -e py36
-    allow_failure: true
-
 py37:
     <<: *test-template
-    image: ubuntu:20.04
+    image: python:3.7
     stage: test
     script:
-        - apt-get install -y python3.7 python3.7-dev
-        - python3 -m pip install --upgrade pip
         - python3 -m pip install -r requirements.txt
         - tox -e py37
 
 py38:
     <<: *test-template
-    image: ubuntu:20.04
+    image: python:3.8
     stage: test
     script:
-        - apt-get install -y python3.8 python3.8-dev
-        - python3 -m pip install --upgrade pip
         - python3 -m pip install -r requirements.txt
         - tox -e py38
 
 py39:
     <<: *test-template
-    image: ubuntu:20.04
+    image: python:3.9
     stage: test
     script:
-        - apt-get install -y python3.9 python3.9-dev
-        - python3 -m pip install --upgrade pip
         - python3 -m pip install -r requirements.txt
         - tox -e py39
 
 py310:
     <<: *test-template
-    image: ubuntu:22.04
+    image: python:3.10
     stage: test
     script:
-        - apt-get install -y python3.11 python3.11-dev
-        - python3 -m pip install --upgrade pip
         - python3 -m pip install -r requirements.txt
         - tox -e py310
 
 py311:
     <<: *test-template
-    image: ubuntu:22.04
+    image: python:3.11
     stage: test
     script:
-        - apt-get install -y python3.11 python3.11-dev
-        - python3 -m pip install --upgrade pip
         - python3 -m pip install -r requirements.txt
         - tox -e py311
 
