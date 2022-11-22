@@ -53,7 +53,7 @@ default:
         - export LANG=C.UTF-8
         - export LC_ALL=C.UTF-8
         - apt-get update
-        - apt-get install -y 2to3 build-essential git intltool lftp librsync-dev
+        - apt-get install -y build-essential git intltool lftp librsync-dev
           libffi-dev libssl-dev openssl par2 rdiff tzdata python3-pip
     interruptible: true
 
@@ -62,6 +62,8 @@ code:
     image: ubuntu:18.04
     stage: qual
     script:
+        - apt-get update
+        - apt-get install 2to3
         - python3 -m pip install --upgrade pip
         - python3 -m pip install -r requirements.txt
         - apt-get install -y python3.8 python3.8-dev
@@ -72,12 +74,14 @@ py27:
     image: ubuntu:16.04
     stage: test
     script:
+        - python -m pip install --upgrade pip
+        - python -m pip install -r requirements.txt
         - apt-get install -y python2.7 python2.7-dev
         - tox -e py27
     allow_failure: true
 
 py35:
-    image: ubuntu:18.04
+    image: ubuntu:16.04
     <<: *test-template
     stage: test
     script:
@@ -100,7 +104,7 @@ py36:
 
 py37:
     <<: *test-template
-    image: ubuntu:20.04
+    image: ubuntu:22.04
     stage: test
     script:
         - python3 -m pip install --upgrade pip
