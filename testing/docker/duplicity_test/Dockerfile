@@ -80,7 +80,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # Install pyenv
-RUN git clone -b "v2.3.4" --single-branch https://github.com/pyenv/pyenv.git /root/.pyenv \
+RUN git clone -b "v2.3.6" --single-branch https://github.com/pyenv/pyenv.git /root/.pyenv \
     && eval "$(pyenv init --path)" \
     && eval "$(pyenv init -)"
 # Install all the Pythons we test
@@ -90,12 +90,13 @@ RUN pyenv install 3.6.15
 RUN pyenv install 3.7.13
 RUN pyenv install 3.8.13
 RUN pyenv install 3.9.13
-RUN pyenv install 3.10.5
+RUN pyenv install 3.10.8
+RUN pyenv install 3.11.0
 
 # Tell tox how to find python.  Update pip minimals.
 RUN python3 -m pip install --upgrade pip setuptools setuptools-scm \
     && python3 -m pip install tox tox-pyenv \
-    && pyenv local 2.7.18 3.5.10 3.6.15 3.7.13 3.8.13 3.9.13 3.10.5
+    && pyenv local 2.7.18 3.5.10 3.6.15 3.7.13 3.8.13 3.9.13 3.10.8 3.11.0
 
 # set up tiny dummy project to make tox happy
 WORKDIR /root
@@ -116,6 +117,7 @@ RUN tox --notest -e py37 -- --setup-only
 RUN tox --notest -e py38 -- --setup-only
 RUN tox --notest -e py39 -- --setup-only
 RUN tox --notest -e py310 -- --setup-only
+RUN tox --notest -e py311 -- --setup-only
 
 # cleanup the noise left over
 RUN rm -rf /root/.cache/pip \

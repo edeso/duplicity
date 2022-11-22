@@ -22,13 +22,13 @@ boto3
 boxsdk[jwt]
 dropbox
 gdata                   ; python_version == '2.7'
-gdata-python3
+gdata-python3           ; python_version >= '3.5'
 google-api-python-client
 google-auth-oauthlib
 jottalib
 keyring
 mediafire
-megatools
+megatools               ; python_version >= '3.6'
 paramiko
 pexpect
 psutil
@@ -57,8 +57,8 @@ tox
 
 ##### documentation libraries #####
 
-gitchangelog
-myst-parser
-pystache
-sphinx
-sphinx-rtd-theme
+gitchangelog            ; python_version >= '3.6'
+myst-parser             ; python_version >= '3.6'
+pystache                ; python_version >= '3.6'
+sphinx                  ; python_version >= '3.6'
+sphinx-rtd-theme        ; python_version >= '3.6'

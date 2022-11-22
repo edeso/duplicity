@@ -23,12 +23,12 @@
 #     - template: Dependency-Scanning.gitlab-ci.yml
 
 .test-template: &test-template
-    image: registry.gitlab.com/duplicity/duplicity/firstprime/duplicity_test
     stage: test
     rules:
         - if: $CI_COMMIT_MESSAGE =~ /\[skip[ _-]tests?\]/i || $SKIP_TESTS
           when: never
         - changes:
+            - .gitlab-ci.yaml
             - bin/duplicity
             - bin/rdiffdir
             - duplicity/**/*
@@ -52,65 +52,100 @@ default:
         # Set locale to prevent UTF-8 errors
         - export LANG=C.UTF-8
         - export LC_ALL=C.UTF-8
-        - export PYENV_ROOT="/root/.pyenv"
-        - export TOXWORKDIR="/root/.tox"
+        - apt-get update
+        - apt-get install -y 2to3 build-essential git intltool lftp librsync-dev
+          libffi-dev libssl-dev openssl par2 rdiff tzdata python3-pip
     interruptible: true
 
 code:
     <<: *test-template
+    image: ubuntu:18.04
     stage: qual
     script:
+        - python3 -m pip install --upgrade pip
+        - python3 -m pip install -r requirements.txt
+        - apt-get install -y python3.8 python3.8-dev
         - tox -e code
 
 py27:
     <<: *test-template
+    image: ubuntu:16.04
     stage: test
     script:
+        - apt-get install -y python2.7 python2.7-dev
         - tox -e py27
     allow_failure: true
 
 py35:
+    image: ubuntu:18.04
     <<: *test-template
     stage: test
     script:
+        - python3 -m pip install --upgrade pip
+        - python3 -m pip install -r requirements.txt
+        - apt-get install -y python3.5 python3.5-dev
         - tox -e py35
     allow_failure: true
 
 py36:
+    image: ubuntu:18.04
     <<: *test-template
     stage: test
     script:
+        - python3 -m pip install --upgrade pip
+        - python3 -m pip install -r requirements.txt
+        - apt-get install -y python3.6 python3.6-dev
         - tox -e py36
     allow_failure: true
 
 py37:
     <<: *test-template
+    image: ubuntu:20.04
     stage: test
     script:
+        - python3 -m pip install --upgrade pip
+        - python3 -m pip install -r requirements.txt
+        - apt-get install -y python3.7 python3.7-dev
         - tox -e py37
 
 py38:
     <<: *test-template
+    image: ubuntu:20.04
     stage: test
     script:
+        - python3 -m pip install --upgrade pip
+        - python3 -m pip install -r requirements.txt
+        - apt-get install -y python3.8 python3.8-dev
         - tox -e py38
 
 py39:
     <<: *test-template
+    image: ubuntu:20.04
     stage: test
     script:
+        - python3 -m pip install --upgrade pip
+        - python3 -m pip install -r requirements.txt
+        - apt-get install -y python3.9 python3.9-dev
         - tox -e py39
 
 py310:
     <<: *test-template
+    image: ubuntu:22.04
     stage: test
     script:
+        - python3 -m pip install --upgrade pip
+        - python3 -m pip install -r requirements.txt
+        - apt-get install -y python3.11 python3.11-dev
         - tox -e py310
 
 py311:
     <<: *test-template
+    image: ubuntu:22.04
     stage: test
     script:
+        - python3 -m pip install --upgrade pip
+        - python3 -m pip install -r requirements.txt
+        - apt-get install -y python3.11 python3.11-dev
         - tox -e py311
 
 build_pip:
