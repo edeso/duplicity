@@ -28,7 +28,7 @@
         - if: $CI_COMMIT_MESSAGE =~ /\[skip[ _-]tests?\]/i || $SKIP_TESTS
           when: never
         - changes:
-            - .gitlab-ci.yaml
+            - .gitlab-ci.yml
             - bin/duplicity
             - bin/rdiffdir
             - duplicity/**/*
