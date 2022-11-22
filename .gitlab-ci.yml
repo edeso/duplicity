@@ -62,11 +62,9 @@ code:
     image: ubuntu:18.04
     stage: qual
     script:
-        - apt-get update
-        - apt-get install 2to3
+        - apt-get install -y python3.8 python3.8-dev
         - python3 -m pip install --upgrade pip
         - python3 -m pip install -r requirements.txt
-        - apt-get install -y python3.8 python3.8-dev
         - tox -e code
 
 py27:
@@ -74,9 +72,9 @@ py27:
     image: ubuntu:16.04
     stage: test
     script:
-        - python -m pip install --upgrade pip
-        - python -m pip install -r requirements.txt
         - apt-get install -y python2.7 python2.7-dev
+        - python2 -m pip install --upgrade pip
+        - python2 -m pip install -r requirements.txt
         - tox -e py27
     allow_failure: true
 
@@ -85,9 +83,9 @@ py35:
     <<: *test-template
     stage: test
     script:
+        - apt-get install -y python3.5 python3.5-dev
         - python3 -m pip install --upgrade pip
         - python3 -m pip install -r requirements.txt
-        - apt-get install -y python3.5 python3.5-dev
         - tox -e py35
     allow_failure: true
 
@@ -96,9 +94,9 @@ py36:
     <<: *test-template
     stage: test
     script:
+        - apt-get install -y python3.6 python3.6-dev
         - python3 -m pip install --upgrade pip
         - python3 -m pip install -r requirements.txt
-        - apt-get install -y python3.6 python3.6-dev
         - tox -e py36
     allow_failure: true
 
@@ -107,9 +105,9 @@ py37:
     image: ubuntu:22.04
     stage: test
     script:
+        - apt-get install -y python3.7 python3.7-dev
         - python3 -m pip install --upgrade pip
         - python3 -m pip install -r requirements.txt
-        - apt-get install -y python3.7 python3.7-dev
         - tox -e py37
 
 py38:
@@ -117,9 +115,9 @@ py38:
     image: ubuntu:20.04
     stage: test
     script:
+        - apt-get install -y python3.8 python3.8-dev
         - python3 -m pip install --upgrade pip
         - python3 -m pip install -r requirements.txt
-        - apt-get install -y python3.8 python3.8-dev
         - tox -e py38
 
 py39:
@@ -127,9 +125,9 @@ py39:
     image: ubuntu:20.04
     stage: test
     script:
+        - apt-get install -y python3.9 python3.9-dev
         - python3 -m pip install --upgrade pip
         - python3 -m pip install -r requirements.txt
-        - apt-get install -y python3.9 python3.9-dev
         - tox -e py39
 
 py310:
@@ -137,9 +135,9 @@ py310:
     image: ubuntu:22.04
     stage: test
     script:
+        - apt-get install -y python3.11 python3.11-dev
         - python3 -m pip install --upgrade pip
         - python3 -m pip install -r requirements.txt
-        - apt-get install -y python3.11 python3.11-dev
         - tox -e py310
 
 py311:
@@ -147,9 +145,9 @@ py311:
     image: ubuntu:22.04
     stage: test
     script:
+        - apt-get install -y python3.11 python3.11-dev
         - python3 -m pip install --upgrade pip
         - python3 -m pip install -r requirements.txt
-        - apt-get install -y python3.11 python3.11-dev
         - tox -e py311
 
 build_pip:

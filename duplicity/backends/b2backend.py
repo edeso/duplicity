@@ -68,32 +68,32 @@ class B2Backend(duplicity.backend.Backend):
         global DownloadDestLocalFile, FileVersionInfoFactory
 
         try:  # figure out what version of b2sdk we have
-            from b2sdk import __version__ as VERSION
+            from b2sdk import __version__ as VERSION  # pylint: disable=import-error
             v_split = VERSION.split(u'.')
             self.v_num = [int(x) for x in v_split]
         except:
             self.v_num = [0, 0, 0]
 
         try:  # public API v2 is recommended, if available
-            from b2sdk.v2 import B2Api
-            from b2sdk.v2 import InMemoryAccountInfo
-            from b2sdk.v2.exception import NonExistentBucket
+            from b2sdk.v2 import B2Api  # pylint: disable=import-error
+            from b2sdk.v2 import InMemoryAccountInfo  # pylint: disable=import-error
+            from b2sdk.v2.exception import NonExistentBucket  # pylint: disable=import-error
         except ImportError:
             try:  # if public API v2 not found, try to use public API v1
-                from b2sdk.v1 import B2Api
-                from b2sdk.v1 import InMemoryAccountInfo
-                from b2sdk.v1 import DownloadDestLocalFile
-                from b2sdk.v1.exception import NonExistentBucket
+                from b2sdk.v1 import B2Api  # pylint: disable=import-error
+                from b2sdk.v1 import InMemoryAccountInfo  # pylint: disable=import-error
+                from b2sdk.v1 import DownloadDestLocalFile  # pylint: disable=import-error
+                from b2sdk.v1.exception import NonExistentBucket  # pylint: disable=import-error
 
                 if self.v_num < [1, 9, 0]:
                     from b2sdk.v1.file_version import FileVersionInfoFactory
             except ImportError:
                 try:  # try to import the new b2sdk internal API if available (and public API isn't)
-                    from b2sdk.api import B2Api
-                    from b2sdk.account_info import InMemoryAccountInfo
-                    from b2sdk.download_dest import DownloadDestLocalFile
-                    from b2sdk.exception import NonExistentBucket
-                    from b2sdk.file_version import FileVersionInfoFactory
+                    from b2sdk.api import B2Api  # pylint: disable=import-error
+                    from b2sdk.account_info import InMemoryAccountInfo  # pylint: disable=import-error
+                    from b2sdk.download_dest import DownloadDestLocalFile  # pylint: disable=import-error
+                    from b2sdk.exception import NonExistentBucket  # pylint: disable=import-error
+                    from b2sdk.file_version import FileVersionInfoFactory  # pylint: disable=import-error
                 except ImportError as e:
                     if u'b2sdk' in getattr(e, u'name', u'b2sdk'):
                         raise
