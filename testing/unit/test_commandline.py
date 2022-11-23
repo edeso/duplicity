@@ -67,14 +67,21 @@ class CommandlineTest(UnitTestCase):
                 if arg in new_args:
                     runtest = True
             if runtest:
-                with self.assertRaises(commandline.CommandLineError) as cm:
+                with self.assertRaisesRegex(commandline.CommandLineError, err_msg) as cm:
                     commandline.parse_cmdline_options(cline)
-                self.assertIn(err_msg, str(cm.exception))
 
     def test_full_commands(self):
         u"""
         test backup, restore, verify with explicit commands
         """
+
+        commandline.parse_cmdline_options(u"cleanup file://duptest".split())
+        assert config.cleanup
+        assert config.target_url == u"file://duptest"
+
+        commandline.parse_cmdline_options(u"collection-status file://duptest".split())
+        assert config.collection_status
+        assert config.target_url == u"file://duptest"
 
         commandline.parse_cmdline_options(u"full foo/bar file://duptest".split())
         assert config.full
@@ -86,12 +93,42 @@ class CommandlineTest(UnitTestCase):
         assert config.source_dir.endswith(u"foo/bar")
         assert config.target_url == u"file://duptest"
 
+        commandline.parse_cmdline_options(u"list-current-files file://duptest".split())
+        assert config.list_current_files
+        assert config.target_url == u"file://duptest"
+
+        commandline.parse_cmdline_options(u"remove-all-but-n-full 5 file://duptest".split())
+        assert config.remove_all_but_n_full
+        assert config.target_url == u"file://duptest"
+
+        commandline.parse_cmdline_options(u"remove-all-inc-of-but-n-full 5 file://duptest".split())
+        assert config.remove_all_inc_of_but_n_full
+        assert config.target_url == u"file://duptest"
+
+        commandline.parse_cmdline_options(u"remove-older-than 100 file://duptest".split())
+        assert config.remove_older_than
+        assert config.target_url == u"file://duptest"
+
+        commandline.parse_cmdline_options(u"restore file://duptest foo/bar".split())
+        assert config.restore
+        assert config.source_dir.endswith(u"foo/bar")
+        assert config.target_url == u"file://duptest"
+
         commandline.parse_cmdline_options(u"verify file://duptest foo/bar".split())
         assert config.verify
         assert config.source_dir.endswith(u"foo/bar")
         assert config.target_url == u"file://duptest"
 
-        commandline.parse_cmdline_options(u"restore file://duptest foo/bar".split())
+    def test_implied_commands(self):
+        u"""
+        test backup, restore, verify without explicit commands
+        """
+        commandline.parse_cmdline_options(u"foo/bar file://duptest".split())
+        assert config.full
+        assert config.source_dir.endswith(u"foo/bar")
+        assert config.target_url == u"file://duptest"
+
+        commandline.parse_cmdline_options(u"file://duptest foo/bar".split())
         assert config.restore
         assert config.source_dir.endswith(u"foo/bar")
         assert config.target_url == u"file://duptest"
@@ -100,17 +137,14 @@ class CommandlineTest(UnitTestCase):
         u"""
         test backup, restore, verify with explicit commands - reversed arg
         """
-        with self.assertRaises(commandline.CommandLineError):
-            commandline.parse_cmdline_options(u"full file://duptest foo/bar".split())
-
-        with self.assertRaises(commandline.CommandLineError):
-            commandline.parse_cmdline_options(u"inc file://duptest foo/bar".split())
-
-        with self.assertRaises(commandline.CommandLineError):
-            commandline.parse_cmdline_options(u"verify foo/bar file://duptest".split())
-
-        with self.assertRaises(commandline.CommandLineError):
-            commandline.parse_cmdline_options(u"restore foo/bar file://duptest".split())
+        new_args = {
+            u"source_dir": u"file://duptest",
+            u"source_url": u"foo/bar",
+            u"target_dir": u"file://duptest",
+            u"target_url": u"foo/bar",
+        }
+        err_msg = u"should be url|should be directory"
+        self.run_all_commands_with_errors(new_args, err_msg)
 
     def test_full_command_errors_bad_url(self):
         u"""
@@ -134,16 +168,22 @@ class CommandlineTest(UnitTestCase):
         err_msg = u"not a valid file path"
         self.run_all_commands_with_errors(new_args, err_msg)
 
-    def test_implied_commands(self):
+    def test_full_command_errors_bad_integer(self):
         u"""
-        test backup, restore, verify without explicit commands
+        test backup, restore, verify with explicit commands - bad integer
         """
-        commandline.parse_cmdline_options(u"foo/bar file://duptest".split())
-        assert config.full
-        assert config.source_dir.endswith(u"foo/bar")
-        assert config.target_url == u"file://duptest"
+        new_args = {
+            u"count": u"foo",
+        }
+        err_msg = u"not an int"
+        self.run_all_commands_with_errors(new_args, err_msg)
 
-        commandline.parse_cmdline_options(u"file://duptest foo/bar".split())
-        assert config.restore
-        assert config.source_dir.endswith(u"foo/bar")
-        assert config.target_url == u"file://duptest"
+    def test_full_command_errors_bad_time_string(self):
+        u"""
+        test backup, restore, verify with explicit commands - bad time string
+        """
+        new_args = {
+            u"remove_time": u"foo",
+        }
+        err_msg = u"Bad time string"
+        self.run_all_commands_with_errors(new_args, err_msg)
