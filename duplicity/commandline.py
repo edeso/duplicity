@@ -90,11 +90,18 @@ class AddRenameAction(argparse.Action):
 
 
 def check_count(val):
-    return int(val)
+    try:
+        return int(val)
+    except Exception as e:
+        command_line_error(f"'{val}' is not an int.")
 
 
 def check_remove_time(val):
-     return dup_time.genstrtotime(val)
+    try:
+        return dup_time.genstrtotime(val)
+    except Exception as e:
+        command_line_error(str(e))
+
 
 
 def check_source_dir(val):
@@ -678,7 +685,8 @@ def parse_cmdline_options(arglist):
             commands[cmd] = [u"defer", u"defer"]
 
     # commands just need standard checks
-    setattr(config, cmd, args)
+    cmdvar = cmd.replace(u'-', u'_')
+    setattr(config, cmdvar, args)
     num_expect = len(commands[cmd])
     if len(args) != num_expect:
         command_line_error(f"Expected {num_expect} args, got {len(args)}.")
@@ -691,10 +699,7 @@ def parse_cmdline_options(arglist):
             setattr(config, targets[n], func(args[n]))
 
     # other commands need added processing
-    if cmd == u"remove-older-than":
-        config.remove_time = dup_time.genstrtotime(arg)
-
-    elif cmd == u"remove-all-but-n-full":
+    if cmd == u"remove-all-but-n-full":
         config.remove_all_but_n_full_mode = True
         arg = args[0]
         config.keep_chains = int(arg)

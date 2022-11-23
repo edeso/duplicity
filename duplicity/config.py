@@ -30,12 +30,28 @@ from duplicity import __version__
 # The current version of duplicity
 version = __version__
 
-# command and args
-positional = []
-source_url = u""
-target_url = u""
-source_dir = b""
-target_dir = b""
+# The following args are set by ommandline processing
+# they correspond to the args in commandline.commands
+positional = None
+source_url = None
+target_url = None
+source_dir = None
+target_dir = None
+remove_time = None
+count = None
+
+# the following contain the argument to each command
+# all resolve to False until filled, then areTrue
+cleanup = []
+collection_status = []
+full = []
+incremental = []
+list_current_files = []
+remove_older_than = []
+remove_all_but_n_full = []
+remove_all_inc_of_but_n_full = []
+restore = []
+verify = []
 
 # Prefix for all files (appended before type-specific prefixes)
 file_prefix = b""
