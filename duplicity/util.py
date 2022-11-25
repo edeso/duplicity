@@ -104,13 +104,13 @@ def exception_traceback(limit=50):
 
 
 def escape(string):
-    u"Convert a (bytes) filename to a format suitable for logging (quoted utf8)"
+    u"""Convert a (bytes) filename to a format suitable for logging (quoted utf8)"""
     string = fsdecode(string).encode(u'unicode-escape', u'replace')
     return u"'%s'" % string.decode(u'utf8', u'replace').replace(u"'", u'\\x27')
 
 
 def uindex(index):
-    u"Convert an index (a tuple of path parts) to unicode for printing"
+    u"""Convert an index (a tuple of path parts) to unicode for printing"""
     if index:
         return os.path.join(*list(map(fsdecode, index)))
     else:
@@ -287,29 +287,8 @@ def which(program):
     return None
 
 
-def start_debugger(remote=False):
+def start_debugger():
     if not os.getenv(u'DEBUG_RUNNING', None) and (u'--pydevd' in sys.argv or os.getenv(u'PYDEVD', None)):
-        if remote:
-            # modify this for your configuration.
-            # client = base path in machine that Liclipse is on
-            # server = base path in machine that duplicity is on
-            client = u'/Users/ken/workspace/duplicity-testfiles'
-            server = u'/home/ken/workspace/duplicity-testfiles'
-
-            # relative paths under duplicity root
-            duppaths = [
-                u'',
-                u'bin',
-                u'duplicity',
-                u'duplicity/backends',
-                u'testing',
-                u'testing/functional',
-                u'testing/unit',
-            ]
-            pathlist = [(os.path.normpath(os.path.join(client, p)),
-                         os.path.normpath(os.path.join(server, p))) for p in duppaths]
-            os.environ[u'PATHS_FROM_ECLIPSE_TO_PYTHON'] = json.dumps(pathlist)
-
         try:
             import pydevd_pycharm as pydevd  # pylint: disable=import-error
         except ImportError:
@@ -322,7 +301,7 @@ def start_debugger(remote=False):
 
         try:
             # NOTE: this needs to be customized for your system
-            pydevd.settrace(u'dione.local', port=6700, stdoutToServer=True, stderrToServer=True)
+            pydevd.settrace(u'dione.local', port=6777, stdoutToServer=True, stderrToServer=True)
         except ConnectionRefusedError as e:
             log.FatalError(u"Connection refused for debug.  Check your setup.")
 
