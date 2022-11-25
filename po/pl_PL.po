@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: duplicity\n"
 "Report-Msgid-Bugs-To: Kenneth Loafman <kenneth@loafman.com>\n"
-"POT-Creation-Date: 2022-10-23 10:58-0500\n"
-"PO-Revision-Date: 2022-10-23 16:22\n"
+"POT-Creation-Date: 2022-11-22 14:03-0600\n"
+"PO-Revision-Date: 2022-11-25 16:51\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -36,7 +36,7 @@ msgstr "Szczegóły błędu użytkownika: %s"
 msgid "Backend error detail: %s"
 msgstr "Szczegóły błędu backendu: %s"
 
-#: ../bin/rdiffdir:64 ../duplicity/commandline.py:240
+#: ../bin/rdiffdir:64 ../duplicity/commandline.py:239
 #, python-format
 msgid "Error opening file %s"
 msgstr "Błąd podczas próby otwarcia pliku %s"
@@ -125,1690 +125,6 @@ msgstr "Zapisywanie %s"
 #, python-format
 msgid "File %s not found locally after get from backend"
 msgstr "Plik %s nieodnaleziony lokalnie po pobraniu z backendu"
-
-#: ../duplicity/gpg_error_codes.py:9
-msgid "Success"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:10
-msgid "General error"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:11
-msgid "Unknown packet"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:12
-msgid "Unknown version in packet"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:13
-msgid "Invalid public key algorithm"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:14
-msgid "Invalid digest algorithm"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:15
-msgid "Bad public key"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:16
-msgid "Bad secret key"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:17
-msgid "Bad signature"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:18
-msgid "No public key"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:19
-msgid "Checksum error"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:20
-msgid "Bad passphrase"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:21
-msgid "Invalid cipher algorithm"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:22
-msgid "Cannot open keyring"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:23
-msgid "Invalid packet"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:24
-msgid "Invalid armor"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:25
-msgid "No user ID"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:26
-msgid "No secret key"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:27
-msgid "Wrong secret key used"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:28
-msgid "Bad session key"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:29
-msgid "Unknown compression algorithm"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:30
-msgid "Number is not prime"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:31
-msgid "Invalid encoding method"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:32
-msgid "Invalid encryption scheme"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:33
-msgid "Invalid signature scheme"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:34
-msgid "Invalid attribute"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:35
-msgid "No value"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:36
-msgid "Not found"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:37
-msgid "Value not found"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:38
-msgid "Syntax error"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:39
-msgid "Bad MPI value"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:40
-msgid "Invalid passphrase"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:41
-msgid "Invalid signature class"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:42
-msgid "Resources exhausted"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:43
-msgid "Invalid keyring"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:44
-msgid "Trust DB error"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:45
-msgid "Bad certificate"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:46
-msgid "Invalid user ID"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:47
-msgid "Unexpected error"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:48
-msgid "Time conflict"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:49
-msgid "Keyserver error"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:50
-msgid "Wrong public key algorithm"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:51
-msgid "Tribute to D. A."
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:52
-msgid "Weak encryption key"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:53
-msgid "Invalid key length"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:54
-msgid "Invalid argument"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:55
-msgid "Syntax error in URI"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:56
-msgid "Invalid URI"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:57
-msgid "Network error"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:58
-msgid "Unknown host"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:59
-msgid "Selftest failed"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:60
-msgid "Data not encrypted"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:61
-msgid "Data not processed"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:62
-msgid "Unusable public key"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:63
-msgid "Unusable secret key"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:64
-msgid "Invalid value"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:65
-msgid "Bad certificate chain"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:66
-msgid "Missing certificate"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:67
-msgid "No data"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:68
-msgid "Bug"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:69
-msgid "Not supported"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:70
-msgid "Invalid operation code"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:71
-msgid "Timeout"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:72
-msgid "Internal error"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:73
-msgid "EOF (gcrypt)"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:74
-msgid "Invalid object"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:75
-msgid "Provided object is too short"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:76
-msgid "Provided object is too large"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:77
-msgid "Missing item in object"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:78
-msgid "Not implemented"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:79
-msgid "Conflicting use"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:80
-msgid "Invalid cipher mode"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:81
-msgid "Invalid flag"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:82
-msgid "Invalid handle"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:83
-msgid "Result truncated"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:84
-msgid "Incomplete line"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:85
-msgid "Invalid response"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:86
-msgid "No agent running"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:87
-msgid "Agent error"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:88
-msgid "Invalid data"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:89
-msgid "Unspecific Assuan server fault"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:90
-msgid "General Assuan error"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:91
-msgid "Invalid session key"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:92
-msgid "Invalid S-expression"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:93
-msgid "Unsupported algorithm"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:94
-msgid "No pinentry"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:95
-msgid "pinentry error"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:96
-msgid "Bad PIN"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:97
-msgid "Invalid name"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:98
-msgid "Bad data"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:99
-msgid "Invalid parameter"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:100
-msgid "Wrong card"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:101
-msgid "No dirmngr"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:102
-msgid "dirmngr error"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:103
-msgid "Certificate revoked"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:104
-msgid "No CRL known"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:105
-msgid "CRL too old"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:106
-msgid "Line too long"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:107
-msgid "Not trusted"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:108
-msgid "Operation cancelled"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:109
-msgid "Bad CA certificate"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:110
-msgid "Certificate expired"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:111
-msgid "Certificate too young"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:112
-msgid "Unsupported certificate"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:113
-msgid "Unknown S-expression"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:114
-msgid "Unsupported protection"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:115
-msgid "Corrupted protection"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:116
-msgid "Ambiguous name"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:117
-msgid "Card error"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:118
-msgid "Card reset required"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:119
-msgid "Card removed"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:120
-msgid "Invalid card"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:121
-msgid "Card not present"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:122
-msgid "Not confirmed"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:123
-msgid "Configuration error"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:124
-msgid "No policy match"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:125
-msgid "Invalid index"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:126
-msgid "Invalid ID"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:127
-msgid "No SmartCard daemon"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:128
-msgid "SmartCard daemon error"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:129
-msgid "Unsupported protocol"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:130
-msgid "Bad PIN method"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:131
-msgid "Card not initialized"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:132
-msgid "Unsupported operation"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:133
-msgid "Wrong key usage"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:134
-msgid "Nothing found"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:135
-msgid "Wrong blob type"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:136
-msgid "Missing value"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:137
-msgid "Hardware problem"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:138
-msgid "PIN blocked"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:139
-msgid "Conditions of use not satisfied"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:140
-msgid "PINs are not synced"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:141
-msgid "Invalid CRL"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:142
-msgid "BER error"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:143
-msgid "Invalid BER"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:144
-msgid "Element not found"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:145
-msgid "Identifier not found"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:146
-msgid "Invalid tag"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:147
-msgid "Invalid length"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:148
-msgid "Invalid key info"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:149
-msgid "Unexpected tag"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:150
-msgid "Not DER encoded"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:151
-msgid "No CMS object"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:152
-msgid "Invalid CMS object"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:153
-msgid "Unknown CMS object"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:154
-msgid "Unsupported CMS object"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:155
-msgid "Unsupported encoding"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:156
-msgid "Unsupported CMS version"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:157
-msgid "Unknown algorithm"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:158
-msgid "Invalid crypto engine"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:159
-msgid "Public key not trusted"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:160
-msgid "Decryption failed"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:161
-msgid "Key expired"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:162
-msgid "Signature expired"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:163
-msgid "Encoding problem"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:164
-msgid "Invalid state"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:165
-msgid "Duplicated value"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:166
-msgid "Missing action"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:167
-msgid "ASN.1 module not found"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:168
-msgid "Invalid OID string"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:169
-msgid "Invalid time"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:170
-msgid "Invalid CRL object"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:171
-msgid "Unsupported CRL version"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:172
-msgid "Invalid certificate object"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:173
-msgid "Unknown name"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:174
-msgid "A locale function failed"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:175
-msgid "Not locked"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:176
-msgid "Protocol violation"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:177
-msgid "Invalid MAC"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:178
-msgid "Invalid request"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:179
-msgid "Unknown extension"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:180
-msgid "Unknown critical extension"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:181
-msgid "Locked"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:182
-msgid "Unknown option"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:183
-msgid "Unknown command"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:184
-msgid "Not operational"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:185
-msgid "No passphrase given"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:186
-msgid "No PIN given"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:187
-msgid "Not enabled"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:188
-msgid "No crypto engine"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:189
-msgid "Missing key"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:190
-msgid "Too many objects"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:191
-msgid "Limit reached"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:192
-msgid "Not initialized"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:193
-msgid "Missing issuer certificate"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:194
-msgid "No keyserver available"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:195
-msgid "Invalid elliptic curve"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:196
-msgid "Unknown elliptic curve"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:197
-msgid "Duplicated key"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:198
-msgid "Ambiguous result"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:199
-msgid "No crypto context"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:200
-msgid "Wrong crypto context"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:201
-msgid "Bad crypto context"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:202
-msgid "Conflict in the crypto context"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:203
-msgid "Broken public key"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:204
-msgid "Broken secret key"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:205
-msgid "Invalid MAC algorithm"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:206
-msgid "Operation fully cancelled"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:207
-msgid "Operation not yet finished"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:208
-msgid "Buffer too short"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:209
-msgid "Invalid length specifier in S-expression"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:210
-msgid "String too long in S-expression"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:211
-msgid "Unmatched parentheses in S-expression"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:212
-msgid "S-expression not canonical"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:213
-msgid "Bad character in S-expression"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:214
-msgid "Bad quotation in S-expression"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:215
-msgid "Zero prefix in S-expression"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:216
-msgid "Nested display hints in S-expression"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:217
-msgid "Unmatched display hints"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:218
-msgid "Unexpected reserved punctuation in S-expression"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:219
-msgid "Bad hexadecimal character in S-expression"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:220
-msgid "Odd hexadecimal numbers in S-expression"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:221
-msgid "Bad octal character in S-expression"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:222
-msgid "All subkeys are expired or revoked"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:223
-msgid "Database is corrupted"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:224
-msgid "Server indicated a failure"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:225
-msgid "No name"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:226
-msgid "No key"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:227
-msgid "Legacy key"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:228
-msgid "Request too short"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:229
-msgid "Request too long"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:230
-msgid "Object is in termination state"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:231
-msgid "No certificate chain"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:232
-msgid "Certificate is too large"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:233
-msgid "Invalid record"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:234
-msgid "The MAC does not verify"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:235
-msgid "Unexpected message"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:236
-msgid "Compression or decompression failed"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:237
-msgid "A counter would wrap"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:238
-msgid "Fatal alert message received"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:239
-msgid "No cipher algorithm"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:240
-msgid "Missing client certificate"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:241
-msgid "Close notification received"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:242
-msgid "Ticket expired"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:243
-msgid "Bad ticket"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:244
-msgid "Unknown identity"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:245
-msgid "Bad certificate message in handshake"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:246
-msgid "Bad certificate request message in handshake"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:247
-msgid "Bad certificate verify message in handshake"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:248
-msgid "Bad change cipher message in handshake"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:249
-msgid "Bad client hello message in handshake"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:250
-msgid "Bad server hello message in handshake"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:251
-msgid "Bad server hello done message in handshake"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:252
-msgid "Bad finished message in handshake"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:253
-msgid "Bad server key exchange message in handshake"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:254
-msgid "Bad client key exchange message in handshake"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:255
-msgid "Bogus string"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:256
-msgid "Forbidden"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:257
-msgid "Key disabled"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:258
-msgid "Not possible with a card based key"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:259
-msgid "Invalid lock object"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:260
-msgid "True"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:261
-msgid "False"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:262
-msgid "General IPC error"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:263
-msgid "IPC accept call failed"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:264
-msgid "IPC connect call failed"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:265
-msgid "Invalid IPC response"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:266
-msgid "Invalid value passed to IPC"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:267
-msgid "Incomplete line passed to IPC"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:268
-msgid "Line passed to IPC too long"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:269
-msgid "Nested IPC commands"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:270
-msgid "No data callback in IPC"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:271
-msgid "No inquire callback in IPC"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:272
-msgid "Not an IPC server"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:273
-msgid "Not an IPC client"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:274
-msgid "Problem starting IPC server"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:275
-msgid "IPC read error"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:276
-msgid "IPC write error"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:277
-msgid "Too much data for IPC layer"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:278
-msgid "Unexpected IPC command"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:279
-msgid "Unknown IPC command"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:280
-msgid "IPC syntax error"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:281
-msgid "IPC call has been cancelled"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:282
-msgid "No input source for IPC"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:283
-msgid "No output source for IPC"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:284
-msgid "IPC parameter error"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:285
-msgid "Unknown IPC inquire"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:286
-msgid "Crypto engine too old"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:287
-msgid "Screen or window too small"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:288
-msgid "Screen or window too large"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:289
-msgid "Required environment variable not set"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:290
-msgid "User ID already exists"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:291
-msgid "Name already exists"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:292
-msgid "Duplicated name"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:293
-msgid "Object is too young"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:294
-msgid "Object is too old"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:295
-msgid "Unknown flag"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:296
-msgid "Invalid execution order"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:297
-msgid "Already fetched"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:298
-msgid "Try again later"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:299
-msgid "Wrong name"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:300
-msgid "Not authenticated"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:301
-msgid "Bad authentication"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:302
-msgid "No Keybox daemon running"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:303
-msgid "Keybox daemon error"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:304
-msgid "Service is not running"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:305
-msgid "Service error"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:306
-msgid "System bug detected"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:307
-msgid "Unknown DNS error"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:308
-msgid "Invalid DNS section"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:309
-msgid "Invalid textual address form"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:310
-msgid "Missing DNS query packet"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:311
-msgid "Missing DNS answer packet"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:312
-msgid "Connection closed in DNS"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:313
-msgid "Verification failed in DNS"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:314
-msgid "DNS Timeout"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:315
-msgid "General LDAP error"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:316
-msgid "General LDAP attribute error"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:317
-msgid "General LDAP name error"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:318
-msgid "General LDAP security error"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:319
-msgid "General LDAP service error"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:320
-msgid "General LDAP update error"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:321
-msgid "Experimental LDAP error code"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:322
-msgid "Private LDAP error code"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:323
-msgid "Other general LDAP error"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:324
-msgid "LDAP connecting failed (X)"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:325
-msgid "LDAP referral limit exceeded"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:326
-msgid "LDAP client loop"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:327
-msgid "No LDAP results returned"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:328
-msgid "LDAP control not found"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:329
-msgid "Not supported by LDAP"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:330
-msgid "LDAP connect error"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:331
-msgid "Out of memory in LDAP"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:332
-msgid "Bad parameter to an LDAP routine"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:333
-msgid "User cancelled LDAP operation"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:334
-msgid "Bad LDAP search filter"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:335
-msgid "Unknown LDAP authentication method"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:336
-msgid "Timeout in LDAP"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:337
-msgid "LDAP decoding error"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:338
-msgid "LDAP encoding error"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:339
-msgid "LDAP local error"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:340
-msgid "Cannot contact LDAP server"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:341
-msgid "LDAP success"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:342
-msgid "LDAP operations error"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:343
-msgid "LDAP protocol error"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:344
-msgid "Time limit exceeded in LDAP"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:345
-msgid "Size limit exceeded in LDAP"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:346
-msgid "LDAP compare false"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:347
-msgid "LDAP compare true"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:348
-msgid "LDAP authentication method not supported"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:349
-msgid "Strong(er) LDAP authentication required"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:350
-msgid "Partial LDAP results+referral received"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:351
-msgid "LDAP referral"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:352
-msgid "Administrative LDAP limit exceeded"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:353
-msgid "Critical LDAP extension is unavailable"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:354
-msgid "Confidentiality required by LDAP"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:355
-msgid "LDAP SASL bind in progress"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:356
-msgid "No such LDAP attribute"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:357
-msgid "Undefined LDAP attribute type"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:358
-msgid "Inappropriate matching in LDAP"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:359
-msgid "Constraint violation in LDAP"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:360
-msgid "LDAP type or value exists"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:361
-msgid "Invalid syntax in LDAP"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:362
-msgid "No such LDAP object"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:363
-msgid "LDAP alias problem"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:364
-msgid "Invalid DN syntax in LDAP"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:365
-msgid "LDAP entry is a leaf"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:366
-msgid "LDAP alias dereferencing problem"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:367
-msgid "LDAP proxy authorization failure (X)"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:368
-msgid "Inappropriate LDAP authentication"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:369
-msgid "Invalid LDAP credentials"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:370
-msgid "Insufficient access for LDAP"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:371
-msgid "LDAP server is busy"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:372
-msgid "LDAP server is unavailable"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:373
-msgid "LDAP server is unwilling to perform"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:374
-msgid "Loop detected by LDAP"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:375
-msgid "LDAP naming violation"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:376
-msgid "LDAP object class violation"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:377
-msgid "LDAP operation not allowed on non-leaf"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:378
-msgid "LDAP operation not allowed on RDN"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:379
-msgid "Already exists (LDAP)"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:380
-msgid "Cannot modify LDAP object class"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:381
-msgid "LDAP results too large"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:382
-msgid "LDAP operation affects multiple DSAs"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:383
-msgid "Virtual LDAP list view error"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:384
-msgid "Other LDAP error"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:385
-msgid "Resources exhausted in LCUP"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:386
-msgid "Security violation in LCUP"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:387
-msgid "Invalid data in LCUP"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:388
-msgid "Unsupported scheme in LCUP"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:389
-msgid "Reload required in LCUP"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:390
-msgid "LDAP cancelled"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:391
-msgid "No LDAP operation to cancel"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:392
-msgid "Too late to cancel LDAP"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:393
-msgid "Cannot cancel LDAP"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:394
-msgid "LDAP assertion failed"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:395
-msgid "Proxied authorization denied by LDAP"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:396
-msgid "SQL success"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:397
-msgid "SQL error"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:398
-msgid "Internal logic error in SQL library"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:399
-msgid "Access permission denied (SQL)"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:400
-msgid "SQL abort was requested"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:401
-msgid "SQL database file is locked"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:402
-msgid "An SQL table in the database is locked"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:403
-msgid "SQL library ran out of core"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:404
-msgid "Attempt to write a readonly SQL database"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:405
-msgid "SQL operation terminated by interrupt"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:406
-msgid "I/O error during SQL operation"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:407
-msgid "SQL database disk image is malformed"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:408
-msgid "Unknown opcode in SQL file control"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:409
-msgid "Insertion failed because SQL database is full"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:410
-msgid "Unable to open the SQL database file"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:411
-msgid "SQL database lock protocol error"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:412
-msgid "(internal SQL code: empty)"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:413
-msgid "SQL database schema changed"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:414
-msgid "String or blob exceeds size limit (SQL)"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:415
-msgid "SQL abort due to constraint violation"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:416
-msgid "Data type mismatch (SQL)"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:417
-msgid "SQL library used incorrectly"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:418
-msgid "SQL library uses unsupported OS features"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:419
-msgid "Authorization denied (SQL)"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:420
-msgid "(unused SQL code: format)"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:421
-msgid "SQL bind parameter out of range"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:422
-msgid "File opened that is not an SQL database file"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:423
-msgid "Notifications from SQL logger"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:424
-msgid "Warnings from SQL logger"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:425
-msgid "SQL has another row ready"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:426
-msgid "SQL has finished executing"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:427
-msgid "System error w/o errno"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:428
-msgid "Unknown system error"
-msgstr ""
-
-#: ../duplicity/gpg_error_codes.py:429
-msgid "End of file"
-msgstr ""
 
 #: ../duplicity/manifest.py:99
 #, python-format
@@ -2156,19 +472,19 @@ msgstr ""
 
 #: ../duplicity/commandline.py:78
 #, python-format
-msgid "Warning: Option %s is pending deprecation and will be removed in version 0.9.0.\n"
+msgid "Warning: Option %s is pending deprecation and will be removed in version 2.0.\n"
 "Use of default filenames is strongly suggested."
 msgstr ""
 
-#: ../duplicity/commandline.py:85
+#: ../duplicity/commandline.py:84
 #, python-format
-msgid "Warning: Option %s is pending deprecation and will be removed in a future release.\n"
+msgid "Warning: Option %s is pending deprecation and will be removed in version 2.0.\n"
 "--include-filelist and --exclude-filelist now accept globbing characters and should be used instead."
 msgstr ""
 
-#: ../duplicity/commandline.py:95
+#: ../duplicity/commandline.py:94
 #, python-format
-msgid "Warning: Option %s is pending deprecation and will be removed in a future release.\n"
+msgid "Warning: Option %s is pending deprecation and will be removed in version 2.0.\n"
 "On many GNU/Linux systems, stdin is represented by /dev/stdin and\n"
 "--include-filelist=/dev/stdin or --exclude-filelist=/dev/stdin could\n"
 "be used as a substitute."
@@ -2176,11 +492,11 @@ msgstr ""
 
 #. Used in usage help to represent a Unix-style path name. Example:
 #. --archive-dir <path>
-#: ../duplicity/commandline.py:262 ../duplicity/commandline.py:272
-#: ../duplicity/commandline.py:293 ../duplicity/commandline.py:389
-#: ../duplicity/commandline.py:407 ../duplicity/commandline.py:418
-#: ../duplicity/commandline.py:666 ../duplicity/commandline.py:714
-#: ../duplicity/commandline.py:942
+#: ../duplicity/commandline.py:261 ../duplicity/commandline.py:271
+#: ../duplicity/commandline.py:292 ../duplicity/commandline.py:388
+#: ../duplicity/commandline.py:410 ../duplicity/commandline.py:421
+#: ../duplicity/commandline.py:669 ../duplicity/commandline.py:717
+#: ../duplicity/commandline.py:944
 msgid "path"
 msgstr "ścieżka"
 
@@ -2190,9 +506,9 @@ msgstr "ścieżka"
 #. --hidden-encrypt-key <gpg_key_id>
 #. Used in usage help to represent an ID for a GnuPG key. Example:
 #. --encrypt-key <gpg_key_id>
-#: ../duplicity/commandline.py:288 ../duplicity/commandline.py:295
-#: ../duplicity/commandline.py:413 ../duplicity/commandline.py:647
-#: ../duplicity/commandline.py:915
+#: ../duplicity/commandline.py:287 ../duplicity/commandline.py:294
+#: ../duplicity/commandline.py:416 ../duplicity/commandline.py:650
+#: ../duplicity/commandline.py:917
 msgid "gpg-key-id"
 msgstr "id_klucza_gpg"
 
@@ -2200,102 +516,102 @@ msgstr "id_klucza_gpg"
 #. matching one or more files, as described in the documentation.
 #. Example:
 #. --exclude <pattern>
-#: ../duplicity/commandline.py:303 ../duplicity/commandline.py:441
-#: ../duplicity/commandline.py:948
+#: ../duplicity/commandline.py:302 ../duplicity/commandline.py:444
+#: ../duplicity/commandline.py:950
 msgid "pattern"
 msgstr ""
 
 #. Used in usage help to represent the name of a file. Example:
 #. --log-file <filename>
-#: ../duplicity/commandline.py:309 ../duplicity/commandline.py:318
-#: ../duplicity/commandline.py:325 ../duplicity/commandline.py:443
-#: ../duplicity/commandline.py:450 ../duplicity/commandline.py:463
-#: ../duplicity/commandline.py:911
+#: ../duplicity/commandline.py:308 ../duplicity/commandline.py:317
+#: ../duplicity/commandline.py:324 ../duplicity/commandline.py:392
+#: ../duplicity/commandline.py:446 ../duplicity/commandline.py:453
+#: ../duplicity/commandline.py:466 ../duplicity/commandline.py:913
 msgid "filename"
 msgstr "nazwa_pliku"
 
 #. Used in usage help to represent a regular expression (regexp).
-#: ../duplicity/commandline.py:332 ../duplicity/commandline.py:454
+#: ../duplicity/commandline.py:331 ../duplicity/commandline.py:457
 msgid "regular_expression"
 msgstr "wyrażenie_regularne"
 
 #. Used in usage help to represent a time spec for a previous
 #. point in time, as described in the documentation. Example:
 #. duplicity remove-older-than time [options] target_url
-#: ../duplicity/commandline.py:336 ../duplicity/commandline.py:401
-#: ../duplicity/commandline.py:541 ../duplicity/commandline.py:997
+#: ../duplicity/commandline.py:335 ../duplicity/commandline.py:404
+#: ../duplicity/commandline.py:544 ../duplicity/commandline.py:999
 msgid "time"
 msgstr "data"
 
 #. Used in usage help. (Should be consistent with the "Options:"
 #. header.) Example:
 #. duplicity [full|incremental] [options] source_dir target_url
-#: ../duplicity/commandline.py:409 ../duplicity/commandline.py:518
-#: ../duplicity/commandline.py:544 ../duplicity/commandline.py:655
-#: ../duplicity/commandline.py:930
+#: ../duplicity/commandline.py:412 ../duplicity/commandline.py:521
+#: ../duplicity/commandline.py:547 ../duplicity/commandline.py:658
+#: ../duplicity/commandline.py:932
 msgid "options"
 msgstr "opcje"
 
-#: ../duplicity/commandline.py:427
+#: ../duplicity/commandline.py:430
 #, python-format
 msgid "Running in 'ignore errors' mode due to %s; please re-consider if this was not intended"
 msgstr "Działanie w trybie 'ignorowania błędów' z powodu %s. Upewnij się, że tego właśnie chciałeś."
 
 #. Used in usage help to represent an imap mailbox
-#: ../duplicity/commandline.py:439
+#: ../duplicity/commandline.py:442
 msgid "imap_mailbox"
 msgstr "skrzynka_imap"
 
-#: ../duplicity/commandline.py:457
+#: ../duplicity/commandline.py:460
 msgid "file_descriptor"
 msgstr "deskryptor_pliku"
 
 #. Used in usage help to represent a desired number of
 #. something. Example:
 #. --num-retries <number>
-#: ../duplicity/commandline.py:472 ../duplicity/commandline.py:494
-#: ../duplicity/commandline.py:515 ../duplicity/commandline.py:521
-#: ../duplicity/commandline.py:527 ../duplicity/commandline.py:580
-#: ../duplicity/commandline.py:585 ../duplicity/commandline.py:589
-#: ../duplicity/commandline.py:612 ../duplicity/commandline.py:618
-#: ../duplicity/commandline.py:622 ../duplicity/commandline.py:696
-#: ../duplicity/commandline.py:709 ../duplicity/commandline.py:722
-#: ../duplicity/commandline.py:925
+#: ../duplicity/commandline.py:475 ../duplicity/commandline.py:497
+#: ../duplicity/commandline.py:518 ../duplicity/commandline.py:524
+#: ../duplicity/commandline.py:530 ../duplicity/commandline.py:583
+#: ../duplicity/commandline.py:588 ../duplicity/commandline.py:592
+#: ../duplicity/commandline.py:615 ../duplicity/commandline.py:621
+#: ../duplicity/commandline.py:625 ../duplicity/commandline.py:699
+#: ../duplicity/commandline.py:712 ../duplicity/commandline.py:725
+#: ../duplicity/commandline.py:927
 msgid "number"
 msgstr "liczba"
 
 #. Used in usage help (noun)
-#: ../duplicity/commandline.py:475
+#: ../duplicity/commandline.py:478
 msgid "backup name"
 msgstr "nazwa kopii zapasowej"
 
-#: ../duplicity/commandline.py:607
+#: ../duplicity/commandline.py:610
 msgid "policy"
 msgstr ""
 
-#: ../duplicity/commandline.py:625
+#: ../duplicity/commandline.py:628
 msgid "Hot|Cool|Archive"
 msgstr ""
 
 #. noun
-#: ../duplicity/commandline.py:628 ../duplicity/commandline.py:631
-#: ../duplicity/commandline.py:896
+#: ../duplicity/commandline.py:631 ../duplicity/commandline.py:634
+#: ../duplicity/commandline.py:898
 msgid "command"
 msgstr "polecenie"
 
-#: ../duplicity/commandline.py:634
+#: ../duplicity/commandline.py:637
 msgid "pyrax|cloudfiles"
 msgstr ""
 
-#: ../duplicity/commandline.py:658
+#: ../duplicity/commandline.py:661
 msgid "pem formatted bundle of certificate authorities"
 msgstr "plik PEM z certyfikatami"
 
-#: ../duplicity/commandline.py:659
+#: ../duplicity/commandline.py:662
 msgid "path to a folder with certificate authority files"
 msgstr ""
 
-#: ../duplicity/commandline.py:663
+#: ../duplicity/commandline.py:666
 msgid "extra headers for Webdav, like 'Cookie,name=value'"
 msgstr ""
 
@@ -2305,113 +621,113 @@ msgstr ""
 #. --backend-retry-delay <seconds>
 #. Used in usage help. Example:
 #. --timeout <seconds>
-#: ../duplicity/commandline.py:671 ../duplicity/commandline.py:727
-#: ../duplicity/commandline.py:965
+#: ../duplicity/commandline.py:674 ../duplicity/commandline.py:730
+#: ../duplicity/commandline.py:967
 msgid "seconds"
 msgstr "sekund(-y)"
 
 #. abbreviation for "character" (noun)
-#: ../duplicity/commandline.py:677 ../duplicity/commandline.py:893
+#: ../duplicity/commandline.py:680 ../duplicity/commandline.py:895
 msgid "char"
 msgstr "znak"
 
-#: ../duplicity/commandline.py:859
+#: ../duplicity/commandline.py:861
 #, python-format
 msgid "Using archive dir: %s"
 msgstr "Używanie katalogu archiwum: %s"
 
-#: ../duplicity/commandline.py:860
+#: ../duplicity/commandline.py:862
 #, python-format
 msgid "Using backup name: %s"
 msgstr "Używanie nazwy kopii zapasowej: %s"
 
-#: ../duplicity/commandline.py:867
+#: ../duplicity/commandline.py:869
 #, python-format
 msgid "Command line error: %s"
 msgstr "Błąd linii poleceń: %s"
 
-#: ../duplicity/commandline.py:868
+#: ../duplicity/commandline.py:870
 msgid "Enter 'duplicity --help' for help screen."
 msgstr "Wykonaj 'duplicity --help', by uzyskać pomoc."
 
 #. Used in usage help to represent a Unix-style path name. Example:
 #. rsync://user[:password]@other_host[:port]//absolute_path
-#: ../duplicity/commandline.py:881
+#: ../duplicity/commandline.py:883
 msgid "absolute_path"
 msgstr "ścieżka_absolutna"
 
 #. Used in usage help. Example:
 #. tahoe://alias/some_dir
-#: ../duplicity/commandline.py:885
+#: ../duplicity/commandline.py:887
 msgid "alias"
 msgstr ""
 
 #. Used in help to represent a "bucket name" for Amazon Web
 #. Services' Simple Storage Service (S3). Example:
 #. s3://other.host/bucket_name[/prefix]
-#: ../duplicity/commandline.py:890
+#: ../duplicity/commandline.py:892
 msgid "bucket_name"
 msgstr "nazwa_bucketa"
 
 #. Used in usage help to represent the name of a container in
 #. Amazon Web Services' Cloudfront. Example:
 #. cf+http://container_name
-#: ../duplicity/commandline.py:901
+#: ../duplicity/commandline.py:903
 msgid "container_name"
 msgstr "nazwa_kontenera"
 
 #. noun
-#: ../duplicity/commandline.py:904
+#: ../duplicity/commandline.py:906
 msgid "count"
 msgstr "liczba"
 
 #. Used in usage help to represent the name of a file directory
-#: ../duplicity/commandline.py:907
+#: ../duplicity/commandline.py:909
 msgid "directory"
 msgstr "katalog"
 
 #. Used in usage help, e.g. to represent the name of a code
 #. module. Example:
 #. rsync://user[:password]@other.host[:port]::/module/some_dir
-#: ../duplicity/commandline.py:920
+#: ../duplicity/commandline.py:922
 msgid "module"
 msgstr "moduł"
 
 #. Used in usage help to represent an internet hostname. Example:
 #. ftp://user[:password]@other.host[:port]/some_dir
-#: ../duplicity/commandline.py:934
+#: ../duplicity/commandline.py:936
 msgid "other.host"
 msgstr "zdalny_adres"
 
 #. Used in usage help. Example:
 #. ftp://user[:password]@other.host[:port]/some_dir
-#: ../duplicity/commandline.py:938
+#: ../duplicity/commandline.py:940
 msgid "password"
 msgstr "hasło"
 
 #. Used in usage help to represent a TCP port number. Example:
 #. ftp://user[:password]@other.host[:port]/some_dir
-#: ../duplicity/commandline.py:952
+#: ../duplicity/commandline.py:954
 msgid "port"
 msgstr ""
 
 #. Used in usage help. This represents a string to be used as a
 #. prefix to names for backup files created by Duplicity. Example:
 #. s3://other.host/bucket_name[/prefix]
-#: ../duplicity/commandline.py:957
+#: ../duplicity/commandline.py:959
 msgid "prefix"
 msgstr "prefiks"
 
 #. Used in usage help to represent a Unix-style path name. Example:
 #. rsync://user[:password]@other.host[:port]/relative_path
-#: ../duplicity/commandline.py:961
+#: ../duplicity/commandline.py:963
 msgid "relative_path"
 msgstr "ścieżka_względna"
 
 #. Used in usage help to represent the name of a single file
 #. directory or a Unix-style path to a directory. Example:
 #. file:///some_dir
-#: ../duplicity/commandline.py:970
+#: ../duplicity/commandline.py:972
 msgid "some_dir"
 msgstr "katalog"
 
@@ -2419,14 +735,14 @@ msgstr "katalog"
 #. directory or a Unix-style path to a directory where files will be
 #. coming FROM. Example:
 #. duplicity [full|incremental] [options] source_dir target_url
-#: ../duplicity/commandline.py:976
+#: ../duplicity/commandline.py:978
 msgid "source_dir"
 msgstr "katalog_źródłowy"
 
 #. Used in usage help to represent a URL files will be coming
 #. FROM. Example:
 #. duplicity [restore] [options] source_url target_dir
-#: ../duplicity/commandline.py:981
+#: ../duplicity/commandline.py:983
 msgid "source_url"
 msgstr "url_źródłowy"
 
@@ -2434,96 +750,96 @@ msgstr "url_źródłowy"
 #. directory or a Unix-style path to a directory. where files will be
 #. going TO. Example:
 #. duplicity [restore] [options] source_url target_dir
-#: ../duplicity/commandline.py:987
+#: ../duplicity/commandline.py:989
 msgid "target_dir"
 msgstr "katalog_docelowy"
 
 #. Used in usage help to represent a URL files will be going TO.
 #. Example:
 #. duplicity [full|incremental] [options] source_dir target_url
-#: ../duplicity/commandline.py:992
+#: ../duplicity/commandline.py:994
 msgid "target_url"
 msgstr "url_docelowy"
 
 #. Used in usage help to represent a user name (i.e. login).
 #. Example:
 #. ftp://user[:password]@other.host[:port]/some_dir
-#: ../duplicity/commandline.py:1002
+#: ../duplicity/commandline.py:1004
 msgid "user"
 msgstr "użytkownik"
 
 #. account id for b2. Example: b2://account_id@bucket/
-#: ../duplicity/commandline.py:1005
+#: ../duplicity/commandline.py:1007
 msgid "account_id"
 msgstr ""
 
 #. application_key for b2.
 #. Example: b2://account_id:application_key@bucket/
-#: ../duplicity/commandline.py:1009
+#: ../duplicity/commandline.py:1011
 msgid "application_key"
 msgstr ""
 
 #. remote name for rclone.
 #. Example: rclone://remote:/some_dir
-#: ../duplicity/commandline.py:1013 ../duplicity/dup_collections.py:517
+#: ../duplicity/commandline.py:1015 ../duplicity/dup_collections.py:517
 msgid "remote"
 msgstr "zdalna"
 
 #. Header in usage help
-#: ../duplicity/commandline.py:1032
+#: ../duplicity/commandline.py:1034
 msgid "Backends and their URL formats:"
 msgstr "Backendy oraz ich formaty URL:"
 
 #. Header in usage help
-#: ../duplicity/commandline.py:1070
+#: ../duplicity/commandline.py:1072
 msgid "Commands:"
 msgstr "Polecenia:"
 
-#: ../duplicity/commandline.py:1097
+#: ../duplicity/commandline.py:1099
 #, python-format
 msgid "Specified archive directory '%s' does not exist, or is not a directory"
 msgstr "Podana nazwa katalogu '%s' nie istnieje lub nie jest katalogiem"
 
-#: ../duplicity/commandline.py:1106
+#: ../duplicity/commandline.py:1108
 #, python-format
 msgid "Sign key should be an 8, 16 alt. 40 character hex string, like 'AA0E73D2'.\n"
 "Received '%s' instead."
 msgstr ""
 
-#: ../duplicity/commandline.py:1166
+#: ../duplicity/commandline.py:1168
 #, python-format
 msgid "Restore destination directory %s already exists.\n"
 "Will not overwrite."
 msgstr "Docelowy katalog %s już istnieje\n"
 "i nie zostanie nadpisany."
 
-#: ../duplicity/commandline.py:1171
+#: ../duplicity/commandline.py:1173
 #, python-format
 msgid "Verify directory %s does not exist"
 msgstr "Katalog weryfikacji %s nie istnieje"
 
-#: ../duplicity/commandline.py:1177
+#: ../duplicity/commandline.py:1179
 #, python-format
 msgid "Backup source directory %s does not exist."
 msgstr "Katalog źródłowy kopii zapasowej %s nie istnieje."
 
-#: ../duplicity/commandline.py:1208
+#: ../duplicity/commandline.py:1210
 #, python-format
 msgid "Command line warning: %s"
 msgstr "Ostrzeżenie dotyczące linii poleceń: %s"
 
-#: ../duplicity/commandline.py:1208
+#: ../duplicity/commandline.py:1210
 msgid "Selection options --exclude/--include\n"
 "currently work only when backing up,not restoring."
 msgstr "Opcje --exclude oraz --include dotyczą\n"
 "tylko tworzenia kopii zapasowej, a nie odzyskiwania."
 
-#: ../duplicity/commandline.py:1244
+#: ../duplicity/commandline.py:1246
 #, python-format
 msgid "GPG binary is %s, version %s"
 msgstr ""
 
-#: ../duplicity/commandline.py:1271
+#: ../duplicity/commandline.py:1273
 #, python-format
 msgid "Bad URL '%s'.\n"
 "Examples of URL strings are \"scp://user@host.net:1234/path\" and\n"
@@ -2532,7 +848,7 @@ msgstr "Błędny URL '%s'.\n"
 "Przykładowe adresy URL to np. \"scp://użytkownik@adres.net:1234/ścieżka\" oraz\n"
 "\"file:///usr/local\". Zobacz podręcznik systemowy, aby uzyskać więcej informacji."
 
-#: ../duplicity/commandline.py:1301
+#: ../duplicity/commandline.py:1303
 msgid "Main action: "
 msgstr "Główna akcja: "
 
@@ -3286,31 +1602,31 @@ msgstr "Pomijanie pliku gniazda %s"
 msgid "Error initializing file %s"
 msgstr "Błąd inicjalizacji pliku %s"
 
-#: ../duplicity/selection.py:125 ../duplicity/selection.py:150
-#: ../duplicity/selection.py:517
+#: ../duplicity/selection.py:125 ../duplicity/selection.py:164
+#: ../duplicity/selection.py:580
 #, python-format
 msgid "Error accessing possibly locked file %s"
 msgstr "Błąd dostępu do (prawdopodobnie) zastrzeżonego pliku %s"
 
-#: ../duplicity/selection.py:165
+#: ../duplicity/selection.py:179
 #, python-format
 msgid "Warning: base %s doesn't exist, continuing"
 msgstr "Ostrzeżenie: ścieżka bazowa %s nie istnieje, kontynuowanie"
 
-#: ../duplicity/selection.py:168 ../duplicity/selection.py:186
-#: ../duplicity/selection.py:189
+#: ../duplicity/selection.py:182 ../duplicity/selection.py:203
+#: ../duplicity/selection.py:206
 #, python-format
 msgid "Selecting %s"
 msgstr "Wybrano %s"
 
-#: ../duplicity/selection.py:245
+#: ../duplicity/selection.py:259
 #, python-format
 msgid "The last file selection option is the filter option %s, which will have no\n"
 "effect as there are no subsequent file selection options. Exiting because\n"
 "this probably isn't what you meant."
 msgstr ""
 
-#: ../duplicity/selection.py:254
+#: ../duplicity/selection.py:268
 #, python-format
 msgid "Only these filter mode options were specified:\n"
 "    %s\n"
@@ -3318,7 +1634,7 @@ msgid "Only these filter mode options were specified:\n"
 "Exiting because this probably isn't what you meant."
 msgstr ""
 
-#: ../duplicity/selection.py:325
+#: ../duplicity/selection.py:342
 #, python-format
 msgid "Fatal Error: The file specification\n"
 "    %s\n"
@@ -3333,14 +1649,32 @@ msgstr "Krytyczny błąd: specyfikacja pliku\n"
 "Użyteczne specyfikacje zaczynają się od ścieżki bazowej lub zawierają\n"
 "wzorzec (np. \"**\"), który odpowiada ścieżce bazowej."
 
-#: ../duplicity/selection.py:334
+#: ../duplicity/selection.py:351
 #, python-format
 msgid "Fatal Error while processing expression\n"
 "%s"
 msgstr "Krytyczny błąd podczas przetwarzania wyrażenia\n"
 "%s"
 
-#: ../duplicity/selection.py:343
+#: ../duplicity/selection.py:368
+#, python-format
+msgid "Reading files to backup from list %s"
+msgstr ""
+
+#: ../duplicity/selection.py:387
+#, python-format
+msgid "Files-from list contains the absolute path:\n"
+"    %s\n"
+"All paths specified in a files-from list must be given relative to the backup\n"
+"source path."
+msgstr ""
+
+#: ../duplicity/selection.py:396
+msgid "Files-from list specified which contains no files, the backup will be empty as\n"
+"a result. Exiting as this probably isn't what you meant,"
+msgstr ""
+
+#: ../duplicity/selection.py:406
 #, python-format
 msgid "Last selection expression:\n"
 "    %s\n"
@@ -3353,12 +1687,12 @@ msgstr "Ostatnie wyrażenie:\n"
 "wszystkie pliki są dodawane, wyrażenie to jest niepotrzebne. Kończę wykonywanie,\n"
 "ponieważ prawdopodobnie nie jest to to co chciałeś uzyskać."
 
-#: ../duplicity/selection.py:402
+#: ../duplicity/selection.py:465
 #, python-format
 msgid "Reading %s filelist %s"
 msgstr ""
 
-#: ../duplicity/selection.py:443
+#: ../duplicity/selection.py:506
 #, python-format
 msgid "Error compiling regular expression %s"
 msgstr "Błąd kompilacji wyrażenia regularnego %s"
