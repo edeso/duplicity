@@ -25,7 +25,7 @@ import sys
 
 from duplicity import errors
 from duplicity import log
-from duplicity import commandline
+from duplicity import cli_main
 from duplicity import config
 from testing.unit import UnitTestCase
 
