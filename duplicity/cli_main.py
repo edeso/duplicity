@@ -30,11 +30,12 @@ from hashlib import md5
 from pathvalidate import sanitize_filepath
 from pathvalidate import is_valid_filepath
 
-import errors
-from duplicity import commandline
+from duplicity import cli_usage
+from duplicity import cli_main
 from duplicity import config
 from duplicity import dup_time
 from duplicity import errors
+from duplicity import gpg
 from duplicity import log
 from duplicity import path
 
@@ -263,9 +264,9 @@ def parse_cmdline_options(arglist):
 
     parser = argparse.ArgumentParser(
         prog=u'duplicity',
-        usage=usage(),
+        usage=cli_usage.usage(),
         argument_default=False,
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter
+        # formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
 
     # Add commands and their args to the parser.
@@ -695,7 +696,7 @@ def parse_cmdline_options(arglist):
     for n in range(len(targets)):
         if targets[n] != u"defer":
             name = f"check_{targets[n]}"
-            func = getattr(commandline, name)
+            func = getattr(cli_main, name)
             setattr(config, targets[n], func(args[n]))
 
     # other commands need added processing

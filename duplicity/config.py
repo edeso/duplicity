@@ -26,6 +26,7 @@ import socket
 import sys
 
 from duplicity import __version__
+from duplicity import gpg
 
 # The current version of duplicity
 version = __version__
