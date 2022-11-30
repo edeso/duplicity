@@ -1,8 +1,35 @@
-## rel.1.0.1 (2022-10-03)
+## (unreleased)
+
+### New
+
+* Add rsync style --files-from=FILE. Fixes #151. [Kenneth Loafman]
+
+* Add literal include/excludes. Fixes #138. [Kenneth Loafman]
 
 ### Changes
 
-* Pkg New Crowdin updates. [Kenneth Loafman]
+* Add test case for issue #683. [Kenneth Loafman]
+
+* Don't run start\_debugger till after logging started. [Kenneth Loafman]
+
+* Always run pipeline after MR approval. [Kenneth Loafman]
+
+* Update deprecation messages.  Cleanup. [Kenneth Loafman]
+
+* Add filter mode to log line.  #138. [Kenneth Loafman]
+
+### Fix
+
+* Fix for issue #683. [Kenneth Loafman]
+
+  - ngettext() is returning empty string on plural and zero counts.   -
+  go back to plain gettext() and use just a single translation.   -
+  modify test to run backup using all translations we have.
+
+* Azure Blob Storage backend fails to resume.  Fixes #149. [Kenneth Loafman]
+
+
+## rel.1.0.1 (2022-10-03)
 
 ### Fix
 
@@ -16,11 +43,17 @@
 
 * Update Crowdin configuration file. [Kenneth Loafman]
 
+* Update Crowdin configuration file. [Kenneth Loafman]
+
+* Update Crowdin configuration file. [Kenneth Loafman]
+
+* Update Crowdin configuration file. [Kenneth Loafman]
+
   Update Crowdin configuration file
   Update Crowdin configuration file
 
 
-## rel.1.0.0 (2022-09-25)
+## rel.1.0.0 (2022-09-23)
 
 ### Changes
 
@@ -91,12 +124,6 @@
 * Add missing double quote. [ede]
 
 ### Other
-
-* Update Crowdin configuration file. [Kenneth Loafman]
-
-* Update Crowdin configuration file. [Kenneth Loafman]
-
-* Update Crowdin configuration file. [Kenneth Loafman]
 
 * Doc: some reformatting for better readability. [ede]
 
