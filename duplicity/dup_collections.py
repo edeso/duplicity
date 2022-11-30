@@ -675,10 +675,7 @@ class CollectionsStatus(object):
              (self.backend.__class__.__name__,),
              _(u"Archive dir: %s") % (self.archive_dir_path.uc_name if self.archive_dir_path else u'None',)]
 
-        l.append(u"\n" +
-                 ngettext(u"Found %d secondary backup chain.",
-                          u"Found %d secondary backup chains.",
-                          len(self.other_backup_chains))
+        l.append(u"\n" + _(u"Found %d secondary backup chain(s).")
                  % len(self.other_backup_chains))
         for i in range(len(self.other_backup_chains)):
             l.append(_(u"Secondary chain %d of %d:") %
@@ -694,14 +691,10 @@ class CollectionsStatus(object):
             l.append(_(u"No backup chains with active signatures found"))
 
         if self.orphaned_backup_sets or self.incomplete_backup_sets:
-            l.append(ngettext(u"Also found %d backup set not part of any chain,",
-                              u"Also found %d backup sets not part of any chain,",
-                              len(self.orphaned_backup_sets))
-                     % (len(self.orphaned_backup_sets),))
-            l.append(ngettext(u"and %d incomplete backup set.",
-                              u"and %d incomplete backup sets.",
-                              len(self.incomplete_backup_sets))
-                     % (len(self.incomplete_backup_sets),))
+            l.append(_(u"Also found %d backup set(s) not part of any chain,")
+                     % len(self.orphaned_backup_sets))
+            l.append(_(u"and %d incomplete backup set(s).")
+                     % len(self.incomplete_backup_sets))
             # TRANSL: "cleanup" is a hard-coded command, so do not translate it
             l.append(_(u'These may be deleted by running duplicity with the '
                        u'"cleanup" command.'))
@@ -722,20 +715,16 @@ class CollectionsStatus(object):
 
         # get remote filename list
         backend_filename_list = self.backend.list()
-        log.Debug(ngettext(u"%d file exists on backend",
-                           u"%d files exist on backend",
-                           len(backend_filename_list)) %
-                  len(backend_filename_list))
+        log.Debug(_(u"%d file(s) exists on backend")
+                  % len(backend_filename_list))
 
         # get local filename list
         if self.action != u"replicate":
             local_filename_list = self.archive_dir_path.listdir()
         else:
             local_filename_list = []
-        log.Debug(ngettext(u"%d file exists in cache",
-                           u"%d files exist in cache",
-                           len(local_filename_list)) %
-                  len(local_filename_list))
+        log.Debug(_(u"%d file(s) exists in cache")
+                  % len(local_filename_list))
 
         # check for partial backups
         partials = []
@@ -808,20 +797,12 @@ class CollectionsStatus(object):
         assert self.values_set
 
         if self.local_orphaned_sig_names:
-            log.Warn(ngettext(u"Warning, found the following local orphaned "
-                              u"signature file:",
-                              u"Warning, found the following local orphaned "
-                              u"signature files:",
-                              len(self.local_orphaned_sig_names)) + u"\n" +
+            log.Warn(_(u"Warning, found the following local orphaned signature file(s):") + u"\n" +
                      u"\n".join(map(util.fsdecode, self.local_orphaned_sig_names)),
                      log.WarningCode.orphaned_sig)
 
         if self.remote_orphaned_sig_names:
-            log.Warn(ngettext(u"Warning, found the following remote orphaned "
-                              u"signature file:",
-                              u"Warning, found the following remote orphaned "
-                              u"signature files:",
-                              len(self.remote_orphaned_sig_names)) + u"\n" +
+            log.Warn(_(u"Warning, found the following remote orphaned signature file(s):") + u"\n" +
                      u"\n".join(map(util.fsdecode, self.remote_orphaned_sig_names)),
                      log.WarningCode.orphaned_sig)
 
@@ -834,11 +815,7 @@ class CollectionsStatus(object):
                        u"from aborted session"), log.WarningCode.incomplete_backup)
 
         if self.orphaned_backup_sets:
-            log.Warn(ngettext(u"Warning, found the following orphaned "
-                              u"backup file:",
-                              u"Warning, found the following orphaned "
-                              u"backup files:",
-                              len(self.orphaned_backup_sets)) + u"\n" +
+            log.Warn(_(u"Warning, found the following orphaned backup file(s):") + u"\n" +
                      u"\n".join(map(str, self.orphaned_backup_sets)),
                      log.WarningCode.orphaned_backup)
 
@@ -900,7 +877,7 @@ class CollectionsStatus(object):
                     orphaned_sets.append(set)
         for s in sets:
             add_to_chains(s)
-        return (chains, orphaned_sets, incomplete_sets)
+        return chains, orphaned_sets, incomplete_sets
 
     def get_sorted_sets(self, set_list):
         u"""
@@ -915,7 +892,7 @@ class CollectionsStatus(object):
             else:
                 time_set_pairs.append((set.end_time, set))
         time_set_pairs.sort(key=lambda x: x[0])
-        return ([p[1] for p in time_set_pairs], incomplete_sets)
+        return [p[1] for p in time_set_pairs], incomplete_sets
 
     def get_signature_chains(self, local, filelist=None):
         u"""
@@ -966,7 +943,7 @@ class CollectionsStatus(object):
                     break
             else:
                 orphaned_filenames.append(sig_filename)
-        return (chains, orphaned_filenames)
+        return chains, orphaned_filenames
 
     def get_sorted_chains(self, chain_list):
         u"""
@@ -1242,7 +1219,7 @@ class FileChangedStatus(object):
     def __str__(self):
         set_schema = u"%20s   %30s  %20s"
         l = [u"-------------------------",
-             _(u"File: %s") % (self.filepath),
+             _(u"File: %s") % self.filepath,
              _(u"Total number of backup: %d") % len(self.fileinfo_list),
              set_schema % (_(u"Type of backup set:"), _(u"Time:"), _(u"Type of file change:"))]
 
@@ -1266,7 +1243,7 @@ class BackupSetChangesStatus(object):
     def __str__(self):
         changed_files = self.backup_set.get_files_changed()
         max_file_path_len = max([len(c[1]) for c in changed_files] + [5])
-        set_schema = u"%%-%ds  %%20s" % (max_file_path_len)
+        set_schema = u"%%-%ds  %%20s" % max_file_path_len
         l = [u"-------------------------",
              _(u" Backup set time: %s") % (self.backup_set.get_timestr()),
              _(u"Total number of changes: %d") % len(changed_files),
