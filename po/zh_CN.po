@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: duplicity\n"
 "Report-Msgid-Bugs-To: Kenneth Loafman <kenneth@loafman.com>\n"
-"POT-Creation-Date: 2022-11-22 14:03-0600\n"
-"PO-Revision-Date: 2022-11-25 16:50\n"
+"POT-Creation-Date: 2022-11-30 12:49-0600\n"
+"PO-Revision-Date: 2022-11-30 20:42\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -17,21 +17,21 @@ msgstr ""
 "X-Crowdin-File: /main/po/duplicity.pot\n"
 "X-Crowdin-File-ID: 6\n"
 
-#: ../bin/duplicity:107
+#: ../bin/duplicity:106
 msgid "INT intercepted...exiting."
 msgstr "收到 INT 信号 ... 正在退出。"
 
-#: ../bin/duplicity:115
+#: ../bin/duplicity:114
 #, python-format
 msgid "GPG error detail: %s"
 msgstr "GPG 错误详情：%s"
 
-#: ../bin/duplicity:125
+#: ../bin/duplicity:124
 #, python-format
 msgid "User error detail: %s"
 msgstr "用户错误详情：%s"
 
-#: ../bin/duplicity:135
+#: ../bin/duplicity:134
 #, python-format
 msgid "Backend error detail: %s"
 msgstr "后台设备错误详情：%s"
@@ -1014,178 +1014,172 @@ msgstr "完成验证：%s，%s。"
 
 #: ../duplicity/dup_main.py:925
 #, python-format
-msgid "%d file compared"
-msgid_plural "%d files compared"
-msgstr[0] "已比较 %d 文件"
+msgid "%d file(s) compared"
+msgstr ""
 
-#: ../duplicity/dup_main.py:927
+#: ../duplicity/dup_main.py:926
 #, python-format
-msgid "%d difference found"
-msgid_plural "%d differences found"
-msgstr[0] "找到 %d 项差异"
+msgid "%d difference(s) found"
+msgstr ""
 
-#: ../duplicity/dup_main.py:946
+#: ../duplicity/dup_main.py:944
 msgid "No extraneous files found, nothing deleted in cleanup."
 msgstr "未发现无关的文件，本次清理没有删除任何文件。"
 
-#: ../duplicity/dup_main.py:951
-msgid "Deleting this file from backend:"
-msgid_plural "Deleting these files from backend:"
-msgstr[0] "从后台中删除此文件："
+#: ../duplicity/dup_main.py:949
+msgid "Deleting these file(s) from backend:"
+msgstr ""
 
-#: ../duplicity/dup_main.py:962
-msgid "Found the following file to delete:"
-msgid_plural "Found the following files to delete:"
-msgstr[0] "找到以下要删除的文件："
+#: ../duplicity/dup_main.py:958
+msgid "Found the following file(s) to delete:"
+msgstr ""
 
-#: ../duplicity/dup_main.py:965
+#: ../duplicity/dup_main.py:959
 msgid "Run duplicity again with the --force option to actually delete."
 msgstr "用 --force 选项重新运行 duplicity 以执行删除操作。"
 
-#: ../duplicity/dup_main.py:1008
+#: ../duplicity/dup_main.py:1002
 msgid "There are backup set(s) at time(s):"
 msgstr "已有备份集："
 
-#: ../duplicity/dup_main.py:1010
+#: ../duplicity/dup_main.py:1004
 msgid "Which can't be deleted because newer sets depend on them."
 msgstr "这些备份集被新的备份所依赖，不能被删除。"
 
-#: ../duplicity/dup_main.py:1014
+#: ../duplicity/dup_main.py:1008
 msgid "Current active backup chain is older than specified time.  However, it will not be deleted.  To remove all your backups, manually purge the repository."
 msgstr "当前活动备份链已超出指定的寿命，但是不会被删除。要删除所有备份，请手动清理仓库。"
 
-#: ../duplicity/dup_main.py:1027
+#: ../duplicity/dup_main.py:1021
 msgid "No old backup sets found, nothing deleted."
 msgstr "未发现旧备份，没有删除任何文件。"
 
-#: ../duplicity/dup_main.py:1030
-msgid "Deleting backup chain at time:"
-msgid_plural "Deleting backup chains at times:"
-msgstr[0] "删除如下时间的备份链："
+#: ../duplicity/dup_main.py:1024
+msgid "Deleting backup chain(s) at time:"
+msgstr ""
 
-#: ../duplicity/dup_main.py:1042
+#: ../duplicity/dup_main.py:1034
 #, python-format
 msgid "Deleting any incremental signature chain rooted at %s"
 msgstr ""
 
-#: ../duplicity/dup_main.py:1044
+#: ../duplicity/dup_main.py:1036
 #, python-format
 msgid "Deleting any incremental backup chain rooted at %s"
 msgstr ""
 
-#: ../duplicity/dup_main.py:1047
+#: ../duplicity/dup_main.py:1039
 #, python-format
 msgid "Deleting complete signature chain %s"
 msgstr "删除完全签名链 %s"
 
-#: ../duplicity/dup_main.py:1049
+#: ../duplicity/dup_main.py:1041
 #, python-format
 msgid "Deleting complete backup chain %s"
 msgstr "删除完全备份链 %s"
 
-#: ../duplicity/dup_main.py:1055
-msgid "Found old backup chain at the following time:"
-msgid_plural "Found old backup chains at the following times:"
-msgstr[0] "找到如下时间的旧备份链："
+#: ../duplicity/dup_main.py:1047
+msgid "Found old backup chain(s) at the following time:"
+msgstr ""
 
-#: ../duplicity/dup_main.py:1059
+#: ../duplicity/dup_main.py:1049
 msgid "Rerun command with --force option to actually delete."
 msgstr "用 --force 选项重新运行命令以执行删除。"
 
-#: ../duplicity/dup_main.py:1082
+#: ../duplicity/dup_main.py:1072
 msgid "No old backup sets found."
 msgstr ""
 
-#: ../duplicity/dup_main.py:1097
+#: ../duplicity/dup_main.py:1087
 #, python-format
 msgid "Signature %s already replicated"
 msgstr ""
 
-#: ../duplicity/dup_main.py:1104 ../duplicity/dup_main.py:1143
+#: ../duplicity/dup_main.py:1094 ../duplicity/dup_main.py:1133
 #, python-format
 msgid "Replicating %s."
 msgstr ""
 
-#: ../duplicity/dup_main.py:1131
+#: ../duplicity/dup_main.py:1121
 #, python-format
 msgid "Backupset %s already replicated"
 msgstr ""
 
-#: ../duplicity/dup_main.py:1279
+#: ../duplicity/dup_main.py:1269
 #, python-format
 msgid "Deleting local %s (not authoritative at backend)."
 msgstr "删除本地 %s (不会作用在后台设备上)。"
 
-#: ../duplicity/dup_main.py:1284
+#: ../duplicity/dup_main.py:1274
 #, python-format
 msgid "Unable to delete %s: %s"
 msgstr "无法删除 %s：%s"
 
-#: ../duplicity/dup_main.py:1318 ../duplicity/dup_temp.py:271
+#: ../duplicity/dup_main.py:1308 ../duplicity/dup_temp.py:271
 #, python-format
 msgid "Failed to read %s: %s"
 msgstr "读取 %s 失败： %s"
 
-#: ../duplicity/dup_main.py:1331
+#: ../duplicity/dup_main.py:1321
 #, python-format
 msgid "Copying %s to local cache."
 msgstr "拷贝 %s 到本地缓冲。"
 
-#: ../duplicity/dup_main.py:1379
+#: ../duplicity/dup_main.py:1369
 msgid "Local and Remote metadata are synchronized, no sync needed."
 msgstr "本地和远程元数据已同步，无需再次同步。"
 
-#: ../duplicity/dup_main.py:1384
+#: ../duplicity/dup_main.py:1374
 msgid "Synchronizing remote metadata to local cache..."
 msgstr "同步远程元数据到本地缓冲..."
 
-#: ../duplicity/dup_main.py:1397
+#: ../duplicity/dup_main.py:1387
 msgid "Sync would copy the following from remote to local:"
 msgstr "同步将会从远程拷贝以下内容到本地："
 
-#: ../duplicity/dup_main.py:1400
+#: ../duplicity/dup_main.py:1390
 msgid "Sync would remove the following spurious local files:"
 msgstr "同步将会删除以下本地无效文件："
 
-#: ../duplicity/dup_main.py:1444
+#: ../duplicity/dup_main.py:1434
 msgid "Unable to get free space on temp."
 msgstr "无法申请临时空闲空间。"
 
-#: ../duplicity/dup_main.py:1452
+#: ../duplicity/dup_main.py:1442
 #, python-format
 msgid "Temp space has %d available, backup needs approx %d."
 msgstr "临时空间还剩余 %d，备份需要大约 %d。"
 
-#: ../duplicity/dup_main.py:1455
+#: ../duplicity/dup_main.py:1445
 #, python-format
 msgid "Temp has %d available, backup will use approx %d."
 msgstr "临时空间还剩余 %d，备份需要大约 %d。"
 
-#: ../duplicity/dup_main.py:1463
+#: ../duplicity/dup_main.py:1453
 msgid "Unable to get max open files."
 msgstr "无法获取打开文件数的上限。"
 
-#: ../duplicity/dup_main.py:1467
+#: ../duplicity/dup_main.py:1457
 #, python-format
 msgid "Max open files of %s is too low, should be >= 1024.\n"
 "Use 'ulimit -n 1024' or higher to correct.\n"
 msgstr "%s 的打开文件数上限太低，该数值需要 >= 1024。\n"
 "请通过 ulimit -n 1024 更正设置。\n"
 
-#: ../duplicity/dup_main.py:1519
+#: ../duplicity/dup_main.py:1509
 msgid "RESTART: The first volume failed to upload before termination.\n"
 "         Restart is impossible...starting backup from beginning."
 msgstr "重启备份：第一个卷未能在结束前完成上传。\n"
 "         无法重启... 重头开始备份。"
 
-#: ../duplicity/dup_main.py:1525
+#: ../duplicity/dup_main.py:1515
 #, python-format
 msgid "RESTART: Volumes %d to %d failed to upload before termination.\n"
 "         Restarting backup at volume %d."
 msgstr "重启备份：卷 %d 到 %d 未能在结束前完成上传。\n"
 "         从卷 %d 开始重启备份。"
 
-#: ../duplicity/dup_main.py:1532
+#: ../duplicity/dup_main.py:1522
 #, python-format
 msgid "RESTART: Impossible backup state: manifest has %d vols, remote has %d vols.\n"
 "         Restart is impossible ... duplicity will clean off the last partial\n"
@@ -1194,7 +1188,7 @@ msgstr "重启备份：无法备份的状态：清单上有 %d 卷，远程有 %
 "         无法重启备份 ... duplicity 将会清除最近一部分备份 \n"
 "         然后重头开始备份。"
 
-#: ../duplicity/dup_main.py:1553
+#: ../duplicity/dup_main.py:1543
 msgid "\n"
 "PYTHONOPTIMIZE in the environment causes duplicity to fail to\n"
 "recognize its own backups.  Please remove PYTHONOPTIMIZE from\n"
@@ -1206,34 +1200,34 @@ msgstr "\n"
 "然后重新运行备份。\n\n"
 "具体请查阅 https://bugs.launchpad.net/duplicity/+bug/931175\n"
 
-#: ../duplicity/dup_main.py:1576
+#: ../duplicity/dup_main.py:1566
 #, python-format
 msgid "Acquiring lockfile %s"
 msgstr ""
 
-#: ../duplicity/dup_main.py:1639
+#: ../duplicity/dup_main.py:1629
 #, python-format
 msgid "Last %s backup left a partial set, restarting."
 msgstr "最近 %s 备份遗留一个不完整备份集，重启备份。"
 
-#: ../duplicity/dup_main.py:1643
+#: ../duplicity/dup_main.py:1633
 #, python-format
 msgid "Cleaning up previous partial %s backup set, restarting."
 msgstr "正在清理遗留的不完整备份集 %s，并重启备份。"
 
-#: ../duplicity/dup_main.py:1655
+#: ../duplicity/dup_main.py:1645
 msgid "Last full backup date:"
 msgstr "最后一次完全备份日期："
 
-#: ../duplicity/dup_main.py:1657
+#: ../duplicity/dup_main.py:1647
 msgid "Last full backup date: none"
 msgstr "最后一次完全备份日期：无"
 
-#: ../duplicity/dup_main.py:1660
+#: ../duplicity/dup_main.py:1650
 msgid "Last full backup is too old, forcing full backup"
 msgstr "最后一次完全备份已过期，强制完全备份"
 
-#: ../duplicity/dup_main.py:1709
+#: ../duplicity/dup_main.py:1699
 msgid "When using symmetric encryption, the signing passphrase must equal the encryption passphrase."
 msgstr "使用对称加密时，必须采用相同的签名密码与加密密码。"
 
@@ -1350,11 +1344,11 @@ msgstr "包含的备份集数量：%d"
 msgid "Total number of contained volumes: %d"
 msgstr "包含的卷数量：%d"
 
-#: ../duplicity/dup_collections.py:448 ../duplicity/dup_collections.py:1247
+#: ../duplicity/dup_collections.py:448 ../duplicity/dup_collections.py:1224
 msgid "Type of backup set:"
 msgstr "备份集类型："
 
-#: ../duplicity/dup_collections.py:448 ../duplicity/dup_collections.py:1247
+#: ../duplicity/dup_collections.py:448 ../duplicity/dup_collections.py:1224
 msgid "Time:"
 msgstr "时间："
 
@@ -1362,11 +1356,11 @@ msgstr "时间："
 msgid "Num volumes:"
 msgstr "卷数量："
 
-#: ../duplicity/dup_collections.py:452 ../duplicity/dup_collections.py:1253
+#: ../duplicity/dup_collections.py:452 ../duplicity/dup_collections.py:1230
 msgid "Full"
 msgstr "完全"
 
-#: ../duplicity/dup_collections.py:455 ../duplicity/dup_collections.py:1255
+#: ../duplicity/dup_collections.py:455 ../duplicity/dup_collections.py:1232
 msgid "Incremental"
 msgstr "增量"
 
@@ -1388,150 +1382,142 @@ msgstr "正在连接后台设备：%s"
 msgid "Archive dir: %s"
 msgstr "存档路径：%s"
 
-#: ../duplicity/dup_collections.py:679
+#: ../duplicity/dup_collections.py:678
 #, python-format
-msgid "Found %d secondary backup chain."
-msgid_plural "Found %d secondary backup chains."
-msgstr[0] "找到 %d 条次级备份链。"
+msgid "Found %d secondary backup chain(s)."
+msgstr ""
 
-#: ../duplicity/dup_collections.py:684
+#: ../duplicity/dup_collections.py:681
 #, python-format
 msgid "Secondary chain %d of %d:"
 msgstr "第 %d 次级链 (总共 %d )："
 
-#: ../duplicity/dup_collections.py:690
+#: ../duplicity/dup_collections.py:687
 msgid "Found primary backup chain with matching signature chain:"
 msgstr "找到主备份链及对应的签名链："
 
-#: ../duplicity/dup_collections.py:694
+#: ../duplicity/dup_collections.py:691
 msgid "No backup chains with active signatures found"
 msgstr "没有找到活动签名的备份链"
 
-#: ../duplicity/dup_collections.py:697
+#: ../duplicity/dup_collections.py:694
 #, python-format
-msgid "Also found %d backup set not part of any chain,"
-msgid_plural "Also found %d backup sets not part of any chain,"
-msgstr[0] "还找到 %d 不属于任何备份链的备份集，"
+msgid "Also found %d backup set(s) not part of any chain,"
+msgstr ""
 
-#: ../duplicity/dup_collections.py:701
+#: ../duplicity/dup_collections.py:696
 #, python-format
-msgid "and %d incomplete backup set."
-msgid_plural "and %d incomplete backup sets."
-msgstr[0] "以及 %d 不完整的备份集。"
+msgid "and %d incomplete backup set(s)."
+msgstr ""
 
 #. "cleanup" is a hard-coded command, so do not translate it
-#: ../duplicity/dup_collections.py:706
+#: ../duplicity/dup_collections.py:699
 msgid "These may be deleted by running duplicity with the \"cleanup\" command."
 msgstr "可以通过“cleanup”命令删除。"
 
-#: ../duplicity/dup_collections.py:709
+#: ../duplicity/dup_collections.py:702
 msgid "No orphaned or incomplete backup sets found."
 msgstr "没有找到孤立或不完整的备份集。"
 
-#: ../duplicity/dup_collections.py:725
+#: ../duplicity/dup_collections.py:718
 #, python-format
-msgid "%d file exists on backend"
-msgid_plural "%d files exist on backend"
-msgstr[0] "备份中有 %d 个文件"
+msgid "%d file(s) exists on backend"
+msgstr ""
 
-#: ../duplicity/dup_collections.py:735
+#: ../duplicity/dup_collections.py:726
 #, python-format
-msgid "%d file exists in cache"
-msgid_plural "%d files exist in cache"
-msgstr[0] "缓存中有 %d 个文件"
+msgid "%d file(s) exists in cache"
+msgstr ""
 
-#: ../duplicity/dup_collections.py:788
+#: ../duplicity/dup_collections.py:777
 msgid "Warning, discarding last backup set, because of missing signature file."
 msgstr "警告，由于缺少签名文件，将废弃最后一个备份集。"
 
-#: ../duplicity/dup_collections.py:811
-msgid "Warning, found the following local orphaned signature file:"
-msgid_plural "Warning, found the following local orphaned signature files:"
-msgstr[0] "警告，找到以下孤立的签名文件："
+#: ../duplicity/dup_collections.py:800
+msgid "Warning, found the following local orphaned signature file(s):"
+msgstr ""
 
-#: ../duplicity/dup_collections.py:820
-msgid "Warning, found the following remote orphaned signature file:"
-msgid_plural "Warning, found the following remote orphaned signature files:"
-msgstr[0] "警告，找到以下孤立的远程签名文件："
+#: ../duplicity/dup_collections.py:805
+msgid "Warning, found the following remote orphaned signature file(s):"
+msgstr ""
 
-#: ../duplicity/dup_collections.py:829
+#: ../duplicity/dup_collections.py:810
 msgid "Warning, found signatures but no corresponding backup files"
 msgstr "警告，找到无对应备份文件的签名"
 
-#: ../duplicity/dup_collections.py:833
+#: ../duplicity/dup_collections.py:814
 msgid "Warning, found incomplete backup sets, probably left from aborted session"
 msgstr "警告，找到不完整的备份集，可能来自于中断的会话"
 
-#: ../duplicity/dup_collections.py:837
-msgid "Warning, found the following orphaned backup file:"
-msgid_plural "Warning, found the following orphaned backup files:"
-msgstr[0] "警告，找到以下废弃的备份文件："
+#: ../duplicity/dup_collections.py:818
+msgid "Warning, found the following orphaned backup file(s):"
+msgstr ""
 
-#: ../duplicity/dup_collections.py:854
+#: ../duplicity/dup_collections.py:831
 #, python-format
 msgid "Extracting backup chains from list of files: %s"
 msgstr "从文件列表中提取备份链：%s"
 
-#: ../duplicity/dup_collections.py:866
+#: ../duplicity/dup_collections.py:843
 #, python-format
 msgid "File %s is part of known set"
 msgstr "文件 %s 属于已知集合"
 
-#: ../duplicity/dup_collections.py:869
+#: ../duplicity/dup_collections.py:846
 #, python-format
 msgid "File %s is not part of a known set; creating new set"
 msgstr "文件 %s 不属于任何已知集合，建立新集合"
 
-#: ../duplicity/dup_collections.py:874
+#: ../duplicity/dup_collections.py:851
 #, python-format
 msgid "Ignoring file (rejected by backup set) '%s'"
 msgstr "忽略 (被备份集拒绝) 文件 %s"
 
-#: ../duplicity/dup_collections.py:890
+#: ../duplicity/dup_collections.py:867
 #, python-format
 msgid "Found backup chain %s"
 msgstr "找到备份链 %s"
 
-#: ../duplicity/dup_collections.py:895
+#: ../duplicity/dup_collections.py:872
 #, python-format
 msgid "Added set %s to pre-existing chain %s"
 msgstr "将集合 %s 加入已存在的备份链 %s"
 
-#: ../duplicity/dup_collections.py:899
+#: ../duplicity/dup_collections.py:876
 #, python-format
 msgid "Found orphaned set %s"
 msgstr "找到孤立的集合 %s"
 
-#: ../duplicity/dup_collections.py:1049
+#: ../duplicity/dup_collections.py:1026
 #, python-format
 msgid "No signature chain for the requested time. Using oldest available chain, starting at time %s."
 msgstr ""
 
-#: ../duplicity/dup_collections.py:1245
+#: ../duplicity/dup_collections.py:1222
 #, python-format
 msgid "File: %s"
 msgstr "文件：%s"
 
-#: ../duplicity/dup_collections.py:1246
+#: ../duplicity/dup_collections.py:1223
 #, python-format
 msgid "Total number of backup: %d"
 msgstr "备份总数：%d"
 
-#: ../duplicity/dup_collections.py:1247 ../duplicity/dup_collections.py:1273
+#: ../duplicity/dup_collections.py:1224 ../duplicity/dup_collections.py:1250
 msgid "Type of file change:"
 msgstr "文件修改的类型："
 
-#: ../duplicity/dup_collections.py:1271
+#: ../duplicity/dup_collections.py:1248
 #, python-format
 msgid " Backup set time: %s"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:1272
+#: ../duplicity/dup_collections.py:1249
 #, python-format
 msgid "Total number of changes: %d"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:1273
+#: ../duplicity/dup_collections.py:1250
 msgid "File:"
 msgstr ""
 

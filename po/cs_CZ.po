@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: duplicity\n"
 "Report-Msgid-Bugs-To: Kenneth Loafman <kenneth@loafman.com>\n"
-"POT-Creation-Date: 2022-11-22 14:03-0600\n"
-"PO-Revision-Date: 2022-11-25 16:50\n"
+"POT-Creation-Date: 2022-11-30 12:49-0600\n"
+"PO-Revision-Date: 2022-11-30 20:42\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -17,21 +17,21 @@ msgstr ""
 "X-Crowdin-File: /main/po/duplicity.pot\n"
 "X-Crowdin-File-ID: 6\n"
 
-#: ../bin/duplicity:107
+#: ../bin/duplicity:106
 msgid "INT intercepted...exiting."
 msgstr "Zachyceno přerušení, ukončuje se."
 
-#: ../bin/duplicity:115
+#: ../bin/duplicity:114
 #, python-format
 msgid "GPG error detail: %s"
 msgstr "Podrobnosti chyby GPG: %s"
 
-#: ../bin/duplicity:125
+#: ../bin/duplicity:124
 #, python-format
 msgid "User error detail: %s"
 msgstr "Podrobnosti uživateské chyby: %s"
 
-#: ../bin/duplicity:135
+#: ../bin/duplicity:134
 #, python-format
 msgid "Backend error detail: %s"
 msgstr "Podrobnosti chyby na podpůrné vrstvě (backend): %s"
@@ -1011,196 +1011,172 @@ msgstr "Kontrola dokončena: %s, %s."
 
 #: ../duplicity/dup_main.py:925
 #, python-format
-msgid "%d file compared"
-msgid_plural "%d files compared"
-msgstr[0] "%d soubor porovnán"
-msgstr[1] "%d soubory porovnány"
-msgstr[2] "%d souborů porovnáno"
-msgstr[3] ""
+msgid "%d file(s) compared"
+msgstr ""
 
-#: ../duplicity/dup_main.py:927
+#: ../duplicity/dup_main.py:926
 #, python-format
-msgid "%d difference found"
-msgid_plural "%d differences found"
-msgstr[0] "%d rozdíl nalezen"
-msgstr[1] "%d rozdíly nalezeny"
-msgstr[2] "%d rozdílů nalezeno"
-msgstr[3] ""
+msgid "%d difference(s) found"
+msgstr ""
 
-#: ../duplicity/dup_main.py:946
+#: ../duplicity/dup_main.py:944
 msgid "No extraneous files found, nothing deleted in cleanup."
 msgstr "Nenalezeny žádné zbytečné soubory, během úklidu nebylo nic smazáno."
 
-#: ../duplicity/dup_main.py:951
-msgid "Deleting this file from backend:"
-msgid_plural "Deleting these files from backend:"
-msgstr[0] "Mazání tohoto souboru z podpůrné vrtvy (backend):"
-msgstr[1] "Mazání těchto souborů z podpůrné vrtvy (backend):"
-msgstr[2] "Mazání těchto souborů z podpůrné vrtvy (backend):"
-msgstr[3] ""
+#: ../duplicity/dup_main.py:949
+msgid "Deleting these file(s) from backend:"
+msgstr ""
 
-#: ../duplicity/dup_main.py:962
-msgid "Found the following file to delete:"
-msgid_plural "Found the following files to delete:"
-msgstr[0] "Nalezen následující soubor ke smazání:"
-msgstr[1] "Nalezeny následující soubory ke smazání:"
-msgstr[2] "Nalezeno následujících souborů ke smazání:"
-msgstr[3] ""
+#: ../duplicity/dup_main.py:958
+msgid "Found the following file(s) to delete:"
+msgstr ""
 
-#: ../duplicity/dup_main.py:965
+#: ../duplicity/dup_main.py:959
 msgid "Run duplicity again with the --force option to actually delete."
 msgstr "Spusť duplicity znovu s volbou --force pro skutečné mazání."
 
-#: ../duplicity/dup_main.py:1008
+#: ../duplicity/dup_main.py:1002
 msgid "There are backup set(s) at time(s):"
 msgstr "Jsou zde sady záloh v časech:"
 
-#: ../duplicity/dup_main.py:1010
+#: ../duplicity/dup_main.py:1004
 msgid "Which can't be deleted because newer sets depend on them."
 msgstr "Které není možné smazat protože na nich závisí novější sady."
 
-#: ../duplicity/dup_main.py:1014
+#: ../duplicity/dup_main.py:1008
 msgid "Current active backup chain is older than specified time.  However, it will not be deleted.  To remove all your backups, manually purge the repository."
 msgstr "Stávající aktivní řetěz záloh je starší než zadaný čas. Nicméně, nebude smazán. Pro smazání všech svých záloh vyčistěte repozitář ručně."
 
-#: ../duplicity/dup_main.py:1027
+#: ../duplicity/dup_main.py:1021
 msgid "No old backup sets found, nothing deleted."
 msgstr "Nenalezeny žádné staré sady záloh, nic nebylo smazáno."
 
-#: ../duplicity/dup_main.py:1030
-msgid "Deleting backup chain at time:"
-msgid_plural "Deleting backup chains at times:"
-msgstr[0] "Maže se řetěz zálohy v čase:"
-msgstr[1] "Mažou se řetězce zálohy v čase:"
-msgstr[2] "Maže se řetězců zálohy v čase:"
-msgstr[3] ""
+#: ../duplicity/dup_main.py:1024
+msgid "Deleting backup chain(s) at time:"
+msgstr ""
 
-#: ../duplicity/dup_main.py:1042
+#: ../duplicity/dup_main.py:1034
 #, python-format
 msgid "Deleting any incremental signature chain rooted at %s"
 msgstr "Mažou se všechny přírůstkové signatury řetězců počínající v %s"
 
-#: ../duplicity/dup_main.py:1044
+#: ../duplicity/dup_main.py:1036
 #, python-format
 msgid "Deleting any incremental backup chain rooted at %s"
 msgstr "Mažou se všechny řetězy přírůstkové zálohy počínaje v %s"
 
-#: ../duplicity/dup_main.py:1047
+#: ../duplicity/dup_main.py:1039
 #, python-format
 msgid "Deleting complete signature chain %s"
 msgstr "Maže se celý řetěz podpisů %s"
 
-#: ../duplicity/dup_main.py:1049
+#: ../duplicity/dup_main.py:1041
 #, python-format
 msgid "Deleting complete backup chain %s"
 msgstr "Maže se celý řetěz záloh %s"
 
-#: ../duplicity/dup_main.py:1055
-msgid "Found old backup chain at the following time:"
-msgid_plural "Found old backup chains at the following times:"
-msgstr[0] "Nalezen starý řetěz záloh v následujících časech:"
-msgstr[1] "Nalezeny staré řetězy záloh v následujících časech:"
-msgstr[2] "Nalezeno starých řetězů záloh v následujících časech:"
-msgstr[3] ""
+#: ../duplicity/dup_main.py:1047
+msgid "Found old backup chain(s) at the following time:"
+msgstr ""
 
-#: ../duplicity/dup_main.py:1059
+#: ../duplicity/dup_main.py:1049
 msgid "Rerun command with --force option to actually delete."
 msgstr "Aby došlo ke skutečnému smazání, spusťte příkaz znovu s volbou --force."
 
-#: ../duplicity/dup_main.py:1082
+#: ../duplicity/dup_main.py:1072
 msgid "No old backup sets found."
 msgstr "Nebyly nalezeny žádné staré sady záloh."
 
-#: ../duplicity/dup_main.py:1097
+#: ../duplicity/dup_main.py:1087
 #, python-format
 msgid "Signature %s already replicated"
 msgstr "Podpis %s je už replikovaný"
 
-#: ../duplicity/dup_main.py:1104 ../duplicity/dup_main.py:1143
+#: ../duplicity/dup_main.py:1094 ../duplicity/dup_main.py:1133
 #, python-format
 msgid "Replicating %s."
 msgstr "Replikuje se %s."
 
-#: ../duplicity/dup_main.py:1131
+#: ../duplicity/dup_main.py:1121
 #, python-format
 msgid "Backupset %s already replicated"
 msgstr "Sada záloh %s je už replikovaná"
 
-#: ../duplicity/dup_main.py:1279
+#: ../duplicity/dup_main.py:1269
 #, python-format
 msgid "Deleting local %s (not authoritative at backend)."
 msgstr "Mazání místní %s (neautoritativní z pohledu podpůrné vrstvy)."
 
-#: ../duplicity/dup_main.py:1284
+#: ../duplicity/dup_main.py:1274
 #, python-format
 msgid "Unable to delete %s: %s"
 msgstr "%s se nedaří smazat: %s"
 
-#: ../duplicity/dup_main.py:1318 ../duplicity/dup_temp.py:271
+#: ../duplicity/dup_main.py:1308 ../duplicity/dup_temp.py:271
 #, python-format
 msgid "Failed to read %s: %s"
 msgstr "Nepodařilo se načíst %s: %s"
 
-#: ../duplicity/dup_main.py:1331
+#: ../duplicity/dup_main.py:1321
 #, python-format
 msgid "Copying %s to local cache."
 msgstr "Kopíruje se %s do mezipaměti na tomto stroji."
 
-#: ../duplicity/dup_main.py:1379
+#: ../duplicity/dup_main.py:1369
 msgid "Local and Remote metadata are synchronized, no sync needed."
 msgstr "Místní a vzdálená metadata jsou synchronní, není třeba synchronizace."
 
-#: ../duplicity/dup_main.py:1384
+#: ../duplicity/dup_main.py:1374
 msgid "Synchronizing remote metadata to local cache..."
 msgstr "Synchronizace vzdálených metadat do místní mezipaměti…"
 
-#: ../duplicity/dup_main.py:1397
+#: ../duplicity/dup_main.py:1387
 msgid "Sync would copy the following from remote to local:"
 msgstr "Sync by zkopíroval následující ze vzdáleného na místní:"
 
-#: ../duplicity/dup_main.py:1400
+#: ../duplicity/dup_main.py:1390
 msgid "Sync would remove the following spurious local files:"
 msgstr "Sync by odebralo následující zbytečné místní soubory:"
 
-#: ../duplicity/dup_main.py:1444
+#: ../duplicity/dup_main.py:1434
 msgid "Unable to get free space on temp."
 msgstr "Nedaří se zjistit volné místo na dočasném."
 
-#: ../duplicity/dup_main.py:1452
+#: ../duplicity/dup_main.py:1442
 #, python-format
 msgid "Temp space has %d available, backup needs approx %d."
 msgstr "Na dočasném prostoru je k dispozici %d, záloha potřebuje přibližně %d."
 
-#: ../duplicity/dup_main.py:1455
+#: ../duplicity/dup_main.py:1445
 #, python-format
 msgid "Temp has %d available, backup will use approx %d."
 msgstr "Na dočasném prostoru je k dispozici %d, záloha využije přibližně %d."
 
-#: ../duplicity/dup_main.py:1463
+#: ../duplicity/dup_main.py:1453
 msgid "Unable to get max open files."
 msgstr "Nedaří se zjistit limit počtu otevřených souborů."
 
-#: ../duplicity/dup_main.py:1467
+#: ../duplicity/dup_main.py:1457
 #, python-format
 msgid "Max open files of %s is too low, should be >= 1024.\n"
 "Use 'ulimit -n 1024' or higher to correct.\n"
 msgstr "Limit naráz otevřených souborů %s je příliš nízký, měl by být >= 1024.\n"
 "Napravte to spuštěním příkazu „ulimit -n 1024“ (nebo s vyšší hodnotou).\n"
 
-#: ../duplicity/dup_main.py:1519
+#: ../duplicity/dup_main.py:1509
 msgid "RESTART: The first volume failed to upload before termination.\n"
 "         Restart is impossible...starting backup from beginning."
 msgstr "RESTART: První svazek se nepodařilo nahrát před ukončením.\n"
 "         Restart není možný, záloha se spouští znovu od začátku."
 
-#: ../duplicity/dup_main.py:1525
+#: ../duplicity/dup_main.py:1515
 #, python-format
 msgid "RESTART: Volumes %d to %d failed to upload before termination.\n"
 "         Restarting backup at volume %d."
 msgstr "RESTART: Svazky %d až %d se nepodařilo nahrát před ukončením.\n"
 "         Restartuje se záloha u svazku %d."
 
-#: ../duplicity/dup_main.py:1532
+#: ../duplicity/dup_main.py:1522
 #, python-format
 msgid "RESTART: Impossible backup state: manifest has %d vols, remote has %d vols.\n"
 "         Restart is impossible ... duplicity will clean off the last partial\n"
@@ -1209,7 +1185,7 @@ msgstr "RESTART: Nemožný stav zálohy: manifest má %d svazků, vzdálený má
 "         Restart není monžný. Dduplicity vyčistí poslední částečnou zálohu a pak\n"
 "         restartuje zálohu od začátku."
 
-#: ../duplicity/dup_main.py:1553
+#: ../duplicity/dup_main.py:1543
 msgid "\n"
 "PYTHONOPTIMIZE in the environment causes duplicity to fail to\n"
 "recognize its own backups.  Please remove PYTHONOPTIMIZE from\n"
@@ -1221,34 +1197,34 @@ msgstr "\n"
 "a spusťte zálohu znovu.\n\n"
 "Viz https://bugs.launchpad.net/duplicity/+bug/931175\n"
 
-#: ../duplicity/dup_main.py:1576
+#: ../duplicity/dup_main.py:1566
 #, python-format
 msgid "Acquiring lockfile %s"
 msgstr "Získává se zamykací soubor %s"
 
-#: ../duplicity/dup_main.py:1639
+#: ../duplicity/dup_main.py:1629
 #, python-format
 msgid "Last %s backup left a partial set, restarting."
 msgstr "Poslední %s záloha zanechala částečnou sadu, restartuje se."
 
-#: ../duplicity/dup_main.py:1643
+#: ../duplicity/dup_main.py:1633
 #, python-format
 msgid "Cleaning up previous partial %s backup set, restarting."
 msgstr "Čištění předchozí částečné %s sady záloh, restartuje se."
 
-#: ../duplicity/dup_main.py:1655
+#: ../duplicity/dup_main.py:1645
 msgid "Last full backup date:"
 msgstr "Datum poslední úplné zálohy:"
 
-#: ../duplicity/dup_main.py:1657
+#: ../duplicity/dup_main.py:1647
 msgid "Last full backup date: none"
 msgstr "Datum poslední plné zálohy: žádná"
 
-#: ../duplicity/dup_main.py:1660
+#: ../duplicity/dup_main.py:1650
 msgid "Last full backup is too old, forcing full backup"
 msgstr "Poslední plná záloha je příliš stará, vynucuje se pořízení plné zálohy"
 
-#: ../duplicity/dup_main.py:1709
+#: ../duplicity/dup_main.py:1699
 msgid "When using symmetric encryption, the signing passphrase must equal the encryption passphrase."
 msgstr "Při použití symetrického šifrování je třeba, aby podpisovací heslová fráze byla stejná, jako ta šifrovací."
 
@@ -1365,11 +1341,11 @@ msgstr "Počet obsažených sad záloh: %d"
 msgid "Total number of contained volumes: %d"
 msgstr "Celkový počet obsažených svazků: %d"
 
-#: ../duplicity/dup_collections.py:448 ../duplicity/dup_collections.py:1247
+#: ../duplicity/dup_collections.py:448 ../duplicity/dup_collections.py:1224
 msgid "Type of backup set:"
 msgstr "Typ sad záloh:"
 
-#: ../duplicity/dup_collections.py:448 ../duplicity/dup_collections.py:1247
+#: ../duplicity/dup_collections.py:448 ../duplicity/dup_collections.py:1224
 msgid "Time:"
 msgstr "Čas:"
 
@@ -1377,11 +1353,11 @@ msgstr "Čas:"
 msgid "Num volumes:"
 msgstr "Poč. svazků:"
 
-#: ../duplicity/dup_collections.py:452 ../duplicity/dup_collections.py:1253
+#: ../duplicity/dup_collections.py:452 ../duplicity/dup_collections.py:1230
 msgid "Full"
 msgstr "Plná"
 
-#: ../duplicity/dup_collections.py:455 ../duplicity/dup_collections.py:1255
+#: ../duplicity/dup_collections.py:455 ../duplicity/dup_collections.py:1232
 msgid "Incremental"
 msgstr "Přírůstková"
 
@@ -1403,174 +1379,142 @@ msgstr "Spojování se s podpůrnou vrstvou: %s"
 msgid "Archive dir: %s"
 msgstr "Archivní složka: %s"
 
-#: ../duplicity/dup_collections.py:679
+#: ../duplicity/dup_collections.py:678
 #, python-format
-msgid "Found %d secondary backup chain."
-msgid_plural "Found %d secondary backup chains."
-msgstr[0] "Nalezen %d pomocný řetězec zálohy."
-msgstr[1] "Nalezeny %d pomocné řetězce zálohy."
-msgstr[2] "Nalezeno %d pomocných řetězců zálohy."
-msgstr[3] ""
+msgid "Found %d secondary backup chain(s)."
+msgstr ""
 
-#: ../duplicity/dup_collections.py:684
+#: ../duplicity/dup_collections.py:681
 #, python-format
 msgid "Secondary chain %d of %d:"
 msgstr "Sekundární řetěz %d z %d:"
 
-#: ../duplicity/dup_collections.py:690
+#: ../duplicity/dup_collections.py:687
 msgid "Found primary backup chain with matching signature chain:"
 msgstr "Nalezen hlavní řetěz zálohy s odpovídajícím podpisovým řetězem:"
 
-#: ../duplicity/dup_collections.py:694
+#: ../duplicity/dup_collections.py:691
 msgid "No backup chains with active signatures found"
 msgstr "Nebyly nalezený žádné řetězce záloh s aktivními podpisy"
 
-#: ../duplicity/dup_collections.py:697
+#: ../duplicity/dup_collections.py:694
 #, python-format
-msgid "Also found %d backup set not part of any chain,"
-msgid_plural "Also found %d backup sets not part of any chain,"
-msgstr[0] "Také nalezena %d sada zálohy která není součástí žádného řetězce,"
-msgstr[1] "Také nalezeny %d sady zálohy, které nejsou součástí žádného řetězce,"
-msgstr[2] "Také nalezeno %d sad záloh, které nejsou součástí žádného řetězce,"
-msgstr[3] ""
+msgid "Also found %d backup set(s) not part of any chain,"
+msgstr ""
 
-#: ../duplicity/dup_collections.py:701
+#: ../duplicity/dup_collections.py:696
 #, python-format
-msgid "and %d incomplete backup set."
-msgid_plural "and %d incomplete backup sets."
-msgstr[0] "a %d neúplná sada záloh."
-msgstr[1] "a %d neúplné sady záloh."
-msgstr[2] "a %d neúplných sad záloh."
-msgstr[3] ""
+msgid "and %d incomplete backup set(s)."
+msgstr ""
 
 #. "cleanup" is a hard-coded command, so do not translate it
-#: ../duplicity/dup_collections.py:706
+#: ../duplicity/dup_collections.py:699
 msgid "These may be deleted by running duplicity with the \"cleanup\" command."
 msgstr "Ty mohou být smazány spuštěním duplicity s příkazem „cleanup“ (vyčištění)."
 
-#: ../duplicity/dup_collections.py:709
+#: ../duplicity/dup_collections.py:702
 msgid "No orphaned or incomplete backup sets found."
 msgstr "Nebyly nalezeny žádné k ničemu nepatřící nebo neúplné sady záloh."
 
-#: ../duplicity/dup_collections.py:725
+#: ../duplicity/dup_collections.py:718
 #, python-format
-msgid "%d file exists on backend"
-msgid_plural "%d files exist on backend"
-msgstr[0] "%d soubor existuje na podpůrné vrstvě"
-msgstr[1] "%d soubory existují na podpůrné vrstvě"
-msgstr[2] "%d souborů existuje na podpůrné vrstvě"
-msgstr[3] ""
+msgid "%d file(s) exists on backend"
+msgstr ""
 
-#: ../duplicity/dup_collections.py:735
+#: ../duplicity/dup_collections.py:726
 #, python-format
-msgid "%d file exists in cache"
-msgid_plural "%d files exist in cache"
-msgstr[0] "%d soubor existuje v mezipaměti"
-msgstr[1] "%d soubory existují v mezipaměti"
-msgstr[2] "%d souborů existuje v mezipaměti"
-msgstr[3] ""
+msgid "%d file(s) exists in cache"
+msgstr ""
 
-#: ../duplicity/dup_collections.py:788
+#: ../duplicity/dup_collections.py:777
 msgid "Warning, discarding last backup set, because of missing signature file."
 msgstr "Varování, zahazuje se nejnovější sada záloh, protože chybí soubor s podpisem."
 
-#: ../duplicity/dup_collections.py:811
-msgid "Warning, found the following local orphaned signature file:"
-msgid_plural "Warning, found the following local orphaned signature files:"
-msgstr[0] "Varování, nalezen následující místní, k ničemu nepatřící podpisový soubor:"
-msgstr[1] "Varování, nalezeny následující místní, k ničemu nepatřící podpisové soubory:"
-msgstr[2] "Varování, nalezeno následujících místních, k ničemu nepatřící podpisových souborů:"
-msgstr[3] ""
+#: ../duplicity/dup_collections.py:800
+msgid "Warning, found the following local orphaned signature file(s):"
+msgstr ""
 
-#: ../duplicity/dup_collections.py:820
-msgid "Warning, found the following remote orphaned signature file:"
-msgid_plural "Warning, found the following remote orphaned signature files:"
-msgstr[0] "Varování, nalezen následující vzdálený soubor s podpisem, který k ničemu nepatří:"
-msgstr[1] "Varování, nalezeny následující vzdálené soubory s podpisem, které k ničemu nepatří:"
-msgstr[2] "Varování, nalezeno následujících vzdálených souborů s podpisem, které k ničemu nepatří:"
-msgstr[3] ""
+#: ../duplicity/dup_collections.py:805
+msgid "Warning, found the following remote orphaned signature file(s):"
+msgstr ""
 
-#: ../duplicity/dup_collections.py:829
+#: ../duplicity/dup_collections.py:810
 msgid "Warning, found signatures but no corresponding backup files"
 msgstr "Varování, nalezeny podpisy ale žádné odpovídající soubory záloh"
 
-#: ../duplicity/dup_collections.py:833
+#: ../duplicity/dup_collections.py:814
 msgid "Warning, found incomplete backup sets, probably left from aborted session"
 msgstr "Varování, nalezeny neúplné sady záloh, pravděpodobně zůstaly pro přerušeném sezení"
 
-#: ../duplicity/dup_collections.py:837
-msgid "Warning, found the following orphaned backup file:"
-msgid_plural "Warning, found the following orphaned backup files:"
-msgstr[0] "Varování, nalezen následující soubor zálohy, který k ničemu nepatří:"
-msgstr[1] "Varování, nalezeny následující soubory zálohy, které k ničemu nepatří:"
-msgstr[2] "Varování, nalezeno následujících souborů zálohy, které k ničemu nepatří:"
-msgstr[3] ""
+#: ../duplicity/dup_collections.py:818
+msgid "Warning, found the following orphaned backup file(s):"
+msgstr ""
 
-#: ../duplicity/dup_collections.py:854
+#: ../duplicity/dup_collections.py:831
 #, python-format
 msgid "Extracting backup chains from list of files: %s"
 msgstr "Vyzískávají se řetězce zálohy ze seznamu souborů: %s"
 
-#: ../duplicity/dup_collections.py:866
+#: ../duplicity/dup_collections.py:843
 #, python-format
 msgid "File %s is part of known set"
 msgstr "Soubor %s je součástí známé sady"
 
-#: ../duplicity/dup_collections.py:869
+#: ../duplicity/dup_collections.py:846
 #, python-format
 msgid "File %s is not part of a known set; creating new set"
 msgstr "Soubor %s není součástí známé sady, bude proto vytvořena nová"
 
-#: ../duplicity/dup_collections.py:874
+#: ../duplicity/dup_collections.py:851
 #, python-format
 msgid "Ignoring file (rejected by backup set) '%s'"
 msgstr "Ignoruje se soubor (odmítnutý sadou záloh) „%s“"
 
-#: ../duplicity/dup_collections.py:890
+#: ../duplicity/dup_collections.py:867
 #, python-format
 msgid "Found backup chain %s"
 msgstr "Nalezen řetězec záloh %s"
 
-#: ../duplicity/dup_collections.py:895
+#: ../duplicity/dup_collections.py:872
 #, python-format
 msgid "Added set %s to pre-existing chain %s"
 msgstr "Přidána sada %s k už existujícímu řetězci %s"
 
-#: ../duplicity/dup_collections.py:899
+#: ../duplicity/dup_collections.py:876
 #, python-format
 msgid "Found orphaned set %s"
 msgstr "Nalezena sada %s, která k ničemu nepatří"
 
-#: ../duplicity/dup_collections.py:1049
+#: ../duplicity/dup_collections.py:1026
 #, python-format
 msgid "No signature chain for the requested time. Using oldest available chain, starting at time %s."
 msgstr "Pro požadovaný čas neexistuje žádný řetězec podpisu. Náhradně se použije starší dostupný řetězec, začínající v čase %s."
 
-#: ../duplicity/dup_collections.py:1245
+#: ../duplicity/dup_collections.py:1222
 #, python-format
 msgid "File: %s"
 msgstr "Soubor: %s"
 
-#: ../duplicity/dup_collections.py:1246
+#: ../duplicity/dup_collections.py:1223
 #, python-format
 msgid "Total number of backup: %d"
 msgstr "Celkový počet záloh: %d"
 
-#: ../duplicity/dup_collections.py:1247 ../duplicity/dup_collections.py:1273
+#: ../duplicity/dup_collections.py:1224 ../duplicity/dup_collections.py:1250
 msgid "Type of file change:"
 msgstr "Typ změny souboru:"
 
-#: ../duplicity/dup_collections.py:1271
+#: ../duplicity/dup_collections.py:1248
 #, python-format
 msgid " Backup set time: %s"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:1272
+#: ../duplicity/dup_collections.py:1249
 #, python-format
 msgid "Total number of changes: %d"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:1273
+#: ../duplicity/dup_collections.py:1250
 msgid "File:"
 msgstr ""
 
