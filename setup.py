@@ -55,7 +55,7 @@ try:
     Version = get_version(**scm_version_args)
 except Exception as e:
     Version = u"1.2.1"
-    print(u"Unable to get SCM version: defaulting to %s" % (Version,))
+    print(u"Unable to get SCM version: %s\ndefaulting to %s" % (str(e), Version))
 Reldate = time.strftime(u"%B %d, %Y", time.gmtime(int(os.environ.get(u'SOURCE_DATE_EPOCH', time.time()))))
 
 
