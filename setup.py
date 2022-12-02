@@ -39,7 +39,8 @@ from setuptools.command.test import test
 
 
 # check that we can function here
-if not (sys.version_info[:2] >= (3, 5) or (sys.version_info[0] == 2 and sys.version_info[:2] >= (2, 7))):
+if not ((sys.version_info[0] == 2 and sys.version_info[1] >= 7) or
+        (sys.version_info[0] == 3 and sys.version_info[1] >= 5)):
     print(u"Sorry, duplicity requires version 2.7 or version 3.5 or later of Python.")
     sys.exit(1)
 
@@ -53,7 +54,7 @@ try:
     from setuptools_scm import get_version  # pylint: disable=import-error
     Version = get_version(**scm_version_args)
 except Exception as e:
-    Version = u"1.2.0"
+    Version = u"1.2.1"
     print(u"Unable to get SCM version: defaulting to %s" % (Version,))
 Reldate = time.strftime(u"%B %d, %Y", time.gmtime(int(os.environ.get(u'SOURCE_DATE_EPOCH', time.time()))))
 
@@ -107,30 +108,33 @@ def get_data_files():
             ),
         ]
 
-    if not os.environ.get(u'READTHEDOCS') == u'True':
-        # msgfmt the translation files
-        assert os.path.exists(u"po"), u"Missing 'po' directory."
+    # short circuit fot READTHEDOCS
+    if os.environ.get(u'READTHEDOCS') == u'True':
+        return data_files
 
-        if os.path.exists(u'po/LINGUAS'):
-            linguas = open(u'po/LINGUAS').readlines()
-            for line in linguas:
-                langs = line.split()
-                for lang in langs:
-                    try:
-                        os.mkdir(os.path.join(u"po", lang))
-                    except os.error:
-                        pass
-                    assert not os.system(u"cp po/%s.po po/%s" % (lang, lang)), lang
-                    assert not os.system(u"msgfmt po/%s.po -o po/%s/duplicity.mo" % (lang, lang)), lang
+    # msgfmt the translation files
+    assert os.path.exists(u"po"), u"Missing 'po' directory."
 
-        for root, dirs, files in os.walk(u"po"):
-            for file in files:
-                path = os.path.join(root, file)
-                if path.endswith(u"duplicity.mo"):
-                    lang = os.path.split(root)[-1]
-                    data_files.append(
-                        (u'share/locale/%s/LC_MESSAGES' % lang,
-                         [u"po/%s/duplicity.mo" % lang]))
+    if os.path.exists(u'po/LINGUAS'):
+        linguas = open(u'po/LINGUAS').readlines()
+        for line in linguas:
+            langs = line.split()
+            for lang in langs:
+                try:
+                    os.mkdir(os.path.join(u"po", lang))
+                except os.error:
+                    pass
+                assert not os.system(u"cp po/%s.po po/%s" % (lang, lang)), lang
+                assert not os.system(u"msgfmt po/%s.po -o po/%s/duplicity.mo" % (lang, lang)), lang
+
+    for root, dirs, files in os.walk(u"po"):
+        for file in files:
+            path = os.path.join(root, file)
+            if path.endswith(u"duplicity.mo"):
+                lang = os.path.split(root)[-1]
+                data_files.append(
+                    (u'share/locale/%s/LC_MESSAGES' % lang,
+                     [u"po/%s/duplicity.mo" % lang]))
 
     return data_files
 
@@ -198,7 +202,6 @@ class SdistCommand(sdist):
                                  --exclude Makefile \
                                  --exclude debian \
                                  --exclude docs \
-                                 --exclude pylintrc \
                                  --exclude readthedocs.yaml \
                                  --exclude testing/docker \
                                  --exclude testing/manual \
@@ -301,13 +304,41 @@ setup(name=u"duplicity",
         u"duplicity.backends.pyrax_identity",
         u"testing",
         u"testing.functional",
-        u"testing.overrides",
         u"testing.unit",
         ],
     package_dir={
         u"duplicity": u"duplicity",
         u"duplicity.backends": u"duplicity/backends",
         },
+    package_data={
+        u"testing": [
+            u"testing/gnupg",
+            u"testing/gnupg/private-keys-v1.d",
+            u"testing/gnupg/private-keys-v1.d/4572B9686180E88EA52ED65F1416E486F7A8CAF5.key",
+            u"testing/gnupg/private-keys-v1.d/D2DF6D795DFD90DB4F7A109970F506692731CA67.key",
+            u"testing/gnupg/private-keys-v1.d/B29B24778338E7F20437B21704EA434E522BC1FE.key",
+            u"testing/gnupg/private-keys-v1.d/1DBE767B921015FD5466978BAC968320E5BF6812.key",
+            u"testing/gnupg/private-keys-v1.d/910D6B4035D3FEE3DA5960C1EE573C5F9ECE2B8D.key",
+            u"testing/gnupg/private-keys-v1.d/7229722CD5A4726D5CC5588034ADA07429FDECAB.key",
+            u"testing/gnupg/README",
+            u"testing/gnupg/secring.gpg",
+            u"testing/gnupg/pubring.gpg",
+            u"testing/gnupg/random_seed",
+            u"testing/gnupg/gpg-agent.conf",
+            u"testing/gnupg/gpg.conf",
+            u"testing/gnupg/trustdb.gpg",
+            u"testing/gnupg/.gpg-v21-migrated",
+            u"testing/overrides",
+            u"testing/overrides/bin",
+            u"testing/overrides/bin/ncftpput",
+            u"testing/overrides/bin/ncftpget",
+            u"testing/overrides/bin/ncftpls",
+            u"testing/overrides/bin/tahoe",
+            u"testing/overrides/bin/lftp",
+            u"testing/overrides/bin/hsi",
+            u"testing/overrides/__init__.py",
+        ],
+    },
     ext_modules=ext_modules,
     scripts=[
         u"bin/rdiffdir",
@@ -351,6 +382,7 @@ setup(name=u"duplicity",
         u"Programming Language :: Python :: 3.8",
         u"Programming Language :: Python :: 3.9",
         u"Programming Language :: Python :: 3.10",
+        u"Programming Language :: Python :: 3.11",
         u"Topic :: System :: Archiving :: Backup"
         ],
     )
