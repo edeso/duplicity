@@ -2,6 +2,8 @@
 
 ### Changes
 
+* More changes to get release process working. [Kenneth Loafman]
+
 * Fix for setuptools changes.  Add testing data files to mix. [Kenneth Loafman]
 
 
