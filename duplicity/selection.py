@@ -269,7 +269,7 @@ Exiting because this probably isn't what you meant.""") %
                            (u", ".join(f_opt),),
                            log.ErrorCode.redundant_filter)
 
-        # Called by commandline.py set_selection. External.
+        # Called by cli_main.py set_selection. External.
         filelists_index = 0
         mode = u"globbing"
         no_case = False
