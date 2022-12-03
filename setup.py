@@ -40,9 +40,8 @@ from setuptools.command.test import test
 
 
 # check that we can function here
-if not ((sys.version_info[0] == 2 and sys.version_info[1] >= 7) or
-        (sys.version_info[0] == 3 and sys.version_info[1] >= 5)):
-    print(u"Sorry, duplicity requires version 2.7 or version 3.5 or later of Python.")
+if not (sys.version_info[0] == 3 and sys.version_info[1] >= 7):
+    print(u"Sorry, duplicity requires version 3.7 or later of Python3.")
     sys.exit(1)
 
 
@@ -55,7 +54,7 @@ try:
     from setuptools_scm import get_version  # pylint: disable=import-error
     Version = get_version(**scm_version_args)
 except Exception as e:
-    Version = u"1.2.1"
+    Version = u"2.0.0"
     print(u"Unable to get SCM version: %s\ndefaulting to %s" % (str(e), Version))
 Reldate = time.strftime(u"%B %d, %Y", time.gmtime(int(os.environ.get(u'SOURCE_DATE_EPOCH', time.time()))))
 
