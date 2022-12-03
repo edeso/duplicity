@@ -912,10 +912,8 @@ def verify(col_stats):
     # Unfortunately, ngettext doesn't handle multiple number variables, so we
     # split up the string.
     log.Notice(_(u"Verify complete: %s, %s.") %
-               (ngettext(u"%d file compared",
-                         u"%d files compared", total_count) % total_count,
-                ngettext(u"%d difference found",
-                         u"%d differences found", diff_count) % diff_count))
+               (_(u"%d file(s) compared") % total_count,
+                _(u"%d difference(s) found") % diff_count))
     if diff_count >= 1:
         exit_val = 1
 
@@ -938,9 +936,7 @@ def cleanup(col_stats):
 
     filestr = u"\n".join(map(os.fsdecode, extraneous))
     if config.force:
-        log.Notice(ngettext(u"Deleting this file from backend:",
-                            u"Deleting these files from backend:",
-                            len(extraneous)) + u"\n" + filestr)
+        log.Notice(_(u"Deleting these file(s) from backend:") + u"\n" + filestr)
         if not config.dry_run:
             col_stats.backend.delete(ext_remote)
             for fn in ext_local:
@@ -949,9 +945,7 @@ def cleanup(col_stats):
                 except Exception:
                     pass
     else:
-        log.Notice(ngettext(u"Found the following file to delete:",
-                            u"Found the following files to delete:",
-                            len(extraneous)) + u"\n" + filestr + u"\n" +
+        log.Notice(_(u"Found the following file(s) to delete:") + u"\n" + filestr + u"\n" +
                    _(u"Run duplicity again with the --force option to actually delete."))
 
 
@@ -1017,9 +1011,7 @@ def remove_old(col_stats):
         log.Notice(_(u"No old backup sets found, nothing deleted."))
         return
     if config.force:
-        log.Notice(ngettext(u"Deleting backup chain at time:",
-                            u"Deleting backup chains at times:",
-                            len(chainlist)) +
+        log.Notice(_(u"Deleting backup chain(s) at time:") +
                    u"\n" + chain_times_str(chainlist))
         # Add signature files too, since they won't be needed anymore
         chainlist += col_stats.get_signature_chains_older_than(config.remove_time)
@@ -1042,9 +1034,7 @@ def remove_old(col_stats):
                 chain.delete(keep_full=config.remove_all_inc_of_but_n_full_mode)
         col_stats.set_values(sig_chain_warning=None)
     else:
-        log.Notice(ngettext(u"Found old backup chain at the following time:",
-                            u"Found old backup chains at the following times:",
-                            len(chainlist)) +
+        log.Notice(_(u"Found old backup chain(s) at the following time:") +
                    u"\n" + chain_times_str(chainlist) + u"\n" +
                    _(u"Rerun command with --force option to actually delete."))
 

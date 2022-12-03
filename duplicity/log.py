@@ -325,6 +325,12 @@ class ErrorCode(object):
     backend_command_error = 54
     backend_code_error = 55
 
+    # file selection filter mode errors
+    redundant_filter = 70
+    trailing_filter = 71
+    absolute_files_from = 72
+    empty_files_from = 73
+
     # Reserve 126 because it is used as an error code for pkexec
     # Reserve 127 because it is used as an error code for pkexec
     # Reserve 255 because it is used as an error code for gksu

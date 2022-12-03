@@ -46,9 +46,9 @@ echo "$0 of ${VERSION} on ${BUILD}"
 # make clean source dir
 rm -rf build
 mkdir -p build
-tar xf duplicity-${VERSION}.tar.gz -C build
-rm -f duplicity-${VERSION}.tar.gz
-cd build/duplicity-${VERSION}
+tar xf duplicity-"${VERSION}".tar.gz -C build
+rm -f duplicity-"${VERSION}".tar.gz
+cd build/duplicity-"${VERSION}"
 
 # print version in build copy of snapcraft.yaml
 head -2 snap/snapcraft.yaml | tail -1
