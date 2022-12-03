@@ -32,7 +32,7 @@ from duplicity import gpg
 version = __version__
 
 # The following args are set by ommandline processing
-# they correspond to the args in commandline.commands
+# they correspond to the args in cli_main.commands
 positional = None
 source_url = None
 target_url = None

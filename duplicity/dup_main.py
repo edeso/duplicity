@@ -564,7 +564,7 @@ def full_backup(col_stats):
         progress.tracker.set_evidence(diffdir.stats, True)
         # Reinit the config.select iterator, so
         # the core of duplicity can rescan the paths
-        commandline.set_selection()
+        cli_main.set_selection()
         progress.progress_thread = progress.LogProgressThread()
 
     if config.dry_run:
@@ -659,7 +659,7 @@ def incremental_backup(sig_chain):
         progress.tracker.set_evidence(diffdir.stats, False)
         # Reinit the config.select iterator, so
         # the core of duplicity can rescan the paths
-        commandline.set_selection()
+        cli_main.set_selection()
         progress.progress_thread = progress.LogProgressThread()
 
     if config.dry_run:
@@ -1434,7 +1434,7 @@ See https://bugs.launchpad.net/duplicity/+bug/931175
     dup_time.setcurtime()
 
     # determine what action we're performing and process command line
-    action = commandline.ProcessCommandLine(sys.argv[1:])
+    action = cli_main.ProcessCommandLine(sys.argv[1:])
 
     config.lockpath = os.path.join(config.archive_dir_path.name, b"lockfile")
     config.lockfile = fasteners.process_lock.InterProcessLock(config.lockpath)

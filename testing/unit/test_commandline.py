@@ -58,63 +58,63 @@ class CommandlineTest(UnitTestCase):
         """
         test_args = copy.copy(self.good_args)
         test_args.update(new_args)
-        for cmd in commandline.commands:
+        for cmd in cli_main.commands:
             runtest = False
-            args = commandline.commands[cmd]
+            args = cli_main.commands[cmd]
             cline = [cmd]
             for arg in args:
                 cline.append(test_args[arg])
                 if arg in new_args:
                     runtest = True
             if runtest:
-                with self.assertRaisesRegex(commandline.CommandLineError, err_msg) as cm:
-                    commandline.parse_cmdline_options(cline)
+                with self.assertRaisesRegex(cli_main.CommandLineError, err_msg) as cm:
+                    cli_main.parse_cmdline_options(cline)
 
     def test_full_commands(self):
         u"""
         test backup, restore, verify with explicit commands
         """
 
-        commandline.parse_cmdline_options(u"cleanup file://duptest".split())
+        cli_main.parse_cmdline_options(u"cleanup file://duptest".split())
         assert config.cleanup
         assert config.target_url == u"file://duptest"
 
-        commandline.parse_cmdline_options(u"collection-status file://duptest".split())
+        cli_main.parse_cmdline_options(u"collection-status file://duptest".split())
         assert config.collection_status
         assert config.target_url == u"file://duptest"
 
-        commandline.parse_cmdline_options(u"full foo/bar file://duptest".split())
+        cli_main.parse_cmdline_options(u"full foo/bar file://duptest".split())
         assert config.full
         assert config.source_dir.endswith(u"foo/bar")
         assert config.target_url == u"file://duptest"
 
-        commandline.parse_cmdline_options(u"inc foo/bar file://duptest".split())
+        cli_main.parse_cmdline_options(u"inc foo/bar file://duptest".split())
         assert config.incremental
         assert config.source_dir.endswith(u"foo/bar")
         assert config.target_url == u"file://duptest"
 
-        commandline.parse_cmdline_options(u"list-current-files file://duptest".split())
+        cli_main.parse_cmdline_options(u"list-current-files file://duptest".split())
         assert config.list_current_files
         assert config.target_url == u"file://duptest"
 
-        commandline.parse_cmdline_options(u"remove-all-but-n-full 5 file://duptest".split())
+        cli_main.parse_cmdline_options(u"remove-all-but-n-full 5 file://duptest".split())
         assert config.remove_all_but_n_full
         assert config.target_url == u"file://duptest"
 
-        commandline.parse_cmdline_options(u"remove-all-inc-of-but-n-full 5 file://duptest".split())
+        cli_main.parse_cmdline_options(u"remove-all-inc-of-but-n-full 5 file://duptest".split())
         assert config.remove_all_inc_of_but_n_full
         assert config.target_url == u"file://duptest"
 
-        commandline.parse_cmdline_options(u"remove-older-than 100 file://duptest".split())
+        cli_main.parse_cmdline_options(u"remove-older-than 100 file://duptest".split())
         assert config.remove_older_than
         assert config.target_url == u"file://duptest"
 
-        commandline.parse_cmdline_options(u"restore file://duptest foo/bar".split())
+        cli_main.parse_cmdline_options(u"restore file://duptest foo/bar".split())
         assert config.restore
         assert config.source_dir.endswith(u"foo/bar")
         assert config.target_url == u"file://duptest"
 
-        commandline.parse_cmdline_options(u"verify file://duptest foo/bar".split())
+        cli_main.parse_cmdline_options(u"verify file://duptest foo/bar".split())
         assert config.verify
         assert config.source_dir.endswith(u"foo/bar")
         assert config.target_url == u"file://duptest"
@@ -123,12 +123,12 @@ class CommandlineTest(UnitTestCase):
         u"""
         test backup, restore, verify without explicit commands
         """
-        commandline.parse_cmdline_options(u"foo/bar file://duptest".split())
+        cli_main.parse_cmdline_options(u"foo/bar file://duptest".split())
         assert config.full
         assert config.source_dir.endswith(u"foo/bar")
         assert config.target_url == u"file://duptest"
 
-        commandline.parse_cmdline_options(u"file://duptest foo/bar".split())
+        cli_main.parse_cmdline_options(u"file://duptest foo/bar".split())
         assert config.restore
         assert config.source_dir.endswith(u"foo/bar")
         assert config.target_url == u"file://duptest"
