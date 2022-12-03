@@ -27,7 +27,7 @@ google-auth-oauthlib
 jottalib
 keyring
 mediafire
-megatools
+megatools               ; python_version >= '3.6'
 paramiko
 pexpect
 psutil
@@ -57,8 +57,8 @@ tox
 
 ##### documentation libraries #####
 
-gitchangelog
-myst-parser
-pystache
-sphinx
-sphinx-rtd-theme
+gitchangelog            ; python_version >= '3.6'
+myst-parser             ; python_version >= '3.6'
+pystache                ; python_version >= '3.6'
+sphinx                  ; python_version >= '3.6'
+sphinx-rtd-theme        ; python_version >= '3.6'

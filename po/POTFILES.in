@@ -4,7 +4,6 @@ duplicity/tempdir.py
 duplicity/dup_threading.py
 duplicity/backend.py
 duplicity/config.py
-duplicity/gpg_error_codes.py
 duplicity/manifest.py
 duplicity/log.py
 duplicity/util.py
