@@ -23,12 +23,14 @@
 #     - template: Dependency-Scanning.gitlab-ci.yml
 
 .test-template: &test-template
-    image: registry.gitlab.com/duplicity/duplicity/firstprime/duplicity_test
     stage: test
     rules:
         - if: $CI_COMMIT_MESSAGE =~ /\[skip[ _-]tests?\]/i || $SKIP_TESTS
           when: never
+        - if: $CI_MERGE_REQUEST_APPROVED
+          when: always
         - changes:
+            - .gitlab-ci.yml
             - bin/duplicity
             - bin/rdiffdir
             - duplicity/**/*
@@ -52,39 +54,58 @@ default:
         # Set locale to prevent UTF-8 errors
         - export LANG=C.UTF-8
         - export LC_ALL=C.UTF-8
-        - export PYENV_ROOT="/root/.pyenv"
-        - export TOXWORKDIR="/root/.tox"
+        - apt-get update
+        - apt-get install -y build-essential git intltool lftp librsync-dev
+                             libffi-dev libssl-dev openssl par2 rdiff tzdata
     interruptible: true
 
 code:
     <<: *test-template
+    image: python:3.11
     stage: qual
     script:
+        - python3 -m pip install -r requirements.txt
         - tox -e code
 
 py37:
     <<: *test-template
+    image: python:3.7
     stage: test
     script:
+        - python3 -m pip install -r requirements.txt
         - tox -e py37
 
 py38:
     <<: *test-template
+    image: python:3.8
     stage: test
     script:
+        - python3 -m pip install -r requirements.txt
         - tox -e py38
 
 py39:
     <<: *test-template
+    image: python:3.9
     stage: test
     script:
+        - python3 -m pip install -r requirements.txt
         - tox -e py39
 
 py310:
     <<: *test-template
+    image: python:3.10
     stage: test
     script:
+        - python3 -m pip install -r requirements.txt
         - tox -e py310
+
+py311:
+    <<: *test-template
+    image: python:3.11
+    stage: test
+    script:
+        - python3 -m pip install -r requirements.txt
+        - tox -e py311
 
 build_pip:
     stage: deploy

@@ -69,8 +69,6 @@ def with_tempdir(fn):
 if __name__ == u"__main__":
     try:
 
-        util.start_debugger()
-
         #         import cProfile
         #         import pstats
         #         import StringIO
@@ -78,6 +76,7 @@ if __name__ == u"__main__":
         #         prof.enable(subcalls=True, builtins=True)
 
         log.setup()
+        util.start_debugger()
         with_tempdir(main)
 
         #         prof.disable()

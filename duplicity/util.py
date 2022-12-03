@@ -234,29 +234,8 @@ def which(program):
     return None
 
 
-def start_debugger(remote=False):
+def start_debugger():
     if not os.getenv(u'DEBUG_RUNNING', None) and (u'--pydevd' in sys.argv or os.getenv(u'PYDEVD', None)):
-        if remote:
-            # modify this for your configuration.
-            # client = base path in machine that Liclipse is on
-            # server = base path in machine that duplicity is on
-            client = u'/Users/ken/workspace/duplicity-testfiles'
-            server = u'/home/ken/workspace/duplicity-testfiles'
-
-            # relative paths under duplicity root
-            duppaths = [
-                u'',
-                u'bin',
-                u'duplicity',
-                u'duplicity/backends',
-                u'testing',
-                u'testing/functional',
-                u'testing/unit',
-            ]
-            pathlist = [(os.path.normpath(os.path.join(client, p)),
-                         os.path.normpath(os.path.join(server, p))) for p in duppaths]
-            os.environ[u'PATHS_FROM_ECLIPSE_TO_PYTHON'] = json.dumps(pathlist)
-
         try:
             import pydevd_pycharm as pydevd  # pylint: disable=import-error
         except ImportError:
@@ -269,7 +248,7 @@ def start_debugger(remote=False):
 
         try:
             # NOTE: this needs to be customized for your system
-            pydevd.settrace(u'dione.local', port=6700, stdoutToServer=True, stderrToServer=True)
+            pydevd.settrace(u'dione.local', port=6777, stdoutToServer=True, stderrToServer=True)
         except ConnectionRefusedError as e:
             log.FatalError(u"Connection refused for debug.  Check your setup.")
 
@@ -305,3 +284,16 @@ def csv_args_to_dict(arg):
             for i in range(0, len(row), 2):
                 mydict[row[i]] = row[i + 1]
     return mydict
+
+
+# TODO: just use util.fsdecode().casefold() directly when python27 is gone
+def casefold_compat(s):
+    u"""
+    Compatability function for casefolding which provides an acceptable for
+    older pythons. Can likely be removed once python2 support is no longer o
+    any interest.
+    """
+    if sys.version_info.major >= 3 and sys.version_info.minor >= 3:
+        return s.casefold()
+    else:
+        return s.lower()

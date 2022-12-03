@@ -38,7 +38,7 @@ class FilePrefixError(GlobbingError):
 
 def _glob_get_prefix_regexs(glob_str):
     u"""Return list of regexps equivalent to prefixes of glob_str"""
-    # Internal. Used by glob_get_normal_sf.
+    # Internal. Used by glob_get_sf.
     glob_parts = glob_str.split(u"/")
     if u"" in glob_parts[1:-1]:
         # "" OK if comes first or last, as in /foo/
@@ -58,10 +58,23 @@ def select_fn_from_glob(glob_str, include, ignore_case=False):
     arguments a path, a glob string and include (0 indicating that the glob
     string is an exclude glob and 1 indicating that it is an include glob,
     returning:
+
     0 - if the file should be excluded
     1 - if the file should be included
     2 - if the folder should be scanned for any included/excluded files
     None - if the selection function has nothing to say about the file
+
+
+    The basic idea is to turn glob_str into a regular expression,
+    and just use the normal regular expression.  There is a
+    complication because the selection function should return '2'
+    (scan) for directories which may contain a file which matches
+    the glob_str.  So we break up the glob string into parts, and
+    any file which matches an initial sequence of glob parts gets
+    scanned.
+
+    Thanks to Donovan Baarda who provided some code which did some
+    things similar to this.
 
     Note: including a folder implicitly includes everything within it.
     """
@@ -154,7 +167,7 @@ def glob_to_regex(pat):
     by Donovan Baarda.
 
     """
-    # Internal. Used by glob_get_normal_sf, glob_get_prefix_res and unit tests.
+    # Internal. Used by glob_get_sf, glob_get_prefix_res and unit tests.
 
     assert isinstance(pat, str)
 

@@ -659,10 +659,7 @@ class CollectionsStatus(object):
              (self.backend.__class__.__name__,),
              _(u"Archive dir: %s") % (self.archive_dir_path.uc_name if self.archive_dir_path else u'None',)]
 
-        l.append(u"\n" +
-                 ngettext(u"Found %d secondary backup chain.",
-                          u"Found %d secondary backup chains.",
-                          len(self.other_backup_chains))
+        l.append(u"\n" + _(u"Found %d secondary backup chain(s).")
                  % len(self.other_backup_chains))
         for i in range(len(self.other_backup_chains)):
             l.append(_(u"Secondary chain %d of %d:") %
@@ -678,14 +675,10 @@ class CollectionsStatus(object):
             l.append(_(u"No backup chains with active signatures found"))
 
         if self.orphaned_backup_sets or self.incomplete_backup_sets:
-            l.append(ngettext(u"Also found %d backup set not part of any chain,",
-                              u"Also found %d backup sets not part of any chain,",
-                              len(self.orphaned_backup_sets))
-                     % (len(self.orphaned_backup_sets),))
-            l.append(ngettext(u"and %d incomplete backup set.",
-                              u"and %d incomplete backup sets.",
-                              len(self.incomplete_backup_sets))
-                     % (len(self.incomplete_backup_sets),))
+            l.append(_(u"Also found %d backup set(s) not part of any chain,")
+                     % len(self.orphaned_backup_sets))
+            l.append(_(u"and %d incomplete backup set(s).")
+                     % len(self.incomplete_backup_sets))
             # TRANSL: "cleanup" is a hard-coded command, so do not translate it
             l.append(_(u'These may be deleted by running duplicity with the '
                        u'"cleanup" command.'))
@@ -706,10 +699,8 @@ class CollectionsStatus(object):
 
         # get remote filename list
         backend_filename_list = self.backend.list()
-        log.Debug(ngettext(u"%d file exists on backend",
-                           u"%d files exist on backend",
-                           len(backend_filename_list)) %
-                  len(backend_filename_list))
+        log.Debug(_(u"%d file(s) exists on backend")
+                  % len(backend_filename_list))
 
         # get local filename list
         local_filename_list = self.archive_dir_path.listdir()
@@ -789,21 +780,13 @@ class CollectionsStatus(object):
         assert self.values_set
 
         if self.local_orphaned_sig_names:
-            log.Warn(ngettext(u"Warning, found the following local orphaned "
-                              u"signature file:",
-                              u"Warning, found the following local orphaned "
-                              u"signature files:",
-                              len(self.local_orphaned_sig_names)) + u"\n" +
-                     u"\n".join(map(os.fsdecode, self.local_orphaned_sig_names)),
+            log.Warn(_(u"Warning, found the following local orphaned signature file(s):") + u"\n" +
+                     u"\n".join(map(util.fsdecode, self.local_orphaned_sig_names)),
                      log.WarningCode.orphaned_sig)
 
         if self.remote_orphaned_sig_names:
-            log.Warn(ngettext(u"Warning, found the following remote orphaned "
-                              u"signature file:",
-                              u"Warning, found the following remote orphaned "
-                              u"signature files:",
-                              len(self.remote_orphaned_sig_names)) + u"\n" +
-                     u"\n".join(map(os.fsdecode, self.remote_orphaned_sig_names)),
+            log.Warn(_(u"Warning, found the following remote orphaned signature file(s):") + u"\n" +
+                     u"\n".join(map(util.fsdecode, self.remote_orphaned_sig_names)),
                      log.WarningCode.orphaned_sig)
 
         if self.all_sig_chains and sig_chain_warning and not self.matched_chain_pair:
@@ -815,11 +798,7 @@ class CollectionsStatus(object):
                        u"from aborted session"), log.WarningCode.incomplete_backup)
 
         if self.orphaned_backup_sets:
-            log.Warn(ngettext(u"Warning, found the following orphaned "
-                              u"backup file:",
-                              u"Warning, found the following orphaned "
-                              u"backup files:",
-                              len(self.orphaned_backup_sets)) + u"\n" +
+            log.Warn(_(u"Warning, found the following orphaned backup file(s):") + u"\n" +
                      u"\n".join(map(str, self.orphaned_backup_sets)),
                      log.WarningCode.orphaned_backup)
 

@@ -62,15 +62,13 @@ ignore_regexps = [
     r'@cosmetic', r'!cosmetic',
     r'@refactor', r'!refactor',
     r'@wip', r'!wip',
-    r'^(chg|fix|new)\s*:\s*pkg:',
-    r'^(chg|fix|new)\s*:\s*dev:',
     r'^(.{3,3}\s*:)?\s*[fF]irst commit.?\s*$',
     r'^Launchpad automatic translations update..*$',
     r'^.*LP translations.*$',
-    r'^New Crowdin updates.*$',
+    r'^.*New Crowdin updates.*$',
     r'^.*Change version for LP.*$',
     r'^.*Update changelog..*$',
-    r'^(\* )?Prep\s*for\s*\d+\.\d+\.\d+.*$',
+    r'^.*Prep for .*$',
     r'^$',  ## ignore commits with empty messages
 ]
 

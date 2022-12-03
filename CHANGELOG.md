@@ -1,8 +1,110 @@
+## rel.1.2.1 (2022-12-02)
+
+### Changes
+
+* More changes to get release process working. [Kenneth Loafman]
+
+* Fix for setuptools changes.  Add testing data files to mix. [Kenneth Loafman]
+
+
+## rel.1.2.0 (2022-12-01)
+
+### New
+
+* Add rsync style --files-from=FILE. Fixes #151. [Kenneth Loafman]
+
+* Add literal include/excludes. Fixes #138. [Kenneth Loafman]
+
+### Changes
+
+* Update duplicity.pot. [Kenneth Loafman]
+
+* Add test case for issue #683. [Kenneth Loafman]
+
+* Don't run start\_debugger till after logging started. [Kenneth Loafman]
+
+* Always run pipeline after MR approval. [Kenneth Loafman]
+
+* Remove gpg\_error\_codes.py / update duplicity.pot. [Kenneth Loafman]
+
+* Fix name in .gitlab-ci.yml. [Kenneth Loafman]
+
+* Go back to standard tests, no master image. [Kenneth Loafman]
+
+* Go back to standard tests, no master image. [Kenneth Loafman]
+
+* Go back to standard tests, no master image. [Kenneth Loafman]
+
+* Go back to standard tests, no master image. [Kenneth Loafman]
+
+* Go back to standard tests, no master image. [Kenneth Loafman]
+
+* Go back to standard tests, no master image. [Kenneth Loafman]
+
+* Add testing for Python 3.11. [Kenneth Loafman]
+
+* Update deprecation messages.  Cleanup. [Kenneth Loafman]
+
+* Reformat / cleanup Makefile. [Kenneth Loafman]
+
+* Fixup help entries in Makefile. [Kenneth Loafman]
+
+* Remove targets xlate-*.  Add target pot. [Kenneth Loafman]
+
+* Change Crowdin commit message. [Kenneth Loafman]
+
+* Update po/duplicity.pot. [Kenneth Loafman]
+
+* Cleanup and make sure setup cleans po dir. [Kenneth Loafman]
+
+* Fix version, oversight in previious commit. [ede]
+
+  [ci_skip]
+
+* Fix snap build for non-amd64 archs. [ede]
+
+  [ci_skip]
+
+* Add filter mode to log line.  #138. [Kenneth Loafman]
+
+* Fix emacs mode line. [Kenneth Loafman]
+
+### Fix
+
+* Fix for issue #683. [Kenneth Loafman]
+
+  - ngettext() is returning empty string on plural and zero counts.   -
+  go back to plain gettext() and use just a single translation.   -
+  modify test to run backup using all translations we have.
+
+* Azure Blob Storage backend fails to resume.  Fixes #149. [Kenneth Loafman]
+
+* Went to aggressive on cleanup(). [Kenneth Loafman]
+
+* Fix about 20 pep8 issues. [Kenneth Loafman]
+
+* More fixes to po/update-po. [Kenneth Loafman]
+
+* Fix po/update-pot to leave po/LINGUAS in po. [Kenneth Loafman]
+
+* Run po/update-pot. [Kenneth Loafman]
+
+
 ## rel.1.0.1 (2022-10-03)
 
 ### Changes
 
-* Pkg New Crowdin updates. [Kenneth Loafman]
+* Various cleanups to code and tests. [Kenneth Loafman]
+
+* Accept all .po files for update-pot. [Kenneth Loafman]
+
+* Build control files for update-pot. [Kenneth Loafman]
+
+* Accept all .po files for LINGUAS gen. [Kenneth Loafman]
+
+* Build control files for update-pot. [Kenneth Loafman]
+
+* Add tags to commit message. [Kenneth Loafman]
 
 ### Fix
 
@@ -16,13 +118,53 @@
 
 * Update Crowdin configuration file. [Kenneth Loafman]
 
+* Update Crowdin configuration file. [Kenneth Loafman]
+
+* Update Crowdin configuration file. [Kenneth Loafman]
+
+* Update Crowdin configuration file. [Kenneth Loafman]
+
   Update Crowdin configuration file
   Update Crowdin configuration file
 
 
-## rel.1.0.0 (2022-09-25)
+## rel.1.0.0 (2022-09-23)
 
 ### Changes
+
+* Update README-SNAP.md to show options. [Kenneth Loafman]
+
+* Add instructions for building snaps. [Kenneth Loafman]
+
+* Add missing license metadata. [ede]
+
+  [ci_skip]
+
+* More docker cleanup. [Kenneth Loafman]
+
+  - Add rclone to package installs.
+
+* Trigger website rebuild on pushes/tags. [ede]
+
+* More docker cleanup. [Kenneth Loafman]
+
+  - remove copy of setup.py, not used   - add testit.py for basic
+  testing
+
+* More docker cleanup. [Kenneth Loafman]
+
+  - use 'docker compose' not docker-compose   - remove more unused items
+
+* Optimize build of duplicity\_test image. [Kenneth Loafman]
+
+  - use buildkit to speed up build,   - split huge layers into smaller
+  ones   - changes in testing dir trigger pipeline
+
+* Fold requirements.dev into requirements.txt.  Del requirements.dev. [Kenneth Loafman]
+
+* Fold requirements.dev into requirements.txt.  Del requirements.dev. [Kenneth Loafman]
+
+* Fold requirements.dev into requirements.txt.  Del requirements.dev. [Kenneth Loafman]
 
 * Extend code\_test to testing directory. [Kenneth Loafman]
 
@@ -36,11 +178,15 @@
 
 * Ref requirements files instead of listing in duplicate. [Kenneth Loafman]
 
+* Action and Audience must be lowercased. [Kenneth Loafman]
+
 * Nuke skip tests and skip ci in CHANGELOG.md. [Kenneth Loafman]
 
 * New os\_options for SWIFT backend. [Florian Perrot]
 
 * Clarify when --s3-endpoint-url,-region-name are needed. [ede]
+
+* Change from master to main branch naming. [Kenneth Loafman]
 
 * Better defaults for S3 mac procs and chunk sizing. [Josh Goebel]
 
@@ -48,15 +194,27 @@
 
 * Migrate to unittest.mock. [Gwyn Ciesla]
 
+* Fix modeline, change utf8 to utf-8 to make emacs happy. [Kenneth Loafman]
+
 * Replace pexpect.run with subprocess\_popen in par2backend. [Kenneth Loafman]
 
 * Fix PEP8 issue. [Kenneth Loafman]
+
+* Add py310 to list of versions supported. [Kenneth Loafman]
+
+* Fix script pushsnap to handle errors. [Kenneth Loafman]
 
 * Add returncode to BackendException for rclonebackend. [Kenneth Loafman]
 
 * Snap use core20 coreutils if none in PATH env var. [ede]
 
   add "/snap/core20/current/usr/bin" to PATH
+
+* Need to install python3 for pages. [Kenneth Loafman]
+
+* Don't push to savannah any more. [Kenneth Loafman]
+
+* Fix version for builds. [Kenneth Loafman]
 
 ### Fix
 
@@ -68,9 +226,13 @@
 
 * Reduce number of GPG file descriptors, add GPG translatable errors. [Kenneth Loafman]
 
+* Remove sign-build step.  Does not work. [Kenneth Loafman]
+
 * Add back overzealous removal of 'import re'. [Kenneth Loafman]
 
 * Webdav listing failed on responses with namespace 'ns0' [Felix Prüter]
+
+* Fix build of apsw/sqlite3 bundle.  Don't store apsw in repo. [Kenneth Loafman]
 
 * Make sure that FileChunkIO#name is a string, not a bytes-like object. [Josh Goebel]
 
@@ -90,13 +252,9 @@
 
 * Add missing double quote. [ede]
 
+* Install requirements.dev. [Kenneth Loafman]
+
 ### Other
-
-* Update Crowdin configuration file. [Kenneth Loafman]
-
-* Update Crowdin configuration file. [Kenneth Loafman]
-
-* Update Crowdin configuration file. [Kenneth Loafman]
 
 * Doc: some reformatting for better readability. [ede]
 
@@ -109,7 +267,28 @@
 
 * Add --webdav-headers to webdavbackend.  Fixes #94. [Kenneth Loafman]
 
+* Add tests for Python 3.10. [Kenneth Loafman]
+
+* Make sdist only provide necessary items for build. [Kenneth Loafman]
+
+* Add changelog to deploy stage to build CHANGELOG.md. [Kenneth Loafman]
+
+  - make job changelog to run tools/makechangelog in CI/CD.   - make
+  jobs build_pip and build_snap require changelog.
+
 * Document rclone option setting via env vars. [edeso]
+
+* Enable CI snapcraft amd64 builds with docker. [edeso]
+
+  .gitlab-ci.yml   job build_snap based on a working docker image
+  commented 'only:' limitiation, it's manual anyway   used split out
+  tools/installsnap step   upload artifact (duplicity-*.snap) regardless
+  - so it can be downloaded and debugged   - keep it for 30 deays by
+  default
+  snap/snapcraft.yaml   - fixup PYTHONPATH
+  new 'tools/installsnap' that detects and works with docker
+  tools/testsnap   remove installation step   remove double test entries
+  change testing to use gpg and compression
 
 * Document rclone option setting via env vars. [edeso]
 
@@ -142,11 +321,173 @@
 
 * Create singular container for testing. [Kenneth Loafman]
 
+* Fix PEP8 issue. [Kenneth Loafman]
+
+* Remove build on merge request and unused variables. [Kenneth Loafman]
+
+* Cosmetic changes only. [Kenneth Loafman]
+
+* Make pages manual deploy. [Kenneth Loafman]
+
+* Changelog removed, remove needs. [Kenneth Loafman]
+
+* Only build pip and snap, don't push. [Kenneth Loafman]
+
+* Fix misspelled stage name. [Kenneth Loafman]
+
+* Fix deps format. [Kenneth Loafman]
+
+* Fix deps format. [Kenneth Loafman]
+
+* Add requirements.dev to tox.ini. [Kenneth Loafman]
+
+* Include pydevd in requirements.txt. [Kenneth Loafman]
+
+* Go back to ubuntudesktop/gnome-3-38-2004. [Kenneth Loafman]
+
+* Add tools dir to changes list in deploy-template. [Kenneth Loafman]
+
+* Try snap with utuntu:20.04. Fix artifacts loc. [Kenneth Loafman]
+
+* Some debugging statements. [Kenneth Loafman]
+
+* Some debugging statements. [Kenneth Loafman]
+
+* Set up the SSH key and the known\_hosts file. [Kenneth Loafman]
+
+* Set up config for git. [Kenneth Loafman]
+
+* Clone repo so setuptools-scm works properly. [Kenneth Loafman]
+
+* Move setuptools* to .dev.  Nuke report.xml artifact. [Kenneth Loafman]
+
+* Add some more requirements. [Kenneth Loafman]
+
+* Install git and intltool for changelog. [Kenneth Loafman]
+
+* Add changes: to deploy-template. [Kenneth Loafman]
+
+* Fix syntax. [Kenneth Loafman]
+
+* Minimize CI/CD overhead. [Kenneth Loafman]
+
+* Split requirements into .txt and .dev. [Kenneth Loafman]
+
+  .txt - normal user   .dev - developer
+
+* Standardize startup sequence. [Kenneth Loafman]
+
+* Remove deploy jobs needing secret keys. [Kenneth Loafman]
+
+* Do not supply user/password to twine, just access token. [Kenneth Loafman]
+
+* Do not supply user/password to twine, just access token. [Kenneth Loafman]
+
+* Add default never to .test-template. [Kenneth Loafman]
+
+* Change PYPI\_ACCESS\_TOKEN back to variable and just echo it. [Kenneth Loafman]
+
+* Just cp PYPI\_ACCESS\_TOKEN to \~/.pypirc. [Kenneth Loafman]
+
+* Fix usage of PYPI\_ACCESS\_TOKEN. [Kenneth Loafman]
+
+* Set to run deploy only after a push event. [Kenneth Loafman]
+
+* Whoops, can't run deploy on source branch to merge. [Kenneth Loafman]
+
+* Use rules in templates.  Always run on merge requests. [Kenneth Loafman]
+
+* Always run pipeline on merge request event. [Kenneth Loafman]
+
+* Make sure we run all during merge requests. [Kenneth Loafman]
+
+* Add deploy-template to only run when source changes. [Kenneth Loafman]
+
+* Fix to only run tests if source code changes. [Kenneth Loafman]
+
+* If no changes, exit 0 to allow pip and snap builds. [Kenneth Loafman]
+
+* Set up pypi access token for uploading. [Kenneth Loafman]
+
+* Keep pip build artifacts for 30 days as pipeline artifacts. [ede]
+
+* Skip tests, not ci, so we can build snaps, pips, pages, etc. [Kenneth Loafman]
+
+* Allow non-Docker environs to sign snaps. [Kenneth Loafman]
+
+* Allow GitLab CI to upload snaps to the store. [Kenneth Loafman]
+
+  still have not figured out how to store sign key on GitLab
+
+* Update or add copyright and some cosmetic changes. [Kenneth Loafman]
+
+* Remove install of snapcraft, snap, snapd. [Kenneth Loafman]
+
+* Add grpcio-tools to top to get latest version. [Kenneth Loafman]
+
+  This leaves two unresolvable problems (upper version conflicts):
+  ERROR: mediafire 0.6.0 has requirement requests<=2.11.1,>=2.4.1, but
+  you'll have requests 2.27.1 which is incompatible.   ERROR: python-
+  novaclient 2.27.0 has requirement pbr<2.0,>=1.6, but   you'll have pbr
+  5.8.1 which is incompatible.
+
+* Remove conflicting build env variable.  Nuke evil tabs. [Kenneth Loafman]
+
+* Allow duplicity-core20 to run deploy steps, for now. [Kenneth Loafman]
+
+* Install snapcraft snap snapd. [Kenneth Loafman]
+
+* Allow pip and snap builds from branches for now. [Kenneth Loafman]
+
+* Add build\_snap and build\_pip back. [Kenneth Loafman]
+
+* More tests for tools/testsnap. [Kenneth Loafman]
+
+  add backup/verify runs to check major pathways   add multi-lib check
+  to avoid SnapCraft bug 1965814
+
+* More snapcraft.yaml fixups. [Kenneth Loafman]
+
+  break up long strings for better readability   preload pbr and
+  requests to avoid most version warnings   pbr and requests are now at
+  latest version, not ancient
+
+* Add further checks to testing for backup and multi-lib. [Kenneth Loafman]
+
+* Remove SNAPCRAFT\_PYTHON\_INTERPRETER per edso, no change on U20. [Kenneth Loafman]
+
+* Try to force Python 3.8 only. [Kenneth Loafman]
+
+* More detailed error message. [Kenneth Loafman]
+
+* Divide makesnap into makesnap, testsnap, and pushsnap. [Kenneth Loafman]
+
+* Revert to core18.  core20 is still unusable. [Kenneth Loafman]
+
 ### Fix
 
 * Fix LP bug #1970124 - obscure error message. [Kenneth Loafman]
 
   Fixes handling of error message with real path, not temp path.
+
+* Nuke a couple of false pylint errors, use inline disable. [Kenneth Loafman]
+
+* Nuke a couple of false pylint errors, fix spelling. [Kenneth Loafman]
+
+* Nuke a couple of false pylint errors. [Kenneth Loafman]
+
+* Minor formatting fix. [ede]
+
+  /builds/duplicity/duplicity/duplicity/backends/s3_boto3_backend.py:93:
+  81: W291 trailing whitespace
+
+* Fixup some minor formatting issues. [ede]
+
+  /builds/duplicity/duplicity/duplicity/backends/s3_boto3_backend.py:92:
+  121: E501 line too long (159 > 120 characters)   /builds/duplicity/dup
+  licity/duplicity/backends/s3_boto3_backend.py:227:58: W292 no newline
+  at end of file   /builds/duplicity/duplicity/duplicity/backends/s3_bot
+  o_backend.py:34:1: W391 blank line at end of file
 
 ### Other
 
@@ -177,9 +518,13 @@
 
   [no ci]
 
+* Test case for issue 103 multi-backend prefix affinity. [Kenneth Loafman]
+
 * Add --use-glacier-ir option for instant retrieval.  Fixes #102. [Kenneth Loafman]
 
 * Add --par2-volumes entry to man page. [Kenneth Loafman]
+
+* Add manual test for issue 100. [Kenneth Loafman]
 
 * Add option --show-changes-in-set <index> to collection-status. [Kenneth Loafman]
 
@@ -187,7 +532,105 @@
 
 ### Changes
 
+* Changes to run on Focal with core20. [Kenneth Loafman]
+
+* Use multiple -m options on commit to split comment. [Kenneth Loafman]
+
+* Remove build-pip and build-snap.  Build locally for now. [Kenneth Loafman]
+
+* Remove build-pip and build-snap.  Build locally for now. [Kenneth Loafman]
+
+* Swap over to image 'cibuilds/snapcraft:core20`. [Kenneth Loafman]
+
+* Swap over to image 'cibuilds/snapcraft:core20`. [Kenneth Loafman]
+
+* Swap over to image 'cibuilds/snapcraft:core20`. [Kenneth Loafman]
+
+* Swap over to image 'cibuilds/snapcraft:core20`. [Kenneth Loafman]
+
+* Swap over to image 'cibuilds/snapcraft:core20`. [Kenneth Loafman]
+
+* Swap over to image 'cibuilds/snapcraft:core20`. [Kenneth Loafman]
+
+* Remove sudo. [Kenneth Loafman]
+
+* Swap over to image 'cibuilds/snapcraft:core20`. [Kenneth Loafman]
+
+* Core20 usess py38, not py36. [Kenneth Loafman]
+
+* Core20 usess py38, not py36. [Kenneth Loafman]
+
+* Attempt core20 again. [Kenneth Loafman]
+
+* Fix syntax. [Kenneth Loafman]
+
+* Remove unneeded Dockerfiles.  Rename. [Kenneth Loafman]
+
+* Try remote snap build. [Kenneth Loafman]
+
+* Remove unneeded Dockerfiles.  Rename. [Kenneth Loafman]
+
+* Cosmetic fixes. [Kenneth Loafman]
+
+* Try forcing snaps to use python3.6 in 18.04. [Kenneth Loafman]
+
+* Add check for correct platform. [Kenneth Loafman]
+
+* Use snapcraft snap instead of deb.  See LP bug 1948597. [Kenneth Loafman]
+
+* Use snapcraft snap instead of deb.  See LP bug 1948597. [Kenneth Loafman]
+
+* Use snapcraft snap instead of deb.  See LP bug 1948597. [Kenneth Loafman]
+
+* Use snapcraft snap instead of deb.  See LP bug 1948597. [Kenneth Loafman]
+
+* Use snapcraft snap instead of deb.  See LP bug 1948597. [Kenneth Loafman]
+
+* Use snapcraft snap instead of deb.  See LP bug 1948597. [Kenneth Loafman]
+
+* Use snapcraft snap instead of deb.  See LP bug 1948597. [Kenneth Loafman]
+
+* Use snapcraft snap instead of deb.  See LP bug 1948597. [Kenneth Loafman]
+
 * Add warning for replicate command.  See issue #98. [Kenneth Loafman]
+
+* Minor tweaks. [Kenneth Loafman]
+
+* Add wheels to .gitignore. [Kenneth Loafman]
+
+* Cosmetic changes. [Kenneth Loafman]
+
+* Add collection-status at end of test. [Kenneth Loafman]
+
+* Remove gpg socket files during clean. [Kenneth Loafman]
+
+* Back off to default image. [Kenneth Loafman]
+
+  [skip-tests]
+
+* Try adding apt-get upgrade. [Kenneth Loafman]
+
+  [skip-tests]
+
+* Add .test-template to allow skipping qual and tests. [Kenneth Loafman]
+
+  [skip-tests]
+
+* Try build with apt-get update. [Kenneth Loafman]
+
+* Try building snap on 20.04. [Kenneth Loafman]
+
+* Add targets to manually import/export translations. [Kenneth Loafman]
+
+* Update duplicity.pot for LP translation. [Kenneth Loafman]
+
+* Revert "Put out first 'post' release to fix pypi issue". [Kenneth Loafman]
+
+* Put out first 'post' release to fix pypi issue. [Kenneth Loafman]
+
+* Rename AUTHORS to CONTRIBUTING.md. [Kenneth Loafman]
+
+* Rename dist dir to tools to avoid collision with setuptools. [Kenneth Loafman]
 
 * Add line wrap to changelog process, body and subject. [Kenneth Loafman]
 
@@ -197,13 +640,23 @@
 
 * Fix use of sorted() builtin (does not sort in place). [Kenneth Loafman]
 
+* Revert snapcraft.yaml to build on core18.  core20 was flakey. [Kenneth Loafman]
+
 * Fix #107 - TypeError in restart\_position\_iterator. [Kenneth Loafman]
 
 * Need to pass kwargs to BaseIdentitu. [Kenneth Loafman]
 
 * Fix \_\_init\_\_ in hubic.py.  Fixes #106. [Kenneth Loafman]
 
+* Try building snap on core20. [Kenneth Loafman]
+
+* Try building snap on core20. [Kenneth Loafman]
+
 * Somehow missed boto when doing #102.  Now supported. [Kenneth Loafman]
+
+* Fix logic of skipIf test. [Kenneth Loafman]
+
+* Fix data\_files AUTHORS to CONTRIBUTING.md. [Kenneth Loafman]
 
 ### Other
 
@@ -220,9 +673,15 @@
 
 ### New
 
+* Add release-prep.sh for release preparation. [Kenneth Loafman]
+
+* Add py310 to envlist to test against python 3.10. [Kenneth Loafman]
+
 * Add update of API docs to deploy step. [Kenneth Loafman]
 
 ### Changes
+
+* When buiilding for amd64 build snap locally, else remote. [Kenneth Loafman]
 
 * Fix build of pages. [Kenneth Loafman]
 
@@ -230,11 +689,15 @@
 
 * Fix command line warning messages. [Kenneth Loafman]
 
+* Fix clean command to include module doc .rst files. [Kenneth Loafman]
+
 * Nuke generated .rst files. [Kenneth Loafman]
 
 * Nuke before\_script.  [ci skip] [Kenneth Loafman]
 
 * Move html to public dir. [Kenneth Loafman]
+
+* Forgot to add myst-parser.  Comment out tests for now. [Kenneth Loafman]
 
 * Back to alabaster theme.  Port changes from sqlite branch. [Kenneth Loafman]
 
@@ -243,6 +706,20 @@
 * Fix some rst errors in docstrings.  Add doctest module. [Kenneth Loafman]
 
 * Fixes to make API docs work right. [Kenneth Loafman]
+
+* Whoops, left out import sys. [Kenneth Loafman]
+
+* Skip test to allow py27 and py35 to pass. [Kenneth Loafman]
+
+* Some tweaks to run cleaner. [Kenneth Loafman]
+
+* Fix typo in test selection. [Kenneth Loafman]
+
+* Remove redundant call to pre\_process\_download\_batch. [Kenneth Loafman]
+
+* Fix mismatch between pre\_process\_download[\_batch] calls. [Kenneth Loafman]
+
+  Implement both in backend and multibackend if hasattr True.
 
 ### Fix
 
@@ -258,6 +735,8 @@
 
 * Fix theme name, sphinx\_rtd\_theme. [Kenneth Loafman]
 
+* Fix PEP8 issue. [Kenneth Loafman]
+
 * Fix #90 - rclone backend fails with spaces in pathnames. [Kenneth Loafman]
 
 * Fix #89 - Add PAR2 number volumes option. [Kenneth Loafman]
@@ -268,9 +747,16 @@
 
 * Fix bug #86, PAR2 backend fails on restore, with patch supplied. [Kenneth Loafman]
 
+* Fixed Catch-22 in pyrax\_identity.hubic.  Debian bug #996577. [Kenneth Loafman]
+
+  Name error on backend HubiC (Baseidentity).  Cannot avoid importing
+  pyrax since HubicIdentity requires pyrax.base_identity.BaseIdentity.
+
 * Fix PEP8 style errors. [Kenneth Loafman]
 
 * Fix issue #81 - Assertion fail when par2 prefix forgotten. [Kenneth Loafman]
+
+* Test with mirror and stripe modes. [Kenneth Loafman]
 
 * Fix issue #79 - Multibackend degradation. [Kenneth Loafman]
 
@@ -327,19 +813,83 @@ Multibackend as well. [Erwan B]
 
 ### Changes
 
+* Build\_ext now builds inplace for development ease. [Kenneth Loafman]
+
 * Log difftar filename where kill happened. [Kenneth Loafman]
 
+* Remove lockfile to avoid user confusion. [Kenneth Loafman]
+
 * Allow customization. [Kenneth Loafman]
+
+* Fix Support DynamicLargeObjects inside swift backend. [Mathieu Le Marec - Pasquet]
+
+  Use high levels APIS to both:
+  - correctly delete multipart uploads   - correctly handle multipart
+  uploads
+  This fixes [launchpad
+  #557374](https://answers.launchpad.net/duplicity/+question/557374)
+
+* Fix makechangelog to output actual problems. [Kenneth Loafman]
+
+* Add dependency scanning. [Kenneth Loafman]
+
+* Make sure changelog is only change to commit. [Kenneth Loafman]
+
+* Fix indentation. [Kenneth Loafman]
 
 * Add support for --s3-multipart-chunk-size, default 25MB. [Kenneth Loafman]
 
   Fixes issue #61
 
+* Add interruptable:true as default. [Kenneth Loafman]
+
+* Fix snapcraft commands. [Kenneth Loafman]
+
+* Fix snaplogin file use. [Kenneth Loafman]
+
+* Add deployment for pip and snap builds. [Kenneth Loafman]
+
+* Add build\_pip job. [Kenneth Loafman]
+
+* Fix PEP8 issue. [Kenneth Loafman]
+
+* More cleanup for snap builds. [Kenneth Loafman]
+
+* Move arch selection to dist/makesnap. [Kenneth Loafman]
+
+* Try snap build on all architectures. [Kenneth Loafman]
+
+* Build for i386, amd64, armhf. [Kenneth Loafman]
+
+* Move to remote build of armfh and amd64. [Kenneth Loafman]
+
+* Attempt remote build of armfh. [Kenneth Loafman]
+
+* More cleanup on requirements. [Kenneth Loafman]
+
+* Megatools no longer supports py35. [Kenneth Loafman]
+
+* Get more stuff from pypi than repo.  Some cleanup. [Kenneth Loafman]
+
+* Fix spaces before inline comments. [Kenneth Loafman]
+
+* Enable access-member-before-definition in pylintrc. [Kenneth Loafman]
+
+* Fix indentation. [Kenneth Loafman]
+
 * Fix formatting in A NOTE ON GDRIVE BACKEND.  Minor. [Kenneth Loafman]
+
+* Module gdata still does not work on py3. [Kenneth Loafman]
+
+* Tweak requirements for gdrivebackend.  Cosmetic changes. [Kenneth Loafman]
 
 ### Fix
 
 * Fix test file count after deleting lockfile. [Kenneth Loafman]
+
+* Release lockfile only once. [Kenneth Loafman]
+
+* Release lockfile only once. [Kenneth Loafman]
 
 * Support -o{Global,User}KnownHostsFile in --ssh-options. [Kenneth Loafman]
 
@@ -383,6 +933,16 @@ correct size. [Doug Thompson]
 
 ### Changes
 
+* Display merge comments.  Better formatting. [Kenneth Loafman]
+
+* Clean up readability.  Minor changes. [Kenneth Loafman]
+
+* Cosmetic chnges. [Kenneth Loafman]
+
+* Make testing/manual/bug1893481 into a tarball, not directory. [Kenneth Loafman]
+
+* Add Makefile and update docs. [Kenneth Loafman]
+
 * Remove installs common between before\_script: and script: [Kenneth Loafman]
 
 * Remove installs common between before\_script: and script: [Kenneth Loafman]
@@ -391,9 +951,25 @@ correct size. [Doug Thompson]
 
 * Gdata module passes on py27 only. [Kenneth Loafman]
 
+* Restore pylintrc, add requirement. [Kenneth Loafman]
+
+* Fix unadorned string in restored pylint test. [Kenneth Loafman]
+
+* Restored pylint test.  Fixed one issue found. [Kenneth Loafman]
+
+* More py27 packages bit the dust. [Kenneth Loafman]
+
 * Util.uexec() will return u'' if no err msg in e.args. [Kenneth Loafman]
 
 * Util.uexec() should check for e==None on entry. [Kenneth Loafman]
+
+* Mark skip those not usable on py27. Fix version. [Kenneth Loafman]
+
+* Uncomment backends.  Mark skip those not usable on py27. [Kenneth Loafman]
+
+* Lock in some module versions to last supporting py27. [Kenneth Loafman]
+
+* Allow py27 to fail CI.  Restrict mock pkg to 3.05. [Kenneth Loafman]
 
 * Fix bug #1547458 - more consistent passphrase prompt. [Kenneth Loafman]
 
@@ -404,6 +980,18 @@ correct size. [Doug Thompson]
   Added --mf-purge option to bypass trash
 
 * Fix bug 1919017 - MultiBackend reports failure on file deletion. [Kenneth Loafman]
+
+* Recomment, py2 does not support all backends. [Kenneth Loafman]
+
+* Add azure-storage module requirement.  Uncomment all. [Kenneth Loafman]
+
+* Remove requirement for python3-pytest-runner.  Not used. [Kenneth Loafman]
+
+* Install older version of pip before py35 deprecation. [Kenneth Loafman]
+
+* Add py27 and py35 back to CI. [Kenneth Loafman]
+
+* Fix setup.py to handle Python 2 properly. [Kenneth Loafman]
 
 * Fixes #41 - par2+rsync (non-ssh) fails. [Kenneth Loafman]
 
@@ -2042,5 +2630,3 @@ was throwing an error and does not seem to be needed. [Aaron A Whitehouse]
 
 * Fixed bug #1817375 with hint from mgorse   - Added 'global pexpect' at
 end of imports. [kenneth@loafman.com]
-
-
