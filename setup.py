@@ -116,15 +116,15 @@ def get_data_files():
     # msgfmt the translation files
     assert os.path.exists(u"po"), u"Missing 'po' directory."
 
-        linguas = glob.glob(u'po/*.po')
-        for lang in linguas:
-            lang = lang[3:-3]
-            try:
-                os.mkdir(os.path.join(u"po", lang))
-            except os.error:
-                pass
-            assert not os.system(u"cp po/%s.po po/%s" % (lang, lang)), lang
-            assert not os.system(u"msgfmt po/%s.po -o po/%s/duplicity.mo" % (lang, lang)), lang
+    linguas = glob.glob(u'po/*.po')
+    for lang in linguas:
+        lang = lang[3:-3]
+        try:
+            os.mkdir(os.path.join(u"po", lang))
+        except os.error:
+            pass
+        assert not os.system(u"cp po/%s.po po/%s" % (lang, lang)), lang
+        assert not os.system(u"msgfmt po/%s.po -o po/%s/duplicity.mo" % (lang, lang)), lang
 
     for root, dirs, files in os.walk(u"po"):
         for file in files:
