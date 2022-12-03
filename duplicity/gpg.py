@@ -35,7 +35,6 @@ from duplicity import config
 from duplicity import gpginterface
 from duplicity import tempdir
 from duplicity import util
-from duplicity.gpg_error_codes import gpg_error_codes
 
 try:
     from hashlib import sha1
