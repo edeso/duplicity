@@ -33,7 +33,6 @@ version = __version__
 
 # The following args are set by ommandline processing
 # they correspond to the args in cli_main.commands
-positional = None
 source_url = None
 target_url = None
 source_dir = None
@@ -167,7 +166,7 @@ print_statistics = True
 
 # If set, forces a full backup if the last full backup is older than
 # the time specified
-full_force_time = None
+full_if_older_than = None
 
 # Used to confirm certain destructive operations like deleting old files.
 force = None
@@ -189,11 +188,11 @@ remove_all_inc_of_but_n_full_mode = None
 # Don't actually do anything, but still report what would be done
 dry_run = False
 
-# If set to false, then do not encrypt files on remote system
-encryption = True
+# If set to false, then encrypt files on remote system
+no_encryption = False
 
-# If set to false, then do not compress files on remote system
-compression = True
+# If set to false, then compress files on remote system
+no_compression = False
 
 # volume size. default 200M
 volsize = 200 * 1024 * 1024
@@ -397,7 +396,7 @@ backend_retry_delay = 30
 mf_purge = False
 
 # Fake root directory path for iDrived backend
-fakeroot = None
+idr_fakeroot = None
 
 # default filesystem encoding
 # In Python 2 it seems that sys.getfilesystemencoding() will normally return
