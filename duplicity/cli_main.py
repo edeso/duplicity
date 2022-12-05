@@ -27,11 +27,10 @@ import os
 import re
 import sys
 from hashlib import md5
-from pathvalidate import sanitize_filepath
 from pathvalidate import is_valid_filepath
+from pathvalidate import sanitize_filepath
 
 from duplicity import cli_usage
-from duplicity import cli_main
 from duplicity import config
 from duplicity import dup_time
 from duplicity import errors
@@ -44,6 +43,7 @@ select_files = []  # Will hold file objects when filelist given
 
 # commands and type of positional args expected
 commands = {
+    u"backup": [u"url_or_dir", u"url_or_dir"],
     u"cleanup": [u"target_url"],
     u"collection-status": [u"target_url"],
     u"full": [u"source_dir", u"target_url"],
@@ -66,7 +66,6 @@ class AddSelectionAction(argparse.Action):
         super(AddSelectionAction, self).__init__(option_strings, dest, **kwargs)
 
     def __call__(self, parser, namespace, values, option_string=None):
-        print('%r %r %r' % (namespace, values, option_string))
         addarg = os.fsdecode(value) if isinstance(values, bytes) else values
         select_opts.append((os.fsdecode(option_string), addarg))
 
@@ -76,7 +75,6 @@ class AddFilistAction(argparse.Action):
         super(AddFilistAction, self).__init__(option_strings, dest, **kwargs)
 
     def __call__(self, parser, namespace, values, option_string=None):
-        print('%r %r %r' % (namespace, values, option_string))
         select_opts.append((os.fsdecode(s), os.fsdecode(filename)))
         try:
             select_files.append(io.open(filename, u"rt", encoding=u"UTF-8"))
@@ -89,7 +87,6 @@ class AddRenameAction(argparse.Action):
         super(AddRenameAction, self).__init__(option_strings, dest, **kwargs)
 
     def __call__(self, parser, namespace, values, option_string=None):
-        print('%r %r %r' % (namespace, values, option_string))
         key = os.fsencode(os.path.normcase(os.path.normpath(values[0])))
         config.rename[key] = os.fsencode(values[1])
 
@@ -265,181 +262,212 @@ def print_ver(value):
 def parse_cmdline_options(arglist):
     u"""Parse argument list"""
 
+    def make_wide(formatter, w=120, h=40):
+        """Return a wider HelpFormatter, if possible."""
+        try:
+            # https://stackoverflow.com/a/5464440
+            # beware: "Only the name of this class is considered a public API."
+            kwargs = {'width': w, 'max_help_position': h}
+            formatter(None, **kwargs)
+            return lambda prog: formatter(prog, **kwargs)
+        except TypeError:
+            warnings.warn("argparse help formatter failed, falling back.")
+            return formatter
+
     parser = argparse.ArgumentParser(
         prog=u'duplicity',
-        usage=cli_usage.usage(),
-        argument_default=False,
-        # formatter_class=argparse.ArgumentDefaultsHelpFormatter
+        argument_default=None,
+        formatter_class=make_wide(argparse.ArgumentDefaultsHelpFormatter),
     )
+    subparsers = parser.add_subparsers(required=False)
 
-    # Add commands and their args to the parser.
-    # We grab the command and all the args with '*'.
-    parser.add_argument(u'positional', type=str, nargs=u"*")
+    subp_dict = dict()
+    for subc, meta in commands.items():
+        subp_dict[subc] = subparsers.add_parser(subc, help=u' '.join(meta))
+        for arg in meta:
+            subp_dict[subc].add_argument(arg, type=str)
 
     # allow different sources to same target url, not recommended
-    parser.add_argument(u"--allow-source-mismatch", action=u"store_true")
+    parser.add_argument(u"--allow-source-mismatch", action=u"store_true",
+                        help=u"Allow different source directories",
+                        default=False)
 
     # Set to the path of the archive directory (the directory which
     # contains the signatures and manifests of the relevent backup
     # collection), and for checkpoint state between volumes.
     # TRANSL: Used in usage help to represent a Unix-style path name. Example:
     # --archive-dir <path>
-    parser.add_argument(u"--archive-dir", type=check_file,
-                        default=config.archive_dir, metavar=_(u"path"))
-
-    # config dir for future use
-    parser.add_argument(u"--config-dir", type=check_file,
-                        default=config.archive_dir, metavar=_(u"path"))
+    parser.add_argument(u"--archive-dir", type=check_file, metavar=_(u"path"),
+                        help=u"Path to store metadata archives",
+                        default=config.archive_dir)
 
     # Asynchronous put/get concurrency limit
     # (default of 0 disables asynchronicity).
-    parser.add_argument(u"--asynchronous-upload", action=u"store_const", const=1)
+    parser.add_argument(u"--asynchronous-upload", action=u"store_const", const=1,
+                        help=u"Number of async upload tasks, max of 1 for now",
+                        default=0)
 
     # force verify to compare data, not just hashes
-    parser.add_argument(u"--compare-data", action=u"store_true")
+    parser.add_argument(u"--compare-data", action=u"store_true",
+                        help=u"Compare data on verify not only signatures",
+                        default=False)
+
+    # config dir for future use
+    parser.add_argument(u"--config-dir", type=check_file, metavar=_(u"path"),
+                        help=u"Path to store configuration files",
+                        default=config.archive_dir)
 
     # When symlinks are encountered, the item they point to is copied rather than
     # the symlink.
-    parser.add_argument(u"--copy-links", action=u"store_true")
+    parser.add_argument(u"--copy-links", action=u"store_true",
+                        help=u"Copy contents of symlinks instead of linking",
+                        default=False)
 
     # Don't actually do anything, but still report what would be done
-    parser.add_argument(u"--dry-run", action=u"store_true")
+    parser.add_argument(u"--dry-run", action=u"store_true",
+                        help=u"Perform dry-run with no writes",
+                        default=False)
 
     # TRANSL: Used in usage help to represent an ID for a GnuPG key. Example:
     # --encrypt-key <gpg_key_id>
-    parser.add_argument(u"--encrypt-key", metavar=_(u"gpg-key-id"),
-                        action=u"append")
+    parser.add_argument(u"--encrypt-key", metavar=_(u"gpg-key-id"), action=u"append",
+                        help=u"GNUpg key for encryption/decryption")
 
     # secret keyring in which the private encrypt key can be found
-    parser.add_argument(u"--encrypt-secret-keyring", metavar=_(u"path"))
+    parser.add_argument(u"--encrypt-secret-keyring", metavar=_(u"path"),
+                        help=u"Path to secret GNUpg keyring")
 
-    parser.add_argument(u"--encrypt-sign-key", metavar=_(u"gpg-key-id"),
-                        action=u"append")
+    parser.add_argument(u"--encrypt-sign-key", metavar=_(u"gpg-key-id"), action=u"append",
+                        help=u"GNUpg key for signing")
 
     # TRANSL: Used in usage help to represent a "glob" style pattern for
     # matching one or more files, as described in the documentation.
     # Example:
     # --exclude <shell_pattern>
-    parser.add_argument(u"--exclude", metavar=_(u"shell_pattern"), action=AddSelectionAction)
+    parser.add_argument(u"--exclude", metavar=_(u"shell_pattern"), action=AddSelectionAction,
+                        help=u"Exclude globbing pattern")
 
-    parser.add_argument(u"--exclude-device-files", action=AddSelectionAction)
+    parser.add_argument(u"--exclude-device-files", action=u"store_true",
+                        help=u"Exclude device files",
+                        default=False)
 
-    parser.add_argument(u"--exclude-filelist", type=check_file,
-                        metavar=_(u"filename"),
-                        action=AddFilistAction)
+    parser.add_argument(u"--exclude-filelist", metavar=_(u"filename"), action=AddFilistAction,
+                        help=u"File with list of file patters to exclude")
 
     # TRANSL: Used in usage help to represent the name of a file. Example:
     # --log-file <filename>
-    parser.add_argument(u"--exclude-if-present", metavar=_(u"filename"),
-                        type=check_file, action=AddSelectionAction)
-
-    parser.add_argument(u"--exclude-other-filesystems", action=AddSelectionAction)
-
-    # TRANSL: Used in usage help to represent a regular expression (regexp).
-    parser.add_argument(u"--exclude-regexp", metavar=_(u"regular_expression"),
-                        action=AddSelectionAction)
+    parser.add_argument(u"--exclude-if-present", metavar=_(u"filename"), action=AddSelectionAction,
+                        help=u"Exclude directory if this file is present")
 
     # Exclude any files with modification dates older than this from the backup
-    parser.add_argument(u"--exclude-older-than", type=check_time, metavar=_(u"time"),
-                        action=AddSelectionAction)
+    parser.add_argument(u"--exclude-older-than", metavar=_(u"time"), type=check_time, action=AddSelectionAction,
+                        help=u"Exclude files older than time")
 
-    # used to provide a prefix on top of the defaul tar file name
-    parser.add_argument(u"--file-prefix", metavar="string", action=u"store")
+    parser.add_argument(u"--exclude-other-filesystems", action=u"store_true",
+                        help=u"Exclude other filesystems from backup",
+                        default=False)
 
-    # used to provide a suffix for manifest files only
-    parser.add_argument(u"--file-prefix-manifest", metavar="string", action=u"store")
+    parser.add_argument(u"--exclude-regexp", metavar=_(u"regex"), action=AddSelectionAction,
+                        help=u"Exclude based on regex pattern")
 
-    # used to provide a suffix for archive files only
-    parser.add_argument(u"--file-prefix-archive", metavar="string", action=u"store")
+    parser.add_argument(u"--file-prefix", metavar="string", action=u"store",
+                        help=u"String prefix for all duplicity files")
 
-    # used to provide a suffix for sigature files only
-    parser.add_argument(u"--file-prefix-signature", metavar="string", action=u"store")
+    parser.add_argument(u"--file-prefix-archive", metavar="string", action=u"store",
+                        help = u"String prefix for duplicity difftar files")
 
-    # If set, restore only the subdirectory or file specified, not the
-    # whole root.
-    # TRANSL: Used in usage help to represent a Unix-style path name. Example:
-    # --archive-dir <path>
-    parser.add_argument(u"--file-to-restore", u"-r", type=check_file, metavar=_(u"path"))
+    parser.add_argument(u"--file-prefix-manifest", metavar="string", action=u"store",
+                        help = u"String prefix for duplicity manifest files")
 
-    # Used to confirm certain destructive operations like deleting old files.
-    parser.add_argument(u"--force", action=u"store_true")
+    parser.add_argument(u"--file-prefix-signature", metavar="string", action=u"store",
+                        help = u"String prefix for duplicity signature files")
 
-    # FTP data connection type
-    parser.add_argument(u"--ftp-passive", action=u"store_const", const=u"passive", dest=u"ftp_connection")
+    parser.add_argument(u"--file-to-restore", u"-r", metavar=_(u"path"), type=check_file,
+                        help=u"File or directory path to restore")
 
-    parser.add_argument(u"--ftp-regular", action=u"store_const", const=u"regular", dest=u"ftp_connection")
+    parser.add_argument(u"--force", action=u"store_true",
+                        help=u"Force duplicity to actually delete during cleanup",
+                        default=False)
 
-    # If set, forces a full backup if the last full backup is older than
-    # the time specified
-    parser.add_argument(u"--full-if-older-than", type=check_time, dest=u"full_force_time", metavar=_(u"time"))
+    parser.add_argument(u"--ftp-passive", action=u"store_const", const=u"passive", dest=u"ftp_connection",
+                        help=u"Tell FTP to use passive mode",
+                        default='passive')
 
-    parser.add_argument(u"--gpg-binary", type=check_file, metavar=_(u"path"))
+    parser.add_argument(u"--ftp-regular", action=u"store_const", const=u"regular", dest=u"ftp_connection",
+                        help=u"Tell FTP to use regular mode",
+                        default='passive')
 
-    parser.add_argument(u"--gpg-options", action=u"append", metavar=_(u"options"))
+    parser.add_argument(u"--full-if-older-than", metavar=_(u"time"), type=check_time,
+                        help=u"Perform full backup if last full is older than 'time'")
 
-    # TRANSL: Used in usage help to represent an ID for a hidden GnuPG key. Example:
-    # --hidden-encrypt-key <gpg_key_id>
-    parser.add_argument(u"--hidden-encrypt-key", metavar=_(u"gpg-key-id"))
+    parser.add_argument(u"--gpg-binary", metavar=_(u"path"), type=check_file,
+                        help=u"Path to GNUpg executable file")
 
-    # Fake-root for iDrived backend
-    parser.add_argument(u"--idr-fakeroot", dest=u"fakeroot", type=check_file, metavar=_(u"path"))
+    parser.add_argument(u"--gpg-options", metavar=_(u"options"), action=u"append",
+                        help=u"Options to append to GNUpg invocation")
 
-    # ignore (some) errors during operations; supposed to make it more
-    # likely that you are able to restore data under problematic
-    # circumstances. the default should absolutely always be False unless
-    # you know what you are doing.
-    parser.add_argument(u"--ignore-errors", action=u"store_true")
+    parser.add_argument(u"--hidden-encrypt-key", metavar=_(u"gpg-key-id"),
+                        help=u"Hidden GNUpg encryption key")
 
-    # Whether to use the full email address as the user name when
-    # logging into an imap server. If false just the user name
-    # part of the email address is used.
-    parser.add_argument(u"--imap-full-address", action=u"store_true")
+    parser.add_argument(u"--idr-fakeroot", metavar=_(u"path"), type=check_file,
+                        help=u"Fake root for idrive backend")
 
-    # Name of the imap folder where we want to store backups.
-    # Can be changed with a command line argument.
-    # TRANSL: Used in usage help to represent an imap mailbox
-    parser.add_argument(u"--imap-mailbox", metavar=_(u"imap_mailbox"))
+    parser.add_argument(u"--ignore-errors", action=u"store_true",
+                        help=u"Ignore most errors during restore",
+                        default=False)
 
-    parser.add_argument(u"--include", metavar=_(u"shell_pattern"), action=AddSelectionAction)
+    parser.add_argument(u"--imap-full-address", action=u"store_true",
+                        help=u"Whether to use the full email address as the user name",
+                        default=False)
 
-    parser.add_argument(u"--include-filelist", type=check_file, metavar=_(u"filename"), action=AddFilistAction)
+    parser.add_argument(u"--imap-mailbox", metavar=_(u"imap_mailbox"),
+                        help=u"Name of the imap folder to store backups")
 
-    parser.add_argument(u"--include-regexp", metavar=_(u"regular_expression"), action=AddSelectionAction)
+    parser.add_argument(u"--include", metavar=_(u"shell_pattern"), action=AddSelectionAction,
+                        help=u"Exclude globbing pattern")
 
-    parser.add_argument(u"--log-fd", type=set_log_fd, metavar=_(u"file_descriptor"))
+    parser.add_argument(u"--include-filelist", metavar=_(u"filename"), action=AddFilistAction,
+                        help=u"File with list of file patters to include")
 
-    # TRANSL: Used in usage help to represent the name of a file. Example:
-    # --log-file <filename>
-    parser.add_argument(u"--log-file", type=set_log_file, metavar=_(u"log_filename"))
+    parser.add_argument(u"--include-regexp", metavar=_(u"regular_expression"), action=AddSelectionAction,
+                        help=u"Exclude based on regex pattern")
 
-    # log option to add timestamp and level to log entries
-    parser.add_argument(u"--log-timestamp", action=u"store_true")
+    parser.add_argument(u"--log-fd", metavar=_(u"file_descriptor"), type=set_log_fd,
+                        help=u"Logging file descripto to use")
 
-    # Maximum block size for large files
-    parser.add_argument(u"--max-blocksize", type=int, metavar=_(u"number"))
+    parser.add_argument(u"--log-file", metavar=_(u"log_filename"), type=set_log_file,
+                        help=u"Logging filename to use")
 
-    # TRANSL: Used in usage help (noun)
-    parser.add_argument(u"--name", dest=u"backup_name",
-                        default=config.backup_name, metavar=_(u"backup name"))
+    parser.add_argument(u"--log-timestamp", action=u"store_true",
+                        help=u"Whether to include timestamp and level in log",
+                        default=False)
 
-    # If set to false, then do not encrypt files on remote system
-    parser.add_argument(u"--no-encryption", action=u"store_false", dest=u"encryption")
+    parser.add_argument(u"--max-blocksize", metavar=_(u"number"), type=int,
+                        help=u"Maximum block size for large files in MB")
 
-    # If set to false, then do not compress files on remote system
-    parser.add_argument(u"--no-compression", action=u"store_false", dest=u"compression")
+    parser.add_argument(u"--name", dest=u"backup_name", metavar=_(u"backup name"),
+                        help=u"Custom backup name instead of hash",
+                        default=config.backup_name)
 
-    # If set, print the statistics after every backup session
-    parser.add_argument(u"--no-print-statistics", action=u"store_false", dest=u"print_statistics")
+    parser.add_argument(u"--no-compression", action=u"store_true",
+                        help=u"If supplied do not perform compression",
+                        default=False)
 
-    # If true, filelists and directory statistics will be split on
-    # nulls instead of newlines.
-    parser.add_argument(u"--null-separator", action=u"store_true")
+    parser.add_argument(u"--no-encryption", action=u"store_true",
+                        help=u"If supplied do not perform encryption",
+                        default=False)
 
-    # number of retries on network operations
-    # TRANSL: Used in usage help to represent a desired number of
-    # something. Example:
-    # --num-retries <number>
-    parser.add_argument(u"--num-retries", type=int, metavar=_(u"number"))
+    parser.add_argument(u"--no-print-statistics", action=u"store_true",
+                        help=u"If supplied do not print statistics",
+                        default=False)
+
+    parser.add_argument(u"--null-separator", action=u"store_true",
+                        help=u"Whether to split on null instead of newline",
+                        default=False)
+
+    parser.add_argument(u"--num-retries", metavar=_(u"number"), type=int,
+                        help=u"Number of retries on network operations",
+                        default=config.num_retries)
 
     # File owner uid keeps number from tar file. Like same option in GNU tar.
     parser.add_argument(u"--numeric-owner", action=u"store_true")
@@ -534,14 +562,14 @@ def parse_cmdline_options(arglist):
     # Options to allow use of server side KMS encryption
     parser.add_argument(u"--s3-use-server-side-kms-encryption", action=u"store_true", dest=u"s3_use_sse_kms")
 
-    parser.add_argument(u"--s3-kms-key-id", action=u"store", dest=u"s3_kms_key_id")
+    parser.add_argument(u"--s3-kms-key-id", metavar=u"s3_kms_key_id", action=u"store")
 
-    parser.add_argument(u"--s3-kms-grant", action=u"store", dest=u"s3_kms_grant")
+    parser.add_argument(u"--s3-kms-grant", metavar=u"s3_kms_grant", action=u"store")
 
     # Options for specifying region and endpoint of s3
-    parser.add_argument(u"--s3-region-name", dest=u"s3_region_name", action=u"store")
+    parser.add_argument(u"--s3-region-name", metavar=u"s3_region_name", action=u"store")
 
-    parser.add_argument(u"--s3-endpoint-url", dest=u"s3_endpoint_url", action=u"store")
+    parser.add_argument(u"--s3-endpoint-url", metavar=u"s3_endpoint_url", action=u"store")
 
     # Option to specify a Swift container storage policy.
     parser.add_argument(u"--swift-storage-policy", metavar=_(u"policy"))
@@ -587,14 +615,17 @@ def parse_cmdline_options(arglist):
     parser.add_argument(u"--ssh-options", action=u"append", metavar=_(u"options"))
 
     # user added ssl options (used by webdav, lftp backend)
-    parser.add_argument(u"--ssl-cacert-file", metavar=_(u"pem formatted bundle of certificate authorities"))
+    parser.add_argument(u"--ssl-cacert-file", metavar="file",
+                        help=_(u"pem formatted bundle of certificate authorities"))
 
-    parser.add_argument(u"--ssl-cacert-path", metavar=_(u"path to a folder with certificate authority files"))
+    parser.add_argument(u"--ssl-cacert-path", metavar="path",
+                        help=_(u"path to a folder with certificate authority files"))
 
     parser.add_argument(u"--ssl-no-check-certificate", action=u"store_true")
 
     # header options for Webdav
-    parser.add_argument(u"--webdav-headers", metavar=_(u"extra headers for Webdav, like 'Cookie,name=value'"))
+    parser.add_argument(u"--webdav-headers", metavar="string",
+                        help=_(u"extra headers for Webdav, like 'Cookie,name=value'"))
 
     # Working directory for the tempfile module. Defaults to /tmp on most systems.
     parser.add_argument(u"--tempdir", dest=u"temproot", type=check_file, metavar=_(u"path"))
