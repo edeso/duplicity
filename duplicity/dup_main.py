@@ -1434,7 +1434,7 @@ See https://bugs.launchpad.net/duplicity/+bug/931175
     dup_time.setcurtime()
 
     # determine what action we're performing and process command line
-    action = cli_main.ProcessCommandLine(sys.argv[1:])
+    action = cli_main.process_command_line(sys.argv[1:])
 
     config.lockpath = os.path.join(config.archive_dir_path.name, b"lockfile")
     config.lockfile = fasteners.process_lock.InterProcessLock(config.lockpath)
@@ -1519,8 +1519,8 @@ def do_backup(action):
         log.Notice(_(u"Last full backup date:") + u" " + dup_time.timetopretty(last_full_time))
     else:
         log.Notice(_(u"Last full backup date: none"))
-    if not config.restart and action == u"inc" and config.full_force_time is not None and \
-       last_full_time < config.full_force_time:
+    if not config.restart and action == u"inc" and config.full_if_older_than is not None and \
+       last_full_time < config.full_if_older_than:
         log.Notice(_(u"Last full backup is too old, forcing full backup"))
         action = u"full"
     log.PrintCollectionStatus(col_stats)
