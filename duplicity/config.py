@@ -32,8 +32,7 @@ from duplicity import gpg
 version = __version__
 
 # The following args are set by ommandline processing
-# they correspond to the args in cli_main.commands
-positional = None
+# they correspond to the args in cli_main.duplicity_commands
 source_url = None
 target_url = None
 source_dir = None
@@ -41,30 +40,30 @@ target_dir = None
 remove_time = None
 count = None
 
-# the following contain the argument to each command
-# all resolve to False until filled, then areTrue
-cleanup = []
-collection_status = []
-full = []
-incremental = []
-list_current_files = []
-remove_older_than = []
-remove_all_but_n_full = []
-remove_all_inc_of_but_n_full = []
-restore = []
-verify = []
+# one of the following is true for one duplicity command
+backup = False
+cleanup = False
+collection_status = False
+full = False
+incremental = False
+list_current_files = False
+remove_older_than = False
+remove_all_but_n_full = False
+remove_all_inc_of_but_n_full = False
+restore = False
+verify = False
 
 # Prefix for all files (appended before type-specific prefixes)
-file_prefix = b""
+file_prefix = u""
 
 # Prefix for manifest files only
-file_prefix_manifest = b""
+file_prefix_manifest = u""
 
 # Prefix for archive files only
-file_prefix_archive = b""
+file_prefix_archive = u""
 
 # Prefix for sig files only
-file_prefix_signature = b""
+file_prefix_signature = u""
 
 # The name of the current host
 hostname = socket.gethostname()
@@ -102,7 +101,7 @@ restore_time = None
 
 # If set, restore only the subdirectory or file specified, not the
 # whole root.
-restore_dir = None
+restore_path = None
 
 # The backend representing the remote side
 backend = None
@@ -158,23 +157,15 @@ lockfile = None
 # source directory doesn't match previous backup source directory.
 allow_source_mismatch = None
 
-# If set, abort if cannot do an incremental backup.  Otherwise if
-# signatures not found, default to full.
-incremental = None
-
 # If set, print the statistics after every backup session
 print_statistics = True
 
 # If set, forces a full backup if the last full backup is older than
 # the time specified
-full_force_time = None
+full_if_older_than = None
 
 # Used to confirm certain destructive operations like deleting old files.
 force = None
-
-# If set, signifies time in seconds before which backup files should
-# be deleted.
-remove_time = None
 
 # If set, signifies the number of backups chains to keep when performing
 # a remove-all-but-n-full.
@@ -189,18 +180,18 @@ remove_all_inc_of_but_n_full_mode = None
 # Don't actually do anything, but still report what would be done
 dry_run = False
 
-# If set to false, then do not encrypt files on remote system
-encryption = True
+# If set to false, then encrypt files on remote system
+no_encryption = False
 
-# If set to false, then do not compress files on remote system
-compression = True
+# If set to false, then compress files on remote system
+no_compression = False
 
 # volume size. default 200M
 volsize = 200 * 1024 * 1024
 
 # after this volume, we will switch to multipart upload
 mp_factor = 1.1
-mp_segment_size = mp_factor * volsize
+mp_segment_size = int(mp_factor * volsize)
 
 # Working directory for the tempfile module. Defaults to /tmp on most systems.
 temproot = None
@@ -315,7 +306,7 @@ metadata_sync_mode = u"partial"
 # Wheter to specify --use-agent in GnuPG options
 use_agent = False
 
-# ssh commands to use, used by ssh_pexpect (defaults to sftp, scp)
+# ssh duplicity_commands to use, used by ssh_pexpect (defaults to sftp, scp)
 scp_command = None
 sftp_command = None
 
@@ -397,7 +388,7 @@ backend_retry_delay = 30
 mf_purge = False
 
 # Fake root directory path for iDrived backend
-fakeroot = None
+idr_fakeroot = None
 
 # default filesystem encoding
 # In Python 2 it seems that sys.getfilesystemencoding() will normally return

@@ -41,6 +41,7 @@ class CommandlineTest(UnitTestCase):
         u"source_url": u"file://duptest",
         u"target_dir": u"foo/bar",
         u"target_url": u"file://duptest",
+        u"url_or_dir": u"file://duptest",
     }
 
     def setUp(self):
@@ -58,9 +59,9 @@ class CommandlineTest(UnitTestCase):
         """
         test_args = copy.copy(self.good_args)
         test_args.update(new_args)
-        for cmd in cli_main.commands:
+        for cmd in cli_main.duplicity_commands:
             runtest = False
-            args = cli_main.commands[cmd]
+            args = cli_main.duplicity_commands[cmd]
             cline = [cmd]
             for arg in args:
                 cline.append(test_args[arg])
