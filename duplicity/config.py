@@ -199,7 +199,7 @@ volsize = 200 * 1024 * 1024
 
 # after this volume, we will switch to multipart upload
 mp_factor = 1.1
-mp_segment_size = mp_factor * volsize
+mp_segment_size = int(mp_factor * volsize)
 
 # Working directory for the tempfile module. Defaults to /tmp on most systems.
 temproot = None

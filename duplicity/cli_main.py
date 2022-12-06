@@ -262,7 +262,7 @@ def print_ver(value):
 def parse_cmdline_options(arglist):
     u"""Parse argument list"""
 
-    def make_wide(formatter, w=120, h=40):
+    def make_wide(formatter, w=120, h=46 ):
         """Return a wider HelpFormatter, if possible."""
         try:
             # https://stackoverflow.com/a/5464440
@@ -287,32 +287,52 @@ def parse_cmdline_options(arglist):
         for arg in meta:
             subp_dict[subc].add_argument(arg, type=str)
 
-    # allow different sources to same target url, not recommended
     parser.add_argument(u"--allow-source-mismatch", action=u"store_true",
                         help=u"Allow different source directories",
                         default=False)
 
-    # Set to the path of the archive directory (the directory which
-    # contains the signatures and manifests of the relevent backup
-    # collection), and for checkpoint state between volumes.
-    # TRANSL: Used in usage help to represent a Unix-style path name. Example:
-    # --archive-dir <path>
     parser.add_argument(u"--archive-dir", type=check_file, metavar=_(u"path"),
                         help=u"Path to store metadata archives",
                         default=config.archive_dir)
 
-    # Asynchronous put/get concurrency limit
-    # (default of 0 disables asynchronicity).
-    parser.add_argument(u"--asynchronous-upload", action=u"store_const", const=1,
+    # TODO: refactor dest=
+    parser.add_argument(u"--asynchronous-upload", action=u"store_const", const=1, dest=u"async_concurrency",
                         help=u"Number of async upload tasks, max of 1 for now",
-                        default=0)
+                        default=config.async_concurrency)
 
-    # force verify to compare data, not just hashes
+    parser.add_argument(u"--azure-blob-tier", metavar=_(u"Hot|Cool|Archive"),
+                        help=u"Standard storage tier used for storring backup files (Hot|Cool|Archive)",
+                        default=config.azure_blob_tier)
+
+    parser.add_argument(u"--azure-max-connections", type=int, metavar=_(u"number"),
+                        help=u"Number of maximum parallel connections to use when the blob size exceeds 64MB",
+                        default=config.azure_max_connections)
+
+    parser.add_argument(u"--azure-max-block-size", metavar=_(u"number"), type=int,
+                        help=u"Number for the block size to upload a blob if the length is unknown\n"
+                             u"or is larger than the value set by --azure-max-single-put-size\n"
+                             u"The maximum block size the service supports is 100MiB.",
+                        default=config.azure_max_block_size)
+
+    parser.add_argument(u"--azure-max-single-put-size", metavar=_(u"number"), type=int,
+                        help=u"Largest supported upload size where the Azure library makes only one put call.\n"
+                             u"Used to upload a single block if the content length is known and is less than this",
+                        default=config.azure_max_single_put_size)
+
+    parser.add_argument(u"--b2-hide-files", action=u"store_true",
+                        help=u"Whether the B2 backend hides files instead of deleting them")
+
+    parser.add_argument(u"--backend-retry-delay", type=int, metavar=_(u"seconds"),
+                        help=u"Delay time before next try after a failure of a backend operation",
+                        default=config.backend_retry_delay)
+
+    parser.add_argument(u"--cf-backend", metavar=_(u"pyrax|cloudfiles"),
+                        help=u"Allow the user to switch cloudfiles backend")
+
     parser.add_argument(u"--compare-data", action=u"store_true",
                         help=u"Compare data on verify not only signatures",
                         default=False)
 
-    # config dir for future use
     parser.add_argument(u"--config-dir", type=check_file, metavar=_(u"path"),
                         help=u"Path to store configuration files",
                         default=config.archive_dir)
@@ -340,10 +360,6 @@ def parse_cmdline_options(arglist):
     parser.add_argument(u"--encrypt-sign-key", metavar=_(u"gpg-key-id"), action=u"append",
                         help=u"GNUpg key for signing")
 
-    # TRANSL: Used in usage help to represent a "glob" style pattern for
-    # matching one or more files, as described in the documentation.
-    # Example:
-    # --exclude <shell_pattern>
     parser.add_argument(u"--exclude", metavar=_(u"shell_pattern"), action=AddSelectionAction,
                         help=u"Exclude globbing pattern")
 
@@ -354,12 +370,9 @@ def parse_cmdline_options(arglist):
     parser.add_argument(u"--exclude-filelist", metavar=_(u"filename"), action=AddFilistAction,
                         help=u"File with list of file patters to exclude")
 
-    # TRANSL: Used in usage help to represent the name of a file. Example:
-    # --log-file <filename>
     parser.add_argument(u"--exclude-if-present", metavar=_(u"filename"), action=AddSelectionAction,
                         help=u"Exclude directory if this file is present")
 
-    # Exclude any files with modification dates older than this from the backup
     parser.add_argument(u"--exclude-older-than", metavar=_(u"time"), type=check_time, action=AddSelectionAction,
                         help=u"Exclude files older than time")
 
@@ -369,6 +382,9 @@ def parse_cmdline_options(arglist):
 
     parser.add_argument(u"--exclude-regexp", metavar=_(u"regex"), action=AddSelectionAction,
                         help=u"Exclude based on regex pattern")
+
+    parser.add_argument(u"--file-changed", type=check_file, metavar=_(u"path"),
+                        help=u"Whether to collect only the file status, not the whole root")
 
     parser.add_argument(u"--file-prefix", metavar="string", action=u"store",
                         help=u"String prefix for all duplicity files")
@@ -389,10 +405,12 @@ def parse_cmdline_options(arglist):
                         help=u"Force duplicity to actually delete during cleanup",
                         default=False)
 
+    # TODO: refactor dest=
     parser.add_argument(u"--ftp-passive", action=u"store_const", const=u"passive", dest=u"ftp_connection",
                         help=u"Tell FTP to use passive mode",
                         default='passive')
 
+    # TODO: refactor dest=
     parser.add_argument(u"--ftp-regular", action=u"store_const", const=u"regular", dest=u"ftp_connection",
                         help=u"Tell FTP to use regular mode",
                         default='passive')
@@ -445,234 +463,207 @@ def parse_cmdline_options(arglist):
     parser.add_argument(u"--max-blocksize", metavar=_(u"number"), type=int,
                         help=u"Maximum block size for large files in MB")
 
-    parser.add_argument(u"--name", dest=u"backup_name", metavar=_(u"backup name"),
+    parser.add_argument(u"--mf-purge", action=u"store_true",
+                        help=u"Option for mediafire to purge files on delete instead of sending to trash")
+
+    parser.add_argument(u"--mp-segment-size", metavar=_(u"number"), type=set_mpsize,
+                        help=u"Swift backend segment size",
+                        default=config.mp_segment_size)
+
+    parser.add_argument(u"--name", metavar=_(u"backup name"),
                         help=u"Custom backup name instead of hash",
                         default=config.backup_name)
 
     parser.add_argument(u"--no-compression", action=u"store_true",
-                        help=u"If supplied do not perform compression",
-                        default=False)
+                        help=u"If supplied do not perform compression")
 
     parser.add_argument(u"--no-encryption", action=u"store_true",
-                        help=u"If supplied do not perform encryption",
-                        default=False)
+                        help=u"If supplied do not perform encryption")
+
+    parser.add_argument(u"--no-files-changed", action=u"store_true",
+                        help=u"Whether to skip collecting the files_changed list in statistics")
 
     parser.add_argument(u"--no-print-statistics", action=u"store_true",
-                        help=u"If supplied do not print statistics",
-                        default=False)
+                        help=u"If supplied do not print statistics")
 
     parser.add_argument(u"--null-separator", action=u"store_true",
-                        help=u"Whether to split on null instead of newline",
-                        default=False)
+                        help=u"Whether to split on null instead of newline")
 
     parser.add_argument(u"--num-retries", metavar=_(u"number"), type=int,
                         help=u"Number of retries on network operations",
                         default=config.num_retries)
 
-    # File owner uid keeps number from tar file. Like same option in GNU tar.
-    parser.add_argument(u"--numeric-owner", action=u"store_true")
+    parser.add_argument(u"--numeric-owner", action=u"store_true",
+                        help=u"Keeps number from tar file. Like same option in GNU tar.",
+                        default=False)
 
-    # Do no restore the uid/gid when finished, useful if you're restoring
-    # data without having root privileges or Unix users support
-    parser.add_argument(u"--do-not-restore-ownership", action=u"store_true")
+    parser.add_argument(u"--do-not-restore-ownership", action=u"store_true",
+                        help=u"Do no restore the uid/gid when finished, useful if you're restoring\n" 
+                             U"data without having root privileges or Unix users support",
+                        default=False)
 
-    # Sync only required metadata
-    parser.add_argument(u"--metadata-sync-mode",
-                        default=u"partial",
-                        choices=(u"full", u"partial"))
+    parser.add_argument(u"--metadata-sync-mode", choices=(u"full", u"partial"),
+                        help=u"Only sync required metadata not all",
+                        default=u"partial")
 
-    # Level of Redundancy in % for Par2 files
-    parser.add_argument(u"--par2-redundancy", type=int, metavar=_(u"number"))
+    parser.add_argument(u"--par2-options", metavar=_(u"options"), action=u"append",
+                        help=u"Verbatim par2 options.  May be supplied multiple times.")
 
-    # Verbatim par2 options
-    parser.add_argument(u"--par2-options", action=u"append", metavar=_(u"options"))
+    parser.add_argument(u"--par2-redundancy", metavar=_(u"number"), type=int, choices=range(5, 99),
+                        help=u"Level of Redundancy in percent for Par2 files",
+                        default=config.par2_redundancy)
 
-    # Number of par2 volumes
-    parser.add_argument(u"--par2-volumes", type=int, metavar=_(u"number"))
+    parser.add_argument(u"--par2-volumes", metavar=_(u"number"), type=int,
+                        help=u"Number of par2 volumes",
+                        default=config.par2_volumes)
 
-    # Used to display the progress for the full and incremental backup operations
-    parser.add_argument(u"--progress", action=u"store_true")
+    parser.add_argument(u"--progress", action=u"store_true",
+                        help=u"Display progress for the full and incremental backup operations")
 
-    # Used to control the progress option update rate in seconds. Default: prompts each 3 seconds
-    parser.add_argument(u"--progress-rate", type=int, metavar=_(u"number"))
+    parser.add_argument(u"--progress-rate", metavar=_(u"number"), type=int,
+                        help=u"Used to control the progress option update rate in seconds",
+                        default=config.progress_rate)
 
-    # option to rename files during restore
-    parser.add_argument(u"--rename", type=check_file, nargs=2, action=AddRenameAction)
+    parser.add_argument(u"--rename", type=check_file, nargs=2, metavar="from to", action=AddRenameAction,
+                        help=u"Rename files during restore")
 
-    # Restores will try to bring back the state as of the following time.
-    # If it is None, default to current time.
-    # TRANSL: Used in usage help to represent a time spec for a previous
-    # point in time, as described in the documentation. Example:
-    # duplicity remove-older-than time [options] target_url
-    parser.add_argument(u"--restore-time", u"--time", u"-t", type=check_time, metavar=_(u"time"))
+    parser.add_argument(u"--restore-time", u"--time", u"-t", metavar=_(u"time"), type=check_time,
+                        help=u"Restores will try to bring back the state as of the following time")
 
-    # user added rsync options
-    parser.add_argument(u"--rsync-options", action=u"append", metavar=_(u"options"))
+    parser.add_argument(u"--rsync-options", metavar=_(u"options"), action=u"append",
+                        help=u"User added rsync options")
 
-    # Whether to create European buckets (sorry, hard-coded to only
-    # support european for now).
-    parser.add_argument(u"--s3-european-buckets", action=u"store_true")
+    parser.add_argument(u"--s3-european-buckets", action=u"store_true",
+                        help=u"Whether to create European buckets")
 
-    # Whether to use S3 Reduced Redundancy Storage
-    parser.add_argument(u"--s3-use-rrs", action=u"store_true")
+    parser.add_argument(u"--s3-unencrypted-connection", action=u"store_true",
+                        help=u"Whether to use plain HTTP (without SSL) to send data to S3")
 
-    # Whether to use S3 Infrequent Access Storage
-    parser.add_argument(u"--s3-use-ia", action=u"store_true")
+    parser.add_argument(u"--s3-use-deep-archive", action=u"store_true",
+                        help=u"Whether to use S3 Glacier Deep Archive Storage")
 
-    # Whether to use S3 Glacier Storage
-    parser.add_argument(u"--s3-use-glacier", action=u"store_true")
+    parser.add_argument(u"--s3-use-glacier", action=u"store_true",
+                        help=u"Whether to use S3 Glacier Storage")
 
-    # Whether to use S3 Glacier IR Storage
-    parser.add_argument(u"--s3-use-glacier-ir", action=u"store_true")
+    parser.add_argument(u"--s3-use-glacier-ir", action=u"store_true",
+                        help="Whether to use S3 Glacier IR Storage")
 
-    # Whether to use S3 Glacier Deep Archive Storage
-    parser.add_argument(u"--s3-use-deep-archive", action=u"store_true")
+    parser.add_argument(u"--s3-use-ia", action=u"store_true",
+                        help=u"Whether to use S3 Infrequent Access Storage")
 
-    # Whether to use S3 One Zone Infrequent Access Storage
-    parser.add_argument(u"--s3-use-onezone-ia", action=u"store_true")
+    parser.add_argument(u"--s3-use-new-style", action=u"store_true",
+                        help=u"Whether to use new-style subdomain addressing for S3 buckets. Such\n"
+                             u"use is not backwards-compatible with upper-case buckets, or buckets\n"
+                             u"that are otherwise not expressable in a valid hostname")
 
-    # Whether to use "new-style" subdomain addressing for S3 buckets. Such
-    # use is not backwards-compatible with upper-case buckets, or buckets
-    # that are otherwise not expressable in a valid hostname.
-    parser.add_argument(u"--s3-use-new-style", action=u"store_true")
+    parser.add_argument(u"--s3-use-onezone-ia", action=u"store_true",
+                        help=u"Whether to use S3 One Zone Infrequent Access Storage")
 
-    # Whether to use plain HTTP (without SSL) to send data to S3
-    # See <https://bugs.launchpad.net/duplicity/+bug/433970>.
-    parser.add_argument(u"--s3-unencrypted-connection", action=u"store_true")
+    parser.add_argument(u"--s3-use-rrs", action=u"store_true",
+                        help=u"Whether to use S3 Reduced Redundancy Storage")
 
-    # Chunk size used for S3 multipart uploads.The number of parallel uploads to
-    # S3 be given by chunk size / volume size. Use this to maximize the use of
-    # your bandwidth. Defaults to 25MB
-    parser.add_argument(u"--s3-multipart-chunk-size", type=set_megs, metavar=_(u"number"))
+    parser.add_argument(u"--s3-multipart-chunk-size", metavar=_(u"number"), type=set_megs,
+                        help=u"Chunk size used for S3 multipart uploads.The number of parallel uploads to\n"
+                             u"S3 be given by chunk size / volume size. Use this to maximize the use of\n"
+                             u"your bandwidth",
+                        default=config.s3_multipart_chunk_size)
 
-    # Number of processes to set the Processor Pool to when uploading multipart
-    # uploads to S3. Use this to control the maximum simultaneous uploads to S3.
-    parser.add_argument(u"--s3-multipart-max-procs", type=int, metavar=_(u"number"))
+    parser.add_argument(u"--s3-multipart-max-procs", type=int, metavar=_(u"number"),
+                        help=u"Number of processes to set the Processor Pool to when uploading multipart\n"
+                             u"uploads to S3. Use this to control the maximum simultaneous uploads to S3",
+                        default=config.s3_multipart_max_procs)
 
-    # Number of seconds to wait for each part of a multipart upload to S3. Use this
-    # to prevent hangups when doing a multipart upload to S3.
-    parser.add_argument(u"--s3-multipart-max-timeout", type=int, metavar=_(u"number"))
+    parser.add_argument(u"--s3-multipart-max-timeout", metavar=_(u"number"), type=int,
+                        help=u"Number of seconds to wait for each part of a multipart upload to S3. Use this\n"
+                             u"to prevent hangups when doing a multipart upload to S3",
+                        default=config.s3_multipart_max_timeout)
 
-    # Option to allow the s3/boto backend use the multiprocessing version.
-    parser.add_argument(u"--s3-use-multiprocessing", action=u"store_true")
+    parser.add_argument(u"--s3-use-multiprocessing", action=u"store_true",
+                        help=u"Option to allow the s3/boto backend use the multiprocessing version")
 
-    # Option to allow use of server side encryption in s3
-    parser.add_argument(u"--s3-use-server-side-encryption", action=u"store_true", dest=u"s3_use_sse")
+    # TODO: refactor dest=
+    parser.add_argument(u"--s3-use-server-side-encryption", action=u"store_true", dest=u"s3_use_sse",
+                        help=u"Option to allow use of server side encryption in s3")
 
-    # Options to allow use of server side KMS encryption
-    parser.add_argument(u"--s3-use-server-side-kms-encryption", action=u"store_true", dest=u"s3_use_sse_kms")
+    # TODO: refactor dest=
+    parser.add_argument(u"--s3-use-server-side-kms-encryption", action=u"store_true", dest=u"s3_use_sse_kms",
+                        help=u"Allow use of server side KMS encryption")
 
-    parser.add_argument(u"--s3-kms-key-id", metavar=u"s3_kms_key_id", action=u"store")
+    parser.add_argument(u"--s3-kms-key-id", metavar=_(u"s3_kms_key_id"), action=u"store",
+                        help=u"S3 KMS encryption key id")
 
-    parser.add_argument(u"--s3-kms-grant", metavar=u"s3_kms_grant", action=u"store")
+    parser.add_argument(u"--s3-kms-grant", metavar=_(u"s3_kms_grant"), action=u"store",
+                        help=u"S3 KMS grant value")
 
-    # Options for specifying region and endpoint of s3
-    parser.add_argument(u"--s3-region-name", metavar=u"s3_region_name", action=u"store")
+    parser.add_argument(u"--s3-region-name", metavar=_(u"s3_region_name"), action=u"store",
+                        help=u"Specity S3 region name",
+                        default=None)
 
-    parser.add_argument(u"--s3-endpoint-url", metavar=u"s3_endpoint_url", action=u"store")
+    parser.add_argument(u"--s3-endpoint-url", metavar=_(u"s3_endpoint_url"), action=u"store",
+                        help=u"Specity S3 endpoint",
+                        default=None)
 
-    # Option to specify a Swift container storage policy.
-    parser.add_argument(u"--swift-storage-policy", metavar=_(u"policy"))
+    parser.add_argument(u"--swift-storage-policy", metavar=_(u"policy"),
+                        help=u"Option to specify a Swift container storage policy.",
+                        default=None)
 
-    # Number of the largest supported upload size where the Azure library makes only one put call.
-    # This is used to upload a single block if the content length is known and is less than this value.
-    # The default is 67108864 (64MiB)
-    parser.add_argument(u"--azure-max-single-put-size", type=int, metavar=_(u"number"))
+    parser.add_argument(u"--scp-command", metavar=_(u"command"),
+                        help=u"SCP command to use (ssh pexpect backend)")
 
-    # Number for the block size used by the Azure library to upload a blob if the length is unknown
-    # or is larger than the value set by --azure-max-single-put-size".
-    # The maximum block size the service supports is 100MiB.
-    # The default is 4 * 1024 * 1024 (4MiB)
-    parser.add_argument(u"--azure-max-block-size", type=int, metavar=_(u"number"))
+    parser.add_argument(u"--sftp-command", metavar=_(u"command"),
+                        help=u"SFTP command to use (ssh pexpect backend)")
 
-    # The number for the maximum parallel connections to use when the blob size exceeds 64MB.
-    # max_connections (int) - Maximum number of parallel connections to use when the blob size exceeds 64MB.
-    parser.add_argument(u"--azure-max-connections", type=int, metavar=_(u"number"))
+    parser.add_argument(u"--show-changes-in-set", type=int, metavar=_(u"number"),
+                        help=u"Show file changes (new, deleted, changed) in the specified backup\n"
+                             u"set (0 specifies latest, 1 specifies next latest, etc.)")
 
-    # Standard storage tier used for storring backup files (Hot|Cool|Archive).
-    parser.add_argument(u"--azure-blob-tier", metavar=_(u"Hot|Cool|Archive"))
+    parser.add_argument(u"--sign-key", type=set_sign_key, metavar=_(u"gpg-key-id"),
+                        help=u"Sign key for encryption/decryption")
 
-    # scp command to use (ssh pexpect backend)
-    parser.add_argument(u"--scp-command", metavar=_(u"command"))
+    parser.add_argument(u"--ssh-askpass", action=u"store_true",
+                        help=u"Ask the user for the SSH password. Not for batch usage")
 
-    # sftp command to use (ssh pexpect backend)
-    parser.add_argument(u"--sftp-command", metavar=_(u"command"))
+    parser.add_argument(u"--ssh-options", metavar=_(u"options"), action=u"append",
+                        help=u"SSH options to add")
 
-    # allow the user to switch cloudfiles backend
-    parser.add_argument(u"--cf-backend", metavar=_(u"pyrax|cloudfiles"))
-
-    # Option that causes the B2 backend to hide files instead of deleting them
-    parser.add_argument(u"--b2-hide-files", action=u"store_true")
-
-    # TRANSL: Used in usage help to represent an ID for a GnuPG key. Example:
-    # --encrypt-key <gpg_key_id>
-    parser.add_argument(u"--sign-key", type=set_sign_key, metavar=_(u"gpg-key-id"))
-
-    # default to batch mode using public-key encryption
-    parser.add_argument(u"--ssh-askpass", action=u"store_true")
-
-    # user added ssh options
-    parser.add_argument(u"--ssh-options", action=u"append", metavar=_(u"options"))
-
-    # user added ssl options (used by webdav, lftp backend)
     parser.add_argument(u"--ssl-cacert-file", metavar="file",
                         help=_(u"pem formatted bundle of certificate authorities"))
 
     parser.add_argument(u"--ssl-cacert-path", metavar="path",
                         help=_(u"path to a folder with certificate authority files"))
 
-    parser.add_argument(u"--ssl-no-check-certificate", action=u"store_true")
+    parser.add_argument(u"--ssl-no-check-certificate", action=u"store_true",
+                        help=u"Set to not validate SSL certificates")
 
-    # header options for Webdav
+    # TODO: refactor dest=
+    parser.add_argument(u"--tempdir", metavar=_(u"path"), type=check_file, dest=u"temproot",
+                        help=u"Working directory for temp files",
+                        default=config.temproot)
+
+    parser.add_argument(u"--timeout", metavar=_(u"seconds"), type=int,
+                        help=u"Network timeout in seconds",
+                        default=config.timeout)
+
+    parser.add_argument(u"--time-separator", metavar=_(u"char"),
+                        help=u"Character used like the ':' in time strings like\n"
+                             u"2002-08-06T04:22:00-07:00",
+                        default=config.time_separator)
+
+    parser.add_argument(u"--use-agent", action=u"store_true",
+                        help=u"Whether to specify --use-agent in GnuPG options")
+
+    parser.add_argument(u"--verbosity", u"-v", metavar=_(u"[0-9]"), type=check_verbosity,
+                        help=u"Logging verbosity")
+
+    parser.add_argument(u"--version", u"-V", action="version", version=u"%(prog) __version__",
+                        help=u"Display version and exit")
+
+    parser.add_argument(u"--volsize", metavar=_(u"number"), type=set_volsize,
+                        help=u"Volume size to use in MiB",
+                        default=int(config.volsize / (1024 * 1024)))
+
     parser.add_argument(u"--webdav-headers", metavar="string",
                         help=_(u"extra headers for Webdav, like 'Cookie,name=value'"))
-
-    # Working directory for the tempfile module. Defaults to /tmp on most systems.
-    parser.add_argument(u"--tempdir", dest=u"temproot", type=check_file, metavar=_(u"path"))
-
-    # network timeout value
-    # TRANSL: Used in usage help. Example:
-    # --timeout <seconds>
-    parser.add_argument(u"--timeout", type=int, metavar=_(u"seconds"))
-
-    # Character used like the ":" in time strings like
-    # 2002-08-06T04:22:00-07:00.  The colon isn't good for filenames on
-    # windows machines.
-    # TRANSL: abbreviation for "character" (noun)
-    parser.add_argument(u"--time-separator", metavar=_(u"char"))
-
-    # Whether to specify --use-agent in GnuPG options
-    parser.add_argument(u"--use-agent", action=u"store_true")
-
-    parser.add_argument(u"--verbosity", u"-v", type=check_verbosity, metavar=u"[0-9]")
-
-    parser.add_argument(u"--version", u"-V", action="version", version=u"%(prog) __version__")
-
-    # option for mediafire to purge files on delete instead of sending to trash
-    parser.add_argument(u"--mf-purge", action=u"store_true")
-
-    parser.add_argument(u"--mp-segment-size", type=set_mpsize, metavar=_(u"number"))
-
-    # volume size
-    # TRANSL: Used in usage help to represent a desired number of
-    # something. Example:
-    # --num-retries <number>
-    parser.add_argument(u"--volsize", type=set_volsize, metavar=_(u"number"))
-
-    # If set, collect only the file status, not the whole root.
-    parser.add_argument(u"--file-changed", type=check_file, metavar=_(u"path"))
-
-    # If set, skip collecting the files_changed list in statistics, nullifies --file-changed
-    parser.add_argument(u"--no-files-changed", action=u"store_true")
-
-    # If set, show file changes (new, deleted, changed) in the specified backup
-    #  set (0 specifies latest, 1 specifies next latest, etc.)
-    parser.add_argument(u"--show-changes-in-set", type=int, metavar=_(u"number"))
-
-    # delay time before next try after a failure of a backend operation
-    # TRANSL: Used in usage help. Example:
-    # --backend-retry-delay <seconds>
-    parser.add_argument(u"--backend-retry-delay", type=int, metavar=_(u"seconds"))
 
     # TODO: Find a way to nuke these test options in production.
 
