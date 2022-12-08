@@ -54,16 +54,16 @@ restore = []
 verify = []
 
 # Prefix for all files (appended before type-specific prefixes)
-file_prefix = b""
+file_prefix = u""
 
 # Prefix for manifest files only
-file_prefix_manifest = b""
+file_prefix_manifest = u""
 
 # Prefix for archive files only
-file_prefix_archive = b""
+file_prefix_archive = u""
 
 # Prefix for sig files only
-file_prefix_signature = b""
+file_prefix_signature = u""
 
 # The name of the current host
 hostname = socket.gethostname()
@@ -101,7 +101,7 @@ restore_time = None
 
 # If set, restore only the subdirectory or file specified, not the
 # whole root.
-restore_dir = None
+restore_path = None
 
 # The backend representing the remote side
 backend = None
@@ -157,10 +157,6 @@ lockfile = None
 # source directory doesn't match previous backup source directory.
 allow_source_mismatch = None
 
-# If set, abort if cannot do an incremental backup.  Otherwise if
-# signatures not found, default to full.
-incremental = None
-
 # If set, print the statistics after every backup session
 print_statistics = True
 
@@ -170,10 +166,6 @@ full_if_older_than = None
 
 # Used to confirm certain destructive operations like deleting old files.
 force = None
-
-# If set, signifies time in seconds before which backup files should
-# be deleted.
-remove_time = None
 
 # If set, signifies the number of backups chains to keep when performing
 # a remove-all-but-n-full.

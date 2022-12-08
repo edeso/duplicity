@@ -41,6 +41,7 @@ class CommandlineTest(UnitTestCase):
         u"source_url": u"file://duptest",
         u"target_dir": u"foo/bar",
         u"target_url": u"file://duptest",
+        u"url_or_dir": u"file://duptest",
     }
 
     def setUp(self):
