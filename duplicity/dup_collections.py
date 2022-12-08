@@ -121,7 +121,7 @@ class BackupSet(object):
         Set BackupSet information from ParseResults object
 
         @param pr: parse results
-        @type pf: ParseResults
+        @type pr: ParseResults
         """
         assert not self.info_set
         self.type = pr.type
