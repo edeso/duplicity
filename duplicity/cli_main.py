@@ -294,232 +294,232 @@ def parse_cmdline_options(arglist):
 
     parser.add_argument(u"--allow-source-mismatch", action=u"store_true",
                         help=u"Allow different source directories",
-                        default=d(d(config.allow_source_mismatch)))
+                        default=d(config.allow_source_mismatch))
 
     parser.add_argument(u"--archive-dir", type=check_file, metavar=_(u"path"),
                         help=u"Path to store metadata archives",
-                        default=d(d(config.archive_dir)))
+                        default=d(config.archive_dir))
 
     parser.add_argument(u"--asynchronous-upload", action=u"store_const", const=1, dest=u"async_concurrency",
                         help=u"Number of async upload tasks, max of 1 for now",
-                        default=d(d(config.async_concurrency)))
+                        default=d(config.async_concurrency))
 
     parser.add_argument(u"--azure-blob-tier", metavar=_(u"Hot|Cool|Archive"),
                         help=u"Standard storage tier used for storring backup files (Hot|Cool|Archive)",
-                        default=d(d(config.azure_blob_tier)))
+                        default=d(config.azure_blob_tier))
 
     parser.add_argument(u"--azure-max-connections", type=int, metavar=_(u"number"),
                         help=u"Number of maximum parallel connections to use when the blob size exceeds 64MB",
-                        default=d(d(config.azure_max_connections)))
+                        default=d(config.azure_max_connections))
 
     parser.add_argument(u"--azure-max-block-size", metavar=_(u"number"), type=int,
                         help=u"Number for the block size to upload a blob if the length is unknown\n"
                              u"or is larger than the value set by --azure-max-single-put-size\n"
                              u"The maximum block size the service supports is 100MiB.",
-                        default=d(d(config.azure_max_block_size)))
+                        default=d(config.azure_max_block_size))
 
     parser.add_argument(u"--azure-max-single-put-size", metavar=_(u"number"), type=int,
                         help=u"Largest supported upload size where the Azure library makes only one put call.\n"
                              u"Used to upload a single block if the content length is known and is less than this",
-                        default=d(d(config.azure_max_single_put_size)))
+                        default=d(config.azure_max_single_put_size))
 
     parser.add_argument(u"--b2-hide-files", action=u"store_true",
                         help=u"Whether the B2 backend hides files instead of deleting them")
 
     parser.add_argument(u"--backend-retry-delay", type=int, metavar=_(u"seconds"),
                         help=u"Delay time before next try after a failure of a backend operation",
-                        default=d(d(config.backend_retry_delay)))
+                        default=d(config.backend_retry_delay))
 
     parser.add_argument(u"--cf-backend", metavar=_(u"pyrax|cloudfiles"),
                         help=u"Allow the user to switch cloudfiles backend")
 
     parser.add_argument(u"--compare-data", action=u"store_true",
                         help=u"Compare data on verify not only signatures",
-                        default=d(d(config.compare_data)))
+                        default=d(config.compare_data))
 
     parser.add_argument(u"--config-dir", type=check_file, metavar=_(u"path"),
                         help=u"Path to store configuration files",
-                        default=d(d(config.archive_dir)))
+                        default=d(config.archive_dir))
 
     parser.add_argument(u"--copy-links", action=u"store_true",
                         help=u"Copy contents of symlinks instead of linking",
-                        default=d(d(config.copy_links)))
+                        default=d(config.copy_links))
 
     parser.add_argument(u"--dry-run", action=u"store_true",
                         help=u"Perform dry-run with no writes",
-                        default=d(d(config.dry_run)))
+                        default=d(config.dry_run))
 
     parser.add_argument(u"--encrypt-key", metavar=_(u"gpg-key-id"), action=u"append",
                         help=u"GNUpg key for encryption/decryption",
-                        default=d(d(None)))
+                        default=d(None))
 
     # secret keyring in which the private encrypt key can be found
     parser.add_argument(u"--encrypt-secret-keyring", metavar=_(u"path"),
                         help=u"Path to secret GNUpg keyring",
-                        default=d(d(None)))
+                        default=d(None))
 
     parser.add_argument(u"--encrypt-sign-key", metavar=_(u"gpg-key-id"), action=u"append",
                         help=u"GNUpg key for signing",
-                        default=d(d(None)))
+                        default=d(None))
 
     parser.add_argument(u"--exclude", metavar=_(u"shell_pattern"), action=AddSelectionAction,
                         help=u"Exclude globbing pattern",
-                        default=d(d(None)))
+                        default=d(None))
 
     parser.add_argument(u"--exclude-device-files", action=u"store_true",
                         help=u"Exclude device files",
-                        default=d(d(False)))
+                        default=d(False))
 
     parser.add_argument(u"--exclude-filelist", metavar=_(u"filename"), action=AddFilistAction,
                         help=u"File with list of file patters to exclude",
-                        default=d(d(None)))
+                        default=d(None))
 
     parser.add_argument(u"--exclude-if-present", metavar=_(u"filename"), action=AddSelectionAction,
                         help=u"Exclude directory if this file is present",
-                        default=d(d(None)))
+                        default=d(None))
 
     parser.add_argument(u"--exclude-older-than", metavar=_(u"time"), type=check_time, action=AddSelectionAction,
                         help=u"Exclude files older than time",
-                        default=d(d(None)))
+                        default=d(None))
 
     parser.add_argument(u"--exclude-other-filesystems", action=u"store_true",
                         help=u"Exclude other filesystems from backup",
-                        default=d(d(False)))
+                        default=d(False))
 
     parser.add_argument(u"--exclude-regexp", metavar=_(u"regex"), action=AddSelectionAction,
                         help=u"Exclude based on regex pattern",
-                        default=d(d(None)))
+                        default=d(None))
 
     parser.add_argument(u"--file-changed", type=check_file, metavar=_(u"path"),
                         help=u"Whether to collect only the file status, not the whole root",
-                        default=d(d(None)))
+                        default=d(None))
 
     parser.add_argument(u"--file-prefix", metavar="string", action=u"store",
                         help=u"String prefix for all duplicity files",
-                        default=d(d(config.file_prefix)))
+                        default=d(config.file_prefix))
 
     parser.add_argument(u"--file-prefix-archive", metavar="string", action=u"store",
                         help=u"String prefix for duplicity difftar files",
-                        default=d(d(config.file_prefix_archive)))
+                        default=d(config.file_prefix_archive))
 
     parser.add_argument(u"--file-prefix-manifest", metavar="string", action=u"store",
                         help=u"String prefix for duplicity manifest files",
-                        default=d(d(config.file_prefix_manifest)))
+                        default=d(config.file_prefix_manifest))
 
     parser.add_argument(u"--file-prefix-signature", metavar="string", action=u"store",
                         help=u"String prefix for duplicity signature files",
-                        default=d(d(config.file_prefix_signature)))
+                        default=d(config.file_prefix_signature))
 
     parser.add_argument(u"--path-to-restore", u"-r", metavar=_(u"path"), type=check_file, dest=u"restore_path",
                         help=u"File or directory path to restore",
-                        default=d(d(config.restore_path)))
+                        default=d(config.restore_path))
 
     parser.add_argument(u"--force", action=u"store_true",
                         help=u"Force duplicity to actually delete during cleanup",
-                        default=d(d(config.force)))
+                        default=d(config.force))
 
     parser.add_argument(u"--ftp-passive", action=u"store_const", const=u"passive", dest=u"ftp_connection",
                         help=u"Tell FTP to use passive mode",
-                        default=d(d(config.ftp_connection)))
+                        default=d(config.ftp_connection))
 
     parser.add_argument(u"--ftp-regular", action=u"store_const", const=u"regular", dest=u"ftp_connection",
                         help=u"Tell FTP to use regular mode",
-                        default=d(d(config.ftp_connection)))
+                        default=d(config.ftp_connection))
 
     parser.add_argument(u"--full-if-older-than", metavar=_(u"time"), type=check_time, dest=u"restore_time",
                         help=u"Perform full backup if last full is older than 'time'",
-                        default=d(d(config.restore_time)))
+                        default=d(config.restore_time))
 
     parser.add_argument(u"--gpg-binary", metavar=_(u"path"), type=check_file,
                         help=u"Path to GNUpg executable file",
-                        default=d(d(config.gpg_binary)))
+                        default=d(config.gpg_binary))
 
     parser.add_argument(u"--gpg-options", metavar=_(u"options"), action=u"append",
                         help=u"Options to append to GNUpg invocation",
-                        default=d(d(None)))
+                        default=d(None))
 
     parser.add_argument(u"--hidden-encrypt-key", metavar=_(u"gpg-key-id"),
                         help=u"Hidden GNUpg encryption key",
-                        default=d(d(None)))
+                        default=d(None))
 
     parser.add_argument(u"--idr-fakeroot", metavar=_(u"path"), type=check_file,
                         help=u"Fake root for idrive backend",
-                        default=d(d(config.idr_fakeroot)))
+                        default=d(config.idr_fakeroot))
 
     parser.add_argument(u"--ignore-errors", action=u"store_true",
                         help=u"Ignore most errors during restore",
-                        default=d(d(False)))
+                        default=d(False))
 
     parser.add_argument(u"--imap-full-address", action=u"store_true",
                         help=u"Whether to use the full email address as the user name",
-                        default=d(d(config.imap_full_address)))
+                        default=d(config.imap_full_address))
 
     parser.add_argument(u"--imap-mailbox", metavar=_(u"imap_mailbox"),
                         help=u"Name of the imap folder to store backups",
-                        default=d(d(config.imap_mailbox)))
+                        default=d(config.imap_mailbox))
 
     parser.add_argument(u"--include", metavar=_(u"shell_pattern"), action=AddSelectionAction,
                         help=u"Exclude globbing pattern",
-                        default=d(d(None)))
+                        default=d(None))
 
     parser.add_argument(u"--include-filelist", metavar=_(u"filename"), action=AddFilistAction,
                         help=u"File with list of file patters to include",
-                        default=d(d(None)))
+                        default=d(None))
 
     parser.add_argument(u"--include-regexp", metavar=_(u"regular_expression"), action=AddSelectionAction,
                         help=u"Exclude based on regex pattern",
-                        default=d(d(None)))
+                        default=d(None))
 
     parser.add_argument(u"--log-fd", metavar=_(u"file_descriptor"), type=set_log_fd,
                         help=u"Logging file descripto to use",
-                        default=d(d(None)))
+                        default=d(None))
 
     parser.add_argument(u"--log-file", metavar=_(u"log_filename"), type=set_log_file,
                         help=u"Logging filename to use",
-                        default=d(d(None)))
+                        default=d(None))
 
     parser.add_argument(u"--log-timestamp", action=u"store_true",
                         help=u"Whether to include timestamp and level in log",
-                        default=d(d(False)))
+                        default=d(False))
 
     parser.add_argument(u"--max-blocksize", metavar=_(u"number"), type=int,
                         help=u"Maximum block size for large files in MB",
-                        default=d(d(None)))
+                        default=d(None))
 
     parser.add_argument(u"--mf-purge", action=u"store_true",
                         help=u"Option for mediafire to purge files on delete instead of sending to trash",
-                        default=d(d(False)))
+                        default=d(False))
 
     parser.add_argument(u"--mp-segment-size", metavar=_(u"number"), type=set_mpsize,
                         help=u"Swift backend segment size",
-                        default=d(d(config.mp_segment_size)))
+                        default=d(config.mp_segment_size))
 
     parser.add_argument(u"--name", metavar=_(u"backup name"),
                         help=u"Custom backup name instead of hash",
-                        default=d(d(config.backup_name)))
+                        default=d(config.backup_name))
 
     parser.add_argument(u"--no-compression", action=u"store_true",
                         help=u"If supplied do not perform compression")
 
     parser.add_argument(u"--no-encryption", action=u"store_true",
                         help=u"If supplied do not perform encryption",
-                        default=d(d(False)))
+                        default=d(False))
 
     parser.add_argument(u"--no-files-changed", action=u"store_true",
                         help=u"Whether to skip collecting the files_changed list in statistics",
-                        default=d(d(False)))
+                        default=d(False))
 
     parser.add_argument(u"--no-print-statistics", action=u"store_true",
                         help=u"If supplied do not print statistics",
-                        default=d(d(False)))
+                        default=d(False))
 
     parser.add_argument(u"--null-separator", action=u"store_true",
                         help=u"Whether to split on null instead of newline",
-                        default=d(d(False)))
+                        default=d(False))
 
     parser.add_argument(u"--num-retries", metavar=_(u"number"), type=int,
                         help=u"Number of retries on network operations",
-                        default=d(d(config.num_retries)))
+                        default=d(config.num_retries))
 
     parser.add_argument(u"--numeric-owner", action=u"store_true",
                         help=u"Keeps number from tar file. Like same option in GNU tar.",
