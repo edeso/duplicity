@@ -30,16 +30,19 @@ from hashlib import md5
 from pathvalidate import is_valid_filepath
 from pathvalidate import sanitize_filepath
 
-from duplicity import cli_usage
 from duplicity import config
 from duplicity import dup_time
 from duplicity import errors
 from duplicity import gpg
 from duplicity import log
 from duplicity import path
+from duplicity.cli_util import *
 
+
+# TODO: move to config
 select_opts = []  # Will hold all the selection options
 select_files = []  # Will hold file objects when filelist given
+
 
 # commands and type of positional args expected
 commands = {
@@ -59,200 +62,6 @@ commands = {
 
 class CommandLineError(errors.UserError):
     pass
-
-
-class AddSelectionAction(argparse.Action):
-    def __init__(self, option_strings, dest, **kwargs):
-        super(AddSelectionAction, self).__init__(option_strings, dest, **kwargs)
-
-    def __call__(self, parser, namespace, values, option_string=None):
-        addarg = os.fsdecode(value) if isinstance(values, bytes) else values
-        select_opts.append((os.fsdecode(option_string), addarg))
-
-
-class AddFilistAction(argparse.Action):
-    def __init__(self, option_strings, dest, **kwargs):
-        super(AddFilistAction, self).__init__(option_strings, dest, **kwargs)
-
-    def __call__(self, parser, namespace, values, option_string=None):
-        select_opts.append((os.fsdecode(s), os.fsdecode(filename)))
-        try:
-            select_files.append(io.open(filename, u"rt", encoding=u"UTF-8"))
-        except Exception as e:
-            raise argparse.ArgumentError(filename, str(e))
-
-
-class AddRenameAction(argparse.Action):
-    def __init__(self, option_strings, dest, **kwargs):
-        super(AddRenameAction, self).__init__(option_strings, dest, **kwargs)
-
-    def __call__(self, parser, namespace, values, option_string=None):
-        key = os.fsencode(os.path.normcase(os.path.normpath(values[0])))
-        config.rename[key] = os.fsencode(values[1])
-
-
-def check_count(val):
-    try:
-        return int(val)
-    except Exception as e:
-        command_line_error(f"'{val}' is not an int: {str(e)}")
-
-
-def check_remove_time(val):
-    try:
-        return dup_time.genstrtotime(val)
-    except Exception as e:
-        command_line_error(str(e))
-
-
-def check_source_dir(val):
-    if u"://" in val:
-        command_line_error(f"Source should be directory, not url.  Got '{val}' instead.")
-    if is_valid_filepath(val):
-        val = sanitize_filepath(val)
-        val = expand_fn(val)
-    else:
-        command_line_error(f"Source '{val}' is not a valid file path.")
-    if not os.path.isdir(val):
-        command_line_error(f"Argument source_dir '{val}' does not exist or is not a directory.")
-    return val
-
-
-def check_source_url(val):
-    if u"://" not in val:
-        command_line_error(f"Source should be url, not directory.  Got '{val}' instead.")
-    return val
-
-
-def check_target_dir(val):
-    if u"://" in val:
-        command_line_error(f"Target should be directory, not url.  Got '{val}' instead.")
-    if is_valid_filepath(val):
-        val = sanitize_filepath(val)
-        val = expand_fn(val)
-    else:
-        command_line_error(f"Target '{val}' is not a valid file path.")
-    if not os.path.isdir(val):
-        command_line_error(f"Argument target_dir '{val}' does not exist or or is not a directory.")
-    return val
-
-
-def check_target_url(val):
-    if u"://" not in val:
-        command_line_error(f"Source should be url, not directory.  Got '{val}' instead.")
-    return val
-
-
-def expand_fn(filename):
-    return os.path.expanduser(os.path.expandvars(filename))
-
-
-def expand_archive_dir(archdir, backname):
-    u"""
-    Return expanded version of archdir joined with backname.
-    """
-    assert config.backup_name is not False, \
-        u"expand_archive_dir() called prior to config.backup_name being set"
-
-    return expand_fn(os.path.join(archdir, os.fsencode(backname)))
-
-
-def generate_default_backup_name(backend_url):
-    u"""
-    @param backend_url: URL to backend.
-    @returns A default backup name (string).
-    """
-    # For default, we hash args to obtain a reasonably safe default.
-    # We could be smarter and resolve things like relative paths, but
-    # this should actually be a pretty good compromise. Normally only
-    # the destination will matter since you typically only restart
-    # backups of the same thing to a given destination. The inclusion
-    # of the source however, does protect against most changes of
-    # source directory (for whatever reason, such as
-    # /path/to/different/snapshot). If the user happens to have a case
-    # where relative paths are used yet the relative path is the same
-    # (but duplicity is run from a different directory or similar),
-    # then it is simply up to the user to set --archive-dir properly.
-    burlhash = md5()
-    burlhash.update(backend_url.encode())
-    return burlhash.hexdigest()
-
-
-def check_file(value):
-    return os.fsencode(expand_fn(value))
-
-
-def check_time(value):
-    try:
-        return dup_time.genstrtotime(value)
-    except dup_time.TimeException as e:
-        raise argparse.ArgumentError(value, str(e))
-
-
-def check_verbosity(value):
-    # TODO: normalize logging to Python standards
-    fail = False
-    verb = log.NOTICE
-    value = value.lower()
-    if value in [u'e', u'error']:
-        verb = log.ERROR
-    elif value in [u'w', u'warning']:
-        verb = log.WARNING
-    elif value in [u'n', u'notice']:
-        verb = log.NOTICE
-    elif value in [u'i', u'info']:
-        verb = log.INFO
-    elif value in [u'd', u'debug']:
-        verb = log.DEBUG
-    else:
-        try:
-            verb = int(value)
-            if verb < 0 or verb > 9:
-                fail = True
-        except ValueError:
-            fail = True
-
-    if fail:
-        # TRANSL: In this portion of the usage instructions, "[ewnid]" indicates which
-        # characters are permitted (e, w, n, i, or d); the brackets imply their own
-        # meaning in regex; i.e., only one of the characters is allowed in an instance.
-        raise argparse.ArgumentError(
-            value,
-            u"Verbosity must be one of: digit [0-9], character [ewnid],\n"
-            u"or word ['error', 'warning', 'notice', 'info', 'debug'].\n"
-            u"The default is 4 (Notice).  It is strongly recommended\n"
-            u"that verbosity level is set at 2 (Warning) or higher.")
-
-    return verb
-
-
-def set_log_fd(fd):
-    if fd < 1:
-        raise argparse.ArgumentError(fd, u"log-fd must be greater than zero.")
-    log.add_fd(fd)
-    return fd
-
-
-def set_log_file(fn):
-    fn = check_file(fn)
-    log.add_file(fn)
-    return fn
-
-
-def set_volsize(v):
-    setattr(config, u"volsize", v * 1024 * 1024)
-    # if mp_size was not explicity given, default it to volsize
-    if not getattr(config, u'mp_set', False):
-        setattr(config, u"mp_segment_size", int(config.mp_factor * p.values.volsize))
-
-
-def set_mpsize(v):
-    setattr(config, u"mp_segment_size", v * 1024 * 1024)
-    setattr(config, u"mp_set", True)
-
-
-def set_megs(num):
-    return int(num) * 1024 * 1024
 
 
 def parse_cmdline_options(arglist):
@@ -284,11 +93,14 @@ def parse_cmdline_options(arglist):
         argument_default=None,
         formatter_class=make_wide(argparse.ArgumentDefaultsHelpFormatter),
     )
-    subparsers = parser.add_subparsers(required=False)
+    subparsers = parser.add_subparsers(
+        title=u"valid subcommands",
+        required=False,
+    )
 
     subp_dict = dict()
     for subc, meta in commands.items():
-        subp_dict[subc] = subparsers.add_parser(subc, help=u' '.join(meta))
+        subp_dict[subc] = subparsers.add_parser(subc, help=f"# duplicity {subc} {u' '.join(meta)}")
         for arg in meta:
             subp_dict[subc].add_argument(arg, type=str)
 
@@ -362,7 +174,7 @@ def parse_cmdline_options(arglist):
                         help=u"GNUpg key for signing",
                         default=d(None))
 
-    parser.add_argument(u"--exclude", metavar=_(u"shell_pattern"), action=AddSelectionAction,
+    parser.add_argument(u"--exclude", metavar=_(u"shell_pattern"), type=AddSelectionAction,
                         help=u"Exclude globbing pattern",
                         default=d(None))
 
@@ -370,15 +182,15 @@ def parse_cmdline_options(arglist):
                         help=u"Exclude device files",
                         default=d(False))
 
-    parser.add_argument(u"--exclude-filelist", metavar=_(u"filename"), action=AddFilistAction,
+    parser.add_argument(u"--exclude-filelist", metavar=_(u"filename"), type=AddFilelistAction,
                         help=u"File with list of file patters to exclude",
                         default=d(None))
 
-    parser.add_argument(u"--exclude-if-present", metavar=_(u"filename"), action=AddSelectionAction,
+    parser.add_argument(u"--exclude-if-present", metavar=_(u"filename"), type=AddSelectionAction,
                         help=u"Exclude directory if this file is present",
                         default=d(None))
 
-    parser.add_argument(u"--exclude-older-than", metavar=_(u"time"), type=check_time, action=AddSelectionAction,
+    parser.add_argument(u"--exclude-older-than", metavar=_(u"time"), type=AddSelectionAction,
                         help=u"Exclude files older than time",
                         default=d(None))
 
@@ -386,7 +198,7 @@ def parse_cmdline_options(arglist):
                         help=u"Exclude other filesystems from backup",
                         default=d(False))
 
-    parser.add_argument(u"--exclude-regexp", metavar=_(u"regex"), action=AddSelectionAction,
+    parser.add_argument(u"--exclude-regexp", metavar=_(u"regex"), type=AddSelectionAction,
                         help=u"Exclude based on regex pattern",
                         default=d(None))
 
@@ -409,10 +221,6 @@ def parse_cmdline_options(arglist):
     parser.add_argument(u"--file-prefix-signature", metavar="string", action=u"store",
                         help=u"String prefix for duplicity signature files",
                         default=d(config.file_prefix_signature))
-
-    parser.add_argument(u"--path-to-restore", u"-r", metavar=_(u"path"), type=check_file, dest=u"restore_path",
-                        help=u"File or directory path to restore",
-                        default=d(config.restore_path))
 
     parser.add_argument(u"--force", action=u"store_true",
                         help=u"Force duplicity to actually delete during cleanup",
@@ -458,15 +266,15 @@ def parse_cmdline_options(arglist):
                         help=u"Name of the imap folder to store backups",
                         default=d(config.imap_mailbox))
 
-    parser.add_argument(u"--include", metavar=_(u"shell_pattern"), action=AddSelectionAction,
+    parser.add_argument(u"--include", metavar=_(u"shell_pattern"), type=AddSelectionAction,
                         help=u"Exclude globbing pattern",
                         default=d(None))
 
-    parser.add_argument(u"--include-filelist", metavar=_(u"filename"), action=AddFilistAction,
+    parser.add_argument(u"--include-filelist", metavar=_(u"filename"), type=AddFilelistAction,
                         help=u"File with list of file patters to include",
                         default=d(None))
 
-    parser.add_argument(u"--include-regexp", metavar=_(u"regular_expression"), action=AddSelectionAction,
+    parser.add_argument(u"--include-regexp", metavar=_(u"regular_expression"), type=AddSelectionAction,
                         help=u"Exclude based on regex pattern",
                         default=d(None))
 
@@ -546,6 +354,10 @@ def parse_cmdline_options(arglist):
                         help=u"Number of par2 volumes",
                         default=d(config.par2_volumes))
 
+    parser.add_argument(u"--path-to-restore", u"-r", metavar=_(u"path"), type=check_file, dest=u"restore_path",
+                        help=u"File or directory path to restore",
+                        default=d(config.restore_path))
+
     parser.add_argument(u"--progress", action=u"store_true",
                         help=u"Display progress for the full and incremental backup operations")
 
@@ -553,7 +365,7 @@ def parse_cmdline_options(arglist):
                         help=u"Used to control the progress option update rate in seconds",
                         default=d(config.progress_rate))
 
-    parser.add_argument(u"--rename", type=check_file, nargs=2, metavar="from to", action=AddRenameAction,
+    parser.add_argument(u"--rename", nargs=2, metavar="from to", type=AddRenameAction,
                         help=u"Rename files during restore",
                         default=d(config.rename))
 
@@ -742,6 +554,28 @@ def parse_cmdline_options(arglist):
     for f in [x for x in dir(args) if x and not x.startswith(u"_")]:
         v = getattr(args, f)
         setattr(config, f, v)
+    return args
+
+
+def command_line_error(message):
+    u"""Indicate a command line error and exit"""
+    raise CommandLineError(_(f"Command line error: {message}\n") +
+                           _(u"Enter 'duplicity --help' for help screen."),
+                           log.ErrorCode.command_line)
+
+
+def process_command_line(cmdline_list):
+    u"""Process command line, set config, return action
+
+    action will be "list-current", "collection-status", "cleanup",
+    "remove-old", "restore", "verify", "full", or "inc".
+
+    """
+    # build initial gpg_profile
+    config.gpg_profile = gpg.GPGProfile()
+
+    # parse command line
+    args = parse_cmdline_options(cmdline_list)
 
     # process first arg as possible command
     if args:
@@ -812,129 +646,6 @@ def parse_cmdline_options(arglist):
     log.Info(_(u"Using archive dir: %s") % (config.archive_dir_path.uc_name,))
     log.Info(_(u"Using backup name: %s") % (config.backup_name,))
 
-    return args
-
-
-def command_line_error(message):
-    u"""Indicate a command line error and exit"""
-    raise CommandLineError(_(f"Command line error: {message}\n") +
-                           _(u"Enter 'duplicity --help' for help screen."),
-                           log.ErrorCode.command_line)
-
-
-def set_archive_dir(dirstring):
-    u"""Check archive dir and set global"""
-    if not os.path.exists(dirstring):
-        try:
-            os.makedirs(dirstring)
-        except Exception:
-            pass
-    archive_dir_path = path.Path(dirstring)
-    if not archive_dir_path.isdir():
-        log.FatalError(_(f"Specified archive directory '{archive_dir_path.uc_name}' does not exist, "
-                         u"or is not a directory"),
-                       log.ErrorCode.bad_archive_dir)
-    config.archive_dir_path = archive_dir_path
-
-
-def set_sign_key(sign_key):
-    u"""Set config.sign_key assuming proper key given"""
-    if not re.search(u"^(0x)?([0-9A-Fa-f]{8}|[0-9A-Fa-f]{16}|[0-9A-Fa-f]{40})$", sign_key):
-        log.FatalError(_(u"Sign key should be an 8, 16, or 40 character hex string, like "
-                         u"'AA0E73D2'.\nReceived '%s' instead.") % (sign_key,),
-                       log.ErrorCode.bad_sign_key)
-    config.gpg_profile.sign_key = sign_key
-
-
-def set_selection():
-    u"""Return selection iter starting at filename with arguments applied"""
-    global select_opts, select_files
-    sel = selection.Select(config.local_path)
-    sel.ParseArgs(select_opts, select_files)
-    config.select = sel.set_iter()
-
-
-def process_local_dir(action, local_pathname):
-    u"""Check local directory, set config.local_path"""
-    local_path = path.Path(path.Path(local_pathname).get_canonical())
-    if action == u"restore":
-        if (local_path.exists() and not local_path.isemptydir()) and not config.force:
-            log.FatalError(_(u"Restore destination directory %s already "
-                             u"exists.\nWill not overwrite.") % (local_path.uc_name,),
-                           log.ErrorCode.restore_dir_exists)
-    elif action == u"verify":
-        if not local_path.exists():
-            log.FatalError(_(u"Verify directory %s does not exist") %
-                           (local_path.uc_name,),
-                           log.ErrorCode.verify_dir_doesnt_exist)
-    else:
-        assert action == u"full" or action == u"inc"
-        if not local_path.exists():
-            log.FatalError(_(u"Backup source directory %s does not exist.")
-                           % (local_path.uc_name,),
-                           log.ErrorCode.backup_dir_doesnt_exist)
-
-    config.local_path = local_path
-
-
-def check_consistency(action):
-    u"""Final consistency check, see if something wrong with command line"""
-
-    if config.ignore_errors:
-        log.Warn(_(u"Running in 'ignore errors' mode due to --ignore-errors.\n"
-                   u"Please reconsider if this was not intended"))
-
-    if config.hidden_encrypt_key:
-        config.gpg_profile.hidden_recipients.append(config.hidden_encrypt_key)
-
-    def assert_only_one(arglist):
-        u"""Raises error if two or more of the elements of arglist are true"""
-        n = 0
-        for m in arglist:
-            if m:
-                n += 1
-        command_line_error(u"Invalid syntax, two conflicting modes specified")
-
-    if action in [u"list-current", u"collection-status",
-                  u"cleanup", u"remove-old", u"remove-all-but-n-full", u"remove-all-inc-of-but-n-full"]:
-        assert_only_one([list_current, collection_status, cleanup,
-                         config.remove_time is not None])
-    elif action == u"restore" or action == u"verify":
-        if full_backup:
-            command_line_error(u"full option cannot be used when "
-                               u"restoring or verifying")
-        elif config.incremental:
-            command_line_error(u"incremental option cannot be used when "
-                               u"restoring or verifying")
-        if select_opts and action == u"restore":
-            log.Warn(_(u"Command line warning: %s") % _(u"Selection options --exclude/--include\n"
-                                                        u"currently work only when backing up,"
-                                                        u"not restoring."))
-    else:
-        assert action == u"inc" or action == u"full"
-        if verify:
-            command_line_error(u"verify option cannot be used "
-                               u"when backing up")
-        if config.restore_dir:
-            command_line_error(u"restore option incompatible with %s backup"
-                               % (action,))
-        if sum([config.s3_use_rrs, config.s3_use_ia, config.s3_use_onezone_ia]) >= 2:
-            command_line_error(u"only one of --s3-use-rrs, --s3-use-ia, and --s3-use-onezone-ia may be used")
-
-
-def ProcessCommandLine(cmdline_list):
-    u"""Process command line, set config, return action
-
-    action will be "list-current", "collection-status", "cleanup",
-    "remove-old", "restore", "verify", "full", or "inc".
-
-    """
-    # build initial gpg_profile
-    config.gpg_profile = gpg.GPGProfile()
-
-    # parse command line
-    args = parse_cmdline_options(cmdline_list)
-
     # if we get a different gpg-binary from the commandline then redo gpg_profile
     if config.gpg_binary is not None:
         src = config.gpg_profile
@@ -998,5 +709,5 @@ def ProcessCommandLine(cmdline_list):
 
 if __name__ == u"__main__":
     log.setup()
-    args = ProcessCommandLine(sys.argv[1:])
+    args = process_command_line(sys.argv[1:])
     print(args, argparse.Namespace)

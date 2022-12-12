@@ -1434,7 +1434,7 @@ See https://bugs.launchpad.net/duplicity/+bug/931175
     dup_time.setcurtime()
 
     # determine what action we're performing and process command line
-    action = cli_main.ProcessCommandLine(sys.argv[1:])
+    action = cli_main.process_command_line(sys.argv[1:])
 
     config.lockpath = os.path.join(config.archive_dir_path.name, b"lockfile")
     config.lockfile = fasteners.process_lock.InterProcessLock(config.lockpath)
