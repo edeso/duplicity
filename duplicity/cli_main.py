@@ -39,7 +39,6 @@ from duplicity import log
 from duplicity import path
 from duplicity.cli_util import *
 
-
 # TODO: move to config
 select_opts = []  # Will hold all the selection options
 select_files = []  # Will hold file objects when filelist given
@@ -61,20 +60,52 @@ class DuplicityCommands:
     verify = [u"source_url", u"target_dir"]
 
 
+all_options = {
+    u"allow_source_mismatch", u"archive_dir", u"asynchronous_upload", u"azure_blob_tier",
+    u"azure_max_connections", u"azure_max_block_size", u"azure_max_single_put_size", u"b2_hide_files",
+    u"backend_retry_delay", u"cf_backend", u"compare_data", u"config_dir", u"copy_links", u"dry_run",
+    u"encrypt_key", u"encrypt_secret_keyring", u"encrypt_sign_key", u"exclude", u"exclude_device_files",
+    u"exclude_filelist", u"exclude_if_present", u"exclude_older_than", u"exclude_other_filesystems",
+    u"exclude_regexp", u"file_changed", u"file_prefix", u"file_prefix_archive", u"file_prefix_manifest",
+    u"file_prefix_signature", u"force", u"ftp_passive", u"ftp_regular", u"full_if_older_than",
+    u"gpg_binary", u"gpg_options", u"hidden_encrypt_key", u"idr_fakeroot", u"ignore_errors",
+    u"imap_full_address", u"imap_mailbox", u"include", u"include_filelist", u"include_regexp", u"log_fd",
+    u"log_file", u"log_timestamp", u"max_blocksize", u"mf_purge", u"mp_segment_size", u"name",
+    u"no_compression", u"no_encryption", u"no_files_changed", u"no_print_statistics", u"null_separator",
+    u"num_retries", u"numeric_owner", u"do_not_restore_ownership", u"metadata_sync_mode", u"par2_options",
+    u"par2_redundancy", u"par2_volumes", u"path_to_restore", u"progress", u"progress_rate", u"rename",
+    u"restore_time", u"rsync_options", u"s3_endpoint_url", u"s3_european_buckets",
+    u"s3_unencrypted_connection", u"s3_use_deep_archive", u"s3_use_glacier", u"s3_use_glacier_ir",
+    u"s3_use_ia", u"s3_use_new_style", u"s3_use_onezone_ia", u"s3_use_rrs", u"s3_multipart_chunk_size",
+    u"s3_multipart_max_procs", u"s3_multipart_max_timeout", u"s3_use_multiprocessing",
+    u"s3_use_server_side_encryption", u"s3_use_server_side_kms_encryption", u"s3_kms_key_id",
+    u"s3_kms_grant", u"s3_region_name", u"swift_storage_policy", u"scp_command", u"sftp_command",
+    u"show_changes_in_set", u"sign_key", u"ssh_askpass", u"ssh_options", u"ssl_cacert_file",
+    u"ssl_cacert_path", u"ssl_no_check_certificate", u"tempdir", u"timeout", u"time_separator",
+    u"use_agent", u"verbosity", u"version", u"volsize", u"webdav_headers", u"current_time",
+    u"fail_on_volume", u"pydevd", u"skip_volume",
+}
+
+selection_options = {
+    u"exclude", u"exclude_device_files", u"exclude_filelist", u"exclude_if_present", u"exclude_older_than",
+    u"exclude_other_filesystems", u"exclude_regexp", u"include", u"include_filelist", u"include_regexp",
+}
+
+
 @dataclass(init=False)
 class CommandOptions:
     u"""legal options by command"""
-    backup = []
-    cleanup = []
-    collection_status = []
-    full = []
-    incremental = []
-    list_current_files = []
-    remove_older_than = []
-    remove_all_but_n_full = []
-    remove_all_inc_of_but_n_full = []
-    restore = []
-    verify = []
+    backup = list(all_options)
+    cleanup = list(all_options - selection_options)
+    collection_status = list(all_options - selection_options)
+    full = list(all_options)
+    incremental = list(all_options)
+    list_current_files = list(all_options - selection_options)
+    remove_older_than = list(all_options - selection_options)
+    remove_all_but_n_full = list(all_options - selection_options)
+    remove_all_inc_of_but_n_full = list(all_options - selection_options)
+    restore = list(all_options - selection_options)
+    verify = list(all_options - selection_options)
 
 
 @dataclass(init=False)
@@ -689,7 +720,7 @@ option_alternates = {
     u"restore_time": [u"time", u"t"],
     u"verbosity": [u"v"],
     u"version": [u"V"],
-    }
+}
 
 
 class CommandLineError(errors.UserError):
@@ -732,7 +763,7 @@ def parse_cmdline_options(arglist):
         subc = var2cmd(subc)
         subparser_dict[subc] = subparsers.add_parser(subc, help=f"# duplicity {subc} {u' '.join(meta)}")
         subparser_dict[subc].add_argument(subc, action=u"store_true",
-                                          default=d(getattr(config, subc.replace(U"-", u"_"))))
+                                          default=d(getattr(config, cmd2var(subc))))
         for arg in meta:
             subparser_dict[subc].add_argument(arg, type=str)
 
@@ -777,133 +808,133 @@ def process_command_line(cmdline_list):
     # parse command line
     args = parse_cmdline_options(cmdline_list)
 
-    # process first arg as possible command
-    if args:
-        cmd = args.pop(0)
-        # look for possible abbreviations
-        possible = [c for c in duplicity_commands.keys() if c.startswith(cmd)]
-        # no unique match, that's an error
-        if len(possible) > 1:
-            command_line_error(f"command '{cmd}' not unique: could be {' or '.join(possible)}")
-        # only one match, that's a keeper, maybe
-        elif len(possible) == 1:
-            cmd = possible[0]
-            if cmd not in duplicity_commands.keys():
-                command_line_error(f"command '{cmd}' is not a duplicity command.")
-        # no matches, assume implied cmd
-        elif not possible:
-            args.insert(0, cmd)
-            cmd = u"implied"
-            duplicity_commands[cmd] = [u"defer", u"defer"]
-
-    # duplicity_commands just need standard checks
-    cmdvar = cmd.replace(u'-', u'_')
-    setattr(config, cmdvar, args)
-    num_expect = len(duplicity_commands[cmd])
-    if len(args) != num_expect:
-        command_line_error(f"Expected {num_expect} args, got {len(args)}.")
-
-    targets = duplicity_commands[cmd]
-    for n in range(len(targets)):
-        if targets[n] != u"defer":
-            name = f"check_{targets[n]}"
-            func = getattr(cli_main, name)
-            setattr(config, targets[n], func(args[n]))
-
-    # other duplicity_commands need added processing
-    if cmd == u"remove-all-but-n-full":
-        config.remove_all_but_n_full_mode = True
-        arg = args[0]
-        config.keep_chains = int(arg)
-        if not config.keep_chains > 0:
-            command_line_error(cmd + u" count must be > 0")
-
-    elif cmd == u"remove-all-inc-of-but-n-full":
-        config.remove_all_inc_of_but_n_full_mode = True
-        arg = args[0]
-        config.keep_chains = int(arg)
-        if not config.keep_chains > 0:
-            command_line_error(cmd + u" count must be > 0")
-
-    backend_url = config.target_url or config.source_url
-    if config.backup_name is None:
-        config.backup_name = generate_default_backup_name(backend_url)
-
-    # convert file_prefix* string
-    if isinstance(config.file_prefix, str):
-        config.file_prefix = bytes(config.file_prefix, u'utf-8')
-    if isinstance(config.file_prefix_manifest, str):
-        config.file_prefix_manifest = bytes(config.file_prefix_manifest, u'utf-8')
-    if isinstance(config.file_prefix_archive, str):
-        config.file_prefix_archive = bytes(config.file_prefix_archive, u'utf-8')
-    if isinstance(config.file_prefix_signature, str):
-        config.file_prefix_signature = bytes(config.file_prefix_signature, u'utf-8')
-
-    # set and expand archive dir
-    set_archive_dir(expand_archive_dir(config.archive_dir,
-                                       config.backup_name))
-
-    log.Info(_(u"Using archive dir: %s") % (config.archive_dir_path.uc_name,))
-    log.Info(_(u"Using backup name: %s") % (config.backup_name,))
-
-    # if we get a different gpg-binary from the commandline then redo gpg_profile
-    if config.gpg_binary is not None:
-        src = config.gpg_profile
-        config.gpg_profile = gpg.GPGProfile(
-            passphrase=src.passphrase,
-            sign_key=src.sign_key,
-            recipients=src.recipients,
-            hidden_recipients=src.hidden_recipients)
-    log.Debug(_(u"GPG binary is %s, version %s") %
-              ((config.gpg_binary or u'gpg'), config.gpg_profile.gpg_version))
-
-    # we can now try to import all the backends
-    backend.import_backends()
-
-    # parse_cmdline_options already verified that we got exactly 1 or 2
-    # positional arguments.  Convert to action
-    if len(args) == 1:
-        if list_current:
-            action = u"list-current"
-        elif collection_status:
-            action = u"collection-status"
-        elif cleanup:
-            action = u"cleanup"
-        elif config.remove_time is not None:
-            action = u"remove-old"
-        elif config.remove_all_but_n_full_mode:
-            action = u"remove-all-but-n-full"
-        elif config.remove_all_inc_of_but_n_full_mode:
-            action = u"remove-all-inc-of-but-n-full"
-        else:
-            command_line_error(u"Too few arguments")
-
-        config.backend = backend.get_backend(args[0])
-        if not config.backend:
-            command_line_error(_(f"Bad URL '{args[0]})'.\n"
-                                 "Examples of URL strings are 'scp://user@host.net:1234/path' and\n"
-                                 "'file:///usr/local'.  See the man page for more information."""))
-    elif len(args) == 2:
-        # Figure out whether backup or restore
-        backup, local_pathname = set_backend(args[0], args[1])
-        if backup:
-            if full_backup:
-                action = u"full"
-            else:
-                action = u"inc"
-        else:
-            if verify:
-                action = u"verify"
-            else:
-                action = u"restore"
-
-        process_local_dir(action, local_pathname)
-        if action in [u'full', u'inc', u'verify']:
-            set_selection()
-
-    check_consistency(action)
-
-    log.Info(_(u"Main action: ") + action)
+    # # process first arg as possible command
+    # if args:
+    #     cmd = args.pop(0)
+    #     # look for possible abbreviations
+    #     possible = [c for c in duplicity_commands.keys() if c.startswith(cmd)]
+    #     # no unique match, that's an error
+    #     if len(possible) > 1:
+    #         command_line_error(f"command '{cmd}' not unique: could be {' or '.join(possible)}")
+    #     # only one match, that's a keeper, maybe
+    #     elif len(possible) == 1:
+    #         cmd = possible[0]
+    #         if cmd not in duplicity_commands.keys():
+    #             command_line_error(f"command '{cmd}' is not a duplicity command.")
+    #     # no matches, assume implied cmd
+    #     elif not possible:
+    #         args.insert(0, cmd)
+    #         cmd = u"implied"
+    #         duplicity_commands[cmd] = [u"defer", u"defer"]
+    #
+    # # duplicity_commands just need standard checks
+    # cmdvar = cmd.replace(u'-', u'_')
+    # setattr(config, cmdvar, args)
+    # num_expect = len(duplicity_commands[cmd])
+    # if len(args) != num_expect:
+    #     command_line_error(f"Expected {num_expect} args, got {len(args)}.")
+    #
+    # targets = duplicity_commands[cmd]
+    # for n in range(len(targets)):
+    #     if targets[n] != u"defer":
+    #         name = f"check_{targets[n]}"
+    #         func = getattr(cli_main, name)
+    #         setattr(config, targets[n], func(args[n]))
+    #
+    # # other duplicity_commands need added processing
+    # if cmd == u"remove-all-but-n-full":
+    #     config.remove_all_but_n_full_mode = True
+    #     arg = args[0]
+    #     config.keep_chains = int(arg)
+    #     if not config.keep_chains > 0:
+    #         command_line_error(cmd + u" count must be > 0")
+    #
+    # elif cmd == u"remove-all-inc-of-but-n-full":
+    #     config.remove_all_inc_of_but_n_full_mode = True
+    #     arg = args[0]
+    #     config.keep_chains = int(arg)
+    #     if not config.keep_chains > 0:
+    #         command_line_error(cmd + u" count must be > 0")
+    #
+    # backend_url = config.target_url or config.source_url
+    # if config.backup_name is None:
+    #     config.backup_name = generate_default_backup_name(backend_url)
+    #
+    # # convert file_prefix* string
+    # if isinstance(config.file_prefix, str):
+    #     config.file_prefix = bytes(config.file_prefix, u'utf-8')
+    # if isinstance(config.file_prefix_manifest, str):
+    #     config.file_prefix_manifest = bytes(config.file_prefix_manifest, u'utf-8')
+    # if isinstance(config.file_prefix_archive, str):
+    #     config.file_prefix_archive = bytes(config.file_prefix_archive, u'utf-8')
+    # if isinstance(config.file_prefix_signature, str):
+    #     config.file_prefix_signature = bytes(config.file_prefix_signature, u'utf-8')
+    #
+    # # set and expand archive dir
+    # set_archive_dir(expand_archive_dir(config.archive_dir,
+    #                                    config.backup_name))
+    #
+    # log.Info(_(u"Using archive dir: %s") % (config.archive_dir_path.uc_name,))
+    # log.Info(_(u"Using backup name: %s") % (config.backup_name,))
+    #
+    # # if we get a different gpg-binary from the commandline then redo gpg_profile
+    # if config.gpg_binary is not None:
+    #     src = config.gpg_profile
+    #     config.gpg_profile = gpg.GPGProfile(
+    #         passphrase=src.passphrase,
+    #         sign_key=src.sign_key,
+    #         recipients=src.recipients,
+    #         hidden_recipients=src.hidden_recipients)
+    # log.Debug(_(u"GPG binary is %s, version %s") %
+    #           ((config.gpg_binary or u'gpg'), config.gpg_profile.gpg_version))
+    #
+    # # we can now try to import all the backends
+    # backend.import_backends()
+    #
+    # # parse_cmdline_options already verified that we got exactly 1 or 2
+    # # positional arguments.  Convert to action
+    # if len(args) == 1:
+    #     if list_current:
+    #         action = u"list-current"
+    #     elif collection_status:
+    #         action = u"collection-status"
+    #     elif cleanup:
+    #         action = u"cleanup"
+    #     elif config.remove_time is not None:
+    #         action = u"remove-old"
+    #     elif config.remove_all_but_n_full_mode:
+    #         action = u"remove-all-but-n-full"
+    #     elif config.remove_all_inc_of_but_n_full_mode:
+    #         action = u"remove-all-inc-of-but-n-full"
+    #     else:
+    #         command_line_error(u"Too few arguments")
+    #
+    #     config.backend = backend.get_backend(args[0])
+    #     if not config.backend:
+    #         command_line_error(_(f"Bad URL '{args[0]})'.\n"
+    #                              "Examples of URL strings are 'scp://user@host.net:1234/path' and\n"
+    #                              "'file:///usr/local'.  See the man page for more information."""))
+    # elif len(args) == 2:
+    #     # Figure out whether backup or restore
+    #     backup, local_pathname = set_backend(args[0], args[1])
+    #     if backup:
+    #         if full_backup:
+    #             action = u"full"
+    #         else:
+    #             action = u"inc"
+    #     else:
+    #         if verify:
+    #             action = u"verify"
+    #         else:
+    #             action = u"restore"
+    #
+    #     process_local_dir(action, local_pathname)
+    #     if action in [u'full', u'inc', u'verify']:
+    #         set_selection()
+    #
+    # check_consistency(action)
+    #
+    # log.Info(_(u"Main action: ") + action)
     return action
 
 
