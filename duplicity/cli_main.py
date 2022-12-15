@@ -26,6 +26,7 @@ import io
 import os
 import re
 import sys
+from dataclasses import dataclass
 from hashlib import md5
 from pathvalidate import is_valid_filepath
 from pathvalidate import sanitize_filepath
@@ -44,20 +45,651 @@ select_opts = []  # Will hold all the selection options
 select_files = []  # Will hold file objects when filelist given
 
 
-# commands and type of positional args expected
-commands = {
-    u"backup": [u"url_or_dir", u"url_or_dir"],
-    u"cleanup": [u"target_url"],
-    u"collection-status": [u"target_url"],
-    u"full": [u"source_dir", u"target_url"],
-    u"incremental": [u"source_dir", u"target_url"],
-    u"list-current-files": [u"target_url"],
-    u"remove-older-than": [u"remove_time", u"target_url"],
-    u"remove-all-but-n-full": [u"count", u"target_url"],
-    u"remove-all-inc-of-but-n-full": [u"count", u"target_url"],
-    u"restore": [u"source_url", u"target_dir"],
-    u"verify": [u"source_url", u"target_dir"],
-}
+@dataclass(init=False)
+class DuplicityCommands:
+    u"""duplicity_commands and type of positional args expected"""
+    backup = [u"url_or_dir", u"url_or_dir"]
+    cleanup = [u"target_url"]
+    collection_status = [u"target_url"]
+    full = [u"source_dir", u"target_url"]
+    incremental = [u"source_dir", u"target_url"]
+    list_current_files = [u"target_url"]
+    remove_older_than = [u"remove_time", u"target_url"]
+    remove_all_but_n_full = [u"count", u"target_url"]
+    remove_all_inc_of_but_n_full = [u"count", u"target_url"]
+    restore = [u"source_url", u"target_dir"]
+    verify = [u"source_url", u"target_dir"]
+
+
+@dataclass(init=False)
+class CommandOptions:
+    u"""legal options by command"""
+    backup = []
+    cleanup = []
+    collection_status = []
+    full = []
+    incremental = []
+    list_current_files = []
+    remove_older_than = []
+    remove_all_but_n_full = []
+    remove_all_inc_of_but_n_full = []
+    restore = []
+    verify = []
+
+
+@dataclass(init=False)
+class OptionKwargs:
+    u"""Option kwargs for add_argument"""
+    allow_source_mismatch = {
+        u"action": u"store_true",
+        u"help": u"Allow different source directories",
+        u"default": d(config.allow_source_mismatch)
+    }
+    archive_dir = {
+        u"type": check_file,
+        u"metavar": _(u"path"),
+        u"help": u"Path to store metadata archives",
+        u"default": d(config.archive_dir)
+    }
+    asynchronous_upload = {
+        u"action": u"store_const",
+        u"const": 1,
+        u"dest": u"async_concurrency",
+        u"help": u"Number of async upload tasks, max of 1",
+        u"default": d(config.async_concurrency)
+    }
+    azure_blob_tier = {
+        u"metavar": _(u"Hot|Cool|Archive"),
+        u"help": u"Standard storage tier used for storing backup files (Hot|Cool|Archive)",
+        u"default": d(config.azure_blob_tier)
+    }
+    azure_max_connections = {
+        u"type": int,
+        u"metavar": _(u"number"),
+        u"help": u"Number of maximum parallel connections to use when the blob size exceeds 64MB",
+        u"default": d(config.azure_max_connections)
+    }
+    azure_max_block_size = {
+        u"metavar": _(u"number"),
+        u"type": int,
+        u"help": u"Number for the block size to upload a blob if the length is unknown\n"
+                 u"or is larger than the value set by --azure-max-single-put-size\n"
+                 u"The maximum block size the service supports is 100MiB.",
+        u"default": d(config.azure_max_block_size)
+    }
+    azure_max_single_put_size = {
+        u"metavar": _(u"number"),
+        u"type": int,
+        u"help": u"Largest supported upload size where the Azure library makes only one put call.\n"
+                 u"Used to upload a single block if the content length is known and is less than this",
+        u"default": d(config.azure_max_single_put_size)
+    }
+    b2_hide_files = {
+        u"action": u"store_true",
+        u"help": u"Whether the B2 backend hides files instead of deleting them",
+        u"default": d(config.b2_hide_files)
+    }
+    backend_retry_delay = {
+        u"metavar": _(u"seconds"),
+        u"type": int,
+        u"help": u"Delay time before next try after a failure of a backend operation",
+        u"default": d(config.backend_retry_delay)
+    }
+    cf_backend = {
+        u"metavar": u"pyrax|cloudfiles",
+        u"help": u"Allow the user to switch cloudfiles backend",
+        u"default": d(config.cf_backend)
+    }
+    compare_data = {
+        u"action": u"store_true",
+        u"help": u"Compare data on verify not only signatures",
+        u"default": d(config.compare_data)
+    }
+    config_dir = {
+        u"metavar": _(u"path"),
+        u"type": check_file,
+        u"help": u"Path to store configuration files",
+        u"default": d(config.archive_dir)
+    }
+    copy_links = {
+        u"action": u"store_true",
+        u"help": u"Copy contents of symlinks instead of linking",
+        u"default": d(config.copy_links)
+    }
+    dry_run = {
+        u"action": u"store_true",
+        u"help": u"Perform dry-run with no writes",
+        u"default": d(config.dry_run)
+    }
+    encrypt_key = {
+        u"metavar": _(u"gpg-key-id"),
+        u"action": u"append",
+        u"help": u"GNUpg key for encryption/decryption",
+        u"default": d(None)
+    }
+    encrypt_secret_keyring = {
+        u"metavar": _(u"path"),
+        u"help": u"Path to secret GNUpg keyring",
+        u"default": d(None)
+    }
+    encrypt_sign_key = {
+        u"metavar": _(u"gpg-key-id"),
+        u"action": u"append",
+        u"help": u"GNUpg key for signing",
+        u"default": d(None)
+    }
+    exclude = {
+        u"metavar": _(u"shell_pattern"),
+        u"action": AddSelectionAction,
+        u"help": u"Exclude globbing pattern",
+        u"default": d(None)
+    }
+    exclude_device_files = {
+        u"action": u"store_true",
+        u"help": u"Exclude device files",
+        u"default": d(False)
+    }
+    exclude_filelist = {
+        u"metavar": _(u"filename"),
+        u"action": AddFilelistAction,
+        u"help": u"File with list of file patters to exclude",
+        u"default": d(None)
+    }
+    exclude_if_present = {
+        u"metavar": _(u"filename"),
+        u"action": AddSelectionAction,
+        u"help": u"Exclude directory if this file is present",
+        u"default": d(None)
+    }
+    exclude_older_than = {
+        u"metavar": _(u"time"),
+        u"action": AddSelectionAction,
+        u"help": u"Exclude files older than time",
+        u"default": d(None)
+    }
+    exclude_other_filesystems = {
+        u"action": u"store_true",
+        u"help": u"Exclude other filesystems from backup",
+        u"default": d(False)
+    }
+    exclude_regexp = {
+        u"metavar": _(u"regex"),
+        u"action": AddSelectionAction,
+        u"help": u"Exclude based on regex pattern",
+        u"default": d(None)
+    }
+    file_changed = {
+        u"type": check_file,
+        u"metavar": _(u"path"),
+        u"help": u"Whether to collect only the file status, not the whole root",
+        u"default": d(None)
+    }
+    file_prefix = {
+        u"metavar": "string",
+        u"help": u"String prefix for all duplicity files",
+        u"default": d(config.file_prefix)
+    }
+    file_prefix_archive = {
+        u"metavar": "string",
+        u"help": u"String prefix for duplicity difftar files",
+        u"default": d(config.file_prefix_archive)
+    }
+    file_prefix_manifest = {
+        u"metavar": "string",
+        u"help": u"String prefix for duplicity manifest files",
+        u"default": d(config.file_prefix_manifest)
+    }
+    file_prefix_signature = {
+        u"metavar": "string",
+        u"help": u"String prefix for duplicity signature files",
+        u"default": d(config.file_prefix_signature)
+    }
+    force = {
+        u"action": u"store_true",
+        u"help": u"Force duplicity to actually delete during cleanup",
+        u"default": d(config.force)
+    }
+    ftp_passive = {
+        u"action": u"store_const",
+        u"const": u"passive",
+        u"dest": u"ftp_connection",
+        u"help": u"Tell FTP to use passive mode",
+        u"default": d(config.ftp_connection)
+    }
+    ftp_regular = {
+        u"action": u"store_const",
+        u"const": u"regular",
+        u"dest": u"ftp_connection",
+        u"help": u"Tell FTP to use regular mode",
+        u"default": d(config.ftp_connection)
+    }
+    full_if_older_than = {
+        u"metavar": _(u"time"),
+        u"type": check_time,
+        u"dest": u"restore_time",
+        u"help": u"Perform full backup if last full is older than 'time'",
+        u"default": d(config.restore_time)
+    }
+    gpg_binary = {
+        u"metavar": _(u"path"), u"type": check_file,
+        u"help": u"Path to GNUpg executable file",
+        u"default": d(config.gpg_binary)
+    }
+    gpg_options = {
+        u"metavar": _(u"options"), u"action": u"append",
+        u"help": u"Options to append to GNUpg invocation",
+        u"default": d(None)
+    }
+    hidden_encrypt_key = {
+        u"metavar": _(u"gpg-key-id"),
+        u"help": u"Hidden GNUpg encryption key",
+        u"default": d(None)
+    }
+    idr_fakeroot = {
+        u"metavar": _(u"path"), u"type": check_file,
+        u"help": u"Fake root for idrive backend",
+        u"default": d(config.idr_fakeroot)
+    }
+    ignore_errors = {
+        u"action": u"store_true",
+        u"help": u"Ignore most errors during restore",
+        u"default": d(False)
+    }
+    imap_full_address = {
+        u"action": u"store_true",
+        u"help": u"Whether to use the full email address as the user name",
+        u"default": d(config.imap_full_address)
+    }
+    imap_mailbox = {
+        u"metavar": _(u"imap_mailbox"),
+        u"help": u"Name of the imap folder to store backups",
+        u"default": d(config.imap_mailbox)
+    }
+    include = {
+        u"metavar": _(u"shell_pattern"), u"action": AddSelectionAction,
+        u"help": u"Exclude globbing pattern",
+        u"default": d(None)
+    }
+    include_filelist = {
+        u"metavar": _(u"filename"), u"action": AddFilelistAction,
+        u"help": u"File with list of file patters to include",
+        u"default": d(None)
+    }
+    include_regexp = {
+        u"metavar": _(u"regex"),
+        u"action": AddSelectionAction,
+        u"help": u"Exclude based on regex pattern",
+        u"default": d(None)
+    }
+    log_fd = {
+        u"metavar": _(u"file_descriptor"),
+        u"type": set_log_fd,
+        u"help": u"Logging file descripto to use",
+        u"default": d(None)
+    }
+    log_file = {
+        u"metavar": _(u"log_filename"),
+        u"type": set_log_file,
+        u"help": u"Logging filename to use",
+        u"default": d(None)
+    }
+    log_timestamp = {
+        u"action": u"store_true",
+        u"help": u"Whether to include timestamp and level in log",
+        u"default": d(False)
+    }
+    max_blocksize = {
+        u"metavar": _(u"number"), u"type": int,
+        u"help": u"Maximum block size for large files in MB",
+        u"default": d(None)
+    }
+    mf_purge = {
+        u"action": u"store_true",
+        u"help": u"Option for mediafire to purge files on delete instead of sending to trash",
+        u"default": d(False)
+    }
+    mp_segment_size = {
+        u"metavar": _(u"number"),
+        u"type": set_mpsize,
+        u"help": u"Swift backend segment size",
+        u"default": d(config.mp_segment_size)
+    }
+    name = {
+        u"metavar": _(u"backup name"),
+        u"help": u"Custom backup name instead of hash",
+        u"default": d(config.backup_name)
+    }
+    no_compression = {
+        u"action": u"store_true",
+        u"help": u"If supplied do not perform compression",
+        u"default": d(False)
+    }
+    no_encryption = {
+        u"action": u"store_true",
+        u"help": u"If supplied do not perform encryption",
+        u"default": d(False)
+    }
+    no_files_changed = {
+        u"action": u"store_true",
+        u"help": u"Whether to skip collecting the files_changed list in statistics",
+        u"default": d(False)
+    }
+    no_print_statistics = {
+        u"action": u"store_true",
+        u"help": u"If supplied do not print statistics",
+        u"default": d(False)
+    }
+    null_separator = {
+        u"action": u"store_true",
+        u"help": u"Whether to split on null instead of newline",
+        u"default": d(False)
+    }
+    num_retries = {
+        u"metavar": _(u"number"), u"type": int,
+        u"help": u"Number of retries on network operations",
+        u"default": d(config.num_retries)
+    }
+    numeric_owner = {
+        u"action": u"store_true",
+        u"help": u"Keeps number from tar file. Like same option in GNU tar.",
+        u"default": d(False)
+    }
+    do_not_restore_ownership = {
+        u"action": u"store_true",
+        u"help": u"Do no restore the uid/gid when finished, useful if you're restoring\n"
+                 U"data without having root privileges or Unix users support",
+        u"default": d(False)
+    }
+    metadata_sync_mode = {
+        u"choices": (u"full", u"partial"),
+        u"help": u"Only sync required metadata not all",
+        u"default": d(config.metadata_sync_mode)
+    }
+    par2_options = {
+        u"metavar": _(u"options"), u"action": u"append",
+        u"help": u"Verbatim par2 options.  May be supplied multiple times.",
+        u"default": d(None)
+    }
+    par2_redundancy = {
+        u"metavar": _(u"number"),
+        u"type": int,
+        u"help": u"Level of Redundancy in percent for Par2 files",
+        u"default": d(config.par2_redundancy)
+    }
+    par2_volumes = {
+        u"metavar": _(u"number"), u"type": int,
+        u"help": u"Number of par2 volumes",
+        u"default": d(config.par2_volumes)
+    }
+    path_to_restore = {
+        u"metavar": _(u"path"),
+        u"type": check_file,
+        u"dest": u"restore_path",
+        u"help": u"File or directory path to restore",
+        u"default": d(config.restore_path)
+    }
+    progress = {
+        u"action": u"store_true",
+        u"help": u"Display progress for the full and incremental backup operations",
+        u"default": d(config.progress)
+    }
+    progress_rate = {
+        u"metavar": _(u"number"), u"type": int,
+        u"help": u"Used to control the progress option update rate in seconds",
+        u"default": d(config.progress_rate)
+    }
+    rename = {
+        u"metavar": u"from to",
+        u"type": AddRenameAction,
+        u"nargs": 2,
+        u"help": u"Rename files during restore",
+        u"default": d(config.rename)
+    }
+    restore_time = {
+        u"metavar": _(u"time"),
+        u"type": check_time,
+        u"help": u"Restores will try to bring back the state as of the following time",
+        u"default": d(config.restore_time)
+    }
+    rsync_options = {
+        u"metavar": _(u"options"), u"action": u"append",
+        u"help": u"User added rsync options",
+        u"default": d(config.rsync_options)
+    }
+    s3_endpoint_url = {
+        u"metavar": _(u"s3_endpoint_url"), u"action": u"store",
+        u"help": u"Specity S3 endpoint",
+        u"default": d(config.s3_endpoint_url)
+    }
+    s3_european_buckets = {
+        u"action": u"store_true",
+        u"help": u"Whether to create European buckets",
+        u"default": d(config.s3_european_buckets)
+    }
+    s3_unencrypted_connection = {
+        u"action": u"store_true",
+        u"help": u"Whether to use plain HTTP (without SSL) to send data to S3",
+        u"default": d(config.s3_unencrypted_connection)
+    }
+    s3_use_deep_archive = {
+        u"action": u"store_true",
+        u"help": u"Whether to use S3 Glacier Deep Archive Storage",
+        u"default": d(config.s3_use_deep_archive)
+    }
+    s3_use_glacier = {
+        u"action": u"store_true",
+        u"help": u"Whether to use S3 Glacier Storage",
+        u"default": d(config.s3_use_glacier)
+    }
+    s3_use_glacier_ir = {
+        u"action": u"store_true",
+        u"help": "Whether to use S3 Glacier IR Storage",
+        u"default": d(config.s3_use_glacier_ir)
+    }
+    s3_use_ia = {
+        u"action": u"store_true",
+        u"help": u"Whether to use S3 Infrequent Access Storage",
+        u"default": d(config.s3_use_ia)
+    }
+    s3_use_new_style = {
+        u"action": u"store_true",
+        u"help": u"Whether to use new-style subdomain addressing for S3 buckets. Such\n"
+                 u"use is not backwards-compatible with upper-case buckets, or buckets\n"
+                 u"that are otherwise not expressable in a valid hostname",
+        u"default": d(config.s3_use_new_style)
+    }
+    s3_use_onezone_ia = {
+        u"action": u"store_true",
+        u"help": u"Whether to use S3 One Zone Infrequent Access Storage",
+        u"default": d(config.s3_use_onezone_ia)
+    }
+    s3_use_rrs = {
+        u"action": u"store_true",
+        u"help": u"Whether to use S3 Reduced Redundancy Storage",
+        u"default": d(config.s3_use_rrs)
+    }
+    s3_multipart_chunk_size = {
+        u"metavar": _(u"number"), u"type": set_megs,
+        u"help": u"Chunk size used for S3 multipart uploads.The number of parallel uploads to\n"
+                 u"S3 be given by chunk size / volume size. Use this to maximize the use of\n"
+                 u"your bandwidth",
+        u"default": d(int(config.s3_multipart_chunk_size / (1024 * 1024)))
+    }
+    s3_multipart_max_procs = {
+        u"type": int,
+        u"metavar": _(u"number"),
+        u"help": u"Number of processes to set the Processor Pool to when uploading multipart\n"
+                 u"uploads to S3. Use this to control the maximum simultaneous uploads to S3",
+        u"default": d(config.s3_multipart_max_procs)
+    }
+    s3_multipart_max_timeout = {
+        u"metavar": _(u"number"),
+        u"type": int,
+        u"help": u"Number of seconds to wait for each part of a multipart upload to S3. Use this\n"
+                 u"to prevent hangups when doing a multipart upload to S3",
+        u"default": d(config.s3_multipart_max_timeout)
+    }
+    s3_use_multiprocessing = {
+        u"action": u"store_true",
+        u"help": u"Option to allow the s3/boto backend use the multiprocessing version",
+        u"default": d(config.s3_use_multiprocessing)
+    }
+    s3_use_server_side_encryption = {
+        u"action": u"store_true",
+        u"dest": u"s3_use_sse",
+        u"help": u"Option to allow use of server side encryption in s3",
+        u"default": d(config.s3_use_sse)
+    }
+    s3_use_server_side_kms_encryption = {
+        u"action": u"store_true",
+        u"dest": u"s3_use_sse_kms",
+        u"help": u"Allow use of server side KMS encryption",
+        u"default": d(config.s3_use_sse_kms)
+    }
+    s3_kms_key_id = {
+        u"metavar": _(u"s3_kms_key_id"), u"action": u"store",
+        u"help": u"S3 KMS encryption key id",
+        u"default": d(config.s3_kms_key_id)
+    }
+    s3_kms_grant = {
+        u"metavar": _(u"s3_kms_grant"), u"action": u"store",
+        u"help": u"S3 KMS grant value",
+        u"default": d(config.s3_kms_grant)
+    }
+    s3_region_name = {
+        u"metavar": _(u"s3_region_name"), u"action": u"store",
+        u"help": u"Specity S3 region name",
+        u"default": d(config.s3_region_name)
+    }
+    swift_storage_policy = {
+        u"metavar": _(u"policy"),
+        u"help": u"Option to specify a Swift container storage policy.",
+        u"default": d(config.swift_storage_policy)
+    }
+    scp_command = {
+        u"metavar": _(u"command"),
+        u"help": u"SCP command to use (ssh pexpect backend)",
+        u"default": d(config.scp_command)
+    }
+    sftp_command = {
+        u"metavar": _(u"command"),
+        u"help": u"SFTP command to use (ssh pexpect backend)",
+        u"default": d(config.sftp_command)
+    }
+    show_changes_in_set = {
+        u"metavar": _(u"number"),
+        u"type": int,
+        u"help": u"Show file changes (new, deleted, changed) in the specified backup\n"
+                 u"set (0 specifies latest, 1 specifies next latest, etc.)",
+        u"default": d(config.show_changes_in_set)
+    }
+    sign_key = {
+        u"metavar": _(u"gpg-key-id"),
+        u"type": set_sign_key,
+        u"help": u"Sign key for encryption/decryption",
+        u"default": d(None)
+    }
+    ssh_askpass = {
+        u"action": u"store_true",
+        u"help": u"Ask the user for the SSH password. Not for batch usage",
+        u"default": d(config.ssh_askpass)
+    }
+    ssh_options = {
+        u"metavar": _(u"options"),
+        u"action": u"append",
+        u"help": u"SSH options to add",
+        u"default": d(config.ssh_options)
+    }
+    ssl_cacert_file = {
+        u"metavar": "file",
+        u"help": _(u"pem formatted bundle of certificate authorities"),
+        u"default": d(config.ssl_cacert_file)
+    }
+    ssl_cacert_path = {
+        u"metavar": "path",
+        u"help": _(u"path to a folder with certificate authority files"),
+        u"default": d(config.ssl_cacert_path)
+    }
+    ssl_no_check_certificate = {
+        u"action": u"store_true",
+        u"help": u"Set to not validate SSL certificates",
+        u"default": d(config.ssl_no_check_certificate)
+    }
+    tempdir = {
+        u"metavar": _(u"path"),
+        u"type": check_file,
+        u"dest": u"temproot",
+        u"help": u"Working directory for temp files",
+        u"default": d(config.temproot)
+    }
+    timeout = {
+        u"metavar": _(u"seconds"),
+        u"type": int,
+        u"help": u"Network timeout in seconds",
+        u"default": d(config.timeout)
+    }
+    time_separator = {
+        u"metavar": _(u"char"),
+        u"help": u"Character used like the ':' in time strings like\n"
+                 u"2002-08-06T04:22:00-07:00",
+        u"default": d(config.time_separator)
+    }
+    use_agent = {
+        u"action": u"store_true",
+        u"help": u"Whether to specify --use-agent in GnuPG options",
+        u"default": d(config.use_agent)
+    }
+    verbosity = {
+        u"metavar": _(u"[0-9]"), u"type": check_verbosity,
+        u"help": u"Logging verbosity",
+        u"default": d(log.NOTICE)
+    }
+    version = {
+        u"action": "version",
+        u"version": u"%(prog) __version__",
+        u"help": u"Display version and exit",
+    }
+    volsize = {
+        u"metavar": _(u"number"),
+        u"type": set_volsize,
+        u"help": u"Volume size to use in MiB",
+        u"default": d(int(config.volsize / (1024 * 1024)))
+    }
+    webdav_headers = {
+        u"metavar": "string",
+        u"help": _(u"extra headers for Webdav, like 'Cookie,name: value'"),
+        u"default": d(config.webdav_headers)
+    }
+
+    # TODO: Find a way to nuke these test options in production.
+    # TESTING ONLY - set current time
+    current_time = {
+        u"type": int,
+        u"help": argparse.SUPPRESS
+    }
+    # TESTING ONLY - raises exception after volume
+    fail_on_volume = {
+        u"type": int,
+        u"help": argparse.SUPPRESS
+    }
+    # TESTING ONLY - trigger Pydev debugger
+    pydevd = {
+        u"action": u"store_true",
+        u"help": argparse.SUPPRESS
+    }
+    # TESTING ONLY - skips upload for a given volume
+    skip_volume = {
+        u"type": int,
+        u"help": argparse.SUPPRESS
+    }
+
+
+option_alternates = {
+    u"path_to_restore": [u"r"],
+    u"restore_time": [u"time", u"t"],
+    u"verbosity": [u"v"],
+    u"version": [u"V"],
+    }
 
 
 class CommandLineError(errors.UserError):
@@ -65,10 +697,14 @@ class CommandLineError(errors.UserError):
 
 
 def parse_cmdline_options(arglist):
-    u"""Parse argument list"""
+    u"""
+    Parse argument list
+    """
 
     def make_wide(formatter, w=120, h=46):
-        """Return a wider HelpFormatter, if possible."""
+        """
+        Return a wider HelpFormatter, if possible.
+        """
         try:
             # https://stackoverflow.com/a/5464440
             # beware: "Only the name of this class is considered a public API."
@@ -78,15 +714,6 @@ def parse_cmdline_options(arglist):
         except TypeError:
             warnings.warn("argparse help formatter failed, falling back.")
             return formatter
-
-    def d(val):
-        if isinstance(val, (str, bytes)):
-            if val:
-                return val
-            else:
-                return None
-        else:
-            return None
 
     parser = argparse.ArgumentParser(
         prog=u'duplicity',
@@ -98,451 +725,23 @@ def parse_cmdline_options(arglist):
         required=False,
     )
 
-    subp_dict = dict()
-    for subc, meta in commands.items():
-        subp_dict[subc] = subparsers.add_parser(subc, help=f"# duplicity {subc} {u' '.join(meta)}")
+    subparser_dict = dict()
+    for subc, meta in DuplicityCommands.__dict__.items():
+        if subc.startswith(u"__"):
+            continue
+        subc = var2cmd(subc)
+        subparser_dict[subc] = subparsers.add_parser(subc, help=f"# duplicity {subc} {u' '.join(meta)}")
+        subparser_dict[subc].add_argument(subc, action=u"store_true",
+                                          default=d(getattr(config, subc.replace(U"-", u"_"))))
         for arg in meta:
-            subp_dict[subc].add_argument(arg, type=str)
-
-    parser.add_argument(u"--allow-source-mismatch", action=u"store_true",
-                        help=u"Allow different source directories",
-                        default=d(config.allow_source_mismatch))
-
-    parser.add_argument(u"--archive-dir", type=check_file, metavar=_(u"path"),
-                        help=u"Path to store metadata archives",
-                        default=d(config.archive_dir))
-
-    parser.add_argument(u"--asynchronous-upload", action=u"store_const", const=1, dest=u"async_concurrency",
-                        help=u"Number of async upload tasks, max of 1 for now",
-                        default=d(config.async_concurrency))
-
-    parser.add_argument(u"--azure-blob-tier", metavar=_(u"Hot|Cool|Archive"),
-                        help=u"Standard storage tier used for storring backup files (Hot|Cool|Archive)",
-                        default=d(config.azure_blob_tier))
-
-    parser.add_argument(u"--azure-max-connections", type=int, metavar=_(u"number"),
-                        help=u"Number of maximum parallel connections to use when the blob size exceeds 64MB",
-                        default=d(config.azure_max_connections))
-
-    parser.add_argument(u"--azure-max-block-size", metavar=_(u"number"), type=int,
-                        help=u"Number for the block size to upload a blob if the length is unknown\n"
-                             u"or is larger than the value set by --azure-max-single-put-size\n"
-                             u"The maximum block size the service supports is 100MiB.",
-                        default=d(config.azure_max_block_size))
-
-    parser.add_argument(u"--azure-max-single-put-size", metavar=_(u"number"), type=int,
-                        help=u"Largest supported upload size where the Azure library makes only one put call.\n"
-                             u"Used to upload a single block if the content length is known and is less than this",
-                        default=d(config.azure_max_single_put_size))
-
-    parser.add_argument(u"--b2-hide-files", action=u"store_true",
-                        help=u"Whether the B2 backend hides files instead of deleting them")
-
-    parser.add_argument(u"--backend-retry-delay", type=int, metavar=_(u"seconds"),
-                        help=u"Delay time before next try after a failure of a backend operation",
-                        default=d(config.backend_retry_delay))
-
-    parser.add_argument(u"--cf-backend", metavar=_(u"pyrax|cloudfiles"),
-                        help=u"Allow the user to switch cloudfiles backend")
-
-    parser.add_argument(u"--compare-data", action=u"store_true",
-                        help=u"Compare data on verify not only signatures",
-                        default=d(config.compare_data))
-
-    parser.add_argument(u"--config-dir", type=check_file, metavar=_(u"path"),
-                        help=u"Path to store configuration files",
-                        default=d(config.archive_dir))
-
-    parser.add_argument(u"--copy-links", action=u"store_true",
-                        help=u"Copy contents of symlinks instead of linking",
-                        default=d(config.copy_links))
-
-    parser.add_argument(u"--dry-run", action=u"store_true",
-                        help=u"Perform dry-run with no writes",
-                        default=d(config.dry_run))
-
-    parser.add_argument(u"--encrypt-key", metavar=_(u"gpg-key-id"), action=u"append",
-                        help=u"GNUpg key for encryption/decryption",
-                        default=d(None))
-
-    # secret keyring in which the private encrypt key can be found
-    parser.add_argument(u"--encrypt-secret-keyring", metavar=_(u"path"),
-                        help=u"Path to secret GNUpg keyring",
-                        default=d(None))
-
-    parser.add_argument(u"--encrypt-sign-key", metavar=_(u"gpg-key-id"), action=u"append",
-                        help=u"GNUpg key for signing",
-                        default=d(None))
-
-    parser.add_argument(u"--exclude", metavar=_(u"shell_pattern"), type=AddSelectionAction,
-                        help=u"Exclude globbing pattern",
-                        default=d(None))
-
-    parser.add_argument(u"--exclude-device-files", action=u"store_true",
-                        help=u"Exclude device files",
-                        default=d(False))
-
-    parser.add_argument(u"--exclude-filelist", metavar=_(u"filename"), type=AddFilelistAction,
-                        help=u"File with list of file patters to exclude",
-                        default=d(None))
-
-    parser.add_argument(u"--exclude-if-present", metavar=_(u"filename"), type=AddSelectionAction,
-                        help=u"Exclude directory if this file is present",
-                        default=d(None))
-
-    parser.add_argument(u"--exclude-older-than", metavar=_(u"time"), type=AddSelectionAction,
-                        help=u"Exclude files older than time",
-                        default=d(None))
-
-    parser.add_argument(u"--exclude-other-filesystems", action=u"store_true",
-                        help=u"Exclude other filesystems from backup",
-                        default=d(False))
-
-    parser.add_argument(u"--exclude-regexp", metavar=_(u"regex"), type=AddSelectionAction,
-                        help=u"Exclude based on regex pattern",
-                        default=d(None))
-
-    parser.add_argument(u"--file-changed", type=check_file, metavar=_(u"path"),
-                        help=u"Whether to collect only the file status, not the whole root",
-                        default=d(None))
-
-    parser.add_argument(u"--file-prefix", metavar="string", action=u"store",
-                        help=u"String prefix for all duplicity files",
-                        default=d(config.file_prefix))
-
-    parser.add_argument(u"--file-prefix-archive", metavar="string", action=u"store",
-                        help=u"String prefix for duplicity difftar files",
-                        default=d(config.file_prefix_archive))
-
-    parser.add_argument(u"--file-prefix-manifest", metavar="string", action=u"store",
-                        help=u"String prefix for duplicity manifest files",
-                        default=d(config.file_prefix_manifest))
-
-    parser.add_argument(u"--file-prefix-signature", metavar="string", action=u"store",
-                        help=u"String prefix for duplicity signature files",
-                        default=d(config.file_prefix_signature))
-
-    parser.add_argument(u"--force", action=u"store_true",
-                        help=u"Force duplicity to actually delete during cleanup",
-                        default=d(config.force))
-
-    parser.add_argument(u"--ftp-passive", action=u"store_const", const=u"passive", dest=u"ftp_connection",
-                        help=u"Tell FTP to use passive mode",
-                        default=d(config.ftp_connection))
-
-    parser.add_argument(u"--ftp-regular", action=u"store_const", const=u"regular", dest=u"ftp_connection",
-                        help=u"Tell FTP to use regular mode",
-                        default=d(config.ftp_connection))
-
-    parser.add_argument(u"--full-if-older-than", metavar=_(u"time"), type=check_time, dest=u"restore_time",
-                        help=u"Perform full backup if last full is older than 'time'",
-                        default=d(config.restore_time))
-
-    parser.add_argument(u"--gpg-binary", metavar=_(u"path"), type=check_file,
-                        help=u"Path to GNUpg executable file",
-                        default=d(config.gpg_binary))
-
-    parser.add_argument(u"--gpg-options", metavar=_(u"options"), action=u"append",
-                        help=u"Options to append to GNUpg invocation",
-                        default=d(None))
-
-    parser.add_argument(u"--hidden-encrypt-key", metavar=_(u"gpg-key-id"),
-                        help=u"Hidden GNUpg encryption key",
-                        default=d(None))
-
-    parser.add_argument(u"--idr-fakeroot", metavar=_(u"path"), type=check_file,
-                        help=u"Fake root for idrive backend",
-                        default=d(config.idr_fakeroot))
-
-    parser.add_argument(u"--ignore-errors", action=u"store_true",
-                        help=u"Ignore most errors during restore",
-                        default=d(False))
-
-    parser.add_argument(u"--imap-full-address", action=u"store_true",
-                        help=u"Whether to use the full email address as the user name",
-                        default=d(config.imap_full_address))
-
-    parser.add_argument(u"--imap-mailbox", metavar=_(u"imap_mailbox"),
-                        help=u"Name of the imap folder to store backups",
-                        default=d(config.imap_mailbox))
-
-    parser.add_argument(u"--include", metavar=_(u"shell_pattern"), type=AddSelectionAction,
-                        help=u"Exclude globbing pattern",
-                        default=d(None))
-
-    parser.add_argument(u"--include-filelist", metavar=_(u"filename"), type=AddFilelistAction,
-                        help=u"File with list of file patters to include",
-                        default=d(None))
-
-    parser.add_argument(u"--include-regexp", metavar=_(u"regular_expression"), type=AddSelectionAction,
-                        help=u"Exclude based on regex pattern",
-                        default=d(None))
-
-    parser.add_argument(u"--log-fd", metavar=_(u"file_descriptor"), type=set_log_fd,
-                        help=u"Logging file descripto to use",
-                        default=d(None))
-
-    parser.add_argument(u"--log-file", metavar=_(u"log_filename"), type=set_log_file,
-                        help=u"Logging filename to use",
-                        default=d(None))
-
-    parser.add_argument(u"--log-timestamp", action=u"store_true",
-                        help=u"Whether to include timestamp and level in log",
-                        default=d(False))
-
-    parser.add_argument(u"--max-blocksize", metavar=_(u"number"), type=int,
-                        help=u"Maximum block size for large files in MB",
-                        default=d(None))
-
-    parser.add_argument(u"--mf-purge", action=u"store_true",
-                        help=u"Option for mediafire to purge files on delete instead of sending to trash",
-                        default=d(False))
-
-    parser.add_argument(u"--mp-segment-size", metavar=_(u"number"), type=set_mpsize,
-                        help=u"Swift backend segment size",
-                        default=d(config.mp_segment_size))
-
-    parser.add_argument(u"--name", metavar=_(u"backup name"),
-                        help=u"Custom backup name instead of hash",
-                        default=d(config.backup_name))
-
-    parser.add_argument(u"--no-compression", action=u"store_true",
-                        help=u"If supplied do not perform compression")
-
-    parser.add_argument(u"--no-encryption", action=u"store_true",
-                        help=u"If supplied do not perform encryption",
-                        default=d(False))
-
-    parser.add_argument(u"--no-files-changed", action=u"store_true",
-                        help=u"Whether to skip collecting the files_changed list in statistics",
-                        default=d(False))
-
-    parser.add_argument(u"--no-print-statistics", action=u"store_true",
-                        help=u"If supplied do not print statistics",
-                        default=d(False))
-
-    parser.add_argument(u"--null-separator", action=u"store_true",
-                        help=u"Whether to split on null instead of newline",
-                        default=d(False))
-
-    parser.add_argument(u"--num-retries", metavar=_(u"number"), type=int,
-                        help=u"Number of retries on network operations",
-                        default=d(config.num_retries))
-
-    parser.add_argument(u"--numeric-owner", action=u"store_true",
-                        help=u"Keeps number from tar file. Like same option in GNU tar.",
-                        default=d(False))
-
-    parser.add_argument(u"--do-not-restore-ownership", action=u"store_true",
-                        help=u"Do no restore the uid/gid when finished, useful if you're restoring\n" 
-                             U"data without having root privileges or Unix users support",
-                        default=d(False))
-
-    parser.add_argument(u"--metadata-sync-mode", choices=(u"full", u"partial"),
-                        help=u"Only sync required metadata not all",
-                        default=d(config.metadata_sync_mode))
-
-    parser.add_argument(u"--par2-options", metavar=_(u"options"), action=u"append",
-                        help=u"Verbatim par2 options.  May be supplied multiple times.",
-                        default=d(None))
-
-    parser.add_argument(u"--par2-redundancy", metavar=_(u"number"), type=int, choices=range(5, 99),
-                        help=u"Level of Redundancy in percent for Par2 files",
-                        default=d(config.par2_redundancy))
-
-    parser.add_argument(u"--par2-volumes", metavar=_(u"number"), type=int,
-                        help=u"Number of par2 volumes",
-                        default=d(config.par2_volumes))
-
-    parser.add_argument(u"--path-to-restore", u"-r", metavar=_(u"path"), type=check_file, dest=u"restore_path",
-                        help=u"File or directory path to restore",
-                        default=d(config.restore_path))
-
-    parser.add_argument(u"--progress", action=u"store_true",
-                        help=u"Display progress for the full and incremental backup operations")
-
-    parser.add_argument(u"--progress-rate", metavar=_(u"number"), type=int,
-                        help=u"Used to control the progress option update rate in seconds",
-                        default=d(config.progress_rate))
-
-    parser.add_argument(u"--rename", nargs=2, metavar="from to", type=AddRenameAction,
-                        help=u"Rename files during restore",
-                        default=d(config.rename))
-
-    parser.add_argument(u"--restore-time", u"--time", u"-t", metavar=_(u"time"), type=check_time,
-                        help=u"Restores will try to bring back the state as of the following time")
-
-    parser.add_argument(u"--rsync-options", metavar=_(u"options"), action=u"append",
-                        help=u"User added rsync options",
-                        default=d(config.rsync_options))
-
-    parser.add_argument(u"--s3-endpoint-url", metavar=_(u"s3_endpoint_url"), action=u"store",
-                        help=u"Specity S3 endpoint",
-                        default=d(config.s3_endpoint_url))
-
-    parser.add_argument(u"--s3-european-buckets", action=u"store_true",
-                        help=u"Whether to create European buckets",
-                        default=d(config.s3_european_buckets))
-
-    parser.add_argument(u"--s3-unencrypted-connection", action=u"store_true",
-                        help=u"Whether to use plain HTTP (without SSL) to send data to S3",
-                        default=d(config.s3_unencrypted_connection))
-
-    parser.add_argument(u"--s3-use-deep-archive", action=u"store_true",
-                        help=u"Whether to use S3 Glacier Deep Archive Storage",
-                        default=d(config.s3_use_deep_archive))
-
-    parser.add_argument(u"--s3-use-glacier", action=u"store_true",
-                        help=u"Whether to use S3 Glacier Storage",
-                        default=d(config.s3_use_glacier))
-
-    parser.add_argument(u"--s3-use-glacier-ir", action=u"store_true",
-                        help="Whether to use S3 Glacier IR Storage",
-                        default=d(config.s3_use_glacier_ir))
-
-    parser.add_argument(u"--s3-use-ia", action=u"store_true",
-                        help=u"Whether to use S3 Infrequent Access Storage",
-                        default=d(config.s3_use_ia))
-
-    parser.add_argument(u"--s3-use-new-style", action=u"store_true",
-                        help=u"Whether to use new-style subdomain addressing for S3 buckets. Such\n"
-                             u"use is not backwards-compatible with upper-case buckets, or buckets\n"
-                             u"that are otherwise not expressable in a valid hostname",
-                        default=d(config.s3_use_new_style))
-
-    parser.add_argument(u"--s3-use-onezone-ia", action=u"store_true",
-                        help=u"Whether to use S3 One Zone Infrequent Access Storage",
-                        default=d(config.s3_use_onezone_ia))
-
-    parser.add_argument(u"--s3-use-rrs", action=u"store_true",
-                        help=u"Whether to use S3 Reduced Redundancy Storage",
-                        default=d(config.s3_use_rrs))
-
-    parser.add_argument(u"--s3-multipart-chunk-size", metavar=_(u"number"), type=set_megs,
-                        help=u"Chunk size used for S3 multipart uploads.The number of parallel uploads to\n"
-                             u"S3 be given by chunk size / volume size. Use this to maximize the use of\n"
-                             u"your bandwidth",
-                        default=d(int(config.s3_multipart_chunk_size / (1024 * 1024))))
-
-    parser.add_argument(u"--s3-multipart-max-procs", type=int, metavar=_(u"number"),
-                        help=u"Number of processes to set the Processor Pool to when uploading multipart\n"
-                             u"uploads to S3. Use this to control the maximum simultaneous uploads to S3",
-                        default=d(config.s3_multipart_max_procs))
-
-    parser.add_argument(u"--s3-multipart-max-timeout", metavar=_(u"number"), type=int,
-                        help=u"Number of seconds to wait for each part of a multipart upload to S3. Use this\n"
-                             u"to prevent hangups when doing a multipart upload to S3",
-                        default=d(config.s3_multipart_max_timeout))
-
-    parser.add_argument(u"--s3-use-multiprocessing", action=u"store_true",
-                        help=u"Option to allow the s3/boto backend use the multiprocessing version",
-                        default=d(config.s3_use_multiprocessing))
-
-    parser.add_argument(u"--s3-use-server-side-encryption", action=u"store_true", dest=u"s3_use_sse",
-                        help=u"Option to allow use of server side encryption in s3",
-                        default=d(config.s3_use_sse))
-
-    parser.add_argument(u"--s3-use-server-side-kms-encryption", action=u"store_true", dest=u"s3_use_sse_kms",
-                        help=u"Allow use of server side KMS encryption",
-                        default=d(config.s3_use_sse_kms))
-
-    parser.add_argument(u"--s3-kms-key-id", metavar=_(u"s3_kms_key_id"), action=u"store",
-                        help=u"S3 KMS encryption key id",
-                        default=d(config.s3_kms_key_id))
-
-    parser.add_argument(u"--s3-kms-grant", metavar=_(u"s3_kms_grant"), action=u"store",
-                        help=u"S3 KMS grant value",
-                        default=d(config.s3_kms_grant))
-
-    parser.add_argument(u"--s3-region-name", metavar=_(u"s3_region_name"), action=u"store",
-                        help=u"Specity S3 region name",
-                        default=d(config.s3_region_name))
-
-    parser.add_argument(u"--swift-storage-policy", metavar=_(u"policy"),
-                        help=u"Option to specify a Swift container storage policy.",
-                        default=d(config.swift_storage_policy))
-
-    parser.add_argument(u"--scp-command", metavar=_(u"command"),
-                        help=u"SCP command to use (ssh pexpect backend)",
-                        default=d(config.scp_command))
-
-    parser.add_argument(u"--sftp-command", metavar=_(u"command"),
-                        help=u"SFTP command to use (ssh pexpect backend)",
-                        default=d(config.sftp_command))
-
-    parser.add_argument(u"--show-changes-in-set", type=int, metavar=_(u"number"),
-                        help=u"Show file changes (new, deleted, changed) in the specified backup\n"
-                             u"set (0 specifies latest, 1 specifies next latest, etc.)",
-                        default=d(config.show_changes_in_set))
-
-    parser.add_argument(u"--sign-key", type=set_sign_key, metavar=_(u"gpg-key-id"),
-                        help=u"Sign key for encryption/decryption",
-                        default=d(None))
-
-    parser.add_argument(u"--ssh-askpass", action=u"store_true",
-                        help=u"Ask the user for the SSH password. Not for batch usage",
-                        default=d(config.ssh_askpass))
-
-    parser.add_argument(u"--ssh-options", metavar=_(u"options"), action=u"append",
-                        help=u"SSH options to add",
-                        default=d(config.ssh_options))
-
-    parser.add_argument(u"--ssl-cacert-file", metavar="file",
-                        help=_(u"pem formatted bundle of certificate authorities"),
-                        default=d(config.ssl_cacert_file))
-
-    parser.add_argument(u"--ssl-cacert-path", metavar="path",
-                        help=_(u"path to a folder with certificate authority files"),
-                        default=d(config.ssl_cacert_path))
-
-    parser.add_argument(u"--ssl-no-check-certificate", action=u"store_true",
-                        help=u"Set to not validate SSL certificates",
-                        default=d(config.ssl_no_check_certificate))
-
-    parser.add_argument(u"--tempdir", metavar=_(u"path"), type=check_file, dest=u"temproot",
-                        help=u"Working directory for temp files",
-                        default=d(config.temproot))
-
-    parser.add_argument(u"--timeout", metavar=_(u"seconds"), type=int,
-                        help=u"Network timeout in seconds",
-                        default=d(config.timeout))
-
-    parser.add_argument(u"--time-separator", metavar=_(u"char"),
-                        help=u"Character used like the ':' in time strings like\n"
-                             u"2002-08-06T04:22:00-07:00",
-                        default=d(config.time_separator))
-
-    parser.add_argument(u"--use-agent", action=u"store_true",
-                        help=u"Whether to specify --use-agent in GnuPG options")
-
-    parser.add_argument(u"--verbosity", u"-v", metavar=_(u"[0-9]"), type=check_verbosity,
-                        help=u"Logging verbosity",
-                        default=d(log.NOTICE))
-
-    parser.add_argument(u"--version", u"-V", action="version", version=u"%(prog) __version__",
-                        help=u"Display version and exit")
-
-    parser.add_argument(u"--volsize", metavar=_(u"number"), type=set_volsize,
-                        help=u"Volume size to use in MiB",
-                        default=d(int(config.volsize / (1024 * 1024))))
-
-    parser.add_argument(u"--webdav-headers", metavar="string",
-                        help=_(u"extra headers for Webdav, like 'Cookie,name=value'"),
-                        default=d(config.webdav_headers))
-
-    # TODO: Find a way to nuke these test options in production.
-
-    # TESTING ONLY - trigger Pydev debugger
-    parser.add_argument(u"--pydevd", action=u"store_true", help=argparse.SUPPRESS)
-
-    # TESTING ONLY - skips upload for a given volume
-    parser.add_argument(u"--skip-volume", type=int, help=argparse.SUPPRESS)
-
-    # TESTING ONLY - raises exception after volume
-    parser.add_argument(u"--fail-on-volume", type=int, help=argparse.SUPPRESS)
-
-    # TESTING ONLY - set current time
-    parser.add_argument(u"--current-time", type=int, help=argparse.SUPPRESS)
+            subparser_dict[subc].add_argument(arg, type=str)
+
+    for option, kwargs in OptionKwargs.__dict__.items():
+        if option.startswith(u"__"):
+            continue
+        names = [option] + (option_alternates.get(option, []))
+        names = [var2opt(n) for n in names]
+        parser.add_argument(*names, **kwargs)
 
     # parse the options
     args = parser.parse_args(arglist)
@@ -554,6 +753,7 @@ def parse_cmdline_options(arglist):
     for f in [x for x in dir(args) if x and not x.startswith(u"_")]:
         v = getattr(args, f)
         setattr(config, f, v)
+
     return args
 
 
@@ -581,36 +781,36 @@ def process_command_line(cmdline_list):
     if args:
         cmd = args.pop(0)
         # look for possible abbreviations
-        possible = [c for c in commands.keys() if c.startswith(cmd)]
+        possible = [c for c in duplicity_commands.keys() if c.startswith(cmd)]
         # no unique match, that's an error
         if len(possible) > 1:
             command_line_error(f"command '{cmd}' not unique: could be {' or '.join(possible)}")
         # only one match, that's a keeper, maybe
         elif len(possible) == 1:
             cmd = possible[0]
-            if cmd not in commands.keys():
+            if cmd not in duplicity_commands.keys():
                 command_line_error(f"command '{cmd}' is not a duplicity command.")
         # no matches, assume implied cmd
         elif not possible:
             args.insert(0, cmd)
             cmd = u"implied"
-            commands[cmd] = [u"defer", u"defer"]
+            duplicity_commands[cmd] = [u"defer", u"defer"]
 
-    # commands just need standard checks
+    # duplicity_commands just need standard checks
     cmdvar = cmd.replace(u'-', u'_')
     setattr(config, cmdvar, args)
-    num_expect = len(commands[cmd])
+    num_expect = len(duplicity_commands[cmd])
     if len(args) != num_expect:
         command_line_error(f"Expected {num_expect} args, got {len(args)}.")
 
-    targets = commands[cmd]
+    targets = duplicity_commands[cmd]
     for n in range(len(targets)):
         if targets[n] != u"defer":
             name = f"check_{targets[n]}"
             func = getattr(cli_main, name)
             setattr(config, targets[n], func(args[n]))
 
-    # other commands need added processing
+    # other duplicity_commands need added processing
     if cmd == u"remove-all-but-n-full":
         config.remove_all_but_n_full_mode = True
         arg = args[0]
