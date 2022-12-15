@@ -32,7 +32,7 @@ from duplicity import gpg
 version = __version__
 
 # The following args are set by ommandline processing
-# they correspond to the args in cli_main.commands
+# they correspond to the args in cli_main.duplicity_commands
 source_url = None
 target_url = None
 source_dir = None
@@ -40,18 +40,18 @@ target_dir = None
 remove_time = None
 count = None
 
-# the following contain the argument to each command
-# all resolve to False until filled, then areTrue
-cleanup = []
-collection_status = []
-full = []
-incremental = []
-list_current_files = []
-remove_older_than = []
-remove_all_but_n_full = []
-remove_all_inc_of_but_n_full = []
-restore = []
-verify = []
+# one of the following is true for one duplicity command
+backup = False
+cleanup = False
+collection_status = False
+full = False
+incremental = False
+list_current_files = False
+remove_older_than = False
+remove_all_but_n_full = False
+remove_all_inc_of_but_n_full = False
+restore = False
+verify = False
 
 # Prefix for all files (appended before type-specific prefixes)
 file_prefix = u""
@@ -306,7 +306,7 @@ metadata_sync_mode = u"partial"
 # Wheter to specify --use-agent in GnuPG options
 use_agent = False
 
-# ssh commands to use, used by ssh_pexpect (defaults to sftp, scp)
+# ssh duplicity_commands to use, used by ssh_pexpect (defaults to sftp, scp)
 scp_command = None
 sftp_command = None
 

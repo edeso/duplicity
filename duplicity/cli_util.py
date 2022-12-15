@@ -204,6 +204,38 @@ def check_verbosity(value):
     return verb
 
 
+def d(val):
+    """
+    Return printable value for default.
+    """
+    if isinstance(val, (str, bytes)):
+        if val:
+            return val
+        else:
+            return None
+    else:
+        return None
+
+
+def var2cmd(s):
+    return s.replace(u"_", u"-")
+
+
+def var2opt(s):
+    if len(s) > 1:
+        return u"--" + s.replace(u"_", u"-")
+    else:
+        return u"-" + s
+
+
+def cmd2var(s):
+    return s.replace(u"-", u"_")
+
+
+def opt2var(s):
+    return s.replace(u"-", u"_").lstrip(u"-")
+
+
 def set_log_fd(fd):
     if fd < 1:
         raise argparse.ArgumentError(fd, u"log-fd must be greater than zero.")

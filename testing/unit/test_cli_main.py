@@ -59,9 +59,9 @@ class CommandlineTest(UnitTestCase):
         """
         test_args = copy.copy(self.good_args)
         test_args.update(new_args)
-        for cmd in cli_main.commands:
+        for cmd in cli_main.duplicity_commands:
             runtest = False
-            args = cli_main.commands[cmd]
+            args = cli_main.duplicity_commands[cmd]
             cline = [cmd]
             for arg in args:
                 cline.append(test_args[arg])
