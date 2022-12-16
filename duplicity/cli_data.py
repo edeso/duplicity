@@ -26,7 +26,7 @@ from dataclasses import dataclass
 from duplicity.cli_util import *
 
 
-@dataclass(init=False)
+@dataclass
 class DuplicityCommands:
     u"""duplicity_commands and positional args expected"""
     backup = [u"url_or_dir", u"url_or_dir"]
@@ -72,29 +72,33 @@ parent_options = {
     u"version",
 }
 
+backup_options = {
+    u"allow_source_mismatch", u"asynchronous_upload", u"dry_run", u"time_separator", u"volsize",
+}
+
 selection_options = {
     u"exclude", u"exclude_device_files", u"exclude_filelist", u"exclude_if_present", u"exclude_older_than",
     u"exclude_other_filesystems", u"exclude_regexp", u"include", u"include_filelist", u"include_regexp",
 }
 
 
-@dataclass(init=False)
+@dataclass
 class CommandOptions:
     u"""legal options by command"""
     backup = list(all_options - parent_options)
-    cleanup = list(all_options - parent_options - selection_options)
-    collection_status = list(all_options - parent_options - selection_options)
+    cleanup = list(all_options - parent_options - backup_options - selection_options)
+    collection_status = list(all_options - parent_options - backup_options - selection_options)
     full = list(all_options - parent_options)
     incremental = list(all_options - parent_options)
-    list_current_files = list(all_options - parent_options - selection_options)
-    remove_older_than = list(all_options - parent_options - selection_options)
-    remove_all_but_n_full = list(all_options - parent_options - selection_options)
-    remove_all_inc_of_but_n_full = list(all_options - parent_options - selection_options)
-    restore = list(all_options - parent_options - selection_options)
-    verify = list(all_options - parent_options - selection_options)
+    list_current_files = list(all_options - parent_options - backup_options - selection_options)
+    remove_older_than = list(all_options - parent_options - backup_options - selection_options)
+    remove_all_but_n_full = list(all_options - parent_options - backup_options - selection_options)
+    remove_all_inc_of_but_n_full = list(all_options - parent_options - backup_options - selection_options)
+    restore = list(all_options - parent_options - backup_options - selection_options)
+    verify = list(all_options - parent_options - backup_options - selection_options)
 
 
-@dataclass(init=False)
+@dataclass
 class OptionKwargs:
     u"""Option kwargs for add_argument"""
     allow_source_mismatch = {
