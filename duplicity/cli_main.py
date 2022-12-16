@@ -93,17 +93,22 @@ def parse_cmdline_options(arglist):
 
     # add help for each command
     subparser_dict = dict()
-    for var, meta in DuplicityCommands.__dict__.items():
+    for var, meta in sorted(DuplicityCommands.__dict__.items()):
         if var.startswith(u"__"):
             continue
         cmd = var2cmd(var)
-        subparser_dict[cmd] = subparsers.add_parser(cmd, help=f"# duplicity {var} {u' '.join(meta)}")
-        subparser_dict[cmd].add_argument(cmd, action=u"store_true",
-                                         default=d(getattr(config, var)))
+        subparser_dict[cmd] = subparsers.add_parser(
+            cmd,
+            help=f"# duplicity {var} {u' '.join(meta)}",
+            formatter_class=make_wide(argparse.ArgumentDefaultsHelpFormatter))
+        subparser_dict[cmd].add_argument(
+            cmd,
+            action=u"store_true",
+            default=d(getattr(config, var)))
         for arg in meta:
             subparser_dict[cmd].add_argument(arg, type=str)
 
-        for opt in CommandOptions.__dict__[var]:
+        for opt in sorted(CommandOptions.__dict__[var]):
             names = [opt] + option_alternates.get(opt, [])
             names = [var2opt(n) for n in names]
             subparser_dict[cmd].add_argument(*names, **OptionKwargs.__dict__[opt])
