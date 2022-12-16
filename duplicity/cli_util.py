@@ -297,29 +297,6 @@ def set_selection():
     config.select = sel.set_iter()
 
 
-def process_local_dir(action, local_pathname):
-    u"""Check local directory, set config.local_path"""
-    local_path = path.Path(path.Path(local_pathname).get_canonical())
-    if action == u"restore":
-        if (local_path.exists() and not local_path.isemptydir()) and not config.force:
-            log.FatalError(_(u"Restore destination directory %s already "
-                             u"exists.\nWill not overwrite.") % (local_path.uc_name,),
-                           log.ErrorCode.restore_dir_exists)
-    elif action == u"verify":
-        if not local_path.exists():
-            log.FatalError(_(u"Verify directory %s does not exist") %
-                           (local_path.uc_name,),
-                           log.ErrorCode.verify_dir_doesnt_exist)
-    else:
-        assert action == u"full" or action == u"inc"
-        if not local_path.exists():
-            log.FatalError(_(u"Backup source directory %s does not exist.")
-                           % (local_path.uc_name,),
-                           log.ErrorCode.backup_dir_doesnt_exist)
-
-    config.local_path = local_path
-
-
 def check_consistency(action):
     u"""Final consistency check, see if something wrong with command line"""
 
