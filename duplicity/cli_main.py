@@ -39,6 +39,7 @@ from duplicity import log
 from duplicity import path
 from duplicity.cli_data import *
 from duplicity.cli_util import *
+from duplicity.cli_usage import *
 
 # TODO: move to config
 select_opts = []  # Will hold all the selection options
@@ -55,33 +56,48 @@ def command_line_error(message):
                            _(u"Enter 'duplicity --help' for help screen."))
 
 
+class DuplicityHelpFormatter(argparse.ArgumentDefaultsHelpFormatter):
+    u"""
+    A working kludge to combine ArgumentDefaults, RawDescription, and RawText.
+    Use with make_wide() to insure we catch argparse API errors.
+    """
+    # from argparse.RawDescriptionHelpFormatter
+    def _fill_text(self, text, width, indent):
+        return ''.join(indent + line for line in text.splitlines(keepends=True))
+
+    # from argparse.RawTextHelpFormatter
+    def _split_lines(self, text, width):
+        return text.splitlines()
+
+
+def make_wide(formatter, w=120, h=46):
+    """
+    Return a wider HelpFormatter, if possible.
+    """
+    try:
+        # see: https://stackoverflow.com/a/5464440
+        # beware: "Only the name of this class is considered a public API."
+        kwargs = {'width': w, 'max_help_position': h}
+        formatter(None, **kwargs)
+        return lambda prog: formatter(prog, **kwargs)
+    except TypeError:
+        warnings.warn("argparse help formatter failed, falling back.")
+        return formatter
+
+
 def parse_cmdline_options(arglist):
     u"""
     Parse argument list
     """
-
-    def make_wide(formatter, w=120, h=46):
-        """
-        Return a wider HelpFormatter, if possible.
-        """
-        try:
-            # https://stackoverflow.com/a/5464440
-            # beware: "Only the name of this class is considered a public API."
-            kwargs = {'width': w, 'max_help_position': h}
-            formatter(None, **kwargs)
-            return lambda prog: formatter(prog, **kwargs)
-        except TypeError:
-            warnings.warn("argparse help formatter failed, falling back.")
-            return formatter
-
     # set up parent parser
     parser = argparse.ArgumentParser(
         prog=u'duplicity',
         argument_default=None,
-        formatter_class=make_wide(argparse.ArgumentDefaultsHelpFormatter),
+        formatter_class=make_wide(DuplicityHelpFormatter),
+        epilog=help_url_formats,
     )
     for var in parent_options:
-        names = [var] + option_alternates.get(var, [])
+        names = option_alternates.get(var, []) + [var]
         names = [var2opt(n) for n in names]
         parser.add_argument(*names, **OptionKwargs.__dict__[var])
 
@@ -100,7 +116,9 @@ def parse_cmdline_options(arglist):
         subparser_dict[cmd] = subparsers.add_parser(
             cmd,
             help=f"# duplicity {var} {u' '.join(meta)}",
-            formatter_class=make_wide(argparse.ArgumentDefaultsHelpFormatter))
+            formatter_class=make_wide(DuplicityHelpFormatter),
+            epilog=help_url_formats,
+        )
         subparser_dict[cmd].add_argument(
             cmd,
             action=u"store_true",
@@ -109,7 +127,7 @@ def parse_cmdline_options(arglist):
             subparser_dict[cmd].add_argument(arg, type=str)
 
         for opt in sorted(CommandOptions.__dict__[var]):
-            names = [opt] + option_alternates.get(opt, [])
+            names = option_alternates.get(opt, []) + [opt]
             names = [var2opt(n) for n in names]
             subparser_dict[cmd].add_argument(*names, **OptionKwargs.__dict__[opt])
 
@@ -266,7 +284,8 @@ def process_command_line(cmdline_list):
     #
     # check_consistency(action)
     #
-    # log.Info(_(u"Main action: ") + action)
+
+    log.Info(_(u"Main action: ") + action)
     return action
 
 
