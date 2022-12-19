@@ -21,25 +21,12 @@
 
 u"""Parse command line, check for consistency, and set config"""
 
-import argparse
-import io
-import os
-import re
+import gpg
 import sys
-from dataclasses import dataclass
-from hashlib import md5
-from pathvalidate import is_valid_filepath
-from pathvalidate import sanitize_filepath
 
-from duplicity import config
-from duplicity import dup_time
 from duplicity import errors
-from duplicity import gpg
-from duplicity import log
-from duplicity import path
 from duplicity.cli_data import *
 from duplicity.cli_util import *
-from duplicity.cli_usage import *
 
 # TODO: move to config
 select_opts = []  # Will hold all the selection options
@@ -56,18 +43,12 @@ def command_line_error(message):
                            _(u"Enter 'duplicity --help' for help screen."))
 
 
-class DuplicityHelpFormatter(argparse.ArgumentDefaultsHelpFormatter):
+class DuplicityHelpFormatter(argparse.ArgumentDefaultsHelpFormatter,
+                             argparse.RawDescriptionHelpFormatter):
     u"""
-    A working kludge to combine ArgumentDefaults, RawDescription, and RawText.
-    Use with make_wide() to insure we catch argparse API errors.
+    A working class to combine ArgumentDefaults, RawDescription.
+    Use with make_wide() to insure we catch argparse API changes.
     """
-    # from argparse.RawDescriptionHelpFormatter
-    def _fill_text(self, text, width, indent):
-        return ''.join(indent + line for line in text.splitlines(keepends=True))
-
-    # from argparse.RawTextHelpFormatter
-    def _split_lines(self, text, width):
-        return text.splitlines()
 
 
 def make_wide(formatter, w=120, h=46):
@@ -107,7 +88,7 @@ def parse_cmdline_options(arglist):
         required=False,
     )
 
-    # add help for each command
+    # add sub_parser for each command
     subparser_dict = dict()
     for var, meta in sorted(DuplicityCommands.__dict__.items()):
         if var.startswith(u"__"):
@@ -115,6 +96,7 @@ def parse_cmdline_options(arglist):
         cmd = var2cmd(var)
         subparser_dict[cmd] = subparsers.add_parser(
             cmd,
+            aliases=CommandAliases.__dict__[var],
             help=f"# duplicity {var} {u' '.join(meta)}",
             formatter_class=make_wide(DuplicityHelpFormatter),
             epilog=help_url_formats,
@@ -126,6 +108,7 @@ def parse_cmdline_options(arglist):
         for arg in meta:
             subparser_dict[cmd].add_argument(arg, type=str)
 
+        # add valid options for each command
         for opt in sorted(CommandOptions.__dict__[var]):
             names = option_alternates.get(opt, []) + [opt]
             names = [var2opt(n) for n in names]

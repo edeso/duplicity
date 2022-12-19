@@ -25,16 +25,13 @@ import argparse
 import io
 import os
 import re
-import sys
 from hashlib import md5
+
 from pathvalidate import is_valid_filepath
 from pathvalidate import sanitize_filepath
 
-from duplicity import cli_usage
 from duplicity import config
 from duplicity import dup_time
-from duplicity import errors
-from duplicity import gpg
 from duplicity import log
 from duplicity import path
 
