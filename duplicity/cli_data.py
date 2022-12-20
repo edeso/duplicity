@@ -28,7 +28,7 @@ from duplicity.cli_util import *
 
 @dataclass
 class DuplicityCommands:
-    u"""duplicity_commands and positional args expected"""
+    u"""duplicity commands and positional args expected"""
     backup = [u"url_or_dir", u"url_or_dir"]
     cleanup = [u"target_url"]
     collection_status = [u"target_url"]
@@ -44,17 +44,17 @@ class DuplicityCommands:
 @dataclass
 class CommandAliases:
     u"""commands and aliases"""
-    backup = [u"back"]
-    cleanup = [u"clean"]
-    collection_status = [u"status"]
-    full = []
-    incremental = [u"inc"]
-    list_current_files = [u"list"]
-    remove_older_than = [u"remolder"]
-    remove_all_but_n_full = [u"remfull"]
-    remove_all_inc_of_but_n_full = [u"reminc"]
-    restore = [u"rest"]
-    verify = [u"ver"]
+    backup = [u"back", u"bu"]
+    cleanup = [u"clean", u"cl"]
+    collection_status = [u"stat", u"st"]
+    full = [u"fb"]
+    incremental = [u"inc", u"ib"]
+    list_current_files = [u"list", u"ls"]
+    remove_older_than = [u"rmolder", u"ro"]
+    remove_all_but_n_full = [u"rmfull", u"rf"]
+    remove_all_inc_of_but_n_full = [u"rminc", u"ri"]
+    restore = [u"rest", u"rb"]
+    verify = [u"veri", u"vb"]
 
 all_options = {
     u"allow_source_mismatch", u"archive_dir", u"asynchronous_upload", u"azure_blob_tier",
