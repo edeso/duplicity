@@ -24,6 +24,8 @@ standard_library.install_aliases()
 
 
 import os
+import socket
+import stat
 import sys
 import platform
 import io
@@ -31,6 +33,7 @@ import io
 import unittest
 
 from . import FunctionalTestCase, CmdError
+from .. import _runtest_dir
 from duplicity import log
 
 
@@ -167,6 +170,61 @@ class IncludeExcludeFunctionalTest(FunctionalTestCase):
             if to_add:
                 directory_list.append(to_add)
         return directory_list
+
+
+class TestSkipSocket(IncludeExcludeFunctionalTest):
+    u""" Tests correct handling of unix domain sockets in backuyp source """
+    sock_path = os.path.join(_runtest_dir, u"testfiles/various_file_types/socket")
+
+    def setUp(self):
+        u""" can't put a socket into testfiles.tar.gz """
+        super().setUp()
+        if os.path.exists(self.sock_path):
+            os.unlink(self.sock_path)
+        sock = socket.socket(socket.AF_UNIX)
+        sock.bind(self.sock_path)
+        self.assertTrue(stat.S_ISSOCK(os.stat(self.sock_path).st_mode))
+
+    u""" Check sockets are skipped when scanned out normally """
+    def test_socket_skipped_backup_path(self):
+        self.backup(u"full", u"testfiles/various_file_types/")
+        self.restore()
+        restore_dir = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        self.assertTrue(u"socket" not in restored[0])
+
+    u""" Check sockets are skipped if found in --files-from list """
+    def test_socket_skipped_files_from(self):
+        with io.open(u"testfiles/files_from.txt", u"w") as f:
+            f.write(u"various_file_types/changeable_permission\n"
+                    u"various_file_types/executable\n"
+                    u"various_file_types/executable2\n"
+                    u"various_file_types/fifo\n"
+                    u"various_file_types/regular_file\n"
+                    u"various_file_types/regular_file.sig\n"
+                    u"various_file_types/symbolic_link\n"
+                    u"various_file_types/socket\n"   # Must match self.sock_path above!
+                    u"various_file_types/test\n"
+                    u"various_file_types/two_hardlinked_files1\n"
+                    u"various_file_types/twp_hardlinked_files2")
+        self.backup(u"full", u"testfiles",
+                    options=[u"--files-from", u"testfiles/files_from.txt"])
+        self.restore()
+        restore_dir = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        self.assertTrue(u"socket" not in restored[0])
+
+    u""" Check sockets are skipped if found in --include-filelist list """
+    def test_socket_skipped_include_filelist(self):
+        with io.open(u"testfiles/include.txt", u"w") as f:
+            f.write(u"testfiles/")
+        self.backup(u"full", u"testfiles/various_file_types/",
+                    options=[u"--include-filelist", u"testfiles/include.txt",
+                             u"--exclude", u"testfiles"])
+        self.restore()
+        restore_dir = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        self.assertTrue(u"socket" not in restored[0])
 
 
 class TestCheckTestFiles(IncludeExcludeFunctionalTest):

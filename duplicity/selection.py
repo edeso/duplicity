@@ -380,7 +380,10 @@ pattern (such as '**') which matches the base directory.""") %
                 path = os.path.join(self.rootpath.uc_name, dirname).rstrip(os.path.sep)
                 if path not in filelist:
                     filelist[path] = set()
-                filelist[path].add(basename)
+                if isinstance(basename, str):
+                    filelist[path].add(util.fsencode(basename))
+                else:
+                    filelist[path].add(basename)
                 line = dirname
 
         if absolute_path:
