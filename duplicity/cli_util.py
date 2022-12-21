@@ -32,8 +32,21 @@ from pathvalidate import sanitize_filepath
 
 from duplicity import config
 from duplicity import dup_time
+from duplicity import errors
 from duplicity import log
 from duplicity import path
+
+
+class CommandLineError(errors.UserError):
+    pass
+
+
+def command_line_error(message):
+    u"""
+    Indicate a command line error and exit
+    """
+    raise CommandLineError(_(f"Command line error: {message}\n") +
+                           _(u"Enter 'duplicity --help' for help screen."))
 
 
 class AddSelectionAction(argparse.Action):
@@ -42,7 +55,7 @@ class AddSelectionAction(argparse.Action):
 
     def __call__(self, parser, namespace, values, option_string=None):
         addarg = os.fsdecode(value) if isinstance(values, bytes) else values
-        select_opts.append((os.fsdecode(option_string), addarg))
+        config.select_opts.append((os.fsdecode(option_string), addarg))
 
 
 class AddFilelistAction(argparse.Action):
@@ -50,7 +63,7 @@ class AddFilelistAction(argparse.Action):
         super(AddFilelistAction, self).__init__(option_strings, dest, **kwargs)
 
     def __call__(self, parser, namespace, values, option_string=None):
-        select_opts.append((os.fsdecode(s), os.fsdecode(filename)))
+        config.select_opts.append((os.fsdecode(s), os.fsdecode(filename)))
         try:
             select_files.append(io.open(filename, u"rt", encoding=u"UTF-8"))
         except Exception as e:
@@ -118,6 +131,21 @@ def check_target_url(val):
     return val
 
 
+def check_url_or_dir(val):
+    # for 'backup' command
+    return val
+
+
+def dflt(val):
+    """
+    Return printable value for default.
+    """
+    if isinstance(val, (str, bytes, bool, int)):
+        return val
+    else:
+        return None
+
+
 def expand_fn(filename):
     return os.path.expanduser(os.path.expandvars(filename))
 
@@ -177,7 +205,7 @@ def check_verbosity(value):
         verb = log.NOTICE
     elif value in [u'i', u'info']:
         verb = log.INFO
-    elif value in [u'd', u'debug']:
+    elif value in [u'dflt', u'debug']:
         verb = log.DEBUG
     else:
         try:
@@ -189,7 +217,7 @@ def check_verbosity(value):
 
     if fail:
         # TRANSL: In this portion of the usage instructions, "[ewnid]" indicates which
-        # characters are permitted (e, w, n, i, or d); the brackets imply their own
+        # characters are permitted (e, w, n, i, or dflt); the brackets imply their own
         # meaning in regex; i.e., only one of the characters is allowed in an instance.
         raise argparse.ArgumentError(
             value,
@@ -201,17 +229,9 @@ def check_verbosity(value):
     return verb
 
 
-def d(val):
-    """
-    Return printable value for default.
-    """
-    if isinstance(val, (str, bytes)):
-        if val:
-            return val
-        else:
-            return None
-    else:
-        return None
+def make_bytes(value):
+    if isinstance(value, str):
+        return bytes(value, u'utf-8')
 
 
 def var2cmd(s):
@@ -288,9 +308,8 @@ def set_sign_key(sign_key):
 
 def set_selection():
     u"""Return selection iter starting at filename with arguments applied"""
-    global select_opts, select_files
     sel = selection.Select(config.local_path)
-    sel.ParseArgs(select_opts, select_files)
+    sel.ParseArgs(config.select_opts, config.select_files)
     config.select = sel.set_iter()
 
 
@@ -323,7 +342,7 @@ def check_consistency(action):
         elif config.incremental:
             command_line_error(u"incremental option cannot be used when "
                                u"restoring or verifying")
-        if select_opts and action == u"restore":
+        if config.select_opts and action == u"restore":
             log.Warn(_(u"Command line warning: %s") % _(u"Selection options --exclude/--include\n"
                                                         u"currently work only when backing up,"
                                                         u"not restoring."))
