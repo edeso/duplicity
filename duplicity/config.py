@@ -33,25 +33,15 @@ version = __version__
 
 # The following args are set by ommandline processing
 # they correspond to the args in cli_main.duplicity_commands
-source_url = None
-target_url = None
-source_dir = None
-target_dir = None
-remove_time = None
 count = None
+remove_time = None
+source_dir = None
+source_url = None
+target_dir = None
+target_url = None
 
-# one of the following is true for one duplicity command
-backup = False
-cleanup = False
-collection_status = False
-full = False
-incremental = False
-list_current_files = False
-remove_older_than = False
-remove_all_but_n_full = False
-remove_all_inc_of_but_n_full = False
-restore = False
-verify = False
+# action to take
+action = u"full"
 
 # Prefix for all files (appended before type-specific prefixes)
 file_prefix = u""
@@ -124,12 +114,12 @@ select = None
 
 gpg_binary = None
 
-# Set to GPGProfile that will be used to compress/uncompress encrypted
-# files.  Replaces encryption_keys, sign_key, and passphrase settings.
-gpg_profile = None
-
 # Options to pass to gpg
 gpg_options = u''
+
+# Set to GPGProfile that will be used to compress/uncompress encrypted
+# files.  Replaces encryption_keys, sign_key, and passphrase settings.
+gpg_profile = gpg.GPGProfile()
 
 # Maximum file blocksize
 max_blocksize = 2048
@@ -155,7 +145,7 @@ lockfile = None
 
 # If this is true, only warn and don't raise fatal error when backup
 # source directory doesn't match previous backup source directory.
-allow_source_mismatch = None
+allow_source_mismatch = False
 
 # If set, print the statistics after every backup session
 print_statistics = True

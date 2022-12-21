@@ -25,8 +25,10 @@ import sys
 
 from duplicity import errors
 from duplicity import log
+from duplicity import cli_data
 from duplicity import cli_main
 from duplicity import config
+from duplicity.cli_util import *
 from testing.unit import UnitTestCase
 
 
@@ -59,9 +61,12 @@ class CommandlineTest(UnitTestCase):
         """
         test_args = copy.copy(self.good_args)
         test_args.update(new_args)
-        for cmd in cli_main.duplicity_commands:
+        for var in cli_data.DuplicityCommands.__dict__.keys():
+            if var.startswith(u"__"):
+                continue
+            cmd = var2cmd(var)
             runtest = False
-            args = cli_main.duplicity_commands[cmd]
+            args = cli_data.DuplicityCommands.__dict__[var]
             cline = [cmd]
             for arg in args:
                 cline.append(test_args[arg])
@@ -69,70 +74,70 @@ class CommandlineTest(UnitTestCase):
                     runtest = True
             if runtest:
                 with self.assertRaisesRegex(cli_main.CommandLineError, err_msg) as cm:
-                    cli_main.parse_cmdline_options(cline)
+                    cli_main.process_command_line(cline)
 
     def test_full_commands(self):
         u"""
         test backup, restore, verify with explicit commands
         """
 
-        cli_main.parse_cmdline_options(u"cleanup file://duptest".split())
-        assert config.cleanup
-        assert config.target_url == u"file://duptest"
+        cli_main.process_command_line(u"cleanup file://duptest".split())
+        self.assertEqual(config.action, u"cleanup")
+        self.assertEqual(config.target_url, u"file://duptest")
 
-        cli_main.parse_cmdline_options(u"collection-status file://duptest".split())
-        assert config.collection_status
-        assert config.target_url == u"file://duptest"
+        cli_main.process_command_line(u"collection-status file://duptest".split())
+        self.assertEqual(config.action, u"collection-status")
+        self.assertEqual(config.target_url, u"file://duptest")
 
-        cli_main.parse_cmdline_options(u"full foo/bar file://duptest".split())
-        assert config.full
-        assert config.source_dir.endswith(u"foo/bar")
-        assert config.target_url == u"file://duptest"
+        cli_main.process_command_line(u"full foo/bar file://duptest".split())
+        self.assertEqual(config.action, u"full")
+        self.assertTrue(config.source_dir.endswith(u"foo/bar"))
+        self.assertEqual(config.target_url, u"file://duptest")
 
-        cli_main.parse_cmdline_options(u"inc foo/bar file://duptest".split())
-        assert config.incremental
-        assert config.source_dir.endswith(u"foo/bar")
-        assert config.target_url == u"file://duptest"
+        cli_main.process_command_line(u"inc foo/bar file://duptest".split())
+        self.assertEqual(config.action, u"incremental")
+        self.assertTrue(config.source_dir.endswith(u"foo/bar"))
+        self.assertEqual(config.target_url, u"file://duptest")
 
-        cli_main.parse_cmdline_options(u"list-current-files file://duptest".split())
-        assert config.list_current_files
-        assert config.target_url == u"file://duptest"
+        cli_main.process_command_line(u"list-current-files file://duptest".split())
+        self.assertEqual(config.action, u"list-current-files")
+        self.assertEqual(config.target_url, u"file://duptest")
 
-        cli_main.parse_cmdline_options(u"remove-all-but-n-full 5 file://duptest".split())
-        assert config.remove_all_but_n_full
-        assert config.target_url == u"file://duptest"
+        cli_main.process_command_line(u"remove-all-but-n-full 5 file://duptest".split())
+        self.assertEqual(config.action, u"remove-all-but-n-full")
+        self.assertEqual(config.target_url, u"file://duptest")
 
-        cli_main.parse_cmdline_options(u"remove-all-inc-of-but-n-full 5 file://duptest".split())
-        assert config.remove_all_inc_of_but_n_full
-        assert config.target_url == u"file://duptest"
+        cli_main.process_command_line(u"remove-all-inc-of-but-n-full 5 file://duptest".split())
+        self.assertEqual(config.action, u"remove-all-inc-of-but-n-full")
+        self.assertEqual(config.target_url, u"file://duptest")
 
-        cli_main.parse_cmdline_options(u"remove-older-than 100 file://duptest".split())
-        assert config.remove_older_than
-        assert config.target_url == u"file://duptest"
+        cli_main.process_command_line(u"remove-older-than 100 file://duptest".split())
+        self.assertEqual(config.action, u"remove-older-than")
+        self.assertEqual(config.target_url, u"file://duptest")
 
-        cli_main.parse_cmdline_options(u"restore file://duptest foo/bar".split())
-        assert config.restore
-        assert config.source_dir.endswith(u"foo/bar")
-        assert config.target_url == u"file://duptest"
+        cli_main.process_command_line(u"restore file://duptest foo/bar".split())
+        self.assertEqual(config.action, u"restore")
+        self.assertTrue(config.source_dir.endswith(u"foo/bar"))
+        self.assertEqual(config.target_url, u"file://duptest")
 
-        cli_main.parse_cmdline_options(u"verify file://duptest foo/bar".split())
-        assert config.verify
-        assert config.source_dir.endswith(u"foo/bar")
-        assert config.target_url == u"file://duptest"
+        cli_main.process_command_line(u"verify file://duptest foo/bar".split())
+        self.assertEqual(config.action, u"verify")
+        self.assertTrue(config.source_dir.endswith(u"foo/bar"))
+        self.assertEqual(config.target_url, u"file://duptest")
 
-    def test_implied_commands(self):
-        u"""
-        test backup, restore, verify without explicit commands
-        """
-        cli_main.parse_cmdline_options(u"foo/bar file://duptest".split())
-        assert config.full
-        assert config.source_dir.endswith(u"foo/bar")
-        assert config.target_url == u"file://duptest"
-
-        cli_main.parse_cmdline_options(u"file://duptest foo/bar".split())
-        assert config.restore
-        assert config.source_dir.endswith(u"foo/bar")
-        assert config.target_url == u"file://duptest"
+    # def test_implied_commands(self):
+    #     u"""
+    #     test backup, restore, verify without explicit commands
+    #     """
+    #     cli_main.process_command_line(u"foo/bar file://duptest".split())
+    #     assert config.full
+    #     assert config.source_dir.endswith(u"foo/bar")
+    #     assert config.target_url == u"file://duptest"
+    #
+    #     cli_main.process_command_line(u"file://duptest foo/bar".split())
+    #     assert config.restore
+    #     assert config.source_dir.endswith(u"foo/bar")
+    #     assert config.target_url == u"file://duptest"
 
     def test_full_command_errors_reversed_args(self):
         u"""

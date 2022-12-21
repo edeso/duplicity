@@ -24,23 +24,9 @@ u"""Parse command line, check for consistency, and set config"""
 import gpg
 import sys
 
-from duplicity import errors
+import duplicity
 from duplicity.cli_data import *
 from duplicity.cli_util import *
-
-# TODO: move to config
-select_opts = []  # Will hold all the selection options
-select_files = []  # Will hold file objects when filelist given
-
-
-class CommandLineError(errors.UserError):
-    pass
-
-
-def command_line_error(message):
-    u"""Indicate a command line error and exit"""
-    raise CommandLineError(_(f"Command line error: {message}\n") +
-                           _(u"Enter 'duplicity --help' for help screen."))
 
 
 class DuplicityHelpFormatter(argparse.ArgumentDefaultsHelpFormatter,
@@ -54,10 +40,10 @@ class DuplicityHelpFormatter(argparse.ArgumentDefaultsHelpFormatter,
 def make_wide(formatter, w=120, h=46):
     """
     Return a wider HelpFormatter, if possible.
+    See: https://stackoverflow.com/a/5464440
+    Beware: "Only the name of this class is considered a public API."
     """
     try:
-        # see: https://stackoverflow.com/a/5464440
-        # beware: "Only the name of this class is considered a public API."
         kwargs = {'width': w, 'max_help_position': h}
         formatter(None, **kwargs)
         return lambda prog: formatter(prog, **kwargs)
@@ -102,11 +88,12 @@ def parse_cmdline_options(arglist):
             epilog=help_url_formats,
         )
         subparser_dict[cmd].add_argument(
-            cmd,
-            action=u"store_true",
-            default=d(getattr(config, var)))
+            dest=u"action",
+            action=u"store_const",
+            const=cmd)
         for arg in meta:
-            subparser_dict[cmd].add_argument(arg, type=str)
+            func = getattr(duplicity.cli_util, f"check_{arg}")
+            subparser_dict[cmd].add_argument(arg, type=func)
 
         # add valid options for each command
         for opt in sorted(CommandOptions.__dict__[var]):
@@ -115,7 +102,15 @@ def parse_cmdline_options(arglist):
             subparser_dict[cmd].add_argument(*names, **OptionKwargs.__dict__[opt])
 
     # parse the options
-    args = parser.parse_args(arglist)
+    return parser.parse_args(arglist)
+
+
+def process_command_line(cmdline_list):
+    u"""
+    Process command line, set config
+    """
+    # parse command line
+    args = parse_cmdline_options(cmdline_list)
 
     # Copy all arguments and their values to the config module.  Don't copy
     # attributes that are 'hidden' (start with an underscore) or whose name is
@@ -126,150 +121,6 @@ def parse_cmdline_options(arglist):
         setattr(config, f, v)
 
     return args
-
-
-def process_command_line(cmdline_list):
-    u"""Process command line, set config, return action
-
-    action will be "list-current", "collection-status", "cleanup",
-    "remove-old", "restore", "verify", "full", or "inc".
-
-    """
-    # build initial gpg_profile
-    config.gpg_profile = gpg.GPGProfile()
-
-    # parse command line
-    args = parse_cmdline_options(cmdline_list)
-
-    # # process first arg as possible command
-    # if args:
-    #     cmd = args.pop(0)
-    #     # look for possible abbreviations
-    #     possible = [c for c in duplicity_commands.keys() if c.startswith(cmd)]
-    #     # no unique match, that's an error
-    #     if len(possible) > 1:
-    #         command_line_error(f"command '{cmd}' not unique: could be {' or '.join(possible)}")
-    #     # only one match, that's a keeper, maybe
-    #     elif len(possible) == 1:
-    #         cmd = possible[0]
-    #         if cmd not in duplicity_commands.keys():
-    #             command_line_error(f"command '{cmd}' is not a duplicity command.")
-    #     # no matches, assume implied cmd
-    #     elif not possible:
-    #         args.insert(0, cmd)
-    #         cmd = u"implied"
-    #         duplicity_commands[cmd] = [u"defer", u"defer"]
-    #
-    # # duplicity_commands just need standard checks
-    # cmdvar = cmd.replace(u'-', u'_')
-    # setattr(config, cmdvar, args)
-    # num_expect = len(duplicity_commands[cmd])
-    # if len(args) != num_expect:
-    #     command_line_error(f"Expected {num_expect} args, got {len(args)}.")
-    #
-    # targets = duplicity_commands[cmd]
-    # for n in range(len(targets)):
-    #     if targets[n] != u"defer":
-    #         name = f"check_{targets[n]}"
-    #         func = getattr(cli_main, name)
-    #         setattr(config, targets[n], func(args[n]))
-    #
-    # # other duplicity_commands need added processing
-    # if cmd == u"remove-all-but-n-full":
-    #     config.remove_all_but_n_full_mode = True
-    #     arg = args[0]
-    #     config.keep_chains = int(arg)
-    #     if not config.keep_chains > 0:
-    #         command_line_error(cmd + u" count must be > 0")
-    #
-    # elif cmd == u"remove-all-inc-of-but-n-full":
-    #     config.remove_all_inc_of_but_n_full_mode = True
-    #     arg = args[0]
-    #     config.keep_chains = int(arg)
-    #     if not config.keep_chains > 0:
-    #         command_line_error(cmd + u" count must be > 0")
-    #
-    # backend_url = config.target_url or config.source_url
-    # if config.backup_name is None:
-    #     config.backup_name = generate_default_backup_name(backend_url)
-    #
-    # # convert file_prefix* string
-    # if isinstance(config.file_prefix, str):
-    #     config.file_prefix = bytes(config.file_prefix, u'utf-8')
-    # if isinstance(config.file_prefix_manifest, str):
-    #     config.file_prefix_manifest = bytes(config.file_prefix_manifest, u'utf-8')
-    # if isinstance(config.file_prefix_archive, str):
-    #     config.file_prefix_archive = bytes(config.file_prefix_archive, u'utf-8')
-    # if isinstance(config.file_prefix_signature, str):
-    #     config.file_prefix_signature = bytes(config.file_prefix_signature, u'utf-8')
-    #
-    # # set and expand archive dir
-    # set_archive_dir(expand_archive_dir(config.archive_dir,
-    #                                    config.backup_name))
-    #
-    # log.Info(_(u"Using archive dir: %s") % (config.archive_dir_path.uc_name,))
-    # log.Info(_(u"Using backup name: %s") % (config.backup_name,))
-    #
-    # # if we get a different gpg-binary from the commandline then redo gpg_profile
-    # if config.gpg_binary is not None:
-    #     src = config.gpg_profile
-    #     config.gpg_profile = gpg.GPGProfile(
-    #         passphrase=src.passphrase,
-    #         sign_key=src.sign_key,
-    #         recipients=src.recipients,
-    #         hidden_recipients=src.hidden_recipients)
-    # log.Debug(_(u"GPG binary is %s, version %s") %
-    #           ((config.gpg_binary or u'gpg'), config.gpg_profile.gpg_version))
-    #
-    # # we can now try to import all the backends
-    # backend.import_backends()
-    #
-    # # parse_cmdline_options already verified that we got exactly 1 or 2
-    # # positional arguments.  Convert to action
-    # if len(args) == 1:
-    #     if list_current:
-    #         action = u"list-current"
-    #     elif collection_status:
-    #         action = u"collection-status"
-    #     elif cleanup:
-    #         action = u"cleanup"
-    #     elif config.remove_time is not None:
-    #         action = u"remove-old"
-    #     elif config.remove_all_but_n_full_mode:
-    #         action = u"remove-all-but-n-full"
-    #     elif config.remove_all_inc_of_but_n_full_mode:
-    #         action = u"remove-all-inc-of-but-n-full"
-    #     else:
-    #         command_line_error(u"Too few arguments")
-    #
-    #     config.backend = backend.get_backend(args[0])
-    #     if not config.backend:
-    #         command_line_error(_(f"Bad URL '{args[0]})'.\n"
-    #                              "Examples of URL strings are 'scp://user@host.net:1234/path' and\n"
-    #                              "'file:///usr/local'.  See the man page for more information."""))
-    # elif len(args) == 2:
-    #     # Figure out whether backup or restore
-    #     backup, local_pathname = set_backend(args[0], args[1])
-    #     if backup:
-    #         if full_backup:
-    #             action = u"full"
-    #         else:
-    #             action = u"inc"
-    #     else:
-    #         if verify:
-    #             action = u"verify"
-    #         else:
-    #             action = u"restore"
-    #
-    #     process_local_dir(action, local_pathname)
-    #     if action in [u'full', u'inc', u'verify']:
-    #         set_selection()
-    #
-    # check_consistency(action)
-    #
-
-    log.Info(_(u"Main action: ") + action)
-    return action
 
 
 if __name__ == u"__main__":
