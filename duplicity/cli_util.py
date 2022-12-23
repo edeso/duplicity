@@ -131,11 +131,6 @@ def check_target_url(val):
     return val
 
 
-def check_url_or_dir(val):
-    # for 'backup' command
-    return val
-
-
 def dflt(val):
     """
     Return printable value for default.

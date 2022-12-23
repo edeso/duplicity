@@ -41,7 +41,7 @@ target_dir = None
 target_url = None
 
 # action to take
-action = u"full"
+action = None
 
 # Prefix for all files (appended before type-specific prefixes)
 file_prefix = u""
@@ -119,7 +119,7 @@ gpg_options = u''
 
 # Set to GPGProfile that will be used to compress/uncompress encrypted
 # files.  Replaces encryption_keys, sign_key, and passphrase settings.
-gpg_profile = gpg.GPGProfile()
+gpg_profile = None
 
 # Maximum file blocksize
 max_blocksize = 2048
@@ -140,8 +140,8 @@ pydevd = False
 time_separator = u":"
 
 # Global lockfile used to manage concurrency
-lockpath = u""
 lockfile = None
+lockpath = u""
 
 # If this is true, only warn and don't raise fatal error when backup
 # source directory doesn't match previous backup source directory.

@@ -21,10 +21,10 @@
 
 u"""Parse command line, check for consistency, and set config"""
 
-import gpg
 import sys
 
 import duplicity
+from duplicity import gpg
 from duplicity.cli_data import *
 from duplicity.cli_util import *
 
@@ -64,7 +64,7 @@ def parse_cmdline_options(arglist):
         epilog=help_url_formats,
     )
     for var in parent_options:
-        names = option_alternates.get(var, []) + [var]
+        names = OptionAliases.__dict__.get(var, []) + [var]
         names = [var2opt(n) for n in names]
         parser.add_argument(*names, **OptionKwargs.__dict__[var])
 
@@ -88,7 +88,7 @@ def parse_cmdline_options(arglist):
             epilog=help_url_formats,
         )
         subparser_dict[cmd].add_argument(
-            dest=u"action",
+            u"action",
             action=u"store_const",
             const=cmd)
         for arg in meta:
@@ -97,20 +97,12 @@ def parse_cmdline_options(arglist):
 
         # add valid options for each command
         for opt in sorted(CommandOptions.__dict__[var]):
-            names = option_alternates.get(opt, []) + [opt]
+            names = OptionAliases.__dict__.get(opt, []) + [opt]
             names = [var2opt(n) for n in names]
             subparser_dict[cmd].add_argument(*names, **OptionKwargs.__dict__[opt])
 
     # parse the options
-    return parser.parse_args(arglist)
-
-
-def process_command_line(cmdline_list):
-    u"""
-    Process command line, set config
-    """
-    # parse command line
-    args = parse_cmdline_options(cmdline_list)
+    args = parser.parse_args(arglist)
 
     # Copy all arguments and their values to the config module.  Don't copy
     # attributes that are 'hidden' (start with an underscore) or whose name is
@@ -123,7 +115,22 @@ def process_command_line(cmdline_list):
     return args
 
 
+def process_command_line(cmdline_list):
+    u"""
+    Process command line, set config
+    """
+    # parse command line
+    args = parse_cmdline_options(cmdline_list)
+
+    # Set to GPGProfile that will be used to compress/uncompress encrypted
+    # files.  Replaces encryption_keys, sign_key, and passphrase settings.
+    config.gpg_profile = gpg.GPGProfile()
+
+    return args
+
+
 if __name__ == u"__main__":
     log.setup()
     args = process_command_line(sys.argv[1:])
-    print(args, argparse.Namespace)
+    for a, v in sorted(args.__dict__.items()):
+        print(f"{a} = {v}")

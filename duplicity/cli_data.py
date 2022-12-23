@@ -29,7 +29,7 @@ from duplicity.cli_util import *
 @dataclass
 class DuplicityCommands:
     u"""duplicity commands and positional args expected"""
-    backup = [u"url_or_dir", u"url_or_dir"]
+    backup = [u"source_dir", u"target_url"]
     cleanup = [u"target_url"]
     collection_status = [u"target_url"]
     full = [u"source_dir", u"target_url"]
@@ -729,12 +729,12 @@ class OptionKwargs:
     }
 
 
-option_alternates = {
-    u"path_to_restore": [u"r"],
-    u"restore_time": [u"t", u"time"],
-    u"verbosity": [u"v"],
-    u"version": [u"V"],
-}
+@dataclass
+class OptionAliases:
+    path_to_restore = [u"r"]
+    restore_time = [u"t", u"time"]
+    verbosity = [u"v"]
+    version = [u"V"]
 
 
 trans = {
