@@ -61,9 +61,9 @@ def parse_cmdline_options(arglist):
         prog=u'duplicity',
         argument_default=None,
         formatter_class=make_wide(DuplicityHelpFormatter),
-        epilog=help_url_formats,
+        # epilog=help_url_formats,
     )
-    for var in parent_options:
+    for var in parent_only_options:
         names = OptionAliases.__dict__.get(var, []) + [var]
         names = [var2opt(n) for n in names]
         parser.add_argument(*names, **OptionKwargs.__dict__[var])
@@ -83,7 +83,7 @@ def parse_cmdline_options(arglist):
         subparser_dict[cmd] = subparsers.add_parser(
             cmd,
             aliases=CommandAliases.__dict__[var],
-            help=f"# duplicity {var} {u' '.join(meta)}",
+            help=f"# duplicity {var} [options] {u' '.join(meta)}",
             formatter_class=make_wide(DuplicityHelpFormatter),
             epilog=help_url_formats,
         )
@@ -103,6 +103,10 @@ def parse_cmdline_options(arglist):
 
     # parse the options
     args = parser.parse_args(arglist)
+
+    # if no command, print help
+    if not hasattr(args, u"action"):
+        parser.print_usage()
 
     # Copy all arguments and their values to the config module.  Don't copy
     # attributes that are 'hidden' (start with an underscore) or whose name is

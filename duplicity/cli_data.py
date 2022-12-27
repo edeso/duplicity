@@ -23,6 +23,7 @@ u"""Parse command line, check for consistency, and set config"""
 
 from dataclasses import dataclass
 
+from duplicity import __version__
 from duplicity.cli_util import *
 
 
@@ -84,15 +85,15 @@ all_options = {
     u"fail_on_volume", u"pydevd", u"skip_volume",
 }
 
-parent_options = {
+parent_only_options = {
     u"version",
 }
 
-backup_options = {
+backup_only_options = {
     u"allow_source_mismatch", u"asynchronous_upload", u"dry_run", u"time_separator", u"volsize",
 }
 
-selection_options = {
+selection_only_options = {
     u"exclude", u"exclude_device_files", u"exclude_filelist", u"exclude_if_present", u"exclude_older_than",
     u"exclude_other_filesystems", u"exclude_regexp", u"include", u"include_filelist", u"include_regexp",
 }
@@ -101,17 +102,66 @@ selection_options = {
 @dataclass
 class CommandOptions:
     u"""legal options by command"""
-    backup = list(all_options - parent_options)
-    cleanup = list(all_options - parent_options - backup_options - selection_options)
-    collection_status = list(all_options - parent_options - backup_options - selection_options)
-    full = list(all_options - parent_options)
-    incremental = list(all_options - parent_options)
-    list_current_files = list(all_options - parent_options - backup_options - selection_options)
-    remove_older_than = list(all_options - parent_options - backup_options - selection_options)
-    remove_all_but_n_full = list(all_options - parent_options - backup_options - selection_options)
-    remove_all_inc_of_but_n_full = list(all_options - parent_options - backup_options - selection_options)
-    restore = list(all_options - parent_options - backup_options - selection_options)
-    verify = list(all_options - parent_options - backup_options - selection_options)
+    backup = list(
+        all_options
+        - parent_only_options
+    )
+    cleanup = list(
+        all_options
+        - parent_only_options
+        - backup_only_options
+        - selection_only_options
+    )
+    collection_status = list(
+        all_options
+        - parent_only_options
+        - backup_only_options
+        - selection_only_options
+    )
+    full = list(
+        all_options
+        - parent_only_options
+    )
+    incremental = list(
+        all_options
+        - parent_only_options
+    )
+    list_current_files = list(
+        all_options
+        - parent_only_options
+        - backup_only_options
+        - selection_only_options
+    )
+    remove_older_than = list(
+        all_options
+        - parent_only_options
+        - backup_only_options
+        - selection_only_options
+    )
+    remove_all_but_n_full = list(
+        all_options
+        - parent_only_options
+        - backup_only_options
+        - selection_only_options
+    )
+    remove_all_inc_of_but_n_full = list(
+        all_options
+        - parent_only_options
+        - backup_only_options
+        - selection_only_options
+    )
+    restore = list(
+        all_options
+        - parent_only_options
+        - backup_only_options
+        - selection_only_options
+    )
+    verify = list(
+        all_options
+        - parent_only_options
+        - backup_only_options
+        - selection_only_options
+    )
 
 
 @dataclass
@@ -691,7 +741,7 @@ class OptionKwargs:
     }
     version = {
         u"action": "version",
-        u"version": u"%(prog) __version__",
+        u"version": u"%(prog)s " + f"{__version__}",
         u"help": u"Display version and exit",
     }
     volsize = {
@@ -706,7 +756,6 @@ class OptionKwargs:
         u"default": dflt(config.webdav_headers)
     }
 
-    # TODO: Find a way to nuke these test options in production.
     # TESTING ONLY - set current time
     current_time = {
         u"type": int,

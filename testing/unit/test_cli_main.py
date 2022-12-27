@@ -25,9 +25,9 @@ import sys
 
 from duplicity import errors
 from duplicity import log
-from duplicity import cli_data
 from duplicity import cli_main
 from duplicity import config
+from duplicity.cli_data import *
 from duplicity.cli_util import *
 from testing.unit import UnitTestCase
 
@@ -60,12 +60,12 @@ class CommandlineTest(UnitTestCase):
         """
         test_args = copy.copy(self.good_args)
         test_args.update(new_args)
-        for var in cli_data.DuplicityCommands.__dict__.keys():
+        for var in DuplicityCommands.__dict__.keys():
             if var.startswith(u"__"):
                 continue
             cmd = var2cmd(var)
             runtest = False
-            args = cli_data.DuplicityCommands.__dict__[var]
+            args = DuplicityCommands.__dict__[var]
             cline = [cmd]
             for arg in args:
                 cline.append(test_args[arg])
@@ -187,3 +187,20 @@ class CommandlineTest(UnitTestCase):
         }
         err_msg = u"Bad time string"
         self.run_all_commands_with_errors(new_args, err_msg)
+
+    def test_help_commands(self):
+        u"""
+        test multi-level help system
+        """
+        for var in DuplicityCommands.__dict__.keys():
+            if var.startswith(u"__"):
+                continue
+            cmd = var2cmd(var)
+            cline = [cmd, u'--help']
+            with self.assertRaises(SystemExit) as cm:
+                cli_main.parse_cmdline_options(cline)
+                for opt in sorted(CommandOptions.__dict__[var]):
+                    names = OptionAliases.__dict__.get(opt, []) + [opt]
+                    names = [var2opt(n) for n in names]
+                    for name in names:
+                        self.assertIn(name, cm.output)
