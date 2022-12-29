@@ -116,7 +116,7 @@ def parse_cmdline_options(arglist):
         v = getattr(args, f)
         setattr(config, f, v)
 
-    return args
+    return parser, args
 
 
 def process_command_line(cmdline_list):
@@ -124,11 +124,31 @@ def process_command_line(cmdline_list):
     Process command line, set config
     """
     # parse command line
-    args = parse_cmdline_options(cmdline_list)
+    parser, args = parse_cmdline_options(cmdline_list)
+    if not hasattr(args, u"action"):
+        sys.exit(1)
 
     # Set to GPGProfile that will be used to compress/uncompress encrypted
     # files.  Replaces encryption_keys, sign_key, and passphrase settings.
-    config.gpg_profile = gpg.GPGProfile()
+    # TODO: Allow lists of encrypt_key, hidden_encrypt_key
+    config.gpg_profile = gpg.GPGProfile(passphrase=None,
+                                        sign_key=config.sign_key,
+                                        recipients=[config.encrypt_key],
+                                        hidden_recipients=[config.hidden_encrypt_key])
+
+    if config.backup_name is None:
+        backend_url = config.target_url or config.source_url
+        config.backup_name = generate_default_backup_name(backend_url)
+
+    set_archive_dir(expand_archive_dir(config.archive_dir,
+                                       config.backup_name))
+
+    if config.ignore_errors:
+        log.Warn(_(u"Running in 'ignore errors' mode due to --ignore-errors.\n"
+                   u"Please reconsider if this was not intended"))
+
+    log.Info(_(u"Using archive dir: %s") % (config.archive_dir_path.uc_name,))
+    log.Info(_(u"Using backup name: %s") % (config.backup_name,))
 
     return args
 

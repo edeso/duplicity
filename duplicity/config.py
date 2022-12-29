@@ -31,7 +31,7 @@ from duplicity import gpg
 # The current version of duplicity
 version = __version__
 
-# The following args are set by ommandline processing
+# The following args are set by commandline processing
 # they correspond to the args in cli_main.duplicity_commands
 count = None
 remove_time = None
@@ -113,6 +113,11 @@ are_errors_fatal = {
 select = None
 
 gpg_binary = None
+encrypt_key = None
+encrypt_secret_keyring = None
+encrypt_sign_key = None
+hidden_encrypt_key = None
+sign_key = None
 
 # Options to pass to gpg
 gpg_options = u''

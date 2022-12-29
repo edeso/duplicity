@@ -98,6 +98,10 @@ selection_only_options = {
     u"exclude_other_filesystems", u"exclude_regexp", u"include", u"include_filelist", u"include_regexp",
 }
 
+deprecated_write_options = {
+    u"old_filenames", u"short_filenames", u"time_separator"
+}
+
 
 @dataclass
 class CommandOptions:
@@ -105,6 +109,7 @@ class CommandOptions:
     backup = list(
         all_options
         - parent_only_options
+        - deprecated_write_options
     )
     cleanup = list(
         all_options
@@ -121,10 +126,12 @@ class CommandOptions:
     full = list(
         all_options
         - parent_only_options
+        - deprecated_write_options
     )
     incremental = list(
         all_options
         - parent_only_options
+        - deprecated_write_options
     )
     list_current_files = list(
         all_options

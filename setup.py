@@ -54,7 +54,7 @@ try:
     from setuptools_scm import get_version  # pylint: disable=import-error
     Version = get_version(**scm_version_args)
 except Exception as e:
-    Version = u"2.0.0"
+    Version = u"2.0.0.dev"
     print(u"Unable to get SCM version: %s\ndefaulting to %s" % (str(e), Version))
 Reldate = time.strftime(u"%B %d, %Y", time.gmtime(int(os.environ.get(u'SOURCE_DATE_EPOCH', time.time()))))
 
@@ -346,11 +346,9 @@ setup(name=u"duplicity",
     include_package_data=True,
     install_requires=[
         u"fasteners",
-        u"future",
         ],
     tests_require=[
         u"fasteners",
-        u"future",
         u"mock",
         u"pexpect",
         u"pytest",

@@ -200,7 +200,7 @@ def check_verbosity(value):
         verb = log.NOTICE
     elif value in [u'i', u'info']:
         verb = log.INFO
-    elif value in [u'dflt', u'debug']:
+    elif value in [u'd', u'debug']:
         verb = log.DEBUG
     else:
         try:
@@ -212,7 +212,7 @@ def check_verbosity(value):
 
     if fail:
         # TRANSL: In this portion of the usage instructions, "[ewnid]" indicates which
-        # characters are permitted (e, w, n, i, or dflt); the brackets imply their own
+        # characters are permitted (e, w, n, i, or d); the brackets imply their own
         # meaning in regex; i.e., only one of the characters is allowed in an instance.
         raise argparse.ArgumentError(
             value,
@@ -310,13 +310,6 @@ def set_selection():
 
 def check_consistency(action):
     u"""Final consistency check, see if something wrong with command line"""
-
-    if config.ignore_errors:
-        log.Warn(_(u"Running in 'ignore errors' mode due to --ignore-errors.\n"
-                   u"Please reconsider if this was not intended"))
-
-    if config.hidden_encrypt_key:
-        config.gpg_profile.hidden_recipients.append(config.hidden_encrypt_key)
 
     def assert_only_one(arglist):
         u"""Raises error if two or more of the elements of arglist are true"""

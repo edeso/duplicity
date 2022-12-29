@@ -44,11 +44,14 @@ def ensure_dbus():
                 os.environ[parts[0]] = parts[1]
 
 
+# noinspection PyPackageRequirements
 class GIOBackend(duplicity.backend.Backend):
     u"""Use this backend when saving to a GIO URL.
        This is a bit of a meta-backend, in that it can handle multiple schemas.
        URLs look like schema://user@server/path.
     """
+
+    # noinspection PyPackageRequirements
     def __init__(self, parsed_url):
         from gi.repository import Gio  # pylint: disable=import-error
         from gi.repository import GLib  # pylint: disable=import-error

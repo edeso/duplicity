@@ -193,6 +193,7 @@ class HubicIdentity(BaseIdentity):
         else:
             raise exc.AuthenticationFailed(u"Unable to get oauth access token from json")
 
+    # noinspection PyPackageRequirements
     def authenticate(self):
         config = configparser.ConfigParser()
         config.read(TOKENS_FILE)

@@ -27,7 +27,7 @@ google-auth-oauthlib
 jottalib
 keyring
 mediafire
-megatools               ; python_version >= '3.6'
+megatools               ; python_version >= '3.7'
 paramiko
 pexpect
 psutil
@@ -42,23 +42,21 @@ requests-oauthlib
 
 
 coverage
-mock>=3.0.5
+mock >= 3.0.5
 pycodestyle
 pylint
-pydevd
-pydevd-pycharm
 pytest
 pytest-cov
 pytest-runner
-setuptools>=44.1.1
-setuptools-scm>=5.0.2
+setuptools >= 44.1.1
+setuptools-scm >= 5.0.2
 tox
 
 
 ##### documentation libraries #####
 
-gitchangelog            ; python_version >= '3.6'
-myst-parser             ; python_version >= '3.6'
-pystache                ; python_version >= '3.6'
-sphinx                  ; python_version >= '3.6'
-sphinx-rtd-theme        ; python_version >= '3.6'
+gitchangelog            ; python_version >= '3.7'
+myst-parser             ; python_version >= '3.7'
+pystache                ; python_version >= '3.7'
+sphinx                  ; python_version >= '3.7'
+sphinx-rtd-theme        ; python_version >= '3.7'

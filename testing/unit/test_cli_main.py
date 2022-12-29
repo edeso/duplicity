@@ -21,6 +21,7 @@
 
 import copy
 import os
+import pytest
 import sys
 
 from duplicity import errors
@@ -73,66 +74,68 @@ class CommandlineTest(UnitTestCase):
                     runtest = True
             if runtest:
                 with self.assertRaisesRegex(cli_main.CommandLineError, err_msg) as cm:
-                    cli_main.parse_cmdline_options(cline)
+                    cli_main.process_command_line(cline)
 
+    @pytest.mark.usefixtures(u"redirect_stdin")
     def test_full_command(self):
         u"""
         test backup, restore, verify with explicit commands
         """
         for cmd in [u"cleanup"] + cli_main.CommandAliases.cleanup:
-            cli_main.parse_cmdline_options(f"{cmd} file://duptest".split())
+            cli_main.process_command_line(f"{cmd} file://duptest".split())
             self.assertEqual(config.action, u"cleanup")
             self.assertEqual(config.target_url, u"file://duptest")
 
         for cmd in [u"collection-status"] + cli_main.CommandAliases.collection_status:
-            cli_main.parse_cmdline_options(f"{cmd} file://duptest".split())
+            cli_main.process_command_line(f"{cmd} file://duptest".split())
             self.assertEqual(config.action, u"collection-status")
             self.assertEqual(config.target_url, u"file://duptest")
 
         for cmd in [u"full"] + cli_main.CommandAliases.full:
-            cli_main.parse_cmdline_options(f"{cmd} foo/bar file://duptest".split())
+            cli_main.process_command_line(f"{cmd} foo/bar file://duptest".split())
             self.assertEqual(config.action, u"full")
             self.assertTrue(config.source_dir.endswith(u"foo/bar"))
             self.assertEqual(config.target_url, u"file://duptest")
 
         for cmd in [u"incremental"] + cli_main.CommandAliases.incremental:
-            cli_main.parse_cmdline_options(f"{cmd} foo/bar file://duptest".split())
+            cli_main.process_command_line(f"{cmd} foo/bar file://duptest".split())
             self.assertEqual(config.action, u"incremental")
             self.assertTrue(config.source_dir.endswith(u"foo/bar"))
             self.assertEqual(config.target_url, u"file://duptest")
 
         for cmd in [u"list-current-files"] + cli_main.CommandAliases.list_current_files:
-            cli_main.parse_cmdline_options(f"{cmd} file://duptest".split())
+            cli_main.process_command_line(f"{cmd} file://duptest".split())
             self.assertEqual(config.action, u"list-current-files")
             self.assertEqual(config.target_url, u"file://duptest")
 
         for cmd in [u"remove-all-but-n-full"] + cli_main.CommandAliases.remove_all_but_n_full:
-            cli_main.parse_cmdline_options(f"{cmd} 5 file://duptest".split())
+            cli_main.process_command_line(f"{cmd} 5 file://duptest".split())
             self.assertEqual(config.action, u"remove-all-but-n-full")
             self.assertEqual(config.target_url, u"file://duptest")
 
         for cmd in [u"remove-all-inc-of-but-n-full"] + cli_main.CommandAliases.remove_all_inc_of_but_n_full:
-            cli_main.parse_cmdline_options(f"{cmd} 5 file://duptest".split())
+            cli_main.process_command_line(f"{cmd} 5 file://duptest".split())
             self.assertEqual(config.action, u"remove-all-inc-of-but-n-full")
             self.assertEqual(config.target_url, u"file://duptest")
 
         for cmd in [u"remove-older-than"] + cli_main.CommandAliases.remove_older_than:
-            cli_main.parse_cmdline_options(f"{cmd} 100 file://duptest".split())
+            cli_main.process_command_line(f"{cmd} 100 file://duptest".split())
             self.assertEqual(config.action, u"remove-older-than")
             self.assertEqual(config.target_url, u"file://duptest")
 
         for cmd in [u"restore"] + cli_main.CommandAliases.restore:
-            cli_main.parse_cmdline_options(f"{cmd} file://duptest foo/bar".split())
+            cli_main.process_command_line(f"{cmd} file://duptest foo/bar".split())
             self.assertEqual(config.action, u"restore")
             self.assertTrue(config.source_dir.endswith(u"foo/bar"))
             self.assertEqual(config.target_url, u"file://duptest")
 
         for cmd in [u"verify"] + cli_main.CommandAliases.verify:
-            cli_main.parse_cmdline_options(f"{cmd} file://duptest foo/bar".split())
+            cli_main.process_command_line(f"{cmd} file://duptest foo/bar".split())
             self.assertEqual(config.action, u"verify")
             self.assertTrue(config.source_dir.endswith(u"foo/bar"))
             self.assertEqual(config.target_url, u"file://duptest")
 
+    @pytest.mark.usefixtures(u"redirect_stdin")
     def test_full_command_errors_reversed_args(self):
         u"""
         test backup, restore, verify with explicit commands - reversed arg
@@ -146,6 +149,7 @@ class CommandlineTest(UnitTestCase):
         err_msg = u"should be url|should be directory"
         self.run_all_commands_with_errors(new_args, err_msg)
 
+    @pytest.mark.usefixtures(u"redirect_stdin")
     def test_full_command_errors_bad_url(self):
         u"""
         test backup, restore, verify with explicit commands - bad url
@@ -157,6 +161,7 @@ class CommandlineTest(UnitTestCase):
         err_msg = u"should be url"
         self.run_all_commands_with_errors(new_args, err_msg)
 
+    @pytest.mark.usefixtures(u"redirect_stdin")
     def test_full_command_errors_bad_filename(self):
         u"""
         test backup, restore, verify with explicit commands - bad filename
@@ -168,6 +173,7 @@ class CommandlineTest(UnitTestCase):
         err_msg = u"not a valid file path"
         self.run_all_commands_with_errors(new_args, err_msg)
 
+    @pytest.mark.usefixtures(u"redirect_stdin")
     def test_full_command_errors_bad_integer(self):
         u"""
         test backup, restore, verify with explicit commands - bad integer
@@ -178,6 +184,7 @@ class CommandlineTest(UnitTestCase):
         err_msg = u"not an int"
         self.run_all_commands_with_errors(new_args, err_msg)
 
+    @pytest.mark.usefixtures(u"redirect_stdin")
     def test_full_command_errors_bad_time_string(self):
         u"""
         test backup, restore, verify with explicit commands - bad time string
@@ -188,6 +195,7 @@ class CommandlineTest(UnitTestCase):
         err_msg = u"Bad time string"
         self.run_all_commands_with_errors(new_args, err_msg)
 
+    @pytest.mark.usefixtures(u"redirect_stdin")
     def test_help_commands(self):
         u"""
         test multi-level help system
@@ -198,7 +206,7 @@ class CommandlineTest(UnitTestCase):
             cmd = var2cmd(var)
             cline = [cmd, u'--help']
             with self.assertRaises(SystemExit) as cm:
-                cli_main.parse_cmdline_options(cline)
+                cli_main.process_command_line(cline)
                 for opt in sorted(CommandOptions.__dict__[var]):
                     names = OptionAliases.__dict__.get(opt, []) + [opt]
                     names = [var2opt(n) for n in names]

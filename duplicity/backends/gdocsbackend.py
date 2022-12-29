@@ -36,6 +36,7 @@ class GDocsBackend(duplicity.backend.Backend):
     ROOT_FOLDER_ID = u'folder%3Aroot'
     BACKUP_DOCUMENT_TYPE = u'application/binary'
 
+    # noinspection PyPackageRequirements
     def __init__(self, parsed_url):
         duplicity.backend.Backend.__init__(self, parsed_url)
 

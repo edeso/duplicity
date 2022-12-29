@@ -58,6 +58,7 @@ class B2Backend(duplicity.backend.Backend):
     Backend for BackBlaze's B2 storage service
     """
 
+    # noinspection PyPackageRequirements
     def __init__(self, parsed_url):
         u"""
         Authorize to B2 api and set up needed variables
