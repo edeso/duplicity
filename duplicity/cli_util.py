@@ -96,11 +96,11 @@ def check_remove_time(val):
 def check_source_dir(val):
     if u"://" in val:
         command_line_error(f"Source should be directory, not url.  Got '{val}' instead.")
-    if is_valid_filepath(val):
-        val = sanitize_filepath(val)
-        val = expand_fn(val)
-    else:
-        command_line_error(f"Source '{val}' is not a valid file path.")
+    # if is_valid_filepath(val):
+    #     val = sanitize_filepath(val)
+    #     val = expand_fn(val)
+    # else:
+    #     command_line_error(f"Source '{val}' is not a valid file path.")
     if not os.path.isdir(val):
         command_line_error(f"Argument source_dir '{val}' does not exist or is not a directory.")
     return val
@@ -115,11 +115,11 @@ def check_source_url(val):
 def check_target_dir(val):
     if u"://" in val:
         command_line_error(f"Target should be directory, not url.  Got '{val}' instead.")
-    if is_valid_filepath(val):
-        val = sanitize_filepath(val)
-        val = expand_fn(val)
-    else:
-        command_line_error(f"Target '{val}' is not a valid file path.")
+    # if is_valid_filepath(val):
+    #     val = sanitize_filepath(val)
+    #     val = expand_fn(val)
+    # else:
+    #     command_line_error(f"Target '{val}' is not a valid file path.")
     if not os.path.isdir(val):
         command_line_error(f"Argument target_dir '{val}' does not exist or or is not a directory.")
     return val
@@ -132,7 +132,7 @@ def check_target_url(val):
 
 
 def dflt(val):
-    """
+    u"""
     Return printable value for default.
     """
     if isinstance(val, (str, bytes, bool, int)):
@@ -259,18 +259,6 @@ def set_log_file(fn):
     fn = check_file(fn)
     log.add_file(fn)
     return fn
-
-
-def set_volsize(v):
-    setattr(config, u"volsize", v * 1024 * 1024)
-    # if mp_size was not explicity given, default it to volsize
-    if not getattr(config, u'mp_set', False):
-        setattr(config, u"mp_segment_size", int(config.mp_factor * p.values.volsize))
-
-
-def set_mpsize(v):
-    setattr(config, u"mp_segment_size", v * 1024 * 1024)
-    setattr(config, u"mp_set", True)
 
 
 def set_megs(num):

@@ -543,7 +543,7 @@ probably isn't what you meant.""") %
         # legacy prefix applies *only* in globbing mode
         if mode == u"globbing" and pattern_str.lower().startswith(u"ignorecase:"):
             pattern_str = pattern_str[len(u"ignorecase:"):]
-            pattern_str = util.casefold_compat(util.fsdecode(pattern_str))
+            pattern_str = os.fsdecode(pattern_str).casefold()
             ignore_case = True
 
         if mode == u"globbing":
@@ -663,12 +663,12 @@ probably isn't what you meant.""") %
             lit_str = lit_str[:-1]
 
         if ignore_case:
-            lit_str = util.casefold_compat(util.fsdecode(lit_str))
+            lit_str = os.fsdecode(lit_str).casefold()
 
         def test_fn(path):
             # FIXME: caller to do this once, rather than for every path?
             if ignore_case:
-                uc_name = util.casefold_compat(util.fsdecode(path.uc_name))
+                uc_name = os.fsdecode(path.uc_name).casefold()
             else:
                 uc_name = path.uc_name
 

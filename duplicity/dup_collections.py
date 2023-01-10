@@ -781,12 +781,12 @@ class CollectionsStatus(object):
 
         if self.local_orphaned_sig_names:
             log.Warn(_(u"Warning, found the following local orphaned signature file(s):") + u"\n" +
-                     u"\n".join(map(util.fsdecode, self.local_orphaned_sig_names)),
+                     u"\n".join(map(os.fsdecode, self.local_orphaned_sig_names)),
                      log.WarningCode.orphaned_sig)
 
         if self.remote_orphaned_sig_names:
             log.Warn(_(u"Warning, found the following remote orphaned signature file(s):") + u"\n" +
-                     u"\n".join(map(util.fsdecode, self.remote_orphaned_sig_names)),
+                     u"\n".join(map(os.fsdecode, self.remote_orphaned_sig_names)),
                      log.WarningCode.orphaned_sig)
 
         if self.all_sig_chains and sig_chain_warning and not self.matched_chain_pair:

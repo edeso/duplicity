@@ -24,7 +24,10 @@ u"""Parse command line, check for consistency, and set config"""
 import sys
 
 import duplicity
+from duplicity import backend
+from duplicity import config
 from duplicity import gpg
+from duplicity import path
 from duplicity.cli_data import *
 from duplicity.cli_util import *
 
@@ -38,17 +41,17 @@ class DuplicityHelpFormatter(argparse.ArgumentDefaultsHelpFormatter,
 
 
 def make_wide(formatter, w=120, h=46):
-    """
+    u"""
     Return a wider HelpFormatter, if possible.
     See: https://stackoverflow.com/a/5464440
     Beware: "Only the name of this class is considered a public API."
     """
     try:
-        kwargs = {'width': w, 'max_help_position': h}
+        kwargs = {u'width': w, u'max_help_position': h}
         formatter(None, **kwargs)
         return lambda prog: formatter(prog, **kwargs)
     except TypeError:
-        warnings.warn("argparse help formatter failed, falling back.")
+        warnings.warn(u"argparse help formatter failed, falling back.")
         return formatter
 
 
@@ -97,8 +100,10 @@ def parse_cmdline_options(arglist):
 
         # add valid options for each command
         for opt in sorted(CommandOptions.__dict__[var]):
-            names = OptionAliases.__dict__.get(opt, []) + [opt]
-            names = [var2opt(n) for n in names]
+            if opt.startswith(u"__"):
+                continue
+            names = OptionAliases.__dict__.get(opt, list())
+            names = [var2opt(n) for n in names + [opt]]
             subparser_dict[cmd].add_argument(*names, **OptionKwargs.__dict__[opt])
 
     # parse the options
@@ -123,25 +128,51 @@ def process_command_line(cmdline_list):
     u"""
     Process command line, set config
     """
+    # build initial gpg_profile
+    config.gpg_profile = gpg.GPGProfile()
+
     # parse command line
     parser, args = parse_cmdline_options(cmdline_list)
     if not hasattr(args, u"action"):
         sys.exit(1)
 
-    # Set to GPGProfile that will be used to compress/uncompress encrypted
-    # files.  Replaces encryption_keys, sign_key, and passphrase settings.
-    # TODO: Allow lists of encrypt_key, hidden_encrypt_key
-    config.gpg_profile = gpg.GPGProfile(passphrase=None,
-                                        sign_key=config.sign_key,
-                                        recipients=[config.encrypt_key],
-                                        hidden_recipients=[config.hidden_encrypt_key])
+    # if we get a different gpg-binary from the commandline then redo gpg_profile
+    # TODO: Allow lists of keys not just single key
+    if config.gpg_binary is not None:
+        src = config.gpg_profile
+        config.gpg_profile = gpg.GPGProfile(
+            passphrase=src.passphrase,
+            sign_key=src.sign_key,
+            recipients=src.recipients,
+            hidden_recipients=src.hidden_recipients)
+    log.Info(_(u"GPG binary is %s, version %s") %
+            ((config.gpg_binary or u'gpg'), config.gpg_profile.gpg_version))
+
+    # TODO: Most of the following code belongs elsewhere.
+
+    backend.import_backends()
+
+    remote_url = config.source_url or config.target_url
+    if remote_url:
+        config.backend = backend.get_backend(remote_url)
+    else:
+        config.backend = None
+
+    local_path = config.source_dir or config.target_dir
+    if local_path:
+        config.local_path = path.Path(path.Path(local_path).get_canonical())
+    else:
+        config.local_path = None
 
     if config.backup_name is None:
-        backend_url = config.target_url or config.source_url
-        config.backup_name = generate_default_backup_name(backend_url)
+        config.backup_name = generate_default_backup_name(remote_url)
 
     set_archive_dir(expand_archive_dir(config.archive_dir,
                                        config.backup_name))
+
+    config.action = u"inc" if config.action == u"incremental" else config.action
+
+    config.mp_segment_size = int(config.mp_factor * config.volsize)
 
     if config.ignore_errors:
         log.Warn(_(u"Running in 'ignore errors' mode due to --ignore-errors.\n"
@@ -150,7 +181,7 @@ def process_command_line(cmdline_list):
     log.Info(_(u"Using archive dir: %s") % (config.archive_dir_path.uc_name,))
     log.Info(_(u"Using backup name: %s") % (config.backup_name,))
 
-    return args
+    return config.action
 
 
 if __name__ == u"__main__":

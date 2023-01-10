@@ -44,16 +44,16 @@ target_url = None
 action = None
 
 # Prefix for all files (appended before type-specific prefixes)
-file_prefix = u""
+file_prefix = b""
 
 # Prefix for manifest files only
-file_prefix_manifest = u""
+file_prefix_manifest = b""
 
 # Prefix for archive files only
-file_prefix_archive = u""
+file_prefix_archive = b""
 
 # Prefix for sig files only
-file_prefix_signature = u""
+file_prefix_signature = b""
 
 # The name of the current host
 hostname = socket.gethostname()
@@ -175,11 +175,11 @@ remove_all_inc_of_but_n_full_mode = None
 # Don't actually do anything, but still report what would be done
 dry_run = False
 
-# If set to false, then encrypt files on remote system
-no_encryption = False
+# Compress files on remote system?
+compression = False
 
-# If set to false, then compress files on remote system
-no_compression = False
+# Encrypt files on remote system?
+encryption = True
 
 # volume size. default 200M
 volsize = 200 * 1024 * 1024
@@ -218,7 +218,7 @@ numeric_owner = False
 
 # Do no restore the uid/gid when finished, useful if you're restoring
 # data without having root privileges or Unix users support
-do_not_restore_ownership = False
+restore_ownership = True
 
 # Whether to use plain HTTP (without SSL) to send data to S3
 # See <https://bugs.launchpad.net/duplicity/+bug/433970>.
@@ -373,8 +373,8 @@ show_changes_in_set = None
 # If set, collect only the file status, not the whole root.
 file_changed = None
 
-# If set, skip collecting the files_changed list in statistics, nullifies --file-changed
-no_files_changed = False
+# If set collect the files_changed list in statistics
+files_changed = True
 
 # delay (in seconds) before next operation after failure
 backend_retry_delay = 30

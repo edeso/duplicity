@@ -450,7 +450,7 @@ class ROPath(object):
             os.mkdir(other.name)
         elif self.issym():
             os.symlink(self.symtext, other.name)
-            if not config.do_not_restore_ownership:
+            if config.restore_ownership:
                 os.lchown(other.name, self.stat.st_uid, self.stat.st_gid)
             other.setdata()
             return  # no need to copy symlink attributes
@@ -470,7 +470,7 @@ class ROPath(object):
         u"""Only copy attributes from self to other"""
         if isinstance(other, Path):
             if not self.issym():
-                if self.stat and not config.do_not_restore_ownership:
+                if self.stat and config.restore_ownership:
                     util.maybe_ignore_errors(lambda: os.chown(other.name, self.stat.st_uid, self.stat.st_gid))
                 util.maybe_ignore_errors(lambda: os.chmod(other.name, self.mode))
                 util.maybe_ignore_errors(lambda: os.utime(other.name, (time.time(), self.stat.st_mtime)))

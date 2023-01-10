@@ -99,7 +99,7 @@ class CommandlineTest(UnitTestCase):
 
         for cmd in [u"incremental"] + cli_main.CommandAliases.incremental:
             cli_main.process_command_line(f"{cmd} foo/bar file://duptest".split())
-            self.assertEqual(config.action, u"incremental")
+            self.assertEqual(config.action, u"inc")
             self.assertTrue(config.source_dir.endswith(u"foo/bar"))
             self.assertEqual(config.target_url, u"file://duptest")
 
@@ -170,7 +170,7 @@ class CommandlineTest(UnitTestCase):
             u"source_dir": u"fi:l*e/p\"a?t>h|.t<xt",
             u"target_dir": u"fi:l*e/p\"a?t>h|.t<xt",
         }
-        err_msg = u"not a valid file path"
+        err_msg = u"does not exist"
         self.run_all_commands_with_errors(new_args, err_msg)
 
     @pytest.mark.usefixtures(u"redirect_stdin")

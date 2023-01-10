@@ -36,12 +36,8 @@ from duplicity import gpginterface
 from duplicity import tempdir
 from duplicity import util
 
-try:
-    from hashlib import sha1
-    from hashlib import md5
-except ImportError:
-    from sha import new as sha1
-    from md5 import new as md5
+from hashlib import sha1
+from hashlib import md5
 
 blocksize = 256 * 1024
 
@@ -67,7 +63,7 @@ class GPGProfile(object):
         indicated, and recipients should be a list of keys.  For all
         keys, the format should be an hex key like 'AA0E73D2'.
         """
-        assert passphrase is None or isinstance(passphrase, (str, u"".__class__))
+        assert passphrase is None or isinstance(passphrase, (str, string))
 
         self.passphrase = passphrase
         self.signing_passphrase = passphrase

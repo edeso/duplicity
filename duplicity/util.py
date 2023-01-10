@@ -248,7 +248,7 @@ def start_debugger():
 
         try:
             # NOTE: this needs to be customized for your system
-            pydevd.settrace(u'dione.local', port=6777, stdoutToServer=True, stderrToServer=True)
+            pydevd.settrace(u'dione.local', port=6789, stdoutToServer=True, stderrToServer=True)
         except ConnectionRefusedError as e:
             log.FatalError(u"Connection refused for debug.  Check your setup.")
 

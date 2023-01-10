@@ -31,6 +31,7 @@ import io
 
 from duplicity import progress
 from duplicity import statistics
+from duplicity import util
 from duplicity.path import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 
 # A StatsObj will be written to this from DirDelta and DirDelta_WriteSig.
@@ -722,7 +723,7 @@ def write_block_iter(block_iter, out_obj):
     """
     if isinstance(out_obj, Path):
         fp = open(out_obj.name, u"wb")
-    elif isinstance(out_obj, (str, u"".__class__)):
+    elif isinstance(out_obj, (str, string)):
         fp = open(out_obj, u"wb")
     else:
         fp = out_obj

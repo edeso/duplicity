@@ -104,6 +104,9 @@ class FunctionalTestCase(DuplicityTestCase):
             cmd_list.extend([u"-m", u"coverage", u"run", u"--source=duplicity", u"-p"])
         cmd_list.extend([u"{0}/bin/duplicity".format(_top_dir)])
         cmd_list.extend(options)
+        run_debugger = os.environ.get(u"PYDEVD", None)
+        if run_debugger is not None:
+            cmd_list.extend([u"--pydevd"])
         cmd_list.extend([u"-v0"])
         cmd_list.extend([u"--no-print-statistics"])
         cmd_list.extend([u"--allow-source-mismatch"])

@@ -21,8 +21,10 @@
 
 u"""Parse command line, check for consistency, and set config"""
 
+import argparse
 from dataclasses import dataclass
 
+from duplicity import config
 from duplicity import __version__
 from duplicity.cli_util import *
 
@@ -57,118 +59,6 @@ class CommandAliases:
     remove_all_inc_of_but_n_full = [u"rminc", u"ri"]
     restore = [u"rest", u"rb"]
     verify = [u"veri", u"vb"]
-
-
-all_options = {
-    u"allow_source_mismatch", u"archive_dir", u"asynchronous_upload", u"azure_blob_tier",
-    u"azure_max_connections", u"azure_max_block_size", u"azure_max_single_put_size", u"b2_hide_files",
-    u"backend_retry_delay", u"cf_backend", u"compare_data", u"config_dir", u"copy_links", u"dry_run",
-    u"encrypt_key", u"encrypt_secret_keyring", u"encrypt_sign_key", u"exclude", u"exclude_device_files",
-    u"exclude_filelist", u"exclude_if_present", u"exclude_older_than", u"exclude_other_filesystems",
-    u"exclude_regexp", u"file_changed", u"file_prefix", u"file_prefix_archive", u"file_prefix_manifest",
-    u"file_prefix_signature", u"force", u"ftp_passive", u"ftp_regular", u"full_if_older_than",
-    u"gpg_binary", u"gpg_options", u"hidden_encrypt_key", u"idr_fakeroot", u"ignore_errors",
-    u"imap_full_address", u"imap_mailbox", u"include", u"include_filelist", u"include_regexp", u"log_fd",
-    u"log_file", u"log_timestamp", u"max_blocksize", u"mf_purge", u"mp_segment_size", u"name",
-    u"no_compression", u"no_encryption", u"no_files_changed", u"no_print_statistics", u"null_separator",
-    u"num_retries", u"numeric_owner", u"do_not_restore_ownership", u"metadata_sync_mode", u"par2_options",
-    u"par2_redundancy", u"par2_volumes", u"path_to_restore", u"progress", u"progress_rate", u"rename",
-    u"restore_time", u"rsync_options", u"s3_endpoint_url", u"s3_european_buckets",
-    u"s3_unencrypted_connection", u"s3_use_deep_archive", u"s3_use_glacier", u"s3_use_glacier_ir",
-    u"s3_use_ia", u"s3_use_new_style", u"s3_use_onezone_ia", u"s3_use_rrs", u"s3_multipart_chunk_size",
-    u"s3_multipart_max_procs", u"s3_multipart_max_timeout", u"s3_use_multiprocessing",
-    u"s3_use_server_side_encryption", u"s3_use_server_side_kms_encryption", u"s3_kms_key_id",
-    u"s3_kms_grant", u"s3_region_name", u"swift_storage_policy", u"scp_command", u"sftp_command",
-    u"show_changes_in_set", u"sign_key", u"ssh_askpass", u"ssh_options", u"ssl_cacert_file",
-    u"ssl_cacert_path", u"ssl_no_check_certificate", u"tempdir", u"timeout", u"time_separator",
-    u"use_agent", u"verbosity", u"version", u"volsize", u"webdav_headers", u"current_time",
-    u"fail_on_volume", u"pydevd", u"skip_volume",
-}
-
-parent_only_options = {
-    u"version",
-}
-
-backup_only_options = {
-    u"allow_source_mismatch", u"asynchronous_upload", u"dry_run", u"time_separator", u"volsize",
-}
-
-selection_only_options = {
-    u"exclude", u"exclude_device_files", u"exclude_filelist", u"exclude_if_present", u"exclude_older_than",
-    u"exclude_other_filesystems", u"exclude_regexp", u"include", u"include_filelist", u"include_regexp",
-}
-
-deprecated_write_options = {
-    u"old_filenames", u"short_filenames", u"time_separator"
-}
-
-
-@dataclass
-class CommandOptions:
-    u"""legal options by command"""
-    backup = list(
-        all_options
-        - parent_only_options
-        - deprecated_write_options
-    )
-    cleanup = list(
-        all_options
-        - parent_only_options
-        - backup_only_options
-        - selection_only_options
-    )
-    collection_status = list(
-        all_options
-        - parent_only_options
-        - backup_only_options
-        - selection_only_options
-    )
-    full = list(
-        all_options
-        - parent_only_options
-        - deprecated_write_options
-    )
-    incremental = list(
-        all_options
-        - parent_only_options
-        - deprecated_write_options
-    )
-    list_current_files = list(
-        all_options
-        - parent_only_options
-        - backup_only_options
-        - selection_only_options
-    )
-    remove_older_than = list(
-        all_options
-        - parent_only_options
-        - backup_only_options
-        - selection_only_options
-    )
-    remove_all_but_n_full = list(
-        all_options
-        - parent_only_options
-        - backup_only_options
-        - selection_only_options
-    )
-    remove_all_inc_of_but_n_full = list(
-        all_options
-        - parent_only_options
-        - backup_only_options
-        - selection_only_options
-    )
-    restore = list(
-        all_options
-        - parent_only_options
-        - backup_only_options
-        - selection_only_options
-    )
-    verify = list(
-        all_options
-        - parent_only_options
-        - backup_only_options
-        - selection_only_options
-    )
 
 
 @dataclass
@@ -241,6 +131,11 @@ class OptionKwargs:
         u"help": u"Compare data on verify not only signatures",
         u"default": dflt(config.compare_data)
     }
+    compression = {
+        u"action": argparse.BooleanOptionalAction,
+        u"help": u"If supplied perform compression",
+        u"default": dflt(config.compression)
+    }
     config_dir = {
         u"metavar": _(u"path"),
         u"type": check_file,
@@ -261,18 +156,17 @@ class OptionKwargs:
         u"metavar": _(u"gpg-key-id"),
         u"action": u"append",
         u"help": u"GNUpg key for encryption/decryption",
-        u"default": dflt(None)
+        u"default": dflt(config.encrypt_key)
     }
     encrypt_secret_keyring = {
         u"metavar": _(u"path"),
         u"help": u"Path to secret GNUpg keyring",
-        u"default": dflt(None)
+        u"default": dflt(config.encrypt_secret_keyring)
     }
-    encrypt_sign_key = {
-        u"metavar": _(u"gpg-key-id"),
-        u"action": u"append",
-        u"help": u"GNUpg key for signing",
-        u"default": dflt(None)
+    encryption = {
+        u"action": argparse.BooleanOptionalAction,
+        u"help": u"If supplied perform encryption",
+        u"default": dflt(config.encryption)
     }
     exclude = {
         u"metavar": _(u"shell_pattern"),
@@ -321,28 +215,33 @@ class OptionKwargs:
         u"default": dflt(None)
     }
     file_prefix = {
-        u"metavar": "string",
+        u"metavar": u"string",
         u"type": make_bytes,
         u"help": u"String prefix for all duplicity files",
         u"default": dflt(config.file_prefix)
     }
     file_prefix_archive = {
-        u"metavar": "string",
+        u"metavar": u"string",
         u"type": make_bytes,
         u"help": u"String prefix for duplicity difftar files",
         u"default": dflt(config.file_prefix_archive)
     }
     file_prefix_manifest = {
-        u"metavar": "string",
+        u"metavar": u"string",
         u"type": make_bytes,
         u"help": u"String prefix for duplicity manifest files",
         u"default": dflt(config.file_prefix_manifest)
     }
     file_prefix_signature = {
-        u"metavar": "string",
+        u"metavar": u"string",
         u"type": make_bytes,
         u"help": u"String prefix for duplicity signature files",
         u"default": dflt(config.file_prefix_signature)
+    }
+    files_changed = {
+        u"action": argparse.BooleanOptionalAction,
+        u"help": u"If supplied collect the files_changed list",
+        u"default": dflt(config.files_changed)
     }
     force = {
         u"action": u"store_true",
@@ -395,7 +294,7 @@ class OptionKwargs:
     ignore_errors = {
         u"action": u"store_true",
         u"help": u"Ignore most errors during restore",
-        u"default": dflt(False)
+        u"default": dflt(config.ignore_errors)
     }
     imap_full_address = {
         u"action": u"store_true",
@@ -408,12 +307,14 @@ class OptionKwargs:
         u"default": dflt(config.imap_mailbox)
     }
     include = {
-        u"metavar": _(u"shell_pattern"), u"action": AddSelectionAction,
+        u"metavar": _(u"shell_pattern"),
+        u"action": AddSelectionAction,
         u"help": u"Exclude globbing pattern",
         u"default": dflt(None)
     }
     include_filelist = {
-        u"metavar": _(u"filename"), u"action": AddFilelistAction,
+        u"metavar": _(u"filename"),
+        u"action": AddFilelistAction,
         u"help": u"File with list of file patters to include",
         u"default": dflt(None)
     }
@@ -441,18 +342,19 @@ class OptionKwargs:
         u"default": dflt(False)
     }
     max_blocksize = {
-        u"metavar": _(u"number"), u"type": int,
+        u"metavar": _(u"number"),
+        u"type": int,
         u"help": u"Maximum block size for large files in MB",
-        u"default": dflt(None)
+        u"default": dflt(config.max_blocksize)
     }
     mf_purge = {
         u"action": u"store_true",
         u"help": u"Option for mediafire to purge files on delete instead of sending to trash",
-        u"default": dflt(False)
+        u"default": dflt(config.mf_purge)
     }
     mp_segment_size = {
         u"metavar": _(u"number"),
-        u"type": set_mpsize,
+        u"type": set_megs,
         u"help": u"Swift backend segment size",
         u"default": dflt(config.mp_segment_size)
     }
@@ -461,30 +363,10 @@ class OptionKwargs:
         u"help": u"Custom backup name instead of hash",
         u"default": dflt(config.backup_name)
     }
-    no_compression = {
-        u"action": u"store_true",
-        u"help": u"If supplied do not perform compression",
-        u"default": dflt(False)
-    }
-    no_encryption = {
-        u"action": u"store_true",
-        u"help": u"If supplied do not perform encryption",
-        u"default": dflt(False)
-    }
-    no_files_changed = {
-        u"action": u"store_true",
-        u"help": u"Whether to skip collecting the files_changed list in statistics",
-        u"default": dflt(False)
-    }
-    no_print_statistics = {
-        u"action": u"store_true",
-        u"help": u"If supplied do not print statistics",
-        u"default": dflt(False)
-    }
     null_separator = {
         u"action": u"store_true",
         u"help": u"Whether to split on null instead of newline",
-        u"default": dflt(False)
+        u"default": dflt(config.null_separator)
     }
     num_retries = {
         u"metavar": _(u"number"), u"type": int,
@@ -494,13 +376,12 @@ class OptionKwargs:
     numeric_owner = {
         u"action": u"store_true",
         u"help": u"Keeps number from tar file. Like same option in GNU tar.",
-        u"default": dflt(False)
+        u"default": dflt(config.numeric_owner)
     }
-    do_not_restore_ownership = {
-        u"action": u"store_true",
-        u"help": u"Do no restore the uid/gid when finished, useful if you're restoring\n"
-                 U"data without having root privileges or Unix users support",
-        u"default": dflt(False)
+    restore_ownership = {
+        u"action": argparse.BooleanOptionalAction,
+        u"help": u"Restore the uid/gid when finished",
+        u"default": dflt(config.restore_ownership)
     }
     metadata_sync_mode = {
         u"choices": (u"full", u"partial"),
@@ -510,7 +391,7 @@ class OptionKwargs:
     par2_options = {
         u"metavar": _(u"options"), u"action": u"append",
         u"help": u"Verbatim par2 options.  May be supplied multiple times.",
-        u"default": dflt(None)
+        u"default": dflt(config.par2_options)
     }
     par2_redundancy = {
         u"metavar": _(u"number"),
@@ -529,6 +410,11 @@ class OptionKwargs:
         u"dest": u"restore_path",
         u"help": u"File or directory path to restore",
         u"default": dflt(config.restore_path)
+    }
+    print_statistics = {
+        u"action": argparse.BooleanOptionalAction,
+        u"help": u"If supplied print statistics",
+        u"default": dflt(config.print_statistics)
     }
     progress = {
         u"action": u"store_true",
@@ -585,7 +471,7 @@ class OptionKwargs:
     }
     s3_use_glacier_ir = {
         u"action": u"store_true",
-        u"help": "Whether to use S3 Glacier IR Storage",
+        u"help": u"Whether to use S3 Glacier IR Storage",
         u"default": dflt(config.s3_use_glacier_ir)
     }
     s3_use_ia = {
@@ -689,7 +575,7 @@ class OptionKwargs:
         u"metavar": _(u"gpg-key-id"),
         u"type": set_sign_key,
         u"help": u"Sign key for encryption/decryption",
-        u"default": dflt(None)
+        u"default": dflt(config.sign_key)
     }
     ssh_askpass = {
         u"action": u"store_true",
@@ -703,12 +589,12 @@ class OptionKwargs:
         u"default": dflt(config.ssh_options)
     }
     ssl_cacert_file = {
-        u"metavar": "file",
+        u"metavar": u"file",
         u"help": _(u"pem formatted bundle of certificate authorities"),
         u"default": dflt(config.ssl_cacert_file)
     }
     ssl_cacert_path = {
-        u"metavar": "path",
+        u"metavar": u"path",
         u"help": _(u"path to a folder with certificate authority files"),
         u"default": dflt(config.ssl_cacert_path)
     }
@@ -747,18 +633,18 @@ class OptionKwargs:
         u"default": dflt(log.NOTICE)
     }
     version = {
-        u"action": "version",
+        u"action": u"version",
         u"version": u"%(prog)s " + f"{__version__}",
         u"help": u"Display version and exit",
     }
     volsize = {
         u"metavar": _(u"number"),
-        u"type": set_volsize,
+        u"type": set_megs,
         u"help": u"Volume size to use in MiB",
         u"default": dflt(int(config.volsize / (1024 * 1024)))
     }
     webdav_headers = {
-        u"metavar": "string",
+        u"metavar": u"string",
         u"help": _(u"extra headers for Webdav, like 'Cookie,name: value'"),
         u"default": dflt(config.webdav_headers)
     }
@@ -791,6 +677,94 @@ class OptionAliases:
     restore_time = [u"t", u"time"]
     verbosity = [u"v"]
     version = [u"V"]
+
+
+all_options = {opt for opt in OptionKwargs.__dict__.keys()}
+
+parent_only_options = {
+    u"version",
+}
+
+backup_only_options = {
+    u"allow_source_mismatch", u"asynchronous_upload", u"dry_run", u"time_separator", u"volsize",
+}
+
+selection_only_options = {
+    u"exclude", u"exclude_device_files", u"exclude_filelist", u"exclude_if_present", u"exclude_older_than",
+    u"exclude_other_filesystems", u"exclude_regexp", u"include", u"include_filelist", u"include_regexp",
+}
+
+deprecated_write_options = {
+    u"old_filenames", u"short_filenames", u"time_separator"
+}
+
+
+@dataclass
+class CommandOptions:
+    u"""legal options by command"""
+    backup = list(
+        all_options
+        - parent_only_options
+        - deprecated_write_options
+    )
+    cleanup = list(
+        all_options
+        - parent_only_options
+        - backup_only_options
+        - selection_only_options
+    )
+    collection_status = list(
+        all_options
+        - parent_only_options
+        - backup_only_options
+        - selection_only_options
+    )
+    full = list(
+        all_options
+        - parent_only_options
+        - deprecated_write_options
+    )
+    incremental = list(
+        all_options
+        - parent_only_options
+        - deprecated_write_options
+    )
+    list_current_files = list(
+        all_options
+        - parent_only_options
+        - backup_only_options
+        - selection_only_options
+    )
+    remove_older_than = list(
+        all_options
+        - parent_only_options
+        - backup_only_options
+        - selection_only_options
+    )
+    remove_all_but_n_full = list(
+        all_options
+        - parent_only_options
+        - backup_only_options
+        - selection_only_options
+    )
+    remove_all_inc_of_but_n_full = list(
+        all_options
+        - parent_only_options
+        - backup_only_options
+        - selection_only_options
+    )
+    restore = list(
+        all_options
+        - parent_only_options
+        - backup_only_options
+        - selection_only_options
+    )
+    verify = list(
+        all_options
+        - parent_only_options
+        - backup_only_options
+        - selection_only_options
+    )
 
 
 trans = {
