@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: duplicity\n"
 "Report-Msgid-Bugs-To: Kenneth Loafman <kenneth@loafman.com>\n"
-"POT-Creation-Date: 2022-11-30 12:49-0600\n"
-"PO-Revision-Date: 2022-11-30 20:42\n"
+"POT-Creation-Date: 2023-01-13 11:30-0600\n"
+"PO-Revision-Date: 2023-01-13 17:48\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -1547,7 +1547,7 @@ msgid "Error initializing file %s"
 msgstr "Błąd inicjalizacji pliku %s"
 
 #: ../duplicity/selection.py:125 ../duplicity/selection.py:164
-#: ../duplicity/selection.py:580
+#: ../duplicity/selection.py:583
 #, python-format
 msgid "Error accessing possibly locked file %s"
 msgstr "Błąd dostępu do (prawdopodobnie) zastrzeżonego pliku %s"
@@ -1605,7 +1605,7 @@ msgstr "Krytyczny błąd podczas przetwarzania wyrażenia\n"
 msgid "Reading files to backup from list %s"
 msgstr ""
 
-#: ../duplicity/selection.py:387
+#: ../duplicity/selection.py:390
 #, python-format
 msgid "Files-from list contains the absolute path:\n"
 "    %s\n"
@@ -1613,12 +1613,12 @@ msgid "Files-from list contains the absolute path:\n"
 "source path."
 msgstr ""
 
-#: ../duplicity/selection.py:396
+#: ../duplicity/selection.py:399
 msgid "Files-from list specified which contains no files, the backup will be empty as\n"
 "a result. Exiting as this probably isn't what you meant,"
 msgstr ""
 
-#: ../duplicity/selection.py:406
+#: ../duplicity/selection.py:409
 #, python-format
 msgid "Last selection expression:\n"
 "    %s\n"
@@ -1631,12 +1631,12 @@ msgstr "Ostatnie wyrażenie:\n"
 "wszystkie pliki są dodawane, wyrażenie to jest niepotrzebne. Kończę wykonywanie,\n"
 "ponieważ prawdopodobnie nie jest to to co chciałeś uzyskać."
 
-#: ../duplicity/selection.py:465
+#: ../duplicity/selection.py:468
 #, python-format
 msgid "Reading %s filelist %s"
 msgstr ""
 
-#: ../duplicity/selection.py:506
+#: ../duplicity/selection.py:509
 #, python-format
 msgid "Error compiling regular expression %s"
 msgstr "Błąd kompilacji wyrażenia regularnego %s"
