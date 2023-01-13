@@ -35,7 +35,7 @@ from duplicity import config
 from duplicity import log
 from duplicity import util
 
-util.start_debugger()
+# util.start_debugger()
 
 if sys.version_info.major >= 3:
     gettext.install(u'duplicity', names=[u'ngettext'])
