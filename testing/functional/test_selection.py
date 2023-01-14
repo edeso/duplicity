@@ -178,7 +178,7 @@ class TestSkipSocket(IncludeExcludeFunctionalTest):
 
     def setUp(self):
         u""" can't put a socket into testfiles.tar.gz """
-        super().setUp()
+        super(TestSkipSocket, self).setUp()
         if os.path.exists(self.sock_path):
             os.unlink(self.sock_path)
         sock = socket.socket(socket.AF_UNIX)
