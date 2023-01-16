@@ -723,7 +723,7 @@ def write_block_iter(block_iter, out_obj):
     """
     if isinstance(out_obj, Path):
         fp = open(out_obj.name, u"wb")
-    elif isinstance(out_obj, (str, string)):
+    elif isinstance(out_obj, str):
         fp = open(out_obj, u"wb")
     else:
         fp = out_obj

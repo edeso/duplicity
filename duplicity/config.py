@@ -108,9 +108,10 @@ are_errors_fatal = {
     u'query': (True, None),
 }
 
-# If set, the Select object which iterates paths in the local
-# source directory.
+# Select object which iterates paths in the local source dir.
 select = None
+select_opts = []
+select_files = []
 
 gpg_binary = None
 encrypt_key = None
@@ -165,12 +166,6 @@ force = None
 # If set, signifies the number of backups chains to keep when performing
 # a remove-all-but-n-full.
 keep_chains = None
-
-# If set, signifies that remove-all-but-n-full in progress
-remove_all_but_n_full_mode = None
-
-# If set, signifies that remove-all-inc-of-but-n-full in progress (variant of remove-all-but-n-full)
-remove_all_inc_of_but_n_full_mode = None
 
 # Don't actually do anything, but still report what would be done
 dry_run = False

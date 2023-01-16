@@ -121,7 +121,7 @@ def parse_cmdline_options(arglist):
         v = getattr(args, f)
         setattr(config, f, v)
 
-    return parser, args
+    return args
 
 
 def process_command_line(cmdline_list):
@@ -132,7 +132,7 @@ def process_command_line(cmdline_list):
     config.gpg_profile = gpg.GPGProfile()
 
     # parse command line
-    parser, args = parse_cmdline_options(cmdline_list)
+    args = parse_cmdline_options(cmdline_list)
     if not hasattr(args, u"action"):
         sys.exit(1)
 
@@ -146,9 +146,9 @@ def process_command_line(cmdline_list):
             recipients=src.recipients,
             hidden_recipients=src.hidden_recipients)
     log.Info(_(u"GPG binary is %s, version %s") %
-            ((config.gpg_binary or u'gpg'), config.gpg_profile.gpg_version))
+             ((config.gpg_binary or u'gpg'), config.gpg_profile.gpg_version))
 
-    # TODO: Most of the following code belongs elsewhere.
+    config.action = u"inc" if config.action == u"incremental" else config.action
 
     backend.import_backends()
 
@@ -170,9 +170,12 @@ def process_command_line(cmdline_list):
     set_archive_dir(expand_archive_dir(config.archive_dir,
                                        config.backup_name))
 
-    config.action = u"inc" if config.action == u"incremental" else config.action
+    config.keep_chains = config.count
 
     config.mp_segment_size = int(config.mp_factor * config.volsize)
+
+    if config.action in [u'full', u'inc', u'verify']:
+        set_selection()
 
     if config.ignore_errors:
         log.Warn(_(u"Running in 'ignore errors' mode due to --ignore-errors.\n"

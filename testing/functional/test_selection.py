@@ -254,8 +254,8 @@ class TestFilesFrom(IncludeExcludeFunctionalTest):
         self.backup(u"full", u"testfiles/select2",
                     options=[u"--files-from", u"testfiles/files_from.txt"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, [[u"1.doc", u"1.py"]])
 
     def test_files_from_implicit_parents(self):
@@ -269,8 +269,8 @@ class TestFilesFrom(IncludeExcludeFunctionalTest):
         self.backup(u"full", u"testfiles/select2",
                     options=[u"--files-from", u"testfiles/files_from.txt"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, [[u"1", u"2", u"3"],
                                     [u"1sub1"], [u"1sub1sub1", u"1sub1sub2", u"1sub1sub3"],
                                     [u"1sub1sub1_file.txt"], [u"1sub1sub2_file.txt"], [u"1sub1sub3_file.txt"],
@@ -285,8 +285,8 @@ class TestFilesFrom(IncludeExcludeFunctionalTest):
         self.backup(u"full", u"testfiles/select2",
                     options=[u"--files-from", u"testfiles/files_from.txt"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, [[u"trailing_space "],
                                     [u"trailing_space sub1", u"trailing_space sub2"],
                                     [u"trailing_space sub2_file.txt"]])
@@ -300,8 +300,8 @@ class TestFilesFrom(IncludeExcludeFunctionalTest):
         self.backup(u"full", u"testfiles/select2",
                     options=[u"--files-from", u"testfiles/files_from.txt"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, [[u"trailing_space "]])
 
     def test_files_from_with_exclusions(self):
@@ -314,8 +314,8 @@ class TestFilesFrom(IncludeExcludeFunctionalTest):
                              u"--exclude", u"testfiles/select2/3",
                              u"--exclude", u"**.txt"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, [[u"1", u"1.doc", u"1.py"],
                                     [u"1sub1", u"1sub2", u"1sub3"],
                                     [u"1sub1sub1", u"1sub1sub2", u"1sub1sub3"],
@@ -332,8 +332,8 @@ class TestFilesFrom(IncludeExcludeFunctionalTest):
                              u"--include", u"**.txt",
                              u"--exclude", u"**"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, [[u"1", u"2", u"3", u"1.doc", u"1.py"],
                                     [u"1sub1"], [u"1sub1sub1", u"1sub1sub2", u"1sub1sub3"],
                                     [u"1sub1sub1_file.txt"], [u"1sub1sub2_file.txt"], [u"1sub1sub3_file.txt"],
@@ -357,8 +357,8 @@ class TestFilesFrom(IncludeExcludeFunctionalTest):
                              u"--include-filelist", u"testfiles/include.txt",
                              u"--exclude", u"**"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, [[u"1", u"2", u"3"],
                                     [u"1sub2", u"1sub3"],
                                     [u"1sub2sub1", u"1sub2sub2", u"1sub2sub3"],
@@ -385,8 +385,8 @@ class TestFilesFrom(IncludeExcludeFunctionalTest):
                              u"--include", u"testfiles/select2/3/3sub2",
                              u"--exclude", u"**"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, [[u"1", u"2", u"3"],
                                     [u"1sub2", u"1sub3"],
                                     [u"1sub2sub1", u"1sub2sub2", u"1sub2sub3"],
@@ -425,8 +425,8 @@ class TestIncludeExcludeOptions(IncludeExcludeFunctionalTest):
                              u"--include", u"testfiles/select2/1",
                              u"--exclude", u"testfiles/select2/**"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, self.expected_restored_tree)
 
     def test_include_exclude_trailing_whitespace(self):
@@ -459,8 +459,8 @@ class TestIncludeExcludeOptions(IncludeExcludeFunctionalTest):
                              u"--include", u"testfiles/select2/1",
                              u"--exclude", u"testfiles/select2/**"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, self.expected_restored_tree_with_trailing_space)
 
 
@@ -525,8 +525,8 @@ class TestIncludeExcludeFilterModes(IncludeExcludeFunctionalTest):
                              u"--filter-globbing",
                              u"--exclude", u"testfiles/select2/**"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, self.expected_restored_tree)
 
     def test_include_exclude_trailing_whitespace_with_modes(self):
@@ -564,8 +564,8 @@ class TestIncludeExcludeFilterModes(IncludeExcludeFunctionalTest):
                              u"--filter-globbing",
                              u"--exclude", u"testfiles/select2/**"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, self.expected_restored_tree_with_trailing_space)
 
     u"""
@@ -591,8 +591,8 @@ class TestIncludeExcludeFilterModes(IncludeExcludeFunctionalTest):
                              u"--filter-globbing",
                              u"--exclude", u"testfiles/select2/*"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, [[u"1", u"2", u"3", u"trailing_space ", u"1.doc"],
                                     [u"1sub1", u"1sub3"],
                                     [u"1sub1sub1", u"1sub1sub2", u"1sub1sub3"],
@@ -623,8 +623,8 @@ class TestIncludeExcludeFilterModes(IncludeExcludeFunctionalTest):
                              u"--filter-globbing",
                              u"--exclude", u"ignorecase:TestFiles/SELECT2/*"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, [[u"1", u"2", u"3", u"trailing_space ", u"1.doc"],
                                     [u"1sub1", u"1sub3"],
                                     [u"1sub1sub1", u"1sub1sub2", u"1sub1sub3"],
@@ -656,8 +656,8 @@ class TestIncludeExcludeFilterModes(IncludeExcludeFunctionalTest):
                              u"--filter-strictcase",
                              u"--exclude", u"testfiles/select2/*"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, [[u"1", u"2", u"3", u"trailing_space ", u"1.doc"],
                                     [u"1sub1", u"1sub3"],
                                     [u"1sub1sub1", u"1sub1sub2", u"1sub1sub3"],
@@ -681,8 +681,8 @@ class TestIncludeExcludeFilterModes(IncludeExcludeFunctionalTest):
                              u"--include", u"testfiles/dir1/largefile",
                              u"--exclude", u"testfiles/dir1"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, [[u"fifo", u"largefile", u"symbolic_link"]])
 
 
@@ -704,8 +704,8 @@ class TestIncludeSpecialGlobChars(IncludeExcludeFunctionalTest):
                              u"--exclude", u"testfiles/shell_glob_chars/0*1/2*2/0*1sub2*2_file.txt",
                              u"--exclude", u"testfiles/shell_glob_chars/[01]/3?3/[01]sub3?3_file.txt"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, [[u"0*1", u"0?1", u"[01]"],
                                     [u"2*2", u"2?2", u"[02]"], [u"0*1sub2?2_file.txt"], [u"0*1sub[02]_file.txt"],
                                     [u"1?1"], [u"0?1sub1?1_file.txt"],
@@ -721,8 +721,8 @@ class TestIncludeSpecialGlobChars(IncludeExcludeFunctionalTest):
                              u"--filter-globbing",
                              u"--exclude", u"testfiles/shell_glob_chars/0*1"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, [[u"0*1", u"[01]"],
                                     [u"2*2"], [u"0*1sub2*2_file.txt"],
                                     [u"3*3", u"3?3", u"[03]"], [u"[01]sub3*3_file.txt"], [u"[01]sub3?3_file.txt"],
@@ -741,8 +741,8 @@ class TestIncludeSpecialGlobChars(IncludeExcludeFunctionalTest):
         self.backup(u"full", u"testfiles/shell_glob_chars",
                     options=[u"--filter-literal", u"--include-filelist=testfiles/include.txt"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, [[u"0*1", u"0?1", u"[01]"],
                                     [u"2*2", u"2?2", u"[02]"], [u"0*1sub2?2_file.txt"], [u"0*1sub[02]_file.txt"],
                                     [u"1?1"], [u"0?1sub1?1_file.txt"],
@@ -780,8 +780,8 @@ class TestExcludeFilelistTest(IncludeExcludeFunctionalTest):
                     u"testfiles/select2/**")
         self.backup(u"full", u"testfiles/select2", options=[u"--exclude-filelist=testfiles/exclude.txt"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, self.expected_restored_tree)
 
     def test_exclude_filelist_combined_imperfections(self):
@@ -822,8 +822,8 @@ class TestExcludeFilelistTest(IncludeExcludeFunctionalTest):
                     u"- testfiles/select2/**")
         self.backup(u"full", u"testfiles/select2", options=[u"--exclude-filelist=testfiles/exclude.txt"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, self.expected_restored_tree)
 
     def test_exclude_globbing_filelist_combined_imperfections(self):
@@ -867,8 +867,8 @@ class TestExcludeFilelistTest(IncludeExcludeFunctionalTest):
                     u"- testfiles/select2/**")
         self.backup(u"full", u"testfiles/select2", options=[u"--exclude-globbing-filelist=testfiles/exclude.txt"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, self.expected_restored_tree)
 
     def test_exclude_globbing_filelist_is_always_globbing(self):
@@ -907,8 +907,8 @@ class TestExcludeFilelistTest(IncludeExcludeFunctionalTest):
                     options=[u"--filter-literal",
                              u"--exclude-globbing-filelist=testfiles/exclude.txt"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, self.expected_restored_tree)
 
     def test_exclude_filelist_trailing_whitespace_folders_work_with_quotes(self):
@@ -939,8 +939,8 @@ class TestExcludeFilelistTest(IncludeExcludeFunctionalTest):
                     u"testfiles/select2/**")
         self.backup(u"full", u"testfiles/select2", options=[u"--exclude-filelist=testfiles/exclude.txt"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, self.expected_restored_tree_with_trailing_space)
 
     def test_exclude_filelist_progress_option(self):
@@ -972,8 +972,8 @@ class TestExcludeFilelistTest(IncludeExcludeFunctionalTest):
         self.backup(u"full", u"testfiles/select2", options=[u"--exclude-filelist=testfiles/exclude.txt",
                                                             u"--progress"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         # The restored files should match those restored in test_exclude_filelist
         self.assertEqual(restored, self.expected_restored_tree)
 
@@ -1010,8 +1010,8 @@ class TestIncludeFilelistTest(IncludeExcludeFunctionalTest):
                     u"- testfiles/select2/**")
         self.backup(u"full", u"testfiles/select2", options=[u"--include-filelist=testfiles/include.txt"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, self.expected_restored_tree)
 
     def test_include_filelist_combined_imperfections(self):
@@ -1052,8 +1052,8 @@ class TestIncludeFilelistTest(IncludeExcludeFunctionalTest):
                     u"- testfiles/select2/**")
         self.backup(u"full", u"testfiles/select2", options=[u"--include-filelist=testfiles/include.txt"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, self.expected_restored_tree)
 
     def test_include_filelist_workaround_combined_imperfections_no_wildcards(self):
@@ -1100,8 +1100,8 @@ class TestIncludeFilelistTest(IncludeExcludeFunctionalTest):
                     u"- testfiles/select2/1.doc")  # es instead of ea as no wildcard - **
         self.backup(u"full", u"testfiles/select2", options=[u"--include-filelist=testfiles/include.txt"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, self.expected_restored_tree)
 
     def test_include_globbing_filelist_combined_imperfections(self):
@@ -1144,8 +1144,8 @@ class TestIncludeFilelistTest(IncludeExcludeFunctionalTest):
                     u"- testfiles/select2/**")
         self.backup(u"full", u"testfiles/select2", options=[u"--include-globbing-filelist=testfiles/include.txt"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, self.expected_restored_tree)
 
     def test_include_globbing_filelist_is_always_globbing(self):
@@ -1184,8 +1184,8 @@ class TestIncludeFilelistTest(IncludeExcludeFunctionalTest):
                     options=[u"--filter-literal",
                              u"--include-globbing-filelist=testfiles/include.txt"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, self.expected_restored_tree)
 
 
@@ -1205,8 +1205,8 @@ class TestIncludeExcludedForContents(IncludeExcludeFunctionalTest):
     def restore_and_check(self):
         u"""Restores the backup and compares to what was expected (based on the filelist in write_filelist)"""
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, [[u"2"], [u"1"]])
 
     def test_commandline_include_exclude(self):
@@ -1241,8 +1241,8 @@ class TestAsterisks(IncludeExcludeFunctionalTest):
     def restore_and_check(self):
         u"""Restores the backup and compares to what is expected."""
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, [[u"2"], [u"1"]])
 
     def test_exclude_filelist_asterisks_none(self):
@@ -1321,14 +1321,14 @@ class TestAsterisks(IncludeExcludeFunctionalTest):
                     options=[u"--include", u"testfiles/select2/*",
                              u"--exclude", u"testfiles/select"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir + u"/select2")
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path + u"/select2")
         self.backup(u"full", u"testfiles/",
                     options=[u"--include", u"testfiles/select2/**",
                              u"--exclude", u"testfiles/select"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored2 = self.directory_tree_to_list_of_lists(restore_dir + u"/select2")
+        restore_path = u"testfiles/restore_out"
+        restored2 = self.directory_tree_to_list_of_lists(restore_path + u"/select2")
         self.assertEqual(restored, restored2)
 
 
@@ -1339,8 +1339,8 @@ class TestTrailingSlash(IncludeExcludeFunctionalTest):
     def restore_and_check(self):
         u"""Restores the backup and compares to what is expected."""
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, [[u"2"], [u"1"]])
 
     def test_exclude_filelist_trailing_slashes(self):
@@ -1408,8 +1408,8 @@ class TestTrailingSlash2(IncludeExcludeFunctionalTest):
                     options=[u"--include", u"testfiles/select2/1.py",
                              u"--exclude", u"**"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, [[u"1.py"]])
 
     def test_trailing_slash(self):
@@ -1420,8 +1420,8 @@ class TestTrailingSlash2(IncludeExcludeFunctionalTest):
                     options=[u"--include", u"testfiles/select2/1.py/",
                              u"--exclude", u"**"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, [])
 
     def test_include_files_not_subdirectories(self):
@@ -1432,8 +1432,8 @@ class TestTrailingSlash2(IncludeExcludeFunctionalTest):
                              u"--include", u"testfiles/select2/*",
                              u"--exclude", u"**"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, [[u"1.doc", u"1.py"]])
 
     def test_include_subdirectories_not_files(self):
@@ -1443,8 +1443,8 @@ class TestTrailingSlash2(IncludeExcludeFunctionalTest):
                              u"--exclude", u"testfiles/select2/1/1sub1/**",
                              u"--exclude", u"**"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, [[u"1"], [u"1sub1"],
                                     [u"1sub1sub1", u"1sub1sub2", u"1sub1sub3"]])
 
@@ -1482,8 +1482,8 @@ class TestGlobbingReplacement(IncludeExcludeFunctionalTest):
                              u"--include", u"**/select2/1",  # Note ** added
                              u"--exclude", u"testfiles/select2/**"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, self.expected_restored_tree)
 
     def test_globbing_replacement_in_includes_using_filter_ignorecase(self):
@@ -1513,8 +1513,8 @@ class TestGlobbingReplacement(IncludeExcludeFunctionalTest):
                              u"--include", u"**/select2/1",  # Note ** added
                              u"--exclude", u"testfiles/select2/**"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, self.expected_restored_tree)
 
 
@@ -1529,8 +1529,8 @@ class TestExcludeIfPresent(IncludeExcludeFunctionalTest):
                     options=[u"--include", u"testfiles/select2/1/1sub1/1sub1sub1/*",
                              u"--exclude", u"**"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, [[u"1sub1sub1"],
                                     [u".nobackup", u"1sub1sub1_file.txt"]])
 
@@ -1543,8 +1543,8 @@ class TestExcludeIfPresent(IncludeExcludeFunctionalTest):
                              u"--include", u"testfiles/select2/1/1sub1/1sub1sub1/*",
                              u"--exclude", u"**"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, [])
 
     def test_exclude_if_present_excludes_2(self):
@@ -1556,8 +1556,8 @@ class TestExcludeIfPresent(IncludeExcludeFunctionalTest):
                              u"--include", u"testfiles/select2/1/1sub1/1sub1sub1/*",
                              u"--exclude", u"**"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, [])
 
 
@@ -1576,8 +1576,8 @@ class TestLockedFoldersNoError(IncludeExcludeFunctionalTest):
                              u"--exclude", u"**"])
         os.chmod(folder_to_lock, initial_mode)
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, [[u"1sub1sub1"],
                                     [u"1sub1sub1_file.txt"]])
 
@@ -1596,8 +1596,8 @@ class TestLockedFoldersNoError(IncludeExcludeFunctionalTest):
                              u"--exclude", u"**"])
         os.chmod(folder_to_lock, initial_mode)
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, [[u"1sub1sub1"],
                                     [u"1sub1sub1_file.txt"]])
 
@@ -1612,8 +1612,8 @@ class TestFolderIncludesFiles(IncludeExcludeFunctionalTest):
                     options=[u"--include", u"testfiles/select2/1/1sub1/1sub1sub1",
                              u"--exclude", u"**"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, [[u"1sub1sub1"],
                                     [u"1sub1sub1_file.txt"]])
 
@@ -1623,8 +1623,8 @@ class TestFolderIncludesFiles(IncludeExcludeFunctionalTest):
                     options=[u"--include", u"testfiles/select2/1/1sub1/1sub1sub1/",
                              u"--exclude", u"**"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, [[u"1sub1sub1"],
                                     [u"1sub1sub1_file.txt"]])
 
@@ -1634,8 +1634,8 @@ class TestFolderIncludesFiles(IncludeExcludeFunctionalTest):
                     options=[u"--include", u"testfiles/s?lect2/1/1sub1/1sub1sub1/",
                              u"--exclude", u"**"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, [[u"1sub1sub1"],
                                     [u"1sub1sub1_file.txt"]])
 
@@ -1648,8 +1648,8 @@ class TestFolderIncludesFiles(IncludeExcludeFunctionalTest):
                              u"--include", u"testfiles/select2/1/1sub1/1sub1**",
                              u"--exclude", u"testfiles/select2/1/1sub1/irrelevant.txt"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, [])
 
     def test_excludes_files_trailing_slash(self):
@@ -1661,8 +1661,8 @@ class TestFolderIncludesFiles(IncludeExcludeFunctionalTest):
                              u"--include", u"testfiles/select2/1/1sub1/1sub1**",
                              u"--exclude", u"testfiles/select2/1/1sub1/irrelevant.txt"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, [])
 
     def test_excludes_files_trailing_slash_globbing_chars(self):
@@ -1674,8 +1674,8 @@ class TestFolderIncludesFiles(IncludeExcludeFunctionalTest):
                              u"--include", u"testfiles/select2/1/1sub1/1sub1**",
                              u"--exclude", u"testfiles/select2/1/1sub1/irrelevant.txt"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, [])
 
 
@@ -1705,8 +1705,8 @@ class TestAbsolutePaths(IncludeExcludeFunctionalTest):
                              u"--include", os.path.abspath(u"testfiles/select2/1"),
                              u"--exclude", os.path.abspath(u"testfiles/select2/**")])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, self.expected_restored_tree)
 
 
@@ -1728,8 +1728,8 @@ class TestUnicode(IncludeExcludeFunctionalTest):
                              u"--include", u"testfiles/select-unicode/օրինակ.txt",
                              u"--exclude", u"testfiles/select-unicode/**"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, [[u"прыклад", u"օրինակ.txt"],
                                     [u"пример", u"উদাহরণ"], [u"例"], [u"Παράδειγμα"], [u"ઉદાહરણ.log"]])
 
@@ -1746,8 +1746,8 @@ class TestUnicode(IncludeExcludeFunctionalTest):
                              u"--include", p + u"օր*ակ.txt",  # Note *
                              u"--exclude", p + u"**"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, [[u"прыклад", u"օրինակ.txt"],
                                     [u"пример", u"উদাহরণ"], [u"例"], [u"Παράδειγμα"], [u"ઉદાહરણ.log"]])
 
@@ -1764,8 +1764,8 @@ class TestUnicode(IncludeExcludeFunctionalTest):
                              u"--include", p + u"օրինակ.txt",
                              u"--exclude", p + u"**"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, [[u"прыклад", u"օրինակ.txt"],
                                     [u"пример", u"উদাহরণ"], [u"例"], [u"Παράδειγμα"], [u"ઉદાહરણ.log"]])
 
@@ -1785,8 +1785,8 @@ class TestUnicode(IncludeExcludeFunctionalTest):
                     u"- " + path + u"**")
         self.backup(u"full", path, options=[u"--exclude-filelist=testfiles/exclude.txt"])
         self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
+        restore_path = u"testfiles/restore_out"
+        restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, [[u"прыклад", u"օրինակ.txt"],
                                     [u"пример", u"উদাহরণ"], [u"例"], [u"Παράδειγμα"], [u"ઉદાહરણ.log"]])
 

@@ -342,7 +342,7 @@ class StatsDeltaProcess(StatsObj):
         self.EndTime = time.time()
 
     def add_delta_entries_file(self, path, action_type):
-        if not config.no_files_changed and path.isreg():
+        if config.files_changed and path.isreg():
             self.files_changed.append((path.get_relative_path(), action_type))
 
     def get_delta_entries_file(self):

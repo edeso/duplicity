@@ -89,7 +89,8 @@ class FinalTest(FunctionalTestCase):
     def test_asym_cycle(self):
         u"""Like test_basic_cycle but use asymmetric encryption and signing"""
         backup_options = [u"--encrypt-key", self.encrypt_key1,
-                          u"--sign-key", self.sign_key]
+                          u"--sign-key", self.sign_key,
+                          u"--allow-source-mismatch"]
         restore_options = [u"--encrypt-key", self.encrypt_key1,
                            u"--sign-key", self.sign_key]
         self.test_basic_cycle(backup_options=backup_options,
@@ -99,7 +100,8 @@ class FinalTest(FunctionalTestCase):
     def test_asym_with_hidden_recipient_cycle(self):
         u"""Like test_basic_cycle but use asymmetric encryption (hiding key id) and signing"""
         backup_options = [u"--hidden-encrypt-key", self.encrypt_key1,
-                          u"--sign-key", self.sign_key]
+                          u"--sign-key", self.sign_key,
+                          u"--allow-source-mismatch"]
         restore_options = [u"--hidden-encrypt-key", self.encrypt_key1,
                            u"--sign-key", self.sign_key]
         self.test_basic_cycle(backup_options=backup_options,

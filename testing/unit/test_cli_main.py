@@ -162,18 +162,6 @@ class CommandlineTest(UnitTestCase):
         self.run_all_commands_with_errors(new_args, err_msg)
 
     @pytest.mark.usefixtures(u"redirect_stdin")
-    def test_full_command_errors_bad_filename(self):
-        u"""
-        test backup, restore, verify with explicit commands - bad filename
-        """
-        new_args = {
-            u"source_dir": u"fi:l*e/p\"a?t>h|.t<xt",
-            u"target_dir": u"fi:l*e/p\"a?t>h|.t<xt",
-        }
-        err_msg = u"does not exist"
-        self.run_all_commands_with_errors(new_args, err_msg)
-
-    @pytest.mark.usefixtures(u"redirect_stdin")
     def test_full_command_errors_bad_integer(self):
         u"""
         test backup, restore, verify with explicit commands - bad integer

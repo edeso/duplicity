@@ -738,10 +738,10 @@ def restore(col_stats):
         return
     if not patchdir.Write_ROPaths(config.local_path,
                                   restore_get_patched_rop_iter(col_stats)):
-        if config.restore_dir:
+        if config.restore_path:
             log.FatalError(_(u"%s not found in archive - no files restored.")
-                           % (os.fsdecode(config.restore_dir)),
-                           log.ErrorCode.restore_dir_not_found)
+                           % (os.fsdecode(config.restore_path)),
+                           log.ErrorCode.restore_path_not_found)
         else:
             log.FatalError(_(u"No files found in archive - nothing restored."),
                            log.ErrorCode.no_restore_files)
@@ -754,8 +754,8 @@ def restore_get_patched_rop_iter(col_stats):
     @type col_stats: CollectionStatus object
     @param col_stats: collection status
     """
-    if config.restore_dir:
-        index = tuple(config.restore_dir.split(b"/"))
+    if config.restore_path:
+        index = tuple(config.restore_path.split(b"/"))
     else:
         index = ()
     time = config.restore_time or dup_time.curtime
@@ -1002,7 +1002,7 @@ def remove_old(col_stats):
 
     chainlist = col_stats.get_chains_older_than(config.remove_time)
 
-    if config.remove_all_inc_of_but_n_full_mode:
+    if config.action == u"remove-all-inc-of-but-n-full":
         # ignore chains without incremental backups:
         chainlist = list(x for x in chainlist if
                          (isinstance(x, dup_collections.SignatureChain) and x.inclist) or
@@ -1018,9 +1018,9 @@ def remove_old(col_stats):
         chainlist += col_stats.get_signature_chains_older_than(config.remove_time)
         chainlist.reverse()  # save oldest for last
         for chain in chainlist:
-            # if remove_all_inc_of_but_n_full_mode mode, remove only
+            # if action is remove_all_inc_of_but_n_full, remove only
             # incrementals one and not full
-            if config.remove_all_inc_of_but_n_full_mode:
+            if config.action == u"remove-all-inc-of-but-n-full":
                 if isinstance(chain, dup_collections.SignatureChain):
                     chain_desc = _(u"Deleting any incremental signature chain rooted at %s")
                 else:
@@ -1032,7 +1032,7 @@ def remove_old(col_stats):
                     chain_desc = _(u"Deleting complete backup chain %s")
             log.Notice(chain_desc % dup_time.timetopretty(chain.end_time))
             if not config.dry_run:
-                chain.delete(keep_full=config.remove_all_inc_of_but_n_full_mode)
+                chain.delete(keep_full=(config.action == u"remove-all-inc-of-but-n-full"))
         col_stats.set_values(sig_chain_warning=None)
     else:
         log.Notice(_(u"Found old backup chain(s) at the following time:") +

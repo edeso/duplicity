@@ -1,7 +1,6 @@
 ##### basic requirements #####
 
 fasteners
-pathvalidate
 python-gettext
 
 

@@ -276,7 +276,7 @@ class ErrorCode(object):
     bad_url = 8
     bad_archive_dir = 9
     bad_sign_key = 10
-    restore_dir_exists = 11
+    restore_path_exists = 11
     verify_dir_doesnt_exist = 12
     backup_dir_doesnt_exist = 13
     file_prefix_error = 14
@@ -284,7 +284,7 @@ class ErrorCode(object):
     redundant_inclusion = 16
     inc_without_sigs = 17
     no_sigs = 18
-    restore_dir_not_found = 19
+    restore_path_not_found = 19
     no_restore_files = 20
     mismatched_hash = 21
     unsigned_volume = 22

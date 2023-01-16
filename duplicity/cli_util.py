@@ -27,14 +27,12 @@ import os
 import re
 from hashlib import md5
 
-from pathvalidate import is_valid_filepath
-from pathvalidate import sanitize_filepath
-
 from duplicity import config
 from duplicity import dup_time
 from duplicity import errors
 from duplicity import log
 from duplicity import path
+from duplicity import selection
 
 
 class CommandLineError(errors.UserError):
@@ -65,7 +63,7 @@ class AddFilelistAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
         config.select_opts.append((os.fsdecode(s), os.fsdecode(filename)))
         try:
-            select_files.append(io.open(filename, u"rt", encoding=u"UTF-8"))
+            config.select_files.append(io.open(filename, u"rt", encoding=u"UTF-8"))
         except Exception as e:
             raise argparse.ArgumentError(filename, str(e))
 
@@ -96,11 +94,6 @@ def check_remove_time(val):
 def check_source_dir(val):
     if u"://" in val:
         command_line_error(f"Source should be directory, not url.  Got '{val}' instead.")
-    # if is_valid_filepath(val):
-    #     val = sanitize_filepath(val)
-    #     val = expand_fn(val)
-    # else:
-    #     command_line_error(f"Source '{val}' is not a valid file path.")
     if not os.path.isdir(val):
         command_line_error(f"Argument source_dir '{val}' does not exist or is not a directory.")
     return val
@@ -115,13 +108,13 @@ def check_source_url(val):
 def check_target_dir(val):
     if u"://" in val:
         command_line_error(f"Target should be directory, not url.  Got '{val}' instead.")
-    # if is_valid_filepath(val):
-    #     val = sanitize_filepath(val)
-    #     val = expand_fn(val)
-    # else:
-    #     command_line_error(f"Target '{val}' is not a valid file path.")
-    if not os.path.isdir(val):
-        command_line_error(f"Argument target_dir '{val}' does not exist or or is not a directory.")
+    if not os.path.exists(val):
+        try:
+            os.makedirs(val)
+        except Exception as e:
+            command_line_error(f"Unable to create target dir '{val}': {str(e)}")
+    elif not os.path.isdir(val):
+        command_line_error(f"Argument target_dir '{val}' is not a directory.")
     return val
 
 
@@ -327,7 +320,7 @@ def check_consistency(action):
         if verify:
             command_line_error(u"verify option cannot be used "
                                u"when backing up")
-        if config.restore_dir:
+        if config.restore_path:
             command_line_error(u"restore option incompatible with %s backup"
                                % (action,))
         if sum([config.s3_use_rrs, config.s3_use_ia, config.s3_use_onezone_ia]) >= 2:

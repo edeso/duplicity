@@ -54,17 +54,17 @@ class CleanupTest(FunctionalTestCase):
         self.backup(u"inc", u"{0}/testfiles/largefiles".format(_runtest_dir))
         self.verify(u"{0}/testfiles/largefiles".format(_runtest_dir))
 
-    def test_remove_all_but_n(self):
+    def test_remove_all_but_n_full(self):
         u"""
         Test that remove-all-but-n works in the simple case.
         """
         full1_files = self.backup(u"full", u"{0}/testfiles/empty_dir".format(_runtest_dir))
         full2_files = self.backup(u"full", u"{0}/testfiles/empty_dir".format(_runtest_dir))
-        self.run_duplicity(options=[u"remove-all-but-n", u"1", self.backend_url, u"--force"])
+        self.run_duplicity(options=[u"remove-all-but-n-full", u"1", self.backend_url, u"--force"])
         leftovers = self.get_backend_files()
         self.assertEqual(full2_files, leftovers)
 
-    def test_remove_all_inc_of_but_n(self):
+    def test_remove_all_inc_of_but_n_full(self):
         u"""
         Test that remove-all-inc-of-but-n-full works in the simple case.
         """

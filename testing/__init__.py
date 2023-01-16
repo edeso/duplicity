@@ -32,9 +32,9 @@ from duplicity import config
 from duplicity import log
 from duplicity import util
 
-util.start_debugger()
-
 gettext.install(u'duplicity', names=[u'ngettext'])
+
+util.start_debugger()
 
 _testing_dir = os.path.dirname(os.path.abspath(__file__))
 _top_dir = os.path.dirname(_testing_dir)

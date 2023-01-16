@@ -109,7 +109,6 @@ class FunctionalTestCase(DuplicityTestCase):
             cmd_list.extend([u"--pydevd"])
         cmd_list.extend([u"-v0"])
         cmd_list.extend([u"--no-print-statistics"])
-        cmd_list.extend([u"--allow-source-mismatch"])
         cmd_list.extend([u"--archive-dir={0}/testfiles/cache".format(_runtest_dir)])
         if current_time:
             cmd_list.extend([u"--current-time", current_time])
@@ -183,7 +182,7 @@ class FunctionalTestCase(DuplicityTestCase):
 
     def restore(self, file_to_restore=None, time=None, options=[], **kwargs):
         assert not os.system(u"rm -rf {0}/testfiles/restore_out".format(_runtest_dir))
-        options = [self.backend_url, u"{0}/testfiles/restore_out".format(_runtest_dir)] + options
+        options = [u"restore", self.backend_url, u"{0}/testfiles/restore_out".format(_runtest_dir)] + options
         if file_to_restore:
             options.extend([u'--file-to-restore', file_to_restore])
         if time:
