@@ -188,14 +188,14 @@ class GPGFile(object):
         if encrypt:
             if profile.recipients:
                 gnupg.options.recipients = profile.recipients
-                cmdlist.append(u'--encrypt')
             if profile.hidden_recipients:
                 gnupg.options.hidden_recipients = profile.hidden_recipients
+            if profile.recipients or profile.hidden_recipients:
                 cmdlist.append(u'--encrypt')
-            if not (profile.recipients or profile.hidden_recipients):
+            else:
                 cmdlist.append(u'--symmetric')
-                # use integrity protection
-                gnupg.options.extra_args.append(u'--force-mdc')
+            # use integrity protection
+            gnupg.options.extra_args.append(u'--force-mdc')
             # Skip the passphrase if using the agent
             if config.use_agent:
                 gnupg_fhs = [u'stdin', ]
