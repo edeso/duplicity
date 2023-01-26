@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: duplicity\n"
 "Report-Msgid-Bugs-To: Kenneth Loafman <kenneth@loafman.com>\n"
-"POT-Creation-Date: 2023-01-13 11:30-0600\n"
-"PO-Revision-Date: 2023-01-13 17:48\n"
+"POT-Creation-Date: 2023-01-25 13:29-0600\n"
+"PO-Revision-Date: 2023-01-25 19:48\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -777,7 +777,7 @@ msgstr ""
 
 #. remote name for rclone.
 #. Example: rclone://remote:/some_dir
-#: ../duplicity/commandline.py:1015 ../duplicity/dup_collections.py:517
+#: ../duplicity/commandline.py:1015 ../duplicity/dup_collections.py:516
 msgid "remote"
 msgstr ""
 
@@ -1280,217 +1280,217 @@ msgstr ""
 msgid "Error processing remote manifest (%s): %s"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:268
+#: ../duplicity/dup_collections.py:267
 #, python-format
 msgid "Processing remote manifest %s (%s)"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:364
+#: ../duplicity/dup_collections.py:363
 msgid "Preferring Backupset over previous one!"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:367
+#: ../duplicity/dup_collections.py:366
 #, python-format
 msgid "Ignoring incremental Backupset (start_time: %s; needed: %s)"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:372
+#: ../duplicity/dup_collections.py:371
 #, python-format
 msgid "Added incremental Backupset (start_time: %s / end_time: %s)"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:442
+#: ../duplicity/dup_collections.py:441
 msgid "Chain start time: "
 msgstr ""
 
-#: ../duplicity/dup_collections.py:443
+#: ../duplicity/dup_collections.py:442
 msgid "Chain end time: "
 msgstr ""
 
-#: ../duplicity/dup_collections.py:444
+#: ../duplicity/dup_collections.py:443
 #, python-format
 msgid "Number of contained backup sets: %d"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:446
+#: ../duplicity/dup_collections.py:445
 #, python-format
 msgid "Total number of contained volumes: %d"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:448 ../duplicity/dup_collections.py:1224
+#: ../duplicity/dup_collections.py:447 ../duplicity/dup_collections.py:1223
 msgid "Type of backup set:"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:448 ../duplicity/dup_collections.py:1224
+#: ../duplicity/dup_collections.py:447 ../duplicity/dup_collections.py:1223
 msgid "Time:"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:448
+#: ../duplicity/dup_collections.py:447
 msgid "Num volumes:"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:452 ../duplicity/dup_collections.py:1230
+#: ../duplicity/dup_collections.py:451 ../duplicity/dup_collections.py:1229
 msgid "Full"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:455 ../duplicity/dup_collections.py:1232
+#: ../duplicity/dup_collections.py:454 ../duplicity/dup_collections.py:1231
 msgid "Incremental"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:515
+#: ../duplicity/dup_collections.py:514
 msgid "local"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:672
+#: ../duplicity/dup_collections.py:671
 msgid "Collection Status"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:674
+#: ../duplicity/dup_collections.py:673
 #, python-format
 msgid "Connecting with backend: %s"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:676
+#: ../duplicity/dup_collections.py:675
 #, python-format
 msgid "Archive dir: %s"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:678
+#: ../duplicity/dup_collections.py:677
 #, python-format
 msgid "Found %d secondary backup chain(s)."
 msgstr ""
 
-#: ../duplicity/dup_collections.py:681
+#: ../duplicity/dup_collections.py:680
 #, python-format
 msgid "Secondary chain %d of %d:"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:687
+#: ../duplicity/dup_collections.py:686
 msgid "Found primary backup chain with matching signature chain:"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:691
+#: ../duplicity/dup_collections.py:690
 msgid "No backup chains with active signatures found"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:694
+#: ../duplicity/dup_collections.py:693
 #, python-format
 msgid "Also found %d backup set(s) not part of any chain,"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:696
+#: ../duplicity/dup_collections.py:695
 #, python-format
 msgid "and %d incomplete backup set(s)."
 msgstr ""
 
 #. "cleanup" is a hard-coded command, so do not translate it
-#: ../duplicity/dup_collections.py:699
+#: ../duplicity/dup_collections.py:698
 msgid "These may be deleted by running duplicity with the \"cleanup\" command."
 msgstr ""
 
-#: ../duplicity/dup_collections.py:702
+#: ../duplicity/dup_collections.py:701
 msgid "No orphaned or incomplete backup sets found."
 msgstr ""
 
-#: ../duplicity/dup_collections.py:718
+#: ../duplicity/dup_collections.py:717
 #, python-format
 msgid "%d file(s) exists on backend"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:726
+#: ../duplicity/dup_collections.py:725
 #, python-format
 msgid "%d file(s) exists in cache"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:777
+#: ../duplicity/dup_collections.py:776
 msgid "Warning, discarding last backup set, because of missing signature file."
 msgstr ""
 
-#: ../duplicity/dup_collections.py:800
+#: ../duplicity/dup_collections.py:799
 msgid "Warning, found the following local orphaned signature file(s):"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:805
+#: ../duplicity/dup_collections.py:804
 msgid "Warning, found the following remote orphaned signature file(s):"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:810
+#: ../duplicity/dup_collections.py:809
 msgid "Warning, found signatures but no corresponding backup files"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:814
+#: ../duplicity/dup_collections.py:813
 msgid "Warning, found incomplete backup sets, probably left from aborted session"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:818
+#: ../duplicity/dup_collections.py:817
 msgid "Warning, found the following orphaned backup file(s):"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:831
+#: ../duplicity/dup_collections.py:830
 #, python-format
 msgid "Extracting backup chains from list of files: %s"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:843
+#: ../duplicity/dup_collections.py:842
 #, python-format
 msgid "File %s is part of known set"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:846
+#: ../duplicity/dup_collections.py:845
 #, python-format
 msgid "File %s is not part of a known set; creating new set"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:851
+#: ../duplicity/dup_collections.py:850
 #, python-format
 msgid "Ignoring file (rejected by backup set) '%s'"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:867
+#: ../duplicity/dup_collections.py:866
 #, python-format
 msgid "Found backup chain %s"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:872
+#: ../duplicity/dup_collections.py:871
 #, python-format
 msgid "Added set %s to pre-existing chain %s"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:876
+#: ../duplicity/dup_collections.py:875
 #, python-format
 msgid "Found orphaned set %s"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:1026
+#: ../duplicity/dup_collections.py:1025
 #, python-format
 msgid "No signature chain for the requested time. Using oldest available chain, starting at time %s."
 msgstr ""
 
-#: ../duplicity/dup_collections.py:1222
+#: ../duplicity/dup_collections.py:1221
 #, python-format
 msgid "File: %s"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:1223
+#: ../duplicity/dup_collections.py:1222
 #, python-format
 msgid "Total number of backup: %d"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:1224 ../duplicity/dup_collections.py:1250
+#: ../duplicity/dup_collections.py:1223 ../duplicity/dup_collections.py:1249
 msgid "Type of file change:"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:1248
+#: ../duplicity/dup_collections.py:1247
 #, python-format
 msgid " Backup set time: %s"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:1249
+#: ../duplicity/dup_collections.py:1248
 #, python-format
 msgid "Total number of changes: %d"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:1250
+#: ../duplicity/dup_collections.py:1249
 msgid "File:"
 msgstr ""
 
