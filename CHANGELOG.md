@@ -1,8 +1,41 @@
-## rel.1.2.1 (2022-12-02)
+## rel.1.2.2 (2023-01-26)
 
 ### Changes
 
+* \_runtest\_dir on Darwin may use TMPDIR for testing. [Kenneth Loafman]
+
+* Update duplicity.pot. [Kenneth Loafman]
+
 * More changes to get release process working. [Kenneth Loafman]
+
+### Fix
+
+* Fix to work with b2sdk 1.19.0. [Adam Jacobs]
+
+* Fix #692.  Redundant --encrypt option added in gpg.py. [Kenneth Loafman]
+
+  Been around forever.  GPG 2.2.x is the first to detect.  Added   only
+  when both recipients and hidden_recipients present.
+
+* Fix super() call in test\_selection.py. [Kenneth Loafman]
+
+* Regression on issue #147, change password for incremental. [Kenneth Loafman]
+
+  Changed testcase issue147.sh to need incremental.
+  Fixed dup_collections.py to bail with fatal error.
+
+* Crash if a socket is listed with --files-from.  Fixes #689. [Kenneth Loafman]
+
+  Patch supplied by Jethro Donaldson (@jeth-ro).
+
+### Other
+
+* Add detailed step-by-step instructions. [ede]
+
+
+## rel.1.2.1 (2022-12-02)
+
+### Changes
 
 * Fix for setuptools changes.  Add testing data files to mix. [Kenneth Loafman]
 
