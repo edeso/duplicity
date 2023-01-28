@@ -24,11 +24,7 @@
 import sys
 
 from duplicity import diffdir
-from duplicity.globmatch import (
-    GlobbingError,
-    FilePrefixError,
-    select_fn_from_glob,
-)
+from duplicity.globmatch import GlobbingError, FilePrefixError, select_fn_from_glob
 from duplicity.path import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 
 u"""Iterate exactly the requested files in a directory
@@ -75,7 +71,6 @@ class Select(object):
     """
     def __init__(self, path):
         u"""Initializer, called with Path of root directory"""
-        self.iter = None
         assert isinstance(path, Path), str(path)
         self.selection_functions = []
         self.rootpath = path
@@ -165,10 +160,10 @@ class Select(object):
                             diffdir.stats.Errors += 1
                     elif s == 1:
                         # Should be included
-                        yield new_path, 0
+                        yield new_path, False
                     elif s == 2 and new_path.isdir():
                         # Is a directory that should be scanned
-                        yield new_path, 1
+                        yield new_path, True
 
         if not path.type:
             # base doesn't exist
@@ -376,7 +371,10 @@ pattern (such as '**') which matches the base directory.""") %
                 path = os.path.join(self.rootpath.uc_name, dirname).rstrip(os.path.sep)
                 if path not in filelist:
                     filelist[path] = set()
-                filelist[path].add(basename)
+                if isinstance(basename, str):
+                    filelist[path].add(os.fsencode(basename))
+                else:
+                    filelist[path].add(basename)
                 line = dirname
 
         if absolute_path:

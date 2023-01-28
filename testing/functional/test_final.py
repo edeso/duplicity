@@ -67,6 +67,7 @@ class FinalTest(FunctionalTestCase):
     @pytest.mark.slow
     def test_basic_cycle(self, backup_options=[], restore_options=[]):
         u"""Run backup/restore test on basic directories"""
+        backup_options.append(u"--allow-source-mismatch")
         self.runtest([u"{0}/testfiles/dir1".format(_runtest_dir),
                       u"{0}/testfiles/dir2".format(_runtest_dir),
                       u"{0}/testfiles/dir3".format(_runtest_dir)],
@@ -89,8 +90,7 @@ class FinalTest(FunctionalTestCase):
     def test_asym_cycle(self):
         u"""Like test_basic_cycle but use asymmetric encryption and signing"""
         backup_options = [u"--encrypt-key", self.encrypt_key1,
-                          u"--sign-key", self.sign_key,
-                          u"--allow-source-mismatch"]
+                          u"--sign-key", self.sign_key]
         restore_options = [u"--encrypt-key", self.encrypt_key1,
                            u"--sign-key", self.sign_key]
         self.test_basic_cycle(backup_options=backup_options,
@@ -100,8 +100,7 @@ class FinalTest(FunctionalTestCase):
     def test_asym_with_hidden_recipient_cycle(self):
         u"""Like test_basic_cycle but use asymmetric encryption (hiding key id) and signing"""
         backup_options = [u"--hidden-encrypt-key", self.encrypt_key1,
-                          u"--sign-key", self.sign_key,
-                          u"--allow-source-mismatch"]
+                          u"--sign-key", self.sign_key]
         restore_options = [u"--hidden-encrypt-key", self.encrypt_key1,
                            u"--sign-key", self.sign_key]
         self.test_basic_cycle(backup_options=backup_options,

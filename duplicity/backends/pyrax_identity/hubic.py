@@ -10,11 +10,8 @@ import re
 import time
 import urllib.parse
 
+from requests.compat import quote, quote_plus
 import requests
-from requests.compat import (
-    quote,
-    quote_plus,
-)
 
 try:
     import pyrax
@@ -193,7 +190,6 @@ class HubicIdentity(BaseIdentity):
         else:
             raise exc.AuthenticationFailed(u"Unable to get oauth access token from json")
 
-    # noinspection PyPackageRequirements
     def authenticate(self):
         config = configparser.ConfigParser()
         config.read(TOKENS_FILE)

@@ -68,7 +68,6 @@ class ROPath(object):
     """
     def __init__(self, index, stat=None):  # pylint: disable=unused-argument
         u"""ROPath initializer"""
-        self.symtext = None
         self.opened, self.fileobj = None, None
         self.index = index
         self.stat, self.type = None, None
@@ -515,7 +514,6 @@ class Path(ROPath):
         u"""Path initializer"""
         # self.opened should be true if the file has been opened, and
         # self.fileobj can override returned fileobj
-        super().__init__(index)
         self.opened, self.fileobj = None, None
         if isinstance(base, str):
             # For now (Python 2), it is helpful to know that all paths
@@ -812,10 +810,6 @@ class DupPath(Path):
 
 class PathDeleter(ITRBranch):
     u"""Delete a directory.  Called by Path.deltree"""
-
-    def __init__(self):
-        self.path = None
-
     def start_process(self, index, path):  # pylint: disable=unused-argument
         self.path = path
 

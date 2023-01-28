@@ -36,15 +36,11 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-from requests.exceptions import ConnectionError  # pylint: disable=redefined-builtin
-
-import duplicity.backend
-from duplicity import (
-    log,
-    config,
-)
+from duplicity import log, config
 from duplicity import progress
 from duplicity.errors import BackendException
+from requests.exceptions import ConnectionError  # pylint: disable=redefined-builtin
+import duplicity.backend
 
 # This is chunk size for upload using Dpbx chumked API v2. It doesn't
 # make sense to make it much large since Dpbx SDK uses connection pool

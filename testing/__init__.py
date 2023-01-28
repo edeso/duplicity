@@ -34,7 +34,8 @@ from duplicity import util
 
 gettext.install(u'duplicity', names=[u'ngettext'])
 
-util.start_debugger()
+log.setup()
+# util.start_debugger()
 
 _testing_dir = os.path.dirname(os.path.abspath(__file__))
 _top_dir = os.path.dirname(_testing_dir)
@@ -42,10 +43,14 @@ _overrides_dir = os.path.join(_testing_dir, u'overrides')
 _bin_dir = os.path.join(_testing_dir, u'overrides', u'bin')
 
 if platform.system().startswith(u'Darwin'):
-    # Use temp space from getconf, never /tmp
-    _runtest_dir = subprocess.check_output([u'getconf', u'DARWIN_USER_TEMP_DIR'])
+    # Use temp space TMPDIR or from getconf, never /tmp
+    _runtest_dir = (os.environ.get(u"TMPDIR", None) or
+                    subprocess.check_output([u'getconf', u'DARWIN_USER_TEMP_DIR']))
     _runtest_dir = os.fsdecode(_runtest_dir).rstrip().rstrip(u'/')
+    if not os.path.exists(_runtest_dir):
+        os.makedirs(_runtest_dir)
 else:
+    # be a little more flexible
     _runtest_dir = os.getenv(u'TMPDIR', False) or os.getenv(u'TEMP', False) or u'/tmp'
 
 # Adjust python path for duplicity and override modules

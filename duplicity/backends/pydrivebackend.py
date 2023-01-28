@@ -27,7 +27,6 @@ from duplicity.errors import BackendException
 class PyDriveBackend(duplicity.backend.Backend):
     u"""Connect to remote store using PyDrive API"""
 
-    # noinspection PyPackageRequirements
     def __init__(self, parsed_url):
         duplicity.backend.Backend.__init__(self, parsed_url)
         try:

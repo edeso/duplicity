@@ -70,7 +70,6 @@ def getpass_safe(message):
     # in non-ascii characters.
     import getpass
     import locale
-    message = message.encode(locale.getpreferredencoding(), u'replace')
     return getpass.getpass(message)
 
 
@@ -1354,7 +1353,6 @@ class Restart(object):
     """
 
     def __init__(self, last_backup):
-        self.time = None
         self.type = None
         self.start_time = None
         self.end_time = None

@@ -26,15 +26,12 @@ import unittest
 from duplicity import dup_time
 from . import UnitTestCase
 
-# For type testing against both int and long types that works in python 2/3
-integer_types = (int,)
-
 
 class TimeTest(object):
     def testConversion(self):
         u"""test timetostring and stringtotime"""
         dup_time.setcurtime()
-        assert type(dup_time.curtime) in integer_types
+        assert type(dup_time.curtime) is int
         assert isinstance(dup_time.curtimestr, (str, u"".__class__))
         assert (dup_time.cmp(int(dup_time.curtime), dup_time.curtimestr) == 0 or
                 dup_time.cmp(int(dup_time.curtime) + 1, dup_time.curtimestr) == 0)

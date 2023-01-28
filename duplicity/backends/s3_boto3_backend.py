@@ -44,7 +44,6 @@ from duplicity.errors import (
 #              - when restoring from glacier or deep archive, specify TTL.
 #              - allow user to specify how fast to restore (impacts cost).
 
-# noinspection PyPackageRequirements
 class S3Boto3Backend(duplicity.backend.Backend):
     u"""
     Backend for Amazon's Simple Storage System, (aka Amazon S3), though
@@ -86,7 +85,6 @@ class S3Boto3Backend(duplicity.backend.Backend):
         self.bucket = None
         self.tracker = UploadProgressTracker()
 
-    # noinspection PyPackageRequirements
     def reset_connection(self):
         import boto3
         import botocore

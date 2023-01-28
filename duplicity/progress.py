@@ -33,15 +33,12 @@ This is a forecast based on gathered evidence.
 """
 
 
+from datetime import datetime, timedelta
 import collections as sys_collections
 import math
 import pickle
 import threading
 import time
-from datetime import (
-    datetime,
-    timedelta,
-)
 
 from duplicity import config
 from duplicity import log

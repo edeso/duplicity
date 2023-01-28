@@ -628,13 +628,6 @@ class DeltaTarBlockIter(TarBlockIter):
     delta_path_iter, so the delta information has already been
     calculated.
     """
-
-    def __init__(self, input_iter):
-        super().__init__(input_iter)
-        self.process_ropath = None
-        self.process_fp = None
-        self.process_prefix = None
-
     def process(self, delta_ropath):
         u"""
         Get a tarblock from delta_ropath

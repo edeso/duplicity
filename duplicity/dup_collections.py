@@ -32,9 +32,6 @@ from duplicity import path
 from duplicity import util
 from duplicity.gpg import GPGError
 
-# For type testing against both int and long types that works in python 2/3
-integer_types = (int,)
-
 
 class CollectionsError(Exception):
     pass
@@ -510,7 +507,7 @@ class SignatureChain(object):
         Check to make sure times are in whole seconds
         """
         for time in time_list:
-            if type(time) not in integer_types:
+            if type(time) is not int:
                 assert 0, u"Time %s in %s wrong type" % (time, time_list)
 
     def islocal(self):

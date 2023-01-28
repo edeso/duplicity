@@ -28,9 +28,6 @@ import time
 from duplicity import config
 from duplicity import util
 
-# For type testing against both int and long types that works in python 2/3
-integer_types = (int,)
-
 
 class TimeException(Exception):
     pass
@@ -72,14 +69,14 @@ def setcurtime(time_in_secs=None):
     u"""Sets the current time in curtime and curtimestr"""
     global curtime, curtimestr
     t = time_in_secs or int(time.time())
-    assert type(t) in integer_types
+    assert type(t) is int
     curtime, curtimestr = t, timetostring(t)
 
 
 def setprevtime(time_in_secs):
     u"""Sets the previous time in prevtime and prevtimestr"""
     global prevtime, prevtimestr
-    assert type(time_in_secs) in integer_types, prevtime
+    assert type(time_in_secs) is int, prevtime
     prevtime, prevtimestr = time_in_secs, timetostring(time_in_secs)
 
 
@@ -175,7 +172,7 @@ def inttopretty(seconds):
     if seconds == 1:
         partlist.append(u"1 second")
     elif not partlist or seconds > 1:
-        if isinstance(seconds, integer_types):
+        if isinstance(seconds, int):
             partlist.append(u"%s seconds" % seconds)
         else:
             partlist.append(u"%.2f seconds" % seconds)

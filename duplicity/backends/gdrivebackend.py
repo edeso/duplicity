@@ -26,14 +26,12 @@ from duplicity import log
 from duplicity.errors import BackendException
 
 
-# noinspection PyPackageRequirements
 class GDriveBackend(duplicity.backend.Backend):
     u"""Connect to remote store using Google Drive API V3"""
 
     PAGE_SIZE = 100
     MIN_RESUMABLE_UPLOAD = 5 * 1024 * 1024
 
-    # noinspection PyPackageRequirements
     def __init__(self, parsed_url):
         duplicity.backend.Backend.__init__(self, parsed_url)
         try:

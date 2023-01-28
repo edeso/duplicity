@@ -147,7 +147,7 @@ class MegaBackend(duplicity.backend.Backend):
             cmd = [u'megaget', u'--config', self._megarc, u'--no-progress',
                    u'--path', local_file, self._folder + u'/' + remote_file]
         else:
-            cmd = [u'megaget', u'-', self._username, u'-p', self._password, u'--no-progress',
+            cmd = [u'megaget', u'-u', self._username, u'-p', self._password, u'--no-progress',
                    u'--path', local_file, self._folder + u'/' + remote_file]
 
         self.subprocess_popen(cmd)
@@ -160,7 +160,7 @@ class MegaBackend(duplicity.backend.Backend):
             cmd = [u'megaput', u'--config', self._megarc, u'--no-progress',
                    u'--path', self._folder + u'/' + remote_file, local_file]
         else:
-            cmd = [u'megaput', u'-', self._username, u'-p', self._password, u'--no-progress',
+            cmd = [u'megaput', u'-u', self._username, u'-p', self._password, u'--no-progress',
                    u'--path', self._folder + u'/' + remote_file, local_file]
 
         try:

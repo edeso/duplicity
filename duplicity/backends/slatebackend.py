@@ -155,7 +155,7 @@ class SlateBackend(duplicity.backend.Backend):
         # file_list = self._list()
 
         # if remote_filename not in file_list:
-        #     raise BackendException("The chosen file does not exist in the chosen slate")
+        #     raise BackendException(u"The chosen file does not exist in the chosen slate")
 
         for slate in slates:
             if slate[u'id'] == self.slate_id:

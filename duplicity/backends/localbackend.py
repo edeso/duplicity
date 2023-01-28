@@ -22,10 +22,7 @@
 import os
 
 import duplicity.backend
-from duplicity import (
-    path,
-    progress,
-)
+from duplicity import path, progress
 from duplicity.errors import BackendException
 
 

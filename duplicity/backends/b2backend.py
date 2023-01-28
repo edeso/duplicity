@@ -30,10 +30,9 @@ import duplicity.backend
 from duplicity import config
 from duplicity import log
 from duplicity import progress
-from duplicity.errors import (
-    BackendException,
-    FatalBackendException,
-)
+from duplicity import util
+from duplicity import config
+from duplicity.errors import BackendException, FatalBackendException
 
 
 class B2ProgressListener(object):
@@ -58,7 +57,6 @@ class B2Backend(duplicity.backend.Backend):
     Backend for BackBlaze's B2 storage service
     """
 
-    # noinspection PyPackageRequirements
     def __init__(self, parsed_url):
         u"""
         Authorize to B2 api and set up needed variables

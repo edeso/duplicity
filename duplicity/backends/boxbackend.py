@@ -21,12 +21,8 @@
 
 import os
 
-from boxsdk import (
-    Client,
-    JWTAuth,
-)
-
 import duplicity.backend
+from boxsdk import Client, JWTAuth
 from duplicity.errors import BackendException
 
 

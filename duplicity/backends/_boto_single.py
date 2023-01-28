@@ -27,11 +27,9 @@ from concurrent.futures import ThreadPoolExecutor
 import duplicity.backend
 from duplicity import config
 from duplicity import log
+from duplicity.errors import FatalBackendException, BackendException
 from duplicity import progress
-from duplicity.errors import (
-    FatalBackendException,
-    BackendException,
-)
+from duplicity import util
 
 BOTO_MIN_VERSION = u"2.1.1"
 
