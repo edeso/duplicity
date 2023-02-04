@@ -1557,6 +1557,8 @@ below.
 .B "OneDrive Backend"
 .RS
 onedrive://some_dir
+See also
+.B "A NOTE ON ONEDRIVE BACKEND"
 .RE
 
 .TP
@@ -2665,6 +2667,52 @@ will try with the next backend on failure.
 ]
 .fi
 .RE
+
+.SH A NOTE ON ONEDRIVE BACKEND
+onedrive:// works with both personal and business onedrive as well as sharepoint drives.
+On first use you be provided with an URL to with a microsoft account. Open it in your web browser.
+
+After authenticating, copy the redirected URL back to duplicity. Duplicity will fetch a token and store
+it in ~/.duplicity_onedrive_oauthtoken.json. This location can be overridden by setting the
+DUPLICITY_ONEDRIVE_TOKEN environment variable.
+
+Duplicity uses a default App ID registered with Microsoft Azure AD.
+It will need to be approved by an administrator of your Office365 Tenant on a business account.
+
+.SS Register and set your own microsoft app id
+
+.IP 1.
+visit https://portal.azure.com
+
+.IP 2.
+Choose "Enterprise Applications", then "Create your own Application"
+
+.IP 3.
+Input your application name and select "Register an application to integrate with Azure AD".
+
+.IP 4.
+Continue to the next page and set the redirect uri to "https://login.microsoftonline.com/common/oauth2/nativeclient",
+choosing "Public client/native" from the dropdown. Click create.
+
+.IP 5.
+Find the application id in "Enterprise Applications" and set the environment variable DUPLICITY_ONEDRIVE_CLIENT_ID to it.
+
+.BR
+More information on Microsoft Apps at: https://learn.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app
+
+.SS Backup to a sharepoint site instead of onedrive
+
+to use a sharepoint site you need to find and provide the site's tenant and site id.
+
+.IP 1.
+Login with your Microsoft Account at https://<o365_tenant>.sharepoint.com/
+
+.IP 2.
+Navigate to https://<o365_tenant>.sharepoint.com/sites/<path_to_site>/_api/site/id
+
+.IP 3.
+Copy the disyplayed UUID (site_id) and set the DUPLICITY_ONEDRIVE_ROOT environment variable to
+"sites/<o365_tenant>.sharepoint.com,<site_id>/drive"
 
 .SH A NOTE ON PAR2 WRAPPER BACKEND
 Par2 Wrapper Backend can be used in combination with all other backends to

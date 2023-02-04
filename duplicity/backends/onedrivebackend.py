@@ -56,8 +56,13 @@ class OneDriveBackend(duplicity.backend.Backend):
         duplicity.backend.Backend.__init__(self, parsed_url)
 
         self.directory = parsed_url.path.lstrip(u'/')
-        onedrive_root = os.environ.get(u'ONEDRIVE_ROOT', u'me/drive/root')
-        self.directory_onedrive_path = u'%s:/%s/' % (onedrive_root, self.directory)
+
+        # this drive_root works for personal and business onedrive
+        # to use a sharepoint 365 default drive this needs to be set to
+        # 'sites/<xxxx.sharepoint.com>,<site id>/drive'
+        self.drive_root = os.environ.get(u'DUPLICITY_ONEDRIVE_ROOT', u'me/drive')
+
+        self.directory_onedrive_path = u'%s:/%s/' % (self.drive_root + u'/root', self.directory)
         if self.directory == u"":
             raise BackendException((
                 u'You did not specify a path. '
@@ -120,7 +125,7 @@ class OneDriveBackend(duplicity.backend.Backend):
         remote_filename = remote_filename.decode(u"UTF-8")
         source_size = os.path.getsize(source_path.name)
         start = time.time()
-        response = self.http_client.get(self.API_URI + u'me/drive?$select=quota')
+        response = self.http_client.get(self.API_URI + self.drive_root + u'?$select=quota')
         response.raise_for_status()
         if (u'quota' in response.json()):
             available = response.json()[u'quota'].get(u'remaining', None)
@@ -196,7 +201,7 @@ class OneDriveBackend(duplicity.backend.Backend):
 class OneDriveOAuth2Session(object):
     u"""A tiny wrapper for OAuth2Session that handles some OneDrive details."""
 
-    OAUTH_TOKEN_URI = u'https://login.live.com/oauth20_token.srf'
+    OAUTH_TOKEN_URI = u'https://login.microsoftonline.com/common/oauth2/v2.0/token'
 
     def __init__(self):
         # OAUTHLIB_RELAX_TOKEN_SCOPE prevents the oauthlib from complaining
@@ -239,16 +244,23 @@ class DefaultOAuth2Session(OneDriveOAuth2Session):
     u"""A possibly-interactive console session using a built-in API key"""
 
     OAUTH_TOKEN_PATH = os.path.expanduser(
-        u'~/.duplicity_onedrive_oauthtoken.json')
-    CLIENT_ID = u'000000004C12E85D'
-    OAUTH_AUTHORIZE_URI = u'https://login.live.com/oauth20_authorize.srf'
-    OAUTH_REDIRECT_URI = u'https://login.live.com/oauth20_desktop.srf'
+        os.environ.get(u'DUPLICITY_ONEDRIVE_TOKEN',
+                       u'~/.duplicity_onedrive_oauthtoken.json'))
+
+    CLIENT_ID = os.getenv(u'DUPLICITY_ONEDRIVE_CLIENT_ID', u'1612f841-ae01-46ab-9535-43ba6ec04029')
+    OAUTH_AUTHORIZE_URI = u'https://login.microsoftonline.com/common/oauth2/v2.0/authorize'
+    OAUTH_REDIRECT_URI = u'https://login.microsoftonline.com/common/oauth2/nativeclient'
     # Files.Read is for reading files,
     # Files.ReadWrite  is for creating/writing files,
+    # Files.Read.All and Files.Read.All are used if a sharepoint drive is provided by ONEDRIVE_ROOT in env
     # User.Read is needed for the /me request to see if the token works.
     # offline_access is necessary for duplicity to access onedrive without
     # the user being logged in right now.
-    OAUTH_SCOPE = [u'Files.Read', u'Files.ReadWrite', u'User.Read', u'offline_access']
+    OAUTH_SCOPE = [
+        u'Files.Read', u'Files.ReadWrite',
+        u'Files.Read.All', u'Files.ReadWrite.All',
+        u'User.Read', u'offline_access'
+    ]
 
     def __init__(self, api_uri):
         super(DefaultOAuth2Session, self).__init__()
@@ -303,7 +315,8 @@ class DefaultOAuth2Session(OneDriveOAuth2Session):
 
             token = self.session.fetch_token(
                 self.OAUTH_TOKEN_URI,
-                authorization_response=redirected_to)
+                authorization_response=redirected_to,
+                include_client_id=True)
 
             user_info_response = self.session.get(api_uri + u'me')
             user_info_response.raise_for_status()
@@ -332,6 +345,7 @@ class DefaultOAuth2Session(OneDriveOAuth2Session):
 
 class ExternalOAuth2Session(OneDriveOAuth2Session):
     u"""Caller is managing tokens and provides an active refresh token."""
+
     def __init__(self, client_id, refresh_token):
         super(ExternalOAuth2Session, self).__init__()
 
