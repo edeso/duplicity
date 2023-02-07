@@ -49,7 +49,9 @@ files_to_test.extend(glob.glob(os.path.join(_top_dir, u'testing/*.py')))
 
 class CodeTest(DuplicityTestCase):
 
-    def run_checker(self, cmd, returncodes=[0]):
+    def run_checker(self, cmd, returncodes=None):
+        if returncodes is None:
+            returncodes = [0]
         process = subprocess.Popen(cmd,
                                    stdout=subprocess.PIPE,
                                    stderr=subprocess.PIPE,
@@ -85,7 +87,6 @@ class CodeTest(DuplicityTestCase):
         u"""For predictable results in python/3 all string literals need to be marked as unicode, bytes or raw"""
 
         # Find all the .py files in the duplicity tree
-        # We cannot use glob.glob recursive until we drop support for Python < 3.5
         matches = []
 
         for python_source_file in files_to_test:

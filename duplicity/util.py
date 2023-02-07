@@ -235,9 +235,6 @@ def which(program):
 
 
 def start_debugger():
-    # For multiprocess debugging, i.e. testcase and duplicity
-    # specify a different port in each process.  Do not forget
-    # to set allow multiple instances for the debug server.
     if u'--pydevd' in sys.argv or os.environ.get(u"PYDEVD", None):
         try:
             import pydevd_pycharm  # pylint: disable=import-error
@@ -262,13 +259,15 @@ def start_debugger():
         # new pid, next port, start a new debugger
         if prev_port:
             debug_port = int(prev_port) + 1
+
+        # ignition
         try:
             pydevd_pycharm.settrace(debug_host,
                                     port=debug_port,
                                     suspend=False,
                                     stdoutToServer=True,
                                     stderrToServer=True,
-                                    patch_multiprocessing=True,
+                                    # patch_multiprocessing=True,
                                     )
             log.Info(f"Connection {debug_host}:{debug_port} accepted for debug.")
         except ConnectionRefusedError as e:
@@ -280,7 +279,7 @@ def start_debugger():
         base = os.path.sep.join(base)
         sys.path.insert(0, base)
 
-        # save last debug port used
+        # save last debug pid:port used
         os.environ[u'DEBUG_RUNNING'] = f"{os.getpid()}:{debug_port}"
 
 
@@ -307,16 +306,3 @@ def csv_args_to_dict(arg):
             for i in range(0, len(row), 2):
                 mydict[row[i]] = row[i + 1]
     return mydict
-
-
-# TODO: just use util.fsdecode().casefold() directly when python27 is gone
-def casefold_compat(s):
-    u"""
-    Compatability function for casefolding which provides an acceptable for
-    older pythons. Can likely be removed once python2 support is no longer o
-    any interest.
-    """
-    if sys.version_info.major >= 3 and sys.version_info.minor >= 3:
-        return s.casefold()
-    else:
-        return s.lower()

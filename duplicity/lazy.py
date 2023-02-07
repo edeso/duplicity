@@ -23,6 +23,7 @@ u"""Define some lazy data structures and functions acting on them"""
 
 
 import os
+import sys
 
 from duplicity import log
 from duplicity import robust
@@ -84,18 +85,18 @@ class Iter(object):
                 i2 = next(iter2)
             except StopIteration:
                 if verbose:
-                    print(u"End when i1 = %s" % (i1,))
+                    print(u"End when i1 = %s" % (i1,), file=sys.stderr)
                 return None
             if not operator(i1, i2):
                 if verbose:
-                    print(u"%s not equal to %s" % (i1, i2))
+                    print(u"%s not equal to %s" % (i1, i2), file=sys.stderr)
                 return None
         try:
             i2 = next(iter2)
         except StopIteration:
             return 1
         if verbose:
-            print(u"End when i2 = %s" % (i2,))
+            print(u"End when i2 = %s" % (i2,), file=sys.stderr)
         return None
 
     @staticmethod

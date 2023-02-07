@@ -18,6 +18,7 @@ genned_files=\
 	'*.tmp' \
 	'*~' \
 	'.eggs' \
+	'.pytest_cache' \
 	'.tox' \
 	'__pycache__' \
 	'_build' \
@@ -26,6 +27,7 @@ genned_files=\
 	'dist' \
 	'duplicity*.rst' \
 	'megatestresults' \
+	'report.xml' \
 	'testdb*' \
 	'testextension.sqlext' \
 	'testing*.rst' \

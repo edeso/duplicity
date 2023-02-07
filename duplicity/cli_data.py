@@ -243,6 +243,48 @@ class OptionKwargs:
         u"help": u"If supplied collect the files_changed list",
         u"default": dflt(config.files_changed)
     }
+    files_from = {
+        u"metavar": _(u"filename"),
+        u"type": check_file,
+        u"action": AddFilelistAction,
+        u"help": u"Defines the backup source as a sub-set of the source folder",
+        u"default": dflt(None)
+    }
+    filter_globbing = {
+        u"nargs": 0,
+        u"action": AddSelectionAction,
+        u"help": u"File selection mode switch, changes the interpretation of any subsequent\n"
+                 u"--exclude* or --include* options to shell globbing.",
+        u"default": dflt(None)
+    }
+    filter_ignorecase = {
+        u"nargs": 0,
+        u"action": AddSelectionAction,
+        u"help": u"File selection mode switch, changes the interpretation of any subsequent\n"
+                 u"--exclude* or --include* options to case-insensitive matching.",
+        u"default": dflt(None)
+    }
+    filter_literal = {
+        u"nargs": 0,
+        u"action": AddSelectionAction,
+        u"help": u"File selection mode switch, changes the interpretation of any subsequent\n"
+                 u"--exclude* or --include* options to literal strings.",
+        u"default": dflt(None)
+    }
+    filter_regexp = {
+        u"nargs": 0,
+        u"action": AddSelectionAction,
+        u"help": u"File selection mode switch, changes the interpretation of any subsequent\n"
+                 u"--exclude* or --include* options to regular expressions.",
+        u"default": dflt(None)
+    }
+    filter_strictcase = {
+        u"nargs": 0,
+        u"action": AddSelectionAction,
+        u"help": u"File selection mode switch, changes the interpretation of any subsequent\n"
+                 u"--exclude* or --include* options to case-sensitive matching.",
+        u"default": dflt(None)
+    }
     force = {
         u"action": u"store_true",
         u"help": u"Force duplicity to actually delete during cleanup",
@@ -692,6 +734,7 @@ backup_only_options = {
 selection_only_options = {
     u"exclude", u"exclude_device_files", u"exclude_filelist", u"exclude_if_present", u"exclude_older_than",
     u"exclude_other_filesystems", u"exclude_regexp", u"include", u"include_filelist", u"include_regexp",
+    u"files_from"
 }
 
 deprecated_write_options = {

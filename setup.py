@@ -292,7 +292,7 @@ setup(name=u"duplicity",
     maintainer=u"Kenneth Loafman <kenneth@loafman.com>",
     maintainer_email=u"kenneth@loafman.com",
     url=u"http://duplicity.us",
-    python_requires=u">2.6, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <4",
+    python_requires=u">=3.7, <4",
     platforms=[u"any"],
     packages=[
         u"duplicity",

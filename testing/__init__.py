@@ -35,7 +35,7 @@ from duplicity import util
 gettext.install(u'duplicity', names=[u'ngettext'])
 
 log.setup()
-# util.start_debugger()
+util.start_debugger()
 
 _testing_dir = os.path.dirname(os.path.abspath(__file__))
 _top_dir = os.path.dirname(_testing_dir)

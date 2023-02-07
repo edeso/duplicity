@@ -252,8 +252,10 @@ class ParseArgsTest(UnitTestCase):
         uindex = tuple([element.decode(sys.getfilesystemencoding(), u"strict") for element in path.index])
         return uindex
 
-    def ParseTest(self, tuplelist, indicies, filelists=[]):
+    def ParseTest(self, tuplelist, indicies, filelists=None):
         u"""No error if running select on tuple goes over indicies"""
+        if filelists is None:
+            filelists = []
         if not self.root:
             self.root = Path(u"testfiles/select")
         self.Select = Select(self.root)

@@ -49,7 +49,7 @@ def command_line_error(message):
 
 class AddSelectionAction(argparse.Action):
     def __init__(self, option_strings, dest, **kwargs):
-        super(AddSelectionAction, self).__init__(option_strings, dest, **kwargs)
+        super().__init__(option_strings, dest, **kwargs)
 
     def __call__(self, parser, namespace, values, option_string=None):
         addarg = os.fsdecode(value) if isinstance(values, bytes) else values
@@ -58,19 +58,19 @@ class AddSelectionAction(argparse.Action):
 
 class AddFilelistAction(argparse.Action):
     def __init__(self, option_strings, dest, **kwargs):
-        super(AddFilelistAction, self).__init__(option_strings, dest, **kwargs)
+        super().__init__(option_strings, dest, **kwargs)
 
     def __call__(self, parser, namespace, values, option_string=None):
-        config.select_opts.append((os.fsdecode(s), os.fsdecode(filename)))
+        config.select_opts.append((os.fsdecode(option_string), os.fsdecode(values)))
         try:
-            config.select_files.append(io.open(filename, u"rt", encoding=u"UTF-8"))
+            config.select_files.append(io.open(values, u"rt", encoding=u"UTF-8"))
         except Exception as e:
-            raise argparse.ArgumentError(filename, str(e))
+            raise argparse.ArgumentError(values, str(e))
 
 
 class AddRenameAction(argparse.Action):
     def __init__(self, option_strings, dest, **kwargs):
-        super(AddRenameAction, self).__init__(option_strings, dest, **kwargs)
+        super().__init__(option_strings, dest, **kwargs)
 
     def __call__(self, parser, namespace, values, option_string=None):
         key = os.fsencode(os.path.normcase(os.path.normpath(values[0])))

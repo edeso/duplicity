@@ -77,8 +77,8 @@ class FunctionalTestCase(DuplicityTestCase):
         backend_inst.close()
         self._check_setsid()
 
-    def run_duplicity(self, options=[], current_time=None, fail=None,
-                      passphrase_input=[]):
+    def run_duplicity(self, options=None, current_time=None, fail=None,
+                      passphrase_input=None):
         u"""
         Run duplicity binary with given arguments and options
         """
@@ -87,6 +87,10 @@ class FunctionalTestCase(DuplicityTestCase):
         # console unexpectedly (like for gpg password or such).
 
         # Check all string inputs are unicode -- we will convert to system encoding before running the command
+        if options is None:
+            options = []
+        if passphrase_input is None:
+            passphrase_input = []
         for item in passphrase_input:
             assert isinstance(item, u"".__class__), u"item " + unicode(item) + u" in passphrase_input is not unicode"
 
@@ -162,8 +166,10 @@ class FunctionalTestCase(DuplicityTestCase):
             print(u"...return_val:", return_val, file=sys.stderr)
             raise CmdError(return_val)
 
-    def backup(self, type, input_dir, options=[], **kwargs):  # pylint: disable=redefined-builtin
+    def backup(self, type, input_dir, options=None, **kwargs):  # pylint: disable=redefined-builtin
         u"""Run duplicity backup to default directory"""
+        if options is None:
+            options = []
         options = [type, input_dir, self.backend_url, u"--volsize", u"1"] + options
         before_files = self.get_backend_files()
 
@@ -180,7 +186,9 @@ class FunctionalTestCase(DuplicityTestCase):
         after_files = self.get_backend_files()
         return after_files - before_files
 
-    def restore(self, file_to_restore=None, time=None, options=[], **kwargs):
+    def restore(self, file_to_restore=None, time=None, options=None, **kwargs):
+        if options is None:
+            options = []
         assert not os.system(u"rm -rf {0}/testfiles/restore_out".format(_runtest_dir))
         options = [u"restore", self.backend_url, u"{0}/testfiles/restore_out".format(_runtest_dir)] + options
         if file_to_restore:
@@ -189,8 +197,10 @@ class FunctionalTestCase(DuplicityTestCase):
             options.extend([u'--restore-time', u"".__class__(time)])
         self.run_duplicity(options=options, **kwargs)
 
-    def verify(self, dirname, file_to_verify=None, time=None, options=[],
+    def verify(self, dirname, file_to_verify=None, time=None, options=None,
                **kwargs):
+        if options is None:
+            options = []
         options = [u"verify", self.backend_url, dirname] + options
         if file_to_verify:
             options.extend([u'--file-to-restore', file_to_verify])
@@ -198,10 +208,12 @@ class FunctionalTestCase(DuplicityTestCase):
             options.extend([u'--restore-time', u"".__class__(time)])
         self.run_duplicity(options=options, **kwargs)
 
-    def cleanup(self, options=[]):
+    def cleanup(self, options=None):
         u"""
         Run duplicity cleanup to default directory
         """
+        if options is None:
+            options = []
         options = [u"cleanup", self.backend_url, u"--force"] + options
         self.run_duplicity(options=options)
 

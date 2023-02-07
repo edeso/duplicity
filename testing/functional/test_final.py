@@ -21,24 +21,25 @@
 
 
 import os
+import pytest
 import unittest
 
-import pytest
 
 from duplicity import path
 from testing import _runtest_dir
-from . import (
-    CmdError,
-    FunctionalTestCase,
-)
+from . import CmdError, FunctionalTestCase
 
 
 class FinalTest(FunctionalTestCase):
     u"""
     Test backup/restore using duplicity binary
     """
-    def runtest(self, dirlist, backup_options=[], restore_options=[]):
+    def runtest(self, dirlist, backup_options=None, restore_options=None):
         u"""Run backup/restore test on directories in dirlist"""
+        if backup_options is None:
+            backup_options = []
+        if restore_options is None:
+            restore_options = []
         assert len(dirlist) >= 1
 
         # Back up directories to local backend
@@ -65,8 +66,12 @@ class FinalTest(FunctionalTestCase):
         assert path1.compare_recursive(path2, verbose=1)
 
     @pytest.mark.slow
-    def test_basic_cycle(self, backup_options=[], restore_options=[]):
+    def test_basic_cycle(self, backup_options=None, restore_options=None):
         u"""Run backup/restore test on basic directories"""
+        if backup_options is None:
+            backup_options = []
+        if restore_options is None:
+            restore_options = []
         backup_options.append(u"--allow-source-mismatch")
         self.runtest([u"{0}/testfiles/dir1".format(_runtest_dir),
                       u"{0}/testfiles/dir2".format(_runtest_dir),

@@ -22,13 +22,14 @@
 import os
 
 import duplicity.backend
-from boxsdk import Client, JWTAuth
 from duplicity.errors import BackendException
 
 
 class BoxBackend(duplicity.backend.Backend):
     def __init__(self, parsed_url):
         duplicity.backend.Backend.__init__(self, parsed_url)
+
+        from boxsdk import Client, JWTAuth
 
         self._client = self.get_box_client(parsed_url)
         self._folder = (

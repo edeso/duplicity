@@ -81,7 +81,9 @@ class Snapshot(sys_collections.deque):
         pickle.dump(self, progressfd)
         progressfd.close()
 
-    def __init__(self, iterable=[], maxlen=10):
+    def __init__(self, iterable=None, maxlen=10):
+        if iterable is None:
+            iterable = []
         super(Snapshot, self).__init__(iterable, maxlen)
         self.last_vol = 0
 
@@ -329,7 +331,7 @@ class LogProgressThread(threading.Thread):
     """
     def __init__(self):
         super(LogProgressThread, self).__init__()
-        self.setDaemon(True)
+        self.daemon = True
         self.finished = False
 
     def run(self):
