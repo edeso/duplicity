@@ -170,12 +170,12 @@ def ignore_missing(fn, filename):
 
 @atexit.register
 def release_lockfile():
-    if config.lockfile:
+    if config.lockfile and os.path.exists(config.lockfile):
         log.Debug(_(u"Releasing lockfile %s") % config.lockpath)
         try:
             config.lockfile.release()
+            os.remove(config.lockfile)
             config.lockfile = None
-            os.remove(config.lockpath)
             config.lockpath = u""
         except Exception as e:
             log.Error(u"Could not release lockfile: %s" % str(e))

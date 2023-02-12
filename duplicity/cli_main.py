@@ -27,6 +27,7 @@ import duplicity
 from duplicity import backend
 from duplicity import config
 from duplicity import gpg
+from duplicity import log
 from duplicity import path
 from duplicity.cli_data import *
 from duplicity.cli_util import *
@@ -55,21 +56,60 @@ def make_wide(formatter, w=120, h=46):
         return formatter
 
 
+class DuplicityArgumentParser(argparse.ArgumentParser):
+    u"""
+    Return an argument parser friendly to logging
+    Note: log.setup() MUST be run before this
+    """
+    def print_usage(self, file=None):
+        if file is None:
+            file = _sys.stdout
+        log.Info(self.format_usage())
+
+    def print_help(self, file=None):
+        if file is None:
+            file = _sys.stdout
+        log.Info(self.format_help())
+
+    # ===============
+    # Exiting methods
+    # ===============
+    def exit(self, status=0, message=None):
+        if message:
+            log.Info(message)
+        sys.exit(status)
+
+    def error(self, message):
+        """error(message: string)
+
+        Prints a usage message incorporating the message to stderr and
+        exits.
+
+        If you override this in a subclass, it should not return -- it
+        should either exit or raise an exception.
+        """
+        self.print_usage(_sys.stderr)
+        self.exit(2, _(f'{self.prog}: error: {message}\n') % args)
+
+
+
 def parse_cmdline_options(arglist):
     u"""
     Parse argument list
     """
     # set up parent parser
-    parser = argparse.ArgumentParser(
+    parser = DuplicityArgumentParser(
         prog=u'duplicity',
         argument_default=None,
-        formatter_class=make_wide(DuplicityHelpFormatter),
-        # epilog=help_url_formats,
+        formatter_class=make_wide(DuplicityHelpFormatter)
     )
     for var in parent_only_options:
         names = OptionAliases.__dict__.get(var, []) + [var]
         names = [var2opt(n) for n in names]
         parser.add_argument(*names, **OptionKwargs.__dict__[var])
+
+    # preprocess logging options
+    args, remainder = parser.parse_known_args(arglist)
 
     # set up command subparsers
     subparsers = parser.add_subparsers(
@@ -107,7 +147,7 @@ def parse_cmdline_options(arglist):
             subparser_dict[cmd].add_argument(*names, **OptionKwargs.__dict__[opt])
 
     # parse the options
-    args = parser.parse_args(arglist)
+    args = parser.parse_args(remainder)
 
     # if no command, print help
     if not hasattr(args, u"action"):
@@ -133,8 +173,6 @@ def process_command_line(cmdline_list):
 
     # parse command line
     args = parse_cmdline_options(cmdline_list)
-    if not hasattr(args, u"action"):
-        sys.exit(1)
 
     # if we get a different gpg-binary from the commandline then redo gpg_profile
     # TODO: Allow lists of keys not just single key

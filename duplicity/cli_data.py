@@ -724,7 +724,7 @@ class OptionAliases:
 all_options = {opt for opt in OptionKwargs.__dict__.keys()}
 
 parent_only_options = {
-    u"version",
+    u"version", u"log_fd", u"log_file", u"log_timestamp"
 }
 
 backup_only_options = {
@@ -737,10 +737,6 @@ selection_only_options = {
     u"files_from"
 }
 
-deprecated_write_options = {
-    u"old_filenames", u"short_filenames", u"time_separator"
-}
-
 
 @dataclass
 class CommandOptions:
@@ -748,7 +744,6 @@ class CommandOptions:
     backup = list(
         all_options
         - parent_only_options
-        - deprecated_write_options
     )
     cleanup = list(
         all_options
@@ -765,12 +760,10 @@ class CommandOptions:
     full = list(
         all_options
         - parent_only_options
-        - deprecated_write_options
     )
     incremental = list(
         all_options
         - parent_only_options
-        - deprecated_write_options
     )
     list_current_files = list(
         all_options
