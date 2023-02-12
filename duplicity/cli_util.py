@@ -113,8 +113,6 @@ def check_target_dir(val):
             os.makedirs(val)
         except Exception as e:
             command_line_error(f"Unable to create target dir '{val}': {str(e)}")
-    elif not os.path.isdir(val):
-        command_line_error(f"Argument target_dir '{val}' is not a directory.")
     return val
 
 

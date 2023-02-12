@@ -63,12 +63,12 @@ class DuplicityArgumentParser(argparse.ArgumentParser):
     """
     def print_usage(self, file=None):
         if file is None:
-            file = _sys.stdout
+            file = sys.stdout
         log.Info(self.format_usage())
 
     def print_help(self, file=None):
         if file is None:
-            file = _sys.stdout
+            file = sys.stdout
         log.Info(self.format_help())
 
     # ===============
@@ -80,7 +80,7 @@ class DuplicityArgumentParser(argparse.ArgumentParser):
         sys.exit(status)
 
     def error(self, message):
-        """error(message: string)
+        u"""error(message: string)
 
         Prints a usage message incorporating the message to stderr and
         exits.
@@ -88,9 +88,8 @@ class DuplicityArgumentParser(argparse.ArgumentParser):
         If you override this in a subclass, it should not return -- it
         should either exit or raise an exception.
         """
-        self.print_usage(_sys.stderr)
-        self.exit(2, _(f'{self.prog}: error: {message}\n') % args)
-
+        self.print_usage(sys.stderr)
+        self.exit(2, f'{self.prog}: error: {message}\n')
 
 
 def parse_cmdline_options(arglist):

@@ -86,16 +86,19 @@ class CodeTest(DuplicityTestCase):
     def test_unadorned_string_literals(self):
         u"""For predictable results in python/3 all string literals need to be marked as unicode, bytes or raw"""
 
-        # Find all the .py files in the duplicity tree
-        matches = []
-
+        do_assert = False
         for python_source_file in files_to_test:
             # Check each of the relevant python sources for unadorned string literals
             unadorned_string_list = find_unadorned_strings.check_file_for_unadorned(python_source_file)
             if unadorned_string_list:
+                do_assert = True
                 print(f"Found {len(unadorned_string_list):d} unadorned strings in {python_source_file:s}:",
                       file=sys.stderr)
                 for unadorned_string in unadorned_string_list:
                     print(unadorned_string[1:], file=sys.stderr)
 
-        self.assertEqual(unadorned_string_list, [], u"Found unadorned strings.")
+        self.assertEqual(do_assert, False, u"Found unadorned strings.")
+
+
+if __name__ == u"__main__":
+    unittest.main()
