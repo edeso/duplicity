@@ -72,9 +72,9 @@ class FinalTest(FunctionalTestCase):
     def test_basic_cycle(self, backup_options=None, restore_options=None):
         u"""Run backup/restore test on basic directories"""
         if backup_options is None:
-            backup_options = [u'--no-enc', u'--no-com']  # TODO: reset to empty
+            backup_options = []
         if restore_options is None:
-            restore_options = [u'--no-enc', u'--no-com']  # TODO: reset to empty
+            restore_options = []
         self.runtest([u"{0}/testfiles/dir1".format(_runtest_dir),
                       u"{0}/testfiles/dir2".format(_runtest_dir),
                       u"{0}/testfiles/dir3".format(_runtest_dir)],

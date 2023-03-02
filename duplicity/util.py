@@ -71,7 +71,7 @@ except ImportError:
         # For paths, just use path.name rather than converting with this
         # If we are not doing any cleverness with non-unicode filename bytes,
         # encoding to system encoding is good enough
-        if sys.version_info[:2] >= (3,2):
+        if sys.version_info[:2] >= (3, 2):
             return os.fsencode(unicode_filename)
         else:
             return unicode_filename.encode(config.fsencoding, u"replace")
@@ -82,7 +82,7 @@ except ImportError:
         # If we are not doing any cleverness with non-unicode filename bytes,
         # decoding using system encoding is good enough. Use "ignore" as
         # Linux paths can contain non-Unicode characters
-        if sys.version_info[:2] >= (3,2):
+        if sys.version_info[:2] >= (3, 2):
             return os.fsdecode(bytes_filename)
         else:
             return bytes_filename.decode(config.fsencoding, u"replace")
