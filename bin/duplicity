@@ -43,7 +43,7 @@ from duplicity import tempdir
 from duplicity import util
 
 
-if sys.version_info[:2] > (3, 7):
+if sys.version_info[:2] >= (3, 7):
     sys.stdout.reconfigure(errors=u'surrogateescape')
     sys.stderr.reconfigure(errors=u'surrogateescape')
 elif sys.version_info.major == 3:

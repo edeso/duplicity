@@ -294,30 +294,52 @@ def which(program):
 
 
 def start_debugger():
-    if not os.getenv(u'DEBUG_RUNNING', None) and (u'--pydevd' in sys.argv or os.getenv(u'PYDEVD', None)):
+    if u'--pydevd' in sys.argv or os.environ.get(u"PYDEVD", None):
         try:
-            import pydevd_pycharm as pydevd  # pylint: disable=import-error
+            import pydevd_pycharm  # pylint: disable=import-error
         except ImportError:
-            try:
-                import pydevd  # pylint: disable=import-error
-            except ImportError:
-                log.FatalError(u"Module pydevd_pycharm or pydevd must be available for debugging.\n"
-                               u"Remove '--pydevd' from command line and PYDEVD from environment\n"
-                               u"to avoid activating the debugger.")
+            log.FatalError(u"Module pydevd_pycharm must be available for debugging.\n"
+                           u"Remove '--pydevd' from command line and unset 'PYDEVD'\n"
+                           u"from the environment to avoid starting the debugger.")
 
+        # NOTE: this needs to be customized for your system
+        debug_host = u'dione.local'
+        debug_port = 6700
+
+        # get previous pid:port if any
+        # return if pid the same as ours
+        prev_port = None
+        debug_running = os.environ.get(u"DEBUG_RUNNING", False)
+        if debug_running:
+            prev_pid, prev_port = map(int, debug_running.split(u":"))
+            if prev_pid == os.getpid():
+                return
+
+        # new pid, next port, start a new debugger
+        if prev_port:
+            debug_port = int(prev_port) + 1
+
+        # ignition
         try:
-            # NOTE: this needs to be customized for your system
-            pydevd.settrace(u'dione.local', port=6789, stdoutToServer=True, stderrToServer=True)
+            pydevd_pycharm.settrace(debug_host,
+                                    port=debug_port,
+                                    suspend=False,
+                                    stdoutToServer=True,
+                                    stderrToServer=True,
+                                    # patch_multiprocessing=True,
+                                    )
+            log.Info(f"Connection {debug_host}:{debug_port} accepted for debug.")
         except ConnectionRefusedError as e:
-            log.FatalError(u"Connection refused for debug.  Check your setup.")
+            log.Info(f"Connection {debug_host}:{debug_port} refused for debug: {str(e)}")
 
-        # In a dev environment the path is screwed so fix it.
+        # in a dev environment the path is screwed so fix it.
         base = sys.path.pop(0)
         base = base.split(os.path.sep)[:-1]
         base = os.path.sep.join(base)
         sys.path.insert(0, base)
 
-        os.environ[u'DEBUG_RUNNING'] = u'yes'
+        # save last debug pid:port used
+        os.environ[u'DEBUG_RUNNING'] = f"{os.getpid()}:{debug_port}"
 
 
 def merge_dicts(*dict_args):

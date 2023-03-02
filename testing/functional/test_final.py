@@ -37,8 +37,12 @@ class FinalTest(FunctionalTestCase):
     u"""
     Test backup/restore using duplicity binary
     """
-    def runtest(self, dirlist, backup_options=[], restore_options=[]):
+    def runtest(self, dirlist, backup_options=None, restore_options=None):
         u"""Run backup/restore test on directories in dirlist"""
+        if restore_options is None:
+            restore_options = []
+        if backup_options is None:
+            backup_options = []
         assert len(dirlist) >= 1
 
         # Back up directories to local backend
@@ -65,8 +69,12 @@ class FinalTest(FunctionalTestCase):
         assert path1.compare_recursive(path2, verbose=1)
 
     @pytest.mark.slow
-    def test_basic_cycle(self, backup_options=[], restore_options=[]):
+    def test_basic_cycle(self, backup_options=None, restore_options=None):
         u"""Run backup/restore test on basic directories"""
+        if backup_options is None:
+            backup_options = [u'--no-enc', u'--no-com']  # TODO: reset to empty
+        if restore_options is None:
+            restore_options = [u'--no-enc', u'--no-com']  # TODO: reset to empty
         self.runtest([u"{0}/testfiles/dir1".format(_runtest_dir),
                       u"{0}/testfiles/dir2".format(_runtest_dir),
                       u"{0}/testfiles/dir3".format(_runtest_dir)],
@@ -74,14 +82,14 @@ class FinalTest(FunctionalTestCase):
                      restore_options=restore_options)
 
         # Test restoring various sub files
-        for filename, time, dir in [(u'symbolic_link', 99999, u'dir1'),  # pylint: disable=redefined-builtin
-                                    (u'directory_to_file', 100100, u'dir1'),
-                                    (u'directory_to_file', 200100, u'dir2'),
-                                    (u'largefile', 300000, u'dir3')]:
+        for filename, time, tfdir in [(u'symbolic_link', 99999, u'dir1'),
+                                      (u'directory_to_file', 100100, u'dir1'),
+                                      (u'directory_to_file', 200100, u'dir2'),
+                                      (u'largefile', 300000, u'dir3')]:
             self.restore(filename, time, options=restore_options)
-            self.check_same(u'{0}/testfiles/{1}/{2}'.format(_runtest_dir, dir, filename),
+            self.check_same(u'{0}/testfiles/{1}/{2}'.format(_runtest_dir, tfdir, filename),
                             u'{0}/testfiles/restore_out'.format(_runtest_dir))
-            self.verify(u'{0}/testfiles/{1}/{2}'.format(_runtest_dir, dir, filename),
+            self.verify(u'{0}/testfiles/{1}/{2}'.format(_runtest_dir, tfdir, filename),
                         file_to_verify=filename, time=time,
                         options=restore_options)
 
