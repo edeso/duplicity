@@ -328,11 +328,11 @@ def start_debugger():
                                     stderrToServer=True,
                                     # patch_multiprocessing=True,
                                     )
-            log.Info(u"Connection {debug_host}:{debug_port} accepted for debug."
-                     .format(debug_host=debug_host, debug_port=debug_port))
+            log.Info(u"Connection {0}:{1} accepted for debug."
+                     .format(debug_host, debug_port))
         except ConnectionRefusedError as e:
-            log.Info(u"Connection {debug_host}:{debug_port} refused for debug: {msg}"
-                     .format(debug_host=debug_host, debug_port=debug_port), msg=str(e))
+            log.Info(u"Connection {0}:{1} refused for debug: {2}"
+                     .format(debug_host, debug_port), str(e))
 
         # in a dev environment the path is screwed so fix it.
         base = sys.path.pop(0)
