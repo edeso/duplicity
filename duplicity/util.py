@@ -71,7 +71,10 @@ except ImportError:
         # For paths, just use path.name rather than converting with this
         # If we are not doing any cleverness with non-unicode filename bytes,
         # encoding to system encoding is good enough
-        return unicode_filename.encode(sys.getfilesystemencoding(), u"replace")
+        if sys.version_info[:2] >= (3,2):
+            return os.fsencode(unicode_filename)
+        else:
+            return unicode_filename.encode(config.fsencoding, u"replace")
 
     def fsdecode(bytes_filename):
         u"""Convert a filename encoded in the system encoding to unicode"""
@@ -79,7 +82,10 @@ except ImportError:
         # If we are not doing any cleverness with non-unicode filename bytes,
         # decoding using system encoding is good enough. Use "ignore" as
         # Linux paths can contain non-Unicode characters
-        return bytes_filename.decode(config.fsencoding, u"replace")
+        if sys.version_info[:2] >= (3,2):
+            return os.fsdecode(bytes_filename)
+        else:
+            return bytes_filename.decode(config.fsencoding, u"replace")
 
 
 def exception_traceback(limit=50):
