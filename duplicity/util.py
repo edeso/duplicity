@@ -328,9 +328,11 @@ def start_debugger():
                                     stderrToServer=True,
                                     # patch_multiprocessing=True,
                                     )
-            log.Info(f"Connection {debug_host}:{debug_port} accepted for debug.")
+            log.Info(u"Connection {debug_host}:{debug_port} accepted for debug."
+                     .format(debug_host=debug_host, debug_port=debug_port))
         except ConnectionRefusedError as e:
-            log.Info(f"Connection {debug_host}:{debug_port} refused for debug: {str(e)}")
+            log.Info(u"Connection {debug_host}:{debug_port} refused for debug: {str(e)}"
+                     .format(debug_host=debug_host, debug_port=debug_port))
 
         # in a dev environment the path is screwed so fix it.
         base = sys.path.pop(0)
@@ -339,7 +341,7 @@ def start_debugger():
         sys.path.insert(0, base)
 
         # save last debug pid:port used
-        os.environ[u'DEBUG_RUNNING'] = f"{os.getpid()}:{debug_port}"
+        os.environ[u'DEBUG_RUNNING'] = u"{0}:{1}".format(os.getpid(), debug_port)
 
 
 def merge_dicts(*dict_args):
