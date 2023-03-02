@@ -45,6 +45,8 @@ class PathTest(UnitTestCase):
         p.deltree()
         assert not p.type, p.type
 
+    @unittest.skipIf(os.path.exists(u"./dockenv"), u"skip in Docker env")
+    @unittest.skipIf(os.envion[u"USER"] == u"buildd", u"skip in Launchpad env")
     def test_compare(self):
         u"""Test directory comparisons"""
         assert not os.system(u"cp -pR {0}/testfiles/dir1/ {0}/testfiles/output".format(_runtest_dir))
