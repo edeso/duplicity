@@ -332,7 +332,7 @@ def start_debugger():
                      .format(debug_host, debug_port))
         except ConnectionRefusedError as e:
             log.Info(u"Connection {0}:{1} refused for debug: {2}"
-                     .format(debug_host, debug_port), str(e))
+                     .format(debug_host, debug_port, str(e)))
 
         # in a dev environment the path is screwed so fix it.
         base = sys.path.pop(0)
