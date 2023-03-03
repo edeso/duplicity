@@ -43,10 +43,12 @@
                              libffi-dev libssl-dev openssl par2 rdiff tzdata
 
 variables:
-    # cache local items
+    # Cache local items
     PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
     # Set to non-interactive so no tzdata prompt
     DEBIAN_FRONTEND: "noninteractive"
+    # Signal we are running on GitLab CI
+    NON_NATIVE: "true"
 
 stages:
     - qual
