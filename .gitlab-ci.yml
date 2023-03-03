@@ -28,6 +28,7 @@
           when: always
         - changes:
             - .gitlab-ci.yml
+            - tox.ini
             - bin/duplicity
             - bin/rdiffdir
             - duplicity/**/*
