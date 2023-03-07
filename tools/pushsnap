@@ -38,9 +38,9 @@ echo "$0 of ${VERSION}"
 snapcraft login --with ~/.snaplogin
 
 # push to edge and sign
-cd build/duplicity-${VERSION}/
+cd build/duplicity-"${VERSION}"/
 for f in duplicity_*.snap; do
-    snapcraft upload $f --release edge
+    snapcraft upload "$f" --release edge
 done
 
 # mv into working source tree

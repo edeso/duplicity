@@ -35,10 +35,14 @@ fi
 VERSION=`./setup.py --version`
 echo  "$0 of ${VERSION}"
 
+echo -e "\n*** test overall integrity of all snaps"
+echo "unsquashfs will print an error in case the image is corrupted"
+for f in build/duplicity-*/*.snap; do echo "$f"; unsquashfs -l "$f" > /dev/null; done
+
 echo -e  "\n*** test for the multi-lib snapcraft issue ***"
 echo "See: https://bugs.launchpad.net/duplicity/+bug/1965814"
 RES=`find /snap/duplicity/current/usr/lib/ -type d -name 'python3.*' | wc -l`
-if [ ${RES} -gt 1 ]; then
+if [ "${RES}" -gt 1 ]; then
     find /snap/duplicity/current/usr/lib/ -type d -name 'python3.*'
     echo -e "WARNING: Multiple python lib versions exist in snap."
 else
