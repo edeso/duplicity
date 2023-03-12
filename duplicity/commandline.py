@@ -98,13 +98,6 @@ def stdin_deprecation(opt):
             log.WARNING, force_print=True)
 
 
-def warn_no_check_remote(opt):
-    log.Log(_(u"Warning: Option %s is dangerous in that it allows corrupted manifests to\n"
-              u"exist on the remote without being caught.  This could lead to problems\n"
-              u"such as the inability to recover the backup in the future.") % opt,
-            log.WARNING, force_print=True)
-
-
 # log options handled in log.py.  Add noop to make optparse happy
 def noop():
     pass
@@ -738,8 +731,12 @@ def parse_cmdline_options(arglist):
 
     # do we check remote?  requires private encryption key or correct password
     # default is to check the remote
-    parser.add_option(u"--no-check-remote", action=u"store_false", dest=u"check_remote",
-                      callback=lambda o, s, v, p: warn_no_check_remote(o))
+    parser.add_option(u"--no-check-remote", action=u"callback", dest=u"check_remote",
+                      callback=lambda o, s, v, p: (log.Warn(
+                          _(u"Warning: Option %s is dangerous in that it allows corrupted manifests to\n"
+                            u"exist on the remote without being caught.  This could lead to problems\n"
+                            u"such as the inability to recover the backup in the future." % s),
+                          setattr(p.values, u"check_remote", False))))
 
     # parse the options
     (options, args) = parser.parse_args(arglist)
