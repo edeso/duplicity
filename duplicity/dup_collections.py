@@ -231,10 +231,15 @@ class BackupSet(object):
             local_manifest = self.get_local_manifest()
         if remote_manifest and self.local_manifest_path and local_manifest:
             if remote_manifest != local_manifest:
-                log.FatalError(_(u"Fatal Error: Remote manifest does not match "
-                                 u"local one.  Either the remote backup set or "
-                                 u"the local archive directory has been corrupted."),
-                               log.ErrorCode.mismatched_manifests)
+                if config.check_remote:
+                    log.FatalError(_(u"Fatal Error: Remote manifest does not match "
+                                     u"local one.  Either the remote backup set or "
+                                     u"the local archive directory has been corrupted."),
+                                   log.ErrorCode.mismatched_manifests)
+                else:
+                    log.Error(_(u"Error processing remote manifest (%s): %s") %
+                              (util.fsdecode(self.remote_manifest_name), util.uexc(message)))
+                    return None
         if not remote_manifest:
             if self.local_manifest_path:
                 remote_manifest = local_manifest

@@ -384,6 +384,9 @@ mf_purge = False
 # Fake root directory path for iDrived backend
 fakeroot = None
 
+# whether to check remote manifest (requires private key)
+check_remote = True
+
 # default filesystem encoding
 # In Python 2 it seems that sys.getfilesystemencoding() will normally return
 # 'utf-8' or some other sane encoding, but will sometimes fail and return

@@ -385,6 +385,13 @@ Causes Duplicity to hide files in B2 instead of deleting them. Useful in
 combination with B2's lifecycle rules.
 
 .TP
+.BI --no-check-remote
+Turn off validation of the remote manifest.  Checking is the default.
+No checking will allow you to backup without the private key, but will
+mean that the remote manifest may exist and be corrupted, leading to the
+possibility that the backup might not be recoverable.
+
+.TP
 .BI --compare-data
 Enable data comparison of regular files on action verify. This conducts a
 verify as described above to verify the integrity of the backup archives,
@@ -1743,7 +1750,7 @@ line options:
 .RE
 
 For each individual file found in the source directory, the file selection
-conditions are checked in the order they are specified on the command line. 
+conditions are checked in the order they are specified on the command line.
 Should a selection condition match, the file will be included or excluded
 accordingly and the file selection system will proceed to the next file
 without checking the remaining conditions.
@@ -2533,18 +2540,18 @@ above.
 
 During the first run, you will be prompted to visit an URL in your
 browser to grant access to your Google Drive. A temporary HTTP-service will be
-started on a 
+started on a
 .B local network interface
 for this purpose (by default on http://localhost:8080/).
 Ip-address/host and port can be adjusted if need be by providing the environment variables
 GOOGLE_OAUTH_LOCAL_SERVER_HOST, GOOGLE_OAUTH_LOCAL_SERVER_PORT respectively.
 
-If you are running duplicity in a remote location, you will 
-need to make sure that you will be able to access the above 
-HTTP-service with a browser utilizing e.g. port forwarding 
+If you are running duplicity in a remote location, you will
+need to make sure that you will be able to access the above
+HTTP-service with a browser utilizing e.g. port forwarding
 or temporary firewall permission.
 
-The access credentials will be saved in the JSON file mentioned 
+The access credentials will be saved in the JSON file mentioned
 above for future use after a successful authorization.
 
 .SH A NOTE ON HUBIC
