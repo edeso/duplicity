@@ -81,7 +81,7 @@ b'Three blind mice'
 >>>
 >>>
 >>> ##################################################
->>> # Now let's trying using run()'s attach_fhs paramter
+>>> # Now let's trying using run()'s attach_fhs parameter
 >>>
 >>> # we're assuming we're running on a unix...
 >>> infp = open('/etc/manpaths', 'rb')

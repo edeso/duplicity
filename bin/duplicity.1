@@ -154,7 +154,7 @@ performs an incremental backup.
 The following explanations explain some but
 .B not
 all options that can be used in connection with that action command.
-Consult the OPTIONS section for more detailed informations.
+Consult the OPTIONS section for more detailed information.
 
 .TP
 .BI "full " "<folder> <url>"
@@ -183,7 +183,7 @@ The
 option restricts verify to that file or folder.
 The
 .I --time
-option allows to select a backup to verify.
+option allows one to select a backup to verify.
 The
 .I --compare-data
 option enables data comparison (see below).
@@ -370,7 +370,7 @@ blob size exceeds 64MB. The default values is 2.
 .TP
 .BI "--backend-retry-delay " number
 Specifies the number of seconds that duplicity waits after an error has
-occured before attempting to repeat the operation.
+occurred before attempting to repeat the operation.
 
 .TP
 .BI "--cf-backend " backend
@@ -1320,7 +1320,7 @@ In decreasing order of importance, specifies the directory to use for
 temporary files (inherited from Python's tempfile module).
 Eventually the option
 .BI --tempdir
-supercedes any of these.
+supersedes any of these.
 .TP
 .B FTP_PASSWORD
 Supported by most backends which are password capable. More secure than
@@ -1334,7 +1334,7 @@ prompted for the passphrase.
 .B SIGN_PASSPHRASE
 The passphrase to be used for
 .BR --sign-key .
-If ommitted
+If omitted
 .B and
 sign key is also one of the keys to encrypt against
 .B PASSPHRASE
@@ -1471,7 +1471,7 @@ See
 .B "A NOTE ON GOOGLE CLOUD STORAGE"
 about
 .B needed
-endpoint option and env vars for authentification.
+endpoint option and env vars for authentication.
 .RE
 
 .TP
@@ -1905,7 +1905,7 @@ If the pattern starts with "ignorecase:" (case insensitive), then
 this prefix will be removed and any character in the string can be
 replaced with an upper- or lowercase version of itself. This prefix is a
 legacy feature supported for shell globbing selection conditions only,
-but for backward compatability reasons is otherwise considered part of
+but for backward compatibility reasons is otherwise considered part of
 the pattern itself (use
 .B --filter-ignorecase
 instead).
@@ -2153,7 +2153,7 @@ restored out of band.  There are multiple options when restoring
 backups from cold storage, which vary in both cost and speed.
 See Amazon's documentation for details.
 
-Both backends use environment variables for authentification:
+Both backends use environment variables for authentication:
 .br
 .RS
 .BR AWS_ACCESS_KEY_ID " (required),"
@@ -2188,7 +2188,7 @@ legacy
 AWS_ACCESS_KEY_ID=<key_id> AWS_SECRET_ACCESS_KEY=<access_key> duplicity /some/path boto+s3://[host:port]/bucket/subfolder
 .RE
 
-.RB "The url host setting is optional and allows to define a custom endpoint host. you may add " "--s3-european-buckets"
+.RB "The url host setting is optional and allows one to define a custom endpoint host. you may add " "--s3-european-buckets"
 and other s3 options documented above if needed.
 
 
@@ -2240,7 +2240,7 @@ It uses the environment variable
 This string contains the path to box custom app's config.json. Either this environment variable or
 the
 .BR config
-query parameter in the url need to be specified, if both are specified, query paramter takes precedence.
+query parameter in the url need to be specified, if both are specified, query parameter takes precedence.
 
 .SS Create a Box custom app
 In order to use box backend, user need to create a box custom app in the box developer console (https://app.box.com/developers/console).
@@ -2279,7 +2279,7 @@ The backend requires python-cloudfiles to be installed on the system.
 See
 .BR REQUIREMENTS .
 
-It uses three environment variables for authentification:
+It uses three environment variables for authentication:
 .BR CLOUDFILES_USERNAME " (required),"
 .BR CLOUDFILES_APIKEY " (required),"
 .BR CLOUDFILES_AUTHURL " (optional)"
@@ -2606,7 +2606,7 @@ The destination folder will be created for you if it does not exist.
 The multi backend allows duplicity to combine the storage available in
 more than one backend store (e.g., you can store across a google drive
 account and a onedrive account to get effectively the combined storage
-available in both).  The URL path specifies a JSON formated config
+available in both).  The URL path specifies a JSON formatted config
 file containing a list of the backends it will use. The URL may also
 specify "query" parameters to configure overall behavior.
 Each element of the list must have a "url" element, and may also contain
@@ -2744,7 +2744,7 @@ PCA is a long-term data archival solution by OVH. It runs a slightly modified
 version of Openstack Swift introducing latency in the data retrieval process.
 It is a good pick for a
 .BR "multi backend "
-configuration where receiving volumes while an other backend is used to store
+configuration where receiving volumes while another backend is used to store
 manifests and signatures.
 
 .br
@@ -2754,7 +2754,7 @@ Identity service.
 See
 .BR REQUIREMENTS .
 
-It uses following environment variables for authentification:
+It uses following environment variables for authentication:
 .BR PCA_USERNAME " (required),"
 .BR PCA_PASSWORD " (required),"
 .BR PCA_AUTHURL " (required),"
@@ -2794,7 +2794,7 @@ openssl pkcs12 -in XXX.p12  -nodes -nocerts > pydriveprivatekey.pem
 
 The content of .pem file should be passed to
 .BR GOOGLE_DRIVE_ACCOUNT_KEY
-environment variable for authentification.
+environment variable for authentication.
 
 The email address of the account will be used as part of URL. See
 .B URL FORMAT
@@ -2915,7 +2915,7 @@ paramiko & pexpect support
 .BR --ssh-options "."
 Only the
 .B pexpect
-backend allows to define
+backend allows one to define
 .BR --scp-command " and"
 .BR --sftp-command .
 .PP
@@ -2994,7 +2994,7 @@ to point duplicity to a copy in a different location.
 .PP
 Finally there is the
 .BI --ssl-no-check-certificate
-option to disable certificate verification alltogether, in case some ssl library
+option to disable certificate verification altogether, in case some ssl library
 is missing or verification is not wanted. Use it with care, as even with self signed
 servers manually providing the private ca certificate is definitely the safer option.
 
@@ -3006,7 +3006,7 @@ python-keystoneclient is also needed to use OpenStack's Keystone Identity servic
 See
 .BR REQUIREMENTS .
 
-It uses following environment variables for authentification:
+It uses following environment variables for authentication:
 
 .RS
 .BR SWIFT_USERNAME " (required),"

@@ -100,7 +100,7 @@ class SlateBackend(duplicity.backend.Backend):
         log.Debug(u"response handled")
 
         if not response.ok:
-            raise BackendException(u"An error occured whilst attempting to upload a file: %s" % (response))
+            raise BackendException(u"An error occurred whilst attempting to upload a file: %s" % (response))
         else:
             log.Debug(u"File successfully uploaded to slate with id:" + self.slate_id)
 
