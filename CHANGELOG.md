@@ -1,3 +1,119 @@
+## (unreleased)
+
+### New
+
+* Onedrive for Business Support. [Tobias Simetsreiter]
+
+### Changes
+
+* Fix spelling errors. [Barak A. Pearlmutter]
+
+* Chg:pkg:  Cleanup.  Add 'unsquashfs -l' test from @ede. [Kenneth Loafman]
+
+* Update Makefile 'make clean' list. [Kenneth Loafman]
+
+* Fix run website ci call after pushes/releases. [ede]
+
+  [skip_tests]
+
+* Update version for Launchpad. [Kenneth Loafman]
+
+### Fix
+
+* Fixes #701 - unable to resume full backup to B2. [Kenneth Loafman]
+
+  Now tries .name and .uc_name before failing.
+
+* Fixes #698 - backups without GPG decryption key. [Kenneth Loafman]
+
+  Added option --no-check-remote to skip checking the   remote manifest.
+  The default is to check.
+
+* Fixes #698 - backups without GPG decryption key. [Kenneth Loafman]
+
+  Added option --no-check-remote to skip checking the   remote manifest.
+  The default is to check.
+
+* Fixes #686 - PCA backend does not unseal volumes. [Kenneth Loafman]
+
+  Patch supplied by Bertrand Marc, user @bmarc.
+
+* Skip test\_path::test\_compare on non-native. [Kenneth Loafman]
+
+  Skip on GitLab and Launchpad build systems.   Works fine on Linux and
+  macOS.
+
+* Skip test\_path::test\_compare on non-native. [Kenneth Loafman]
+
+  Skip on GitLab and Launchpad build systems.   Works fine on Linux and
+  macOS.
+
+* Skip test\_path::test\_compare on non-native. [Kenneth Loafman]
+
+  Skip on GitLab and Launchpad build systems.   Works fine on Linux and
+  macOS.
+
+* Skip test\_path::test\_compare on non-native. [Kenneth Loafman]
+
+  Skip on GitLab and Launchpad build systems.   Works fine on Linux and
+  macOS.
+
+* Skip test\_path::test\_compare on non-native. [Kenneth Loafman]
+
+  Skip on GitLab and Launchpad build systems.   Works fine on Linux and
+  macOS.
+
+* Skip test\_path::test\_compare on non-native. [Kenneth Loafman]
+
+  Skip on GitLab and Launchpad build systems.   Works fine on Linux and
+  macOS.
+
+* Skip test\_path::test\_compare on non-native. [Kenneth Loafman]
+
+  Skip on GitLab and Launchpad build systems.   Works fine on Linux and
+  macOS.
+
+* Skip test\_path::test\_compare on non-native. [Kenneth Loafman]
+
+  Skip on GitLab and Launchpad build systems.   Works fine on Linux and
+  macOS.
+
+* Revert to medieval string formatting. [Kenneth Loafman]
+
+* Revert to medieval string formatting. [Kenneth Loafman]
+
+* Revert to medieval string formatting. [Kenneth Loafman]
+
+* Revert to medieval string formatting. [Kenneth Loafman]
+
+* Remove dependency scanner. [Kenneth Loafman]
+
+* Fix PEP8 and todo issues. [Kenneth Loafman]
+
+* Misc fixes to testing/build environ. [Kenneth Loafman]
+
+  start_debugger now supports multiprocess debug.   restore
+  testing.unit.test_path.test_compare
+
+* Encoding errors when logging.  Fixes #693. [Kenneth Loafman]
+
+  Use os.fsdecode/os.fsencode when in py3.
+
+* Onedrive may hang indefinitely.  Fixes #695. [Kenneth Loafman]
+
+### Other
+
+* Fix typo. [ede]
+
+* Try to fix. [ede]
+
+  Executing "step_script" stage of the job script   00:00   Using docker
+  image sha256:3148ec916ea71d90f1beae623b3c5eb4a2db5a585db3178d9619bc2fe
+  b8f5f49 for curlimages/curl:latest with digest curlimages/curl@sha256:
+  f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd ...
+  /bin/sh: eval: line 136: apt-get: not found
+
+
 ## rel.1.2.2 (2023-01-26)
 
 ### Changes
