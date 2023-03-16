@@ -154,7 +154,12 @@ class B2Backend(duplicity.backend.Backend):
                                               DownloadDestLocalFile(local_path.name))
         else:
             df = self.bucket.download_file_by_name(quote_plus(self.path + util.fsdecode(remote_filename), u'/'))
-            df.save_to(util.fsdecode(local_path.name))
+            try:
+                # b2sdk >= 1.19.0
+                df.save_to(local_path.uc_name)
+            except:
+                # b2sdk < 1.19.0
+                df.save_to(local_path.name)
 
     def _put(self, source_path, remote_filename):
         u"""
