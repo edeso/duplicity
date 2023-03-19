@@ -13,6 +13,11 @@ READTHEDOCS   = True
 .EXPORT_ALL_VARIABLES:
 
 # Put it first so that "make" without argument is like "make help".
+docs:
+	sphinx-apidoc -o docs/ --separate --private . \
+		apsw duplicity/backends/pyrax_identity/* setup.* testing/overrides testing/manual
+	$(MAKE) -C docs html
+
 help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
