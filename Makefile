@@ -42,7 +42,6 @@ clean:
 docs:
 	sphinx-apidoc -o docs/ --separate --private . \
 		apsw duplicity/backends/pyrax_identity/* setup.* testing/overrides testing/manual
-	$(MAKE) -C docs html
 
 ext:
 	./setup.py build_ext

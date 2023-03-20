@@ -5,16 +5,17 @@
 # Required
 version: 2
 
-# Build documentation in the docs/ directory with Sphinx
 sphinx:
     builder: html
     configuration: docs/conf.py
     fail_on_warning: false
 
-# Build your docs in additional formats such as PDF and ePub
 formats: all
 
-# Set the version of Python and requirements required to build your docs
+jobs:
+    pre_build:
+        make docs
+
 build:
     os: ubuntu-20.04
     tools:

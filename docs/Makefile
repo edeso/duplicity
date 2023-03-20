@@ -16,7 +16,6 @@ READTHEDOCS   = True
 docs:
 	sphinx-apidoc -o docs/ --separate --private . \
 		apsw duplicity/backends/pyrax_identity/* setup.* testing/overrides testing/manual
-	$(MAKE) -C docs html
 
 help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
