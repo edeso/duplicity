@@ -12,14 +12,13 @@ sphinx:
 
 formats: all
 
-jobs:
-    pre_build:
-        make docs
-
 build:
     os: ubuntu-20.04
     tools:
         python: "3.7"
+    jobs:
+        pre_build:
+            - make docs
 
 python:
     install:
