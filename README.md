@@ -53,13 +53,15 @@ if you're using python3
 For more information on downloading duplicity's source code from the
 code repository and developing for duplicity, see README-REPO.
 
+For source docs: http://duplicity.readthedocs.io/
+
 # HELP
 
 For more information see the duplicity web site at:
 
   http://duplicity.us
 
-  or
+  or at:
 
   http://duplicity.gitlab.io
 
