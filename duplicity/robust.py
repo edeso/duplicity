@@ -49,7 +49,7 @@ def check_common_error(error_handler, function, args=()):
             errno.errorcode[exc.errno] in
             [u'EPERM', u'ENOENT', u'EACCES', u'EBUSY', u'EEXIST',
              u'ENOTDIR', u'ENAMETOOLONG', u'EINTR', u'ENOTEMPTY',
-             u'EIO', u'ETXTBSY', u'ESRCH', u'EINVAL']):
+             u'EIO', u'ETXTBSY', u'ESRCH', u'EINVAL', u'EOPNOTSUPP']):
             # Log.exception()
             if error_handler:
                 return error_handler(exc, *args)
