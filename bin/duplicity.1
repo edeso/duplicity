@@ -1685,6 +1685,17 @@ webdav[s]://user[:password]@other.host[:port]/some_dir
 try lftp+webdav[s]://
 .RE
 
+.TP
+.B "Optical media (ISO9660 CD/DVD/Bluray using xorriso)"
+.RS
+xorriso:///dev/byOpticalDrive[:/path/to/directory/on/iso]
+xorriso:///path/to/image.iso[:/path/to/directory/on/iso]
+
+
+See also
+.B "A NOTE ON THE XORRISO BACKEND"
+.RE
+
 .SH TIME FORMATS
 duplicity uses time strings in two places.  Firstly, many of the files
 duplicity creates will have the time in their filenames in the w3
@@ -3055,6 +3066,21 @@ passphrase.
 .BI PASSPHRASE
 for symmetric encryption and the passphrase of the signing key are identical.
 
+.SH A NOTE ON THE XORRISO BACKEND
+
+This backend uses the xorriso tool to append backups to optical media or ISO9660 images.
+
+Use the following environment variables for more settings:
+.RS
+. BR XORRISO_PATH ", set an alternative path to the xorriso executable"
+. br
+. BR XORRISO_WRITE_SPEED ", specify the speed for writing to the optical disc. One of [min, max]"
+. br
+. BR XORRISO_ASSERT_VOLID ", specify the required volume ID of the ISO. Aborts when the actual volume ID is different."
+. br
+. BR XORRISO_ARGS ", for expert use only. Pass arbitrary arguments to xorriso. Example: XORRISO_ARGS='-md5 all'"
+.RE
+
 .SH KNOWN ISSUES / BUGS
 Hard links currently unsupported (they will be treated as non-linked
 regular files).
@@ -3260,6 +3286,10 @@ for kerberos authentication
 .BR "MediaFire backend"
 .B MediaFire Python Open SDK
 - https://pypi.python.org/pypi/mediafire/
+.TP
+.BR "xorriso backend"
+.B xorriso
+- https://www.gnu.org/software/xorriso/
 
 .SH AUTHOR
 .TP

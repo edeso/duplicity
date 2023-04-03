@@ -138,6 +138,14 @@ class ParsedUrlTest(UnitTestCase):
         pu = duplicity.backend.ParsedUrl(u"scheme://username:passwor@127.0.0.1:22/path/path")
         assert pu.strip_auth() == u"scheme://127.0.0.1:22/path/path"
 
+        pu = duplicity.backend.ParsedUrl(u"xorriso:///dev/sr0")
+        assert pu.scheme == u"xorriso", pu.scheme
+        assert pu.path == u"///dev/sr0", pu.path
+
+        pu = duplicity.backend.ParsedUrl(u"xorriso:///dev/sr0:/path/on/iso")
+        assert pu.scheme == u"xorriso", pu.scheme
+        assert pu.path == u"///dev/sr0:/path/on/iso", pu.path
+
     def test_errors(self):
         u"""Test various url errors"""
         self.assertRaises(InvalidBackendURL, duplicity.backend.ParsedUrl,
