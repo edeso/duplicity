@@ -101,7 +101,7 @@ class SSHPExpectBackend(duplicity.backend.Backend):
             state = u"authorizing"
         else:
             state = u"copying"
-        while 1:
+        while True:
             if state == u"authorizing":
                 match = child.expect([pexpect.EOF,
                                       u"(?i)timeout, server not responding",
@@ -175,7 +175,7 @@ class SSHPExpectBackend(duplicity.backend.Backend):
         child = pexpect.spawn(commandline, timeout=None, maxread=maxread, encoding=config.fsencoding, use_poll=True)
         cmdloc = 0
         passprompt = 0
-        while 1:
+        while True:
             msg = u""
             match = child.expect(responses,
                                  searchwindowsize=maxread + max_response_len)

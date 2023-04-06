@@ -69,14 +69,14 @@ def setcurtime(time_in_secs=None):
     u"""Sets the current time in curtime and curtimestr"""
     global curtime, curtimestr
     t = time_in_secs or int(time.time())
-    assert type(t) is int
+    assert isinstance(t, int)
     curtime, curtimestr = t, timetostring(t)
 
 
 def setprevtime(time_in_secs):
     u"""Sets the previous time in prevtime and prevtimestr"""
     global prevtime, prevtimestr
-    assert type(time_in_secs) is int, prevtime
+    assert isinstance(time_in_secs, int), prevtime
     prevtime, prevtimestr = time_in_secs, timetostring(time_in_secs)
 
 

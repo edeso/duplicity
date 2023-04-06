@@ -157,7 +157,7 @@ def get_passphrase(n, action, for_signing=False):
     else:
         log.Info(_(u"PASSPHRASE variable not set, asking user."))
         use_cache = True
-        while 1:
+        while True:
             # ask the user to enter a new passphrase to avoid an infinite loop
             # if the user made a typo in the first passphrase
             if use_cache and n == 2:

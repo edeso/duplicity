@@ -48,7 +48,7 @@ class RootTest(unittest.TestCase):
     def copyfileobj(self, infp, outfp):
         u"""Copy in fileobj to out, closing afterwards"""
         blocksize = 32 * 1024
-        while 1:
+        while True:
             buf = infp.read(blocksize)
             if not buf: break
             outfp.write(buf)

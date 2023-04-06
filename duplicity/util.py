@@ -192,7 +192,7 @@ def copyfileobj(infp, outfp, byte_count=-1):
     blocksize = 64 * 1024
     bytes_written = 0
     if byte_count < 0:
-        while 1:
+        while True:
             buf = infp.read(blocksize)
             if not buf:
                 break
@@ -252,7 +252,7 @@ def start_debugger():
         prev_port = None
         debug_running = os.environ.get(u"DEBUG_RUNNING", False)
         if debug_running:
-            prev_pid, prev_port = map(int, debug_running.split(u":"))
+            prev_pid, prev_port = list(map(int, debug_running.split(u":")))
             if prev_pid == os.getpid():
                 return
 

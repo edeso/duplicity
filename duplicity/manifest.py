@@ -169,8 +169,7 @@ class Manifest(object):
         for fileinfo in self.files_changed:
             result += b"    %-7s  %s\n" % (fileinfo[1], Quote(fileinfo[0]))
 
-        vol_num_list = list(self.volume_info_dict.keys())
-        vol_num_list.sort()
+        vol_num_list = sorted(self.volume_info_dict.keys())
 
         def vol_num_to_string(vol_num):
             return self.volume_info_dict[vol_num].to_string()
@@ -248,10 +247,8 @@ class Manifest(object):
         u"""
         Two manifests are equal if they contain the same volume infos
         """
-        vi_list1 = list(self.volume_info_dict.keys())
-        vi_list1.sort()
-        vi_list2 = list(other.volume_info_dict.keys())
-        vi_list2.sort()
+        vi_list1 = sorted(self.volume_info_dict.keys())
+        vi_list2 = sorted(other.volume_info_dict.keys())
 
         if vi_list1 != vi_list2:
             log.Notice(_(u"Manifests not equal because different volume numbers"))
@@ -458,10 +455,8 @@ class VolumeInfo(object):
         if self.end_index != other.end_index:
             log.Notice(_(u"end_index don't match"))
             return None
-        hash_list1 = list(self.hashes.items())
-        hash_list1.sort()
-        hash_list2 = list(other.hashes.items())
-        hash_list2.sort()
+        hash_list1 = sorted(self.hashes.items())
+        hash_list2 = sorted(other.hashes.items())
         if hash_list1 != hash_list2:
             log.Notice(_(u"Hashes don't match"))
             return None

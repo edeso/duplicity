@@ -121,7 +121,7 @@ class Iter(object):
     def len(iter):  # pylint: disable=redefined-builtin
         u"""Return length of iterator"""
         i = 0
-        while 1:
+        while True:
             try:
                 next(iter)
             except StopIteration:
@@ -140,7 +140,7 @@ class Iter(object):
     @staticmethod
     def foldl(f, default, iter):  # pylint: disable=redefined-builtin
         u"""the fundamental list iteration operator.."""
-        while 1:
+        while True:
             try:
                 next_item = next(iter)
             except StopIteration:
@@ -293,7 +293,7 @@ class IterTreeReducer(object):
 
         """
         branches = self.branches
-        while 1:
+        while True:
             to_be_finished = branches[-1]
             base_index = to_be_finished.base_index
             if base_index != index[:len(base_index)]:
@@ -322,7 +322,7 @@ class IterTreeReducer(object):
 
     def Finish(self):
         u"""Call at end of sequence to tie everything up"""
-        while 1:
+        while True:
             to_be_finished = self.branches.pop()
             to_be_finished.call_end_proc()
             if not self.branches:

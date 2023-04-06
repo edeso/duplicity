@@ -41,7 +41,7 @@ class PatchingTest(UnitTestCase):
     def copyfileobj(self, infp, outfp):
         u"""Copy in fileobj to out, closing afterwards"""
         blocksize = 32 * 1024
-        while 1:
+        while True:
             buf = infp.read(blocksize)
             if not buf:
                 break
@@ -144,8 +144,8 @@ class CollateItersTest(UnitTestCase):
         helper = lambda i: indicies[i]
 
         makeiter1 = lambda: iter(indicies)
-        makeiter2 = lambda: map(helper, [0, 1, 3])
-        makeiter3 = lambda: map(helper, [1, 2])
+        makeiter2 = lambda: list(map(helper, [0, 1, 3]))
+        makeiter3 = lambda: list(map(helper, [1, 2]))
 
         outiter = patchdir.collate_iters([makeiter1(), makeiter2()])
         assert Iter.equal(outiter,
@@ -163,8 +163,8 @@ class CollateItersTest(UnitTestCase):
                                 (indicies[3], indicies[3], None)]), 1)
 
         assert Iter.equal(patchdir.collate_iters([makeiter1(), iter([])]),
-                          map(lambda i: (i, None), indicies))
-        assert Iter.equal(map(lambda i: (i, None), indicies),
+                          [(i, None) for i in indicies])
+        assert Iter.equal([(i, None) for i in indicies],
                           patchdir.collate_iters([makeiter1(), iter([])]))
 
     def test_tuple(self):

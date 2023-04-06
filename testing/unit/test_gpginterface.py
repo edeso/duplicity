@@ -241,7 +241,7 @@ class PipesTests(unittest.TestCase):
 
 
 def fh_cmp(f1, f2, bufsize=8192):
-    while 1:
+    while True:
         b1 = f1.read(bufsize)
         b2 = f2.read(bufsize)
         if b1 != b2:

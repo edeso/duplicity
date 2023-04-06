@@ -478,7 +478,7 @@ def get_hash(hash, path, hex=1):  # pylint: disable=redefined-builtin
     else:
         assert 0, u"Unknown hash %s" % (hash,)
 
-    while 1:
+    while True:
         buf = fp.read(blocksize)
         if not buf:
             break

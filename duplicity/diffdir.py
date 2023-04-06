@@ -266,7 +266,7 @@ def collate2iters(riter1, riter2):
     index, and earlier indicies are yielded later than later indicies.
     """
     relem1, relem2 = None, None
-    while 1:
+    while True:
         if not relem1:
             try:
                 relem1 = next(riter1)

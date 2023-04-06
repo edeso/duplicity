@@ -114,7 +114,7 @@ def difftar2path_iter(diff_tarfile):
     except StopIteration:
         return
 
-    while 1:
+    while True:
         # This section relevant when a multivol diff is last in tar
         if not tarinfo_list[0]:
             return
@@ -394,7 +394,7 @@ def collate_iters(iter_list):
         return min([elem.index for elem in [x for x in elems if x]])
 
     def yield_tuples(iter_num, overflow, elems):
-        while 1:
+        while True:
             setrorps(overflow, elems)
             if None not in overflow:
                 break

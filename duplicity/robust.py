@@ -63,6 +63,5 @@ def listpath(path):
     def error_handler(exc):  # pylint: disable=unused-argument
         log.Warn(_(u"Error listing directory %s") % path.uc_name)
         return []
-    dir_listing = check_common_error(error_handler, path.listdir)
-    dir_listing.sort()
+    dir_listing = sorted(check_common_error(error_handler, path.listdir))
     return dir_listing

@@ -264,8 +264,7 @@ class BackupSet(object):
         Return sorted list of (remote) filenames of files in set
         """
         assert self.info_set
-        volume_num_list = list(self.volume_name_dict.keys())
-        volume_num_list.sort()
+        volume_num_list = sorted(self.volume_name_dict.keys())
         volume_filenames = [self.volume_name_dict[x] for x in volume_num_list]
         if self.remote_manifest_name:
             # For convenience of implementation for restart support, we treat
@@ -507,7 +506,7 @@ class SignatureChain(object):
         Check to make sure times are in whole seconds
         """
         for time in time_list:
-            if type(time) is not int:
+            if not isinstance(time, int):
                 assert 0, u"Time %s in %s wrong type" % (time, time_list)
 
     def islocal(self):
@@ -935,8 +934,7 @@ class CollectionsStatus(object):
                 endtime_chain_dict[chain.end_time] = [chain]
 
         # Use dictionary to build final sorted list
-        sorted_end_times = list(endtime_chain_dict.keys())
-        sorted_end_times.sort()
+        sorted_end_times = sorted(endtime_chain_dict.keys())
         sorted_chain_list = []
         for end_time in sorted_end_times:
             chain_list = endtime_chain_dict[end_time]
@@ -1030,8 +1028,7 @@ class CollectionsStatus(object):
 
     def sort_sets(self, setlist):
         u"""Return new list containing same elems of setlist, sorted by time"""
-        pairs = [(s.get_time(), s) for s in setlist]
-        pairs.sort()
+        pairs = sorted([(s.get_time(), s) for s in setlist])
         return [p[1] for p in pairs]
 
     def get_chains_older_than(self, t):

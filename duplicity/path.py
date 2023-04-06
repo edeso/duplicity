@@ -425,7 +425,7 @@ class ROPath(object):
             assert not f1.close()
             assert not f2.close()
 
-        while 1:
+        while True:
             buf1 = f1.read(_copy_blocksize)
             buf2 = f2.read(_copy_blocksize)
             if buf1 != buf2:
@@ -649,7 +649,7 @@ class Path(ROPath):
     def writefileobj(self, fin):
         u"""Copy file object fin to self.  Close both when done."""
         fout = self.open(u"wb")
-        while 1:
+        while True:
             buf = fin.read(_copy_blocksize)
             if not buf:
                 break
@@ -691,7 +691,7 @@ class Path(ROPath):
         u"""Return temp non existent path in same directory as self"""
         global _tmp_path_counter
         parent_dir = self.get_parent_dir()
-        while 1:
+        while True:
             temp_path = parent_dir.append(u"duplicity_temp." +
                                           str(_tmp_path_counter))
             if not temp_path.type:

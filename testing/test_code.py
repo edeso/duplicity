@@ -92,7 +92,8 @@ class CodeTest(DuplicityTestCase):
             unadorned_string_list = find_unadorned_strings.check_file_for_unadorned(python_source_file)
             if unadorned_string_list:
                 do_assert = True
-                print(f"Found {len(unadorned_string_list):d} unadorned strings in {python_source_file:s}:",
+                print(f"Found {len(unadorned_string_list):d} "
+                      f"unadorned strings in {python_source_file:s}:",
                       file=sys.stderr)
                 for unadorned_string in unadorned_string_list:
                     print(unadorned_string[1:], file=sys.stderr)

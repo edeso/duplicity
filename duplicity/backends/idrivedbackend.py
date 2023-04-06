@@ -267,9 +267,9 @@ class IDriveBackend(duplicity.backend.Backend):
         log.Debug(u"list response: {0}".format(l))
 
         # get a list of lists from data lines returned by idevsutil_dedup --auth-list
-        filtered = map((lambda line: re.split(r"\[|\]", line)), [x for x in l.splitlines() if x.startswith(u"[")])
+        filtered = list(map((lambda line: re.split(r"\[|\]", line)), [x for x in l.splitlines() if x.startswith(u"[")]))
         # remove whitespace from elements
-        filtered = map((lambda line: map((lambda c: c.strip()), line)), filtered)
+        filtered = list(map((lambda line: list(map((lambda c: c.strip()), line))), filtered))
         # remove empty elements
         filtered = list(map((lambda cols: list(filter((lambda c: c != u''), cols))), filtered))
 
