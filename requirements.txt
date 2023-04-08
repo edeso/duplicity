@@ -5,30 +5,30 @@ future
 python-gettext
 
 
-##### requests libraries #####
+##### custom versions not used directly
 
 chardet < 3.10
 urllib3 < 1.26
-requests
+cryptography == 3.4.8
 
 
 ##### backend libraries #####
 
 azure-core
 azure-storage-blob
-b2sdk                   ; python_version >= '3.7'
+b2sdk
 boto
 boto3
 boxsdk[jwt]
 dropbox
 gdata                   ; python_version == '2.7'
-gdata-python3           ; python_version >= '3.5'
+gdata-python3
 google-api-python-client
 google-auth-oauthlib
 jottalib
 keyring
 mediafire
-megatools               ; python_version >= '3.6'
+megatools
 paramiko
 pexpect
 psutil
@@ -36,6 +36,7 @@ pydrive2
 pyrax
 python-swiftclient
 python-keystoneclient
+requests
 requests-oauthlib
 
 
@@ -57,8 +58,8 @@ tox
 
 ##### documentation libraries #####
 
-gitchangelog            ; python_version >= '3.6'
-myst-parser             ; python_version >= '3.6'
-pystache                ; python_version >= '3.6'
-sphinx                  ; python_version >= '3.6'
-sphinx-rtd-theme        ; python_version >= '3.6'
+gitchangelog
+myst-parser
+pystache
+sphinx
+sphinx-rtd-theme
