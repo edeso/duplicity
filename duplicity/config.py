@@ -171,7 +171,7 @@ keep_chains = None
 dry_run = False
 
 # Compress files on remote system?
-compression = False
+compression = True
 
 # Encrypt files on remote system?
 encryption = True

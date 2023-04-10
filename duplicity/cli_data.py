@@ -335,7 +335,7 @@ class OptionKwargs:
     }
     ignore_errors = {
         u"action": u"store_true",
-        u"help": u"Ignore most errors during restore",
+        u"help": u"Ignore most errors during processing",
         u"default": dflt(config.ignore_errors)
     }
     imap_full_address = {
@@ -940,6 +940,7 @@ trans = {
     # Example: rclone://remote:/some_dir
     u'remote': _(u"remote"),
 }
+
 help_url_formats = _(u"Backends and their URL formats:") + u"""
   azure://%(container_name)s
   b2://%(account_id)s[:%(application_key)s]@%(bucket_name)s/[%(some_dir)s/]

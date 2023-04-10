@@ -24,7 +24,7 @@ export PYTHONPATH='/usr/local/lib/python.x/site-packages/'
 
 # REQUIREMENTS
 
- * Python 3.5 to 3.10
+ * Python 3.8 to 3.10
  * librsync v0.9.6 or later
  * GnuPG for encryption
  * see `requirements.txt` for complete list

@@ -38,8 +38,8 @@ from setuptools.command.test import test
 
 
 # check that we can function here
-if not (sys.version_info[0] == 3 and sys.version_info[1] >= 7):
-    print(u"Sorry, duplicity requires version 3.7 or later of Python3.")
+if not (sys.version_info[0] == 3 and sys.version_info[1] >= 8):
+    print(u"Sorry, duplicity requires version 3.8 or later of Python3.")
     sys.exit(1)
 
 
@@ -292,7 +292,7 @@ setup(name=u"duplicity",
     maintainer=u"Kenneth Loafman <kenneth@loafman.com>",
     maintainer_email=u"kenneth@loafman.com",
     url=u"http://duplicity.us",
-    python_requires=u">=3.7, <4",
+    python_requires=u">=3.8, <4",
     platforms=[u"any"],
     packages=[
         u"duplicity",
@@ -368,7 +368,6 @@ setup(name=u"duplicity",
         u"Operating System :: POSIX",
         u"Programming Language :: C",
         u"Programming Language :: Python :: 3",
-        u"Programming Language :: Python :: 3.7",
         u"Programming Language :: Python :: 3.8",
         u"Programming Language :: Python :: 3.9",
         u"Programming Language :: Python :: 3.10",

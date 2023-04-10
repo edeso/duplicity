@@ -4,11 +4,11 @@ fasteners
 python-gettext
 
 
-##### requests libraries #####
+##### custom versions not used directly
 
 chardet < 3.10
 urllib3 < 1.26
-requests
+cryptography == 3.4.8
 
 
 ##### backend libraries #####
@@ -26,7 +26,7 @@ google-auth-oauthlib
 jottalib
 keyring
 mediafire
-megatools               ; python_version >= '3.7'
+megatools
 paramiko
 pexpect
 psutil
@@ -49,13 +49,13 @@ pytest-cov
 pytest-runner
 setuptools >= 44.1.1
 setuptools-scm >= 5.0.2
-tox < 4.0
+tox
 
 
 ##### documentation libraries #####
 
-gitchangelog            ; python_version >= '3.7'
-myst-parser             ; python_version >= '3.7'
-pystache                ; python_version >= '3.7'
-sphinx                  ; python_version >= '3.7'
-sphinx-rtd-theme        ; python_version >= '3.7'
+gitchangelog
+myst-parser
+pystache
+sphinx
+sphinx-rtd-theme

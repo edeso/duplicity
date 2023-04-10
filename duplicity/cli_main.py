@@ -195,6 +195,8 @@ def process_command_line(cmdline_list):
     else:
         config.backend = None
 
+    assert (not (config.source_dir and config.target_dir),
+        u"Program error: cannot have both source_dir and target_dir")
     local_path = config.source_dir or config.target_dir
     if local_path:
         config.local_path = path.Path(path.Path(local_path).get_canonical())

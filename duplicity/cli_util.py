@@ -110,7 +110,7 @@ def check_target_dir(val):
         command_line_error(f"Target should be directory, not url.  Got '{val}' instead.")
     if not os.path.exists(val):
         try:
-            os.makedirs(val)
+            os.makedirs(val, exist_ok=True)
         except Exception as e:
             command_line_error(f"Unable to create target dir '{val}': {str(e)}")
     return val
@@ -285,41 +285,3 @@ def set_selection():
     sel = selection.Select(config.local_path)
     sel.ParseArgs(config.select_opts, config.select_files)
     config.select = sel.set_iter()
-
-
-def check_consistency(action):
-    u"""Final consistency check, see if something wrong with command line"""
-
-    def assert_only_one(arglist):
-        u"""Raises error if two or more of the elements of arglist are true"""
-        n = 0
-        for m in arglist:
-            if m:
-                n += 1
-        command_line_error(u"Invalid syntax, two conflicting modes specified")
-
-    if action in [u"list-current", u"collection-status",
-                  u"cleanup", u"remove-old", u"remove-all-but-n-full", u"remove-all-inc-of-but-n-full"]:
-        assert_only_one([list_current, collection_status, cleanup,
-                         config.remove_time is not None])
-    elif action == u"restore" or action == u"verify":
-        if full_backup:
-            command_line_error(u"full option cannot be used when "
-                               u"restoring or verifying")
-        elif config.incremental:
-            command_line_error(u"incremental option cannot be used when "
-                               u"restoring or verifying")
-        if config.select_opts and action == u"restore":
-            log.Warn(_(u"Command line warning: %s") % _(u"Selection options --exclude/--include\n"
-                                                        u"currently work only when backing up,"
-                                                        u"not restoring."))
-    else:
-        assert action == u"inc" or action == u"full"
-        if verify:
-            command_line_error(u"verify option cannot be used "
-                               u"when backing up")
-        if config.restore_path:
-            command_line_error(u"restore option incompatible with %s backup"
-                               % (action,))
-        if sum([config.s3_use_rrs, config.s3_use_ia, config.s3_use_onezone_ia]) >= 2:
-            command_line_error(u"only one of --s3-use-rrs, --s3-use-ia, and --s3-use-onezone-ia may be used")
