@@ -1,7 +1,6 @@
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
-# Copyright 2002 Ben Escoto <ben@emerose.org>
-# Copyright 2007 Kenneth Loafman <kenneth@loafman.com>
+# Copyright 2022 Kenneth Loafman <kenneth@loafman.com>
 #
 # This file is part of duplicity.
 #
@@ -19,7 +18,9 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-u"""Parse command line, check for consistency, and set config"""
+u"""
+Main for parse command line, check for consistency, and set config
+"""
 
 import sys
 
@@ -56,59 +57,20 @@ def make_wide(formatter, w=120, h=46):
         return formatter
 
 
-class DuplicityArgumentParser(argparse.ArgumentParser):
-    u"""
-    Return an argument parser friendly to logging
-    Note: log.setup() MUST be run before this
-    """
-    def print_usage(self, file=None):
-        if file is None:
-            file = sys.stdout
-        log.Info(self.format_usage())
-
-    def print_help(self, file=None):
-        if file is None:
-            file = sys.stdout
-        log.Info(self.format_help())
-
-    # ===============
-    # Exiting methods
-    # ===============
-    def exit(self, status=0, message=None):
-        if message:
-            log.Info(message)
-        sys.exit(status)
-
-    def error(self, message):
-        u"""error(message: string)
-
-        Prints a usage message incorporating the message to stderr and
-        exits.
-
-        If you override this in a subclass, it should not return -- it
-        should either exit or raise an exception.
-        """
-        self.print_usage(sys.stderr)
-        self.exit(2, f'{self.prog}: error: {message}\n')
-
-
 def parse_cmdline_options(arglist):
     u"""
     Parse argument list
     """
     # set up parent parser
-    parser = DuplicityArgumentParser(
+    parser = argparse.ArgumentParser(
         prog=u'duplicity',
         argument_default=None,
         formatter_class=make_wide(DuplicityHelpFormatter)
     )
-    for var in parent_only_options:
+    for var in sorted(all_options):
         names = OptionAliases.__dict__.get(var, []) + [var]
         names = [var2opt(n) for n in names]
         parser.add_argument(*names, **OptionKwargs.__dict__[var])
-
-    # preprocess logging options
-    args, remainder = parser.parse_known_args(arglist)
 
     # set up command subparsers
     subparsers = parser.add_subparsers(
@@ -141,16 +103,18 @@ def parse_cmdline_options(arglist):
         for opt in sorted(CommandOptions.__dict__[var]):
             if opt.startswith(u"__"):
                 continue
-            names = OptionAliases.__dict__.get(opt, list())
-            names = [var2opt(n) for n in names + [opt]]
+            names = OptionAliases.__dict__.get(opt, [])
+            # Note: 1st var is the dest= name for the option
+            names = [var2opt(opt)] + [var2opt(n) for n in names]
             subparser_dict[cmd].add_argument(*names, **OptionKwargs.__dict__[opt])
 
     # parse the options
-    args = parser.parse_args(remainder)
+    args = parser.parse_args(arglist)
 
-    # if no command, print help
+    # if no command, print general help
     if not hasattr(args, u"action"):
         parser.print_usage()
+        sys.exit(2)
 
     # Copy all arguments and their values to the config module.  Don't copy
     # attributes that are 'hidden' (start with an underscore) or whose name is
@@ -195,8 +159,6 @@ def process_command_line(cmdline_list):
     else:
         config.backend = None
 
-    assert (not (config.source_dir and config.target_dir),
-        u"Program error: cannot have both source_dir and target_dir")
     local_path = config.source_dir or config.target_dir
     if local_path:
         config.local_path = path.Path(path.Path(local_path).get_canonical())

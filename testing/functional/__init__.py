@@ -100,16 +100,13 @@ class FunctionalTestCase(DuplicityTestCase):
                 cmd_list.extend([u"-w"])
         else:
             cmd_list = []
-        basepython = os.environ.get(u'TOXPYTHON', None)
-        if basepython is not None:
+        if basepython := os.environ.get(u'TOXPYTHON', None):
             cmd_list.extend([basepython])
-        run_coverage = os.environ.get(u'RUN_COVERAGE', None)
-        if run_coverage is not None:
+        if run_coverage := os.environ.get(u'RUN_COVERAGE', None):
             cmd_list.extend([u"-m", u"coverage", u"run", u"--source=duplicity", u"-p"])
         cmd_list.extend([u"{0}/bin/duplicity".format(_top_dir)])
         cmd_list.extend(options)
-        run_debugger = os.environ.get(u"PYDEVD", None)
-        if run_debugger is not None:
+        if run_debugger := os.environ.get(u"PYDEVD", None):
             cmd_list.extend([u"--pydevd"])
         cmd_list.extend([u"-v0"])
         cmd_list.extend([u"--no-print-statistics"])
@@ -139,6 +136,8 @@ class FunctionalTestCase(DuplicityTestCase):
         # else:
 
         # Manually encode to filesystem encoding and send to spawn as bytes
+        with open("/tmp/test_basic.sh", "at") as f:
+            f.write(cmdline + '\n')
         child = pexpect.spawn(u'/bin/sh', [u'-c', cmdline], timeout=None)
 
         for passphrase in passphrase_input:

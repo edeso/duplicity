@@ -709,7 +709,7 @@ class Path(ROPath):
 
     def __repr__(self):
         u"""Return string representation"""
-        return u"(%s %s %s)" % (self.index, self.name, self.type)
+        return u"(%s %s %s)" % (self.index, self.uc_name, self.type)
 
     def quote(self, s=None):
         u"""

@@ -24,6 +24,7 @@ u"""Store global configuration information"""
 import os
 import socket
 import sys
+import time
 
 from duplicity import __version__
 from duplicity import gpg

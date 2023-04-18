@@ -184,19 +184,18 @@ class CommandlineTest(UnitTestCase):
         self.run_all_commands_with_errors(new_args, err_msg)
 
     @pytest.mark.usefixtures(u"redirect_stdin")
-    def test_help_commands(self):
+    def test_option_aliases(self):
         u"""
-        test multi-level help system
+        test short option aliases
         """
-        for var in DuplicityCommands.__dict__.keys():
-            if var.startswith(u"__"):
-                continue
-            cmd = var2cmd(var)
-            cline = [cmd, u'--help']
-            with self.assertRaises(SystemExit) as cm:
-                cli_main.process_command_line(cline)
-                for opt in sorted(CommandOptions.__dict__[var]):
-                    names = OptionAliases.__dict__.get(opt, []) + [opt]
-                    names = [var2opt(n) for n in names]
-                    for name in names:
-                        self.assertIn(name, cm.output)
+        cline = u"back foo/bar file:///target_url -v 9".split()
+        cli_main.process_command_line(cline)
+        self.assertEqual(config.verbosity, 9)
+
+        cline = u"rest file:///source_url foo/bar -t 10000".split()
+        cli_main.process_command_line(cline)
+        self.assertEqual(config.restore_time, 10000)
+
+        cline = u"rest file:///source_url foo/bar --time 10000".split()
+        cli_main.process_command_line(cline)
+        self.assertEqual(config.restore_time, 10000)

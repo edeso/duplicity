@@ -429,7 +429,7 @@ def write_multivol(backup_type, tarblock_iter, man_outfp, sig_outfp, backend):
                                         encrypted=config.encryption,
                                         gzipped=config.compression)
         tdp = dup_temp.new_tempduppath(file_naming.parse(dest_filename))
-        log.Debug(u"FILENAME: " + str(tdp.name))
+        log.Debug(u"FILENAME: " + tdp.uc_name)
 
         # write volume
         log.Debug(u"***WRITING VOLUME***")
@@ -1439,7 +1439,7 @@ See https://bugs.launchpad.net/duplicity/+bug/931175
 
     config.lockpath = os.path.join(config.archive_dir_path.name, b"lockfile")
     config.lockfile = fasteners.process_lock.InterProcessLock(config.lockpath)
-    log.Debug(_(u"Acquiring lockfile %s") % config.lockpath)
+    log.Debug(_(u"Acquiring lockfile %s") % os.fsdecode(config.lockpath))
     if not config.lockfile.acquire(blocking=False):
         log.FatalError(
             u"Another duplicity instance is already running with this archive directory\n",

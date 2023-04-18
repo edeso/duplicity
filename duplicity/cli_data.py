@@ -1,7 +1,6 @@
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
-# Copyright 2002 Ben Escoto <ben@emerose.org>
-# Copyright 2007 Kenneth Loafman <kenneth@loafman.com>
+# Copyright 2022 Kenneth Loafman <kenneth@loafman.com>
 #
 # This file is part of duplicity.
 #
@@ -19,7 +18,9 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-u"""Parse command line, check for consistency, and set config"""
+u"""
+Data for parse command line, check for consistency, and set config
+"""
 
 import argparse
 from dataclasses import dataclass
@@ -31,7 +32,12 @@ from duplicity.cli_util import *
 
 @dataclass
 class DuplicityCommands:
-    u"""duplicity commands and positional args expected"""
+    u"""
+    duplicity commands and positional args expected
+
+    NOTE: cli_util must contain a function named check_* for each positional arg,
+          for example check_source_url() to check for source dir validity.
+    """
     backup = [u"source_dir", u"target_url"]
     cleanup = [u"target_url"]
     collection_status = [u"target_url"]
@@ -47,7 +53,9 @@ class DuplicityCommands:
 
 @dataclass
 class CommandAliases:
-    u"""commands and aliases"""
+    u"""
+    commands and aliases
+    """
     backup = [u"back", u"bu"]
     cleanup = [u"clean", u"cl"]
     collection_status = [u"stat", u"st"]
@@ -72,8 +80,8 @@ class OptionKwargs:
         u"default": dflt(config.allow_source_mismatch)
     }
     archive_dir = {
-        u"type": check_file,
         u"metavar": _(u"path"),
+        u"type": check_file,
         u"help": u"Path to store metadata archives",
         u"default": dflt(config.archive_dir)
     }
@@ -90,8 +98,8 @@ class OptionKwargs:
         u"default": dflt(config.azure_blob_tier)
     }
     azure_max_connections = {
-        u"type": int,
         u"metavar": _(u"number"),
+        u"type": int,
         u"help": u"Number of maximum parallel connections to use when the blob size exceeds 64MB",
         u"default": dflt(config.azure_max_connections)
     }
@@ -307,12 +315,12 @@ class OptionKwargs:
     full_if_older_than = {
         u"metavar": _(u"time"),
         u"type": check_time,
-        u"dest": u"restore_time",
         u"help": u"Perform full backup if last full is older than 'time'",
-        u"default": dflt(config.restore_time)
+        u"default": dflt(config.full_if_older_than)
     }
     gpg_binary = {
-        u"metavar": _(u"path"), u"type": check_file,
+        u"metavar": _(u"path"),
+        u"type": check_file,
         u"help": u"Path to GNUpg executable file",
         u"default": dflt(config.gpg_binary)
     }
@@ -411,7 +419,8 @@ class OptionKwargs:
         u"default": dflt(config.null_separator)
     }
     num_retries = {
-        u"metavar": _(u"number"), u"type": int,
+        u"metavar": _(u"number"),
+        u"type": int,
         u"help": u"Number of retries on network operations",
         u"default": dflt(config.num_retries)
     }
@@ -442,7 +451,8 @@ class OptionKwargs:
         u"default": dflt(config.par2_redundancy)
     }
     par2_volumes = {
-        u"metavar": _(u"number"), u"type": int,
+        u"metavar": _(u"number"),
+        u"type": int,
         u"help": u"Number of par2 volumes",
         u"default": dflt(config.par2_volumes)
     }
@@ -464,7 +474,8 @@ class OptionKwargs:
         u"default": dflt(config.progress)
     }
     progress_rate = {
-        u"metavar": _(u"number"), u"type": int,
+        u"metavar": _(u"number"),
+        u"type": int,
         u"help": u"Used to control the progress option update rate in seconds",
         u"default": dflt(config.progress_rate)
     }
@@ -478,16 +489,19 @@ class OptionKwargs:
     restore_time = {
         u"metavar": _(u"time"),
         u"type": check_time,
+        # u"dest": u"restore_time",
         u"help": u"Restores will try to bring back the state as of the following time",
         u"default": dflt(config.restore_time)
     }
     rsync_options = {
-        u"metavar": _(u"options"), u"action": u"append",
+        u"metavar": _(u"options"),
+        u"action": u"append",
         u"help": u"User added rsync options",
         u"default": dflt(config.rsync_options)
     }
     s3_endpoint_url = {
-        u"metavar": _(u"s3_endpoint_url"), u"action": u"store",
+        u"metavar": _(u"s3_endpoint_url"),
+        u"action": u"store",
         u"help": u"Specity S3 endpoint",
         u"default": dflt(config.s3_endpoint_url)
     }
@@ -539,15 +553,16 @@ class OptionKwargs:
         u"default": dflt(config.s3_use_rrs)
     }
     s3_multipart_chunk_size = {
-        u"metavar": _(u"number"), u"type": set_megs,
+        u"metavar": _(u"number"),
+        u"type": set_megs,
         u"help": u"Chunk size used for S3 multipart uploads.The number of parallel uploads to\n"
                  u"S3 be given by chunk size / volume size. Use this to maximize the use of\n"
                  u"your bandwidth",
         u"default": dflt(int(config.s3_multipart_chunk_size / (1024 * 1024)))
     }
     s3_multipart_max_procs = {
-        u"type": int,
         u"metavar": _(u"number"),
+        u"type": int,
         u"help": u"Number of processes to set the Processor Pool to when uploading multipart\n"
                  u"uploads to S3. Use this to control the maximum simultaneous uploads to S3",
         u"default": dflt(config.s3_multipart_max_procs)
@@ -577,17 +592,20 @@ class OptionKwargs:
         u"default": dflt(config.s3_use_sse_kms)
     }
     s3_kms_key_id = {
-        u"metavar": _(u"s3_kms_key_id"), u"action": u"store",
+        u"metavar": _(u"s3_kms_key_id"),
+        u"action": u"store",
         u"help": u"S3 KMS encryption key id",
         u"default": dflt(config.s3_kms_key_id)
     }
     s3_kms_grant = {
-        u"metavar": _(u"s3_kms_grant"), u"action": u"store",
+        u"metavar": _(u"s3_kms_grant"),
+        u"action": u"store",
         u"help": u"S3 KMS grant value",
         u"default": dflt(config.s3_kms_grant)
     }
     s3_region_name = {
-        u"metavar": _(u"s3_region_name"), u"action": u"store",
+        u"metavar": _(u"s3_region_name"),
+        u"action": u"store",
         u"help": u"Specity S3 region name",
         u"default": dflt(config.s3_region_name)
     }
@@ -670,7 +688,8 @@ class OptionKwargs:
         u"default": dflt(config.use_agent)
     }
     verbosity = {
-        u"metavar": _(u"[0-9]"), u"type": check_verbosity,
+        u"metavar": _(u"[0-9]"),
+        u"type": check_verbosity,
         u"help": u"Logging verbosity",
         u"default": dflt(log.NOTICE)
     }
@@ -721,10 +740,11 @@ class OptionAliases:
     version = [u"V"]
 
 
-all_options = {opt for opt in OptionKwargs.__dict__.keys()}
+all_options = {opt for opt in OptionKwargs.__dict__.keys()
+               if not opt.startswith(u"__")}
 
 parent_only_options = {
-    u"version", u"log_fd", u"log_file", u"log_timestamp"
+    u"log_fd", u"log_file", u"log_timestamp", u"version",
 }
 
 backup_only_options = {

@@ -1,7 +1,6 @@
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
-# Copyright 2002 Ben Escoto <ben@emerose.org>
-# Copyright 2007 Kenneth Loafman <kenneth@loafman.com>
+# Copyright 2022 Kenneth Loafman <kenneth@loafman.com>
 #
 # This file is part of duplicity.
 #
@@ -19,7 +18,9 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-u"""Parse command line, check for consistency, and set config"""
+u"""
+Utils for parse command line, check for consistency, and set config
+"""
 
 import argparse
 import io
@@ -47,7 +48,15 @@ def command_line_error(message):
                            _(u"Enter 'duplicity --help' for help screen."))
 
 
-class AddSelectionAction(argparse.Action):
+class DuplicityAction(argparse.Action):
+    def __init__(self, option_strings, dest, **kwargs):
+        super().__init__(option_strings, dest, **kwargs)
+
+    def __call__(self, parser, namespace, values, option_string=None):
+        raise NotImplemented
+
+
+class AddSelectionAction(DuplicityAction):
     def __init__(self, option_strings, dest, **kwargs):
         super().__init__(option_strings, dest, **kwargs)
 
@@ -56,7 +65,7 @@ class AddSelectionAction(argparse.Action):
         config.select_opts.append((os.fsdecode(option_string), addarg))
 
 
-class AddFilelistAction(argparse.Action):
+class AddFilelistAction(DuplicityAction):
     def __init__(self, option_strings, dest, **kwargs):
         super().__init__(option_strings, dest, **kwargs)
 
@@ -68,7 +77,7 @@ class AddFilelistAction(argparse.Action):
             raise argparse.ArgumentError(values, str(e))
 
 
-class AddRenameAction(argparse.Action):
+class AddRenameAction(DuplicityAction):
     def __init__(self, option_strings, dest, **kwargs):
         super().__init__(option_strings, dest, **kwargs)
 
