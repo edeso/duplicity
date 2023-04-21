@@ -210,7 +210,7 @@ class Iter(object):
                     return
                 yield ret
 
-        return tuple(map(make_iterator, list(range(num_of_forks))))
+        return tuple(map(make_iterator, range(num_of_forks)))
 
 
 class IterMultiplex2(object):

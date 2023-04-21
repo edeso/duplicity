@@ -22,6 +22,7 @@
 u"""Create and edit manifest for session contents"""
 
 
+import os
 import re
 
 from duplicity import config
@@ -98,10 +99,10 @@ class Manifest(object):
             code_extra = u"%s %s" % (util.escape(config.hostname), util.escape(self.hostname))
 
         elif self.local_dirname and self.local_dirname != config.local_path.name:
-            errmsg = _(u"Fatal Error: Backup source directory has changed.\n"
-                       u"Current directory: %s\n"
-                       u"Previous directory: %s") % (config.local_path.name, self.local_dirname)
-            code = log.ErrorCode.source_dir_mismatch
+            errmsg = _(f"Fatal Error: Backup source directory has changed.\n"
+                       f"Current directory: {config.local_path.uc_name}\n"
+                       f"Previous directory: {os.fsdecode(self.local_dirname)}")
+            code = log.ErrorCode.source_path_mismatch
             code_extra = u"%s %s" % (util.escape(config.local_path.name),
                                      util.escape(self.local_dirname))
         else:

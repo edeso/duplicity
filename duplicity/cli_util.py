@@ -35,6 +35,8 @@ from duplicity import log
 from duplicity import path
 from duplicity import selection
 
+gpg_key_patt = re.compile(u"^(0x)?([0-9A-Fa-f]{8}|[0-9A-Fa-f]{16}|[0-9A-Fa-f]{40})$")
+
 
 class CommandLineError(errors.UserError):
     pass
@@ -53,7 +55,7 @@ class DuplicityAction(argparse.Action):
         super().__init__(option_strings, dest, **kwargs)
 
     def __call__(self, parser, namespace, values, option_string=None):
-        raise NotImplemented
+        raise NotImplementedError
 
 
 class AddSelectionAction(DuplicityAction):
@@ -100,11 +102,11 @@ def check_remove_time(val):
         command_line_error(str(e))
 
 
-def check_source_dir(val):
+def check_source_path(val):
     if u"://" in val:
-        command_line_error(f"Source should be directory, not url.  Got '{val}' instead.")
-    if not os.path.isdir(val):
-        command_line_error(f"Argument source_dir '{val}' does not exist or is not a directory.")
+        command_line_error(f"Source should be pathname, not url.  Got '{val}' instead.")
+    if not os.path.exists(val):
+        command_line_error(f"Argument source_path '{val}'.")
     return val
 
 
@@ -280,9 +282,31 @@ def set_archive_dir(dirstring):
     config.archive_dir_path = archive_dir_path
 
 
+def set_encrypt_key(encrypt_key):
+    u"""Set config.gpg_profile.encrypt_key assuming proper key given"""
+    if not gpg_key_patt.match(encrypt_key):
+        log.FatalError(_(u"Encrypt key should be an 8, 16, or 40 character hex string, like "
+                         u"'AA0E73D2'.\nReceived '%s' instead.") % (encrypt_key,),
+                       log.ErrorCode.bad_encrypt_key)
+    if config.gpg_profile.recipients is None:
+        config.gpg_profile.recipients = []
+    config.gpg_profile.recipients.append(encrypt_key)
+
+
+def set_hidden_encrypt_keyk(hidden_encrypt_key):
+    u"""Set config.gpg_profile.hidden_encrypt_key assuming proper key given"""
+    if not gpg_key_patt.match(hidden_encrypt_key):
+        log.FatalError(_(u"Hidden encrypt key should be an 8, 16, or 40 character hex string, like "
+                         u"'AA0E73D2'.\nReceived '%s' instead.") % (hidden_encrypt_key,),
+                       log.ErrorCode.bad_hidden_encrypt_key)
+    if config.gpg_profile.hidden_recipients is None:
+        config.gpg_profile.hidden_recipients = []
+    config.gpg_profile.hidden_recipients.append(hidden_encrypt_key)
+
+
 def set_sign_key(sign_key):
     u"""Set config.sign_key assuming proper key given"""
-    if not re.search(u"^(0x)?([0-9A-Fa-f]{8}|[0-9A-Fa-f]{16}|[0-9A-Fa-f]{40})$", sign_key):
+    if not gpg_key_patt.match(sign_key):
         log.FatalError(_(u"Sign key should be an 8, 16, or 40 character hex string, like "
                          u"'AA0E73D2'.\nReceived '%s' instead.") % (sign_key,),
                        log.ErrorCode.bad_sign_key)

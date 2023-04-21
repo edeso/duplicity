@@ -275,7 +275,7 @@ class ErrorCode(object):
     cant_open_filelist = 7
     bad_url = 8
     bad_archive_dir = 9
-    bad_sign_key = 10
+    # bad_sign_key = 10  # moved below
     restore_path_exists = 11
     verify_dir_doesnt_exist = 12
     backup_dir_doesnt_exist = 13
@@ -306,7 +306,7 @@ class ErrorCode(object):
     connection_failed = 38
     restart_file_not_found = 39
     gio_not_available = 40
-    source_dir_mismatch = 42  # 41 is reserved for par2
+    source_path_mismatch = 42  # 41 is reserved for par2
     ftps_lftp_missing = 43
     volume_wrong_size = 44
     enryption_mismatch = 45
@@ -330,6 +330,11 @@ class ErrorCode(object):
     trailing_filter = 71
     absolute_files_from = 72
     empty_files_from = 73
+
+    # gpg key errors
+    bad_sign_key = 80
+    bad_encrypt_key = 81
+    bad_hidden_encrypt_key = 82
 
     # Reserve 126 because it is used as an error code for pkexec
     # Reserve 127 because it is used as an error code for pkexec

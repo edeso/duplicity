@@ -41,15 +41,15 @@ from datetime import datetime
 
 import fasteners
 
-import duplicity.config as config
-import duplicity.errors
 from duplicity import __version__
 from duplicity import asyncscheduler
 from duplicity import cli_main
+from duplicity import config
 from duplicity import diffdir
 from duplicity import dup_collections
 from duplicity import dup_temp
 from duplicity import dup_time
+from duplicity import errors
 from duplicity import file_naming
 from duplicity import gpg
 from duplicity import log
@@ -1544,7 +1544,7 @@ def do_backup(action):
             log.PrintCollectionFileChangedStatus(col_stats, config.file_changed, True)
     elif action == u"cleanup":
         cleanup(col_stats)
-    elif action == u"remove-old":
+    elif action == u"remove-older-than":
         remove_old(col_stats)
     elif action == u"remove-all-but-n-full" or action == u"remove-all-inc-of-but-n-full":
         remove_all_but_n_full(col_stats)

@@ -36,13 +36,13 @@ class DuplicityCommands:
     duplicity commands and positional args expected
 
     NOTE: cli_util must contain a function named check_* for each positional arg,
-          for example check_source_url() to check for source dir validity.
+          for example check_source_path() to check for source path validity.
     """
-    backup = [u"source_dir", u"target_url"]
+    backup = [u"source_path", u"target_url"]
     cleanup = [u"target_url"]
     collection_status = [u"target_url"]
-    full = [u"source_dir", u"target_url"]
-    incremental = [u"source_dir", u"target_url"]
+    full = [u"source_path", u"target_url"]
+    incremental = [u"source_path", u"target_url"]
     list_current_files = [u"target_url"]
     remove_older_than = [u"remove_time", u"target_url"]
     remove_all_but_n_full = [u"count", u"target_url"]
@@ -162,14 +162,14 @@ class OptionKwargs:
     }
     encrypt_key = {
         u"metavar": _(u"gpg-key-id"),
-        u"action": u"append",
+        u"type": set_encrypt_key,
         u"help": u"GNUpg key for encryption/decryption",
-        u"default": dflt(config.encrypt_key)
+        u"default": dflt(None)
     }
     encrypt_secret_keyring = {
         u"metavar": _(u"path"),
         u"help": u"Path to secret GNUpg keyring",
-        u"default": dflt(config.encrypt_secret_keyring)
+        u"default": dflt(None)
     }
     encryption = {
         u"action": argparse.BooleanOptionalAction,
@@ -332,6 +332,7 @@ class OptionKwargs:
     }
     hidden_encrypt_key = {
         u"metavar": _(u"gpg-key-id"),
+        u"type": set_hidden_encrypt_key,
         u"help": u"Hidden GNUpg encryption key",
         u"default": dflt(None)
     }
@@ -410,6 +411,7 @@ class OptionKwargs:
     }
     name = {
         u"metavar": _(u"backup name"),
+        u"dest": u"backup_name",
         u"help": u"Custom backup name instead of hash",
         u"default": dflt(config.backup_name)
     }
@@ -635,7 +637,7 @@ class OptionKwargs:
         u"metavar": _(u"gpg-key-id"),
         u"type": set_sign_key,
         u"help": u"Sign key for encryption/decryption",
-        u"default": dflt(config.sign_key)
+        u"default": dflt(None)
     }
     ssh_askpass = {
         u"action": u"store_true",
@@ -874,7 +876,7 @@ trans = {
 
     # TRANSL: Used in usage help. (Should be consistent with the "Options:"
     # header.) Example:
-    # duplicity [full|incremental] [options] source_dir target_url
+    # duplicity [full|incremental] [options] source_path target_url
     u'options': _(u"options"),
 
     # TRANSL: Used in usage help to represent an internet hostname. Example:
@@ -920,8 +922,8 @@ trans = {
     # TRANSL: Used in usage help to represent the name of a single file
     # directory or a Unix-style path to a directory where files will be
     # coming FROM. Example:
-    # duplicity [full|incremental] [options] source_dir target_url
-    u'source_dir': _(u"source_dir"),
+    # duplicity [full|incremental] [options] source_path target_url
+    u'source_path': _(u"source_path"),
 
     # TRANSL: Used in usage help to represent a URL files will be coming
     # FROM. Example:
@@ -936,7 +938,7 @@ trans = {
 
     # TRANSL: Used in usage help to represent a URL files will be going TO.
     # Example:
-    # duplicity [full|incremental] [options] source_dir target_url
+    # duplicity [full|incremental] [options] source_path target_url
     u'target_url': _(u"target_url"),
 
     # TRANSL: Used in usage help to represent a time spec for a previous

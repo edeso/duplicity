@@ -22,6 +22,7 @@ u"""
 Main for parse command line, check for consistency, and set config
 """
 
+import copy
 import sys
 
 import duplicity
@@ -140,7 +141,7 @@ def process_command_line(cmdline_list):
     # if we get a different gpg-binary from the commandline then redo gpg_profile
     # TODO: Allow lists of keys not just single key
     if config.gpg_binary is not None:
-        src = config.gpg_profile
+        src = copy.deepcopy(config.gpg_profile)
         config.gpg_profile = gpg.GPGProfile(
             passphrase=src.passphrase,
             sign_key=src.sign_key,
@@ -159,7 +160,7 @@ def process_command_line(cmdline_list):
     else:
         config.backend = None
 
-    local_path = config.source_dir or config.target_dir
+    local_path = config.source_path or config.target_dir
     if local_path:
         config.local_path = path.Path(path.Path(local_path).get_canonical())
     else:

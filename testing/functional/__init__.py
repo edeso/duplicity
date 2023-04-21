@@ -26,6 +26,7 @@ import time
 
 import pexpect
 
+from duplicity import config
 from duplicity import backend
 from .. import DuplicityTestCase
 from .. import _runtest_dir
@@ -91,8 +92,9 @@ class FunctionalTestCase(DuplicityTestCase):
             options = []
         if passphrase_input is None:
             passphrase_input = []
+
         for item in passphrase_input:
-            assert isinstance(item, u"".__class__), u"item " + unicode(item) + u" in passphrase_input is not unicode"
+            assert isinstance(item, u"".__class__), f"item {os.fsdecode(item)} in passphrase_input is not unicode"
 
         if platform.platform().startswith(u'Linux'):
             cmd_list = [u'setsid']
@@ -100,48 +102,43 @@ class FunctionalTestCase(DuplicityTestCase):
                 cmd_list.extend([u"-w"])
         else:
             cmd_list = []
+
         if basepython := os.environ.get(u'TOXPYTHON', None):
-            cmd_list.extend([basepython])
+            cmd_list.extend([basepython, u'-bb'])
+        else:
+            cmd_list.extend([u"python3", u'-bb'])
+
         if run_coverage := os.environ.get(u'RUN_COVERAGE', None):
             cmd_list.extend([u"-m", u"coverage", u"run", u"--source=duplicity", u"-p"])
+
         cmd_list.extend([u"{0}/bin/duplicity".format(_top_dir)])
         cmd_list.extend(options)
+
         if run_debugger := os.environ.get(u"PYDEVD", None):
             cmd_list.extend([u"--pydevd"])
+
         cmd_list.extend([u"-v0"])
         cmd_list.extend([u"--no-print-statistics"])
         cmd_list.extend([u"--archive-dir={0}/testfiles/cache".format(_runtest_dir)])
+
         if current_time:
             cmd_list.extend([u"--current-time", current_time])
+
         cmd_list.extend(self.class_args)
+
         if fail:
             cmd_list.extend([u"--fail", u"".__class__(fail)])
+
         cmdline = u" ".join([u'"%s"' % x for x in cmd_list])
 
         if not passphrase_input:
             cmdline += u" < /dev/null"
 
-        # The immediately following block is the nicer way to execute pexpect with
-        # unicode strings, but we need to have the pre-4.0 version for some time yet,
-        # so for now this is commented out so tests execute the same way on all systems.
-
-        # if parse_version(pexpect.__version__) >= parse_version("4.0"):
-        #     # pexpect.spawn only supports unicode from version 4.0
-        #     # there was a separate pexpect.spawnu in 3.x, but it has an error on readline
-        #     child = pexpect.spawn('/bin/sh', ['-c', cmdline], timeout=None, encoding=sys.getfilesystemencoding())
-        #
-        #     for passphrase in passphrase_input:
-        #         child.expect('passphrase.*:')
-        #         child.sendline(passphrase)
-        # else:
-
-        # Manually encode to filesystem encoding and send to spawn as bytes
-        with open("/tmp/test_basic.sh", "at") as f:
-            f.write(cmdline + '\n')
-        child = pexpect.spawn(u'/bin/sh', [u'-c', cmdline], timeout=None)
+        # Set encoding to filesystem encoding and send to spawn
+        child = pexpect.spawn(u'/bin/sh', [u'-c', cmdline], timeout=None, encoding=config.fsencoding)
 
         for passphrase in passphrase_input:
-            child.expect(b'passphrase.*:')
+            child.expect(u'passphrase.*:')
             child.sendline(passphrase)
 
         # if the command fails, we need to clear its output
@@ -161,7 +158,7 @@ class FunctionalTestCase(DuplicityTestCase):
             for line in lines:
                 line = line.rstrip()
                 if line:
-                    print(line, file=sys.stderr)
+                    print(os.fsdecode(line), file=sys.stderr)
             print(u"...return_val:", return_val, file=sys.stderr)
             raise CmdError(return_val)
 
@@ -191,7 +188,7 @@ class FunctionalTestCase(DuplicityTestCase):
         assert not os.system(u"rm -rf {0}/testfiles/restore_out".format(_runtest_dir))
         options = [u"restore", self.backend_url, u"{0}/testfiles/restore_out".format(_runtest_dir)] + options
         if file_to_restore:
-            options.extend([u'--file-to-restore', file_to_restore])
+            options.extend([u'--path-to-restore', file_to_restore])
         if time:
             options.extend([u'--restore-time', u"".__class__(time)])
         self.run_duplicity(options=options, **kwargs)
@@ -202,7 +199,7 @@ class FunctionalTestCase(DuplicityTestCase):
             options = []
         options = [u"verify", self.backend_url, dirname] + options
         if file_to_verify:
-            options.extend([u'--file-to-restore', file_to_verify])
+            options.extend([u'--path-to-restore', file_to_verify])
         if time:
             options.extend([u'--restore-time', u"".__class__(time)])
         self.run_duplicity(options=options, **kwargs)

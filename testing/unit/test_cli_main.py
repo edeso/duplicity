@@ -24,10 +24,11 @@ import os
 import pytest
 import sys
 
-from duplicity import errors
-from duplicity import log
 from duplicity import cli_main
 from duplicity import config
+from duplicity import errors
+from duplicity import gpg
+from duplicity import log
 from duplicity.cli_data import *
 from duplicity.cli_util import *
 from testing.unit import UnitTestCase
@@ -40,14 +41,15 @@ class CommandlineTest(UnitTestCase):
     good_args = {
         u"count": u"5",
         u"remove_time": u"100",
-        u"source_dir": u"foo/bar",
+        u"source_path": u"foo/bar",
         u"source_url": u"file://duptest",
         u"target_dir": u"foo/bar",
         u"target_url": u"file://duptest",
     }
 
     def setUp(self):
-        log.setup()
+        super().setUp()
+        config.gpg_profile = gpg.GPGProfile()
         os.makedirs(u"foo/bar", exist_ok=True)
 
     def tearDown(self):
@@ -94,13 +96,13 @@ class CommandlineTest(UnitTestCase):
         for cmd in [u"full"] + cli_main.CommandAliases.full:
             cli_main.process_command_line(f"{cmd} foo/bar file://duptest".split())
             self.assertEqual(config.action, u"full")
-            self.assertTrue(config.source_dir.endswith(u"foo/bar"))
+            self.assertTrue(config.source_path.endswith(u"foo/bar"))
             self.assertEqual(config.target_url, u"file://duptest")
 
         for cmd in [u"incremental"] + cli_main.CommandAliases.incremental:
             cli_main.process_command_line(f"{cmd} foo/bar file://duptest".split())
             self.assertEqual(config.action, u"inc")
-            self.assertTrue(config.source_dir.endswith(u"foo/bar"))
+            self.assertTrue(config.source_path.endswith(u"foo/bar"))
             self.assertEqual(config.target_url, u"file://duptest")
 
         for cmd in [u"list-current-files"] + cli_main.CommandAliases.list_current_files:
@@ -126,13 +128,13 @@ class CommandlineTest(UnitTestCase):
         for cmd in [u"restore"] + cli_main.CommandAliases.restore:
             cli_main.process_command_line(f"{cmd} file://duptest foo/bar".split())
             self.assertEqual(config.action, u"restore")
-            self.assertTrue(config.source_dir.endswith(u"foo/bar"))
+            self.assertTrue(config.source_path.endswith(u"foo/bar"))
             self.assertEqual(config.target_url, u"file://duptest")
 
         for cmd in [u"verify"] + cli_main.CommandAliases.verify:
             cli_main.process_command_line(f"{cmd} file://duptest foo/bar".split())
             self.assertEqual(config.action, u"verify")
-            self.assertTrue(config.source_dir.endswith(u"foo/bar"))
+            self.assertTrue(config.source_path.endswith(u"foo/bar"))
             self.assertEqual(config.target_url, u"file://duptest")
 
     @pytest.mark.usefixtures(u"redirect_stdin")
@@ -141,12 +143,12 @@ class CommandlineTest(UnitTestCase):
         test backup, restore, verify with explicit commands - reversed arg
         """
         new_args = {
-            u"source_dir": u"file://duptest",
+            u"source_path": u"file://duptest",
             u"source_url": u"foo/bar",
             u"target_dir": u"file://duptest",
             u"target_url": u"foo/bar",
         }
-        err_msg = u"should be url|should be directory"
+        err_msg = u"should be url|should be pathname"
         self.run_all_commands_with_errors(new_args, err_msg)
 
     @pytest.mark.usefixtures(u"redirect_stdin")

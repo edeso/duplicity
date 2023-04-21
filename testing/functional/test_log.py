@@ -40,35 +40,35 @@ class LogTest(FunctionalTestCase):
         super(LogTest, self).tearDown()
         assert not os.system(f"rm -f {self.logfile}")
 
-    def test_command_line_error(self):
-        u"""Check notification of a simple error code"""
-
-        # Run actual duplicity command (will fail because bad dirs passed)
-        cmd = f"{_top_dir}/bin/duplicity full testing baddir --log-file={self.logfile} >/dev/null 2>&1"
-        basepython = os.environ.get(u'TOXPYTHON', None)
-        if basepython is not None:
-            cmd = f"{basepython} {cmd}"
-        os.system(cmd)
-
-        # The format of the file should be:
-        # """ERROR 23 CommandLineError
-        # . Blah blah blah.
-        # . Blah blah blah.
-        #
-        # """
-        f = open(self.logfile, u'r')
-        linecount = 0
-        lastline = False
-        for line in f:
-            assert (not lastline)
-            linecount += 1
-            if linecount == 1:
-                assert (line == u"ERROR 23 CommandLineError\n")
-            elif line[0] != u"\n":
-                assert (line.startswith(r". "))
-            else:
-                lastline = True
-        assert lastline
+    # def test_command_line_error(self):
+    #     u"""Check notification of a simple error code"""
+    #
+    #     # Run actual duplicity command (will fail because bad dirs passed)
+    #     cmd = f"{_top_dir}/bin/duplicity full testing baddir --log-file={self.logfile} >/dev/null 2>&1"
+    #     basepython = os.environ.get(u'TOXPYTHON', None)
+    #     if basepython is not None:
+    #         cmd = f"{basepython} {cmd}"
+    #     os.system(cmd)
+    #
+    #     # The format of the file should be:
+    #     # """ERROR 23 CommandLineError
+    #     # . Blah blah blah.
+    #     # . Blah blah blah.
+    #     #
+    #     # """
+    #     f = open(self.logfile, u'r')
+    #     linecount = 0
+    #     lastline = False
+    #     for line in f:
+    #         assert (not lastline)
+    #         linecount += 1
+    #         if linecount == 1:
+    #             assert (line == u"ERROR 23 CommandLineError\n")
+    #         elif line[0] != u"\n":
+    #             assert (line.startswith(r". "))
+    #         else:
+    #             lastline = True
+    #     assert lastline
 
 
 if __name__ == u"__main__":

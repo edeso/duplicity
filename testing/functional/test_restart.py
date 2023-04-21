@@ -28,6 +28,7 @@ import unittest
 
 import pytest
 
+from duplicity import config
 from testing import _runtest_dir
 from . import FunctionalTestCase
 
@@ -41,9 +42,9 @@ class RestartTest(FunctionalTestCase):
         Test basic Checkpoint/Restart
         """
         self.make_largefiles()
-        self.backup(u"full", u"{0}/testfiles/largefiles".format(_runtest_dir), fail=1)
-        self.backup(u"full", u"{0}/testfiles/largefiles".format(_runtest_dir))
-        self.verify(u"{0}/testfiles/largefiles".format(_runtest_dir))
+        self.backup(u"full", f"{_runtest_dir}/testfiles/largefiles", fail=1)
+        self.backup(u"full", f"{_runtest_dir}/testfiles/largefiles")
+        self.verify(f"{_runtest_dir}/testfiles/largefiles")
 
     @pytest.mark.slow
     def test_multiple_checkpoint_restart(self):
@@ -51,11 +52,11 @@ class RestartTest(FunctionalTestCase):
         Test multiple Checkpoint/Restart
         """
         self.make_largefiles()
-        self.backup(u"full", u"{0}/testfiles/largefiles".format(_runtest_dir), fail=1)
-        self.backup(u"full", u"{0}/testfiles/largefiles".format(_runtest_dir), fail=2)
-        self.backup(u"full", u"{0}/testfiles/largefiles".format(_runtest_dir), fail=3)
-        self.backup(u"full", u"{0}/testfiles/largefiles".format(_runtest_dir))
-        self.verify(u"{0}/testfiles/largefiles".format(_runtest_dir))
+        self.backup(u"full", f"{_runtest_dir}/testfiles/largefiles", fail=1)
+        self.backup(u"full", f"{_runtest_dir}/testfiles/largefiles", fail=2)
+        self.backup(u"full", f"{_runtest_dir}/testfiles/largefiles", fail=3)
+        self.backup(u"full", f"{_runtest_dir}/testfiles/largefiles")
+        self.verify(f"{_runtest_dir}/testfiles/largefiles")
 
     def test_first_volume_failure(self):
         u"""
@@ -63,10 +64,10 @@ class RestartTest(FunctionalTestCase):
         Caused when duplicity fails before the first transfer.
         """
         self.make_largefiles()
-        self.backup(u"full", u"{0}/testfiles/largefiles".format(_runtest_dir), fail=1)
+        self.backup(u"full", f"{_runtest_dir}/testfiles/largefiles", fail=1)
         assert not os.system(u"rm {0}/testfiles/output/duplicity-full*difftar*".format(_runtest_dir))
-        self.backup(u"full", u"{0}/testfiles/largefiles".format(_runtest_dir))
-        self.verify(u"{0}/testfiles/largefiles".format(_runtest_dir))
+        self.backup(u"full", f"{_runtest_dir}/testfiles/largefiles")
+        self.verify(f"{_runtest_dir}/testfiles/largefiles")
 
     def test_multi_volume_failure(self):
         u"""
@@ -75,10 +76,10 @@ class RestartTest(FunctionalTestCase):
         fails the last queued transfer(s).
         """
         self.make_largefiles()
-        self.backup(u"full", u"{0}/testfiles/largefiles".format(_runtest_dir), fail=3)
+        self.backup(u"full", f"{_runtest_dir}/testfiles/largefiles", fail=3)
         assert not os.system(u"rm {0}/testfiles/output/duplicity-full*vol[23].difftar*".format(_runtest_dir))
-        self.backup(u"full", u"{0}/testfiles/largefiles".format(_runtest_dir))
-        self.verify(u"{0}/testfiles/largefiles".format(_runtest_dir))
+        self.backup(u"full", f"{_runtest_dir}/testfiles/largefiles")
+        self.verify(f"{_runtest_dir}/testfiles/largefiles")
 
     def test_restart_encrypt_without_password(self):
         u"""
@@ -90,11 +91,11 @@ class RestartTest(FunctionalTestCase):
         self.set_environ(u'SIGN_PASSPHRASE', None)
         self.make_largefiles()
         enc_opts = [u"--encrypt-key", self.encrypt_key1]
-        self.backup(u"full", u"{0}/testfiles/largefiles".format(_runtest_dir), options=enc_opts, fail=2)
-        self.backup(u"full", u"{0}/testfiles/largefiles".format(_runtest_dir), options=enc_opts)
+        self.backup(u"full", f"{_runtest_dir}/testfiles/largefiles", options=enc_opts, fail=2)
+        self.backup(u"full", f"{_runtest_dir}/testfiles/largefiles", options=enc_opts)
 
         self.set_environ(u'PASSPHRASE', self.sign_passphrase)
-        self.verify(u"{0}/testfiles/largefiles".format(_runtest_dir))
+        self.verify(f"{_runtest_dir}/testfiles/largefiles")
 
     def test_restart_sign_and_encrypt(self):
         u"""
@@ -103,9 +104,9 @@ class RestartTest(FunctionalTestCase):
         """
         self.make_largefiles()
         enc_opts = [u"--sign-key", self.sign_key, u"--encrypt-key", self.sign_key]
-        self.backup(u"full", u"{0}/testfiles/largefiles".format(_runtest_dir), options=enc_opts, fail=2)
-        self.backup(u"full", u"{0}/testfiles/largefiles".format(_runtest_dir), options=enc_opts)
-        self.verify(u"{0}/testfiles/largefiles".format(_runtest_dir))
+        self.backup(u"full", f"{_runtest_dir}/testfiles/largefiles", options=enc_opts, fail=2)
+        self.backup(u"full", f"{_runtest_dir}/testfiles/largefiles", options=enc_opts)
+        self.verify(f"{_runtest_dir}/testfiles/largefiles")
 
     def test_restart_sign_and_hidden_encrypt(self):
         u"""
@@ -114,9 +115,9 @@ class RestartTest(FunctionalTestCase):
         """
         self.make_largefiles()
         enc_opts = [u"--sign-key", self.sign_key, u"--hidden-encrypt-key", self.sign_key]
-        self.backup(u"full", u"{0}/testfiles/largefiles".format(_runtest_dir), options=enc_opts, fail=2)
-        self.backup(u"full", u"{0}/testfiles/largefiles".format(_runtest_dir), options=enc_opts)
-        self.verify(u"{0}/testfiles/largefiles".format(_runtest_dir))
+        self.backup(u"full", f"{_runtest_dir}/testfiles/largefiles", options=enc_opts, fail=2)
+        self.backup(u"full", f"{_runtest_dir}/testfiles/largefiles", options=enc_opts)
+        self.verify(f"{_runtest_dir}/testfiles/largefiles")
 
     def test_last_file_missing_in_middle(self):
         u"""
@@ -125,10 +126,10 @@ class RestartTest(FunctionalTestCase):
         the file in the middle of the backup, with files following.
         """
         self.make_largefiles()
-        self.backup(u"full", u"{0}/testfiles/largefiles".format(_runtest_dir), fail=3)
+        self.backup(u"full", f"{_runtest_dir}/testfiles/largefiles", fail=3)
         assert not os.system(u"rm {0}/testfiles/largefiles/file2".format(_runtest_dir))
-        self.backup(u"full", u"{0}/testfiles/largefiles".format(_runtest_dir))
-        self.verify(u"{0}/testfiles/largefiles".format(_runtest_dir))
+        self.backup(u"full", f"{_runtest_dir}/testfiles/largefiles")
+        self.verify(f"{_runtest_dir}/testfiles/largefiles")
 
     @unittest.skipIf(platform.machine() in [u"ppc64el", u"ppc64le"], u"Skip on ppc64el and ppc64le machines")
     def test_last_file_missing_at_end(self):
@@ -138,10 +139,10 @@ class RestartTest(FunctionalTestCase):
         the file at the end of the backup, with no files following.
         """
         self.make_largefiles()
-        self.backup(u"full", u"{0}/testfiles/largefiles".format(_runtest_dir), fail=6)
+        self.backup(u"full", f"{_runtest_dir}/testfiles/largefiles", fail=6)
         assert not os.system(u"rm {0}/testfiles/largefiles/file3".format(_runtest_dir))
-        self.backup(u"full", u"{0}/testfiles/largefiles".format(_runtest_dir))
-        self.verify(u"{0}/testfiles/largefiles".format(_runtest_dir))
+        self.backup(u"full", f"{_runtest_dir}/testfiles/largefiles")
+        self.verify(f"{_runtest_dir}/testfiles/largefiles")
 
     @pytest.mark.slow
     def test_restart_incremental(self):
@@ -149,10 +150,13 @@ class RestartTest(FunctionalTestCase):
         Test restarting an incremental backup
         """
         self.make_largefiles()
-        self.backup(u"full", u"{0}/testfiles/dir1".format(_runtest_dir))
-        self.backup(u"inc", u"{0}/testfiles/largefiles".format(_runtest_dir), fail=2)
-        self.backup(u"inc", u"{0}/testfiles/largefiles".format(_runtest_dir))
-        self.verify(u"{0}/testfiles/largefiles".format(_runtest_dir))
+        self.backup(u"full", u"{0}/testfiles/dir1".format(_runtest_dir),
+                    options=[u"--allow-source-mismatch"])
+        self.backup(u"inc", f"{_runtest_dir}/testfiles/largefiles", fail=2,
+                    options=[u"--allow-source-mismatch"])
+        self.backup(u"inc", f"{_runtest_dir}/testfiles/largefiles",
+                    options=[u"--allow-source-mismatch"])
+        self.verify(f"{_runtest_dir}/testfiles/largefiles")
 
     def make_fake_second_volume(self, name):
         u"""
@@ -313,7 +317,7 @@ class RestartTest(FunctionalTestCase):
 class RestartTestWithoutEncryption(RestartTest):
 
     def setUp(self):
-        super(RestartTestWithoutEncryption, self).setUp()
+        super().setUp()
         self.class_args.extend([u"--no-encryption"])
 
     def test_no_write_double_snapshot(self):
@@ -324,8 +328,8 @@ class RestartTestWithoutEncryption(RestartTest):
         https://launchpad.net/bugs/929067
         """
         self.make_largefiles()
-        self.backup(u"full", u"{0}/testfiles/largefiles".format(_runtest_dir), fail=2)
-        self.backup(u"full", u"{0}/testfiles/largefiles".format(_runtest_dir))
+        self.backup(u"full", f"{_runtest_dir}/testfiles/largefiles", fail=2)
+        self.backup(u"full", f"{_runtest_dir}/testfiles/largefiles")
         # Now check sigtar
         sigtars = glob.glob(u"{0}/testfiles/output/duplicity-full*.sigtar.gz".format(_runtest_dir))
         self.assertEqual(1, len(sigtars))

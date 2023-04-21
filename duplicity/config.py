@@ -36,7 +36,7 @@ version = __version__
 # they correspond to the args in cli_main.duplicity_commands
 count = None
 remove_time = None
-source_dir = None
+source_path = None
 source_url = None
 target_dir = None
 target_url = None
@@ -114,12 +114,8 @@ select = None
 select_opts = []
 select_files = []
 
+# gpg binary to use
 gpg_binary = None
-encrypt_key = None
-encrypt_secret_keyring = None
-encrypt_sign_key = None
-hidden_encrypt_key = None
-sign_key = None
 
 # Options to pass to gpg
 gpg_options = u''
