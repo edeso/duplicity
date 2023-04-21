@@ -293,7 +293,7 @@ def set_encrypt_key(encrypt_key):
     config.gpg_profile.recipients.append(encrypt_key)
 
 
-def set_hidden_encrypt_keyk(hidden_encrypt_key):
+def set_hidden_encrypt_key(hidden_encrypt_key):
     u"""Set config.gpg_profile.hidden_encrypt_key assuming proper key given"""
     if not gpg_key_patt.match(hidden_encrypt_key):
         log.FatalError(_(u"Hidden encrypt key should be an 8, 16, or 40 character hex string, like "
@@ -305,7 +305,7 @@ def set_hidden_encrypt_keyk(hidden_encrypt_key):
 
 
 def set_sign_key(sign_key):
-    u"""Set config.sign_key assuming proper key given"""
+    u"""Set config.gpg_profile.sign_key assuming proper key given"""
     if not gpg_key_patt.match(sign_key):
         log.FatalError(_(u"Sign key should be an 8, 16, or 40 character hex string, like "
                          u"'AA0E73D2'.\nReceived '%s' instead.") % (sign_key,),
