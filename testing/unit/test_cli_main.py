@@ -201,3 +201,53 @@ class CommandlineTest(UnitTestCase):
         cline = u"rest file:///source_url foo/bar --time 10000".split()
         cli_main.process_command_line(cline)
         self.assertEqual(config.restore_time, 10000)
+
+    @pytest.mark.usefixtures(u"redirect_stdin")
+    def test_encryption_options(self):
+        u"""
+        test short option aliases
+        """
+        start = u"back foo/bar file:///target_url "
+        keys = (
+            u"DEADDEAD",
+            u"DEADDEADDEADDEAD",
+            u"DEADDEADDEADDEADDEADDEADDEADDEADDEADDEAD",
+        )
+
+        for key in (keys):
+            cline = f"{start} --encrypt-key={key}".split()
+            cli_main.process_command_line(cline)
+            self.assertEqual(config.gpg_profile.recipients, [key])
+
+            cline = f"{start} --hidden-encrypt-key={key}".split()
+            cli_main.process_command_line(cline)
+            self.assertEqual(config.gpg_profile.hidden_recipients, [key])
+
+            cline = f"{start} --sign-key={key}".split()
+            cli_main.process_command_line(cline)
+            self.assertEqual(config.gpg_profile.sign_key, key)
+
+    @pytest.mark.usefixtures(u"redirect_stdin")
+    def test_bad_encryption_options(self):
+        u"""
+        test short option aliases
+        """
+        start = u"back foo/bar file:///target_url "
+        keys = (
+            u"DEADFOO",
+            u"DEADDEADDEADFOO",
+            u"DEADDEADDEADDEADDEADDEADDEADDEADDEADFOO",
+        )
+
+        for key in (keys):
+            with self.assertRaises(CommandLineError) as cm:
+                cline = f"{start} --encrypt-key={key}".split()
+                cli_main.process_command_line(cline)
+
+            with self.assertRaises(CommandLineError) as cm:
+                cline = f"{start} --hidden-encrypt-key={key}".split()
+                cli_main.process_command_line(cline)
+
+            with self.assertRaises(CommandLineError) as cm:
+                cline = f"{start} --sign-key={key}".split()
+                cli_main.process_command_line(cline)

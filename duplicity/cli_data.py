@@ -345,7 +345,7 @@ class OptionKwargs:
     include = {
         u"metavar": _(u"shell_pattern"),
         u"action": AddSelectionAction,
-        u"help": u"Exclude globbing pattern",
+        u"help": u"Include globbing pattern",
         u"default": dflt(None)
     }
     include_filelist = {
@@ -357,7 +357,7 @@ class OptionKwargs:
     include_regexp = {
         u"metavar": _(u"regex"),
         u"action": AddSelectionAction,
-        u"help": u"Exclude based on regex pattern",
+        u"help": u"Include based on regex pattern",
         u"default": dflt(None)
     }
     log_fd = {
@@ -382,6 +382,11 @@ class OptionKwargs:
         u"type": int,
         u"help": u"Maximum block size for large files in MB",
         u"default": dflt(config.max_blocksize)
+    }
+    metadata_sync_mode = {
+        u"choices": (u"full", u"partial"),
+        u"help": u"Only sync required metadata not all",
+        u"default": dflt(config.metadata_sync_mode)
     }
     mf_purge = {
         u"action": u"store_true",
@@ -445,11 +450,6 @@ class OptionKwargs:
         u"action": u"store_true",
         u"help": u"Keeps number from tar file. Like same option in GNU tar.",
         u"default": dflt(config.numeric_owner)
-    }
-    metadata_sync_mode = {
-        u"choices": (u"full", u"partial"),
-        u"help": u"Only sync required metadata not all",
-        u"default": dflt(config.metadata_sync_mode)
     }
     par2_options = {
         u"metavar": _(u"options"), u"action": u"append",
