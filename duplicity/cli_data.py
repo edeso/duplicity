@@ -139,11 +139,6 @@ class OptionKwargs:
         u"help": u"Compare data on verify not only signatures",
         u"default": dflt(config.compare_data)
     }
-    compression = {
-        u"action": argparse.BooleanOptionalAction,
-        u"help": u"If supplied perform compression",
-        u"default": dflt(config.compression)
-    }
     config_dir = {
         u"metavar": _(u"path"),
         u"type": check_file,
@@ -170,11 +165,6 @@ class OptionKwargs:
         u"metavar": _(u"path"),
         u"help": u"Path to secret GNUpg keyring",
         u"default": dflt(None)
-    }
-    encryption = {
-        u"action": argparse.BooleanOptionalAction,
-        u"help": u"If supplied perform encryption",
-        u"default": dflt(config.encryption)
     }
     exclude = {
         u"metavar": _(u"shell_pattern"),
@@ -245,11 +235,6 @@ class OptionKwargs:
         u"type": make_bytes,
         u"help": u"String prefix for duplicity signature files",
         u"default": dflt(config.file_prefix_signature)
-    }
-    files_changed = {
-        u"action": argparse.BooleanOptionalAction,
-        u"help": u"If supplied collect the files_changed list",
-        u"default": dflt(config.files_changed)
     }
     files_from = {
         u"metavar": _(u"filename"),
@@ -415,6 +400,36 @@ class OptionKwargs:
         u"help": u"Custom backup name instead of hash",
         u"default": dflt(config.backup_name)
     }
+    no_compression = {
+        u"action": u"store_false",
+        u"dest": u"compression",
+        u"help": u"If supplied do not perform compression",
+        u"default": dflt(config.compression)
+    }
+    no_encryption = {
+        u"action": u"store_false",
+        u"dest": u"encryption",
+        u"help": u"If supplied do not perform encryption",
+        u"default": dflt(config.encryption)
+    }
+    no_files_changed = {
+        u"action": u"store_false",
+        u"dest": u"files_changed",
+        u"help": u"If supplied do not collect the files_changed list",
+        u"default": dflt(config.files_changed)
+    }
+    no_restore_ownership = {
+        u"action": u"store_false",
+        u"dest": u"restore_ownership",
+        u"help": u"If supplied do not restore uid/gid when finished",
+        u"default": dflt(config.restore_ownership)
+    }
+    no_print_statistics = {
+        u"action": u"store_false",
+        u"dest": u"print_statistics",
+        u"help": u"If supplied do not print statistics",
+        u"default": dflt(config.print_statistics)
+    }
     null_separator = {
         u"action": u"store_true",
         u"help": u"Whether to split on null instead of newline",
@@ -430,11 +445,6 @@ class OptionKwargs:
         u"action": u"store_true",
         u"help": u"Keeps number from tar file. Like same option in GNU tar.",
         u"default": dflt(config.numeric_owner)
-    }
-    restore_ownership = {
-        u"action": argparse.BooleanOptionalAction,
-        u"help": u"Restore the uid/gid when finished",
-        u"default": dflt(config.restore_ownership)
     }
     metadata_sync_mode = {
         u"choices": (u"full", u"partial"),
@@ -465,11 +475,6 @@ class OptionKwargs:
         u"help": u"File or directory path to restore",
         u"default": dflt(config.restore_path)
     }
-    print_statistics = {
-        u"action": argparse.BooleanOptionalAction,
-        u"help": u"If supplied print statistics",
-        u"default": dflt(config.print_statistics)
-    }
     progress = {
         u"action": u"store_true",
         u"help": u"Display progress for the full and incremental backup operations",
@@ -491,7 +496,6 @@ class OptionKwargs:
     restore_time = {
         u"metavar": _(u"time"),
         u"type": check_time,
-        # u"dest": u"restore_time",
         u"help": u"Restores will try to bring back the state as of the following time",
         u"default": dflt(config.restore_time)
     }
