@@ -159,9 +159,7 @@ class BackendWrapperTest(UnitTestCase):
         try:
             del self.mock._error_code
         except:
-            # Old versions of mock don't let you mark non-present attributes
-            # like this.
-            return  # can't use self.skip() since that needs py27
+            return
         self.mock._put.side_effect = Exception
         self.backend.put(self.local, self.remote)
         exit_mock.assert_called_once_with(50)

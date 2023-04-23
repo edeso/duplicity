@@ -378,8 +378,8 @@ mf_purge = False
 idr_fakeroot = None
 
 # default filesystem encoding
-# In Python 2 it seems that sys.getfilesystemencoding() will normally return
-# 'utf-8' or some other sane encoding, but will sometimes fail and return
+# It seems that sys.getfilesystemencoding() will normally return
+# 'utf-8' or some other sane encoding, but will sometimes fail and returns
 # either 'ascii' or None.  Both are bogus, so default to 'utf-8' if it does.
 fsencoding = sys.getfilesystemencoding()
 fsencoding = fsencoding if fsencoding not in [u'ascii', u'ANSI_X3.4-1968', None] else u'utf-8'

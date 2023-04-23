@@ -66,8 +66,6 @@ exit_val = None
 
 
 def getpass_safe(message):
-    # getpass() in Python 2.x will call str() on our prompt.  So we can't pass
-    # in non-ascii characters.
     import getpass
     import locale
     return getpass.getpass(message)

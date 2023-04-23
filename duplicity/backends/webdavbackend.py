@@ -92,19 +92,10 @@ class VerifiedHTTPSConnection(http.client.HTTPSConnection):
             self.sock = sock
             self.tunnel()
 
-        # python 2.7.9+ supports default system certs now
-        if u"create_default_context" in dir(ssl):
-            context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH,
-                                                 cafile=self.cacert_file,
-                                                 capath=config.ssl_cacert_path)
-            self.sock = context.wrap_socket(sock, server_hostname=self.host)
-        # the legacy way needing a cert file
-        else:
-            # wrap the socket in ssl using verification
-            self.sock = ssl.wrap_socket(sock,
-                                        cert_reqs=ssl.CERT_REQUIRED,
-                                        ca_certs=self.cacert_file,
-                                        )
+        context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH,
+                                             cafile=self.cacert_file,
+                                             capath=config.ssl_cacert_path)
+        self.sock = context.wrap_socket(sock, server_hostname=self.host)
 
     def request(self, *args, **kwargs):  # pylint: disable=method-hidden
         try:

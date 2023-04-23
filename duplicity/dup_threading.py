@@ -24,8 +24,7 @@ Duplicity specific but otherwise generic threading interfaces and
 utilities.
 
 (Not called "threading" because we do not want to conflict with
-the standard threading module, and absolute imports require
-at least python 2.5.)
+the standard threading module.)
 """
 
 import sys

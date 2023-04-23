@@ -85,7 +85,6 @@ def uexc(e):
                 return os.fsdecode(m)
         # If the function did not return yet, we did not
         # succeed in finding a string; return the whole message.
-        # This fails for Python 2, so only do this in Python 3.
         return str(e)
     else:
         return u''

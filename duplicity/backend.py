@@ -301,7 +301,6 @@ class ParsedUrl(object):
         try:
             self.port = pu.port
         except Exception:  # just returns None
-            # TODO: remove after dropping python 2.7 support
             if self.scheme in [u'rclone']:
                 pass
             # old style rsync://host::[/]dest, are still valid, though they contain no port

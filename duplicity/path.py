@@ -516,8 +516,6 @@ class Path(ROPath):
         # self.fileobj can override returned fileobj
         self.opened, self.fileobj = None, None
         if isinstance(base, str):
-            # For now (Python 2), it is helpful to know that all paths
-            # are starting with bytes -- see note above os.fsencode definition
             base = os.fsencode(base)
         self.base = base
 

@@ -1,23 +1,20 @@
 # INSTALLATION
 
 Thank you for trying duplicity.  To install, run:
-
 ```
-python setup.py install
+python3 setup.py install
 ```
 
 The build process can be also be run separately:
-
 ```
-python setup.py build
+python3 setup.py build
 ```
 
 The default prefix is /usr, so files are put in /usr/bin,
 /usr/share/man/, etc.  An alternate prefix can be specified
 using the --prefix=<prefix> option.  For example:
-
 ```
-python setup.py install --prefix=/usr/local
+python3 setup.py install --prefix=/usr/local
 export PYTHONPATH='/usr/local/lib/python.x/site-packages/'
 /usr/local/bin/duplicity -V`
 ```
@@ -35,12 +32,6 @@ If you install from the source package, you will also need:
  * librsync development files, normally found in module 'librsync-dev'.
  
 Install python modules by performing the following command in duplicity's root directory:
-
-```
-pip install -r requirements.txt
-```
-or:
-
 ```
 pip3 install -r requirements.txt
 ```
