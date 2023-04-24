@@ -223,6 +223,7 @@ def check_verbosity(value):
             u"The default is 4 (Notice).  It is strongly recommended\n"
             u"that verbosity level is set at 2 (Warning) or higher.")
 
+    log.setverbosity(verb)
     return verb
 
 
@@ -251,6 +252,10 @@ def opt2var(s):
 
 
 def set_log_fd(fd):
+    try:
+        fd = int(fd)
+    except ValueError:
+        raise argparse.ArgumentError(fd, u"log_fd must be an integer.")
     if fd < 1:
         raise argparse.ArgumentError(fd, u"log-fd must be greater than zero.")
     log.add_fd(fd)

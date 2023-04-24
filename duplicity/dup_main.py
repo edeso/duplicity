@@ -128,7 +128,7 @@ def get_passphrase(n, action, for_signing=False):
 
     # these commands don't need a password
     elif action in [u"collection-status",
-                    u"list-current",
+                    u"list-current-files",
                     u"remove-all-but-n-full",
                     u"remove-all-inc-of-but-n-full",
                     u"remove-old",
@@ -420,7 +420,6 @@ def write_multivol(backup_type, tarblock_iter, man_outfp, sig_outfp, backend):
             log.Debug(u"BACKEND: " + str(config.backend))
         except:
             pass
-        log.Debug(u"***CREATING VOLUME***")
 
         vol_num += 1
         dest_filename = file_naming.get(backup_type, vol_num,
@@ -430,7 +429,6 @@ def write_multivol(backup_type, tarblock_iter, man_outfp, sig_outfp, backend):
         log.Debug(u"FILENAME: " + tdp.uc_name)
 
         # write volume
-        log.Debug(u"***WRITING VOLUME***")
         if config.encryption:
             at_end = gpg.GPGWriteFile(tarblock_iter, tdp.name, config.gpg_profile,
                                       config.volsize)
@@ -1531,7 +1529,7 @@ def do_backup(action):
         restore(col_stats)
     elif action == u"verify":
         verify(col_stats)
-    elif action == u"list-current":
+    elif action == u"list-current-files":
         list_current(col_stats)
     elif action == u"collection-status":
         if config.show_changes_in_set is not None:
@@ -1585,6 +1583,7 @@ def do_backup(action):
                         config.gpg_profile.passphrase = get_passphrase(1, action)
                         check_last_manifest(col_stats)  # not needed for full backups
                 incremental_backup(sig_chain)
+
     config.backend.close()
     log.shutdown()
     if exit_val is not None:
