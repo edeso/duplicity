@@ -76,7 +76,7 @@ class AddFilelistAction(DuplicityAction):
         try:
             config.select_files.append(io.open(values, u"rt", encoding=u"UTF-8"))
         except Exception as e:
-            raise argparse.ArgumentError(values, str(e))
+            command_line_error(str(e))
 
 
 class AddRenameAction(DuplicityAction):
@@ -92,7 +92,7 @@ def check_count(val):
     try:
         return int(val)
     except Exception as e:
-        command_line_error(f"'{val}' is not an int: {str(e)}")
+        command_line_error(_(f"'{val}' is not an int: {str(e)}"))
 
 
 def check_remove_time(val):
@@ -104,32 +104,32 @@ def check_remove_time(val):
 
 def check_source_path(val):
     if u"://" in val:
-        command_line_error(f"Source should be pathname, not url.  Got '{val}' instead.")
+        command_line_error(_(f"Source should be pathname, not url.  Got '{val}' instead."))
     if not os.path.exists(val):
-        command_line_error(f"Argument source_path '{val}'.")
+        command_line_error(_(f"Argument source_path '{val}'."))
     return val
 
 
 def check_source_url(val):
     if u"://" not in val:
-        command_line_error(f"Source should be url, not directory.  Got '{val}' instead.")
+        command_line_error(_(f"Source should be url, not directory.  Got '{val}' instead."))
     return val
 
 
 def check_target_dir(val):
     if u"://" in val:
-        command_line_error(f"Target should be directory, not url.  Got '{val}' instead.")
+        command_line_error(_(f"Target should be directory, not url.  Got '{val}' instead."))
     if not os.path.exists(val):
         try:
             os.makedirs(val, exist_ok=True)
         except Exception as e:
-            command_line_error(f"Unable to create target dir '{val}': {str(e)}")
+            command_line_error(_(f"Unable to create target dir '{val}': {str(e)}"))
     return val
 
 
 def check_target_url(val):
     if u"://" not in val:
-        command_line_error(f"Source should be url, not directory.  Got '{val}' instead.")
+        command_line_error(_(f"Source should be url, not directory.  Got '{val}' instead."))
     return val
 
 
@@ -186,7 +186,7 @@ def check_time(value):
     try:
         return dup_time.genstrtotime(value)
     except dup_time.TimeException as e:
-        raise argparse.ArgumentError(value, str(e))
+        command_line_error(str(e))
 
 
 def check_verbosity(value):
@@ -216,12 +216,11 @@ def check_verbosity(value):
         # TRANSL: In this portion of the usage instructions, "[ewnid]" indicates which
         # characters are permitted (e, w, n, i, or d); the brackets imply their own
         # meaning in regex; i.e., only one of the characters is allowed in an instance.
-        raise argparse.ArgumentError(
-            value,
+        command_line_error(_(
             u"Verbosity must be one of: digit [0-9], character [ewnid],\n"
             u"or word ['error', 'warning', 'notice', 'info', 'debug'].\n"
             u"The default is 4 (Notice).  It is strongly recommended\n"
-            u"that verbosity level is set at 2 (Warning) or higher.")
+            u"that verbosity level is set at 2 (Warning) or higher."))
 
     log.setverbosity(verb)
     return verb
@@ -255,9 +254,9 @@ def set_log_fd(fd):
     try:
         fd = int(fd)
     except ValueError:
-        raise argparse.ArgumentError(fd, u"log_fd must be an integer.")
+        command_line_error(u"log_fd must be an integer.")
     if fd < 1:
-        raise argparse.ArgumentError(fd, u"log-fd must be greater than zero.")
+        command_line_error(u"log-fd must be greater than zero.")
     log.add_fd(fd)
     return fd
 
