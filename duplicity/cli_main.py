@@ -68,9 +68,9 @@ def parse_cmdline_options(arglist):
         argument_default=None,
         formatter_class=make_wide(DuplicityHelpFormatter)
     )
-    for var in sorted(all_options):
-        names = OptionAliases.__dict__.get(var, []) + [var]
-        names = [var2opt(n) for n in names]
+    for opt in sorted(all_options):
+        var = opt2var(opt)
+        names = [opt] + OptionAliases.__dict__.get(var, [])
         parser.add_argument(*names, **OptionKwargs.__dict__[var])
 
     # set up command subparsers
@@ -93,7 +93,7 @@ def parse_cmdline_options(arglist):
             epilog=help_url_formats,
         )
         subparser_dict[cmd].add_argument(
-            u"action",
+            dest=u"action",
             action=u"store_const",
             const=cmd)
         for arg in meta:
@@ -102,12 +102,9 @@ def parse_cmdline_options(arglist):
 
         # add valid options for each command
         for opt in sorted(CommandOptions.__dict__[var]):
-            if opt.startswith(u"__"):
-                continue
-            names = OptionAliases.__dict__.get(opt, [])
-            # Note: 1st var is the dest= name for the option
-            names = [var2opt(opt)] + [var2opt(n) for n in names]
-            subparser_dict[cmd].add_argument(*names, **OptionKwargs.__dict__[opt])
+            var = opt2var(opt)
+            names = [opt] + OptionAliases.__dict__.get(var, [])
+            subparser_dict[cmd].add_argument(*names, **OptionKwargs.__dict__[var])
 
     # parse the options
     args = parser.parse_args(arglist)

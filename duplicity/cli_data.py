@@ -740,36 +740,44 @@ class OptionKwargs:
 
 @dataclass
 class OptionAliases:
-    path_to_restore = [u"r"]
-    restore_time = [u"t", u"time"]
-    verbosity = [u"v"]
-    version = [u"V"]
+    path_to_restore = [u"-r"]
+    restore_time = [u"-t", u"--time"]
+    verbosity = [u"-v"]
+    version = [u"-V"]
 
 
-all_options = {opt for opt in OptionKwargs.__dict__.keys()
-               if not opt.startswith(u"__")}
+all_options = {var2opt(var) for var in OptionKwargs.__dict__.keys()
+               if not var.startswith(u"__")}
 
 parent_only_options = {
-    u"log_fd", u"log_file", u"log_timestamp", u"version",
+    u"--log-fd", u"--log-file", u"--log-timestamp", u"--version",
 }
 
 backup_only_options = {
-    u"allow_source_mismatch", u"asynchronous_upload", u"dry_run", u"time_separator", u"volsize",
+    u"--allow_source-mismatch", u"--asynchronous-upload", u"--dry-run", u"--time-separator", u"--volsize",
 }
 
 selection_only_options = {
-    u"exclude", u"exclude_device_files", u"exclude_filelist", u"exclude_if_present", u"exclude_older_than",
-    u"exclude_other_filesystems", u"exclude_regexp", u"include", u"include_filelist", u"include_regexp",
-    u"files_from"
+    u"--exclude", u"--exclude_device-files", u"--exclude-filelist", u"--exclude_if-present", u"--exclude_older-than",
+    u"--exclude_other-filesystems", u"--exclude-regexp", u"--include", u"--include-filelist", u"--include-regexp",
+    u"--files-from", u"--filter-globbing", u"--filter-ignorecase", u"--filter-literal", u"--filter-regexp",
+    u"--filter-strictcase",
+}
+
+deprecated_backup_options = {
+    u"--time-separator",
 }
 
 
 @dataclass
 class CommandOptions:
-    u"""legal options by command"""
+    u"""
+    legal options by command
+    """
     backup = list(
         all_options
         - parent_only_options
+        - deprecated_backup_options
     )
     cleanup = list(
         all_options
@@ -783,14 +791,8 @@ class CommandOptions:
         - backup_only_options
         - selection_only_options
     )
-    full = list(
-        all_options
-        - parent_only_options
-    )
-    incremental = list(
-        all_options
-        - parent_only_options
-    )
+    full = backup
+    incremental = backup
     list_current_files = list(
         all_options
         - parent_only_options

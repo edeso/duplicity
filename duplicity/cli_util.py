@@ -232,10 +232,16 @@ def make_bytes(value):
 
 
 def var2cmd(s):
+    u"""
+    Convert var name to command string
+    """
     return s.replace(u"_", u"-")
 
 
 def var2opt(s):
+    u"""
+    Convert var name to option string
+    """
     if len(s) > 1:
         return u"--" + s.replace(u"_", u"-")
     else:
@@ -243,11 +249,17 @@ def var2opt(s):
 
 
 def cmd2var(s):
+    u"""
+    Convert ccommand string to var name
+    """
     return s.replace(u"-", u"_")
 
 
 def opt2var(s):
-    return s.replace(u"-", u"_").lstrip(u"-")
+    u"""
+    Convert option string to var name
+    """
+    return s.lstrip(u"-").replace(u"-", u"_")
 
 
 def set_log_fd(fd):
