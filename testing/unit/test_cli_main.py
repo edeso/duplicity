@@ -268,7 +268,7 @@ class CommandlineTest(UnitTestCase):
             u"--include-filelist-stdin",
         }
 
-        for opt in (opts):
+        for opt in opts:
             with self.assertLogs(logger=log._logger, level=log.DupToLoggerLevel(log.ERROR)) as cm:
                 cline = f"{start} {opt} dummy".split()
                 cli_main.process_command_line(cline)

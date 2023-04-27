@@ -96,6 +96,7 @@ class DeprecationAction(DuplicityAction):
         log.Error(f"Option '{option_string} was removed in 2.0.0.  Ignored.",
                   code=log.ErrorCode.deprecated_option)
 
+
 def check_count(val):
     try:
         return int(val)
