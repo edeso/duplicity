@@ -251,3 +251,24 @@ class CommandlineTest(UnitTestCase):
             with self.assertRaises(CommandLineError) as cm:
                 cline = f"{start} --sign-key={key}".split()
                 cli_main.process_command_line(cline)
+
+    @pytest.mark.usefixtures(u"redirect_stdin")
+    def test_deprecated_options(self):
+        u"""
+        test short option aliases
+        """
+        start = u"back foo/bar file:///target_url "
+        opts = {
+            u"--gio",
+            u"--old-filenames",
+            u"--short-filenames",
+            u"--exclude-globbing-filelist",
+            u"--include-globbing-filelist",
+            u"--exclude-filelist-stdin",
+            u"--include-filelist-stdin",
+        }
+
+        for opt in (opts):
+            with self.assertLogs(logger=log._logger, level=log.DupToLoggerLevel(log.ERROR)) as cm:
+                cline = f"{start} {opt} dummy".split()
+                cli_main.process_command_line(cline)

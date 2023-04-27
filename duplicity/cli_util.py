@@ -88,6 +88,14 @@ class AddRenameAction(DuplicityAction):
         config.rename[key] = os.fsencode(values[1])
 
 
+class DeprecationAction(DuplicityAction):
+    def __init__(self, option_strings, dest, **kwargs):
+        super().__init__(option_strings, dest, **kwargs)
+
+    def __call__(self, parser, namespace, values, option_string=None):
+        log.Error(f"Option '{option_string} was removed in 2.0.0.  Ignored.",
+                  code=log.ErrorCode.deprecated_option)
+
 def check_count(val):
     try:
         return int(val)

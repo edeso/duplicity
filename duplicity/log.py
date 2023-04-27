@@ -275,7 +275,7 @@ class ErrorCode(object):
     cant_open_filelist = 7
     bad_url = 8
     bad_archive_dir = 9
-    # bad_sign_key = 10  # moved below
+    deprecated_option = 10
     restore_path_exists = 11
     verify_dir_doesnt_exist = 12
     backup_dir_doesnt_exist = 13

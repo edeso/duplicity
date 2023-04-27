@@ -488,7 +488,7 @@ class OptionKwargs:
     }
     rename = {
         u"metavar": u"from to",
-        u"type": AddRenameAction,
+        u"action": AddRenameAction,
         u"nargs": 2,
         u"help": u"Rename files during restore",
         u"default": dflt(config.rename)
@@ -716,24 +716,52 @@ class OptionKwargs:
         u"default": dflt(config.webdav_headers)
     }
 
-    # TESTING ONLY - set current time
+    # TESTING ONLY - do not use in production
     current_time = {
         u"type": int,
         u"help": argparse.SUPPRESS
     }
-    # TESTING ONLY - raises exception after volume
     fail_on_volume = {
         u"type": int,
         u"help": argparse.SUPPRESS
     }
-    # TESTING ONLY - trigger Pydev debugger
     pydevd = {
         u"action": u"store_true",
         u"help": argparse.SUPPRESS
     }
-    # TESTING ONLY - skips upload for a given volume
     skip_volume = {
         u"type": int,
+        u"help": argparse.SUPPRESS
+    }
+
+    # DEPRECATED OPTIONS
+    # TODO: remove in 2.3
+    gio = {
+        u"action": DeprecationAction,
+        u"help": argparse.SUPPRESS
+    }
+    old_filenames = {
+        u"action": DeprecationAction,
+        u"help": argparse.SUPPRESS
+    }
+    short_filenames = {
+        u"action": DeprecationAction,
+        u"help": argparse.SUPPRESS
+    }
+    exclude_globbing_filelist = {
+        u"action": DeprecationAction,
+        u"help": argparse.SUPPRESS
+    }
+    include_globbing_filelist = {
+        u"action": DeprecationAction,
+        u"help": argparse.SUPPRESS
+    }
+    exclude_filelist_stdin = {
+        u"action": DeprecationAction,
+        u"help": argparse.SUPPRESS
+    }
+    include_filelist_stdin = {
+        u"action": DeprecationAction,
         u"help": argparse.SUPPRESS
     }
 
