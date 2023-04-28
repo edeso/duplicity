@@ -151,6 +151,8 @@ def process_command_line(cmdline_list):
 
     config.action = u"inc" if config.action == u"incremental" else config.action
 
+    backend.import_backends()
+
     remote_url = config.source_url or config.target_url
     if remote_url:
         config.backend = backend.get_backend(remote_url)
@@ -173,10 +175,8 @@ def process_command_line(cmdline_list):
 
     config.mp_segment_size = int(config.mp_factor * config.volsize)
 
-    if config.action in [u'full', u'inc', u'verify']:
+    if config.action in [u"backup", u'full', u'inc', u'verify']:
         set_selection()
-
-    backend.import_backends()
 
     if config.ignore_errors:
         log.Warn(_(u"Running in 'ignore errors' mode due to --ignore-errors.\n"
