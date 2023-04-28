@@ -82,7 +82,6 @@ class B2Backend(duplicity.backend.Backend):
                 from b2sdk.v1 import InMemoryAccountInfo  # pylint: disable=import-error
                 from b2sdk.v1 import DownloadDestLocalFile  # pylint: disable=import-error
                 from b2sdk.v1.exception import NonExistentBucket  # pylint: disable=import-error
-
                 if self.v_num < [1, 9, 0]:
                     from b2sdk.v1.file_version import FileVersionInfoFactory
             except ImportError:
@@ -93,18 +92,7 @@ class B2Backend(duplicity.backend.Backend):
                     from b2sdk.exception import NonExistentBucket  # pylint: disable=import-error
                     from b2sdk.file_version import FileVersionInfoFactory  # pylint: disable=import-error
                 except ImportError as e:
-                    if u'b2sdk' in getattr(e, u'name', u'b2sdk'):
-                        raise
-                    try:  # fall back to import the old b2 client
-                        from b2.api import B2Api
-                        from b2.account_info import InMemoryAccountInfo
-                        from b2.download_dest import DownloadDestLocalFile
-                        from b2.exception import NonExistentBucket
-                        from b2.file_version import FileVersionInfoFactory
-                    except ImportError:
-                        if u'b2' in getattr(e, u'name', u'b2'):
-                            raise
-                        raise BackendException(u'B2 backend requires B2 Python SDK (pip install b2sdk)')
+                    raise BackendException(u'B2 backend requires B2 Python SDK (pip install b2sdk)')
 
         self.service = B2Api(InMemoryAccountInfo())
         self.parsed_url.hostname = u'B2'

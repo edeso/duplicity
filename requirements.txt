@@ -9,15 +9,18 @@ python-gettext
 chardet < 3.10
 urllib3 < 1.26
 cryptography == 3.4.8
+requests
 
 
 ##### backend libraries #####
 
+atom
 azure-core
 azure-storage-blob
 b2sdk
 boto
 boto3
+botocore
 boxsdk[jwt]
 dropbox
 gdata-python3

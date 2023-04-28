@@ -31,6 +31,8 @@ import sys
 
 from duplicity import errors
 
+# TODO: remove dummy threading code
+
 _threading_supported = True
 
 try:

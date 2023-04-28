@@ -214,7 +214,7 @@ class CommandlineTest(UnitTestCase):
             u"DEADDEADDEADDEADDEADDEADDEADDEADDEADDEAD",
         )
 
-        for key in (keys):
+        for key in keys:
             cline = f"{start} --encrypt-key={key}".split()
             cli_main.process_command_line(cline)
             self.assertEqual(config.gpg_profile.recipients, [key])
@@ -239,7 +239,7 @@ class CommandlineTest(UnitTestCase):
             u"DEADDEADDEADDEADDEADDEADDEADDEADDEADFOO",
         )
 
-        for key in (keys):
+        for key in keys:
             with self.assertRaises(CommandLineError) as cm:
                 cline = f"{start} --encrypt-key={key}".split()
                 cli_main.process_command_line(cline)
