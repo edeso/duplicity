@@ -737,30 +737,37 @@ class OptionKwargs:
     # DEPRECATED OPTIONS
     # TODO: remove in 2.3
     gio = {
+        u"nargs": 0,
         u"action": DeprecationAction,
         u"help": argparse.SUPPRESS
     }
     old_filenames = {
+        u"nargs": 0,
         u"action": DeprecationAction,
         u"help": argparse.SUPPRESS
     }
     short_filenames = {
+        u"nargs": 0,
         u"action": DeprecationAction,
         u"help": argparse.SUPPRESS
     }
     exclude_globbing_filelist = {
+        u"nargs": 0,
         u"action": DeprecationAction,
         u"help": argparse.SUPPRESS
     }
     include_globbing_filelist = {
+        u"nargs": 0,
         u"action": DeprecationAction,
         u"help": argparse.SUPPRESS
     }
     exclude_filelist_stdin = {
+        u"nargs": 0,
         u"action": DeprecationAction,
         u"help": argparse.SUPPRESS
     }
     include_filelist_stdin = {
+        u"nargs": 0,
         u"action": DeprecationAction,
         u"help": argparse.SUPPRESS
     }

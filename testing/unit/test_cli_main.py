@@ -213,6 +213,9 @@ class CommandlineTest(UnitTestCase):
             u"DEADDEADDEADDEAD",
             u"DEADDEADDEADDEADDEADDEADDEADDEADDEADDEAD",
         )
+        opts = (
+
+        )
 
         for key in keys:
             cline = f"{start} --encrypt-key={key}".split()
@@ -258,7 +261,7 @@ class CommandlineTest(UnitTestCase):
         test short option aliases
         """
         start = u"back foo/bar file:///target_url "
-        opts = {
+        opts = (
             u"--gio",
             u"--old-filenames",
             u"--short-filenames",
@@ -266,9 +269,9 @@ class CommandlineTest(UnitTestCase):
             u"--include-globbing-filelist",
             u"--exclude-filelist-stdin",
             u"--include-filelist-stdin",
-        }
+        )
 
         for opt in opts:
             with self.assertLogs(logger=log._logger, level=log.DupToLoggerLevel(log.ERROR)) as cm:
-                cline = f"{start} {opt} dummy".split()
+                cline = f"{start} {opt}".split()
                 cli_main.process_command_line(cline)

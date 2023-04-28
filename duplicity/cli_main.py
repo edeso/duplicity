@@ -31,6 +31,7 @@ from duplicity import config
 from duplicity import gpg
 from duplicity import log
 from duplicity import path
+from duplicity import util
 from duplicity.cli_data import *
 from duplicity.cli_util import *
 
@@ -136,7 +137,6 @@ def process_command_line(cmdline_list):
     args = parse_cmdline_options(cmdline_list)
 
     # if we get a different gpg-binary from the commandline then redo gpg_profile
-    # TODO: Allow lists of keys not just single key
     if config.gpg_binary is not None:
         src = copy.deepcopy(config.gpg_profile)
         config.gpg_profile = gpg.GPGProfile(
@@ -144,12 +144,12 @@ def process_command_line(cmdline_list):
             sign_key=src.sign_key,
             recipients=src.recipients,
             hidden_recipients=src.hidden_recipients)
-    log.Info(_(u"GPG binary is %s, version %s") %
-             ((config.gpg_binary or u'gpg'), config.gpg_profile.gpg_version))
+    else:
+        config.gpg_binary = util.which(u'gpg')
+    gpg_version = u".".join(map(str, config.gpg_profile.gpg_version))
+    log.Info(_(f"GPG binary is {config.gpg_binary}, version {gpg_version}"))
 
     config.action = u"inc" if config.action == u"incremental" else config.action
-
-    backend.import_backends()
 
     remote_url = config.source_url or config.target_url
     if remote_url:
@@ -175,6 +175,8 @@ def process_command_line(cmdline_list):
 
     if config.action in [u'full', u'inc', u'verify']:
         set_selection()
+
+    backend.import_backends()
 
     if config.ignore_errors:
         log.Warn(_(u"Running in 'ignore errors' mode due to --ignore-errors.\n"

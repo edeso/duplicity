@@ -88,6 +88,7 @@ class AddRenameAction(DuplicityAction):
         config.rename[key] = os.fsencode(values[1])
 
 
+# TODO: remove in 2.3
 class DeprecationAction(DuplicityAction):
     def __init__(self, option_strings, dest, **kwargs):
         super().__init__(option_strings, dest, **kwargs)

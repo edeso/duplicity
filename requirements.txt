@@ -1,16 +1,15 @@
-##### basic requirements #####
 
-fasteners
-python-gettext
-
-
-##### custom versions not used directly
+##### installed first to avoid conflicts #####
 
 chardet < 3.10
 urllib3 < 1.26
 cryptography == 3.4.8
 requests
 
+##### basic requirements #####
+
+fasteners
+python-gettext
 
 ##### backend libraries #####
 
@@ -39,9 +38,7 @@ python-swiftclient
 python-keystoneclient
 requests-oauthlib
 
-
 ##### testing libraries #####
-
 
 coverage
 mock >= 3.0.5
@@ -53,7 +50,6 @@ pytest-runner
 setuptools >= 44.1.1
 setuptools-scm >= 5.0.2
 tox
-
 
 ##### documentation libraries #####
 
