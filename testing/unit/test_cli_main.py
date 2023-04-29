@@ -262,16 +262,18 @@ class CommandlineTest(UnitTestCase):
         """
         start = u"back foo/bar file:///target_url "
         opts = (
+            u"--do-not-restore-ownership",
+            u"--exclude-filelist-stdin",
+            u"--exclude-globbing-filelist",
+            u"--file-to-restore",
             u"--gio",
+            u"--include-filelist-stdin",
+            u"--include-globbing-filelist",
             u"--old-filenames",
             u"--short-filenames",
-            u"--exclude-globbing-filelist",
-            u"--include-globbing-filelist",
-            u"--exclude-filelist-stdin",
-            u"--include-filelist-stdin",
         )
 
         for opt in opts:
-            with self.assertLogs(logger=log._logger, level=log.DupToLoggerLevel(log.ERROR)) as cm:
+            with self.assertRaises(CommandLineError) as cm:
                 cline = f"{start} {opt}".split()
                 cli_main.process_command_line(cline)

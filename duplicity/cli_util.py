@@ -46,7 +46,7 @@ def command_line_error(message):
     u"""
     Indicate a command line error and exit
     """
-    raise CommandLineError(_(f"Command line error: {message}\n") +
+    raise CommandLineError(_(f"{message}\n") +
                            _(u"Enter 'duplicity --help' for help screen."))
 
 
@@ -94,8 +94,10 @@ class DeprecationAction(DuplicityAction):
         super().__init__(option_strings, dest, **kwargs)
 
     def __call__(self, parser, namespace, values, option_string=None):
-        log.Error(f"Option '{option_string} was removed in 2.0.0.  Ignored.",
-                  code=log.ErrorCode.deprecated_option)
+        command_line_error(_(
+            f"Option '{option_string} was removed or changed in 2.0.0.\n"
+            f"See https://gitlab.com/duplicity/duplicity/-/issues/152\n"
+            f"for discussion and possible replacement options."))
 
 
 def check_count(val):
