@@ -67,8 +67,9 @@ def parse_cmdline_options(arglist):
     parser = argparse.ArgumentParser(
         prog=u'duplicity',
         argument_default=None,
-        formatter_class=make_wide(DuplicityHelpFormatter)
-    )
+        formatter_class=make_wide(DuplicityHelpFormatter))
+
+    # add all options to the parser
     for opt in sorted(all_options):
         var = opt2var(opt)
         names = [opt] + OptionAliases.__dict__.get(var, [])
@@ -77,8 +78,7 @@ def parse_cmdline_options(arglist):
     # set up command subparsers
     subparsers = parser.add_subparsers(
         title=u"valid ommands",
-        required=False,
-    )
+        required=False)
 
     # add sub_parser for each command
     subparser_dict = dict()
