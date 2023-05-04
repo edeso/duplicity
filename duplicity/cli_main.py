@@ -25,8 +25,8 @@ Main for parse command line, check for consistency, and set config
 import copy
 import sys
 
-import duplicity
 from duplicity import backend
+from duplicity import cli_util
 from duplicity import config
 from duplicity import gpg
 from duplicity import log
@@ -98,7 +98,7 @@ def parse_cmdline_options(arglist):
             action=u"store_const",
             const=cmd)
         for arg in meta:
-            func = getattr(duplicity.cli_util, f"check_{arg}")
+            func = getattr(cli_util, f"check_{arg}")
             subparser_dict[cmd].add_argument(arg, type=func)
 
         # add valid options for each command

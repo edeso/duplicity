@@ -416,17 +416,11 @@ def write_multivol(backup_type, tarblock_iter, man_outfp, sig_outfp, backend):
         tarblock_iter.remember_next_index()  # keep track of start index
 
         # Create volume
-        try:
-            log.Debug(u"BACKEND: " + str(config.backend))
-        except:
-            pass
-
         vol_num += 1
         dest_filename = file_naming.get(backup_type, vol_num,
                                         encrypted=config.encryption,
                                         gzipped=config.compression)
         tdp = dup_temp.new_tempduppath(file_naming.parse(dest_filename))
-        log.Debug(u"FILENAME: " + tdp.uc_name)
 
         # write volume
         if config.encryption:

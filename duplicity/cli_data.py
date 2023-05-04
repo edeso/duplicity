@@ -30,7 +30,7 @@ from duplicity import __version__
 from duplicity.cli_util import *
 
 
-@dataclass
+@dataclass(frozen=True)
 class DuplicityCommands:
     u"""
     duplicity commands and positional args expected
@@ -51,7 +51,7 @@ class DuplicityCommands:
     verify = [u"source_url", u"target_dir"]
 
 
-@dataclass
+@dataclass(frozen=True)
 class CommandAliases:
     u"""
     commands and aliases
@@ -69,7 +69,7 @@ class CommandAliases:
     verify = [u"veri", u"vb"]
 
 
-@dataclass
+@dataclass(frozen=True)
 class OptionKwargs:
     u"""
     Option kwargs for add_argument
@@ -564,7 +564,7 @@ class OptionKwargs:
         u"help": u"Chunk size used for S3 multipart uploads.The number of parallel uploads to\n"
                  u"S3 be given by chunk size / volume size. Use this to maximize the use of\n"
                  u"your bandwidth",
-        u"default": dflt(int(config.s3_multipart_chunk_size / (1024 * 1024)))
+        u"default": dflt(config.s3_multipart_chunk_size)
     }
     s3_multipart_max_procs = {
         u"metavar": _(u"number"),
@@ -708,7 +708,7 @@ class OptionKwargs:
         u"metavar": _(u"number"),
         u"type": set_megs,
         u"help": u"Volume size to use in MiB",
-        u"default": dflt(int(config.volsize / (1024 * 1024)))
+        u"default": dflt(config.volsize)
     }
     webdav_headers = {
         u"metavar": u"string",
@@ -783,7 +783,7 @@ class OptionKwargs:
     }
 
 
-@dataclass
+@dataclass(frozen=True)
 class OptionAliases:
     path_to_restore = [u"-r"]
     restore_time = [u"-t", u"--time"]
@@ -814,7 +814,7 @@ deprecated_backup_options = {
 }
 
 
-@dataclass
+@dataclass(frozen=True)
 class CommandOptions:
     u"""
     legal options by command

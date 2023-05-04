@@ -27,66 +27,11 @@ utilities.
 the standard threading module.)
 """
 
+import _thread
 import sys
+import threading
 
 from duplicity import errors
-
-# TODO: remove dummy threading code
-
-_threading_supported = True
-
-try:
-    import _thread
-except ImportError:
-    import _dummy_thread as _thread
-    _threading_supported = False
-
-try:
-    import threading
-except ImportError:
-    import dummy_threading as threading
-    _threading_supported = False
-
-
-def threading_supported():
-    u"""
-    Returns whether threading is supported on the system we are
-    running on.
-    """
-    return _threading_supported
-
-
-def require_threading(reason=None):
-    u"""
-    Assert that threading is required for operation to continue. Raise
-    an appropriate exception if this is not the case.
-
-    Reason specifies an optional reason why threading is required,
-    which will be used for error reporting in case threading is not
-    supported.
-    """
-    if not threading_supported():
-        if reason is None:
-            reason = u"(no reason given)"
-        raise errors.NotSupported(u"threading was needed because [%s], but "
-                                  u"is not supported by the python "
-                                  u"interpreter" % (reason,))
-
-
-def thread_module():
-    u"""
-    Returns the thread module, or dummy_thread if threading is not
-    supported.
-    """
-    return _thread
-
-
-def threading_module():
-    u"""
-    Returns the threading module, or dummy_thread if threading is not
-    supported.
-    """
-    return threading
 
 
 def with_lock(lock, fn):
