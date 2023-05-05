@@ -35,7 +35,7 @@ from . import UnitTestCase
 class PatchingTest(UnitTestCase):
     u"""Test patching"""
     def setUp(self):
-        super(PatchingTest, self).setUp()
+        super().setUp()
         self.unpack_testfiles()
 
     def copyfileobj(self, infp, outfp):
@@ -135,7 +135,7 @@ class index(object):
 
 class CollateItersTest(UnitTestCase):
     def setUp(self):
-        super(CollateItersTest, self).setUp()
+        super().setUp()
         self.unpack_testfiles()
 
     def test_collate(self):
@@ -188,7 +188,7 @@ class CollateItersTest(UnitTestCase):
 class TestInnerFuncs(UnitTestCase):
     u"""Test some other functions involved in patching"""
     def setUp(self):
-        super(TestInnerFuncs, self).setUp()
+        super().setUp()
         self.unpack_testfiles()
         self.check_output()
 

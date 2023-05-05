@@ -84,7 +84,7 @@ class Snapshot(sys_collections.deque):
     def __init__(self, iterable=None, maxlen=10):
         if iterable is None:
             iterable = []
-        super(Snapshot, self).__init__(iterable, maxlen)
+        super().__init__(iterable, maxlen)
         self.last_vol = 0
 
     def get_snapshot(self, volume):
@@ -101,7 +101,7 @@ class Snapshot(sys_collections.deque):
         return self.popleft()
 
     def clear(self):
-        super(Snapshot, self).clear()
+        super().clear()
         self.last_vol = 0
 
 
@@ -330,7 +330,7 @@ class LogProgressThread(threading.Thread):
     every --progress-rate seconds
     """
     def __init__(self):
-        super(LogProgressThread, self).__init__()
+        super().__init__()
         self.daemon = True
         self.finished = False
 

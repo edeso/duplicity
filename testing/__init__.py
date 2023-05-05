@@ -82,7 +82,7 @@ class DuplicityTestCase(unittest.TestCase):
     encrypt_key2 = u'453005CE9B736B2A'
 
     def setUp(self):
-        super(DuplicityTestCase, self).setUp()
+        super().setUp()
         self.savedEnviron = {}
         self.savedConfig = {}
 
@@ -107,7 +107,7 @@ class DuplicityTestCase(unittest.TestCase):
         self.remove_testfiles()
 
         os.chdir(_testing_dir)
-        super(DuplicityTestCase, self).tearDown()
+        super().tearDown()
 
     def unpack_testfiles(self):
         assert not os.system(u"rm -rf {0}/testfiles".format(_runtest_dir))

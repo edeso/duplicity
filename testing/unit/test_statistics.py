@@ -31,7 +31,7 @@ from . import UnitTestCase
 class StatsObjTest(UnitTestCase):
     u"""Test StatsObj class"""
     def setUp(self):
-        super(StatsObjTest, self).setUp()
+        super().setUp()
         self.unpack_testfiles()
 
     def set_obj(self, s):

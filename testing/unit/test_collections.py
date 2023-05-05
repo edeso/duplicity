@@ -79,7 +79,7 @@ filename_list2 = [b"duplicity-full.2001-01-01T16:17:01-07:00.manifest.gpg",
 class CollectionTest(UnitTestCase):
     u"""Test collections"""
     def setUp(self):
-        super(CollectionTest, self).setUp()
+        super().setUp()
 
         self.unpack_testfiles()
 

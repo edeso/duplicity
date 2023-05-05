@@ -33,11 +33,11 @@ class LogTest(FunctionalTestCase):
     logfile = f"{_runtest_dir}/duplicity.log"
 
     def setUp(self):
-        super(LogTest, self).setUp()
+        super().setUp()
         assert not os.system(f"rm -f {self.logfile}")
 
     def tearDown(self):
-        super(LogTest, self).tearDown()
+        super().tearDown()
         assert not os.system(f"rm -f {self.logfile}")
 
     def test_command_line_error(self):

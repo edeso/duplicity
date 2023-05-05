@@ -32,7 +32,7 @@ from . import UnitTestCase
 class DDTest(UnitTestCase):
     u"""Test functions in diffdir.py"""
     def setUp(self):
-        super(DDTest, self).setUp()
+        super().setUp()
         self.unpack_testfiles()
 
     def copyfileobj(self, infp, outfp):

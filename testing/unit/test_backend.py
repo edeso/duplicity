@@ -147,7 +147,7 @@ class ParsedUrlTest(UnitTestCase):
 class BackendWrapperTest(UnitTestCase):
 
     def setUp(self):
-        super(BackendWrapperTest, self).setUp()
+        super().setUp()
         self.mock = mock.MagicMock()
         self.backend = duplicity.backend.BackendWrapper(self.mock)
         self.local = mock.MagicMock()

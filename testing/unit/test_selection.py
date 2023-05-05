@@ -38,7 +38,7 @@ except ImportError:
 class MatchingTest(UnitTestCase):
     u"""Test matching of file names against various selection functions"""
     def setUp(self):
-        super(MatchingTest, self).setUp()
+        super().setUp()
         self.unpack_testfiles()
         self.root = Path(u"testfiles/select")
         self.Select = Select(self.root)
@@ -232,7 +232,7 @@ class MatchingTest(UnitTestCase):
 class ParseArgsTest(UnitTestCase):
     u"""Test argument parsing"""
     def setUp(self):
-        super(ParseArgsTest, self).setUp()
+        super().setUp()
         self.unpack_testfiles()
         self.root = None
         self.expected_restored_tree = [(), (u"1",), (u"1", u"1sub1"), (u"1", u"1sub1", u"1sub1sub1"),

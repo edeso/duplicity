@@ -30,7 +30,7 @@ from . import UnitTestCase
 class PathTest(UnitTestCase):
     u"""Test basic path functions"""
     def setUp(self):
-        super(PathTest, self).setUp()
+        super().setUp()
         self.unpack_testfiles()
 
     def test_deltree(self):

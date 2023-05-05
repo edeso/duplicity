@@ -129,13 +129,13 @@ class FileNamingBase(object):
 class FileNaming(UnitTestCase, FileNamingBase):
     u"""Test long filename parsing and generation"""
     def setUp(self):
-        super(FileNaming, self).setUp()
+        super().setUp()
 
 
 class FileNamingPrefixes(UnitTestCase, FileNamingBase):
     u"""Test filename parsing and generation with prefixes"""
     def setUp(self):
-        super(FileNamingPrefixes, self).setUp()
+        super().setUp()
         self.set_config(u'file_prefix', b"global-")
         self.set_config(u'file_prefix_manifest', b"mani-")
         self.set_config(u'file_prefix_signature', b"sign-")

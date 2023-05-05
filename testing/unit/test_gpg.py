@@ -37,7 +37,7 @@ from . import UnitTestCase
 class GPGTest(UnitTestCase):
     u"""Test GPGFile"""
     def setUp(self):
-        super(GPGTest, self).setUp()
+        super().setUp()
         self.unpack_testfiles()
         self.default_profile = gpg.GPGProfile(passphrase=u"foobar")
 
@@ -205,7 +205,7 @@ class GPGWriteFile_Helper(object):
 class SHATest(UnitTestCase):
     u"""Test making sha signatures"""
     def setUp(self):
-        super(SHATest, self).setUp()
+        super().setUp()
         self.unpack_testfiles()
 
     def test_sha(self):

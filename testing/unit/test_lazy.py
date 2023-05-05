@@ -37,7 +37,7 @@ class Iterators(UnitTestCase):
     empty = lambda s: iter([])
 
     def __init__(self, *args):
-        super(Iterators, self).__init__(*args)
+        super().__init__(*args)
         self.falseerror = self.falseerror_maker()
         self.trueerror = self.trueerror_maker()
         self.emptygen = self.emptygen_maker()
@@ -293,7 +293,7 @@ class ITRBadder2(ITRBranch):
 
 class TreeReducerTest(UnitTestCase):
     def setUp(self):
-        super(TreeReducerTest, self).setUp()
+        super().setUp()
 
         self.i1 = [(), (1,), (2,), (3,)]
         self.i2 = [(0,), (0, 1), (0, 1, 0), (0, 1, 1), (0, 2), (0, 2, 1), (0, 3)]

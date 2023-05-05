@@ -52,7 +52,7 @@ class ManualBackendBase(BackendInstanceBase):
     password = None
 
     def setUp(self):
-        super(ManualBackendBase, self).setUp()
+        super().setUp()
         self.set_config(u'num_retries', 1)
         self.set_config(u'ssl_no_check_certificate', True)
         self.setBackendInfo()

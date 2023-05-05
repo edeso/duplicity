@@ -61,7 +61,7 @@ class FunctionalTestCase(DuplicityTestCase):
                 cls._setsid_w = True
 
     def setUp(self):
-        super(FunctionalTestCase, self).setUp()
+        super().setUp()
 
         self.unpack_testfiles()
 

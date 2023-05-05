@@ -78,7 +78,7 @@ class BackendException(DuplicityError):
     Raised to indicate a backend specific problem.
     """
     def __init__(self, msg, code=log.ErrorCode.backend_error):
-        super(BackendException, self).__init__(msg)
+        super()
         self.code = code
 
 
