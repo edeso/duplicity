@@ -57,6 +57,8 @@ git push --tags -f origin main -o ci.skip
 
 # make changelog and move tag to include it
 tools/makechangelog
+git commit -m"chg:pkg: Update changelog." -m"[skip tests]" CHANGELOG.md
+git push
 git tag -f rel.${REL}
 git push --tags -f origin main
 

@@ -44,7 +44,3 @@ if [ "$CNT" -ne 0 ]; then
     echo "*** REPO DIRTY, REFUSING TO COMMIT ***"
     exit 1
 fi
-
-# finally commit and push
-#git commit -m"chg:pkg: Update changelog." -m"[skip tests]" CHANGELOG.md
-#git push
