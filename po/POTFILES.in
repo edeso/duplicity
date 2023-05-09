@@ -46,6 +46,7 @@ duplicity/backends/s3_boto3_backend.py
 duplicity/backends/idrivedbackend.py
 duplicity/backends/b2backend.py
 duplicity/backends/azurebackend.py
+duplicity/backends/xorrisobackend.py
 duplicity/backends/rsyncbackend.py
 duplicity/backends/pyrax_identity/__init__.py
 duplicity/backends/pyrax_identity/hubic.py
