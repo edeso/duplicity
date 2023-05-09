@@ -1,10 +1,38 @@
-## (unreleased)
+## rel.1.2.3 (2023-05-09)
 
 ### New
+
+* Xorriso backend for optical media. [T. K]
 
 * Onedrive for Business Support. [Tobias Simetsreiter]
 
 ### Changes
+
+* Fix tools/release-prep. [Kenneth Loafman]
+
+* Run po/update-pot. [Kenneth Loafman]
+
+* Update readthedocs.yaml. [Kenneth Loafman]
+
+* More ReadTheDocs changes. [Kenneth Loafman]
+
+* More ReadTheDocs changes. [Kenneth Loafman]
+
+* More ReadTheDocs changes. [Kenneth Loafman]
+
+* More ReadTheDocs changes. [Kenneth Loafman]
+
+* More ReadTheDocs changes. [Kenneth Loafman]
+
+* More ReadTheDocs changes. [Kenneth Loafman]
+
+* More ReadTheDocs changes. [Kenneth Loafman]
+
+* Change readthedocs.yaml. [Kenneth Loafman]
+
+* Change readthedocs.yaml. [Kenneth Loafman]
+
+* Update CHANGELOG.md. [Kenneth Loafman]
 
 * Fix spelling errors. [Barak A. Pearlmutter]
 
@@ -19,6 +47,12 @@
 * Update version for Launchpad. [Kenneth Loafman]
 
 ### Fix
+
+* Use cryptography == 3.4.8. [Kenneth Loafman]
+
+  Fixes #703 - use same version as python3-cryptography in apt.
+
+* Warn rather than fail on op-not-supported restore errors. [Michael Terry]
 
 * Fixes #701 - unable to resume full backup to B2. [Kenneth Loafman]
 
