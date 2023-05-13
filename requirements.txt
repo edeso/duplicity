@@ -1,9 +1,9 @@
 
 ##### installed first to avoid conflicts #####
 
-chardet < 3.10
-urllib3 < 1.26
-cryptography == 3.4.8
+chardet<3.10
+urllib3<1.26
+cryptography==3.4.8
 requests
 
 ##### basic requirements #####
@@ -44,15 +44,15 @@ requests-oauthlib
 ##### testing libraries #####
 
 coverage
-mock >= 3.0.5
+mock>=3.0.5
 pycodestyle
 pylint
 pytest
 pytest-cov
 pytest-runner
-setuptools >= 44.1.1
-setuptools-scm >= 5.0.2
-tox < 4.0
+setuptools>=44.1.1
+setuptools-scm>=5.0.2
+tox<4.0
 
 ##### documentation libraries #####
 
