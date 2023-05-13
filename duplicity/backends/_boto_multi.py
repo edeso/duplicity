@@ -53,7 +53,7 @@ class ConsumerThread(threading.Thread):
     Wakes up every second to check for termination
     """
     def __init__(self, queue, total):
-        super()
+        super().__init__()
         self.daemon = True
         self.finish = False
         self.progress = {}

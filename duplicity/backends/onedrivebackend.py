@@ -248,7 +248,7 @@ class DefaultOAuth2Session(OneDriveOAuth2Session):
     OAUTH_SCOPE = [u'Files.Read', u'Files.ReadWrite', u'User.Read', u'offline_access']
 
     def __init__(self, api_uri):
-        super()
+        super().__init__()
 
         token = None
         try:
@@ -330,7 +330,7 @@ class DefaultOAuth2Session(OneDriveOAuth2Session):
 class ExternalOAuth2Session(OneDriveOAuth2Session):
     u"""Caller is managing tokens and provides an active refresh token."""
     def __init__(self, client_id, refresh_token):
-        super()
+        super().__init__()
 
         token = {
             u'refresh_token': refresh_token,
