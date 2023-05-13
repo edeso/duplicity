@@ -514,6 +514,7 @@ class Path(ROPath):
         u"""Path initializer"""
         # self.opened should be true if the file has been opened, and
         # self.fileobj can override returned fileobj
+        super().__init__(index)
         self.opened, self.fileobj = None, None
         if isinstance(base, str):
             base = os.fsencode(base)
