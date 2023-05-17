@@ -69,7 +69,6 @@ class StatsObjTest(UnitTestCase):
         stats_string = s.get_stats_string()
         assert stats_string == u"", stats_string
 
-        self.set_environ('TZ', 'UTC')
         self.set_obj(s)
         stats_string = s.get_stats_string()
         assert stats_string == u"""\

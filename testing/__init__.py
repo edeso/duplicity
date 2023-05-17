@@ -111,6 +111,10 @@ class DuplicityTestCase(unittest.TestCase):
         self.remove_testfiles()
         self.unpack_testfiles()
 
+        self.set_environ(u"TZ", u"UTC")
+        time.tzset()
+        assert time.tzname[0] == u"UTC", f"{time.tzname[0]} should be 'UTC'"
+
         # Have all file references in tests relative to our runtest dir
         os.chdir(_runtest_dir)
 
@@ -120,6 +124,8 @@ class DuplicityTestCase(unittest.TestCase):
 
         for key in self.savedConfig:
             setattr(config, key, self.savedConfig[key])
+
+        time.tzset()
 
         self.remove_testfiles()
 
