@@ -73,8 +73,8 @@ class StatsObjTest(UnitTestCase):
         self.set_obj(s)
         stats_string = s.get_stats_string()
         assert stats_string == u"""\
-StartTime 13.00 (Thu Jan 1 00:00:13 1970)
-EndTime 14.00 (Thu Jan 1 00:00:14 1970)
+StartTime 13.00 (Thu Jan  1 00:00:13 1970)
+EndTime 14.00 (Thu Jan  1 00:00:14 1970)
 ElapsedTime 1.00 (1 second)
 SourceFiles 1
 SourceFileSize 2 (2 bytes)
