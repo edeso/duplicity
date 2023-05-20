@@ -573,30 +573,6 @@ class OptionKwargs:
                  u"uploads to S3. Use this to control the maximum simultaneous uploads to S3",
         u"default": dflt(config.s3_multipart_max_procs)
     }
-    s3_multipart_max_timeout = {
-        u"metavar": _(u"number"),
-        u"type": int,
-        u"help": u"Number of seconds to wait for each part of a multipart upload to S3. Use this\n"
-                 u"to prevent hangups when doing a multipart upload to S3",
-        u"default": dflt(config.s3_multipart_max_timeout)
-    }
-    s3_use_multiprocessing = {
-        u"action": u"store_true",
-        u"help": u"Option to allow the s3/boto backend use the multiprocessing version",
-        u"default": dflt(config.s3_use_multiprocessing)
-    }
-    s3_use_server_side_encryption = {
-        u"action": u"store_true",
-        u"dest": u"s3_use_sse",
-        u"help": u"Option to allow use of server side encryption in s3",
-        u"default": dflt(config.s3_use_sse)
-    }
-    s3_use_server_side_kms_encryption = {
-        u"action": u"store_true",
-        u"dest": u"s3_use_sse_kms",
-        u"help": u"Allow use of server side KMS encryption",
-        u"default": dflt(config.s3_use_sse_kms)
-    }
     s3_kms_key_id = {
         u"metavar": _(u"s3_kms_key_id"),
         u"action": u"store",
@@ -810,7 +786,8 @@ selection_only_options = {
 }
 
 deprecated_backup_options = {
-    u"--time-separator",
+    u"--s3-multipart-max-timeout", u"--s3-use-multiprocessing", u"--s3-use-server-side-encryption",
+    u"--s3-use-server-side-kms-encryption", u"--time-separator",
 }
 
 

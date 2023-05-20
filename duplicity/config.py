@@ -234,9 +234,6 @@ s3_use_deep_archive = False
 # Whether to use S3 One Zone Infrequent Access Storage
 s3_use_onezone_ia = False
 
-# True if we should use boto multiprocessing version
-s3_use_multiprocessing = False
-
 # Chunk size used for S3 multipart uploads.The number of parallel uploads to
 # S3 be given by chunk size / volume size. Use this to maximize the use of
 # your bandwidth. Defaults to 25MB
@@ -248,14 +245,7 @@ s3_multipart_minimum_chunk_size = 5 * 1024 * 1024
 # Maximum number of processes to use while doing a multipart upload to S3
 s3_multipart_max_procs = 4
 
-# Maximum time to wait for a part to finish when doig a multipart upload to S3
-s3_multipart_max_timeout = None
-
-# Use server side encryption in s3
-s3_use_sse = False
-
 # Use server side kms encryption in s3
-s3_use_sse_kms = False
 s3_kms_key_id = None
 s3_kms_grant = None
 
