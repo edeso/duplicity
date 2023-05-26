@@ -4,7 +4,7 @@ help:
 	@echo	"ext          -- build C extensions"
 	@echo 	"docs         -- build Sphinx docs"
 	@echo 	"help         -- this text"
-	@echo   "pot          -- update pot"
+	@echo   "pot          -- update duplicity.pot"
 	@echo   "sdist        -- make versioned source"
 
 genned_files=\

@@ -1,5 +1,4 @@
 bin/duplicity
-bin/rdiffdir
 duplicity/tempdir.py
 duplicity/dup_threading.py
 duplicity/backend.py
@@ -16,11 +15,9 @@ duplicity/backends/megav3backend.py
 duplicity/backends/par2backend.py
 duplicity/backends/multibackend.py
 duplicity/backends/boxbackend.py
-duplicity/backends/s3_boto_backend.py
 duplicity/backends/swiftbackend.py
 duplicity/backends/tahoebackend.py
 duplicity/backends/giobackend.py
-duplicity/backends/_boto_multi.py
 duplicity/backends/localbackend.py
 duplicity/backends/adbackend.py
 duplicity/backends/slatebackend.py
@@ -36,7 +33,6 @@ duplicity/backends/ncftpbackend.py
 duplicity/backends/gdocsbackend.py
 duplicity/backends/cfbackend.py
 duplicity/backends/_cf_cloudfiles.py
-duplicity/backends/_boto_single.py
 duplicity/backends/ssh_paramiko_backend.py
 duplicity/backends/hsibackend.py
 duplicity/backends/onedrivebackend.py
@@ -51,12 +47,13 @@ duplicity/backends/pyrax_identity/__init__.py
 duplicity/backends/pyrax_identity/hubic.py
 duplicity/backends/lftpbackend.py
 duplicity/backends/webdavbackend.py
+duplicity/cli_data.py
 duplicity/globmatch.py
 duplicity/__init__.py
 duplicity/diffdir.py
-duplicity/commandline.py
 duplicity/librsync.py
 duplicity/dup_time.py
+duplicity/cli_main.py
 duplicity/gpg.py
 duplicity/file_naming.py
 duplicity/dup_main.py
@@ -75,3 +72,4 @@ duplicity/lazy.py
 duplicity/filechunkio.py
 duplicity/path.py
 duplicity/cached_ops.py
+duplicity/cli_util.py

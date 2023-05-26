@@ -87,7 +87,6 @@ def get_data_files():
             (u'share/man/man1',
                 [
                 u'bin/duplicity.1',
-                u'bin/rdiffdir.1'
                 ]
             ),
             (u'share/doc/duplicity-%s' % Version,
@@ -174,13 +173,10 @@ class SdistCommand(sdist):
         # make sure executables are
         assert not os.chmod(os.path.join(tardir, u"setup.py"), 0o755)
         assert not os.chmod(os.path.join(tardir, u"bin", u"duplicity"), 0o755)
-        assert not os.chmod(os.path.join(tardir, u"bin", u"rdiffdir"), 0o755)
 
         # recopy the unversioned files and add correct version
         VersionedCopy(os.path.join(u"bin", u"duplicity.1"),
                       os.path.join(tardir, u"bin", u"duplicity.1"))
-        VersionedCopy(os.path.join(u"bin", u"rdiffdir.1"),
-                      os.path.join(tardir, u"bin", u"rdiffdir.1"))
         VersionedCopy(os.path.join(u"duplicity", u"__init__.py"),
                       os.path.join(tardir, u"duplicity", u"__init__.py"))
         VersionedCopy(os.path.join(u"snap", u"snapcraft.yaml"),
@@ -334,7 +330,6 @@ setup(name=u"duplicity",
     },
     ext_modules=ext_modules,
     scripts=[
-        u"bin/rdiffdir",
         u"bin/duplicity",
         ],
     data_files=get_data_files(),

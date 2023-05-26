@@ -32,7 +32,6 @@
         - changes:
             - .gitlab-ci.yml
             - bin/duplicity
-            - bin/rdiffdir
             - duplicity/**/*
             - testing/**/*
           when: always
