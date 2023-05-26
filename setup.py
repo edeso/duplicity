@@ -42,18 +42,15 @@ if not (sys.version_info[0] == 3 and sys.version_info[1] >= 8):
     print(u"Sorry, duplicity requires version 3.8 or later of Python3.")
     sys.exit(1)
 
-
+Version = u"2.0.0.dev0"
 scm_version_args = {
     u'tag_regex': r'^(?P<prefix>rel.)?(?P<version>[^\+]+)(?P<suffix>.*)?$',
     u'local_scheme': u'no-local-version',
+    u'fallback_version': Version,
     }
 
-try:
-    from setuptools_scm import get_version  # pylint: disable=import-error
-    Version = get_version(**scm_version_args)
-except Exception as e:
-    Version = u"2.0.0.dev"
-    print(u"Unable to get SCM version: %s\ndefaulting to %s" % (str(e), Version))
+from setuptools_scm import get_version  # pylint: disable=import-error
+Version = get_version(**scm_version_args)
 Reldate = time.strftime(u"%B %d, %Y", time.gmtime(int(os.environ.get(u'SOURCE_DATE_EPOCH', time.time()))))
 
 
