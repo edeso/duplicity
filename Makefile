@@ -5,6 +5,7 @@ help:
 	@echo 	"docs         -- build Sphinx docs"
 	@echo 	"help         -- this text"
 	@echo   "pot          -- update pot"
+	@echo   "sdist        -- make versioned source"
 
 genned_files=\
 	'*.egg-info' \
@@ -52,4 +53,7 @@ ext:
 pot:
 	po/update-pot
 
-.PHONY: clean docs ext help pot
+sdist:
+	./setup.py sdist --dist-dir=.
+
+.PHONY: clean docs ext help pot sdist
