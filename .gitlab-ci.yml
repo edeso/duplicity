@@ -19,9 +19,6 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-# include:
-#     - template: Dependency-Scanning.gitlab-ci.yml
-
 .test-template: &test-template
     stage: test
     rules:
@@ -36,19 +33,6 @@
             - testing/**/*
           when: always
         - when: never
-
-variables:
-    # cache local items
-    PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
-    # Set to non-interactive so no tzdata prompt
-    DEBIAN_FRONTEND: "noninteractive"
-
-stages:
-    - qual
-    - test
-    - deploy
-
-default:
     before_script:
         # Set locale to prevent UTF-8 errors
         - export LANG=C.UTF-8
@@ -56,6 +40,21 @@ default:
         - apt-get update
         - apt-get install -y build-essential git intltool lftp librsync-dev
                              libffi-dev libssl-dev openssl par2 rdiff tzdata
+
+variables:
+    # Cache local items
+    PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+    # Set to non-interactive so no tzdata prompt
+    DEBIAN_FRONTEND: "noninteractive"
+    # Signal we are running on GitLab CI
+    NON_NATIVE: "true"
+
+stages:
+    - qual
+    - test
+    - deploy
+
+default:
     interruptible: true
 
 code:
@@ -167,6 +166,7 @@ pages:
 # needs WEBSITE_TRIGGER_TOKEN variable in CI settings (mask/protected as needed)
 website:
     stage: deploy
+    image: curlimages/curl:latest
     rules:
         - if: $CI_COMMIT_TAG
           when: always
@@ -181,6 +181,5 @@ website:
     variables:
         GIT_STRATEGY: none
         GIT_CHECKOUT: "false"
-    image: curlimages/curl:latest
     script: |
         curl --fail-with-body -X POST -F token=${WEBSITE_TRIGGER_TOKEN} -F ref=master https://gitlab.com/api/v4/projects/29130748/trigger/pipeline
