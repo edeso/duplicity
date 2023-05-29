@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: duplicity\n"
 "Report-Msgid-Bugs-To: Kenneth Loafman <kenneth@loafman.com>\n"
 "POT-Creation-Date: 2023-05-09 09:37-0500\n"
-"PO-Revision-Date: 2023-05-09 14:49\n"
+"PO-Revision-Date: 2023-05-28 07:27\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -24,32 +24,32 @@ msgstr ""
 #: ../bin/duplicity:114
 #, python-format
 msgid "GPG error detail: %s"
-msgstr ""
+msgstr "GPG-foutmelding: %s"
 
 #: ../bin/duplicity:124
 #, python-format
 msgid "User error detail: %s"
-msgstr ""
+msgstr "Gebruikersfoutmelding: %s"
 
 #: ../bin/duplicity:134
 #, python-format
 msgid "Backend error detail: %s"
-msgstr ""
+msgstr "Backendfoutmelding: %s"
 
 #: ../bin/rdiffdir:64 ../duplicity/commandline.py:239
 #, python-format
 msgid "Error opening file %s"
-msgstr ""
+msgstr "Fout tijdens openen van het bestand %s"
 
 #: ../bin/rdiffdir:131
 #, python-format
 msgid "File %s already exists, will not overwrite."
-msgstr ""
+msgstr "Het bestand %s bestaat al en zal niet niet worden overschreven."
 
 #: ../duplicity/tempdir.py:160
 #, python-format
 msgid "Using temporary directory %s"
-msgstr ""
+msgstr "Tijdelijke map %s wordt gebruikt"
 
 #: ../duplicity/tempdir.py:204
 #, python-format
@@ -64,12 +64,12 @@ msgstr ""
 #: ../duplicity/tempdir.py:258
 #, python-format
 msgid "Forgetting temporary file %s"
-msgstr ""
+msgstr "Tijdelijk bestand %s wordt vergeten"
 
 #: ../duplicity/tempdir.py:261
 #, python-format
 msgid "Attempt to forget unknown tempfile %s - this is probably a bug."
-msgstr ""
+msgstr "Poging om onbekend tijdelijk bestand %s te vergeten: dit is waarschijnlijk een bug."
 
 #: ../duplicity/tempdir.py:280
 #, python-format
@@ -89,91 +89,95 @@ msgstr ""
 #: ../duplicity/backend.py:102
 #, python-format
 msgid "Import of %s %s"
-msgstr ""
+msgstr "Import van %s %s"
 
 #: ../duplicity/backend.py:211
 #, python-format
 msgid "Could not initialize backend: %s"
-msgstr ""
+msgstr "Kan backend niet initialiseren: %s"
 
 #: ../duplicity/backend.py:403
 #, python-format
 msgid "Backtrace of previous error: %s"
-msgstr ""
+msgstr "Backtrace van vorige foutmelding: %s"
 
 #: ../duplicity/backend.py:419
 #, python-format
 msgid "Giving up after %s attempts. %s: %s"
-msgstr ""
+msgstr "Opgegeven na %s pogingen. %s: %s"
 
 #: ../duplicity/backend.py:423
 #, python-format
 msgid "Attempt of %s Nr. %s failed. %s: %s"
-msgstr ""
+msgstr "Poging van %s no. %s mislukt. %s: %s"
 
 #: ../duplicity/backend.py:517
 #, python-format
 msgid "Reading results of '%s'"
-msgstr ""
+msgstr "Resultaten van '%s' aan het lezen"
 
 #: ../duplicity/backend.py:543
 #, python-format
 msgid "Writing %s"
-msgstr ""
+msgstr "%s aan het schrijven"
 
 #: ../duplicity/backend.py:584
 #, python-format
 msgid "File %s not found locally after get from backend"
-msgstr ""
+msgstr "Bestand %s niet lokaal gevonden na ophalen van backend"
 
 #: ../duplicity/manifest.py:99
 #, python-format
 msgid "Fatal Error: Backup source host has changed.\n"
 "Current hostname: %s\n"
 "Previous hostname: %s"
-msgstr ""
+msgstr "Cruciale fout: de hostnaam van de backupbron is veranderd.\n"
+"Huidige hostnaam: %s\n"
+"Vorige hostnaam: %s"
 
 #: ../duplicity/manifest.py:106
 #, python-format
 msgid "Fatal Error: Backup source directory has changed.\n"
 "Current directory: %s\n"
 "Previous directory: %s"
-msgstr ""
+msgstr "Cruciale fout: bronmap van de backup is veranderd.\n"
+"Huidige map: %s\n"
+"Vorige map: %s"
 
 #: ../duplicity/manifest.py:116
 msgid "Aborting because you may have accidentally tried to backup two different data sets to the same remote location, or using the same archive directory.  If this is not a mistake, use the --allow-source-mismatch switch to avoid seeing this message"
-msgstr ""
+msgstr "De operatie wordt geannuleerd, omdat u mogelijk per ongeluk een backup probeert te maken van twee verschillende datasets naar dezelfde externe locatie, of omdat u dezelfde archiefmap probeert te gebruiken. Als dit geen vergissing is, gebruik dan de schakelaar --allow-source-mismatch om dit bericht te negeren."
 
 #: ../duplicity/manifest.py:218
 #, python-format
 msgid "Found manifest volume %s"
-msgstr ""
+msgstr "Manifestvolume %s gevonden"
 
 #: ../duplicity/manifest.py:225
 #, python-format
 msgid "Found %s volumes in manifest"
-msgstr ""
+msgstr "%s volumes gevonden in manifest"
 
 #: ../duplicity/manifest.py:243
 #, python-format
 msgid "Manifest file '%s' is corrupt: File count says %d, File list contains %d"
-msgstr ""
+msgstr "Manifestbestand %s is corrupt: aantal bestanden is %d, maar de bestandslijst telt er %d."
 
 #: ../duplicity/manifest.py:262
 msgid "Manifests not equal because different volume numbers"
-msgstr ""
+msgstr "Manifesten niet gelijk: verschillende volumenummers"
 
 #: ../duplicity/manifest.py:267
 msgid "Manifests not equal because volume lists differ"
-msgstr ""
+msgstr "Manifesten niet gelijk: volumelijsten verschillen"
 
 #: ../duplicity/manifest.py:272
 msgid "Manifests not equal because hosts or directories differ"
-msgstr ""
+msgstr "Manifesten niet gelijk: hosts of mappen verschillen"
 
 #: ../duplicity/manifest.py:429
 msgid "Warning, found extra Volume identifier"
-msgstr ""
+msgstr "Waarschuwing: extra volumeidentifier gevonden"
 
 #: ../duplicity/manifest.py:455
 msgid "Other is not VolumeInfo"
@@ -181,110 +185,110 @@ msgstr ""
 
 #: ../duplicity/manifest.py:458
 msgid "Volume numbers don't match"
-msgstr ""
+msgstr "Volumenummers komen niet overeen"
 
 #: ../duplicity/manifest.py:461
 msgid "start_indicies don't match"
-msgstr ""
+msgstr "start_indices komen niet overeen"
 
 #: ../duplicity/manifest.py:464
 msgid "end_index don't match"
-msgstr ""
+msgstr "end_index komen niet overeen"
 
 #: ../duplicity/manifest.py:471
 msgid "Hashes don't match"
-msgstr ""
+msgstr "Hashes komen niet overeen"
 
 #: ../duplicity/util.py:166 ../duplicity/dup_main.py:847
 #, python-format
 msgid "IGNORED_ERROR: Warning: ignoring error as requested: %s: %s"
-msgstr ""
+msgstr "IGNORED_ERROR: Waarschuwing: foutmelding wordt genegeerd zoals gevraagd: %s: %s"
 
 #: ../duplicity/util.py:233
 #, python-format
 msgid "Releasing lockfile %s"
-msgstr ""
+msgstr "Lockfile %s wordt losgelaten"
 
 #: ../duplicity/backends/pydrivebackend.py:181
 #, python-format
 msgid "PyDrive backend: multiple files called '%s'."
-msgstr ""
+msgstr "PyDrive-backend: meerdere bestanden heten '%s'."
 
 #: ../duplicity/backends/multibackend.py:96
 #, python-format
 msgid "MultiBackend: Could not parse query string %s: %s "
-msgstr ""
+msgstr "MultiBackend: kon querystring %s niet ontleden: %s "
 
 #: ../duplicity/backends/multibackend.py:105
 #, python-format
 msgid "MultiBackend: Invalid query string %s: more than one value for %s"
-msgstr ""
+msgstr "MultiBackend: querystring %s is ongeldig: meer dan één waarde voor %s"
 
 #: ../duplicity/backends/multibackend.py:110
 #, python-format
 msgid "MultiBackend: Invalid query string %s: unknown parameter %s"
-msgstr ""
+msgstr "MultiBackend: querystring %s is ongeldig: onbekende parameter %s"
 
 #: ../duplicity/backends/multibackend.py:160
 #: ../duplicity/backends/multibackend.py:165
 #, python-format
 msgid "MultiBackend: illegal value for %s: %s"
-msgstr ""
+msgstr "MultiBackend: ongeldige waarde voor %s: %s"
 
 #: ../duplicity/backends/multibackend.py:176
 #, python-format
 msgid "MultiBackend: Url %s"
-msgstr ""
+msgstr "MultiBackend: URL %s"
 
 #: ../duplicity/backends/multibackend.py:180
 #, python-format
 msgid "MultiBackend: Could not load config file %s: %s "
-msgstr ""
+msgstr "MultiBackend: kon configuratiebestand %s niet laden: %s "
 
 #: ../duplicity/backends/multibackend.py:189
 #, python-format
 msgid "MultiBackend: use store %s"
-msgstr ""
+msgstr "MultiBackend: gebruik store %s"
 
 #: ../duplicity/backends/multibackend.py:194
 #, python-format
 msgid "MultiBackend: set env %s = %s"
-msgstr ""
+msgstr "MultiBackend: zet omgevingsvariabele %s = %s"
 
 #: ../duplicity/backends/multibackend.py:207
 #, python-format
 msgid "Multibackend: register affinity for prefix %s"
-msgstr ""
+msgstr "MultiBackend: registreer affiniteit voor voorvoegsel %s"
 
 #: ../duplicity/backends/multibackend.py:248
 #, python-format
 msgid "MultiBackend: _put: write to store #%s (%s)"
-msgstr ""
+msgstr "MultiBackend: _put: schrijf naar store #%s (%s)"
 
 #: ../duplicity/backends/multibackend.py:261
 #, python-format
 msgid "MultiBackend: failed to write to store #%s (%s), try #%s, Exception: %s"
-msgstr ""
+msgstr "MultiBackend: poging om naar store #%s (%s) te schrijven is mislukt, probeer #%s. Foutmelding: %s"
 
 #: ../duplicity/backends/multibackend.py:268
 #, python-format
 msgid "MultiBackend: failed to write %s. Aborting process."
-msgstr ""
+msgstr "MultiBackend: schrijven naar %s mislukt. Proces wordt afgebroken."
 
 #: ../duplicity/backends/multibackend.py:275
 #, python-format
 msgid "MultiBackend: failed to write %s. Tried all backing stores and none succeeded"
-msgstr ""
+msgstr "MultiBackend: schrijven naar %s mislukt. Alle backend stores zijn geprobeerd en geen ervan slaagde."
 
 #: ../duplicity/backends/multibackend.py:294
 #, python-format
 msgid "MultiBackend: failed to get %s to %s from %s"
-msgstr ""
+msgstr "MultiBackend: kon %s naar %s van %s niet ophalen"
 
 #: ../duplicity/backends/multibackend.py:297
 #, python-format
 msgid "MultiBackend: failed to get %s. Tried all backing stores and none succeeded"
-msgstr ""
+msgstr "MultiBackend: ophalen van %s mislukt. Alle backend stores zijn geprobeerd en geen ervan slaagde."
 
 #: ../duplicity/backends/multibackend.py:307
 #, python-format
@@ -464,24 +468,24 @@ msgstr ""
 #: ../duplicity/diffdir.py:210
 #, python-format
 msgid "Comparing %s and %s"
-msgstr ""
+msgstr "%s en %s worden vergeleken"
 
 #: ../duplicity/diffdir.py:218
 #, python-format
 msgid "D %s"
-msgstr ""
+msgstr "D %s"
 
 #: ../duplicity/commandline.py:78
 #, python-format
 msgid "Warning: Option %s is pending deprecation and will be removed in version 2.0.\n"
 "Use of default filenames is strongly suggested."
-msgstr ""
+msgstr "Waarschuwing: optie %s wordt afgeschaft en zal worden verwijderd in versie 2.0. Het gebruik van standaardbestandsnamen wordt ten zeerste aangeraden."
 
 #: ../duplicity/commandline.py:84
 #, python-format
 msgid "Warning: Option %s is pending deprecation and will be removed in version 2.0.\n"
 "--include-filelist and --exclude-filelist now accept globbing characters and should be used instead."
-msgstr ""
+msgstr "Waarschuwing: optie %s wordt afgeschaft en zal worden verwijderd in versie 2.0. --include-filelist en --exclude-filelist accepteren nu globs en zouden gebruikt moeten worden."
 
 #: ../duplicity/commandline.py:94
 #, python-format
@@ -489,7 +493,7 @@ msgid "Warning: Option %s is pending deprecation and will be removed in version 
 "On many GNU/Linux systems, stdin is represented by /dev/stdin and\n"
 "--include-filelist=/dev/stdin or --exclude-filelist=/dev/stdin could\n"
 "be used as a substitute."
-msgstr ""
+msgstr "Waarschuwing: optie %s wordt afgeschaft en zal worden verwijderd in versie 2.0. Op veel GNU/Linux-systemen wordt stdin vertegenwoordigd door /dev/stdin en --include-filelist=/dev/stdin of --exclude-filelist=/dev/stdin kunnen worden gebruikt als alternatief."
 
 #. Used in usage help to represent a Unix-style path name. Example:
 #. --archive-dir <path>
@@ -499,7 +503,7 @@ msgstr ""
 #: ../duplicity/commandline.py:669 ../duplicity/commandline.py:717
 #: ../duplicity/commandline.py:953
 msgid "path"
-msgstr ""
+msgstr "pad"
 
 #. Used in usage help to represent an ID for a GnuPG key. Example:
 #. --encrypt-key <gpg_key_id>
@@ -511,7 +515,7 @@ msgstr ""
 #: ../duplicity/commandline.py:416 ../duplicity/commandline.py:650
 #: ../duplicity/commandline.py:926
 msgid "gpg-key-id"
-msgstr ""
+msgstr "gpg-key-id"
 
 #. Used in usage help to represent a pattern for
 #. matching one or more files, as described in the documentation.
@@ -520,7 +524,7 @@ msgstr ""
 #: ../duplicity/commandline.py:302 ../duplicity/commandline.py:444
 #: ../duplicity/commandline.py:959
 msgid "pattern"
-msgstr ""
+msgstr "patroon"
 
 #. Used in usage help to represent the name of a file. Example:
 #. --log-file <filename>
@@ -529,12 +533,12 @@ msgstr ""
 #: ../duplicity/commandline.py:446 ../duplicity/commandline.py:453
 #: ../duplicity/commandline.py:466 ../duplicity/commandline.py:922
 msgid "filename"
-msgstr ""
+msgstr "bestandsnaam"
 
 #. Used in usage help to represent a regular expression (regexp).
 #: ../duplicity/commandline.py:331 ../duplicity/commandline.py:457
 msgid "regular_expression"
-msgstr ""
+msgstr "reguliere_expressie"
 
 #. Used in usage help to represent a time spec for a previous
 #. point in time, as described in the documentation. Example:
@@ -542,7 +546,7 @@ msgstr ""
 #: ../duplicity/commandline.py:335 ../duplicity/commandline.py:404
 #: ../duplicity/commandline.py:544 ../duplicity/commandline.py:1008
 msgid "time"
-msgstr ""
+msgstr "tijd"
 
 #. Used in usage help. (Should be consistent with the "Options:"
 #. header.) Example:
@@ -551,21 +555,21 @@ msgstr ""
 #: ../duplicity/commandline.py:547 ../duplicity/commandline.py:658
 #: ../duplicity/commandline.py:941
 msgid "options"
-msgstr ""
+msgstr "opties"
 
 #: ../duplicity/commandline.py:430
 #, python-format
 msgid "Running in 'ignore errors' mode due to %s; please re-consider if this was not intended"
-msgstr ""
+msgstr "Wordt uitgevoerd in foutnegeermodus vanwege %s; bedenk alstublieft opnieuw of dit de bedoeling is"
 
 #. Used in usage help to represent an imap mailbox
 #: ../duplicity/commandline.py:442
 msgid "imap_mailbox"
-msgstr ""
+msgstr "imap_mailbox"
 
 #: ../duplicity/commandline.py:460
 msgid "file_descriptor"
-msgstr ""
+msgstr "bestandsomschrijving"
 
 #. Used in usage help to represent a desired number of
 #. something. Example:
@@ -579,42 +583,42 @@ msgstr ""
 #: ../duplicity/commandline.py:712 ../duplicity/commandline.py:725
 #: ../duplicity/commandline.py:936
 msgid "number"
-msgstr ""
+msgstr "nummer"
 
 #. Used in usage help (noun)
 #: ../duplicity/commandline.py:478
 msgid "backup name"
-msgstr ""
+msgstr "backupnaam"
 
 #: ../duplicity/commandline.py:610
 msgid "policy"
-msgstr ""
+msgstr "beleid"
 
 #: ../duplicity/commandline.py:628
 msgid "Hot|Cool|Archive"
-msgstr ""
+msgstr "Hot|Cool|Archive"
 
 #. noun
 #: ../duplicity/commandline.py:631 ../duplicity/commandline.py:634
 #: ../duplicity/commandline.py:907
 msgid "command"
-msgstr ""
+msgstr "commando"
 
 #: ../duplicity/commandline.py:637
 msgid "pyrax|cloudfiles"
-msgstr ""
+msgstr "pyrax|cloudfiles"
 
 #: ../duplicity/commandline.py:661
 msgid "pem formatted bundle of certificate authorities"
-msgstr ""
+msgstr "PEM-geformatteerde bundel van certificaatautoriteiten"
 
 #: ../duplicity/commandline.py:662
 msgid "path to a folder with certificate authority files"
-msgstr ""
+msgstr "pad naar een map met certificaatautoriteitbestanden"
 
 #: ../duplicity/commandline.py:666
 msgid "extra headers for Webdav, like 'Cookie,name=value'"
-msgstr ""
+msgstr "extra headers voor WebDav, bijvoorbeeld: 'Cookie,naam=waarde'"
 
 #. Used in usage help. Example:
 #. --timeout <seconds>
@@ -625,119 +629,119 @@ msgstr ""
 #: ../duplicity/commandline.py:674 ../duplicity/commandline.py:730
 #: ../duplicity/commandline.py:976
 msgid "seconds"
-msgstr ""
+msgstr "seconden"
 
 #. abbreviation for "character" (noun)
 #: ../duplicity/commandline.py:680 ../duplicity/commandline.py:904
 msgid "char"
-msgstr ""
+msgstr "char"
 
 #: ../duplicity/commandline.py:736
 #, python-format
 msgid "Warning: Option %s is dangerous in that it allows corrupted manifests to\n"
 "exist on the remote without being caught.  This could lead to problems\n"
 "such as the inability to recover the backup in the future."
-msgstr ""
+msgstr "Waarschuwing: optie %s is gevaarlijk, omdat het toestaat dat corrupte manifesten bestaan op de remote host zonder dat dit ondervangen wordt. Dit kan leiden tot problemen, bijvoorbeeld het niet meer in staat zijn de backup te herstellen in de toekomst."
 
 #: ../duplicity/commandline.py:870
 #, python-format
 msgid "Using archive dir: %s"
-msgstr ""
+msgstr "Archiefmap %s wordt gebruikt"
 
 #: ../duplicity/commandline.py:871
 #, python-format
 msgid "Using backup name: %s"
-msgstr ""
+msgstr "Backupnaam %s wordt gebruikt"
 
 #: ../duplicity/commandline.py:878
 #, python-format
 msgid "Command line error: %s"
-msgstr ""
+msgstr "Commandlinefout: %s"
 
 #: ../duplicity/commandline.py:879
 msgid "Enter 'duplicity --help' for help screen."
-msgstr ""
+msgstr "Typ 'duplicity --help' voor hulpinformatie."
 
 #. Used in usage help to represent a Unix-style path name. Example:
 #. rsync://user[:password]@other_host[:port]//absolute_path
 #: ../duplicity/commandline.py:892
 msgid "absolute_path"
-msgstr ""
+msgstr "absoluut_pad"
 
 #. Used in usage help. Example:
 #. tahoe://alias/some_dir
 #: ../duplicity/commandline.py:896
 msgid "alias"
-msgstr ""
+msgstr "alias"
 
 #. Used in help to represent a "bucket name" for Amazon Web
 #. Services' Simple Storage Service (S3). Example:
 #. s3://other.host/bucket_name[/prefix]
 #: ../duplicity/commandline.py:901
 msgid "bucket_name"
-msgstr ""
+msgstr "bucketnaam"
 
 #. Used in usage help to represent the name of a container in
 #. Amazon Web Services' Cloudfront. Example:
 #. cf+http://container_name
 #: ../duplicity/commandline.py:912
 msgid "container_name"
-msgstr ""
+msgstr "containernaam"
 
 #. noun
 #: ../duplicity/commandline.py:915
 msgid "count"
-msgstr ""
+msgstr "aantal"
 
 #. Used in usage help to represent the name of a file directory
 #: ../duplicity/commandline.py:918
 msgid "directory"
-msgstr ""
+msgstr "map"
 
 #. Used in usage help, e.g. to represent the name of a code
 #. module. Example:
 #. rsync://user[:password]@other.host[:port]::/module/some_dir
 #: ../duplicity/commandline.py:931
 msgid "module"
-msgstr ""
+msgstr "module"
 
 #. Used in usage help to represent an internet hostname. Example:
 #. ftp://user[:password]@other.host[:port]/some_dir
 #: ../duplicity/commandline.py:945
 msgid "other.host"
-msgstr ""
+msgstr "andere.host"
 
 #. Used in usage help. Example:
 #. ftp://user[:password]@other.host[:port]/some_dir
 #: ../duplicity/commandline.py:949
 msgid "password"
-msgstr ""
+msgstr "wachtwoord"
 
 #. Used in usage help to represent a TCP port number. Example:
 #. ftp://user[:password]@other.host[:port]/some_dir
 #: ../duplicity/commandline.py:963
 msgid "port"
-msgstr ""
+msgstr "poort"
 
 #. Used in usage help. This represents a string to be used as a
 #. prefix to names for backup files created by Duplicity. Example:
 #. s3://other.host/bucket_name[/prefix]
 #: ../duplicity/commandline.py:968
 msgid "prefix"
-msgstr ""
+msgstr "voorvoegsel"
 
 #. Used in usage help to represent a Unix-style path name. Example:
 #. rsync://user[:password]@other.host[:port]/relative_path
 #: ../duplicity/commandline.py:972
 msgid "relative_path"
-msgstr ""
+msgstr "relatief_pad"
 
 #. Used in usage help to represent the name of a single file
 #. directory or a Unix-style path to a directory. Example:
 #. file:///some_dir
 #: ../duplicity/commandline.py:981
 msgid "some_dir"
-msgstr ""
+msgstr "een_map"
 
 #. Used in usage help to represent the name of a single file
 #. directory or a Unix-style path to a directory where files will be
@@ -745,14 +749,14 @@ msgstr ""
 #. duplicity [full|incremental] [options] source_dir target_url
 #: ../duplicity/commandline.py:987
 msgid "source_dir"
-msgstr ""
+msgstr "doelmap"
 
 #. Used in usage help to represent a URL files will be coming
 #. FROM. Example:
 #. duplicity [restore] [options] source_url target_dir
 #: ../duplicity/commandline.py:992
 msgid "source_url"
-msgstr ""
+msgstr "bronurl"
 
 #. Used in usage help to represent the name of a single file
 #. directory or a Unix-style path to a directory. where files will be
@@ -760,53 +764,53 @@ msgstr ""
 #. duplicity [restore] [options] source_url target_dir
 #: ../duplicity/commandline.py:998
 msgid "target_dir"
-msgstr ""
+msgstr "doelmap"
 
 #. Used in usage help to represent a URL files will be going TO.
 #. Example:
 #. duplicity [full|incremental] [options] source_dir target_url
 #: ../duplicity/commandline.py:1003
 msgid "target_url"
-msgstr ""
+msgstr "doelurl"
 
 #. Used in usage help to represent a user name (i.e. login).
 #. Example:
 #. ftp://user[:password]@other.host[:port]/some_dir
 #: ../duplicity/commandline.py:1013
 msgid "user"
-msgstr ""
+msgstr "gebruiker"
 
 #. account id for b2. Example: b2://account_id@bucket/
 #: ../duplicity/commandline.py:1016
 msgid "account_id"
-msgstr ""
+msgstr "account_id"
 
 #. application_key for b2.
 #. Example: b2://account_id:application_key@bucket/
 #: ../duplicity/commandline.py:1020
 msgid "application_key"
-msgstr ""
+msgstr "applicatiesleutel"
 
 #. remote name for rclone.
 #. Example: rclone://remote:/some_dir
 #: ../duplicity/commandline.py:1024 ../duplicity/dup_collections.py:521
 msgid "remote"
-msgstr ""
+msgstr "remote"
 
 #. Header in usage help
 #: ../duplicity/commandline.py:1043
 msgid "Backends and their URL formats:"
-msgstr ""
+msgstr "Backends en hun URL-formaten:"
 
 #. Header in usage help
 #: ../duplicity/commandline.py:1081
 msgid "Commands:"
-msgstr ""
+msgstr "Commando's:"
 
 #: ../duplicity/commandline.py:1108
 #, python-format
 msgid "Specified archive directory '%s' does not exist, or is not a directory"
-msgstr ""
+msgstr "De gespecificeerde map %s bestaat niet, of is geen map."
 
 #: ../duplicity/commandline.py:1117
 #, python-format
@@ -854,7 +858,7 @@ msgstr ""
 
 #: ../duplicity/commandline.py:1312
 msgid "Main action: "
-msgstr ""
+msgstr "Hoofdactie: "
 
 #: ../duplicity/librsync.py:196
 msgid "basis_file must be a (true) file or an object whose file attribute is the underlying true file object"
@@ -893,23 +897,23 @@ msgstr ""
 
 #: ../duplicity/dup_main.py:183
 msgid "GnuPG passphrase for signing key:"
-msgstr ""
+msgstr "GnuPG-wachtwoord voor ondertekeningssleutel:"
 
 #: ../duplicity/dup_main.py:188
 msgid "GnuPG passphrase for decryption:"
-msgstr ""
+msgstr "GnuPG-wachtwoord ter ontsleuteling:"
 
 #: ../duplicity/dup_main.py:193
 msgid "Retype passphrase for signing key to confirm: "
-msgstr ""
+msgstr "Typ het wachtwoord voor de ondertekekeningssleutel opnieuw ter bevestiging: "
 
 #: ../duplicity/dup_main.py:195
 msgid "Retype passphrase for decryption to confirm: "
-msgstr ""
+msgstr "Typ het wachtwoord ter ontsleuteling opnieuw ter bevestiging: "
 
 #: ../duplicity/dup_main.py:198
 msgid "First and second passphrases do not match!  Please try again."
-msgstr ""
+msgstr "Eerste en tweede wachtwoorden komen niet overeen! Probeer het opnieuw."
 
 #: ../duplicity/dup_main.py:205
 msgid "Cannot use empty passphrase with symmetric encryption!  Please try again."
