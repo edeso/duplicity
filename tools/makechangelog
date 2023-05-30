@@ -41,10 +41,6 @@ fi
 # make sure only CHANGELOG.md has changed
 CNT=`git status --porcelain | grep -v " M CHANGELOG.md" | wc -l`
 if [ "$CNT" -ne 0 ]; then
-    echo "*** REPO DIRTY, REFUSING TO COMMIT ***"
+    echo "*** REPO DIRTY, DO NOT COMMIT ***"
     exit 1
 fi
-
-# finally commit and push
-#git commit -m"chg:pkg: Update changelog." -m"[skip tests]" CHANGELOG.md
-#git push

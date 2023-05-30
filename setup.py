@@ -35,6 +35,7 @@ from setuptools.command.build_ext import build_ext
 from setuptools.command.install import install
 from setuptools.command.sdist import sdist
 from setuptools.command.test import test
+from setuptools_scm import get_version, version_from_scm
 
 
 # check that we can function here
@@ -42,17 +43,14 @@ if not (sys.version_info[0] == 3 and sys.version_info[1] >= 8):
     print(u"Sorry, duplicity requires version 3.8 or later of Python3.")
     sys.exit(1)
 
-Version = u"2.0.0.dev0"
+Version = u"2.0.0.alpha.0"
 scm_version_args = {
     u'tag_regex': r'^(?P<prefix>rel.)?(?P<version>[^\+]+)(?P<suffix>.*)?$',
     u'local_scheme': u'no-local-version',
     u'fallback_version': Version,
     }
-
-from setuptools_scm import get_version  # pylint: disable=import-error
 Version = get_version(**scm_version_args)
 Reldate = time.strftime(u"%B %d, %Y", time.gmtime(int(os.environ.get(u'SOURCE_DATE_EPOCH', time.time()))))
-
 
 # READTHEDOCS uses setup.py sdist but can't handle extensions
 ext_modules = list()
@@ -163,9 +161,9 @@ class SdistCommand(sdist):
     def run(self):
         sdist.run(self)
 
-        orig = u"%s/duplicity-%s.tar.gz" % (self.dist_dir, Version)
-        tardir = u"duplicity-%s" % Version
-        tarfile = u"%s/duplicity-%s.tar.gz" % (self.dist_dir, Version)
+        orig = u"%s/duplicity_py3-%s.tar.gz" % (self.dist_dir, Version)  # TODO: fix name
+        tardir = u"duplicity_py3-%s" % Version  # TODO: fix name
+        tarfile = u"%s/duplicity_py3-%s.tar.gz" % (self.dist_dir, Version)  # TODO: fix name
 
         assert not os.system(u"tar -xf %s" % orig)
         assert not os.remove(orig)
@@ -275,7 +273,7 @@ with open(u"README.md") as fh:
     long_description = fh.read()
 
 
-setup(name=u"duplicity",
+setup(name=u"duplicity_py3",  # TODO: fix name
     version=Version,
     description=u"Encrypted backup using rsync algorithm",
     long_description=long_description,
