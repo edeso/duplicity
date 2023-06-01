@@ -35,21 +35,51 @@ from setuptools.command.build_ext import build_ext
 from setuptools.command.install import install
 from setuptools.command.sdist import sdist
 from setuptools.command.test import test
-from setuptools_scm import get_version, version_from_scm
+from setuptools_scm import get_version
 
+Version = u"2.0.0a1"
+
+# see https://semver.org/ bottom of page
+SemverPatt = r"^rel.(?P<major>0|[1-9]\d*)\." \
+             r"(?P<minor>0|[1-9]\d*)\." \
+             r"(?P<patch>0|[1-9]\d*)" \
+             r"(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)" \
+             r"(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?" \
+             r"(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$"
 
 # check that we can function here
 if not (sys.version_info[0] == 3 and sys.version_info[1] >= 8):
     print(u"Sorry, duplicity requires version 3.8 or later of Python3.")
     sys.exit(1)
 
-Version = u"2.0.0.alpha.0"
-scm_version_args = {
-    u'tag_regex': r'^(?P<prefix>rel.)?(?P<version>[^\+]+)(?P<suffix>.*)?$',
-    u'local_scheme': u'no-local-version',
-    u'fallback_version': Version,
-    }
-Version = get_version(**scm_version_args)
+# We use semantic versioning, but in a setuptools mangled manner.
+# setuptools wants to normalize 2.0.0aN to 2.0.0aN+1 plus .devD for distance D.
+# I just want the tag to match the version number, so 2.0.0aN is mu result.
+try:
+    proc = subprocess.run(u"git describe --tags --long".split(),
+                          stdout=subprocess.PIPE,
+                          stderr=subprocess.STDOUT,
+                          timeout=10,
+                          text=True,
+                          )
+    output = proc.stdout.strip()
+    tag, dist, revno = output.rsplit(u'-', 2)
+    try:
+        m = re.match(SemverPatt, tag)
+        Version = f"{m.group(u'major')}.{m.group(u'minor')}.{m.group(u'patch')}"
+        if prerel := m.group(u'prerelease'):
+            Version += f"-{prerel}"
+        if buildmeta := m.group(u'buildmetadata'):
+            Version += f"+{buildmeta}"
+        if dist := int(dist):
+            Version += f".post{dist}"
+    except Exception as e:
+        print(f"Invalid version '{tag}', using default: {Version}\n"
+              f"Exception: {str(e)}")
+except Exception as e:
+    print(f"Version not available from git, using default: {Version}\n"
+          f"Exception: {str(e)}")
+
 Reldate = time.strftime(u"%B %d, %Y", time.gmtime(int(os.environ.get(u'SOURCE_DATE_EPOCH', time.time()))))
 
 # READTHEDOCS uses setup.py sdist but can't handle extensions
@@ -161,9 +191,9 @@ class SdistCommand(sdist):
     def run(self):
         sdist.run(self)
 
-        orig = u"%s/duplicity_py3-%s.tar.gz" % (self.dist_dir, Version)  # TODO: fix name
-        tardir = u"duplicity_py3-%s" % Version  # TODO: fix name
-        tarfile = u"%s/duplicity_py3-%s.tar.gz" % (self.dist_dir, Version)  # TODO: fix name
+        orig = u"%s/duplicity-%s.tar.gz" % (self.dist_dir, Version)
+        tardir = u"duplicity-%s" % Version
+        tarball = u"%s/duplicity-%s.tar.gz" % (self.dist_dir, Version)
 
         assert not os.system(u"tar -xf %s" % orig)
         assert not os.remove(orig)
@@ -183,7 +213,7 @@ class SdistCommand(sdist):
         # set COPYFILE_DISABLE to disable appledouble file creation
         os.environ[u'COPYFILE_DISABLE'] = u'true'
 
-        # make the new tarfile and remove tardir
+        # make the new tarball and remove tardir
         assert not os.system(u"""tar czf %s \
                                  --exclude '.*' \
                                  --exclude Makefile \
@@ -194,7 +224,7 @@ class SdistCommand(sdist):
                                  --exclude testing/manual \
                                  --exclude tools \
                                   %s
-                              """ % (tarfile, tardir))
+                              """ % (tarball, tardir))
         assert not shutil.rmtree(tardir)
 
 
@@ -273,7 +303,7 @@ with open(u"README.md") as fh:
     long_description = fh.read()
 
 
-setup(name=u"duplicity_py3",  # TODO: fix name
+setup(name=u"duplicity",
     version=Version,
     description=u"Encrypted backup using rsync algorithm",
     long_description=long_description,
