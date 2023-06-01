@@ -52,35 +52,21 @@ if not (sys.version_info[0] == 3 and sys.version_info[1] >= 8):
     print(u"Sorry, duplicity requires version 3.8 or later of Python3.")
     sys.exit(1)
 
-# We use semantic versioning, but in a setuptools mangled manner.
-# setuptools wants to normalize 2.0.0aN to 2.0.0aN+1 plus .devD for distance D.
-# I just want the tag to match the version number, so 2.0.0aN is mu result.
-try:
-    proc = subprocess.run(u"git describe --tags --long".split(),
-                          stdout=subprocess.PIPE,
-                          stderr=subprocess.STDOUT,
-                          timeout=10,
-                          text=True,
-                          )
-    output = proc.stdout.strip()
-    tag, dist, revno = output.rsplit(u'-', 2)
-    try:
-        m = re.match(SemverPatt, tag)
-        Version = f"{m.group(u'major')}.{m.group(u'minor')}.{m.group(u'patch')}"
-        if prerel := m.group(u'prerelease'):
-            Version += f"-{prerel}"
-        if buildmeta := m.group(u'buildmetadata'):
-            Version += f"+{buildmeta}"
-        if dist := int(dist):
-            Version += f".post{dist}"
-    except Exception as e:
-        print(f"Invalid version '{tag}', using default: {Version}\n"
-              f"Exception: {str(e)}")
-except Exception as e:
-    print(f"Version not available from git, using default: {Version}\n"
-          f"Exception: {str(e)}")
 
+Version = u"2.0.0a1"
+scm_version_args = {
+    u'tag_regex': r'^(?P<prefix>rel.)?(?P<version>[^\+]+)(?P<suffix>.*)?$',
+    u'local_scheme': u'no-local-version',
+    u'fallback_version': Version,
+    }
+try:
+    from setuptools_scm import get_version  # pylint: disable=import-error
+    Version = get_version(**scm_version_args)
+except Exception as e:
+    print(f"Unable to get SCM version: {str(e)}\n"
+          f"Defaulting to {Version}")
 Reldate = time.strftime(u"%B %d, %Y", time.gmtime(int(os.environ.get(u'SOURCE_DATE_EPOCH', time.time()))))
+
 
 # READTHEDOCS uses setup.py sdist but can't handle extensions
 ext_modules = list()
