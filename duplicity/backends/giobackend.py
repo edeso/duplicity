@@ -92,11 +92,8 @@ class GIOBackend(duplicity.backend.Backend):
         loop.run()  # halt program until we're done mounting
 
         # Now make the directory if it doesn't exist
-        try:
+        if not self.remote_file.query_exists():
             self.remote_file.make_directory_with_parents(None)
-        except GLib.GError as e:
-            if e.code != Gio.IOErrorEnum.EXISTS:
-                raise
 
     def __done_with_mount(self, fileobj, result, loop):
         from gi.repository import Gio   # pylint: disable=import-error
