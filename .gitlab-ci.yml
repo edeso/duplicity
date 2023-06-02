@@ -182,7 +182,7 @@ website:
         GIT_STRATEGY: none
         GIT_CHECKOUT: "false"
     script: |
-        if [ "${WEBSITE_TRIGGER_TOKEN}" == "" ]; then do
+        if [ "${WEBSITE_TRIGGER_TOKEN}" == "" ]; then
             echo "WEBSITE_TRIGGER_TOKEN is not defined.  Skipping."
         else:
             curl --fail-with-body -X POST -F token=${WEBSITE_TRIGGER_TOKEN} -F ref=master https://gitlab.com/api/v4/projects/29130748/trigger/pipeline
