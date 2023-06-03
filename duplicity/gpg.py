@@ -193,6 +193,9 @@ class GPGFile(object):
                 gnupg_fhs = [u'stdin', ]
             else:
                 gnupg_fhs = [u'stdin', u'passphrase']
+            # Turn off compression if needed
+            if not config.compression:
+                cmdlist.append(u'--compress-algo=none')
             p1 = gnupg.run(cmdlist,
                            create_fhs=gnupg_fhs,
                            attach_fhs={u'stdout': encrypt_path.open(u"wb"),
