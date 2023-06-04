@@ -149,41 +149,40 @@ def process_command_line(cmdline_list):
     gpg_version = u".".join(map(str, config.gpg_profile.gpg_version))
     log.Info(_(f"GPG binary is {config.gpg_binary}, version {gpg_version}"))
 
+    # shorten incremental to inc
     config.action = u"inc" if config.action == u"incremental" else config.action
 
+    # import all backends and determine which one we use
     backend.import_backends()
-
     remote_url = config.source_url or config.target_url
     if remote_url:
         config.backend = backend.get_backend(remote_url)
     else:
         config.backend = None
 
+    # determine full clean local path
     local_path = config.source_path or config.target_dir
     if local_path:
         config.local_path = path.Path(path.Path(local_path).get_canonical())
     else:
         config.local_path = None
 
+    # generate backup name and set up archive dir
     if config.backup_name is None:
         config.backup_name = generate_default_backup_name(remote_url)
-
     set_archive_dir(expand_archive_dir(config.archive_dir,
                                        config.backup_name))
 
+    # count is only used by the remove-* commands
     config.keep_chains = config.count
 
-    config.mp_segment_size = int(config.mp_factor * config.volsize)
-
+    # selection only applies to certain commands
     if config.action in [u"backup", u'full', u'inc', u'verify']:
         set_selection()
 
-    if config.ignore_errors:
-        log.Warn(_(u"Running in 'ignore errors' mode due to --ignore-errors.\n"
-                   u"Please reconsider if this was not intended"))
-
-    log.Info(_(u"Using archive dir: %s") % (config.archive_dir_path.uc_name,))
-    log.Info(_(u"Using backup name: %s") % (config.backup_name,))
+    # print derived info
+    log.Info(_(f"Using archive dir: {config.archive_dir_path.uc_name}"))
+    log.Info(_(f"Using backup name: {config.backup_name}"))
 
     return config.action
 

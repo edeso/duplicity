@@ -143,7 +143,7 @@ class OptionKwargs:
         u"metavar": _(u"path"),
         u"type": check_file,
         u"help": u"Path to store configuration files",
-        u"default": dflt(config.archive_dir)
+        u"default": dflt(config.config_dir)
     }
     copy_links = {
         u"action": u"store_true",
@@ -328,7 +328,7 @@ class OptionKwargs:
         u"default": dflt(config.idr_fakeroot)
     }
     ignore_errors = {
-        u"action": u"store_true",
+        u"action": IgnoreErrorsAction,
         u"help": u"Ignore most errors during processing",
         u"default": dflt(config.ignore_errors)
     }
@@ -452,7 +452,8 @@ class OptionKwargs:
         u"default": dflt(config.numeric_owner)
     }
     par2_options = {
-        u"metavar": _(u"options"), u"action": u"append",
+        u"metavar": _(u"options"),
+        u"action": u"append",
         u"help": u"Verbatim par2 options.  May be supplied multiple times.",
         u"default": dflt(config.par2_options)
     }

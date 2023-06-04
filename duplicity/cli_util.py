@@ -88,7 +88,6 @@ class AddRenameAction(DuplicityAction):
         config.rename[key] = os.fsencode(values[1])
 
 
-# TODO: remove in 2.3
 class DeprecationAction(DuplicityAction):
     def __init__(self, option_strings, dest, **kwargs):
         super().__init__(option_strings, dest, **kwargs)
@@ -98,6 +97,16 @@ class DeprecationAction(DuplicityAction):
             f"Option '{option_string} was removed or changed in 2.0.0.\n"
             f"See https://gitlab.com/duplicity/duplicity/-/issues/152\n"
             f"for discussion and possible replacement options."))
+
+
+class IgnoreErrorsAction(DuplicityAction):
+    def __init__(self, option_strings, dest, **kwargs):
+        super().__init__(option_strings, dest, **kwargs)
+
+    def __call__(self, parser, namespace, values, option_string=None):
+        log.Warn(_(u"Running in 'ignore errors' mode due to --ignore-errors.\n"
+                   u"Please reconsider if this was not intended"))
+        config.ignore_errors = True
 
 
 def check_count(val):
