@@ -34,6 +34,7 @@ random_seed
 report.xml
 testfiles
 testing/gnupg/S.*
+testing/gnupg/.gpg-v21-migrated
 testing/gnupg/private-keys-v1.d/
 testing/manual/test_config.py.tmpl
 venv

@@ -37,15 +37,6 @@ from setuptools.command.sdist import sdist
 from setuptools.command.test import test
 from setuptools_scm import get_version
 
-Version = u"2.0.0-a.1"
-
-# see https://semver.org/ bottom of page
-SemverPatt = r"^rel\.(?P<major>0|[1-9]\d*)\." \
-             r"(?P<minor>0|[1-9]\d*)\." \
-             r"(?P<patch>0|[1-9]\d*)" \
-             r"(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)" \
-             r"(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?" \
-             r"(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$"
 
 # check that we can function here
 if not (sys.version_info[0] == 3 and sys.version_info[1] >= 8):
