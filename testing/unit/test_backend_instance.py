@@ -248,7 +248,20 @@ class FTPSBackendTest(BackendInstanceBase):
 class RCloneBackendTest(BackendInstanceBase):
     def setUp(self):
         super().setUp()
+        # make sure rclone config exists
+        assert not os.system(u"rclone config touch")
+        # add a duptest local config
+        try:
+            assert not os.system(u"rclone config create duptest local local=true --non-interactive")
+            self.delete_config = True
+        except:
+            self.delete_config = False
         os.makedirs(u'{0}/testfiles/output'.format(_runtest_dir))
         url = u'rclone://duptest:/%s/{0}/testfiles/output'.format(_runtest_dir)
         self.backend = duplicity.backend.get_backend_object(url)
         self.assertEqual(self.backend.__class__.__name__, u'RcloneBackend')
+
+    def tearDown(self):
+        super().tearDown()
+        if self.delete_config:
+            assert not os.system(u"rclone config delete duptest")
