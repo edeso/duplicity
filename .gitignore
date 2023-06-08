@@ -9,11 +9,11 @@
 .coverage*
 .dbeaver
 .eggs
-.idea
+.idea/
 .project
 .pydevproject
 .pytest_cache
-.run
+.run/
 .settings
 .tox
 .vscode
@@ -36,6 +36,6 @@ report.xml
 testfiles
 testing/gnupg/.gpg-v21-migrated
 testing/gnupg/S.*
-testing/gnupg/private-keys-v1.d
+testing/gnupg/private-keys-v1.d/
 testing/manual/test_config.py.tmpl
 venv

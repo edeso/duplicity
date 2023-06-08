@@ -34,8 +34,8 @@ fi
 VERSION=`./setup.py --version`
 echo "$0 of ${VERSION}"
 
-# make sure we're logged in
-snapcraft login --with ~/.snaplogin
+# make sure we can log in
+export SNAPCRAFT_STORE_CREDENTIALS=$(cat ~/.snaplogin)
 
 # push to edge and sign
 cd build/duplicity-"${VERSION}"/
