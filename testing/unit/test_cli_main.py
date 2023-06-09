@@ -190,15 +190,15 @@ class CommandlineTest(UnitTestCase):
         u"""
         test short option aliases
         """
-        cline = u"back foo/bar file:///target_url -v 9".split()
+        cline = u"ib foo/bar file:///target_url -v 9".split()
         cli_main.process_command_line(cline)
         self.assertEqual(config.verbosity, 9)
 
-        cline = u"rest file:///source_url foo/bar -t 10000".split()
+        cline = u"rb file:///source_url foo/bar -t 10000".split()
         cli_main.process_command_line(cline)
         self.assertEqual(config.restore_time, 10000)
 
-        cline = u"rest file:///source_url foo/bar --time 10000".split()
+        cline = u"rb file:///source_url foo/bar --time 10000".split()
         cli_main.process_command_line(cline)
         self.assertEqual(config.restore_time, 10000)
 
@@ -207,7 +207,7 @@ class CommandlineTest(UnitTestCase):
         u"""
         test short option aliases
         """
-        start = u"back foo/bar file:///target_url "
+        start = u"ib foo/bar file:///target_url "
         keys = (
             u"DEADDEAD",
             u"DEADDEADDEADDEAD",
@@ -235,7 +235,7 @@ class CommandlineTest(UnitTestCase):
         u"""
         test short option aliases
         """
-        start = u"back foo/bar file:///target_url "
+        start = u"inc foo/bar file:///target_url "
         keys = (
             u"DEADFOO",
             u"DEADDEADDEADFOO",
@@ -260,7 +260,7 @@ class CommandlineTest(UnitTestCase):
         u"""
         test short option aliases
         """
-        start = u"back foo/bar file:///target_url "
+        start = u"inc foo/bar file:///target_url "
         opts = (
             u"--do-not-restore-ownership",
             u"--exclude-filelist-stdin",

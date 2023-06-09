@@ -38,7 +38,6 @@ class DuplicityCommands:
     NOTE: cli_util must contain a function named check_* for each positional arg,
           for example check_source_path() to check for source path validity.
     """
-    backup = [u"source_path", u"target_url"]
     cleanup = [u"target_url"]
     collection_status = [u"target_url"]
     full = [u"source_path", u"target_url"]
@@ -56,7 +55,6 @@ class CommandAliases:
     u"""
     commands and aliases
     """
-    backup = [u"back", u"bu"]
     cleanup = [u"clean", u"cl"]
     collection_status = [u"stat", u"st"]
     full = [u"fb"]
@@ -67,6 +65,15 @@ class CommandAliases:
     remove_all_inc_of_but_n_full = [u"rminc", u"ri"]
     restore = [u"rest", u"rb"]
     verify = [u"veri", u"vb"]
+
+
+all_commands = set()
+for var, aliases in CommandAliases.__dict__.items():
+    if var.startswith(u"__"):
+        continue
+    all_commands.add(var2cmd(var))
+    for alias in aliases:
+        all_commands.add(alias)
 
 
 @dataclass(frozen=True)
@@ -797,11 +804,6 @@ class CommandOptions:
     u"""
     legal options by command
     """
-    backup = list(
-        all_options
-        - parent_only_options
-        - deprecated_backup_options
-    )
     cleanup = list(
         all_options
         - parent_only_options
@@ -814,8 +816,16 @@ class CommandOptions:
         - backup_only_options
         - selection_only_options
     )
-    full = backup
-    incremental = backup
+    full = list(
+        all_options
+        - parent_only_options
+        - deprecated_backup_options
+    )
+    incremental = list(
+        all_options
+        - parent_only_options
+        - deprecated_backup_options
+    )
     list_current_files = list(
         all_options
         - parent_only_options

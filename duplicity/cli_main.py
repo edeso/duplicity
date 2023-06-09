@@ -59,10 +59,48 @@ def make_wide(formatter, w=120, h=46):
         return formatter
 
 
+def copy_from_namespace(args):
+    # Copy all arguments and their values to the config module.  Don't copy
+    # attributes that are 'hidden' (start with an underscore) or whose name is
+    # the empty string (used for arguments that don't directly store a value
+    # by using dest="")
+    for f in [x for x in dir(args) if x and not x.startswith(u"_")]:
+        v = getattr(args, f)
+        setattr(config, f, v)
+
+
+def pre_parse_cmdline_options(arglist):
+    u"""
+    Parse the args that need to be handled first
+    """
+    # set up parent parser
+    parser = argparse.ArgumentParser(
+        prog=u'duplicity',
+        argument_default=None,
+        formatter_class=make_wide(DuplicityHelpFormatter))
+
+    # add parent_only options to the parser
+    for opt in sorted(parent_only_options):
+        var = opt2var(opt)
+        names = [opt] + OptionAliases.__dict__.get(var, [])
+        parser.add_argument(*names, **OptionKwargs.__dict__[var])
+
+    # process some args now
+    args, remain = parser.parse_known_args(arglist)
+
+    # copy args to config
+    copy_from_namespace(args)
+
+    return args, remain
+
+
 def parse_cmdline_options(arglist):
     u"""
     Parse argument list
     """
+    # preprocess config type args
+    args, remain = pre_parse_cmdline_options(arglist)
+
     # set up parent parser
     parser = argparse.ArgumentParser(
         prog=u'duplicity',
@@ -77,7 +115,7 @@ def parse_cmdline_options(arglist):
 
     # set up command subparsers
     subparsers = parser.add_subparsers(
-        title=u"valid ommands",
+        title=u"valid commands",
         required=False)
 
     # add sub_parser for each command
@@ -108,20 +146,15 @@ def parse_cmdline_options(arglist):
             subparser_dict[cmd].add_argument(*names, **OptionKwargs.__dict__[var])
 
     # parse the options
-    args = parser.parse_args(arglist)
+    args = parser.parse_args(remain)
 
     # if no command, print general help
     if not hasattr(args, u"action"):
         parser.print_usage()
         sys.exit(2)
 
-    # Copy all arguments and their values to the config module.  Don't copy
-    # attributes that are 'hidden' (start with an underscore) or whose name is
-    # the empty string (used for arguments that don't directly store a value
-    # by using dest="")
-    for f in [x for x in dir(args) if x and not x.startswith(u"_")]:
-        v = getattr(args, f)
-        setattr(config, f, v)
+    # copy args to config
+    copy_from_namespace(args)
 
     return args
 

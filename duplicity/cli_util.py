@@ -127,7 +127,7 @@ def check_source_path(val):
     if u"://" in val:
         command_line_error(_(f"Source should be pathname, not url.  Got '{val}' instead."))
     if not os.path.exists(val):
-        command_line_error(_(f"Argument source_path '{val}'."))
+        command_line_error(_(f"Argument source_path '{val}' does not exist."))
     return val
 
 
