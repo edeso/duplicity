@@ -9,6 +9,7 @@ requests
 ##### basic requirements #####
 
 fasteners
+pathvalidate
 python-gettext
 
 ##### backend libraries #####

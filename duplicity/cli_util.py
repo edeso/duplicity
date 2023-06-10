@@ -27,6 +27,7 @@ import io
 import os
 import re
 from hashlib import md5
+from pathvalidate import is_valid_filepath, is_valid_filename
 
 from duplicity import config
 from duplicity import dup_time
@@ -245,6 +246,20 @@ def check_verbosity(value):
 
     log.setverbosity(verb)
     return verb
+
+
+def is_url(val):
+    u"""
+    Check if val is URL
+    """
+    return u'://' in val
+
+
+def is_path(val):
+    u"""
+    Check if val is PATH
+    """
+    return is_valid_filepath(val)
 
 
 def make_bytes(value):

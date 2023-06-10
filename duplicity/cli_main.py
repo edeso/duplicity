@@ -59,11 +59,13 @@ def make_wide(formatter, w=120, h=46):
         return formatter
 
 
-def copy_from_namespace(args):
-    # Copy all arguments and their values to the config module.  Don't copy
-    # attributes that are 'hidden' (start with an underscore) or whose name is
-    # the empty string (used for arguments that don't directly store a value
-    # by using dest="")
+def harvest_namespace(args):
+    u"""
+    Copy all arguments and their values to the config module.  Don't copy
+    attributes that are 'hidden' (start with an underscore) or whose name is
+    the empty string (used for arguments that don't directly store a value
+    by using dest="")
+    """
     for f in [x for x in dir(args) if x and not x.startswith(u"_")]:
         v = getattr(args, f)
         setattr(config, f, v)
@@ -85,11 +87,30 @@ def pre_parse_cmdline_options(arglist):
         names = [opt] + OptionAliases.__dict__.get(var, [])
         parser.add_argument(*names, **OptionKwargs.__dict__[var])
 
-    # process some args now
+    # add args for implied backup/restore
+    parser.add_argument(u'posargs', nargs=u'+')
+
+    # process parent args now
     args, remain = parser.parse_known_args(arglist)
 
-    # copy args to config
-    copy_from_namespace(args)
+    # maybe process implied backup/restore
+    if len(args.posargs) >= 2:
+        arg1, arg2 = args.posargs[0:2]
+        if arg1 in all_commands:
+            # standard command usage, put everything back
+            remain = args.posargs + remain
+        else:
+            # implied command usage, figure out which, if any
+            if is_path(arg1) and is_url(arg2):
+                remain = [u'inc'] + args.posargs + remain
+            elif is_url(arg1) and is_path(arg2):
+                remain = [u'restore'] + args.posargs + remain
+            else:
+                remain = args.posargs + remain
+            del args.posargs
+
+    # harvest args to config
+    harvest_namespace(args)
 
     return args, remain
 
@@ -153,8 +174,8 @@ def parse_cmdline_options(arglist):
         parser.print_usage()
         sys.exit(2)
 
-    # copy args to config
-    copy_from_namespace(args)
+    # harvest args to config
+    harvest_namespace(args)
 
     return args
 

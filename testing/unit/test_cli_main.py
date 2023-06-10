@@ -277,3 +277,16 @@ class CommandlineTest(UnitTestCase):
             with self.assertRaises(CommandLineError) as cm:
                 cline = f"{start} {opt}".split()
                 cli_main.process_command_line(cline)
+
+    @pytest.mark.usefixtures(u"redirect_stdin")
+    def test_implied_commands(self):
+        u"""
+        test implied commands
+        """
+        cline = u"foo/bar file:///target_url".split()
+        cli_main.process_command_line(cline)
+        self.assertEqual(config.action, u"inc")
+
+        cline = u"file:///source_url foo/bar".split()
+        cli_main.process_command_line(cline)
+        self.assertEqual(config.action, u"restore")
