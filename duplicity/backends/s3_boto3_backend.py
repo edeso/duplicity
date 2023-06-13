@@ -26,6 +26,7 @@ from duplicity import log
 from duplicity.errors import FatalBackendException, BackendException
 from duplicity import util
 from duplicity import progress
+from duplicity import file_naming
 
 
 # Note: current gaps with the old boto backend include:
@@ -114,17 +115,36 @@ class S3Boto3Backend(duplicity.backend.Backend):
         remote_filename = util.fsdecode(remote_filename)
         key = self.key_prefix + remote_filename
 
+        # files that should not in glacier and deep_archive, to allow smooth operation
+        if config.short_filenames:
+            glacier_exceptions = [
+                file_naming.full_manifest_re_short,
+                file_naming.inc_manifest_re_short,
+                file_naming.full_sig_re_short,
+                file_naming.new_sig_re_short
+            ]
+        else:
+            glacier_exceptions = [
+                file_naming.full_manifest_re,
+                file_naming.inc_manifest_re,
+                file_naming.full_sig_re,
+                file_naming.new_sig_re
+            ]
+
+        def is_glacier_exception(filename):
+            return any([x.match(filename.encode(u'utf8')) for x in glacier_exceptions])
+
         if config.s3_use_rrs:
             storage_class = u'REDUCED_REDUNDANCY'
         elif config.s3_use_ia:
             storage_class = u'STANDARD_IA'
         elif config.s3_use_onezone_ia:
             storage_class = u'ONEZONE_IA'
-        elif config.s3_use_glacier and u"manifest" not in remote_filename:
+        elif config.s3_use_glacier and not is_glacier_exception(remote_filename):
             storage_class = u'GLACIER'
-        elif config.s3_use_glacier_ir and u"manifest" not in remote_filename:
+        elif config.s3_use_glacier_ir and not is_glacier_exception(remote_filename):
             storage_class = u'GLACIER_IR'
-        elif config.s3_use_deep_archive and u"manifest" not in remote_filename:
+        elif config.s3_use_deep_archive and not is_glacier_exception(remote_filename):
             storage_class = u'DEEP_ARCHIVE'
         else:
             storage_class = u'STANDARD'
