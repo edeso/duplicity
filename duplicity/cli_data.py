@@ -55,16 +55,16 @@ class CommandAliases:
     u"""
     commands and aliases
     """
-    cleanup = [u"clean", u"cl"]
-    collection_status = [u"stat", u"st"]
+    cleanup = [u"cl"]
+    collection_status = [u"st"]
     full = [u"fb"]
     incremental = [u"inc", u"ib"]
-    list_current_files = [u"list", u"ls"]
-    remove_older_than = [u"rmolder", u"ro"]
-    remove_all_but_n_full = [u"rmfull", u"rf"]
-    remove_all_inc_of_but_n_full = [u"rminc", u"ri"]
-    restore = [u"rest", u"rb"]
-    verify = [u"veri", u"vb"]
+    list_current_files = [u"ls"]
+    remove_older_than = [u"ro"]
+    remove_all_but_n_full = [u"ra"]
+    remove_all_inc_of_but_n_full = [u"ri"]
+    restore = [u"rb"]
+    verify = [u"vb"]
 
 
 all_commands = set()
@@ -335,6 +335,7 @@ class OptionKwargs:
         u"default": dflt(config.idr_fakeroot)
     }
     ignore_errors = {
+        u"nargs": 0,
         u"action": IgnoreErrorsAction,
         u"help": u"Ignore most errors during processing",
         u"default": dflt(config.ignore_errors)
@@ -718,54 +719,6 @@ class OptionKwargs:
         u"help": argparse.SUPPRESS
     }
 
-    # DEPRECATED/CHANGED OPTIONS
-    # TODO: remove in 2.3
-    do_not_restore_ownership = {
-        u"nargs": 0,
-        u"action": DeprecationAction,
-        u"help": argparse.SUPPRESS
-    }
-    exclude_filelist_stdin = {
-        u"nargs": 0,
-        u"action": DeprecationAction,
-        u"help": argparse.SUPPRESS
-    }
-    exclude_globbing_filelist = {
-        u"nargs": 0,
-        u"action": DeprecationAction,
-        u"help": argparse.SUPPRESS
-    }
-    file_to_restore = {
-        u"nargs": 0,
-        u"action": DeprecationAction,
-        u"help": argparse.SUPPRESS
-    }
-    gio = {
-        u"nargs": 0,
-        u"action": DeprecationAction,
-        u"help": argparse.SUPPRESS
-    }
-    include_filelist_stdin = {
-        u"nargs": 0,
-        u"action": DeprecationAction,
-        u"help": argparse.SUPPRESS
-    }
-    include_globbing_filelist = {
-        u"nargs": 0,
-        u"action": DeprecationAction,
-        u"help": argparse.SUPPRESS
-    }
-    old_filenames = {
-        u"nargs": 0,
-        u"action": DeprecationAction,
-        u"help": argparse.SUPPRESS
-    }
-    short_filenames = {
-        u"nargs": 0,
-        u"action": DeprecationAction,
-        u"help": argparse.SUPPRESS
-    }
-
 
 @dataclass(frozen=True)
 class OptionAliases:
@@ -787,15 +740,10 @@ backup_only_options = {
 }
 
 selection_only_options = {
-    u"--exclude", u"--exclude_device-files", u"--exclude-filelist", u"--exclude_if-present", u"--exclude_older-than",
-    u"--exclude_other-filesystems", u"--exclude-regexp", u"--include", u"--include-filelist", u"--include-regexp",
+    u"--exclude", u"--exclude-device-files", u"--exclude-filelist", u"--exclude-if-present", u"--exclude-older-than",
+    u"--exclude-other-filesystems", u"--exclude-regexp", u"--include", u"--include-filelist", u"--include-regexp",
     u"--files-from", u"--filter-globbing", u"--filter-ignorecase", u"--filter-literal", u"--filter-regexp",
     u"--filter-strictcase",
-}
-
-deprecated_backup_options = {
-    u"--s3-multipart-max-timeout", u"--s3-use-multiprocessing", u"--s3-use-server-side-encryption",
-    u"--s3-use-server-side-kms-encryption", u"--time-separator",
 }
 
 
@@ -819,12 +767,10 @@ class CommandOptions:
     full = list(
         all_options
         - parent_only_options
-        - deprecated_backup_options
     )
     incremental = list(
         all_options
         - parent_only_options
-        - deprecated_backup_options
     )
     list_current_files = list(
         all_options

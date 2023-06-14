@@ -27,7 +27,7 @@ import io
 import os
 import re
 from hashlib import md5
-from pathvalidate import is_valid_filepath, is_valid_filename
+from pathvalidate import is_valid_filepath
 
 from duplicity import config
 from duplicity import dup_time
@@ -89,17 +89,6 @@ class AddRenameAction(DuplicityAction):
         config.rename[key] = os.fsencode(values[1])
 
 
-class DeprecationAction(DuplicityAction):
-    def __init__(self, option_strings, dest, **kwargs):
-        super().__init__(option_strings, dest, **kwargs)
-
-    def __call__(self, parser, namespace, values, option_string=None):
-        command_line_error(_(
-            f"Option '{option_string} was removed or changed in 2.0.0.\n"
-            f"See https://gitlab.com/duplicity/duplicity/-/issues/152\n"
-            f"for discussion and possible replacement options."))
-
-
 class IgnoreErrorsAction(DuplicityAction):
     def __init__(self, option_strings, dest, **kwargs):
         super().__init__(option_strings, dest, **kwargs)
@@ -125,7 +114,7 @@ def check_remove_time(val):
 
 
 def check_source_path(val):
-    if u"://" in val:
+    if not is_valid_filepath(val):
         command_line_error(_(f"Source should be pathname, not url.  Got '{val}' instead."))
     if not os.path.exists(val):
         command_line_error(_(f"Argument source_path '{val}' does not exist."))
@@ -139,7 +128,7 @@ def check_source_url(val):
 
 
 def check_target_dir(val):
-    if u"://" in val:
+    if not is_valid_filepath(val):
         command_line_error(_(f"Target should be directory, not url.  Got '{val}' instead."))
     if not os.path.exists(val):
         try:
@@ -286,7 +275,7 @@ def var2opt(s):
 
 def cmd2var(s):
     u"""
-    Convert ccommand string to var name
+    Convert command string to var name
     """
     return s.replace(u"-", u"_")
 

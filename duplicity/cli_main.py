@@ -73,13 +73,14 @@ def harvest_namespace(args):
 
 def pre_parse_cmdline_options(arglist):
     u"""
-    Parse the args that need to be handled first
+    Parse the commands and options that need to be handled first.
+    Everthing else is passed on to the main parser.
     """
     # set up parent parser
     parser = argparse.ArgumentParser(
         prog=u'duplicity',
-        argument_default=None,
-        formatter_class=make_wide(DuplicityHelpFormatter))
+        add_help=False,
+        argument_default=None)
 
     # add parent_only options to the parser
     for opt in sorted(parent_only_options):
@@ -88,7 +89,7 @@ def pre_parse_cmdline_options(arglist):
         parser.add_argument(*names, **OptionKwargs.__dict__[var])
 
     # add args for implied backup/restore
-    parser.add_argument(u'posargs', nargs=u'+')
+    parser.add_argument(u'posargs', nargs=u'*')
 
     # process parent args now
     args, remain = parser.parse_known_args(arglist)
@@ -102,12 +103,14 @@ def pre_parse_cmdline_options(arglist):
         else:
             # implied command usage, figure out which, if any
             if is_path(arg1) and is_url(arg2):
+                log.Info(f"Detected implied 'inc' command: {arg1} {arg2}")
                 remain = [u'inc'] + args.posargs + remain
             elif is_url(arg1) and is_path(arg2):
+                log.Info(f"Detected implied 'restore' command: {arg1} {arg2}")
                 remain = [u'restore'] + args.posargs + remain
             else:
-                remain = args.posargs + remain
-            del args.posargs
+                command_line_error(f"Implied command detected.  One should be a PATH and the other a URL.\n"
+                                   f"Got: {arg1} {arg2}")
 
     # harvest args to config
     harvest_namespace(args)
@@ -117,7 +120,7 @@ def pre_parse_cmdline_options(arglist):
 
 def parse_cmdline_options(arglist):
     u"""
-    Parse argument list
+    Parse remaining argument list once all is defined.
     """
     # preprocess config type args
     args, remain = pre_parse_cmdline_options(arglist)

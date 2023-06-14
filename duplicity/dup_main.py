@@ -1329,8 +1329,7 @@ def log_startup_parms(verbosity=log.INFO):
     """
     log.Log(u'=' * 80, verbosity)
     log.Log(u"duplicity %s" % __version__, verbosity)
-    u_args = (os.fsdecode(arg) for arg in sys.argv)
-    log.Log(u"Args: %s" % u' '.join(u_args), verbosity)
+    log.Log(u"Args: %s" % u' '.join([os.fsdecode(arg) for arg in sys.argv]), verbosity)
     log.Log(u' '.join(platform.uname()), verbosity)
     log.Log(u"%s %s" % (sys.executable or sys.platform, sys.version), verbosity)
     log.Log(u'=' * 80, verbosity)
@@ -1437,9 +1436,11 @@ See https://bugs.launchpad.net/duplicity/+bug/931175
         log.shutdown()
         sys.exit(2)
 
+    # log some status info
+    log_startup_parms(log.INFO)
+
     try:
         do_backup(action)
-
     finally:
         util.release_lockfile()
 
@@ -1450,9 +1451,6 @@ def do_backup(action):
         dup_time.setcurtime(config.current_time)
     else:
         dup_time.setcurtime()
-
-    # log some debugging status info
-    log_startup_parms(log.INFO)
 
     # check for disk space and available file handles
     check_resources(action)

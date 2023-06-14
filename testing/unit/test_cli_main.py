@@ -18,7 +18,7 @@
 # You should have received a copy of the GNU General Public License
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-
+import argparse
 import copy
 import os
 import pytest
@@ -213,9 +213,6 @@ class CommandlineTest(UnitTestCase):
             u"DEADDEADDEADDEAD",
             u"DEADDEADDEADDEADDEADDEADDEADDEADDEADDEAD",
         )
-        opts = (
-
-        )
 
         for key in keys:
             cline = f"{start} --encrypt-key={key}".split()
@@ -256,29 +253,6 @@ class CommandlineTest(UnitTestCase):
                 cli_main.process_command_line(cline)
 
     @pytest.mark.usefixtures(u"redirect_stdin")
-    def test_deprecated_options(self):
-        u"""
-        test short option aliases
-        """
-        start = u"inc foo/bar file:///target_url "
-        opts = (
-            u"--do-not-restore-ownership",
-            u"--exclude-filelist-stdin",
-            u"--exclude-globbing-filelist",
-            u"--file-to-restore",
-            u"--gio",
-            u"--include-filelist-stdin",
-            u"--include-globbing-filelist",
-            u"--old-filenames",
-            u"--short-filenames",
-        )
-
-        for opt in opts:
-            with self.assertRaises(CommandLineError) as cm:
-                cline = f"{start} {opt}".split()
-                cli_main.process_command_line(cline)
-
-    @pytest.mark.usefixtures(u"redirect_stdin")
     def test_implied_commands(self):
         u"""
         test implied commands
@@ -290,3 +264,11 @@ class CommandlineTest(UnitTestCase):
         cline = u"file:///source_url foo/bar".split()
         cli_main.process_command_line(cline)
         self.assertEqual(config.action, u"restore")
+
+        cline = u"foo?bar file:///target_url".split()
+        with self.assertRaises(CommandLineError) as cm:
+            cli_main.process_command_line(cline)
+
+        cline = u"file:///source_url foo?bar".split()
+        with self.assertRaises(CommandLineError) as cm:
+            cli_main.process_command_line(cline)
