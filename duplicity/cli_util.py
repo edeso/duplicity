@@ -27,7 +27,6 @@ import io
 import os
 import re
 from hashlib import md5
-from pathvalidate import is_valid_filepath
 
 from duplicity import config
 from duplicity import dup_time
@@ -114,7 +113,7 @@ def check_remove_time(val):
 
 
 def check_source_path(val):
-    if not is_valid_filepath(val):
+    if not is_path(val):
         command_line_error(_(f"Source should be pathname, not url.  Got '{val}' instead."))
     if not os.path.exists(val):
         command_line_error(_(f"Argument source_path '{val}' does not exist."))
@@ -128,7 +127,7 @@ def check_source_url(val):
 
 
 def check_target_dir(val):
-    if not is_valid_filepath(val):
+    if not is_path(val):
         command_line_error(_(f"Target should be directory, not url.  Got '{val}' instead."))
     if not os.path.exists(val):
         try:
@@ -248,7 +247,7 @@ def is_path(val):
     u"""
     Check if val is PATH
     """
-    return is_valid_filepath(val)
+    return not is_url(val)
 
 
 def make_bytes(value):
