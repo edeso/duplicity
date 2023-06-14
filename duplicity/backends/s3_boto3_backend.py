@@ -112,9 +112,6 @@ class S3Boto3Backend(duplicity.backend.Backend):
         if not self.s3:
             self.reset_connection()
 
-        remote_filename = util.fsdecode(remote_filename)
-        key = self.key_prefix + remote_filename
-
         # files that should not in glacier and deep_archive, to allow smooth operation
         if config.short_filenames:
             glacier_exceptions = [
@@ -132,7 +129,7 @@ class S3Boto3Backend(duplicity.backend.Backend):
             ]
 
         def is_glacier_exception(filename):
-            return any([x.match(filename.encode(u'utf8')) for x in glacier_exceptions])
+            return any([x.match(filename) for x in glacier_exceptions])
 
         if config.s3_use_rrs:
             storage_class = u'REDUCED_REDUNDANCY'
@@ -172,6 +169,9 @@ class S3Boto3Backend(duplicity.backend.Backend):
         # it's proper for it to be reset.
         # tracker = UploadProgressTracker() # Scope the tracker to the put()
         tracker = self.tracker
+
+        remote_filename = util.fsdecode(remote_filename)
+        key = self.key_prefix + remote_filename
 
         log.Info(u"Uploading %s/%s to %s Storage" % (self.straight_url, remote_filename, storage_class))
         self.s3.Object(self.bucket.name, key).upload_file(local_source_path.uc_name,
