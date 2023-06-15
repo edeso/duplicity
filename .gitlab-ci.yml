@@ -168,6 +168,8 @@ website:
     stage: deploy
     image: curlimages/curl:latest
     rules:
+        - if: $WEBSITE_TRIGGER_TOKEN == ""
+          when: manual
         - if: $CI_COMMIT_TAG
           when: always
         - changes:
@@ -182,8 +184,4 @@ website:
         GIT_STRATEGY: none
         GIT_CHECKOUT: "false"
     script: |
-        if [ "${WEBSITE_TRIGGER_TOKEN}" == "" ]; then
-            echo "WEBSITE_TRIGGER_TOKEN is not defined.  Skipping."
-        else:
-            curl --fail-with-body -X POST -F token=${WEBSITE_TRIGGER_TOKEN} -F ref=master https://gitlab.com/api/v4/projects/29130748/trigger/pipeline
-        fi
+        curl --fail-with-body -X POST -F token=${WEBSITE_TRIGGER_TOKEN} -F ref=master https://gitlab.com/api/v4/projects/29130748/trigger/pipeline
