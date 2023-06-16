@@ -44,7 +44,6 @@ from duplicity import librsync
 from duplicity import tarfile
 from duplicity.lazy import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 
-_copy_blocksize = 64 * 1024
 _tmp_path_counter = 1
 
 
@@ -426,8 +425,8 @@ class ROPath(object):
             assert not f2.close()
 
         while True:
-            buf1 = f1.read(_copy_blocksize)
-            buf2 = f2.read(_copy_blocksize)
+            buf1 = f1.read(config.copy_blocksize)
+            buf2 = f2.read(config.copy_blocksize)
             if buf1 != buf2:
                 close()
                 return 0
@@ -649,7 +648,7 @@ class Path(ROPath):
         u"""Copy file object fin to self.  Close both when done."""
         fout = self.open(u"wb")
         while True:
-            buf = fin.read(_copy_blocksize)
+            buf = fin.read(config.copy_blocksize)
             if not buf:
                 break
             fout.write(buf)

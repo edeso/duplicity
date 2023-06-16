@@ -176,6 +176,9 @@ encryption = True
 # volume size. default 200M
 volsize = 200 * 1024 * 1024
 
+# file copy blocksize
+copy_blocksize = 128 * 1024
+
 # after this volume, we will switch to multipart upload
 mp_factor = 1.1
 mp_segment_size = int(mp_factor * volsize)

@@ -152,6 +152,12 @@ class OptionKwargs:
         u"help": u"Path to store configuration files",
         u"default": dflt(config.config_dir)
     }
+    copy_blocksize = {
+        u"metavar": _(u"number"),
+        u"type": set_kilos,
+        u"help": u"Blocksize to use in copy operations in kilobytes.",
+        u"default": dflt(config.copy_blocksize)
+    }
     copy_links = {
         u"action": u"store_true",
         u"help": u"Copy contents of symlinks instead of linking",
@@ -404,7 +410,7 @@ class OptionKwargs:
     mp_segment_size = {
         u"metavar": _(u"number"),
         u"type": set_megs,
-        u"help": u"Swift backend segment size",
+        u"help": u"Swift backend segment size in megabytes",
         u"default": dflt(config.mp_segment_size)
     }
     name = {

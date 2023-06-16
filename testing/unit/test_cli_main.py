@@ -264,3 +264,21 @@ class CommandlineTest(UnitTestCase):
         cline = u"file:///source_url foo/bar".split()
         cli_main.process_command_line(cline)
         self.assertEqual(config.action, u"restore")
+
+    @pytest.mark.usefixtures(u"redirect_stdin")
+    def test_integer_args(self):
+        u"""
+        test implied commands
+        """
+        cline = u"foo/bar file:///target_url --copy-blocksize=1024 --volsize=1024".split()
+        cli_main.process_command_line(cline)
+        self.assertEqual(config.copy_blocksize, 1024 * 1024)
+        self.assertEqual(config.volsize, 1024 * 1024 * 1024)
+
+        with self.assertRaises(CommandLineError) as cm:
+            cline = u"foo/bar file:///target_url --copy-blocksize=foo --volsize=1024".split()
+            cli_main.process_command_line(cline)
+
+        with self.assertRaises(CommandLineError) as cm:
+            cline = u"foo/bar file:///target_url --copy-blocksize=1024 --volsize=foo".split()
+            cli_main.process_command_line(cline)

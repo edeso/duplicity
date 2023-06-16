@@ -98,11 +98,15 @@ class IgnoreErrorsAction(DuplicityAction):
         config.ignore_errors = True
 
 
-def check_count(val):
+def _check_int(val):
     try:
         return int(val)
     except Exception as e:
         command_line_error(_(f"'{val}' is not an int: {str(e)}"))
+
+
+def check_count(val):
+    return _check_int(val)
 
 
 def check_remove_time(val):
@@ -303,8 +307,12 @@ def set_log_file(fn):
     return fn
 
 
+def set_kilos(num):
+    return _check_int(num) * 1024
+
+
 def set_megs(num):
-    return int(num) * 1024 * 1024
+    return _check_int(num) * 1024 * 1024
 
 
 def set_archive_dir(dirstring):
