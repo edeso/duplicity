@@ -1403,7 +1403,7 @@ def main():
     # duplicity crashes when PYTHONOPTIMIZE is set, so check
     # and refuse to run if it is set.
     if u'PYTHONOPTIMIZE' in os.environ:
-        log.FatalError(_(u"""
+        log.FatalError(_(u"""\
 PYTHONOPTIMIZE in the environment causes duplicity to fail to
 recognize its own backups.  Please remove PYTHONOPTIMIZE from
 the environment and rerun the backup.

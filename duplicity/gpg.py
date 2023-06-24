@@ -102,7 +102,7 @@ class GPGProfile(object):
         m = self._version_re.search(line)
         if m is not None:
             return int(m.group(u"maj")), int(m.group(u"min")), int(m.group(u"bug"))
-        raise GPGError(u"failed to determine gnupg version of %s from %s" % (binary, line))
+        raise GPGError(f"failed to determine gnupg version of {binary} from {line}")
 
 
 class GPGFile(object):
@@ -154,7 +154,7 @@ class GPGFile(object):
                 gnupg.options.extra_args.append(u'--pinentry-mode=loopback')
 
         else:
-            raise GPGError(u"Unsupported GNUPG version, %s" % profile.gpg_version)
+            raise GPGError(f"Unsupported GNUPG version, {profile.gpg_version}")
 
         # user supplied options
         if config.gpg_options:
@@ -251,7 +251,7 @@ class GPGFile(object):
 
     def seek(self, offset):
         assert not self.encrypt
-        assert offset >= self.byte_count, u"%d < %d" % (offset, self.byte_count)
+        assert offset >= self.byte_count, f"{int(offset)} < {int(self.byte_count)}"
         if offset > self.byte_count:
             self.read(offset - self.byte_count)
 
@@ -261,9 +261,9 @@ class GPGFile(object):
         self.stderr_fp.seek(0)
         for line in self.stderr_fp:
             try:
-                msg += str(line.strip(), locale.getpreferredencoding(), u'replace') + u"\n"
+                msg += f"{str(line.strip(), locale.getpreferredencoding(), u'replace')}\n"
             except Exception as e:
-                msg += line.strip() + u"\n"
+                msg += f"{line.strip()}\n"
         msg += u"===== End GnuPG log =====\n"
         if not (msg.find(u"invalid packet (ctb=14)") > -1):
             raise GPGError(msg)
@@ -479,7 +479,7 @@ def get_hash(hash, path, hex=1):  # pylint: disable=redefined-builtin
     elif hash == u"MD5":
         hash_obj = md5()
     else:
-        assert 0, u"Unknown hash %s" % (hash,)
+        assert 0, f"Unknown hash {hash}"
 
     while True:
         buf = fp.read(blocksize)

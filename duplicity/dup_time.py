@@ -49,13 +49,15 @@ _genstr_date_regexp3 = re.compile(u"^(?P<year>[0-9]{4})"
 curtime = curtimestr = None
 prevtime = prevtimestr = None
 
-bad_interval_string = _(u"""Bad interval string "%s"
+bad_interval_string = _(u"""\
+Bad interval string "%s"
 
 Intervals are specified like 2Y (2 years) or 2h30m (2.5 hours).  The
 allowed special characters are s, m, h, D, W, M, and Y.  See the man
 page for more information.""")
 
-bad_time_string = _(u"""Bad time string "%s"
+bad_time_string = _(u"""\
+Bad time string "%s"
 
 The acceptible time strings are intervals (like "3D64s"), w3-datetime
 strings, like "2002-04-26T04:22:01-07:00" (strings like

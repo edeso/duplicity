@@ -386,15 +386,14 @@ class GnuPG(object):
 
         for fh_name in create_fhs + list(attach_fhs.keys()):
             if fh_name not in _fd_modes:
-                raise KeyError(u"unrecognized filehandle name '%s'; must be one of %s"
-                               % (fh_name, list(_fd_modes.keys())))
+                raise KeyError(f"unrecognized filehandle name '{fh_name}'; "
+                               f"must be one of {list(_fd_modes.keys())}")
 
         for fh_name in create_fhs:
             # make sure the user doesn't specify a filehandle
             # to be created *and* attached
             if fh_name in attach_fhs:
-                raise ValueError(u"cannot have filehandle '%s' in both create_fhs and attach_fhs"
-                                 % fh_name)
+                raise ValueError(f"cannot have filehandle '{fh_name}' in both create_fhs and attach_fhs")
 
             pipe = os.pipe()
             # fix by drt@un.bewaff.net noting
@@ -414,7 +413,7 @@ class GnuPG(object):
         if process.pid != 0:
             # start a threaded_waitpid on the child
             process.thread = threading.Thread(target=threaded_waitpid,
-                                              name=u"wait%d" % process.pid,
+                                              name=f"wait{process.pid:d}",
                                               args=(process,))
             process.thread.start()
 
@@ -439,7 +438,7 @@ class GnuPG(object):
         # child
         for std in _stds:
             p = process._pipes[std]
-            os.dup2(p.child, getattr(sys, u"__%s__" % std).fileno())
+            os.dup2(p.child, getattr(sys, f"__{std}__").fileno())
 
         for k, p in list(process._pipes.items()):
             if p.direct and k not in _stds:
@@ -451,7 +450,7 @@ class GnuPG(object):
         for k, p in list(process._pipes.items()):
             # set command-line options for non-standard fds
             if k not in _stds:
-                fd_args.extend([_fd_options[k], u"%d" % p.child])
+                fd_args.extend([_fd_options[k], f"{p.child:d}"])
 
             if not p.direct:
                 os.close(p.parent)
@@ -667,7 +666,7 @@ class Process(object):
     if multiple calls are made to run().
     """
 
-    def __init__(self):
+    def __init__(self) -> object:
         self._pipes = {}
         self.handles = {}
         self.pid = None
@@ -683,7 +682,7 @@ class Process(object):
         if self.returned is None:
             self.thread.join()
         if self.returned != 0:
-            raise IOError(u"GnuPG exited non-zero, with code %d" % (self.returned >> 8))
+            raise IOError(f"GnuPG exited non-zero, with code {self.returned >> 8:d}")
 
 
 def threaded_waitpid(process):
@@ -697,7 +696,7 @@ def threaded_waitpid(process):
     try:
         process.returned = os.waitpid(process.pid, 0)[1]
     except:
-        log.Debug(_(u"GPG process %d terminated before wait()") % process.pid)
+        log.Debug(_(f"GPG process {process.pid} terminated before wait()"))
         process.returned = 0
 
 
