@@ -24,19 +24,20 @@ duplicity's gpg interface, builds upon Frank Tobin's GnuPGInterface
 which is now patched with some code for iterative threaded execution
 see duplicity's README for details
 """
-
 from builtins import next
-from builtins import str
 from builtins import object
-import os
-import sys
-import tempfile
-import re
+from builtins import str
+
 import gzip
 import locale
+import os
+import re
+import sys
+import tempfile
 
 from duplicity import config
 from duplicity import gpginterface
+from duplicity import log
 from duplicity import tempdir
 from duplicity import util
 
@@ -391,6 +392,8 @@ def GPGWriteFile(block_iter, filename, profile,
             except StopIteration:
                 at_end_of_blockiter = 1
                 break
+            except Exception as e:
+                log.FatalError(f"Read error on {filename}: {str(e)}")
             file.write(data)
 
         file.write(block_iter.get_footer())
