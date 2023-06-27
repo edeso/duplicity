@@ -57,22 +57,9 @@ def with_tempdir(fn):
 
 if __name__ == u"__main__":
     try:
-
-        #         import cProfile
-        #         import pstats
-        #         import StringIO
-        #         prof = cProfile.Profile()
-        #         prof.enable(subcalls=True, builtins=True)
-
         log.setup()
         util.start_debugger()
         with_tempdir(main)
-
-        #         prof.disable()
-        #         s = StringIO.StringIO()
-        #         ps = pstats.Stats(prof, stream=s).sort_stats('cumulative')
-        #         ps.print_stats(20)
-        #         print s.getvalue()
 
     # Don't move this lower.  In order to get an exit
     # status out of the system, you have to call the

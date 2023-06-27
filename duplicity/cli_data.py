@@ -742,7 +742,7 @@ parent_only_options = {
 }
 
 backup_only_options = {
-    u"--allow_source-mismatch", u"--asynchronous-upload", u"--dry-run", u"--time-separator", u"--volsize",
+    u"--allow_source-mismatch", u"--asynchronous-upload", u"--dry-run", u"--volsize",
 }
 
 selection_only_options = {
@@ -750,6 +750,20 @@ selection_only_options = {
     u"--exclude-other-filesystems", u"--exclude-regexp", u"--include", u"--include-filelist", u"--include-regexp",
     u"--files-from", u"--filter-globbing", u"--filter-ignorecase", u"--filter-literal", u"--filter-regexp",
     u"--filter-strictcase",
+}
+
+changed_options = {
+    u"--file-to-restore", u"--do-not-restore-ownership",
+}
+
+deprecated_options = {
+    u"--gio", u"--old-filenames", u"--short-filenames", u"--exclude-globbing-filelist",
+    u"--include-globbing-filelist", u"--exclude-filelist-stdin", u"--include-filelist-stdin",
+    u"--s3-multipart-max-timeout", u"--s3-use-multiprocessing", u"--s3-use-server-side-encryption",
+}
+
+deprecated_backup_options = {
+    u"--time-separator",
 }
 
 
@@ -773,10 +787,12 @@ class CommandOptions:
     full = list(
         all_options
         - parent_only_options
+        - deprecated_backup_options
     )
     incremental = list(
         all_options
         - parent_only_options
+        - deprecated_backup_options
     )
     list_current_files = list(
         all_options

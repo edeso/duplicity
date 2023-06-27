@@ -17,7 +17,7 @@ For detailed descriptions for each command see chapter
 source_directory target_url
 
 .B duplicity verify
-.I [options] [--compare-data] [--file-to-restore <relpath>] [--time time]
+.I [options] [--compare-data] [--path-to-restore <relpath>] [--time time]
 source_url target_directory
 
 .B duplicity collection-status
@@ -29,7 +29,7 @@ target_url
 target_url
 
 .B duplicity [restore]
-.I [options] [--file-to-restore <relpath>] [--time time]
+.I [options] [--path-to-restore <relpath>] [--time time]
 source_url target_directory
 
 .B duplicity remove-older-than <time>
@@ -100,7 +100,7 @@ directory.  If we wanted to restore just the file "Mail/article" in
 /home/me as it was three days ago into /home/me/restored_file:
 .PP
 .RS
-duplicity -t 3D --file-to-restore Mail/article sftp://uid@other.host/some_dir /home/me/restored_file
+duplicity -t 3D --path-to-restore Mail/article sftp://uid@other.host/some_dir /home/me/restored_file
 .PP
 .RE
 The following command compares the latest backup with the current files:
@@ -163,7 +163,7 @@ If this is requested an incremental backup will be performed.
 Duplicity will abort if no old signatures can be found.
 
 .TP
-.BI "verify " "[--compare-data] [--time <time>] [--file-to-restore <rel_path>] <url> <local_path>"
+.BI "verify " "[--compare-data] [--time <time>] [--path-to-restore <rel_path>] <url> <local_path>"
 Verify tests the integrity of the backup archives at the remote location by downloading each file
 and checking both that it can restore the archive and that the restored file matches the signature
 of that file stored in the backup, i.e. compares the archived file with its hash value from archival
@@ -175,7 +175,7 @@ Verify does not compare the backed-up version of the file to the current local c
 unless the --compare-data option is used (see below).
 .br
 The
-.I --file-to-restore
+.I --path-to-restore
 option restricts verify to that file or folder.
 The
 .I --time
@@ -205,7 +205,7 @@ the other hand if the archive has been deleted or corrupted, this
 command will not detect it.
 
 .TP
-.BI "restore " "[--file-to-restore <relpath>] [--time <time>] <url> <target_folder>"
+.BI "restore " "[--path-to-restore <relpath>] [--time <time>] <url> <target_folder>"
 You can restore the full monty or selected folders/files from a specific time.
 Use the relative path as it is printed by
 .BR list-current-files .
@@ -510,7 +510,7 @@ See also
 .RE
 
 .TP
-.BI "--file-to-restore " path
+.BI "--path-to-restore " path
 This option may be given in restore mode, causing only
 .I path
 to be restored instead of the entire contents of the backup archive.
@@ -745,7 +745,7 @@ Recommended for restoring from live cds which might have the users with
 identical names but different uids/gids.
 
 .TP
-.BI --do-not-restore-ownership
+.BI --no-restore-ownership
 Ignores the uid/gid from the archive and keeps the current user's one.
 Recommended for restoring data to mounted filesystem which do not
 support Unix ownership or when root privileges are not available.

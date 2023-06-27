@@ -26,6 +26,7 @@ import argparse
 import io
 import os
 import re
+from textwrap import dedent
 from hashlib import md5
 
 from duplicity import config
@@ -96,6 +97,39 @@ class IgnoreErrorsAction(DuplicityAction):
         log.Warn(_(u"Running in 'ignore errors' mode due to --ignore-errors.\n"
                    u"Please reconsider if this was not intended"))
         config.ignore_errors = True
+
+
+class DeprecationAction(DuplicityAction):
+    def __init__(self, option_strings, dest, **kwargs):
+        super().__init__(option_strings, dest, **kwargs)
+
+    def __call__(self, parser, namespace, values, option_string=None):
+        command_line_error(dedent(
+            f"""\
+            Option '{option_string} was removed in 2.0.0.
+            The following options were deprecated in 2.0.0
+                --exclude-filelist-stdin
+                --exclude-globbing-filelist
+                --gio
+                --include-filelist-stdin
+                --include-globbing-filelist
+                --old-filenames
+                --s3-multipart-max-timeout
+                --s3-use-multiprocessing
+                --s3-use-server-side-encryption
+                --short-filenames"""))
+
+
+class ChangedOptionAction(DuplicityAction):
+    def __init__(self, option_strings, dest, **kwargs):
+        super().__init__(option_strings, dest, **kwargs)
+
+    def __call__(self, parser, namespace, values, option_string=None):
+        command_line_error(dedent(
+            f"""\
+            Option '{option_string} was changed in 2.0.0.
+                --file-to-restore to --path-to-restore
+                --do-not-restore-ownership to --no-restore-ownership"""))
 
 
 def _check_int(val):

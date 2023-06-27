@@ -280,12 +280,6 @@ Exiting because this probably isn't what you meant.""") %
                     for sf in self.filelist_general_get_sfs(filelists[filelists_index], 0, arg, mode, no_case):
                         self.add_selection_func(sf)
                     filelists_index += 1
-                elif opt == u"--exclude-globbing-filelist":
-                    # --exclude-globbing-filelist is now deprecated, but if it
-                    # turns up then it needs to always work in globbing mode...
-                    for sf in self.filelist_general_get_sfs(filelists[filelists_index], 0, arg, u"globbing", no_case):
-                        self.add_selection_func(sf)
-                    filelists_index += 1
                 elif opt == u"--exclude-other-filesystems":
                     self.add_selection_func(self.other_filesystems_get_sf(0))
                 elif opt == u"--exclude-regexp":
@@ -309,12 +303,6 @@ Exiting because this probably isn't what you meant.""") %
                     self.add_selection_func(self.general_get_sf(arg, 1, mode, no_case))
                 elif opt == u"--include-filelist":
                     for sf in self.filelist_general_get_sfs(filelists[filelists_index], 1, arg, mode, no_case):
-                        self.add_selection_func(sf)
-                    filelists_index += 1
-                elif opt == u"--include-globbing-filelist":
-                    # --include-globbing-filelist is now deprecated, but if it
-                    # turns up then it needs to always work in globbing mode...
-                    for sf in self.filelist_general_get_sfs(filelists[filelists_index], 1, arg, u"globbing", no_case):
                         self.add_selection_func(sf)
                     filelists_index += 1
                 elif opt == u"--include-regexp":

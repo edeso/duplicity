@@ -21,7 +21,7 @@
 u"""
 Main for parse command line, check for consistency, and set config
 """
-
+import argparse
 import copy
 import sys
 
@@ -109,7 +109,7 @@ def pre_parse_cmdline_options(arglist):
                 log.Info(f"Detected implied 'restore' command: {arg1} {arg2}")
                 remain = [u'restore'] + args.posargs + remain
             else:
-                command_line_error(f"Implied command detected.  One should be a PATH and the other a URL.\n"
+                command_line_error(f"Implied command detected.  One arg should be a PATH and the other a URL.\n"
                                    f"Got: {arg1} {arg2}")
 
     # harvest args to config
@@ -136,6 +136,20 @@ def parse_cmdline_options(arglist):
         var = opt2var(opt)
         names = [opt] + OptionAliases.__dict__.get(var, [])
         parser.add_argument(*names, **OptionKwargs.__dict__[var])
+
+    # add changed options to the parser
+    for opt in sorted(changed_options):
+        parser.add_argument(opt,
+                            nargs=0,
+                            action=ChangedOptionAction,
+                            help=argparse.SUPPRESS)
+
+    # add deprecated options to the parser
+    for opt in sorted(deprecated_options):
+        parser.add_argument(opt,
+                            nargs=0,
+                            action=DeprecationAction,
+                            help=argparse.SUPPRESS)
 
     # set up command subparsers
     subparsers = parser.add_subparsers(
