@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: duplicity\n"
 "Report-Msgid-Bugs-To: Kenneth Loafman <kenneth@loafman.com>\n"
 "POT-Creation-Date: 2023-05-09 09:37-0500\n"
-"PO-Revision-Date: 2023-05-09 14:49\n"
+"PO-Revision-Date: 2023-06-28 17:13\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -524,7 +524,7 @@ msgstr ""
 #: ../duplicity/commandline.py:302 ../duplicity/commandline.py:444
 #: ../duplicity/commandline.py:959
 msgid "pattern"
-msgstr ""
+msgstr "паттерн"
 
 #. Used in usage help to represent the name of a file. Example:
 #. --log-file <filename>
