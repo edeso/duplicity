@@ -669,7 +669,7 @@ class OptionKwargs:
     }
     timeout = {
         u"metavar": _(u"seconds"),
-        u"type": int,
+        u"type": check_timeout,
         u"help": u"Network timeout in seconds",
         u"default": dflt(config.timeout)
     }

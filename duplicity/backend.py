@@ -68,9 +68,6 @@ _last_exception = None
 # NOTE: this is filled by the respective backends during registering
 uses_netloc = []
 
-# set timeout for backends
-socket.setdefaulttimeout(config.timeout)
-
 
 def import_backends():
     u"""

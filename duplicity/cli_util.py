@@ -143,6 +143,10 @@ def check_count(val):
     return _check_int(val)
 
 
+def check_file(value):
+    return os.fsencode(expand_fn(value))
+
+
 def check_remove_time(val):
     try:
         return dup_time.genstrtotime(val)
@@ -179,6 +183,58 @@ def check_target_url(val):
     if u"://" not in val:
         command_line_error(_(f"Source should be url, not directory.  Got '{val}' instead."))
     return val
+
+
+def check_time(val):
+    try:
+        return dup_time.genstrtotime(val)
+    except dup_time.TimeException as e:
+        command_line_error(str(e))
+
+
+def check_timeout(val):
+    u"""
+    set timeout for backends
+    """
+    val = _check_int(val)
+    socket.setdefaulttimeout(val)
+    return val
+
+
+def check_verbosity(val):
+    fail = False
+    verb = log.NOTICE
+    val = val.lower()
+    if val in [u'e', u'error']:
+        verb = log.ERROR
+    elif val in [u'w', u'warning']:
+        verb = log.WARNING
+    elif val in [u'n', u'notice']:
+        verb = log.NOTICE
+    elif val in [u'i', u'info']:
+        verb = log.INFO
+    elif val in [u'd', u'debug']:
+        verb = log.DEBUG
+    else:
+        try:
+            verb = int(val)
+            if verb < 0 or verb > 9:
+                fail = True
+        except valError:
+            fail = True
+
+    if fail:
+        # TRANSL: In this portion of the usage instructions, "[ewnid]" indicates which
+        # characters are permitted (e, w, n, i, or d); the brackets imply their own
+        # meaning in regex; i.e., only one of the characters is allowed in an instance.
+        command_line_error(_(
+            u"Verbosity must be one of: digit [0-9], character [ewnid],\n"
+            u"or word ['error', 'warning', 'notice', 'info', 'debug'].\n"
+            u"The default is 4 (Notice).  It is strongly recommended\n"
+            u"that verbosity level is set at 2 (Warning) or higher."))
+
+    log.setverbosity(verb)
+    return verb
 
 
 def dflt(val):
@@ -224,54 +280,6 @@ def generate_default_backup_name(backend_url):
     burlhash = md5()
     burlhash.update(backend_url.encode())
     return burlhash.hexdigest()
-
-
-def check_file(value):
-    return os.fsencode(expand_fn(value))
-
-
-def check_time(value):
-    try:
-        return dup_time.genstrtotime(value)
-    except dup_time.TimeException as e:
-        command_line_error(str(e))
-
-
-def check_verbosity(value):
-    # TODO: normalize logging to Python standards
-    fail = False
-    verb = log.NOTICE
-    value = value.lower()
-    if value in [u'e', u'error']:
-        verb = log.ERROR
-    elif value in [u'w', u'warning']:
-        verb = log.WARNING
-    elif value in [u'n', u'notice']:
-        verb = log.NOTICE
-    elif value in [u'i', u'info']:
-        verb = log.INFO
-    elif value in [u'd', u'debug']:
-        verb = log.DEBUG
-    else:
-        try:
-            verb = int(value)
-            if verb < 0 or verb > 9:
-                fail = True
-        except ValueError:
-            fail = True
-
-    if fail:
-        # TRANSL: In this portion of the usage instructions, "[ewnid]" indicates which
-        # characters are permitted (e, w, n, i, or d); the brackets imply their own
-        # meaning in regex; i.e., only one of the characters is allowed in an instance.
-        command_line_error(_(
-            u"Verbosity must be one of: digit [0-9], character [ewnid],\n"
-            u"or word ['error', 'warning', 'notice', 'info', 'debug'].\n"
-            u"The default is 4 (Notice).  It is strongly recommended\n"
-            u"that verbosity level is set at 2 (Warning) or higher."))
-
-    log.setverbosity(verb)
-    return verb
 
 
 def is_url(val):
