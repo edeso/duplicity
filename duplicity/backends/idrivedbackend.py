@@ -126,7 +126,7 @@ class IDriveBackend(duplicity.backend.Backend):
             xml = u"<root>" + u''.join(re.findall(u"<[^>]+>", response)) + u"</root>"
             el = ET.fromstring(xml)
 
-        except:
+        except Exception as e:
             el = None
         log.Debug(u"Request response: {0}".format(response))
 
@@ -259,7 +259,7 @@ class IDriveBackend(duplicity.backend.Backend):
                        .format(self.idrivedevid, self.idriveid, self.idriveserver, remote_path)))
         try:
             _, l, _ = self.subprocess_popen(commandline)
-        except:
+        except Exception as e:
             # error: treat as empty response
             log.Debug(u"list EMPTY response ")
             return []
@@ -420,7 +420,7 @@ class IDriveBackend(duplicity.backend.Backend):
         log.Debug(u"Removing IDrive temp folder evs_temp")
         try:
             shutil.rmtree(u"evs_temp")
-        except:
+        except Exception as e:
             pass
 
     def _query(self, filename):

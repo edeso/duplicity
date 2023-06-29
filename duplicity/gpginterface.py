@@ -695,7 +695,7 @@ def threaded_waitpid(process):
     """
     try:
         process.returned = os.waitpid(process.pid, 0)[1]
-    except:
+    except Exception as e:
         log.Debug(_(f"GPG process {process.pid} terminated before wait()"))
         process.returned = 0
 

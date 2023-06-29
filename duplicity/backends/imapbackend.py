@@ -34,7 +34,7 @@ import time
 from email.parser import Parser
 try:
     from email.policy import default
-except:
+except Exception as e:
     pass
 
 # TODO: should probably change use of socket.sslerror instead of doing this

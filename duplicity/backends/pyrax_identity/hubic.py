@@ -85,7 +85,7 @@ class HubicIdentity(BaseIdentity):
             try:
                 err = r.json()
                 err[u'code'] = r.status_code
-            except:
+            except Exception as e:
                 err = {}
 
             raise exc.AuthenticationFailed(u"Unable to get oauth access token, "
@@ -166,7 +166,7 @@ class HubicIdentity(BaseIdentity):
                     try:
                         err = r.json()
                         err[u'code'] = r.status_code
-                    except:
+                    except Exception as e:
                         err = {}
 
                     raise exc.AuthenticationFailed(
@@ -245,7 +245,7 @@ class HubicIdentity(BaseIdentity):
             try:
                 query = urllib.parse.urlsplit(r.headers[u'location']).query
                 code = dict(urllib.parse.parse_qsl(query))[u'code']
-            except:
+            except Exception as e:
                 raise exc.AuthenticationFailed(u"Unable to authorize client_id, "
                                                u"invalid login/password ?")
 

@@ -87,7 +87,7 @@ class MegaBackend(duplicity.backend.Backend):
             p = p + u'/' + folder
             try:
                 self._makedir(p)
-            except:
+            except Exception as e:
                 pass
 
     def _put(self, source_path, remote_filename):

@@ -102,7 +102,7 @@ class ROPath(object):
             try:
                 self.devnums = (os.major(self.stat.st_rdev),
                                 os.minor(self.stat.st_rdev))
-            except:
+            except Exception as e:
                 log.Warn(_(u"Warning: %s invalid devnums (0x%X), treating as (0, 0).")
                          % (os.fsdecode(self.get_relative_path()), self.stat.st_rdev))
                 self.devnums = (0, 0)
@@ -625,7 +625,7 @@ class Path(ROPath):
 
     def deltree(self):
         u"""Remove self by recursively deleting files under it"""
-        from duplicity import selection  # todo: avoid circ. dep. issue
+        from duplicity import selection  # TODO: avoid circ. dep. issue
         log.Info(_(u"Deleting tree %s") % self.uc_name)
         itr = IterTreeReducer(PathDeleter, [])
         for path in selection.Select(self).set_iter():
@@ -700,7 +700,7 @@ class Path(ROPath):
 
     def compare_recursive(self, other, verbose=None):
         u"""Compare self to other Path, descending down directories"""
-        from duplicity import selection  # todo: avoid circ. dep. issue
+        from duplicity import selection  # TODO: avoid circ. dep. issue
         selfsel = selection.Select(self).set_iter()
         othersel = selection.Select(other).set_iter()
         return Iter.equal(selfsel, othersel, verbose)

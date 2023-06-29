@@ -499,7 +499,7 @@ def patch_seq2ropath(patch_seq):
         assert delta_ropath.difftype == u"diff", delta_ropath.difftype
         try:
             cur_file.fileno()
-        except:
+        except Exception as e:
             u"""
             librsync insists on a real file object, which we create manually
             by using the duplicity.tempdir to tell us where.

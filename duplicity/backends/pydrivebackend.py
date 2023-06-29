@@ -62,7 +62,7 @@ Exception: %s""" % str(e))
         try:
             from oauth2client.client import SignedJwtAssertionCredentials
             self.oldClient = True
-        except:
+        except Exception as e:
             from oauth2client.service_account import ServiceAccountCredentials
             from oauth2client import crypt
             self.oldClient = False

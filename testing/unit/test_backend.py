@@ -158,7 +158,7 @@ class BackendWrapperTest(UnitTestCase):
         self.set_config(u'num_retries', 1)
         try:
             del self.mock._error_code
-        except:
+        except Exception as e:
             return
         self.mock._put.side_effect = Exception
         self.backend.put(self.local, self.remote)
@@ -197,7 +197,7 @@ class BackendWrapperTest(UnitTestCase):
         self.assertEqual(self.mock._delete_list.call_count, 1)
         try:
             del self.mock._delete_list
-        except:
+        except Exception as e:
             return
         self.backend.delete([self.remote])
         self.assertEqual(self.mock._delete.call_count, 1)
@@ -209,7 +209,7 @@ class BackendWrapperTest(UnitTestCase):
         self.assertEqual(self.mock._query_list.call_count, 1)
         try:
             del self.mock._query_list
-        except:
+        except Exception as e:
             return
         self.backend.query_info([self.remote])
         self.assertEqual(self.mock._query.call_count, 1)
@@ -241,7 +241,7 @@ class BackendWrapperTest(UnitTestCase):
 
         try:
             del self.mock._delete_list
-        except:
+        except Exception as e:
             return
         self.mock._delete.side_effect = Exception
         self.backend.delete([self.remote])
@@ -249,7 +249,7 @@ class BackendWrapperTest(UnitTestCase):
 
         try:
             del self.mock._query_list
-        except:
+        except Exception as e:
             return
         self.mock._query.side_effect = Exception
         self.backend.query_info([self.remote])
@@ -275,7 +275,7 @@ class BackendWrapperTest(UnitTestCase):
     def test_move_fallback_undefined(self):
         try:
             del self.mock._move
-        except:
+        except Exception as e:
             return
         self.backend.move(self.local, self.remote)
         self.mock._put.assert_called_once_with(self.local, self.remote)

@@ -34,8 +34,7 @@ def check_common_error(error_handler, function, args=()):
     enough.
 
     """
-    # todo: import here to avoid circular dependency issue
-    from duplicity import path
+    from duplicity import path  # TODO: avoid circ. dep. issue
 
     try:
         return function(*args)

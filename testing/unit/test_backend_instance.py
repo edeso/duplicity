@@ -254,7 +254,7 @@ class RCloneBackendTest(BackendInstanceBase):
         try:
             assert not os.system(u"rclone config create duptest local local=true --non-interactive")
             self.delete_config = True
-        except:
+        except Exception as e:
             self.delete_config = False
         os.makedirs(u'{0}/testfiles/output'.format(_runtest_dir))
         url = u'rclone://duptest:/%s/{0}/testfiles/output'.format(_runtest_dir)

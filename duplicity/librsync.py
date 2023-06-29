@@ -175,7 +175,7 @@ class PatchedFile(LikeFile):
         LikeFile.__init__(self, delta_file)
         try:
             basis_file.fileno()
-        except:
+        except Exception as e:
             u""" tempfile.TemporaryFile() only guarantees a true file
             object on posix platforms. on cygwin/windows a file-like
             object whose file attribute is the underlying true file

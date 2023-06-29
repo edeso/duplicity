@@ -69,7 +69,7 @@ class B2Backend(duplicity.backend.Backend):
             from b2sdk import __version__ as VERSION  # pylint: disable=import-error
             v_split = VERSION.split(u'.')
             self.v_num = [int(x) for x in v_split]
-        except:
+        except Exception as e:
             self.v_num = [0, 0, 0]
 
         try:  # public API v2 is recommended, if available
@@ -125,7 +125,7 @@ class B2Backend(duplicity.backend.Backend):
             try:
                 log.Log(u"Bucket not found, creating one", log.INFO)
                 self.bucket = self.service.create_bucket(bucket_name, u'allPrivate')
-            except:
+            except Exception as e:
                 raise FatalBackendException(u"Bucket cannot be created")
 
     def _get(self, remote_filename, local_path):

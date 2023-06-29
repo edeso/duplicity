@@ -122,7 +122,7 @@ Exception: %s""" % str(e))
             account = self.api_client.users_get_current_account()
             log.Debug(u"User authenticated as ,%s" % account)
             return True
-        except:
+        except Exception as e:
             log.Debug(u'User not authenticated')
             return False
 
