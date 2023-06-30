@@ -25,18 +25,13 @@ Asynchronous job scheduler, for concurrent execution with minimalistic
 dependency guarantees.
 """
 
-from future import standard_library
-standard_library.install_aliases()
-from builtins import object
-import duplicity
-from duplicity import log
-from duplicity.dup_threading import require_threading
-from duplicity.dup_threading import interruptably_wait
-from duplicity.dup_threading import async_split
-from duplicity.dup_threading import with_lock
+import _thread
+import threading
 
-thread = duplicity.dup_threading.thread_module()
-threading = duplicity.dup_threading.threading_module()
+from duplicity import log
+from duplicity.dup_threading import async_split
+from duplicity.dup_threading import interruptably_wait
+from duplicity.dup_threading import with_lock
 
 
 class AsyncScheduler(object):
@@ -68,7 +63,7 @@ class AsyncScheduler(object):
         """
         log.Info(u"%s: %s" % (self.__class__.__name__,
                               _(u"instantiating at concurrency %d") %
-                              (concurrency)))
+                              concurrency))
         assert concurrency >= 0, u"%s concurrency level must be >= 0" % (self.__class__.__name__,)
 
         self.__failed = False  # has at least one task failed so far?
@@ -77,12 +72,10 @@ class AsyncScheduler(object):
         self.__worker_count = 0  # number of active workers
         self.__waiter_count = 0  # number of threads waiting to submit work
         self.__barrier = False  # barrier currently in effect?
-        self.__cv = threading.Condition()  # for simplicity, we use a single cv with its lock
-#                                                    # for everything, even if the resulting notifyAll():s
-#                                                    # are not technically efficient.
-
-        if concurrency > 0:
-            require_threading(u"concurrency > 0 (%d)" % (concurrency,))
+        # for simplicity, we use a single cv with its lock
+        # for everything, even if the resulting notify_all()'s
+        # are not technically efficient.
+        self.__cv = threading.Condition()
 
     def insert_barrier(self):
         u"""
@@ -202,7 +195,7 @@ class AsyncScheduler(object):
                 if self.__worker_count == 0:
                     assert self.__barrier, u"barrier should be in effect"
                     self.__barrier = False
-                    self.__cv.notifyAll()
+                    self.__cv.notify_all()
                 else:
                     self.__waiter_count += 1
                     self.__cv.wait()
@@ -234,10 +227,10 @@ class AsyncScheduler(object):
                     self.__worker_count -= 1
                     log.Debug(u"%s: %s" % (self.__class__.__name__,
                                            _(u"active workers = %d") % (self.__worker_count,)))
-                    self.__cv.notifyAll()
+                    self.__cv.notify_all()
                 with_lock(self.__cv, complete_worker)
 
-        thread.start_new_thread(trampoline, ())
+        _thread.start_new_thread(trampoline, ())
 
     def __execute_caller(self, caller):
         # The caller half that we get here will not propagate
@@ -249,7 +242,7 @@ class AsyncScheduler(object):
                 if not self.__failed:
                     self.__failed = True
                     self.__failed_waiter = waiter
-                    self.__cv.notifyAll()
+                    self.__cv.notify_all()
             with_lock(self.__cv, _signal_failed)
 
         log.Info(u"%s: %s" % (self.__class__.__name__,

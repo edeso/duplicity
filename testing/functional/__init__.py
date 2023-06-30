@@ -18,23 +18,19 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import print_function
-from builtins import range
-from future import standard_library
-standard_library.install_aliases()
 
 import os
-import pexpect
 import platform
 import sys
 import time
 
+import pexpect
+
+from duplicity import config
 from duplicity import backend
-from duplicity import util
 from .. import DuplicityTestCase
-from .. import _top_dir
 from .. import _runtest_dir
-from pkg_resources import parse_version
+from .. import _top_dir
 
 
 class CmdError(Exception):
@@ -65,7 +61,7 @@ class FunctionalTestCase(DuplicityTestCase):
                 cls._setsid_w = True
 
     def setUp(self):
-        super(FunctionalTestCase, self).setUp()
+        super().setUp()
 
         self.unpack_testfiles()
 
@@ -82,8 +78,8 @@ class FunctionalTestCase(DuplicityTestCase):
         backend_inst.close()
         self._check_setsid()
 
-    def run_duplicity(self, options=[], current_time=None, fail=None,
-                      passphrase_input=[]):
+    def run_duplicity(self, options=None, current_time=None, fail=None,
+                      passphrase_input=None):
         u"""
         Run duplicity binary with given arguments and options
         """
@@ -92,12 +88,13 @@ class FunctionalTestCase(DuplicityTestCase):
         # console unexpectedly (like for gpg password or such).
 
         # Check all string inputs are unicode -- we will convert to system encoding before running the command
-        for item in options:
-            if sys.version_info.major == 2:
-                assert not isinstance(item, str), u"item " + unicode(item) + u" in options is not unicode"
+        if options is None:
+            options = []
+        if passphrase_input is None:
+            passphrase_input = []
 
         for item in passphrase_input:
-            assert isinstance(item, u"".__class__), u"item " + unicode(item) + u" in passphrase_input is not unicode"
+            assert isinstance(item, u"".__class__), f"item {os.fsdecode(item)} in passphrase_input is not unicode"
 
         if platform.platform().startswith(u'Linux'):
             cmd_list = [u'setsid']
@@ -105,52 +102,43 @@ class FunctionalTestCase(DuplicityTestCase):
                 cmd_list.extend([u"-w"])
         else:
             cmd_list = []
-        basepython = os.environ.get(u'TOXPYTHON', None)
-        if basepython is not None:
-            cmd_list.extend([basepython])
-        run_coverage = os.environ.get(u'RUN_COVERAGE', None)
-        if run_coverage is not None:
+
+        if basepython := os.environ.get(u'TOXPYTHON', None):
+            cmd_list.extend([basepython, u'-bb'])
+        else:
+            cmd_list.extend([u"python3", u'-bb'])
+
+        if run_coverage := os.environ.get(u'RUN_COVERAGE', None):
             cmd_list.extend([u"-m", u"coverage", u"run", u"--source=duplicity", u"-p"])
+
         cmd_list.extend([u"{0}/bin/duplicity".format(_top_dir)])
         cmd_list.extend(options)
+
+        if run_debugger := os.environ.get(u"PYDEVD", None):
+            cmd_list.extend([u"--pydevd"])
+
         cmd_list.extend([u"-v0"])
         cmd_list.extend([u"--no-print-statistics"])
-        cmd_list.extend([u"--allow-source-mismatch"])
         cmd_list.extend([u"--archive-dir={0}/testfiles/cache".format(_runtest_dir)])
+
         if current_time:
             cmd_list.extend([u"--current-time", current_time])
+
         cmd_list.extend(self.class_args)
+
         if fail:
             cmd_list.extend([u"--fail", u"".__class__(fail)])
+
         cmdline = u" ".join([u'"%s"' % x for x in cmd_list])
 
         if not passphrase_input:
             cmdline += u" < /dev/null"
 
-        # The immediately following block is the nicer way to execute pexpect with
-        # unicode strings, but we need to have the pre-4.0 version for some time yet,
-        # so for now this is commented out so tests execute the same way on all systems.
-
-        # if parse_version(pexpect.__version__) >= parse_version("4.0"):
-        #     # pexpect.spawn only supports unicode from version 4.0
-        #     # there was a separate pexpect.spawnu in 3.x, but it has an error on readline
-        #     child = pexpect.spawn(u'/bin/sh', [u'-c', cmdline], timeout=None, encoding=sys.getfilesystemencoding())
-        #
-        #     for passphrase in passphrase_input:
-        #         child.expect(u'passphrase.*:')
-        #         child.sendline(passphrase)
-        # else:
-
-        # Manually encode to filesystem encoding and send to spawn as bytes
-        # ToDo: Remove this once we no longer have to support systems with pexpect < 4.0
-        if sys.version_info.major > 2:
-            child = pexpect.spawn(u'/bin/sh', [u'-c', cmdline], timeout=None)
-        else:
-            child = pexpect.spawn(b'/bin/sh', [b'-c', cmdline.encode(sys.getfilesystemencoding(),
-                                                                     u'replace')], timeout=None)
+        # Set encoding to filesystem encoding and send to spawn
+        child = pexpect.spawn(u'/bin/sh', [u'-c', cmdline], timeout=None, encoding=config.fsencoding)
 
         for passphrase in passphrase_input:
-            child.expect(b'passphrase.*:')
+            child.expect(u'passphrase.*:')
             child.sendline(passphrase)
 
         # if the command fails, we need to clear its output
@@ -170,12 +158,14 @@ class FunctionalTestCase(DuplicityTestCase):
             for line in lines:
                 line = line.rstrip()
                 if line:
-                    print(line, file=sys.stderr)
+                    print(os.fsdecode(line), file=sys.stderr)
             print(u"...return_val:", return_val, file=sys.stderr)
             raise CmdError(return_val)
 
-    def backup(self, type, input_dir, options=[], **kwargs):  # pylint: disable=redefined-builtin
+    def backup(self, type, input_dir, options=None, **kwargs):  # pylint: disable=redefined-builtin
         u"""Run duplicity backup to default directory"""
+        if options is None:
+            options = []
         options = [type, input_dir, self.backend_url, u"--volsize", u"1"] + options
         before_files = self.get_backend_files()
 
@@ -192,28 +182,34 @@ class FunctionalTestCase(DuplicityTestCase):
         after_files = self.get_backend_files()
         return after_files - before_files
 
-    def restore(self, file_to_restore=None, time=None, options=[], **kwargs):
+    def restore(self, file_to_restore=None, time=None, options=None, **kwargs):
+        if options is None:
+            options = []
         assert not os.system(u"rm -rf {0}/testfiles/restore_out".format(_runtest_dir))
-        options = [self.backend_url, u"{0}/testfiles/restore_out".format(_runtest_dir)] + options
+        options = [u"restore", self.backend_url, u"{0}/testfiles/restore_out".format(_runtest_dir)] + options
         if file_to_restore:
-            options.extend([u'--file-to-restore', file_to_restore])
+            options.extend([u'--path-to-restore', file_to_restore])
         if time:
             options.extend([u'--restore-time', u"".__class__(time)])
         self.run_duplicity(options=options, **kwargs)
 
-    def verify(self, dirname, file_to_verify=None, time=None, options=[],
+    def verify(self, dirname, file_to_verify=None, time=None, options=None,
                **kwargs):
+        if options is None:
+            options = []
         options = [u"verify", self.backend_url, dirname] + options
         if file_to_verify:
-            options.extend([u'--file-to-restore', file_to_verify])
+            options.extend([u'--path-to-restore', file_to_verify])
         if time:
             options.extend([u'--restore-time', u"".__class__(time)])
         self.run_duplicity(options=options, **kwargs)
 
-    def cleanup(self, options=[]):
+    def cleanup(self, options=None):
         u"""
         Run duplicity cleanup to default directory
         """
+        if options is None:
+            options = []
         options = [u"cleanup", self.backend_url, u"--force"] + options
         self.run_duplicity(options=options)
 

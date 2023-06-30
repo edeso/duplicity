@@ -18,21 +18,19 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-import os
-import urllib
-import tempfile
-import re
-import xml.etree.ElementTree as ET
-import shutil
 import errno
-
+import os
+import re
+import shutil
+import tempfile
+import urllib
+import xml.etree.ElementTree as ET
 
 import duplicity.backend
 from duplicity import config
 from duplicity import log
-from duplicity import tempdir
-from duplicity import progress
 from duplicity.errors import BackendException
+
 
 #
 #   This backend works with the IDrive  "dedup implementation". V0.1
@@ -128,7 +126,7 @@ class IDriveBackend(duplicity.backend.Backend):
             xml = u"<root>" + u''.join(re.findall(u"<[^>]+>", response)) + u"</root>"
             el = ET.fromstring(xml)
 
-        except:
+        except Exception as e:
             el = None
         log.Debug(u"Request response: {0}".format(response))
 
@@ -147,7 +145,7 @@ class IDriveBackend(duplicity.backend.Backend):
             log.Warn(u"-" * 72)
             raise BackendException(u"No IDEVSPATH env var set. Should contain folder to idevsutil_dedup")
         self.cmd = os.path.join(path, u"idevsutil_dedup")
-        log.Debug(u"IDrive command base: %s" % (self.cmd))
+        log.Debug(u"IDrive command base: %s" % self.cmd)
 
         # get the account-id
         self.idriveid = os.environ.get(u"IDRIVEID")
@@ -157,7 +155,7 @@ class IDriveBackend(duplicity.backend.Backend):
             log.Warn(u"Create an environment variable IDriveID with your IDrive logon ID")
             log.Warn(u"-" * 72)
             raise BackendException(u"No IDRIVEID env var set. Should contain IDrive id")
-        log.Debug(u"IDrive id: %s" % (self.idriveid))
+        log.Debug(u"IDrive id: %s" % self.idriveid)
 
         # Get the full-path to the account password file
         filepath = os.environ.get(u"IDPWDFILE")
@@ -168,7 +166,7 @@ class IDriveBackend(duplicity.backend.Backend):
             log.Warn(u"Then create an environment variable IDPWDFILE with path/filename of said file")
             log.Warn(u"-" * 72)
             raise BackendException(u"No IDPWDFILE env var set. Should contain file with password")
-        log.Debug(u"IDrive pwdpath: %s" % (filepath))
+        log.Debug(u"IDrive pwdpath: %s" % filepath)
         self.auth_switch = u" --password-file={0}".format(filepath)
 
         # fakeroot set? Create directory and mark for cleanup
@@ -203,7 +201,7 @@ class IDriveBackend(duplicity.backend.Backend):
             log.Warn(u"Create an environment variable IDBUCKET specifying the target bucket")
             log.Warn(u"-" * 72)
             raise BackendException(u"No IDBUCKET env var set. Should contain IDrive backup bucket")
-        log.Debug(u"IDrive bucket: %s" % (self.bucket))
+        log.Debug(u"IDrive bucket: %s" % self.bucket)
 
         # check account / get config status and config type
         el = self.request(self.cmd + self.auth_switch + u" --validate --user={0}".format(self.idriveid)).find(u'tree')
@@ -225,7 +223,7 @@ class IDriveBackend(duplicity.backend.Backend):
                 log.Warn(u"Then create an environment variable IDKEYFILE with path/filename of said file")
                 log.Warn(u"-" * 72)
                 raise BackendException(u"No IDKEYFILE env var set. Should contain file with encription key")
-            log.Debug(u"IDrive keypath: %s" % (filepath))
+            log.Debug(u"IDrive keypath: %s" % filepath)
             self.auth_switch += u" --pvt-key={0}".format(filepath)
 
         # get the server address
@@ -261,7 +259,7 @@ class IDriveBackend(duplicity.backend.Backend):
                        .format(self.idrivedevid, self.idriveid, self.idriveserver, remote_path)))
         try:
             _, l, _ = self.subprocess_popen(commandline)
-        except:
+        except Exception as e:
             # error: treat as empty response
             log.Debug(u"list EMPTY response ")
             return []
@@ -269,9 +267,9 @@ class IDriveBackend(duplicity.backend.Backend):
         log.Debug(u"list response: {0}".format(l))
 
         # get a list of lists from data lines returned by idevsutil_dedup --auth-list
-        filtered = map((lambda line: re.split(r"\[|\]", line)), [x for x in l.splitlines() if x.startswith(u"[")])
+        filtered = list(map((lambda line: re.split(r"\[|\]", line)), [x for x in l.splitlines() if x.startswith(u"[")]))
         # remove whitespace from elements
-        filtered = map((lambda line: map((lambda c: c.strip()), line)), filtered)
+        filtered = list(map((lambda line: list(map((lambda c: c.strip()), line))), filtered))
         # remove empty elements
         filtered = list(map((lambda cols: list(filter((lambda c: c != u''), cols))), filtered))
 
@@ -422,7 +420,7 @@ class IDriveBackend(duplicity.backend.Backend):
         log.Debug(u"Removing IDrive temp folder evs_temp")
         try:
             shutil.rmtree(u"evs_temp")
-        except:
+        except Exception as e:
             pass
 
     def _query(self, filename):

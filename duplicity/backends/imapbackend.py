@@ -20,9 +20,6 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from future import standard_library
-standard_library.install_aliases()
-from builtins import input
 
 import email
 import email.encoders
@@ -32,22 +29,19 @@ import imaplib
 import os
 import re
 import socket
-import sys
 import time
 
 from email.parser import Parser
 try:
-    from email.policy import default  # pylint: disable=import-error
-except:
+    from email.policy import default
+except Exception as e:
     pass
 
 # TODO: should probably change use of socket.sslerror instead of doing this
-if sys.version_info.major >= 3:
-    import ssl
-    socket.sslerror = ssl.SSLError
+import ssl
+socket.sslerror = ssl.SSLError
 
 from duplicity import config
-from duplicity import log
 from duplicity.errors import *  # pylint: disable=unused-wildcard-import
 import duplicity.backend
 
@@ -63,13 +57,13 @@ class ImapBackend(duplicity.backend.Backend):
         self.url = parsed_url
 
         #  Set the username
-        if (parsed_url.username is None):
+        if parsed_url.username is None:
             username = eval(input(u'Enter account userid: '))
         else:
             username = parsed_url.username
 
         #  Set the password
-        if (not parsed_url.password):
+        if not parsed_url.password:
             if u'IMAP_PASSWORD' in os.environ:
                 password = os.environ.get(u'IMAP_PASSWORD')
             else:
@@ -94,18 +88,18 @@ class ImapBackend(duplicity.backend.Backend):
         except Exception:
             pass
 
-        if (parsed_url.scheme == u"imap"):
+        if parsed_url.scheme == u"imap":
             cl = imaplib.IMAP4
             self.conn = cl(imap_server, 143)
-        elif (parsed_url.scheme == u"imaps"):
+        elif parsed_url.scheme == u"imaps":
             cl = imaplib.IMAP4_SSL
             self.conn = cl(imap_server, 993)
 
-        log.Debug(u"Type of imap class: %s" % (cl.__name__))
+        log.Debug(u"Type of imap class: %s" % cl.__name__)
         self.remote_dir = re.sub(r'^/', r'', parsed_url.path, 1)
 
         #  Login
-        if (not config.imap_full_address):
+        if not config.imap_full_address:
             self.conn.login(self.username, self.password)
             self.conn.select(config.imap_mailbox)
             log.Info(u"IMAP connected")
@@ -135,7 +129,7 @@ class ImapBackend(duplicity.backend.Backend):
     def _put(self, source_path, remote_filename):
         f = source_path.open(u"rb")
         allowedTimeout = config.timeout
-        if (allowedTimeout == 0):
+        if allowedTimeout == 0:
             # Allow a total timeout of 1 day
             allowedTimeout = 2880
         while allowedTimeout > 0:
@@ -164,7 +158,7 @@ class ImapBackend(duplicity.backend.Backend):
 
     def _get(self, remote_filename, local_path):
         allowedTimeout = config.timeout
-        if (allowedTimeout == 0):
+        if allowedTimeout == 0:
             # Allow a total timeout of 1 day
             allowedTimeout = 2880
         while allowedTimeout > 0:
@@ -233,18 +227,15 @@ class ImapBackend(duplicity.backend.Backend):
             raise Exception(flist[0])
 
         for msg in flist:
-            if (len(msg) == 1):
+            if len(msg) == 1:
                 continue
-            if sys.version_info.major >= 3:
-                headers = Parser(policy=default).parsestr(msg[1].decode(u"unicode-escape"))  # noqa  # pylint: disable=unsubscriptable-object
-            else:
-                headers = Parser().parsestr(msg[1].decode(u"unicode-escape"))  # pylint: disable=unsubscriptable-object
+            headers = Parser(policy=default).parsestr(msg[1].decode(u"unicode-escape"))  # noqa  # pylint: disable=unsubscriptable-object
             subj = headers[u"subject"]
             header_from = headers[u"from"]
 
             # Catch messages with empty headers which cause an exception.
-            if (not (header_from is None)):
-                if (re.compile(u"^" + self.remote_dir + u"$").match(header_from)):
+            if not (header_from is None):
+                if re.compile(u"^" + self.remote_dir + u"$").match(header_from):
                     ret.append(subj)
                     log.Info(u"IMAP flist: %s %s" % (subj, header_from))
         return ret

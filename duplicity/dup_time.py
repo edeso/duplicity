@@ -20,24 +20,13 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 u"""Provide time related exceptions and functions"""
-from __future__ import division
 
-from past.utils import old_div
-from builtins import map
-
-import time
-import types
-import re
 import calendar
-import sys
+import re
+import time
+
 from duplicity import config
 from duplicity import util
-
-# For type testing against both int and long types that works in python 2/3
-if sys.version_info < (3,):
-    integer_types = (int, types.LongType)
-else:
-    integer_types = (int,)
 
 
 class TimeException(Exception):
@@ -60,13 +49,15 @@ _genstr_date_regexp3 = re.compile(u"^(?P<year>[0-9]{4})"
 curtime = curtimestr = None
 prevtime = prevtimestr = None
 
-bad_interval_string = _(u"""Bad interval string "%s"
+bad_interval_string = _(u"""\
+Bad interval string "%s"
 
 Intervals are specified like 2Y (2 years) or 2h30m (2.5 hours).  The
 allowed special characters are s, m, h, D, W, M, and Y.  See the man
 page for more information.""")
 
-bad_time_string = _(u"""Bad time string "%s"
+bad_time_string = _(u"""\
+Bad time string "%s"
 
 The acceptible time strings are intervals (like "3D64s"), w3-datetime
 strings, like "2002-04-26T04:22:01-07:00" (strings like
@@ -80,32 +71,23 @@ def setcurtime(time_in_secs=None):
     u"""Sets the current time in curtime and curtimestr"""
     global curtime, curtimestr
     t = time_in_secs or int(time.time())
-    assert type(t) in integer_types
+    assert isinstance(t, int)
     curtime, curtimestr = t, timetostring(t)
 
 
 def setprevtime(time_in_secs):
     u"""Sets the previous time in prevtime and prevtimestr"""
     global prevtime, prevtimestr
-    assert type(time_in_secs) in integer_types, prevtime
+    assert isinstance(time_in_secs, int), prevtime
     prevtime, prevtimestr = time_in_secs, timetostring(time_in_secs)
 
 
 def timetostring(timeinseconds):
     u"""Return w3 or duplicity datetime compliant listing of timeinseconds"""
 
-    if config.old_filenames:
-        # We need to know if DST applies to append the correct offset. So
-        #    1. Save the tuple returned by localtime.
-        #    2. Pass the DST flag into gettzd
-        lcltime = time.localtime(timeinseconds)
-        return time.strftime(u"%Y-%m-%dT%H" + config.time_separator +
-                             u"%M" + config.time_separator + u"%S",
-                             lcltime) + gettzd(lcltime[-1])
-    else:
-        # DST never applies to UTC
-        lcltime = time.gmtime(timeinseconds)
-        return time.strftime(u"%Y%m%dT%H%M%SZ", lcltime)
+    # DST never applies to UTC
+    lcltime = time.gmtime(timeinseconds)
+    return time.strftime(u"%Y%m%dT%H%M%SZ", lcltime)
 
 
 def stringtotime(timestring):
@@ -192,7 +174,7 @@ def inttopretty(seconds):
     if seconds == 1:
         partlist.append(u"1 second")
     elif not partlist or seconds > 1:
-        if isinstance(seconds, integer_types):
+        if isinstance(seconds, int):
             partlist.append(u"%s seconds" % seconds)
         else:
             partlist.append(u"%.2f seconds" % seconds)
@@ -234,9 +216,9 @@ def gettzd(dstflag):
     # time.localtime()
 
     if dstflag > 0:
-        offset = old_div(-1 * time.altzone, 60)
+        offset = -1 * time.altzone // 60
     else:
-        offset = old_div(-1 * time.timezone, 60)
+        offset = -1 * time.timezone // 60
     if offset > 0:
         prefix = u"+"
     elif offset < 0:
@@ -262,7 +244,7 @@ def tzdtoseconds(tzd):
 
 def cmp(time1, time2):
     u"""Compare time1 and time2 and return -1, 0, or 1"""
-    if isinstance(time1, (str, u"".__class__)):
+    if isinstance(time1, (str, string)):
         time1 = stringtotime(time1)
         assert time1 is not None
     if isinstance(time2, (str, u"".__class__)):

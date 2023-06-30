@@ -18,45 +18,40 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
 
-import unittest
 import os
+import unittest
 
-from . import FunctionalTestCase
-from testing import _top_dir
 from testing import _runtest_dir
+from testing import _top_dir
+from . import FunctionalTestCase
 
 
 class LogTest(FunctionalTestCase):
     u"""Test machine-readable functions/classes in log.py"""
 
-    logfile = u"{0}/duplicity.log".format(_runtest_dir)
+    logfile = f"{_runtest_dir}/duplicity.log"
 
     def setUp(self):
-        super(LogTest, self).setUp()
-        assert not os.system(u"rm -f {0}".format(self.logfile))
+        super().setUp()
+        assert not os.system(f"rm -f {self.logfile}")
 
     def tearDown(self):
-        super(LogTest, self).tearDown()
-        assert not os.system(u"rm -f {0}".format(self.logfile))
+        super().tearDown()
+        assert not os.system(f"rm -f {self.logfile}")
 
     def test_command_line_error(self):
         u"""Check notification of a simple error code"""
 
-        # Run actual duplicity command (will fail, because no arguments passed)
+        # Run actual duplicity command (will fail because bad dirs passed)
+        cmd = f"{_top_dir}/bin/duplicity --log-file={self.logfile} full testing baddir >/dev/null 2>&1"
         basepython = os.environ.get(u'TOXPYTHON', None)
         if basepython is not None:
-            os.system(u"{0} {1}/bin/duplicity --log-file={2} >/dev/null 2>&1".format
-                      (basepython, _top_dir, self.logfile))
-        else:
-            os.system(u"{0}/bin/duplicity --log-file={1} >/dev/null 2>&1".format(
-                _top_dir, self.logfile))
+            cmd = f"{basepython} {cmd}"
+        os.system(cmd)
 
         # The format of the file should be:
-        # """ERROR 2
+        # """ERROR 23 CommandLineError
         # . Blah blah blah.
         # . Blah blah blah.
         #
@@ -68,7 +63,7 @@ class LogTest(FunctionalTestCase):
             assert (not lastline)
             linecount += 1
             if linecount == 1:
-                assert (line == u"ERROR 2\n")
+                assert (line == u"ERROR 23 CommandLineError\n")
             elif line[0] != u"\n":
                 assert (line.startswith(r". "))
             else:

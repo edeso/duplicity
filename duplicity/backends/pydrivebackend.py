@@ -16,15 +16,12 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from builtins import next
-from builtins import str
 
 import os
 
-from duplicity import log
-from duplicity import util
-from duplicity.errors import BackendException
 import duplicity.backend
+from duplicity import log
+from duplicity.errors import BackendException
 
 
 class PyDriveBackend(duplicity.backend.Backend):
@@ -65,7 +62,7 @@ Exception: %s""" % str(e))
         try:
             from oauth2client.client import SignedJwtAssertionCredentials
             self.oldClient = True
-        except:
+        except Exception as e:
             from oauth2client.service_account import ServiceAccountCredentials
             from oauth2client import crypt
             self.oldClient = False
@@ -88,7 +85,7 @@ Exception: %s""" % str(e))
         elif u'GOOGLE_DRIVE_SETTINGS' in os.environ:
             gauth = GoogleAuth(settings_file=os.environ[u'GOOGLE_DRIVE_SETTINGS'], http_timeout=60)
             gauth.CommandLineAuth()
-        elif (u'GOOGLE_SECRETS_FILE' in os.environ and u'GOOGLE_CREDENTIALS_FILE' in os.environ):
+        elif u'GOOGLE_SECRETS_FILE' in os.environ and u'GOOGLE_CREDENTIALS_FILE' in os.environ:
             gauth = GoogleAuth(http_timeout=60)
             gauth.LoadClientConfigFile(os.environ[u'GOOGLE_SECRETS_FILE'])
             gauth.LoadCredentialsFile(os.environ[u'GOOGLE_CREDENTIALS_FILE'])
@@ -147,7 +144,7 @@ Exception: %s""" % str(e))
     def file_by_name(self, filename):
         from pydrive2.files import ApiRequestError  # pylint: disable=import-error
 
-        filename = util.fsdecode(filename)  # PyDrive deals with unicode filenames
+        filename = os.fsdecode(filename)  # PyDrive deals with unicode filenames
 
         if filename in self.id_cache:
             # It might since have been locally moved, renamed or deleted, so we
@@ -197,7 +194,7 @@ Exception: %s""" % str(e))
             return drive_file[u'id']
 
     def _put(self, source_path, remote_filename):
-        remote_filename = util.fsdecode(remote_filename)
+        remote_filename = os.fsdecode(remote_filename)
         drive_file = self.file_by_name(remote_filename)
         if drive_file is None:
             # No existing file, make a new one
@@ -210,7 +207,7 @@ Exception: %s""" % str(e))
         else:
             log.Info(u"PyDrive backend: replacing existing file '%s' with id '%s'" % (
                 remote_filename, drive_file[u'id']))
-        drive_file.SetContentFile(util.fsdecode(source_path.name))
+        drive_file.SetContentFile(os.fsdecode(source_path.name))
         if self.shared_drive_id:
             drive_file.Upload(param={u'supportsTeamDrives': True})
         else:
@@ -219,7 +216,7 @@ Exception: %s""" % str(e))
 
     def _get(self, remote_filename, local_path):
         drive_file = self.file_by_name(remote_filename)
-        drive_file.GetContentFile(util.fsdecode(local_path.name))
+        drive_file.GetContentFile(os.fsdecode(local_path.name))
 
     def _list(self):
         list_file_args = {
@@ -240,7 +237,7 @@ Exception: %s""" % str(e))
     def _delete(self, filename):
         file_id = self.id_by_name(filename)
         if file_id == u'':
-            log.Warn(u"File '%s' does not exist while trying to delete it" % (util.fsdecode(filename),))
+            log.Warn(u"File '%s' does not exist while trying to delete it" % (os.fsdecode(filename),))
         elif self.shared_drive_id:
             self.drive.auth.service.files().delete(fileId=file_id, param={u'supportsTeamDrives': True}).execute()
         else:

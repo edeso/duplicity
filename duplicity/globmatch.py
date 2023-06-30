@@ -25,10 +25,6 @@
 
 import re
 
-from builtins import map
-from builtins import range
-from builtins import str
-
 
 class GlobbingError(Exception):
     u"""Something has gone wrong when parsing a glob string"""

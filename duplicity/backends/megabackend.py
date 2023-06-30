@@ -19,16 +19,12 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
-
-from duplicity import util
-from duplicity.errors import BackendException
-import duplicity.backend
 
 import os
 import subprocess
+
+import duplicity.backend
+from duplicity.errors import BackendException
 
 
 class MegaBackend(duplicity.backend.Backend):
@@ -62,7 +58,7 @@ class MegaBackend(duplicity.backend.Backend):
         self._makedir_recursive(parsed_url.path[1:].split(u'/'))
 
     def _check_binary_exists(self, cmd):
-        u'checks that a specified command exists in the current path'
+        u"""checks that a specified command exists in the current path"""
 
         try:
             # ignore the output, we only need the return code
@@ -71,17 +67,17 @@ class MegaBackend(duplicity.backend.Backend):
             raise BackendException(u"command '%s' not found, make sure megatools are installed" % (cmd,))
 
     def _makedir(self, path):
-        u'creates a remote directory'
+        u"""creates a remote directory"""
 
         if self._megarc:
             cmd = [u'megamkdir', u'--config', self._megarc, path]
         else:
-            cmd = [u'megamkdir', u'-u', self._username, u'-p', self._password, path]
+            cmd = [u'megamkdir', u'-', self._username, u'-p', self._password, path]
 
         self.subprocess_popen(cmd)
 
     def _makedir_recursive(self, path):
-        u'creates a remote directory (recursively the whole path), ingores errors'
+        u"""creates a remote directory (recursively the whole path), ingores errors"""
 
         print(u"mkdir: %s" % (u'/'.join(path),))
 
@@ -91,48 +87,48 @@ class MegaBackend(duplicity.backend.Backend):
             p = p + u'/' + folder
             try:
                 self._makedir(p)
-            except:
+            except Exception as e:
                 pass
 
     def _put(self, source_path, remote_filename):
-        u'uploads file to Mega (deletes it first, to ensure it does not exist)'
+        u"""uploads file to Mega (deletes it first, to ensure it does not exist)"""
 
         try:
-            self.delete(util.fsdecode(remote_filename))
+            self.delete(os.fsdecode(remote_filename))
         except Exception:
             pass
 
-        self.upload(local_file=util.fsdecode(source_path.get_canonical()),
-                    remote_file=util.fsdecode(remote_filename))
+        self.upload(local_file=os.fsdecode(source_path.get_canonical()),
+                    remote_file=os.fsdecode(remote_filename))
 
     def _get(self, remote_filename, local_path):
-        u'downloads file from Mega'
+        u"""downloads file from Mega"""
 
-        self.download(remote_file=util.fsdecode(remote_filename),
-                      local_file=util.fsdecode(local_path.name))
+        self.download(remote_file=os.fsdecode(remote_filename),
+                      local_file=os.fsdecode(local_path.name))
 
     def _list(self):
-        u'list files in the backup folder'
+        u"""list files in the backup folder"""
 
         return self.folder_contents(files_only=True)
 
     def _delete(self, filename):
-        u'deletes remote '
+        u"""deletes remote """
 
-        self.delete(remote_file=util.fsdecode(filename))
+        self.delete(remote_file=os.fsdecode(filename))
 
     def folder_contents(self, files_only=False):
-        u'lists contents of a folder, optionally ignoring subdirectories'
+        u"""lists contents of a folder, optionally ignoring subdirectories"""
 
         print(u"megals: %s" % (self._folder,))
 
         if self._megarc:
             cmd = [u'megals', u'--config', self._megarc, self._folder]
         else:
-            cmd = [u'megals', u'-u', self._username, u'-p', self._password, self._folder]
+            cmd = [u'megals', u'-', self._username, u'-p', self._password, self._folder]
 
         files = subprocess.check_output(cmd)
-        files = util.fsdecode(files.strip()).split(u'\n')
+        files = os.fsdecode(files.strip()).split(u'\n')
 
         # remove the folder name, including the path separator
         files = [f[len(self._folder) + 1:] for f in files]
@@ -141,7 +137,7 @@ class MegaBackend(duplicity.backend.Backend):
         if files_only:
             files = [f for f in files if u'/' not in f]
 
-        return [util.fsencode(f) for f in files]
+        return [os.fsencode(f) for f in files]
 
     def download(self, remote_file, local_file):
 
@@ -185,7 +181,7 @@ class MegaBackend(duplicity.backend.Backend):
         if self._megarc:
             cmd = [u'megarm', u'--config', self._megarc, self._folder + u'/' + remote_file]
         else:
-            cmd = [u'megarm', u'-u', self._username, u'-p', self._password, self._folder + u'/' + remote_file]
+            cmd = [u'megarm', u'-', self._username, u'-p', self._password, self._folder + u'/' + remote_file]
 
         self.subprocess_popen(cmd)
 

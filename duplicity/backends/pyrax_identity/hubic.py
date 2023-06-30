@@ -3,16 +3,12 @@
 # Copyright (c) 2014 Gu1
 # Licensed under the MIT license
 
-from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
-from builtins import str
 
 import configparser
 import os
 import re
 import time
-import urllib.parse  # pylint: disable=import-error
+import urllib.parse
 
 from requests.compat import quote, quote_plus
 import requests
@@ -41,9 +37,6 @@ class BearerTokenAuth(requests.auth.AuthBase):
 
 
 class HubicIdentity(BaseIdentity):
-    def __init__(self, **kwargs):
-        super(HubicIdentity, self).__init__(self, **kwargs)
-
     def _get_auth_endpoint(self):
         return u""
 
@@ -92,7 +85,7 @@ class HubicIdentity(BaseIdentity):
             try:
                 err = r.json()
                 err[u'code'] = r.status_code
-            except:
+            except Exception as e:
                 err = {}
 
             raise exc.AuthenticationFailed(u"Unable to get oauth access token, "
@@ -173,7 +166,7 @@ class HubicIdentity(BaseIdentity):
                     try:
                         err = r.json()
                         err[u'code'] = r.status_code
-                    except:
+                    except Exception as e:
                         err = {}
 
                     raise exc.AuthenticationFailed(
@@ -252,7 +245,7 @@ class HubicIdentity(BaseIdentity):
             try:
                 query = urllib.parse.urlsplit(r.headers[u'location']).query
                 code = dict(urllib.parse.parse_qsl(query))[u'code']
-            except:
+            except Exception as e:
                 raise exc.AuthenticationFailed(u"Unable to authorize client_id, "
                                                u"invalid login/password ?")
 

@@ -18,13 +18,11 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from builtins import str
 import os
 
 import duplicity.backend
 from duplicity import config
 from duplicity import log
-from duplicity import util
 from duplicity.errors import BackendException
 
 
@@ -170,7 +168,7 @@ Exception: %s""" % str(e))
                 return log.ErrorCode.backend_not_found
 
     def _put(self, source_path, remote_filename):
-        lp = util.fsdecode(source_path.name)
+        lp = os.fsdecode(source_path.name)
         if config.mp_segment_size > 0:
             from swiftclient.service import SwiftUploadObject
             st = os.stat(lp)
@@ -180,7 +178,7 @@ Exception: %s""" % str(e))
                 mp = self.svc.upload(
                     self.container,
                     [SwiftUploadObject(lp,
-                                       object_name=self.prefix + util.fsdecode(remote_filename))],
+                                       object_name=self.prefix + os.fsdecode(remote_filename))],
                     options={u'segment_size': config.mp_segment_size}
                 )
                 uploads = [a for a in mp if u'container' not in a[u'action']]
@@ -188,15 +186,15 @@ Exception: %s""" % str(e))
                     if not upload[u'success']:
                         raise BackendException(upload[u'traceback'])
                 return
-        rp = self.prefix + util.fsdecode(remote_filename)
+        rp = self.prefix + os.fsdecode(remote_filename)
         log.Debug(u"Uploading '%s' to '%s' in remote container '%s'" % (lp, rp, self.container))
         self.conn.put_object(container=self.container,
-                             obj=self.prefix + util.fsdecode(remote_filename),
+                             obj=self.prefix + os.fsdecode(remote_filename),
                              contents=open(lp, u'rb'))
 
     def _get(self, remote_filename, local_path):
         headers, body = self.conn.get_object(self.container,
-                                             self.prefix + util.fsdecode(remote_filename),
+                                             self.prefix + os.fsdecode(remote_filename),
                                              resp_chunk_size=1024)
         with open(local_path.name, u'wb') as f:
             for chunk in body:
@@ -209,13 +207,13 @@ Exception: %s""" % str(e))
 
     def _delete(self, filename):
         # use swiftservice to correctly delete all segments in case of multipart uploads
-        deleted = [a for a in self.svc.delete(self.container, [self.prefix + util.fsdecode(filename)])]
+        deleted = [a for a in self.svc.delete(self.container, [self.prefix + os.fsdecode(filename)])]
 
     def _query(self, filename):
         # use swiftservice to correctly report filesize in case of multipart uploads
-        sobject = [a for a in self.svc.stat(self.container, [self.prefix + util.fsdecode(filename)])][0]
+        sobject = [a for a in self.svc.stat(self.container, [self.prefix + os.fsdecode(filename)])][0]
         sobj = {u'size': int(sobject[u'headers'][u'content-length'])}
-        log.Debug(u"Objectquery: '%s' has size %s." % (util.fsdecode(filename), sobj[u'size']))
+        log.Debug(u"Objectquery: '%s' has size %s." % (os.fsdecode(filename), sobj[u'size']))
         return sobj
 
 

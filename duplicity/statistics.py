@@ -20,16 +20,10 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 u"""Generate and process backup statistics"""
-from __future__ import division
 
-from builtins import zip
-from builtins import map
-from builtins import str
-from builtins import object
-
+import os
 import re
 import time
-import os
 
 from duplicity import config
 from duplicity import dup_time
@@ -345,7 +339,7 @@ class StatsDeltaProcess(StatsObj):
         self.EndTime = time.time()
 
     def add_delta_entries_file(self, path, action_type):
-        if not config.no_files_changed and path.isreg():
+        if config.files_changed and path.isreg():
             self.files_changed.append((path.get_relative_path(), action_type))
 
     def get_delta_entries_file(self):

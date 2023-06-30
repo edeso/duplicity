@@ -24,13 +24,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 or see http://www.gnu.org/copyleft/lesser.html
 """
 
-from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
-
-import unittest
 
 import tempfile
+import unittest
 
 from duplicity import gpginterface
 
@@ -245,7 +241,7 @@ class PipesTests(unittest.TestCase):
 
 
 def fh_cmp(f1, f2, bufsize=8192):
-    while 1:
+    while True:
         b1 = f1.read(bufsize)
         b2 = f2.read(bufsize)
         if b1 != b2:

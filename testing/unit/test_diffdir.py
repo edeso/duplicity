@@ -19,18 +19,11 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
-from builtins import object
 
-import os
 import unittest
 
 from duplicity import diffdir
 from duplicity import selection
-from duplicity import tarfile
-from duplicity import util
 from duplicity.path import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 from testing import _runtest_dir
 from . import UnitTestCase
@@ -39,13 +32,13 @@ from . import UnitTestCase
 class DDTest(UnitTestCase):
     u"""Test functions in diffdir.py"""
     def setUp(self):
-        super(DDTest, self).setUp()
+        super().setUp()
         self.unpack_testfiles()
 
     def copyfileobj(self, infp, outfp):
         u"""Copy in fileobj to out, closing afterwards"""
         blocksize = 32 * 1024
-        while 1:
+        while True:
             buf = infp.read(blocksize)
             if not buf:
                 break

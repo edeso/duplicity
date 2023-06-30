@@ -32,9 +32,6 @@ and the time left to transfer all the (yet unknown) amount of data to send.
 This is a forecast based on gathered evidence.
 """
 
-from __future__ import absolute_import
-from __future__ import division
-from builtins import object
 
 from datetime import datetime, timedelta
 import collections as sys_collections
@@ -84,8 +81,10 @@ class Snapshot(sys_collections.deque):
         pickle.dump(self, progressfd)
         progressfd.close()
 
-    def __init__(self, iterable=[], maxlen=10):
-        super(Snapshot, self).__init__(iterable, maxlen)
+    def __init__(self, iterable=None, maxlen=10):
+        if iterable is None:
+            iterable = []
+        super().__init__(iterable, maxlen)
         self.last_vol = 0
 
     def get_snapshot(self, volume):
@@ -102,7 +101,7 @@ class Snapshot(sys_collections.deque):
         return self.popleft()
 
     def clear(self):
-        super(Snapshot, self).clear()
+        super().clear()
         self.last_vol = 0
 
 
@@ -144,7 +143,7 @@ class ProgressTracker(object):
         Returns true if the progress computation is on and duplicity has not
         yet started the first dry-run pass to collect some information
         """
-        return (self.total_stats is not None)
+        return self.total_stats is not None
 
     def log_upload_progress(self):
         u"""
@@ -331,8 +330,8 @@ class LogProgressThread(threading.Thread):
     every --progress-rate seconds
     """
     def __init__(self):
-        super(LogProgressThread, self).__init__()
-        self.setDaemon(True)
+        super().__init__()
+        self.daemon = True
         self.finished = False
 
     def run(self):

@@ -19,11 +19,9 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
 
 import sys
+
 try:
     import unittest.mock as mock
 except ImportError:
@@ -157,7 +155,7 @@ class ParsedUrlTest(UnitTestCase):
 class BackendWrapperTest(UnitTestCase):
 
     def setUp(self):
-        super(BackendWrapperTest, self).setUp()
+        super().setUp()
         self.mock = mock.MagicMock()
         self.backend = duplicity.backend.BackendWrapper(self.mock)
         self.local = mock.MagicMock()
@@ -168,10 +166,8 @@ class BackendWrapperTest(UnitTestCase):
         self.set_config(u'num_retries', 1)
         try:
             del self.mock._error_code
-        except:
-            # Old versions of mock don't let you mark non-present attributes
-            # like this.
-            return  # can't use self.skip() since that needs py27
+        except Exception as e:
+            return
         self.mock._put.side_effect = Exception
         self.backend.put(self.local, self.remote)
         exit_mock.assert_called_once_with(50)
@@ -209,7 +205,7 @@ class BackendWrapperTest(UnitTestCase):
         self.assertEqual(self.mock._delete_list.call_count, 1)
         try:
             del self.mock._delete_list
-        except:
+        except Exception as e:
             return
         self.backend.delete([self.remote])
         self.assertEqual(self.mock._delete.call_count, 1)
@@ -221,7 +217,7 @@ class BackendWrapperTest(UnitTestCase):
         self.assertEqual(self.mock._query_list.call_count, 1)
         try:
             del self.mock._query_list
-        except:
+        except Exception as e:
             return
         self.backend.query_info([self.remote])
         self.assertEqual(self.mock._query.call_count, 1)
@@ -253,7 +249,7 @@ class BackendWrapperTest(UnitTestCase):
 
         try:
             del self.mock._delete_list
-        except:
+        except Exception as e:
             return
         self.mock._delete.side_effect = Exception
         self.backend.delete([self.remote])
@@ -261,7 +257,7 @@ class BackendWrapperTest(UnitTestCase):
 
         try:
             del self.mock._query_list
-        except:
+        except Exception as e:
             return
         self.mock._query.side_effect = Exception
         self.backend.query_info([self.remote])
@@ -287,7 +283,7 @@ class BackendWrapperTest(UnitTestCase):
     def test_move_fallback_undefined(self):
         try:
             del self.mock._move
-        except:
+        except Exception as e:
             return
         self.backend.move(self.local, self.remote)
         self.mock._put.assert_called_once_with(self.local, self.remote)

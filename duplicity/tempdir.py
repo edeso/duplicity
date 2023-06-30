@@ -26,10 +26,6 @@ securely created temporary directory.
 The public interface of this module is thread-safe.
 """
 
-from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
-from builtins import object
 
 import os
 import platform
@@ -129,7 +125,7 @@ class TemporaryDirectory(object):
         default (recommended).
         """
         def defaults_to_tmp(path):
-            u'''Determine if path point to a MAcOS system tmp'''
+            u"""Determine if path point to a MAcOS system tmp"""
             sys_temps = [
                 os.path.realpath(u"/tmp"),
                 os.path.realpath(u"/var/tmp"),
@@ -148,12 +144,12 @@ class TemporaryDirectory(object):
                 global _initialSystemTempRoot
                 temproot = _initialSystemTempRoot
         if isinstance(temproot, b"".__class__):
-            temproot = util.fsdecode(temproot)
+            temproot = os.fsdecode(temproot)
 
-        if (platform.system().startswith(u'Darwin') and defaults_to_tmp(temproot)):
+        if platform.system().startswith(u'Darwin') and defaults_to_tmp(temproot):
             # Use temp space from getconf, never /tmp
             temproot = subprocess.check_output([u'getconf', u'DARWIN_USER_TEMP_DIR'])
-            temproot = util.fsdecode(temproot).rstrip()
+            temproot = os.fsdecode(temproot).rstrip()
 
         self.__dir = tempfile.mkdtemp(u"-tempdir", u"duplicity-", temproot)
 
@@ -199,9 +195,9 @@ class TemporaryDirectory(object):
         try:
             self.__tempcount = self.__tempcount + 1
             suffix = u"-%d" % (self.__tempcount,)
-            filename = util.fsencode(tempfile.mktemp(suffix, u"mktemp-", self.__dir))
+            filename = os.fsencode(tempfile.mktemp(suffix, u"mktemp-", self.__dir))
 
-            log.Debug(_(u"Registering (mktemp) temporary file %s") % util.fsdecode(filename))
+            log.Debug(_(u"Registering (mktemp) temporary file %s") % os.fsdecode(filename))
             self.__pending[filename] = None
         finally:
             self.__lock.release()
@@ -255,10 +251,10 @@ class TemporaryDirectory(object):
         self.__lock.acquire()
         try:
             if fname in self.__pending:
-                log.Debug(_(u"Forgetting temporary file %s") % util.fsdecode(fname))
+                log.Debug(_(u"Forgetting temporary file %s") % os.fsdecode(fname))
                 del self.__pending[fname]
             else:
-                log.Warn(_(u"Attempt to forget unknown tempfile %s - this is probably a bug.") % util.fsdecode(fname))
+                log.Warn(_(u"Attempt to forget unknown tempfile %s - this is probably a bug.") % os.fsdecode(fname))
                 pass
         finally:
             self.__lock.release()
@@ -277,16 +273,16 @@ class TemporaryDirectory(object):
             if self.__dir is not None:
                 for file in list(self.__pending.keys()):
                     try:
-                        log.Debug(_(u"Removing still remembered temporary file %s") % util.fsdecode(file))
+                        log.Debug(_(u"Removing still remembered temporary file %s") % os.fsdecode(file))
                         util.ignore_missing(os.unlink, file)
                     except Exception:
-                        log.Info(_(u"Cleanup of temporary file %s failed") % util.fsdecode(file))
+                        log.Info(_(u"Cleanup of temporary file %s failed") % os.fsdecode(file))
                         pass
                 try:
                     os.rmdir(self.__dir)
                 except Exception:
                     log.Warn(_(u"Cleanup of temporary directory %s failed - "
-                               u"this is probably a bug.") % util.fsdecode(self.__dir))
+                               u"this is probably a bug.") % os.fsdecode(self.__dir))
                     pass
                 self.__pending = None
                 self.__dir = None

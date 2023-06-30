@@ -21,14 +21,9 @@
 
 u"""Define some lazy data structures and functions acting on them"""
 
-from __future__ import print_function
-
-from builtins import map
-from builtins import next
-from builtins import range
-from builtins import object
 
 import os
+import sys
 
 from duplicity import log
 from duplicity import robust
@@ -90,18 +85,18 @@ class Iter(object):
                 i2 = next(iter2)
             except StopIteration:
                 if verbose:
-                    print(u"End when i1 = %s" % (i1,))
+                    print(u"End when i1 = %s" % (i1,), file=sys.stderr)
                 return None
             if not operator(i1, i2):
                 if verbose:
-                    print(u"%s not equal to %s" % (i1, i2))
+                    print(u"%s not equal to %s" % (i1, i2), file=sys.stderr)
                 return None
         try:
             i2 = next(iter2)
         except StopIteration:
             return 1
         if verbose:
-            print(u"End when i2 = %s" % (i2,))
+            print(u"End when i2 = %s" % (i2,), file=sys.stderr)
         return None
 
     @staticmethod
@@ -126,7 +121,7 @@ class Iter(object):
     def len(iter):  # pylint: disable=redefined-builtin
         u"""Return length of iterator"""
         i = 0
-        while 1:
+        while True:
             try:
                 next(iter)
             except StopIteration:
@@ -145,7 +140,7 @@ class Iter(object):
     @staticmethod
     def foldl(f, default, iter):  # pylint: disable=redefined-builtin
         u"""the fundamental list iteration operator.."""
-        while 1:
+        while True:
             try:
                 next_item = next(iter)
             except StopIteration:
@@ -165,7 +160,7 @@ class Iter(object):
         """
         if num_of_forks == 2 and not final_func and not closing_func:
             im2 = IterMultiplex2(iter)
-            return (im2.yielda(), im2.yieldb())
+            return im2.yielda(), im2.yieldb()
         if not final_func:
             final_func = lambda i: None
         if not closing_func:
@@ -215,7 +210,7 @@ class Iter(object):
                     return
                 yield ret
 
-        return tuple(map(make_iterator, list(range(num_of_forks))))
+        return tuple(map(make_iterator, range(num_of_forks)))
 
 
 class IterMultiplex2(object):
@@ -298,7 +293,7 @@ class IterTreeReducer(object):
 
         """
         branches = self.branches
-        while 1:
+        while True:
             to_be_finished = branches[-1]
             base_index = to_be_finished.base_index
             if base_index != index[:len(base_index)]:
@@ -327,7 +322,7 @@ class IterTreeReducer(object):
 
     def Finish(self):
         u"""Call at end of sequence to tie everything up"""
-        while 1:
+        while True:
             to_be_finished = self.branches.pop()
             to_be_finished.call_end_proc()
             if not self.branches:
@@ -427,7 +422,7 @@ class ITRBranch(object):
             filename = os.path.join(*self.index)  # pylint: disable=not-an-iterable
         else:
             filename = u"."
-        log.Warn(_(u"Error '%s' processing %s") % (exc, util.fsdecode(filename)),
+        log.Warn(_(u"Error '%s' processing %s") % (exc, os.fsdecode(filename)),
                  log.WarningCode.cannot_process,
                  util.escape(filename))
 
@@ -437,6 +432,6 @@ class ITRBranch(object):
             index_str = u"."
         else:
             index_str = os.path.join(*index)
-        log.Warn(_(u"Skipping %s because of previous error") % util.fsdecode(index_str),
+        log.Warn(_(u"Skipping %s because of previous error") % os.fsdecode(index_str),
                  log.WarningCode.process_skipped,
                  util.escape(index_str))

@@ -22,21 +22,17 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import print_function
-from __future__ import division
-from past.utils import old_div
-from builtins import input
-from builtins import str
-import time
+
 import json
 import os
 import sys
+import time
 
 import duplicity.backend
-from duplicity.errors import BackendException
 from duplicity import config
 from duplicity import log
 from duplicity import util
+from duplicity.errors import BackendException
 
 # For documentation on the API, see
 # The previous Live SDK API required the use of opaque folder IDs to navigate paths, but the Microsoft Graph
@@ -138,7 +134,7 @@ class OneDriveBackend(duplicity.backend.Backend):
         start = time.time()
         response = self.http_client.get(self.API_URI + self.drive_root + u'?$select=quota', timeout=config.timeout)
         response.raise_for_status()
-        if (u'quota' in response.json()):
+        if u'quota' in response.json():
             available = response.json()[u'quota'].get(u'remaining', None)
             if available:
                 log.Debug(u'Bytes available: %d' % available)
@@ -166,7 +162,7 @@ class OneDriveBackend(duplicity.backend.Backend):
             # https://docs.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_createuploadsession?
             # indicates 10 MiB is optimal for stable high speed connections.
             offset = 0
-            desired_num_fragments = old_div(10 * 1024 * 1024, self.REQUIRED_FRAGMENT_SIZE_MULTIPLE)
+            desired_num_fragments = 10 * 1024 * 1024 // self.REQUIRED_FRAGMENT_SIZE_MULTIPLE
             while True:
                 chunk = source_file.read(desired_num_fragments * self.REQUIRED_FRAGMENT_SIZE_MULTIPLE)
                 if len(chunk) == 0:
@@ -277,7 +273,7 @@ class DefaultOAuth2Session(OneDriveOAuth2Session):
     ]
 
     def __init__(self, api_uri):
-        super(DefaultOAuth2Session, self).__init__()
+        super().__init__()
 
         token = None
         try:
@@ -362,7 +358,7 @@ class ExternalOAuth2Session(OneDriveOAuth2Session):
     u"""Caller is managing tokens and provides an active refresh token."""
 
     def __init__(self, client_id, refresh_token):
-        super(ExternalOAuth2Session, self).__init__()
+        super().__init__()
 
         token = {
             u'refresh_token': refresh_token,

@@ -32,7 +32,7 @@ class FileChunkIO(io.FileIO):
         self.bytes = bytes
         if bytes is None:
             self.bytes = os.stat(name).st_size - self.offset
-        super(FileChunkIO, self).__init__(os.fsdecode(name), mode, closefd, *args, **kwargs)
+        super().__init__(os.fsdecode(name), mode, closefd, *args, **kwargs)
         self.seek(0)
 
     def seek(self, offset, whence=SEEK_SET):
@@ -40,7 +40,7 @@ class FileChunkIO(io.FileIO):
         Move to a new chunk position.
         """
         if whence == SEEK_SET:
-            super(FileChunkIO, self).seek(self.offset + offset)
+            super().seek(self.offset + offset)
         elif whence == SEEK_CUR:
             self.seek(self.tell() + offset)
         elif whence == SEEK_END:
@@ -50,7 +50,7 @@ class FileChunkIO(io.FileIO):
         u"""
         Current file position.
         """
-        return super(FileChunkIO, self).tell() - self.offset
+        return super().tell() - self.offset
 
     def read(self, n=-1):
         u"""
@@ -59,7 +59,7 @@ class FileChunkIO(io.FileIO):
         if n >= 0:
             max_n = self.bytes - self.tell()
             n = min([n, max_n])
-            return super(FileChunkIO, self).read(n)
+            return super().read(n)
         else:
             return self.readall()
 

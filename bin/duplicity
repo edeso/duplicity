@@ -26,34 +26,17 @@
 # Please send mail to me or the mailing list if you find bugs or have
 # any suggestions.
 
-from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
-
-import json
-import os
 import sys
 
-from duplicity.dup_main import main
 import duplicity.errors
-
 from duplicity import gpg
 from duplicity import log
 from duplicity import tempdir
 from duplicity import util
+from duplicity.dup_main import main
 
-
-if sys.version_info[:2] >= (3, 7):
-    sys.stdout.reconfigure(errors=u'surrogateescape')
-    sys.stderr.reconfigure(errors=u'surrogateescape')
-elif sys.version_info.major == 3:
-    import codecs
-    sys.stdout = codecs.getwriter(u'utf-8')(sys.stdout.buffer, u'surrogateescape')
-    sys.stderr = codecs.getwriter(u'utf-8')(sys.stderr.buffer, u'surrogateescape')
-elif sys.version_info.major == 2:
-    import codecs
-    sys.stdout = codecs.getwriter(u'utf-8')(sys.stdout, u'replace')
-    sys.stderr = codecs.getwriter(u'utf-8')(sys.stderr, u'replace')
+sys.stdout.reconfigure(errors=u'surrogateescape')
+sys.stderr.reconfigure(errors=u'surrogateescape')
 
 
 def with_tempdir(fn):
@@ -74,22 +57,9 @@ def with_tempdir(fn):
 
 if __name__ == u"__main__":
     try:
-
-        #         import cProfile
-        #         import pstats
-        #         import StringIO
-        #         prof = cProfile.Profile()
-        #         prof.enable(subcalls=True, builtins=True)
-
         log.setup()
         util.start_debugger()
         with_tempdir(main)
-
-        #         prof.disable()
-        #         s = StringIO.StringIO()
-        #         ps = pstats.Stats(prof, stream=s).sort_stats('cumulative')
-        #         ps.print_stats(20)
-        #         print s.getvalue()
 
     # Don't move this lower.  In order to get an exit
     # status out of the system, you have to call the

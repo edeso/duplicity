@@ -18,11 +18,6 @@ Use PYTHONPATH to set the path each time that you use the binaries:
 
 `PYTHONPATH=$DUP_ROOT bin/duplicity`
 
-or
-
-`PYTHONPATH=$DUP_ROOT bin/rdiffdir`
-
-
 ## Getting a versioned copy of duplicity
 
 Duplicity source is versioned by **git tags** and **setuptools-scm** with help from `./setup.py sdist --dist-dir=.`.

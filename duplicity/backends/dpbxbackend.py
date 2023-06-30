@@ -25,21 +25,16 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import print_function
-from __future__ import division
-from future import standard_library
-standard_library.install_aliases()
-from builtins import input
-from builtins import str
+
 import io
 import os
 import re
 import sys
 import time
 import traceback
-import urllib.request  # pylint: disable=import-error
-import urllib.parse  # pylint: disable=import-error
-import urllib.error  # pylint: disable=import-error
+import urllib.error
+import urllib.parse
+import urllib.request
 
 from duplicity import log, config
 from duplicity import progress
@@ -127,7 +122,7 @@ Exception: %s""" % str(e))
             account = self.api_client.users_get_current_account()
             log.Debug(u"User authenticated as ,%s" % account)
             return True
-        except:
+        except Exception as e:
             log.Debug(u'User not authenticated')
             return False
 

@@ -19,22 +19,19 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
 
 import unittest
 
-from . import UnitTestCase
 from duplicity import path
 from duplicity.statistics import *  # pylint: disable=redefined-builtin, unused-wildcard-import
 from testing import _runtest_dir
+from . import UnitTestCase
 
 
 class StatsObjTest(UnitTestCase):
     u"""Test StatsObj class"""
     def setUp(self):
-        super(StatsObjTest, self).setUp()
+        super().setUp()
         self.unpack_testfiles()
 
     def set_obj(self, s):

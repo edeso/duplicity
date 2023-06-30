@@ -18,7 +18,6 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from builtins import str
 import os
 
 import duplicity.backend
@@ -32,6 +31,7 @@ class CloudFilesBackend(duplicity.backend.Backend):
     Backend for Rackspace's CloudFiles
     """
     def __init__(self, parsed_url):
+        super().__init__(parsed_url)
         try:
             from cloudfiles import Connection
             from cloudfiles.errors import ResponseError

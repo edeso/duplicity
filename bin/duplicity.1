@@ -17,7 +17,7 @@ For detailed descriptions for each command see chapter
 source_directory target_url
 
 .B duplicity verify
-.I [options] [--compare-data] [--file-to-restore <relpath>] [--time time]
+.I [options] [--compare-data] [--path-to-restore <relpath>] [--time time]
 source_url target_directory
 
 .B duplicity collection-status
@@ -29,7 +29,7 @@ target_url
 target_url
 
 .B duplicity [restore]
-.I [options] [--file-to-restore <relpath>] [--time time]
+.I [options] [--path-to-restore <relpath>] [--time time]
 source_url target_directory
 
 .B duplicity remove-older-than <time>
@@ -47,10 +47,6 @@ target_url
 .B duplicity cleanup
 .I [options] [--force]
 target_url
-
-.B duplicity replicate
-.I [options] [--time time]
-source_url target_url
 
 .SH DESCRIPTION
 Duplicity incrementally backs up files and folders into
@@ -104,7 +100,7 @@ directory.  If we wanted to restore just the file "Mail/article" in
 /home/me as it was three days ago into /home/me/restored_file:
 .PP
 .RS
-duplicity -t 3D --file-to-restore Mail/article sftp://uid@other.host/some_dir /home/me/restored_file
+duplicity -t 3D --path-to-restore Mail/article sftp://uid@other.host/some_dir /home/me/restored_file
 .PP
 .RE
 The following command compares the latest backup with the current files:
@@ -167,7 +163,7 @@ If this is requested an incremental backup will be performed.
 Duplicity will abort if no old signatures can be found.
 
 .TP
-.BI "verify " "[--compare-data] [--time <time>] [--file-to-restore <rel_path>] <url> <local_path>"
+.BI "verify " "[--compare-data] [--time <time>] [--path-to-restore <rel_path>] <url> <local_path>"
 Verify tests the integrity of the backup archives at the remote location by downloading each file
 and checking both that it can restore the archive and that the restored file matches the signature
 of that file stored in the backup, i.e. compares the archived file with its hash value from archival
@@ -179,7 +175,7 @@ Verify does not compare the backed-up version of the file to the current local c
 unless the --compare-data option is used (see below).
 .br
 The
-.I --file-to-restore
+.I --path-to-restore
 option restricts verify to that file or folder.
 The
 .I --time
@@ -209,7 +205,7 @@ the other hand if the archive has been deleted or corrupted, this
 command will not detect it.
 
 .TP
-.BI "restore " "[--file-to-restore <relpath>] [--time <time>] <url> <target_folder>"
+.BI "restore " "[--path-to-restore <relpath>] [--time <time>] <url> <target_folder>"
 You can restore the full monty or selected folders/files from a specific time.
 Use the relative path as it is printed by
 .BR list-current-files .
@@ -258,19 +254,6 @@ deleted.  This should only be necessary after a duplicity session
 fails or is aborted prematurely.  Note that
 .I --force
 will be needed to delete the files instead of just listing them.
-
-.TP
-.BI "replicate " "[--time time] <source_url> <target_url>"
-Replicate backup sets from source to target backend. Files will be
-(re)-encrypted and (re)-compressed depending on normal backend
-options. Signatures and volumes will not get recomputed, thus options like
-.BI --volsize
-or
-.BI --max-blocksize
-have no effect.
-When
-.I --time time
-is given, only backup sets older than time will be replicated.
 
 .SH OPTIONS
 
@@ -537,7 +520,7 @@ See also
 .RE
 
 .TP
-.BI "--file-to-restore " path
+.BI "--path-to-restore " path
 This option may be given in restore mode, causing only
 .I path
 to be restored instead of the entire contents of the backup archive.
@@ -547,19 +530,15 @@ should be given relative to the root of the directory backed up.
 .TP
 .BI --filter-globbing
 .PD 0
-
 .TP
 .BI --filter-ignorecase
 .PD 0
-
 .TP
 .BI --filter-literal
 .PD 0
-
 .TP
 .BI --filter-regexp
 .PD 0
-
 .TP
 .BI --filter-strictcase
 .RS
@@ -776,7 +755,7 @@ Recommended for restoring from live cds which might have the users with
 identical names but different uids/gids.
 
 .TP
-.BI --do-not-restore-ownership
+.BI --no-restore-ownership
 Ignores the uid/gid from the archive and keeps the current user's one.
 Recommended for restoring data to mounted filesystem which do not
 support Unix ownership or when root privileges are not available.
@@ -784,11 +763,6 @@ support Unix ownership or when root privileges are not available.
 .TP
 .BI "--num-retries " number
 Number of retries to make on errors before giving up.
-
-.TP
-.BI --old-filenames
-Use the old filename format (incompatible with Windows/Samba) rather than
-the new filename format.
 
 .TP
 .BI "--par2-options " options
@@ -1109,13 +1083,6 @@ section
 .BR "SSH pexpect backend" .
 
 .TP
-.BI --short-filenames
-If this option is specified, the names of the files duplicity writes
-will be shorter (about 30 chars) but less understandable.  This may be
-useful when backing up to MacOS or another OS or FS that doesn't
-support long filenames.
-
-.TP
 .BI "--sign-key " key-id
 This option can be used when backing up, restoring or verifying.
 When backing up, all backup files will be signed with keyid
@@ -1246,6 +1213,11 @@ Specify the time from which to restore or list files.
 Use
 .IR char
 as the time separator in filenames instead of colon (":").
+
+.B NOTE:
+This option only applies to recovery and status style commands.
+We no longer create or write filenames with time separators,
+but will read older backups that may need this option.
 
 .TP
 .BI "--timeout " seconds
@@ -1929,7 +1901,7 @@ If the pattern starts with "ignorecase:" (case insensitive), then
 this prefix will be removed and any character in the string can be
 replaced with an upper- or lowercase version of itself. This prefix is a
 legacy feature supported for shell globbing selection conditions only,
-but for backward compatibility reasons is otherwise considered part of
+but for backward compatability reasons is otherwise considered part of
 the pattern itself (use
 .B --filter-ignorecase
 instead).
@@ -3111,8 +3083,7 @@ its data files.  It should not necessary to read this section to use
 duplicity.
 
 The files used by duplicity to store backup data are tarfiles in GNU
-tar format.  They can be produced independently by
-.BR rdiffdir (1).
+tar format.
 For incremental backups, new files are saved normally in the tarfile.
 But when a file changes, instead of storing a complete copy of the
 file, only a diff is stored, as generated by
@@ -3359,7 +3330,6 @@ special "duplicity friends" rate for their offsite backup service.  Email
 info@rsync.net for details.
 
 .SH SEE ALSO
-.BR rdiffdir (1),
 .BR python (1),
 .BR rdiff (1),
 .BR rdiff-backup (1).

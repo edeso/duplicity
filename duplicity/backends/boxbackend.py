@@ -18,21 +18,18 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import print_function
 
 import os
 
 import duplicity.backend
-from boxsdk import Client, JWTAuth
 from duplicity.errors import BackendException
-from future import standard_library
-
-standard_library.install_aliases()
 
 
 class BoxBackend(duplicity.backend.Backend):
     def __init__(self, parsed_url):
         duplicity.backend.Backend.__init__(self, parsed_url)
+
+        from boxsdk import Client, JWTAuth
 
         self._client = self.get_box_client(parsed_url)
         self._folder = (
@@ -78,7 +75,7 @@ class BoxBackend(duplicity.backend.Backend):
         )
 
     def _get(self, remote_filename, local_path):
-        u'Downloads file from the specified remote path'
+        u"""Downloads file from the specified remote path"""
 
         self.download(
             remote_file=remote_filename.decode(),
@@ -86,17 +83,17 @@ class BoxBackend(duplicity.backend.Backend):
         )
 
     def _list(self):
-        u'Lists files in the specified remote path'
+        u"""Lists files in the specified remote path"""
 
         return self.folder_contents()
 
     def _delete(self, filename):
-        u'Deletes file from the specified remote path'
+        u"""Deletes file from the specified remote path"""
 
         self.delete(remote_file=filename.decode())
 
     def _query_list(self, filename_list):
-        u'Query metadata for a list of file'
+        u"""Query metadata for a list of file"""
         return {
             filename: self._file_to_metadata_map.get(
                 filename.decode(), {u'size': -1}
@@ -105,7 +102,7 @@ class BoxBackend(duplicity.backend.Backend):
         }
 
     def get_id_from_path(self, remote_path, parent_id=u'0'):
-        u'Get the folder or file id from its path'
+        u"""Get the folder or file id from its path"""
         path_items = [
             x.strip() for x in remote_path.split(u'/') if x.strip() != u''
         ]
@@ -131,7 +128,7 @@ class BoxBackend(duplicity.backend.Backend):
         return None
 
     def get_file_id_from_filename(self, remote_filename):
-        u'Get the fild id by its file name'
+        u"""Get the fild id by its file name"""
         file = self._file_to_metadata_map.get(remote_filename)
 
         if file is not None:
@@ -148,7 +145,7 @@ class BoxBackend(duplicity.backend.Backend):
         return file_id
 
     def makedirs(self, remote_path):
-        u'Create folder(s) in a path if necessary'
+        u"""Create folder(s) in a path if necessary"""
         path_items = [
             x.strip() for x in remote_path.split(u'/') if x.strip() != u''
         ]
@@ -180,7 +177,7 @@ class BoxBackend(duplicity.backend.Backend):
         return parent_id
 
     def folder_contents(self):
-        u'Lists files of a remote box path'
+        u"""Lists files of a remote box path"""
 
         items = [
             x
@@ -197,7 +194,7 @@ class BoxBackend(duplicity.backend.Backend):
         return [x.name for x in items]
 
     def upload(self, remote_file, local_file):
-        u'Upload local file to the box folder'
+        u"""Upload local file to the box folder"""
         new_file = self._client.folder(self._folder_id).upload(
             file_path=local_file, file_name=remote_file
         )
@@ -208,13 +205,13 @@ class BoxBackend(duplicity.backend.Backend):
         }
 
     def download(self, remote_file, local_file):
-        u'Download file in box folder'
+        u"""Download file in box folder"""
         file_id = self.get_file_id_from_filename(remote_file)
         with open(local_file, u'wb') as fp:
             self._client.file(file_id).download_to(fp)
 
     def delete(self, remote_file):
-        u'Delete file in box folder'
+        u"""Delete file in box folder"""
         file_id = self.get_file_id_from_filename(remote_file)
         self._client.file(file_id).delete()
 

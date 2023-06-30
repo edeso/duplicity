@@ -20,9 +20,8 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import print_function
-
 import os
+import glob
 import re
 import shutil
 import subprocess
@@ -36,26 +35,27 @@ from setuptools.command.build_ext import build_ext
 from setuptools.command.install import install
 from setuptools.command.sdist import sdist
 from setuptools.command.test import test
+from setuptools_scm import get_version
 
 
 # check that we can function here
-if not ((sys.version_info[0] == 2 and sys.version_info[1] >= 7) or
-        (sys.version_info[0] == 3 and sys.version_info[1] >= 5)):
-    print(u"Sorry, duplicity requires version 2.7 or version 3.5 or later of Python.")
+if not (sys.version_info[0] == 3 and sys.version_info[1] >= 8):
+    print(u"Sorry, duplicity requires version 3.8 or later of Python3.")
     sys.exit(1)
 
 
+Version = u"2.0.0b2"
 scm_version_args = {
     u'tag_regex': r'^(?P<prefix>rel.)?(?P<version>[^\+]+)(?P<suffix>.*)?$',
     u'local_scheme': u'no-local-version',
+    u'fallback_version': Version,
     }
-
 try:
     from setuptools_scm import get_version  # pylint: disable=import-error
     Version = get_version(**scm_version_args)
 except Exception as e:
-    Version = u"1.2.4-dev"
-    print(u"Unable to get SCM version: %s\ndefaulting to %s" % (str(e), Version))
+    print(f"Unable to get SCM version: {str(e)}\n"
+          f"Defaulting to {Version}")
 Reldate = time.strftime(u"%B %d, %Y", time.gmtime(int(os.environ.get(u'SOURCE_DATE_EPOCH', time.time()))))
 
 
@@ -92,7 +92,6 @@ def get_data_files():
             (u'share/man/man1',
                 [
                 u'bin/duplicity.1',
-                u'bin/rdiffdir.1'
                 ]
             ),
             (u'share/doc/duplicity-%s' % Version,
@@ -115,17 +114,15 @@ def get_data_files():
     # msgfmt the translation files
     assert os.path.exists(u"po"), u"Missing 'po' directory."
 
-    if os.path.exists(u'po/LINGUAS'):
-        linguas = open(u'po/LINGUAS').readlines()
-        for line in linguas:
-            langs = line.split()
-            for lang in langs:
-                try:
-                    os.mkdir(os.path.join(u"po", lang))
-                except os.error:
-                    pass
-                assert not os.system(u"cp po/%s.po po/%s" % (lang, lang)), lang
-                assert not os.system(u"msgfmt po/%s.po -o po/%s/duplicity.mo" % (lang, lang)), lang
+    linguas = glob.glob(u'po/*.po')
+    for lang in linguas:
+        lang = lang[3:-3]
+        try:
+            os.mkdir(os.path.join(u"po", lang))
+        except os.error:
+            pass
+        assert not os.system(u"cp po/%s.po po/%s" % (lang, lang)), lang
+        assert not os.system(u"msgfmt po/%s.po -o po/%s/duplicity.mo" % (lang, lang)), lang
 
     for root, dirs, files in os.walk(u"po"):
         for file in files:
@@ -173,7 +170,7 @@ class SdistCommand(sdist):
 
         orig = u"%s/duplicity-%s.tar.gz" % (self.dist_dir, Version)
         tardir = u"duplicity-%s" % Version
-        tarfile = u"%s/duplicity-%s.tar.gz" % (self.dist_dir, Version)
+        tarball = u"%s/duplicity-%s.tar.gz" % (self.dist_dir, Version)
 
         assert not os.system(u"tar -xf %s" % orig)
         assert not os.remove(orig)
@@ -181,13 +178,10 @@ class SdistCommand(sdist):
         # make sure executables are
         assert not os.chmod(os.path.join(tardir, u"setup.py"), 0o755)
         assert not os.chmod(os.path.join(tardir, u"bin", u"duplicity"), 0o755)
-        assert not os.chmod(os.path.join(tardir, u"bin", u"rdiffdir"), 0o755)
 
         # recopy the unversioned files and add correct version
         VersionedCopy(os.path.join(u"bin", u"duplicity.1"),
                       os.path.join(tardir, u"bin", u"duplicity.1"))
-        VersionedCopy(os.path.join(u"bin", u"rdiffdir.1"),
-                      os.path.join(tardir, u"bin", u"rdiffdir.1"))
         VersionedCopy(os.path.join(u"duplicity", u"__init__.py"),
                       os.path.join(tardir, u"duplicity", u"__init__.py"))
         VersionedCopy(os.path.join(u"snap", u"snapcraft.yaml"),
@@ -196,7 +190,7 @@ class SdistCommand(sdist):
         # set COPYFILE_DISABLE to disable appledouble file creation
         os.environ[u'COPYFILE_DISABLE'] = u'true'
 
-        # make the new tarfile and remove tardir
+        # make the new tarball and remove tardir
         assert not os.system(u"""tar czf %s \
                                  --exclude '.*' \
                                  --exclude Makefile \
@@ -207,7 +201,7 @@ class SdistCommand(sdist):
                                  --exclude testing/manual \
                                  --exclude tools \
                                   %s
-                              """ % (tarfile, tardir))
+                              """ % (tarball, tardir))
         assert not shutil.rmtree(tardir)
 
 
@@ -296,7 +290,7 @@ setup(name=u"duplicity",
     maintainer=u"Kenneth Loafman <kenneth@loafman.com>",
     maintainer_email=u"kenneth@loafman.com",
     url=u"http://duplicity.us",
-    python_requires=u">2.6, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <4",
+    python_requires=u">=3.8, <4",
     platforms=[u"any"],
     packages=[
         u"duplicity",
@@ -341,18 +335,15 @@ setup(name=u"duplicity",
     },
     ext_modules=ext_modules,
     scripts=[
-        u"bin/rdiffdir",
         u"bin/duplicity",
         ],
     data_files=get_data_files(),
     include_package_data=True,
     install_requires=[
         u"fasteners",
-        u"future",
         ],
     tests_require=[
         u"fasteners",
-        u"future",
         u"mock",
         u"pexpect",
         u"pytest",
@@ -373,12 +364,7 @@ setup(name=u"duplicity",
         u"Operating System :: MacOS",
         u"Operating System :: POSIX",
         u"Programming Language :: C",
-        u"Programming Language :: Python :: 2",
-        u"Programming Language :: Python :: 2.7",
         u"Programming Language :: Python :: 3",
-        u"Programming Language :: Python :: 3.5",
-        u"Programming Language :: Python :: 3.6",
-        u"Programming Language :: Python :: 3.7",
         u"Programming Language :: Python :: 3.8",
         u"Programming Language :: Python :: 3.9",
         u"Programming Language :: Python :: 3.10",

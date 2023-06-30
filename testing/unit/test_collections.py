@@ -19,15 +19,12 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
 
-import pytest
 import random
 import unittest
 
-from . import UnitTestCase
+import pytest
+
 from duplicity import backend
 from duplicity import config
 from duplicity import dup_collections
@@ -35,6 +32,7 @@ from duplicity import dup_time
 from duplicity import gpg
 from duplicity import path
 from testing import _runtest_dir
+from . import UnitTestCase
 
 filename_list1 = [b"duplicity-full.2002-08-17T16:17:01-07:00.manifest.gpg",
                   b"duplicity-full.2002-08-17T16:17:01-07:00.vol1.difftar.gpg",
@@ -81,7 +79,7 @@ filename_list2 = [b"duplicity-full.2001-01-01T16:17:01-07:00.manifest.gpg",
 class CollectionTest(UnitTestCase):
     u"""Test collections"""
     def setUp(self):
-        super(CollectionTest, self).setUp()
+        super().setUp()
 
         self.unpack_testfiles()
 

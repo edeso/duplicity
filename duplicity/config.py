@@ -22,14 +22,27 @@
 u"""Store global configuration information"""
 
 import os
-import sys
 import socket
+import sys
+import time
 
 from duplicity import __version__
-
+from duplicity import gpg
 
 # The current version of duplicity
 version = __version__
+
+# The following args are set by commandline processing
+# they correspond to the args in cli_main.duplicity_commands
+count = None
+remove_time = None
+source_path = None
+source_url = None
+target_dir = None
+target_url = None
+
+# action to take
+action = None
 
 # Prefix for all files (appended before type-specific prefixes)
 file_prefix = b""
@@ -71,6 +84,7 @@ archive_dir_path = None
 # config dir for future use
 os.environ[u"XDG_CONFIG_HOME"] = os.getenv(u"XDG_CONFIG_HOME", os.path.expanduser(u"~/.config"))
 config_dir = os.path.expandvars(u"$XDG_CONFIG_HOME/duplicity")
+config_dir_path = None
 
 # Restores will try to bring back the state as of the following time.
 # If it is None, default to current time.
@@ -78,7 +92,7 @@ restore_time = None
 
 # If set, restore only the subdirectory or file specified, not the
 # whole root.
-restore_dir = None
+restore_path = None
 
 # The backend representing the remote side
 backend = None
@@ -95,18 +109,20 @@ are_errors_fatal = {
     u'query': (True, None),
 }
 
-# If set, the Select object which iterates paths in the local
-# source directory.
+# Select object which iterates paths in the local source dir.
 select = None
+select_opts = []
+select_files = []
 
+# gpg binary to use
 gpg_binary = None
+
+# Options to pass to gpg
+gpg_options = u''
 
 # Set to GPGProfile that will be used to compress/uncompress encrypted
 # files.  Replaces encryption_keys, sign_key, and passphrase settings.
 gpg_profile = None
-
-# Options to pass to gpg
-gpg_options = u''
 
 # Maximum file blocksize
 max_blocksize = 2048
@@ -127,59 +143,45 @@ pydevd = False
 time_separator = u":"
 
 # Global lockfile used to manage concurrency
-lockpath = u""
 lockfile = None
+lockpath = u""
 
 # If this is true, only warn and don't raise fatal error when backup
 # source directory doesn't match previous backup source directory.
-allow_source_mismatch = None
-
-# If set, abort if cannot do an incremental backup.  Otherwise if
-# signatures not found, default to full.
-incremental = None
+allow_source_mismatch = False
 
 # If set, print the statistics after every backup session
 print_statistics = True
 
-# If set, use short (< 30 char) filenames for all the remote files.
-short_filenames = False
-
 # If set, forces a full backup if the last full backup is older than
 # the time specified
-full_force_time = None
+full_if_older_than = None
 
 # Used to confirm certain destructive operations like deleting old files.
 force = None
-
-# If set, signifies time in seconds before which backup files should
-# be deleted.
-remove_time = None
 
 # If set, signifies the number of backups chains to keep when performing
 # a remove-all-but-n-full.
 keep_chains = None
 
-# If set, signifies that remove-all-but-n-full in progress
-remove_all_but_n_full_mode = None
-
-# If set, signifies that remove-all-inc-of-but-n-full in progress (variant of remove-all-but-n-full)
-remove_all_inc_of_but_n_full_mode = None
-
 # Don't actually do anything, but still report what would be done
 dry_run = False
 
-# If set to false, then do not encrypt files on remote system
-encryption = True
-
-# If set to false, then do not compress files on remote system
+# Compress files on remote system?
 compression = True
+
+# Encrypt files on remote system?
+encryption = True
 
 # volume size. default 200M
 volsize = 200 * 1024 * 1024
 
+# file copy blocksize
+copy_blocksize = 128 * 1024
+
 # after this volume, we will switch to multipart upload
 mp_factor = 1.1
-mp_segment_size = mp_factor * volsize
+mp_segment_size = int(mp_factor * volsize)
 
 # Working directory for the tempfile module. Defaults to /tmp on most systems.
 temproot = None
@@ -211,7 +213,7 @@ numeric_owner = False
 
 # Do no restore the uid/gid when finished, useful if you're restoring
 # data without having root privileges or Unix users support
-do_not_restore_ownership = False
+restore_ownership = True
 
 # Whether to use plain HTTP (without SSL) to send data to S3
 # See <https://bugs.launchpad.net/duplicity/+bug/433970>.
@@ -235,9 +237,6 @@ s3_use_deep_archive = False
 # Whether to use S3 One Zone Infrequent Access Storage
 s3_use_onezone_ia = False
 
-# True if we should use boto multiprocessing version
-s3_use_multiprocessing = False
-
 # Chunk size used for S3 multipart uploads.The number of parallel uploads to
 # S3 be given by chunk size / volume size. Use this to maximize the use of
 # your bandwidth. Defaults to 25MB
@@ -249,14 +248,7 @@ s3_multipart_minimum_chunk_size = 5 * 1024 * 1024
 # Maximum number of processes to use while doing a multipart upload to S3
 s3_multipart_max_procs = 4
 
-# Maximum time to wait for a part to finish when doig a multipart upload to S3
-s3_multipart_max_timeout = None
-
-# Use server side encryption in s3
-s3_use_sse = False
-
 # Use server side kms encryption in s3
-s3_use_sse_kms = False
 s3_kms_key_id = None
 s3_kms_grant = None
 
@@ -291,13 +283,10 @@ imap_mailbox = u"INBOX"
 # Sync partial metadata by default
 metadata_sync_mode = u"partial"
 
-# Whether the old filename format is in effect.
-old_filenames = False
-
 # Wheter to specify --use-agent in GnuPG options
 use_agent = False
 
-# ssh commands to use, used by ssh_pexpect (defaults to sftp, scp)
+# ssh duplicity_commands to use, used by ssh_pexpect (defaults to sftp, scp)
 scp_command = None
 sftp_command = None
 
@@ -363,17 +352,14 @@ par2_options = u""
 # Number of par2 volumes
 par2_volumes = 1
 
-# Whether to enable gio backend
-use_gio = False
-
 # If set, log the chnages is the set instead of the normal collection status
 show_changes_in_set = None
 
 # If set, collect only the file status, not the whole root.
 file_changed = None
 
-# If set, skip collecting the files_changed list in statistics, nullifies --file-changed
-no_files_changed = False
+# If set collect the files_changed list in statistics
+files_changed = True
 
 # delay (in seconds) before next operation after failure
 backend_retry_delay = 30
@@ -382,14 +368,14 @@ backend_retry_delay = 30
 mf_purge = False
 
 # Fake root directory path for iDrived backend
-fakeroot = None
+idr_fakeroot = None
 
 # whether to check remote manifest (requires private key)
 check_remote = True
 
 # default filesystem encoding
-# In Python 2 it seems that sys.getfilesystemencoding() will normally return
-# 'utf-8' or some other sane encoding, but will sometimes fail and return
+# It seems that sys.getfilesystemencoding() will normally return
+# 'utf-8' or some other sane encoding, but will sometimes fail and returns
 # either 'ascii' or None.  Both are bogus, so default to 'utf-8' if it does.
 fsencoding = sys.getfilesystemencoding()
 fsencoding = fsencoding if fsencoding not in [u'ascii', u'ANSI_X3.4-1968', None] else u'utf-8'

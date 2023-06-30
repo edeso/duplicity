@@ -19,10 +19,6 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import print_function
-from builtins import range
-from future import standard_library
-standard_library.install_aliases()
 
 import os
 import pytest
@@ -39,11 +35,14 @@ class FinalTest(FunctionalTestCase):
     """
     def runtest(self, dirlist, backup_options=None, restore_options=None):
         u"""Run backup/restore test on directories in dirlist"""
-        if restore_options is None:
-            restore_options = []
         if backup_options is None:
             backup_options = []
+        if restore_options is None:
+            restore_options = []
+
         assert len(dirlist) >= 1
+
+        backup_options += [u"--allow-source-mismatch"]
 
         # Back up directories to local backend
         current_time = 100000
@@ -72,9 +71,9 @@ class FinalTest(FunctionalTestCase):
     def test_basic_cycle(self, backup_options=None, restore_options=None):
         u"""Run backup/restore test on basic directories"""
         if backup_options is None:
-            backup_options = []
+            backup_options = [u"--no-encrypt", u"--no-compress"]
         if restore_options is None:
-            restore_options = []
+            restore_options = [u"--no-encrypt", u"--no-compress"]
         self.runtest([u"{0}/testfiles/dir1".format(_runtest_dir),
                       u"{0}/testfiles/dir2".format(_runtest_dir),
                       u"{0}/testfiles/dir3".format(_runtest_dir)],
@@ -154,18 +153,24 @@ class FinalTest(FunctionalTestCase):
 
     def test_empty_restore(self):
         u"""Make sure error raised when restore doesn't match anything"""
-        self.backup(u"full", u"{0}/testfiles/dir1".format(_runtest_dir))
+        self.backup(u"full", u"{0}/testfiles/dir1".format(_runtest_dir),
+                    options=[u"--allow-source-mismatch"])
         self.assertRaises(CmdError, self.restore, u"this_file_does_not_exist")
-        self.backup(u"inc", u"{0}/testfiles/empty_dir".format(_runtest_dir))
+        self.backup(u"inc", u"{0}/testfiles/empty_dir".format(_runtest_dir),
+                    options=[u"--allow-source-mismatch"])
         self.assertRaises(CmdError, self.restore, u"this_file_does_not_exist")
 
     @pytest.mark.slow
     def test_remove_older_than(self):
         u"""Test removing old backup chains"""
-        first_chain = self.backup(u"full", u"{0}/testfiles/dir1".format(_runtest_dir), current_time=10000)
-        first_chain |= self.backup(u"inc", u"{0}/testfiles/dir2".format(_runtest_dir), current_time=20000)
-        second_chain = self.backup(u"full", u"{0}/testfiles/dir1".format(_runtest_dir), current_time=30000)
-        second_chain |= self.backup(u"inc", u"{0}/testfiles/dir3".format(_runtest_dir), current_time=40000)
+        first_chain = self.backup(u"full", u"{0}/testfiles/dir1".format(_runtest_dir), current_time=10000,
+                                  options=[u"--allow-source-mismatch"])
+        first_chain |= self.backup(u"inc", u"{0}/testfiles/dir2".format(_runtest_dir), current_time=20000,
+                                   options=[u"--allow-source-mismatch"])
+        second_chain = self.backup(u"full", u"{0}/testfiles/dir1".format(_runtest_dir), current_time=30000,
+                                   options=[u"--allow-source-mismatch"])
+        second_chain |= self.backup(u"inc", u"{0}/testfiles/dir3".format(_runtest_dir), current_time=40000,
+                                    options=[u"--allow-source-mismatch"])
 
         self.assertEqual(self.get_backend_files(), first_chain | second_chain)
 
@@ -182,20 +187,6 @@ class FinalTest(FunctionalTestCase):
         self.backup(u"full", u"{0}/testfiles/empty_dir".format(_runtest_dir),
                     passphrase_input=[self.sign_passphrase, self.sign_passphrase])
         self.restore(passphrase_input=[self.sign_passphrase])
-
-
-class OldFilenamesFinalTest(FinalTest):
-
-    def setUp(self):
-        super(OldFilenamesFinalTest, self).setUp()
-        self.class_args.extend([u"--old-filenames"])
-
-
-class ShortFilenamesFinalTest(FinalTest):
-
-    def setUp(self):
-        super(ShortFilenamesFinalTest, self).setUp()
-        self.class_args.extend([u"--short-filenames"])
 
 
 if __name__ == u"__main__":

@@ -21,29 +21,16 @@
 
 u"""Classes and functions on collections of backup volumes"""
 
-from builtins import str
-from builtins import zip
-from builtins import map
-from builtins import range
-from builtins import object
+import os
 
-import sys
-
-from duplicity import log
+from duplicity import config
+from duplicity import dup_time
 from duplicity import file_naming
+from duplicity import log
+from duplicity import manifest
 from duplicity import path
 from duplicity import util
-from duplicity import dup_time
-from duplicity import config
-from duplicity import manifest
-from duplicity import util
 from duplicity.gpg import GPGError
-
-# For type testing against both int and long types that works in python 2/3
-if sys.version_info < (3,):
-    integer_types = (int, int)
-else:
-    integer_types = (int,)
 
 
 class CollectionsError(Exception):
@@ -119,8 +106,8 @@ class BackupSet(object):
                 "%s" has the same volume number.
                 Please check your command line and retry.""" % (
                     pr.volume_number,
-                    util.fsdecode(self.volume_name_dict[pr.volume_number]),
-                    util.fsdecode(filename)
+                    os.fsdecode(self.volume_name_dict[pr.volume_number]),
+                    os.fsdecode(filename)
                 )
             self.volume_name_dict[pr.volume_number] = filename
 
@@ -131,7 +118,7 @@ class BackupSet(object):
         Set BackupSet information from ParseResults object
 
         @param pr: parse results
-        @type pf: ParseResults
+        @type pr: ParseResults
         """
         assert not self.info_set
         self.type = pr.type
@@ -158,10 +145,7 @@ class BackupSet(object):
             )
         self.remote_manifest_name = remote_filename
 
-        if self.action != u"replicate":
-            local_filename_list = config.archive_dir_path.listdir()
-        else:
-            local_filename_list = []
+        local_filename_list = config.archive_dir_path.listdir()
         for local_filename in local_filename_list:
             pr = file_naming.parse(local_filename)
             if (pr and pr.manifest and pr.type == self.type and
@@ -183,12 +167,9 @@ class BackupSet(object):
         try:
             self.backend.delete(rfn)
         except Exception:
-            log.Debug(_(u"BackupSet.delete: missing %s") % [util.fsdecode(f) for f in rfn])
+            log.Debug(_(u"BackupSet.delete: missing %s") % [os.fsdecode(f) for f in rfn])
             pass
-        if self.action != u"replicate":
-            local_filename_list = config.archive_dir_path.listdir()
-        else:
-            local_filename_list = []
+        local_filename_list = config.archive_dir_path.listdir()
         for lfn in local_filename_list:
             pr = file_naming.parse(lfn)
             if (pr and pr.time == self.time and
@@ -197,7 +178,7 @@ class BackupSet(object):
                 try:
                     config.archive_dir_path.append(lfn).delete()
                 except Exception:
-                    log.Debug(_(u"BackupSet.delete: missing %s") % [util.fsdecode(f) for f in lfn])
+                    log.Debug(_(u"BackupSet.delete: missing %s") % [os.fsdecode(f) for f in lfn])
                     pass
         util.release_lockfile()
 
@@ -209,7 +190,7 @@ class BackupSet(object):
         if self.remote_manifest_name:
             filelist.append(self.remote_manifest_name)
         filelist.extend(list(self.volume_name_dict.values()))
-        return u"[%s]" % u", ".join(map(util.fsdecode, filelist))
+        return u"[%s]" % u", ".join(map(os.fsdecode, filelist))
 
     def get_timestr(self):
         u"""
@@ -256,7 +237,7 @@ class BackupSet(object):
         assert self.local_manifest_path
         manifest_buffer = self.local_manifest_path.get_data()
         log.Info(_(u"Processing local manifest %s (%s)") % (
-            self.local_manifest_path.name, len(manifest_buffer)))
+            self.local_manifest_path.uc_name, len(manifest_buffer)))
         return manifest.Manifest().from_string(manifest_buffer)
 
     def get_remote_manifest(self):
@@ -267,10 +248,11 @@ class BackupSet(object):
         try:
             manifest_buffer = self.backend.get_data(self.remote_manifest_name)
         except GPGError as message:
-            log.FatalError(_(u"Error processing remote manifest (%s): %s") %
-                           (util.fsdecode(self.remote_manifest_name), util.uexc(message)))
+            log.Error(_(u"Error processing remote manifest (%s): %s") %
+                      (os.fsdecode(self.remote_manifest_name), util.uexc(message)))
+            return None
         log.Info(_(u"Processing remote manifest %s (%s)") % (
-            util.fsdecode(self.remote_manifest_name), len(manifest_buffer)))
+            os.fsdecode(self.remote_manifest_name), len(manifest_buffer)))
         return manifest.Manifest().from_string(manifest_buffer)
 
     def get_manifest(self):
@@ -287,8 +269,7 @@ class BackupSet(object):
         Return sorted list of (remote) filenames of files in set
         """
         assert self.info_set
-        volume_num_list = list(self.volume_name_dict.keys())
-        volume_num_list.sort()
+        volume_num_list = sorted(self.volume_name_dict.keys())
         volume_filenames = [self.volume_name_dict[x] for x in volume_num_list]
         if self.remote_manifest_name:
             # For convenience of implementation for restart support, we treat
@@ -530,7 +511,7 @@ class SignatureChain(object):
         Check to make sure times are in whole seconds
         """
         for time in time_list:
-            if type(time) not in integer_types:
+            if not isinstance(time, int):
                 assert 0, u"Time %s in %s wrong type" % (time, time_list)
 
     def islocal(self):
@@ -723,12 +704,11 @@ class CollectionsStatus(object):
                   % len(backend_filename_list))
 
         # get local filename list
-        if self.action != u"replicate":
-            local_filename_list = self.archive_dir_path.listdir()
-        else:
-            local_filename_list = []
-        log.Debug(_(u"%d file(s) exists in cache")
-                  % len(local_filename_list))
+        local_filename_list = self.archive_dir_path.listdir()
+        log.Debug(ngettext(u"%d file exists in cache",
+                           u"%d files exist in cache",
+                           len(local_filename_list)) %
+                  len(local_filename_list))
 
         # check for partial backups
         partials = []
@@ -802,12 +782,12 @@ class CollectionsStatus(object):
 
         if self.local_orphaned_sig_names:
             log.Warn(_(u"Warning, found the following local orphaned signature file(s):") + u"\n" +
-                     u"\n".join(map(util.fsdecode, self.local_orphaned_sig_names)),
+                     u"\n".join(map(os.fsdecode, self.local_orphaned_sig_names)),
                      log.WarningCode.orphaned_sig)
 
         if self.remote_orphaned_sig_names:
             log.Warn(_(u"Warning, found the following remote orphaned signature file(s):") + u"\n" +
-                     u"\n".join(map(util.fsdecode, self.remote_orphaned_sig_names)),
+                     u"\n".join(map(os.fsdecode, self.remote_orphaned_sig_names)),
                      log.WarningCode.orphaned_sig)
 
         if self.all_sig_chains and sig_chain_warning and not self.matched_chain_pair:
@@ -833,7 +813,7 @@ class CollectionsStatus(object):
         missing files.
         """
         log.Debug(_(u"Extracting backup chains from list of files: %s")
-                  % [util.fsdecode(f) for f in filename_list])
+                  % [os.fsdecode(f) for f in filename_list])
         # First put filenames in set form
         sets = []
 
@@ -844,15 +824,15 @@ class CollectionsStatus(object):
             pr = file_naming.parse(filename)
             for set in sets:  # pylint: disable=redefined-builtin
                 if set.add_filename(filename, pr):
-                    log.Debug(_(u"File %s is part of known set") % (util.fsdecode(filename),))
+                    log.Debug(_(u"File %s is part of known set") % (os.fsdecode(filename),))
                     break
             else:
-                log.Debug(_(u"File %s is not part of a known set; creating new set") % (util.fsdecode(filename),))
+                log.Debug(_(u"File %s is not part of a known set; creating new set") % (os.fsdecode(filename),))
                 new_set = BackupSet(self.backend, self.action)
                 if new_set.add_filename(filename, pr):
                     sets.append(new_set)
                 else:
-                    log.Debug(_(u"Ignoring file (rejected by backup set) '%s'") % util.fsdecode(filename))
+                    log.Debug(_(u"Ignoring file (rejected by backup set) '%s'") % os.fsdecode(filename))
 
         for f in filename_list:
             add_to_sets(f)
@@ -910,10 +890,7 @@ class CollectionsStatus(object):
             if filelist is not None:
                 return filelist
             elif local:
-                if self.action != u"replicate":
-                    return self.archive_dir_path.listdir()
-                else:
-                    return []
+                return self.archive_dir_path.listdir()
             else:
                 return self.backend.list()
 
@@ -962,8 +939,7 @@ class CollectionsStatus(object):
                 endtime_chain_dict[chain.end_time] = [chain]
 
         # Use dictionary to build final sorted list
-        sorted_end_times = list(endtime_chain_dict.keys())
-        sorted_end_times.sort()
+        sorted_end_times = sorted(endtime_chain_dict.keys())
         sorted_chain_list = []
         for end_time in sorted_end_times:
             chain_list = endtime_chain_dict[end_time]
@@ -1057,8 +1033,7 @@ class CollectionsStatus(object):
 
     def sort_sets(self, setlist):
         u"""Return new list containing same elems of setlist, sorted by time"""
-        pairs = [(s.get_time(), s) for s in setlist]
-        pairs.sort()
+        pairs = sorted([(s.get_time(), s) for s in setlist])
         return [p[1] for p in pairs]
 
     def get_chains_older_than(self, t):
@@ -1194,7 +1169,7 @@ class CollectionsStatus(object):
         specified_file_backup_set = []
         specified_file_backup_type = []
 
-        modified_filepath = util.fsencode(modified_filepath)
+        modified_filepath = os.fsencode(modified_filepath)
         for bs in all_backup_set:
             filelist = [fileinfo[1] for fileinfo in bs.get_files_changed()]
             if modified_filepath in filelist:

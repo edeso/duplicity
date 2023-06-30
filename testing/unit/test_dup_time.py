@@ -19,29 +19,19 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
-from builtins import object
 
-import sys
-import unittest
 import time
+import unittest
+
 from duplicity import dup_time
 from . import UnitTestCase
-
-# For type testing against both int and long types that works in python 2/3
-if sys.version_info < (3,):
-    integer_types = (int, int)
-else:
-    integer_types = (int,)
 
 
 class TimeTest(object):
     def testConversion(self):
         u"""test timetostring and stringtotime"""
         dup_time.setcurtime()
-        assert type(dup_time.curtime) in integer_types
+        assert isinstance(dup_time.curtime, int)
         assert isinstance(dup_time.curtimestr, (str, u"".__class__))
         assert (dup_time.cmp(int(dup_time.curtime), dup_time.curtimestr) == 0 or
                 dup_time.cmp(int(dup_time.curtime) + 1, dup_time.curtimestr) == 0)
@@ -148,20 +138,6 @@ class TimeTest(object):
     def testConvertion(self):
         t = int(time.time())
         assert dup_time.stringtotime(dup_time.timetostring(t)) == t
-
-
-class TimeTest1(TimeTest, UnitTestCase):
-
-    def setUp(self):
-        super(TimeTest1, self).setUp()
-        self.set_config(u'old_filenames', False)
-
-
-class TimeTest2(TimeTest, UnitTestCase):
-
-    def setUp(self):
-        super(TimeTest2, self).setUp()
-        self.set_config(u'old_filenames', True)
 
 
 if __name__ == u'__main__':

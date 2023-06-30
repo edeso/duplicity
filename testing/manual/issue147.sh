@@ -1,17 +1,12 @@
 #!/bin/bash
 
-cd `dirname "$0"`/../..
+set -e
+
+cd `dirname $0`/../..
 
 export PYTHONPATH=`pwd`
 
-rm -rf /tmp/testbackup/
-
 export PASSPHRASE=goodpass
-bin/duplicity --name issue147 -vNOTICE `pwd` file:///tmp/testbackup
-
-echo 'test' > newfile
-
+bin/duplicity --name issue147 --no-print -vNOTICE `pwd` file:///tmp/testbackup
 export PASSPHRASE=badpass
-bin/duplicity --name issue147 -vNOTICE `pwd` file:///tmp/testbackup
-
-rm newfile
+bin/duplicity --name issue147 --no-print -vNOTICE `pwd` file:///tmp/testbackup

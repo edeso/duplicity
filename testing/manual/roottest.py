@@ -19,8 +19,9 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-import config
-import sys, unittest
+import sys
+import unittest
+
 sys.path.insert(0, u"../")
 
 from duplicity import diffdir
@@ -47,7 +48,7 @@ class RootTest(unittest.TestCase):
     def copyfileobj(self, infp, outfp):
         u"""Copy in fileobj to out, closing afterwards"""
         blocksize = 32 * 1024
-        while 1:
+        while True:
             buf = infp.read(blocksize)
             if not buf: break
             outfp.write(buf)

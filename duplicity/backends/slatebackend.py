@@ -18,18 +18,16 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from builtins import str
+import json
 import os
 import shutil
-import requests
-import json
 import urllib.request
 from pathlib import Path
-import time
+
+import requests
 
 import duplicity.backend
 from duplicity import log
-from duplicity import util
 from duplicity.errors import BackendException
 
 
@@ -80,9 +78,9 @@ class SlateBackend(duplicity.backend.Backend):
 
         log.Debug(u"source_path.name: " + str(source_path.name))
         log.Debug(u"remote_filename: " + remote_filename.decode(u"utf8"))
-        rem_filename = str(util.fsdecode(remote_filename))
+        rem_filename = str(os.fsdecode(remote_filename))
 
-        src = Path(util.fsdecode(source_path.name))
+        src = Path(os.fsdecode(source_path.name))
         if str(src.name).startswith(u"mktemp"):
             log.Debug(u"copying temp file for upload")
             src = shutil.move(str(src), str(src.with_name(rem_filename)))
@@ -110,7 +108,7 @@ class SlateBackend(duplicity.backend.Backend):
     def _list(self):
 
         # Checks if a specific slate has been selected, otherwise lists all slates
-        log.Debug(u"Slate ID: %s" % (self.slate_id))
+        log.Debug(u"Slate ID: %s" % self.slate_id)
         data = json.dumps({u'data': {u'private': u'true'}})
         headers = {
             u'Content-Type': u'application/json',
@@ -176,8 +174,8 @@ class SlateBackend(duplicity.backend.Backend):
             raise BackendException(u"A slate with id " + self.slate_id + u" does not exist")
 
         try:
-            urllib.request.urlretrieve(u'http://ipfs.io/ipfs/%s' % (cid), util.fsdecode(local_path.name))
-            log.Debug(u'Downloaded file with cid: %s' % (cid))
+            urllib.request.urlretrieve(u'http://ipfs.io/ipfs/%s' % cid, os.fsdecode(local_path.name))
+            log.Debug(u'Downloaded file with cid: %s' % cid)
         except NameError as e:
             raise BackendException(u"Couldn't download file")
 

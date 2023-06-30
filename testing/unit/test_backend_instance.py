@@ -18,22 +18,18 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
 
-import os
 import io
+import os
 import unittest
 
-from . import UnitTestCase
+import duplicity.backend
 from duplicity import log
 from duplicity import path
 from duplicity import util
 from duplicity.errors import BackendException
-import duplicity.backend
-
 from testing import _runtest_dir
+from . import UnitTestCase
 
 
 class BackendInstanceBase(UnitTestCase):
@@ -182,7 +178,7 @@ class BackendInstanceBase(UnitTestCase):
 
 class LocalBackendTest(BackendInstanceBase):
     def setUp(self):
-        super(LocalBackendTest, self).setUp()
+        super().setUp()
         url = u'file://{0}/testfiles/output'.format(_runtest_dir)
         self.backend = duplicity.backend.get_backend_object(url)
         self.assertEqual(self.backend.__class__.__name__, u'LocalBackend')
@@ -192,7 +188,7 @@ class LocalBackendTest(BackendInstanceBase):
 @unittest.skipIf(not util.which(u'par2'), u"par2 not installed")
 class Par2BackendTest(BackendInstanceBase):
     def setUp(self):
-        super(Par2BackendTest, self).setUp()
+        super().setUp()
         url = u'par2+file://{0}/testfiles/output'.format(_runtest_dir)
         self.backend = duplicity.backend.get_backend_object(url)
         self.assertEqual(self.backend.__class__.__name__, u'Par2Backend')
@@ -201,16 +197,16 @@ class Par2BackendTest(BackendInstanceBase):
 # TODO: Fix so localhost is not required.  Fails on LP and GitLab
 # class RsyncBackendTest(BackendInstanceBase):
 #     def setUp(self):
-#         super(RsyncBackendTest, self).setUp()
-#         os.makedirs(u'{0}/testfiles/output')  # rsync needs it to exist first
-#         url = u'rsync://localhost:2222//%s/{0}/testfiles/output' % os.getcwd()
+#         super().setUp()
+#         os.makedirs('{0}/testfiles/output')  # rsync needs it to exist first
+#         url = 'rsync://localhost:2222//%s/{0}/testfiles/output' % os.getcwd()
 #         self.backend = duplicity.backend.get_backend_object(url)
-#         self.assertEqual(self.backend.__class__.__name__, u'RsyncBackend')
+#         self.assertEqual(self.backend.__class__.__name__, 'RsyncBackend')
 
 
 class TahoeBackendTest(BackendInstanceBase):
     def setUp(self):
-        super(TahoeBackendTest, self).setUp()
+        super().setUp()
         os.makedirs(u'{0}/testfiles/output'.format(_runtest_dir))
         url = u'tahoe://{0}/testfiles/output'.format(_runtest_dir)
         self.backend = duplicity.backend.get_backend_object(url)
@@ -220,18 +216,18 @@ class TahoeBackendTest(BackendInstanceBase):
 # TODO: Modernize hsi backend stub
 #  class HSIBackendTest(BackendInstanceBase):
 #      def setUp(self):
-#          super(HSIBackendTest, self).setUp()
-#          os.makedirs(u'{0}/testfiles/output')
+#          super().setUp()
+#          os.makedirs('{0}/testfiles/output')
 #          # hostname is ignored...  Seemingly on purpose
-#          url = u'hsi://hostname%s/{0}/testfiles/output' % os.getcwd()
+#          url = 'hsi://hostname%s/{0}/testfiles/output' % os.getcwd()
 #          self.backend = duplicity.backend.get_backend_object(url)
-#          self.assertEqual(self.backend.__class__.__name__, u'HSIBackend')
+#          self.assertEqual(self.backend.__class__.__name__, 'HSIBackend')
 
 
 @unittest.skipIf(not util.which(u'lftp'), u"lftp not installed")
 class FTPBackendTest(BackendInstanceBase):
     def setUp(self):
-        super(FTPBackendTest, self).setUp()
+        super().setUp()
         os.makedirs(u'{0}/testfiles/output'.format(_runtest_dir))
         url = u'ftp://user:pass@hostname/{0}/testfiles/output'.format(_runtest_dir)
         self.backend = duplicity.backend.get_backend_object(url)
@@ -241,7 +237,7 @@ class FTPBackendTest(BackendInstanceBase):
 @unittest.skipIf(not util.which(u'lftp'), u"lftp not installed")
 class FTPSBackendTest(BackendInstanceBase):
     def setUp(self):
-        super(FTPSBackendTest, self).setUp()
+        super().setUp()
         os.makedirs(u'{0}/testfiles/output'.format(_runtest_dir))
         url = u'ftps://user:pass@hostname/{0}/testfiles/output'.format(_runtest_dir)
         self.backend = duplicity.backend.get_backend_object(url)
@@ -251,14 +247,14 @@ class FTPSBackendTest(BackendInstanceBase):
 @unittest.skipIf(not util.which(u'rclone'), u"rclone not installed")
 class RCloneBackendTest(BackendInstanceBase):
     def setUp(self):
-        super(RCloneBackendTest, self).setUp()
+        super().setUp()
         # make sure rclone config exists
         assert not os.system(u"rclone config touch")
         # add a duptest local config
         try:
             assert not os.system(u"rclone config create duptest local local=true --non-interactive")
             self.delete_config = True
-        except:
+        except Exception as e:
             self.delete_config = False
         os.makedirs(u'{0}/testfiles/output'.format(_runtest_dir))
         url = u'rclone://duptest:/%s/{0}/testfiles/output'.format(_runtest_dir)
@@ -266,5 +262,6 @@ class RCloneBackendTest(BackendInstanceBase):
         self.assertEqual(self.backend.__class__.__name__, u'RcloneBackend')
 
     def tearDown(self):
+        super().tearDown()
         if self.delete_config:
             assert not os.system(u"rclone config delete duptest")

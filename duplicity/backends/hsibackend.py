@@ -19,10 +19,9 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from builtins import range
 import os
+
 import duplicity.backend
-from duplicity import util
 
 hsi_command = u"hsi"
 
@@ -39,13 +38,13 @@ class HSIBackend(duplicity.backend.Backend):
 
     def _put(self, source_path, remote_filename):
         if isinstance(remote_filename, b"".__class__):
-            remote_filename = util.fsdecode(remote_filename)
+            remote_filename = os.fsdecode(remote_filename)
         commandline = u'%s "put %s : %s%s"' % (hsi_command, source_path.uc_name, self.remote_prefix, remote_filename)
         self.subprocess_popen(commandline)
 
     def _get(self, remote_filename, local_path):
         if isinstance(remote_filename, b"".__class__):
-            remote_filename = util.fsdecode(remote_filename)
+            remote_filename = os.fsdecode(remote_filename)
         commandline = u'%s "get %s : %s%s"' % (hsi_command, local_path.uc_name, self.remote_prefix, remote_filename)
         self.subprocess_popen(commandline)
 
@@ -56,11 +55,11 @@ class HSIBackend(duplicity.backend.Backend):
         for i in range(0, len(l)):
             if l[i]:
                 l[i] = l[i].split()[-1]
-        return [util.fsencode(x) for x in l if x]
+        return [os.fsencode(x) for x in l if x]
 
     def _delete(self, filename):
         if isinstance(filename, b"".__class__):
-            filename = util.fsdecode(filename)
+            filename = os.fsdecode(filename)
         commandline = u'%s "rm %s%s"' % (hsi_command, self.remote_prefix, filename)
         self.subprocess_popen(commandline)
 

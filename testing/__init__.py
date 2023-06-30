@@ -18,9 +18,6 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
 
 import gettext
 import os
@@ -35,12 +32,10 @@ from duplicity import config
 from duplicity import log
 from duplicity import util
 
-# util.start_debugger()
+gettext.install(u'duplicity', names=[u'ngettext'])
 
-if sys.version_info.major >= 3:
-    gettext.install(u'duplicity', names=[u'ngettext'])
-else:
-    gettext.install(u'duplicity', names=[u'ngettext'], unicode=True)  # pylint: disable=unexpected-keyword-arg
+log.setup()
+util.start_debugger()
 
 _testing_dir = os.path.dirname(os.path.abspath(__file__))
 _top_dir = os.path.dirname(_testing_dir)
@@ -52,6 +47,8 @@ if platform.system().startswith(u'Darwin'):
     _runtest_dir = (os.environ.get(u"TMPDIR", None) or
                     subprocess.check_output([u'getconf', u'DARWIN_USER_TEMP_DIR']))
     _runtest_dir = os.fsdecode(_runtest_dir).rstrip().rstrip(u'/')
+    if not os.path.exists(_runtest_dir):
+        os.makedirs(_runtest_dir)
 else:
     # be a little more flexible
     _runtest_dir = os.getenv(u'TMPDIR', False) or os.getenv(u'TEMP', False) or u'/tmp'
@@ -79,17 +76,6 @@ os.system(u"chmod 700 %s" % os.path.join(_testing_dir, u'gnupg'))
 os.environ[u'TZ'] = u'US/Central'
 time.tzset()
 
-# TODO: find place in setup.py to do this
-# fix shebangs in _bin_dir to be current python
-if sys.version_info.major == 2:
-    files = os.listdir(_bin_dir)
-    for file in files:
-        print(u"converting %s to python2" % file, file=sys.stderr)
-        with open(os.path.join(_bin_dir, file), u"r") as f:
-            p2 = f.read().replace(u"python3", u"python")
-        with open(os.path.join(_bin_dir, file), u"w") as f:
-            p2 = f.write(p2)
-
 
 class DuplicityTestCase(unittest.TestCase):
 
@@ -99,7 +85,7 @@ class DuplicityTestCase(unittest.TestCase):
     encrypt_key2 = u'453005CE9B736B2A'
 
     def setUp(self):
-        super(DuplicityTestCase, self).setUp()
+        super().setUp()
         self.savedEnviron = {}
         self.savedConfig = {}
 
@@ -130,7 +116,7 @@ class DuplicityTestCase(unittest.TestCase):
         self.remove_testfiles()
 
         os.chdir(_testing_dir)
-        super(DuplicityTestCase, self).tearDown()
+        super().tearDown()
 
     def unpack_testfiles(self):
         assert not os.system(u"rm -rf {0}/testfiles".format(_runtest_dir))

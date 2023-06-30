@@ -22,39 +22,24 @@
 # For predictable results in python/3 all string literals need to be marked as unicode, bytes or raw
 # This code finds all unadorned string literals (strings that are not marked with a u, b or r)
 
-from __future__ import print_function
-
 import sys
 import tokenize
 import token
 
-# Unfortunately python does not have the useful named tuple result from tokenize.tokenize,
-# so we have to recreate the effect using namedtuple and tokenize.generate_tokens
-from collections import namedtuple
-python_token = namedtuple(u'python_token', u'type string start end line')
-
 
 def return_unadorned_string_tokens(f):
-    if sys.version_info[0] < 3:
-        unnamed_tokens = tokenize.generate_tokens(f.readline)
-        for t in unnamed_tokens:
-            named_token = python_token(token.tok_name[t[0]], *t[1:])
-            if named_token.type == u"STRING" and named_token.string[0] in [u'"', u"'"]:
-                yield named_token
-
-    else:
-        named_tokens = tokenize.tokenize(f.readline)
-        for t in named_tokens:
-            if t.type == token.STRING and t.string[0] in [u'"', u"'"]:
-                yield t
+    named_tokens = tokenize.tokenize(f.readline)
+    for t in named_tokens:
+        if t.type == token.STRING and t.string[0] in [u'"', u"'"]:
+            yield t
 
 
-def check_file_for_unadorned(python_file):
-    unadorned_string_list = []
-    with open(python_file, u'rb') as f:
+def check_file_for_unadorned(filename):
+    string_list = []
+    with open(filename, u'rb') as f:
         for s in return_unadorned_string_tokens(f):
-            unadorned_string_list.append((python_file, s.start, s.end, s.string))
-    return unadorned_string_list
+            string_list.append((filename, s.start, s.end, s.string))
+    return string_list
 
 
 if __name__ == u"__main__":
@@ -68,7 +53,7 @@ if __name__ == u"__main__":
     if len(unadorned_string_list) == 0:
         print(u"There are no unadorned strings in", args.file)
     else:
-        print(u"There are unadorned strings in", args.file, u"\n")
+        print(u"There are unadorned strings in", args.file)
         for unadorned_string in unadorned_string_list:
             print(unadorned_string)
             python_file, string_start, string_end, string = unadorned_string

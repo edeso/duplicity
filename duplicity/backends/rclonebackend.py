@@ -19,16 +19,13 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from future import standard_library
-standard_library.install_aliases()
 
 import os
 import os.path
 
-from duplicity import log
-from duplicity import util
-from duplicity.errors import BackendException
 import duplicity.backend
+from duplicity import log
+from duplicity.errors import BackendException
 
 
 class RcloneBackend(duplicity.backend.Backend):
@@ -57,11 +54,11 @@ class RcloneBackend(duplicity.backend.Backend):
         if parsed_url.path.startswith(u"//"):
             self.remote_path = self.remote_path[2:].replace(u":/", u":", 1)
 
-        self.remote_path = util.fsdecode(self.remote_path)
+        self.remote_path = os.fsdecode(self.remote_path)
 
     def _get(self, remote_filename, local_path):
-        remote_filename = util.fsdecode(remote_filename)
-        local_pathname = util.fsdecode(local_path.name)
+        remote_filename = os.fsdecode(remote_filename)
+        local_pathname = os.fsdecode(local_path.name)
         commandline = u"%s copyto '%s/%s' '%s'" % (
             self.rclone_cmd, self.remote_path, remote_filename, local_pathname)
         rc, o, e = self._subprocess_safe_popen(commandline)
@@ -71,8 +68,8 @@ class RcloneBackend(duplicity.backend.Backend):
             raise BackendException(u"rclone returned rc = %d: %s" % (rc, e))
 
     def _put(self, source_path, remote_filename):
-        source_pathname = util.fsdecode(source_path.name)
-        remote_filename = util.fsdecode(remote_filename)
+        source_pathname = os.fsdecode(source_path.name)
+        remote_filename = os.fsdecode(remote_filename)
         commandline = u"%s copyto '%s' '%s/%s'" % (
             self.rclone_cmd, source_pathname, self.remote_path, remote_filename)
         rc, o, e = self._subprocess_safe_popen(commandline)
@@ -90,10 +87,10 @@ class RcloneBackend(duplicity.backend.Backend):
             raise BackendException(u"rclone returned rc = %d: %s" % (rc, e))
         if not o:
             return filelist
-        return [util.fsencode(x) for x in o.split(u'\n') if x]
+        return [os.fsencode(x) for x in o.split(u'\n') if x]
 
     def _delete(self, remote_filename):
-        remote_filename = util.fsdecode(remote_filename)
+        remote_filename = os.fsdecode(remote_filename)
         commandline = u"%s deletefile --drive-use-trash=false '%s/%s'" % (
             self.rclone_cmd, self.remote_path, remote_filename)
         rc, o, e = self._subprocess_safe_popen(commandline)

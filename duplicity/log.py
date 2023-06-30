@@ -22,10 +22,7 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 u"""Log various messages depending on verbosity level"""
-from __future__ import division
 
-from builtins import str
-from builtins import object
 import datetime
 import logging
 import os
@@ -74,7 +71,7 @@ def Log(s, verb_level, code=1, extra=None, force_print=False, transfer_progress=
     if extra:
         controlLine = u'%d %s' % (code, extra)
     else:
-        controlLine = u'%d' % (code)
+        controlLine = u'%d' % code
     if not s:
         s = u''  # If None is passed, standard logging would render it as 'None'
 
@@ -145,7 +142,7 @@ def _ElapsedSecs2Str(secs):
     minutes, seconds = divmod(rem, 60)
     fmt = u""
     if tdelta.days > 0:
-        fmt = u"%dd," % (tdelta.days)
+        fmt = u"%dd," % tdelta.days
     fmt = u"%s%02d:%02d:%02d" % (fmt, hours, minutes, seconds)
     return fmt
 
@@ -156,7 +153,7 @@ def _RemainingSecs2Str(secs):
     minutes, seconds = divmod(rem, 60)
     fmt = u""
     if tdelta.days > 0:
-        fmt = u"%dd" % (tdelta.days)
+        fmt = u"%dd" % tdelta.days
         if hours > 0:
             fmt = u"%s %dh" % (fmt, hours)
         if minutes > 0:
@@ -278,8 +275,8 @@ class ErrorCode(object):
     cant_open_filelist = 7
     bad_url = 8
     bad_archive_dir = 9
-    bad_sign_key = 10
-    restore_dir_exists = 11
+    deprecated_option = 10
+    restore_path_exists = 11
     verify_dir_doesnt_exist = 12
     backup_dir_doesnt_exist = 13
     file_prefix_error = 14
@@ -287,20 +284,20 @@ class ErrorCode(object):
     redundant_inclusion = 16
     inc_without_sigs = 17
     no_sigs = 18
-    restore_dir_not_found = 19
+    restore_path_not_found = 19
     no_restore_files = 20
     mismatched_hash = 21
     unsigned_volume = 22
     user_error = 23
-    boto_old_style = 24
-    boto_lib_too_old = 25
-    boto_calling_format = 26
+    # boto_old_style = 24 # deprecated
+    # boto_lib_too_old = 25 # deprecated
+    # boto_calling_format = 26 # deprecated
     ftp_ncftp_missing = 27
     ftp_ncftp_too_old = 28
     # ftp_ncftp_v320 = 29 # moved to warning
     exception = 30
     gpg_failed = 31
-    s3_bucket_not_style = 32
+    # s3_bucket_not_style = 32 # deprecated
     not_implemented = 33
     get_freespace_failed = 34
     not_enough_freespace = 35
@@ -309,7 +306,7 @@ class ErrorCode(object):
     connection_failed = 38
     restart_file_not_found = 39
     gio_not_available = 40
-    source_dir_mismatch = 42  # 41 is reserved for par2
+    source_path_mismatch = 42  # 41 is reserved for par2
     ftps_lftp_missing = 43
     volume_wrong_size = 44
     enryption_mismatch = 45
@@ -333,6 +330,11 @@ class ErrorCode(object):
     trailing_filter = 71
     absolute_files_from = 72
     empty_files_from = 73
+
+    # gpg key errors
+    bad_sign_key = 80
+    bad_encrypt_key = 81
+    bad_hidden_encrypt_key = 82
 
     # Reserve 126 because it is used as an error code for pkexec
     # Reserve 127 because it is used as an error code for pkexec

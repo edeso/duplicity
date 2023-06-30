@@ -29,31 +29,28 @@
 # Please send mail to me or the mailing list if you find bugs or have
 # any suggestions.
 
-from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
-from builtins import map
-from builtins import next
-from builtins import object
-from builtins import range
 
 import copy
-import fasteners
 import os
 import platform
 import resource
+import socket
 import sys
 import time
+from datetime import datetime
+
+import fasteners
 
 from duplicity import __version__
 from duplicity import asyncscheduler
-from duplicity import commandline
+from duplicity import cli_main
+from duplicity import config
 from duplicity import diffdir
 from duplicity import dup_collections
 from duplicity import dup_temp
 from duplicity import dup_time
+from duplicity import errors
 from duplicity import file_naming
-from duplicity import config
 from duplicity import gpg
 from duplicity import log
 from duplicity import manifest
@@ -62,24 +59,15 @@ from duplicity import path
 from duplicity import progress
 from duplicity import tempdir
 from duplicity import util
-import duplicity.errors
 from duplicity.errors import BadVolumeException
-
-import duplicity.config as config
-
-from datetime import datetime
 
 # If exit_val is not None, exit with given value at end.
 exit_val = None
 
 
 def getpass_safe(message):
-    # getpass() in Python 2.x will call str() on our prompt.  So we can't pass
-    # in non-ascii characters.
     import getpass
     import locale
-    if sys.version_info.major == 2:
-        message = message.encode(locale.getpreferredencoding(), u'replace')
     return getpass.getpass(message)
 
 
@@ -140,7 +128,7 @@ def get_passphrase(n, action, for_signing=False):
 
     # these commands don't need a password
     elif action in [u"collection-status",
-                    u"list-current",
+                    u"list-current-files",
                     u"remove-all-but-n-full",
                     u"remove-all-inc-of-but-n-full",
                     u"remove-old",
@@ -167,7 +155,7 @@ def get_passphrase(n, action, for_signing=False):
     else:
         log.Info(_(u"PASSPHRASE variable not set, asking user."))
         use_cache = True
-        while 1:
+        while True:
             # ask the user to enter a new passphrase to avoid an infinite loop
             # if the user made a typo in the first passphrase
             if use_cache and n == 2:
@@ -249,7 +237,7 @@ def restart_position_iterator(tarblock_iter):
         # Just spin our wheels
         iter_result = next(tarblock_iter)
         while iter_result:
-            if (tarblock_iter.previous_index == last_index):
+            if tarblock_iter.previous_index == last_index:
                 # If both the previous index and this index are done, exit now
                 # before we hit the next index, to prevent skipping its first
                 # block.
@@ -328,7 +316,7 @@ def write_multivol(backup_type, tarblock_iter, man_outfp, sig_outfp, backend):
             time.sleep(2**attempt)
         if size != orig_size:
             code_extra = u"%s %d %d" % (util.escape(dest_filename), orig_size, size)
-            log.FatalError(_(u"File %s was corrupted during upload.") % util.fsdecode(dest_filename),
+            log.FatalError(_(u"File %s was corrupted during upload.") % os.fsdecode(dest_filename),
                            log.ErrorCode.volume_wrong_size, code_extra)
 
     def put(tdp, dest_filename, vol_num):
@@ -428,21 +416,13 @@ def write_multivol(backup_type, tarblock_iter, man_outfp, sig_outfp, backend):
         tarblock_iter.remember_next_index()  # keep track of start index
 
         # Create volume
-        try:
-            log.Debug(u"BACKEND: " + str(config.backend))
-        except:
-            pass
-        log.Debug(u"***CREATING VOLUME***")
-
         vol_num += 1
         dest_filename = file_naming.get(backup_type, vol_num,
                                         encrypted=config.encryption,
                                         gzipped=config.compression)
         tdp = dup_temp.new_tempduppath(file_naming.parse(dest_filename))
-        log.Debug(u"FILENAME: " + str(tdp.name))
 
         # write volume
-        log.Debug(u"***WRITING VOLUME***")
         if config.encryption:
             at_end = gpg.GPGWriteFile(tarblock_iter, tdp.name, config.gpg_profile,
                                       config.volsize)
@@ -574,7 +554,7 @@ def full_backup(col_stats):
         progress.tracker.set_evidence(diffdir.stats, True)
         # Reinit the config.select iterator, so
         # the core of duplicity can rescan the paths
-        commandline.set_selection()
+        cli_main.set_selection()
         progress.progress_thread = progress.LogProgressThread()
 
     if config.dry_run:
@@ -669,7 +649,7 @@ def incremental_backup(sig_chain):
         progress.tracker.set_evidence(diffdir.stats, False)
         # Reinit the config.select iterator, so
         # the core of duplicity can rescan the paths
-        commandline.set_selection()
+        cli_main.set_selection()
         progress.progress_thread = progress.LogProgressThread()
 
     if config.dry_run:
@@ -723,7 +703,7 @@ def list_current(col_stats):
     for path in path_iter:
         if path.difftype != u"deleted":
             user_info = u"%s %s" % (dup_time.timetopretty(path.getmtime()),
-                                    util.fsdecode(path.get_relative_path()))
+                                    os.fsdecode(path.get_relative_path()))
             log_info = u"%s %s %s" % (dup_time.timetostring(path.getmtime()),
                                       util.escape(path.get_relative_path()),
                                       path.type)
@@ -747,10 +727,10 @@ def restore(col_stats):
         return
     if not patchdir.Write_ROPaths(config.local_path,
                                   restore_get_patched_rop_iter(col_stats)):
-        if config.restore_dir:
+        if config.restore_path:
             log.FatalError(_(u"%s not found in archive - no files restored.")
-                           % (util.fsdecode(config.restore_dir)),
-                           log.ErrorCode.restore_dir_not_found)
+                           % (os.fsdecode(config.restore_path)),
+                           log.ErrorCode.restore_path_not_found)
         else:
             log.FatalError(_(u"No files found in archive - nothing restored."),
                            log.ErrorCode.no_restore_files)
@@ -763,8 +743,8 @@ def restore_get_patched_rop_iter(col_stats):
     @type col_stats: CollectionStatus object
     @param col_stats: collection status
     """
-    if config.restore_dir:
-        index = tuple(config.restore_dir.split(b"/"))
+    if config.restore_path:
+        index = tuple(config.restore_path.split(b"/"))
     else:
         index = ()
     time = config.restore_time or dup_time.curtime
@@ -836,14 +816,14 @@ def restore_get_enc_fileobj(backend, filename, volume_info):
             error_msg = u"%s\n %s\n %s\n %s\n" % (
                 _(u"Invalid data - %s hash mismatch for file:") %
                 hash_pair[0],
-                util.fsdecode(filename),
+                os.fsdecode(filename),
                 _(u"Calculated hash: %s") % calculated_hash,
                 _(u"Manifest hash: %s") % hash_pair[1]
             )
             log.Error(error_msg, code=log.ErrorCode.mismatched_hash)
     else:
         if config.ignore_errors:
-            exc = duplicity.errors.BadVolumeException(u"Hash mismatch for: %s" % util.fsdecode(filename))
+            exc = duplicity.errors.BadVolumeException(u"Hash mismatch for: %s" % os.fsdecode(filename))
             log.Warn(_(u"IGNORED_ERROR: Warning: ignoring error as requested: %s: %s")
                      % (exc.__class__.__name__, util.uexc(exc)))
         else:
@@ -944,7 +924,7 @@ def cleanup(col_stats):
         log.Warn(_(u"No extraneous files found, nothing deleted in cleanup."))
         return
 
-    filestr = u"\n".join(map(util.fsdecode, extraneous))
+    filestr = u"\n".join(map(os.fsdecode, extraneous))
     if config.force:
         log.Notice(_(u"Deleting these file(s) from backend:") + u"\n" + filestr)
         if not config.dry_run:
@@ -1011,7 +991,7 @@ def remove_old(col_stats):
 
     chainlist = col_stats.get_chains_older_than(config.remove_time)
 
-    if config.remove_all_inc_of_but_n_full_mode:
+    if config.action == u"remove-all-inc-of-but-n-full":
         # ignore chains without incremental backups:
         chainlist = list(x for x in chainlist if
                          (isinstance(x, dup_collections.SignatureChain) and x.inclist) or
@@ -1027,9 +1007,9 @@ def remove_old(col_stats):
         chainlist += col_stats.get_signature_chains_older_than(config.remove_time)
         chainlist.reverse()  # save oldest for last
         for chain in chainlist:
-            # if remove_all_inc_of_but_n_full_mode mode, remove only
+            # if action is remove_all_inc_of_but_n_full, remove only
             # incrementals one and not full
-            if config.remove_all_inc_of_but_n_full_mode:
+            if config.action == u"remove-all-inc-of-but-n-full":
                 if isinstance(chain, dup_collections.SignatureChain):
                     chain_desc = _(u"Deleting any incremental signature chain rooted at %s")
                 else:
@@ -1041,128 +1021,12 @@ def remove_old(col_stats):
                     chain_desc = _(u"Deleting complete backup chain %s")
             log.Notice(chain_desc % dup_time.timetopretty(chain.end_time))
             if not config.dry_run:
-                chain.delete(keep_full=config.remove_all_inc_of_but_n_full_mode)
+                chain.delete(keep_full=(config.action == u"remove-all-inc-of-but-n-full"))
         col_stats.set_values(sig_chain_warning=None)
     else:
         log.Notice(_(u"Found old backup chain(s) at the following time:") +
                    u"\n" + chain_times_str(chainlist) + u"\n" +
                    _(u"Rerun command with --force option to actually delete."))
-
-
-def replicate():
-    u"""
-    Replicate backup files from one remote to another, possibly encrypting or adding parity.
-
-    @rtype: void
-    @return: void
-    """
-    action = u"replicate"
-    time = config.restore_time or dup_time.curtime
-    src_stats = dup_collections.CollectionsStatus(config.src_backend, None, action).set_values(sig_chain_warning=None)
-    tgt_stats = dup_collections.CollectionsStatus(config.backend, None, action).set_values(sig_chain_warning=None)
-
-    src_list = config.src_backend.list()
-    tgt_list = config.backend.list()
-
-    src_chainlist = src_stats.get_signature_chains(local=False, filelist=src_list)[0]
-    tgt_chainlist = tgt_stats.get_signature_chains(local=False, filelist=tgt_list)[0]
-    src_chainlist = sorted(src_chainlist, key=lambda chain: chain.start_time)
-    tgt_chainlist = sorted(tgt_chainlist, key=lambda chain: chain.start_time)
-    if not src_chainlist:
-        log.Notice(_(u"No old backup sets found."))
-        return
-    for src_chain in src_chainlist:
-        try:
-            tgt_chain = list([chain for chain in tgt_chainlist if chain.start_time == src_chain.start_time])[0]
-        except IndexError:
-            tgt_chain = None
-
-        tgt_sigs = list(map(file_naming.parse, tgt_chain.get_filenames())) if tgt_chain else []
-        for src_sig_filename in src_chain.get_filenames():
-            src_sig = file_naming.parse(src_sig_filename)
-            if not (src_sig.time or src_sig.end_time) < time:
-                continue
-            try:
-                tgt_sigs.remove(src_sig)
-                log.Info(_(u"Signature %s already replicated") % (src_sig_filename,))
-                continue
-            except ValueError:
-                pass
-            if src_sig.type == u'new-sig':
-                dup_time.setprevtime(src_sig.start_time)
-            dup_time.setcurtime(src_sig.time or src_sig.end_time)
-            log.Notice(_(u"Replicating %s.") % (src_sig_filename,))
-            fileobj = config.src_backend.get_fileobj_read(src_sig_filename)
-            filename = file_naming.get(src_sig.type, encrypted=config.encryption, gzipped=config.compression)
-            tdp = dup_temp.new_tempduppath(file_naming.parse(filename))
-            tmpobj = tdp.filtered_open(mode=u'wb')
-            util.copyfileobj(fileobj, tmpobj)  # decrypt, compress, (re)-encrypt
-            fileobj.close()
-            tmpobj.close()
-            config.backend.put(tdp, filename)
-            tdp.delete()
-
-    src_chainlist = src_stats.get_backup_chains(filename_list=src_list)[0]
-    tgt_chainlist = tgt_stats.get_backup_chains(filename_list=tgt_list)[0]
-    src_chainlist = sorted(src_chainlist, key=lambda chain: chain.start_time)
-    tgt_chainlist = sorted(tgt_chainlist, key=lambda chain: chain.start_time)
-    for src_chain in src_chainlist:
-        try:
-            tgt_chain = list([chain for chain in tgt_chainlist if chain.start_time == src_chain.start_time])[0]
-        except IndexError:
-            tgt_chain = None
-
-        tgt_sets = tgt_chain.get_all_sets() if tgt_chain else []
-        for src_set in src_chain.get_all_sets():
-            if not src_set.get_time() < time:
-                continue
-            try:
-                tgt_sets.remove(src_set)
-                log.Info(_(u"Backupset %s already replicated") % (src_set.remote_manifest_name,))
-                continue
-            except ValueError:
-                pass
-            if src_set.type == u'inc':
-                dup_time.setprevtime(src_set.start_time)
-            dup_time.setcurtime(src_set.get_time())
-            rmf = src_set.get_remote_manifest()
-            mf_filename = file_naming.get(src_set.type, manifest=True)
-            mf_tdp = dup_temp.new_tempduppath(file_naming.parse(mf_filename))
-            mf = manifest.Manifest(fh=mf_tdp.filtered_open(mode=u'wb'))
-            for i, filename in list(src_set.volume_name_dict.items()):
-                log.Notice(_(u"Replicating %s.") % (filename,))
-                fileobj = restore_get_enc_fileobj(config.src_backend, filename, rmf.volume_info_dict[i])
-                filename = file_naming.get(src_set.type, i, encrypted=config.encryption, gzipped=config.compression)
-                tdp = dup_temp.new_tempduppath(file_naming.parse(filename))
-                tmpobj = tdp.filtered_open(mode=u'wb')
-                util.copyfileobj(fileobj, tmpobj)  # decrypt, compress, (re)-encrypt
-                fileobj.close()
-                tmpobj.close()
-                config.backend.put(tdp, filename)
-
-                vi = copy.copy(rmf.volume_info_dict[i])
-                vi.set_hash(u"SHA1", gpg.get_hash(u"SHA1", tdp))
-                mf.add_volume_info(vi)
-
-                tdp.delete()
-
-            mf.fh.close()
-            # incremental GPG writes hang on close, so do any encryption here at once
-            mf_fileobj = mf_tdp.filtered_open_with_delete(mode=u'rb')
-            mf_final_filename = file_naming.get(src_set.type,
-                                                manifest=True,
-                                                encrypted=config.encryption,
-                                                gzipped=config.compression)
-            mf_final_tdp = dup_temp.new_tempduppath(file_naming.parse(mf_final_filename))
-            mf_final_fileobj = mf_final_tdp.filtered_open(mode=u'wb')
-            util.copyfileobj(mf_fileobj, mf_final_fileobj)  # compress, encrypt
-            mf_fileobj.close()
-            mf_final_fileobj.close()
-            config.backend.put(mf_final_tdp, mf_final_filename)
-            mf_final_tdp.delete()
-
-    config.src_backend.close()
-    config.backend.close()
 
 
 def sync_archive(col_stats):
@@ -1261,17 +1125,17 @@ def sync_archive(col_stats):
         suffix = file_naming.get_suffix(False, not pr.manifest)
         loc_name = base + suffix
 
-        return (pr, loc_name, fn)
+        return pr, loc_name, fn
 
     def remove_local(fn):
         del_name = config.archive_dir_path.append(fn).name
 
         log.Notice(_(u"Deleting local %s (not authoritative at backend).") %
-                   util.fsdecode(del_name))
+                   os.fsdecode(del_name))
         try:
             util.ignore_missing(os.unlink, del_name)
         except Exception as e:
-            log.Warn(_(u"Unable to delete %s: %s") % (util.fsdecode(del_name),
+            log.Warn(_(u"Unable to delete %s: %s") % (os.fsdecode(del_name),
                                                       util.uexc(e)))
 
     def copy_to_local(fn):
@@ -1305,7 +1169,7 @@ def sync_archive(col_stats):
                             name = name.name
                     else:
                         name = None
-                    log.FatalError(_(u"Failed to read %s: %s") % (util.fsdecode(fn), util.uexc(e)),
+                    log.FatalError(_(u"Failed to read %s: %s") % (os.fsdecode(fn), util.uexc(e)),
                                    log.ErrorCode.generic)
                 if not res.data:
                     self.fileobj.close()
@@ -1318,7 +1182,7 @@ def sync_archive(col_stats):
             def get_footer(self):
                 return b""
 
-        log.Notice(_(u"Copying %s to local cache.") % util.fsdecode(fn))
+        log.Notice(_(u"Copying %s to local cache.") % os.fsdecode(fn))
 
         pr, loc_name, rem_name = resolve_basename(fn)
 
@@ -1385,10 +1249,10 @@ def sync_archive(col_stats):
         else:
             if local_missing:
                 log.Notice(_(u"Sync would copy the following from remote to local:") +
-                           u"\n" + u"\n".join(map(util.fsdecode, local_missing)))
+                           u"\n" + u"\n".join(map(os.fsdecode, local_missing)))
             if local_spurious:
                 log.Notice(_(u"Sync would remove the following spurious local files:") +
-                           u"\n" + u"\n".join(map(util.fsdecode, local_spurious)))
+                           u"\n" + u"\n".join(map(os.fsdecode, local_spurious)))
 
 
 def check_last_manifest(col_stats):
@@ -1465,8 +1329,7 @@ def log_startup_parms(verbosity=log.INFO):
     """
     log.Log(u'=' * 80, verbosity)
     log.Log(u"duplicity %s" % __version__, verbosity)
-    u_args = (util.fsdecode(arg) for arg in sys.argv)
-    log.Log(u"Args: %s" % u' '.join(u_args), verbosity)
+    log.Log(u"Args: %s" % u' '.join([os.fsdecode(arg) for arg in sys.argv]), verbosity)
     log.Log(u' '.join(platform.uname()), verbosity)
     log.Log(u"%s %s" % (sys.executable or sys.platform, sys.version), verbosity)
     log.Log(u'=' * 80, verbosity)
@@ -1540,7 +1403,7 @@ def main():
     # duplicity crashes when PYTHONOPTIMIZE is set, so check
     # and refuse to run if it is set.
     if u'PYTHONOPTIMIZE' in os.environ:
-        log.FatalError(_(u"""
+        log.FatalError(_(u"""\
 PYTHONOPTIMIZE in the environment causes duplicity to fail to
 recognize its own backups.  Please remove PYTHONOPTIMIZE from
 the environment and rerun the backup.
@@ -1559,11 +1422,11 @@ See https://bugs.launchpad.net/duplicity/+bug/931175
     dup_time.setcurtime()
 
     # determine what action we're performing and process command line
-    action = commandline.ProcessCommandLine(sys.argv[1:])
+    action = cli_main.process_command_line(sys.argv[1:])
 
     config.lockpath = os.path.join(config.archive_dir_path.name, b"lockfile")
     config.lockfile = fasteners.process_lock.InterProcessLock(config.lockpath)
-    log.Debug(_(u"Acquiring lockfile %s") % config.lockpath)
+    log.Debug(_(u"Acquiring lockfile %s") % os.fsdecode(config.lockpath))
     if not config.lockfile.acquire(blocking=False):
         log.FatalError(
             u"Another duplicity instance is already running with this archive directory\n",
@@ -1571,9 +1434,11 @@ See https://bugs.launchpad.net/duplicity/+bug/931175
         log.shutdown()
         sys.exit(2)
 
+    # log some status info
+    log_startup_parms(log.INFO)
+
     try:
         do_backup(action)
-
     finally:
         util.release_lockfile()
 
@@ -1584,9 +1449,6 @@ def do_backup(action):
         dup_time.setcurtime(config.current_time)
     else:
         dup_time.setcurtime()
-
-    # log some debugging status info
-    log_startup_parms(log.INFO)
 
     # check for disk space and available file handles
     check_resources(action)
@@ -1601,7 +1463,6 @@ def do_backup(action):
                       u"remove-all-but-n-full",
                       u"remove-all-inc-of-but-n-full",
                       u"remove-old",
-                      u"replicate",
                       ]:
         sync_archive(col_stats)
 
@@ -1645,8 +1506,8 @@ def do_backup(action):
         log.Notice(_(u"Last full backup date:") + u" " + dup_time.timetopretty(last_full_time))
     else:
         log.Notice(_(u"Last full backup date: none"))
-    if not config.restart and action == u"inc" and config.full_force_time is not None and \
-       last_full_time < config.full_force_time:
+    if not config.restart and action == u"inc" and config.full_if_older_than is not None and \
+       last_full_time < config.full_if_older_than:
         log.Notice(_(u"Last full backup is too old, forcing full backup"))
         action = u"full"
     log.PrintCollectionStatus(col_stats)
@@ -1658,7 +1519,7 @@ def do_backup(action):
         restore(col_stats)
     elif action == u"verify":
         verify(col_stats)
-    elif action == u"list-current":
+    elif action == u"list-current-files":
         list_current(col_stats)
     elif action == u"collection-status":
         if config.show_changes_in_set is not None:
@@ -1669,14 +1530,12 @@ def do_backup(action):
             log.PrintCollectionFileChangedStatus(col_stats, config.file_changed, True)
     elif action == u"cleanup":
         cleanup(col_stats)
-    elif action == u"remove-old":
+    elif action == u"remove-older-than":
         remove_old(col_stats)
     elif action == u"remove-all-but-n-full" or action == u"remove-all-inc-of-but-n-full":
         remove_all_but_n_full(col_stats)
     elif action == u"sync":
         sync_archive(col_stats)
-    elif action == u"replicate":
-        replicate()
     else:
         assert action == u"inc" or action == u"full", action
         # the passphrase for full and inc is used by --sign-key
@@ -1714,6 +1573,7 @@ def do_backup(action):
                         config.gpg_profile.passphrase = get_passphrase(1, action)
                         check_last_manifest(col_stats)  # not needed for full backups
                 incremental_backup(sig_chain)
+
     config.backend.close()
     log.shutdown()
     if exit_val is not None:

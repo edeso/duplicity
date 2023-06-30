@@ -20,17 +20,15 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
 
 import io
 import platform
 import unittest
 
-from duplicity.selection import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 from duplicity.lazy import *  # pylint: disable=unused-wildcard-import,redefined-builtin
+from duplicity.selection import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 from . import UnitTestCase
+
 try:
     from unittest.mock import patch
 except ImportError:
@@ -40,7 +38,7 @@ except ImportError:
 class MatchingTest(UnitTestCase):
     u"""Test matching of file names against various selection functions"""
     def setUp(self):
-        super(MatchingTest, self).setUp()
+        super().setUp()
         self.unpack_testfiles()
         self.root = Path(u"testfiles/select")
         self.Select = Select(self.root)
@@ -234,7 +232,7 @@ class MatchingTest(UnitTestCase):
 class ParseArgsTest(UnitTestCase):
     u"""Test argument parsing"""
     def setUp(self):
-        super(ParseArgsTest, self).setUp()
+        super().setUp()
         self.unpack_testfiles()
         self.root = None
         self.expected_restored_tree = [(), (u"1",), (u"1", u"1sub1"), (u"1", u"1sub1", u"1sub1sub1"),
@@ -254,8 +252,10 @@ class ParseArgsTest(UnitTestCase):
         uindex = tuple([element.decode(sys.getfilesystemencoding(), u"strict") for element in path.index])
         return uindex
 
-    def ParseTest(self, tuplelist, indicies, filelists=[]):
+    def ParseTest(self, tuplelist, indicies, filelists=None):
         u"""No error if running select on tuple goes over indicies"""
+        if filelists is None:
+            filelists = []
         if not self.root:
             self.root = Path(u"testfiles/select")
         self.Select = Select(self.root)

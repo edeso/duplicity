@@ -24,19 +24,14 @@
 # have the same syntax.  Also these strings will be executed by the
 # shell, so shouldn't have strange characters in them.
 
-from __future__ import division
-from future import standard_library
-standard_library.install_aliases()
-from builtins import map
 
 import os
 import re
 
+import duplicity.backend
 from duplicity import config
 from duplicity import log
-from duplicity import util
 from duplicity.errors import BackendException
-import duplicity.backend
 
 
 class SSHPExpectBackend(duplicity.backend.Backend):
@@ -90,7 +85,7 @@ class SSHPExpectBackend(duplicity.backend.Backend):
             config.ssh_options = config.ssh_options + u" -oPort=%s" % parsed_url.port
         # set some defaults if user has not specified already.
         if u"ServerAliveInterval" not in config.ssh_options:
-            config.ssh_options += u" -oServerAliveInterval=%d" % ((int)(config.timeout / 2))
+            config.ssh_options += u" -oServerAliveInterval=%d" % (int(config.timeout / 2))
         if u"ServerAliveCountMax" not in config.ssh_options:
             config.ssh_options += u" -oServerAliveCountMax=2"
 
@@ -106,7 +101,7 @@ class SSHPExpectBackend(duplicity.backend.Backend):
             state = u"authorizing"
         else:
             state = u"copying"
-        while 1:
+        while True:
             if state == u"authorizing":
                 match = child.expect([pexpect.EOF,
                                       u"(?i)timeout, server not responding",
@@ -176,11 +171,11 @@ class SSHPExpectBackend(duplicity.backend.Backend):
                      u"Couldn't delete file",
                      u"open(.*): Failure"]
         max_response_len = max([len(p) for p in responses[1:]])
-        log.Info(u"Running '%s'" % (commandline))
+        log.Info(u"Running '%s'" % commandline)
         child = pexpect.spawn(commandline, timeout=None, maxread=maxread, encoding=config.fsencoding, use_poll=True)
         cmdloc = 0
         passprompt = 0
-        while 1:
+        while True:
             msg = u""
             match = child.expect(responses,
                                  searchwindowsize=maxread + max_response_len)
@@ -203,7 +198,7 @@ class SSHPExpectBackend(duplicity.backend.Backend):
             elif match == 3:
                 passprompt += 1
                 child.sendline(self.password)
-                if (passprompt > 1):
+                if passprompt > 1:
                     raise BackendException(u"Invalid SSH password.")
             elif match == 4:
                 if not child.before.strip().startswith(u"mkdir"):
@@ -233,7 +228,7 @@ class SSHPExpectBackend(duplicity.backend.Backend):
             raise BackendException(u"Error running '%s': %s" % (commandline, msg))
 
     def _put(self, source_path, remote_filename):
-        remote_filename = util.fsdecode(remote_filename)
+        remote_filename = os.fsdecode(remote_filename)
         if self.use_scp:
             self.put_scp(source_path, remote_filename)
         else:
@@ -256,7 +251,7 @@ class SSHPExpectBackend(duplicity.backend.Backend):
         self.run_scp_command(commandline)
 
     def _get(self, remote_filename, local_path):
-        remote_filename = util.fsdecode(remote_filename)
+        remote_filename = os.fsdecode(remote_filename)
         if self.use_scp:
             self.get_scp(remote_filename, local_path)
         else:
@@ -286,7 +281,7 @@ class SSHPExpectBackend(duplicity.backend.Backend):
                 dirs[0] = u'/'
         mkdir_commands = []
         for d in dirs:
-            mkdir_commands += [u"mkdir \"%s\"" % (d)] + [u"cd \"%s\"" % (d)]
+            mkdir_commands += [u"mkdir \"%s\"" % d] + [u"cd \"%s\"" % d]
 
         commands = mkdir_commands + [u"ls -1"]
         commandline = (u"%s %s %s" % (self.sftp_command,
@@ -295,18 +290,18 @@ class SSHPExpectBackend(duplicity.backend.Backend):
 
         l = self.run_sftp_command(commandline, commands).split(u'\n')[1:]
 
-        return [x for x in map(u"".__class__.strip, l) if x]
+        return [x for x in map(string.strip, l) if x]
 
     def _delete(self, filename):
         commands = [u"cd \"%s\"" % (self.remote_dir,)]
-        commands.append(u"rm \"%s\"" % util.fsdecode(filename))
+        commands.append(u"rm \"%s\"" % os.fsdecode(filename))
         commandline = (u"%s %s %s" % (self.sftp_command, config.ssh_options, self.host_string))
         self.run_sftp_command(commandline, commands)
 
     def _delete_list(self, filename_list):
         commands = [u"cd \"%s\"" % (self.remote_dir,)]
         for filename in filename_list:
-            commands.append(u"rm \"%s\"" % util.fsdecode(filename))
+            commands.append(u"rm \"%s\"" % os.fsdecode(filename))
         commandline = (u"%s %s %s" % (self.sftp_command, config.ssh_options, self.host_string))
         self.run_sftp_command(commandline, commands)
 

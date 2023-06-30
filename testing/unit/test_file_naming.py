@@ -19,18 +19,14 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import print_function
-from builtins import object
-from future import standard_library
-standard_library.install_aliases()
 
+import os
 import unittest
 
+from duplicity import config
 from duplicity import dup_time
 from duplicity import file_naming
 from duplicity import log
-from duplicity import config
-from duplicity import util
 from . import UnitTestCase
 
 
@@ -53,7 +49,7 @@ class FileNamingBase(object):
 
         file_naming.prepare_regex(force=True)
         filename = file_naming.get(u"inc", volume_number=23)
-        log.Info(u"Inc filename: " + util.fsdecode(filename))
+        log.Info(u"Inc filename: " + os.fsdecode(filename))
         pr = file_naming.parse(filename)
         assert pr and pr.type == u"inc", pr
         assert pr.start_time == 10
@@ -62,7 +58,7 @@ class FileNamingBase(object):
         assert not pr.partial
 
         filename = file_naming.get(u"full-sig")
-        log.Info(u"Full sig filename: " + util.fsdecode(filename))
+        log.Info(u"Full sig filename: " + os.fsdecode(filename))
         pr = file_naming.parse(filename)
         assert pr.type == u"full-sig"
         assert pr.time == 20
@@ -96,13 +92,12 @@ class FileNamingBase(object):
         assert pr.type == u"new-sig"
         assert pr.end_time == 1029826800
 
-        if not config.short_filenames:
-            pr = file_naming.parse(config.file_prefix +
-                                   config.file_prefix_signature +
-                                   b"duplicity-new-signatures.2002-08-18T00:04:30-07:00.to.2002-08-20T00:00:00-07:00.sigtar.gpg")  # noqa
-            assert pr, pr
-            assert pr.type == u"new-sig"
-            assert pr.end_time == 1029826800
+        pr = file_naming.parse(config.file_prefix +
+                               config.file_prefix_signature +
+                               b"duplicity-new-signatures.2002-08-18T00:04:30-07:00.to.2002-08-20T00:00:00-07:00.sigtar.gpg")  # noqa
+        assert pr, pr
+        assert pr.type == u"new-sig"
+        assert pr.end_time == 1029826800
 
         pr = file_naming.parse(config.file_prefix + config.file_prefix_signature + b"dfs.h5dixs.st.g")
         assert pr, pr
@@ -118,12 +113,11 @@ class FileNamingBase(object):
         assert pr.type == u"new-sig"
         assert pr.end_time == 1029826800
 
-        if not config.short_filenames:
-            pr = file_naming.parse(config.file_prefix + config.file_prefix_signature + b"duplicity-new-signatures.2002-08-18T00:04:30-07:00.to.2002-08-20T00:00:00-07:00.sigtar.part.gpg")  # noqa
-            assert pr, pr
-            assert pr.partial
-            assert pr.type == u"new-sig"
-            assert pr.end_time == 1029826800
+        pr = file_naming.parse(config.file_prefix + config.file_prefix_signature + b"duplicity-new-signatures.2002-08-18T00:04:30-07:00.to.2002-08-20T00:00:00-07:00.sigtar.part.gpg")  # noqa
+        assert pr, pr
+        assert pr.partial
+        assert pr.type == u"new-sig"
+        assert pr.end_time == 1029826800
 
         pr = file_naming.parse(config.file_prefix + config.file_prefix_signature + b"dfs.h5dixs.st.p.g")
         assert pr, pr
@@ -132,24 +126,16 @@ class FileNamingBase(object):
         assert pr.time == 1036954144, repr(pr.time)
 
 
-class FileNamingLong(UnitTestCase, FileNamingBase):
+class FileNaming(UnitTestCase, FileNamingBase):
     u"""Test long filename parsing and generation"""
     def setUp(self):
-        super(FileNamingLong, self).setUp()
-        self.set_config(u'short_filenames', 0)
-
-
-class FileNamingShort(UnitTestCase, FileNamingBase):
-    u"""Test short filename parsing and generation"""
-    def setUp(self):
-        super(FileNamingShort, self).setUp()
-        self.set_config(u'short_filenames', 1)
+        super().setUp()
 
 
 class FileNamingPrefixes(UnitTestCase, FileNamingBase):
     u"""Test filename parsing and generation with prefixes"""
     def setUp(self):
-        super(FileNamingPrefixes, self).setUp()
+        super().setUp()
         self.set_config(u'file_prefix', b"global-")
         self.set_config(u'file_prefix_manifest', b"mani-")
         self.set_config(u'file_prefix_signature', b"sign-")

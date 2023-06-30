@@ -24,15 +24,11 @@ duplicity's gpg interface, builds upon Frank Tobin's GnuPGInterface
 which is now patched with some code for iterative threaded execution
 see duplicity's README for details
 """
-from builtins import next
-from builtins import object
-from builtins import str
 
 import gzip
 import locale
 import os
 import re
-import sys
 import tempfile
 
 from duplicity import config
@@ -41,12 +37,8 @@ from duplicity import log
 from duplicity import tempdir
 from duplicity import util
 
-try:
-    from hashlib import sha1
-    from hashlib import md5
-except ImportError:
-    from sha import new as sha1
-    from md5 import new as md5
+from hashlib import sha1
+from hashlib import md5
 
 blocksize = 256 * 1024
 
@@ -72,7 +64,7 @@ class GPGProfile(object):
         indicated, and recipients should be a list of keys.  For all
         keys, the format should be an hex key like 'AA0E73D2'.
         """
-        assert passphrase is None or isinstance(passphrase, (str, u"".__class__))
+        assert passphrase is None or isinstance(passphrase, str)
 
         self.passphrase = passphrase
         self.signing_passphrase = passphrase
@@ -111,7 +103,7 @@ class GPGProfile(object):
         m = self._version_re.search(line)
         if m is not None:
             return int(m.group(u"maj")), int(m.group(u"min")), int(m.group(u"bug"))
-        raise GPGError(u"failed to determine gnupg version of %s from %s" % (binary, line))
+        raise GPGError(f"failed to determine gnupg version of {binary} from {line}")
 
 
 class GPGFile(object):
@@ -163,7 +155,7 @@ class GPGFile(object):
                 gnupg.options.extra_args.append(u'--pinentry-mode=loopback')
 
         else:
-            raise GPGError(u"Unsupported GNUPG version, %s" % profile.gpg_version)
+            raise GPGError(f"Unsupported GNUPG version, {profile.gpg_version}")
 
         # user supplied options
         if config.gpg_options:
@@ -202,6 +194,9 @@ class GPGFile(object):
                 gnupg_fhs = [u'stdin', ]
             else:
                 gnupg_fhs = [u'stdin', u'passphrase']
+            # Turn off compression if needed
+            if not config.compression:
+                cmdlist.append(u'--compress-algo=none')
             p1 = gnupg.run(cmdlist,
                            create_fhs=gnupg_fhs,
                            attach_fhs={u'stdout': encrypt_path.open(u"wb"),
@@ -247,10 +242,7 @@ class GPGFile(object):
         try:
             res = self.gpg_input.write(buf)
             if res is not None:
-                if sys.version_info.major >= 3:
-                    self.byte_count += res
-                else:
-                    self.byte_count += len(res)
+                self.byte_count += res
         except Exception:
             self.gpg_failed()
         return res
@@ -260,7 +252,7 @@ class GPGFile(object):
 
     def seek(self, offset):
         assert not self.encrypt
-        assert offset >= self.byte_count, u"%d < %d" % (offset, self.byte_count)
+        assert offset >= self.byte_count, f"{int(offset)} < {int(self.byte_count)}"
         if offset > self.byte_count:
             self.read(offset - self.byte_count)
 
@@ -270,9 +262,9 @@ class GPGFile(object):
         self.stderr_fp.seek(0)
         for line in self.stderr_fp:
             try:
-                msg += str(line.strip(), locale.getpreferredencoding(), u'replace') + u"\n"
+                msg += f"{str(line.strip(), locale.getpreferredencoding(), u'replace')}\n"
             except Exception as e:
-                msg += line.strip() + u"\n"
+                msg += f"{line.strip()}\n"
         msg += u"===== End GnuPG log =====\n"
         if not (msg.find(u"invalid packet (ctb=14)") > -1):
             raise GPGError(msg)
@@ -321,7 +313,7 @@ class GPGFile(object):
         """
         self.status_fp.seek(0)
         status_buf = self.status_fp.read()
-        match = re.search(b"^\\[GNUPG:\\] GOODSIG ([0-9A-F]*)",
+        match = re.search(b"GOODSIG ([0-9A-F]*)",
                           status_buf, re.M)
         if not match:
             self.signature = None
@@ -490,9 +482,9 @@ def get_hash(hash, path, hex=1):  # pylint: disable=redefined-builtin
     elif hash == u"MD5":
         hash_obj = md5()
     else:
-        assert 0, u"Unknown hash %s" % (hash,)
+        assert 0, f"Unknown hash {hash}"
 
-    while 1:
+    while True:
         buf = fp.read(blocksize)
         if not buf:
             break

@@ -20,27 +20,19 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from builtins import next
-from builtins import str
-from builtins import object
 
-import os
-import stat
 import sys
-import re
+from textwrap import dedent
 
-from duplicity import config
 from duplicity import diffdir
-from duplicity import log
-from duplicity import util
 from duplicity.globmatch import GlobbingError, FilePrefixError, select_fn_from_glob
 from duplicity.path import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 
-u"""Iterate exactly the requested files in a directory
+u"""
+Iterate exactly the requested files in a directory
 
 Parses includes and excludes to yield correct files.  More
 documentation on what this code does can be found on the man page.
-
 """
 
 
@@ -76,7 +68,6 @@ class Select(object):
     be true if f could potentially exclude some file. This is used
     to signal an error if the last function only includes, which would
     be redundant and presumably isn't what the user intends.
-
     """
     def __init__(self, path):
         u"""Initializer, called with Path of root directory"""
@@ -114,15 +105,15 @@ class Select(object):
             try:
                 mode = os.stat(fullpath)[stat.ST_MODE]
                 if stat.S_ISSOCK(mode):
-                    log.Info(_(u"Skipping socket %s") % util.fsdecode(fullpath),
+                    log.Info(_(u"Skipping socket %s") % os.fsdecode(fullpath),
                              log.InfoCode.skipping_socket,
                              util.escape(fullpath))
                 else:
-                    log.Warn(_(u"Error initializing file %s") % util.fsdecode(fullpath),
+                    log.Warn(_(u"Error initializing file %s") % os.fsdecode(fullpath),
                              log.WarningCode.cannot_iterate,
                              util.escape(fullpath))
             except OSError:
-                log.Warn(_(u"Error accessing possibly locked file %s") % util.fsdecode(fullpath),
+                log.Warn(_(u"Error accessing possibly locked file %s") % os.fsdecode(fullpath),
                          log.WarningCode.cannot_stat, util.escape(fullpath))
             return None
 
@@ -141,8 +132,7 @@ class Select(object):
 
             """
             # Only called by Iterate. Internal.
-            # todo: get around circular dependency issue by importing here
-            from duplicity import robust
+            from duplicity import robust  # TODO: avoid circ. dep. issue
 
             if self.files_from is None:
                 files = robust.listpath(path)
@@ -169,10 +159,10 @@ class Select(object):
                             diffdir.stats.Errors += 1
                     elif s == 1:
                         # Should be included
-                        yield (new_path, False)
+                        yield new_path, False
                     elif s == 2 and new_path.isdir():
                         # Is a directory that should be scanned
-                        yield (new_path, True)
+                        yield new_path, True
 
         if not path.type:
             # base doesn't exist
@@ -256,24 +246,26 @@ class Select(object):
         """
         # Sanity checks on --filter-* options for the benefit of users
         if argtuples and argtuples[-1][0].startswith(u"--filter-"):
-            log.FatalError(_(u"""\
-The last file selection option is the filter option %s, which will have no
-effect as there are no subsequent file selection options. Exiting because
-this probably isn't what you meant.""") %
-                           (argtuples[-1][0],),
-                           log.ErrorCode.trailing_filter)
+            log.FatalError(dedent(_(
+                u"""\
+                The last file selection option is the filter option %s, which will have no
+                effect as there are no subsequent file selection options. Exiting because
+                this probably isn't what you meant.""")) %
+                (argtuples[-1][0],),
+                log.ErrorCode.trailing_filter)
         f_opt = set(opt[0] for opt in argtuples if opt[0].startswith(u"--filter-"))
         f_def = (u"--filter-globbing", u"--filter-strictcase")
         if f_opt and all(opt in f_def for opt in f_opt):
-            log.FatalError(_(u"""\
-Only these filter mode options were specified:
-    %s
-Case sensitive globbing is the default behaviour and so this has no effect.
-Exiting because this probably isn't what you meant.""") %
-                           (u", ".join(f_opt),),
-                           log.ErrorCode.redundant_filter)
+            log.FatalError(dedent(_(
+                u"""\
+                Only these filter mode options were specified:
+                    %s
+                Case sensitive globbing is the default behaviour and so this has no effect.
+                Exiting because this probably isn't what you meant.""")) %
+                (u", ".join(f_opt),),
+                log.ErrorCode.redundant_filter)
 
-        # Called by commandline.py set_selection. External.
+        # Called by cli_main.py set_selection. External.
         filelists_index = 0
         mode = u"globbing"
         no_case = False
@@ -287,12 +279,6 @@ Exiting because this probably isn't what you meant.""") %
                     self.add_selection_func(self.devfiles_get_sf(), add_to_start=True)
                 elif opt == u"--exclude-filelist":
                     for sf in self.filelist_general_get_sfs(filelists[filelists_index], 0, arg, mode, no_case):
-                        self.add_selection_func(sf)
-                    filelists_index += 1
-                elif opt == u"--exclude-globbing-filelist":
-                    # --exclude-globbing-filelist is now deprecated, but if it
-                    # turns up then it needs to always work in globbing mode...
-                    for sf in self.filelist_general_get_sfs(filelists[filelists_index], 0, arg, u"globbing", no_case):
                         self.add_selection_func(sf)
                     filelists_index += 1
                 elif opt == u"--exclude-other-filesystems":
@@ -320,12 +306,6 @@ Exiting because this probably isn't what you meant.""") %
                     for sf in self.filelist_general_get_sfs(filelists[filelists_index], 1, arg, mode, no_case):
                         self.add_selection_func(sf)
                     filelists_index += 1
-                elif opt == u"--include-globbing-filelist":
-                    # --include-globbing-filelist is now deprecated, but if it
-                    # turns up then it needs to always work in globbing mode...
-                    for sf in self.filelist_general_get_sfs(filelists[filelists_index], 1, arg, u"globbing", no_case):
-                        self.add_selection_func(sf)
-                    filelists_index += 1
                 elif opt == u"--include-regexp":
                     self.add_selection_func(self.regexp_get_sf(arg, 1, no_case))
                 else:
@@ -339,14 +319,15 @@ Exiting because this probably isn't what you meant.""") %
         u"""Deal with selection error exc"""
         # Internal, used by ParseArgs.
         if isinstance(exc, FilePrefixError):
-            log.FatalError(_(u"""\
-Fatal Error: The file specification
-    %s
-cannot match any files in the base directory
-    %s
-Useful file specifications begin with the base directory or some
-pattern (such as '**') which matches the base directory.""") %
-                           (exc, self.prefix), log.ErrorCode.file_prefix_error)
+            log.FatalError(dedent(_(
+                u"""\
+                Fatal Error: The file specification
+                    %s
+                cannot match any files in the base directory
+                    %s
+                Useful file specifications begin with the base directory or some
+                pattern (such as '**') which matches the base directory.""")) %
+                (exc, self.prefix), log.ErrorCode.file_prefix_error)
         elif isinstance(exc, GlobbingError):
             log.FatalError(_(u"Fatal Error while processing expression\n"
                              u"%s") % exc, log.ErrorCode.globbing_error)
@@ -381,24 +362,27 @@ pattern (such as '**') which matches the base directory.""") %
                 if path not in filelist:
                     filelist[path] = set()
                 if isinstance(basename, str):
-                    filelist[path].add(util.fsencode(basename))
+                    filelist[path].add(os.fsencode(basename))
                 else:
                     filelist[path].add(basename)
                 line = dirname
 
         if absolute_path:
-            log.FatalError(_(u"""\
-Files-from list contains the absolute path:
-    %s
-All paths specified in a files-from list must be given relative to the backup
-source path.""") %
-                           (absolute_path,),
-                           log.ErrorCode.absolute_files_from)
+            log.FatalError(dedent(_(
+                u"""\
+                Files-from list contains the absolute path:
+                    %s
+                All paths specified in a files-from list must be given relative to the backup
+                source path.""")) %
+                (absolute_path,),
+                log.ErrorCode.absolute_files_from)
 
         if not filelist:
-            log.FatalError(_(u"""\
-Files-from list specified which contains no files, the backup will be empty as
-a result. Exiting as this probably isn't what you meant,"""), log.ErrorCode.empty_files_from)
+            log.FatalError(dedent(_(
+                u"""\
+                Files-from list specified which contains no files, the backup will be empty as
+                a result. Exiting as this probably isn't what you meant,""")),
+                log.ErrorCode.empty_files_from)
 
         self.files_from = {d: sorted(f) for d, f in filelist.items()}
 
@@ -406,14 +390,15 @@ a result. Exiting as this probably isn't what you meant,"""), log.ErrorCode.empt
         u"""Exit with error if last selection function isn't an exclude"""
         # Internal. Used by ParseArgs.
         if self.selection_functions and not self.selection_functions[-1].exclude:
-            log.FatalError(_(u"""\
-Last selection expression:
-    %s
-only specifies that files be included.  Because the default is to
-include all files, the expression is redundant.  Exiting because this
-probably isn't what you meant.""") %
-                           (self.selection_functions[-1].name,),
-                           log.ErrorCode.redundant_inclusion)
+            log.FatalError(dedent(_(
+                u"""\
+                Last selection expression:
+                    %s
+                only specifies that files be included.  Because the default is to
+                include all files, the expression is redundant.  Exiting because this
+                probably isn't what you meant.""")) %
+                (self.selection_functions[-1].name,),
+                log.ErrorCode.redundant_inclusion)
 
     def add_selection_func(self, sel_func, add_to_start=None):
         u"""Add another selection function at the end or beginning"""
@@ -469,7 +454,7 @@ probably isn't what you meant.""") %
         separator = config.null_separator and u"\0" or u"\n"
         try:
             filelist_fp.seek(0)
-        except:
+        except Exception as e:
             pass
         for line in filelist_fp.read().split(separator):
             line, include = self.filelist_sanitise_line(line, inc_default)
@@ -550,7 +535,7 @@ probably isn't what you meant.""") %
         # legacy prefix applies *only* in globbing mode
         if mode == u"globbing" and pattern_str.lower().startswith(u"ignorecase:"):
             pattern_str = pattern_str[len(u"ignorecase:"):]
-            pattern_str = util.casefold_compat(util.fsdecode(pattern_str))
+            pattern_str = os.fsdecode(pattern_str).casefold()
             ignore_case = True
 
         if mode == u"globbing":
@@ -567,15 +552,14 @@ probably isn't what you meant.""") %
         # Internal. Used by ParseArgs.
         assert include == 0 or include == 1
 
-        # todo: get around circular dependency issue by importing here
-        from duplicity.robust import check_common_error
+        from duplicity.robust import check_common_error  # TODO: avoid circ. dep. issue
 
         def exclude_sel_func(path):
             # do not follow symbolic links when checking for file existence!
             if path.isdir():
                 def error_handler(_exc, _filename):
                     # Path is not read accessible
-                    # ToDo: Ideally this error would only show if the folder
+                    # TODO: Ideally this error would only show if the folder
                     # was ultimately included by the full set of selection
                     # functions. Currently this will give an error for any
                     # locked directory within the folder being backed up.
@@ -663,19 +647,19 @@ probably isn't what you meant.""") %
         This function is separated from literal_get_sf() so that it can be used
         to test the prefix without creating a loop.
 
-        TODO: this doesn't need to be part of the Select class type, but not
-        sure where else to put it?
         """
+        # TODO: this doesn't need to be part of the Select class type, but not
+        #       sure where else to put it?
         if lit_str != u"/" and lit_str[-1] == u"/":
             lit_str = lit_str[:-1]
 
         if ignore_case:
-            lit_str = util.casefold_compat(util.fsdecode(lit_str))
+            lit_str = os.fsdecode(lit_str).casefold()
 
         def test_fn(path):
-            # FIXME: caller to do this once, rather than for every path?
+            # TODO: caller to do this once, rather than for every path?
             if ignore_case:
-                uc_name = util.casefold_compat(util.fsdecode(path.uc_name))
+                uc_name = os.fsdecode(path.uc_name).casefold()
             else:
                 uc_name = path.uc_name
 

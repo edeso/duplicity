@@ -24,40 +24,32 @@ Provides a common interface to all backends and certain sevices
 intended to be used by the backends themselves.
 """
 
-from future import standard_library
-standard_library.install_aliases()
-from builtins import str
-from builtins import range
-from builtins import object
 
 import errno
+import getpass
 import os
+import re
+import socket
 import sys
 import time
-import re
-import getpass
-import re
-import urllib.request  # pylint: disable=import-error
-import urllib.parse  # pylint: disable=import-error
-import urllib.error  # pylint: disable=import-error
+import urllib.error
+import urllib.parse
+import urllib.request
 
+import duplicity.backends
+from duplicity import config
 from duplicity import dup_temp
 from duplicity import file_naming
-from duplicity import config
 from duplicity import log
 from duplicity import path
 from duplicity import util
-
-from duplicity.util import exception_traceback
-
 from duplicity.errors import BackendException
-from duplicity.errors import FatalBackendException
-from duplicity.errors import TemporaryLoadException
 from duplicity.errors import ConflictingScheme
+from duplicity.errors import FatalBackendException
 from duplicity.errors import InvalidBackendURL
+from duplicity.errors import TemporaryLoadException
 from duplicity.errors import UnsupportedBackendScheme
-
-import duplicity.backends
+from duplicity.util import exception_traceback
 
 _backends = {}
 _backend_prefixes = {}
@@ -88,8 +80,7 @@ def import_backends():
     path = duplicity.backends.__path__[0]
     assert path.endswith(u"duplicity/backends"), duplicity.backends.__path__
 
-    files = os.listdir(path)
-    files.sort()
+    files = sorted(os.listdir(path))
     for fn in files:
         if fn.endswith(u"backend.py"):
             fn = fn[:-3]
@@ -218,8 +209,6 @@ def get_backend(url_string):
 
     Raise InvalidBackendURL if the URL is not a valid URL.
     """
-    if config.use_gio:
-        url_string = u'gio+' + url_string
     obj = get_backend_object(url_string)
     if obj:
         obj = BackendWrapper(obj)
@@ -308,8 +297,7 @@ class ParsedUrl(object):
         self.port = None
         try:
             self.port = pu.port
-        except Exception:  # not raised in python2.7, just returns None
-            # TODO: remove after dropping python 2.7 support
+        except Exception:  # just returns None
             if self.scheme in [u'rclone']:
                 pass
             # old style rsync://host::[/]dest, are still valid, though they contain no port
@@ -337,7 +325,7 @@ class ParsedUrl(object):
         if self.scheme in uses_netloc and not self.hostname:
             raise InvalidBackendURL(u"Missing hostname in a backend URL which "
                                     u"requires an explicit hostname: %s"
-                                    u"" % (url_string))
+                                    u"" % url_string)
 
         # Our backends do not handle implicit relative paths.
         if self.scheme not in uses_netloc and not self.path.startswith(u'//'):
@@ -540,7 +528,7 @@ class BackendWrapper(object):
 
     def __do_put(self, source_path, remote_filename):
         if hasattr(self.backend, u'_put'):
-            log.Info(_(u"Writing %s") % util.fsdecode(remote_filename))
+            log.Info(_(u"Writing %s") % os.fsdecode(remote_filename))
             self.backend._put(source_path, remote_filename)
         else:
             raise NotImplementedError()
@@ -592,12 +580,12 @@ class BackendWrapper(object):
         Return list of filenames (byte strings) present in backend
         """
         def tobytes(filename):
-            u"Convert a (maybe unicode) filename to bytes"
+            u"""Convert a (maybe unicode) filename to bytes"""
             if isinstance(filename, str):
                 # There shouldn't be any encoding errors for files we care
                 # about, since duplicity filenames are ascii.  But user files
                 # may be in the same directory.  So just replace characters.
-                return util.fsencode(filename)
+                return os.fsencode(filename)
             else:
                 return filename
 

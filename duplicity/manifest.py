@@ -21,16 +21,12 @@
 
 u"""Create and edit manifest for session contents"""
 
-from builtins import map
-from builtins import range
-from builtins import object
 
+import os
 import re
-import sys
 
 from duplicity import config
 from duplicity import log
-from duplicity import config
 from duplicity import util
 
 
@@ -102,11 +98,11 @@ class Manifest(object):
             code = log.ErrorCode.hostname_mismatch
             code_extra = u"%s %s" % (util.escape(config.hostname), util.escape(self.hostname))
 
-        elif (self.local_dirname and self.local_dirname != config.local_path.name):
-            errmsg = _(u"Fatal Error: Backup source directory has changed.\n"
-                       u"Current directory: %s\n"
-                       u"Previous directory: %s") % (config.local_path.name, self.local_dirname)
-            code = log.ErrorCode.source_dir_mismatch
+        elif self.local_dirname and self.local_dirname != config.local_path.name:
+            errmsg = _(f"Fatal Error: Backup source directory has changed.\n"
+                       f"Current directory: {config.local_path.uc_name}\n"
+                       f"Previous directory: {os.fsdecode(self.local_dirname)}")
+            code = log.ErrorCode.source_path_mismatch
             code_extra = u"%s %s" % (util.escape(config.local_path.name),
                                      util.escape(self.local_dirname))
         else:
@@ -174,8 +170,7 @@ class Manifest(object):
         for fileinfo in self.files_changed:
             result += b"    %-7s  %s\n" % (fileinfo[1], Quote(fileinfo[0]))
 
-        vol_num_list = list(self.volume_info_dict.keys())
-        vol_num_list.sort()
+        vol_num_list = sorted(self.volume_info_dict.keys())
 
         def vol_num_to_string(vol_num):
             return self.volume_info_dict[vol_num].to_string()
@@ -235,7 +230,7 @@ class Manifest(object):
             if filecount > 0:
                 def parse_fileinfo(line):
                     fileinfo = line.strip().split()
-                    return (fileinfo[0], b''.join(fileinfo[1:]))
+                    return fileinfo[0], b''.join(fileinfo[1:])
 
                 self.files_changed = list(map(parse_fileinfo, match.group(3).split(b'\n')))
 
@@ -253,10 +248,8 @@ class Manifest(object):
         u"""
         Two manifests are equal if they contain the same volume infos
         """
-        vi_list1 = list(self.volume_info_dict.keys())
-        vi_list1.sort()
-        vi_list2 = list(other.volume_info_dict.keys())
-        vi_list2.sort()
+        vi_list1 = sorted(self.volume_info_dict.keys())
+        vi_list2 = sorted(other.volume_info_dict.keys())
 
         if vi_list1 != vi_list2:
             log.Notice(_(u"Manifests not equal because different volume numbers"))
@@ -358,11 +351,11 @@ class VolumeInfo(object):
         if not self.hashes:
             return None
         try:
-            return (u"SHA1", self.hashes[u'SHA1'])
+            return u"SHA1", self.hashes[u'SHA1']
         except KeyError:
             pass
         try:
-            return (u"MD5", self.hashes[u'MD5'])
+            return u"MD5", self.hashes[u'MD5']
         except KeyError:
             pass
         return list(self.hashes.items())[0]
@@ -463,10 +456,8 @@ class VolumeInfo(object):
         if self.end_index != other.end_index:
             log.Notice(_(u"end_index don't match"))
             return None
-        hash_list1 = list(self.hashes.items())
-        hash_list1.sort()
-        hash_list2 = list(other.hashes.items())
-        hash_list2.sort()
+        hash_list1 = sorted(self.hashes.items())
+        hash_list2 = sorted(other.hashes.items())
         if hash_list1 != hash_list2:
             log.Notice(_(u"Hashes don't match"))
             return None
@@ -514,10 +505,7 @@ def Quote(s):
 
 
 def maybe_chr(ch):
-    if sys.version_info.major >= 3:
-        return chr(ch)
-    else:
-        return ch
+    return chr(ch)
 
 
 def Unquote(quoted_string):
@@ -534,10 +522,7 @@ def Unquote(quoted_string):
         if char == b"\\":
             # quoted section
             assert maybe_chr(quoted_string[i + 1]) == u"x"
-            if sys.version_info.major >= 3:
-                return_list.append(int(quoted_string[i + 2:i + 4].decode(), 16).to_bytes(1, byteorder=u'big'))
-            else:
-                return_list.append(chr(int(quoted_string[i + 2:i + 4], 16)))
+            return_list.append(int(quoted_string[i + 2:i + 4].decode(), 16).to_bytes(1, byteorder=u'big'))
             i += 4
         else:
             return_list.append(char)

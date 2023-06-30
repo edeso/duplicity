@@ -19,7 +19,6 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from builtins import str
 import os
 import re
 
@@ -27,8 +26,6 @@ import duplicity.backend
 from duplicity import config
 from duplicity import log
 from duplicity.errors import BackendException
-from duplicity.util import fsdecode
-
 
 _VALID_CONTAINER_NAME_RE = re.compile(r"^[a-z0-9](?!.*--)[a-z0-9-]{1,61}[a-z0-9]$")
 
@@ -52,10 +49,10 @@ class AzureBackend(duplicity.backend.Backend):
 
         # Import Microsoft Azure Storage SDK for Python library.
         try:
-            import azure
-            import azure.storage
-            import azure.storage.blob
-            from azure.storage.blob import BlobServiceClient
+            import azure_core
+            import azure_storage
+            import azure_storage_blob
+            from azure_storage_blob import BlobServiceClient
         except ImportError as e:
             raise BackendException(u"""\
 Azure backend requires Microsoft Azure Storage SDK for Python (https://pypi.org/project/azure-storage-blob/).
@@ -85,6 +82,7 @@ Exception: %s""" % str(e))
         self._get_or_create_container()
 
     def _get_or_create_container(self):
+        # Note: azure comes from azure-core module
         from azure.core.exceptions import ResourceExistsError
 
         try:
@@ -94,12 +92,12 @@ Exception: %s""" % str(e))
             pass
         except Exception as e:
             log.FatalError(u"Could not create Azure container: %s"
-                           % str(e.message).split(u'\n', 1)[0],
+                           % str(e).split(u'\n', 1)[0],
                            log.ErrorCode.connection_failed)
 
     def _put(self, source_path, remote_filename):
-        remote_filename = fsdecode(remote_filename)
-        kwargs = {u"overwrite": True}
+        remote_filename = os.fsdecode(remote_filename)
+        kwargs = {}
 
         if config.azure_max_connections:
             kwargs[u'max_concurrency'] = config.azure_max_connections
@@ -130,10 +128,10 @@ Exception: %s""" % str(e))
 
     def _delete(self, filename):
         # https://docs.microsoft.com/en-us/python/api/azure-storage-blob/azure.storage.blob.containerclient?view=azure-python#delete-blob-blob--delete-snapshots-none----kwargs-
-        self.container.delete_blob(fsdecode(filename))
+        self.container.delete_blob(os.fsdecode(filename))
 
     def _query(self, filename):
-        client = self.container.get_blob_client(fsdecode(filename))
+        client = self.container.get_blob_client(os.fsdecode(filename))
         prop = client.get_blob_properties()
         return {u'size': int(prop.size)}
 

@@ -19,24 +19,14 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
-from builtins import map
-from builtins import object
-from builtins import range
 
 import io
-import os
 import platform
 import unittest
 
 from duplicity import diffdir
 from duplicity import patchdir
 from duplicity import selection
-from duplicity import tarfile
-from duplicity import librsync
-from duplicity.lazy import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 from duplicity.path import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 from testing import _runtest_dir
 from . import UnitTestCase
@@ -45,13 +35,13 @@ from . import UnitTestCase
 class PatchingTest(UnitTestCase):
     u"""Test patching"""
     def setUp(self):
-        super(PatchingTest, self).setUp()
+        super().setUp()
         self.unpack_testfiles()
 
     def copyfileobj(self, infp, outfp):
         u"""Copy in fileobj to out, closing afterwards"""
         blocksize = 32 * 1024
-        while 1:
+        while True:
             buf = infp.read(blocksize)
             if not buf:
                 break
@@ -145,7 +135,7 @@ class index(object):
 
 class CollateItersTest(UnitTestCase):
     def setUp(self):
-        super(CollateItersTest, self).setUp()
+        super().setUp()
         self.unpack_testfiles()
 
     def test_collate(self):
@@ -173,8 +163,8 @@ class CollateItersTest(UnitTestCase):
                                 (indicies[3], indicies[3], None)]), 1)
 
         assert Iter.equal(patchdir.collate_iters([makeiter1(), iter([])]),
-                          map(lambda i: (i, None), indicies))
-        assert Iter.equal(map(lambda i: (i, None), indicies),
+                          iter([(i, None) for i in indicies]))
+        assert Iter.equal([(i, None) for i in indicies],
                           patchdir.collate_iters([makeiter1(), iter([])]))
 
     def test_tuple(self):
@@ -198,7 +188,7 @@ class CollateItersTest(UnitTestCase):
 class TestInnerFuncs(UnitTestCase):
     u"""Test some other functions involved in patching"""
     def setUp(self):
-        super(TestInnerFuncs, self).setUp()
+        super().setUp()
         self.unpack_testfiles()
         self.check_output()
 

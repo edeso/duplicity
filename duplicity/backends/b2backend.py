@@ -23,18 +23,16 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from future import standard_library
-standard_library.install_aliases()
-from builtins import object
 
-from urllib.parse import quote_plus  # pylint: disable=import-error
+from urllib.parse import quote_plus
 
+import duplicity.backend
+from duplicity import config
 from duplicity import log
 from duplicity import progress
 from duplicity import util
 from duplicity import config
 from duplicity.errors import BackendException, FatalBackendException
-import duplicity.backend
 
 
 class B2ProgressListener(object):
@@ -71,7 +69,7 @@ class B2Backend(duplicity.backend.Backend):
             from b2sdk import __version__ as VERSION  # pylint: disable=import-error
             v_split = VERSION.split(u'.')
             self.v_num = [int(x) for x in v_split]
-        except:
+        except Exception as e:
             self.v_num = [0, 0, 0]
 
         try:  # public API v2 is recommended, if available
@@ -84,7 +82,6 @@ class B2Backend(duplicity.backend.Backend):
                 from b2sdk.v1 import InMemoryAccountInfo  # pylint: disable=import-error
                 from b2sdk.v1 import DownloadDestLocalFile  # pylint: disable=import-error
                 from b2sdk.v1.exception import NonExistentBucket  # pylint: disable=import-error
-
                 if self.v_num < [1, 9, 0]:
                     from b2sdk.v1.file_version import FileVersionInfoFactory
             except ImportError:
@@ -95,18 +92,7 @@ class B2Backend(duplicity.backend.Backend):
                     from b2sdk.exception import NonExistentBucket  # pylint: disable=import-error
                     from b2sdk.file_version import FileVersionInfoFactory  # pylint: disable=import-error
                 except ImportError as e:
-                    if u'b2sdk' in getattr(e, u'name', u'b2sdk'):
-                        raise
-                    try:  # fall back to import the old b2 client
-                        from b2.api import B2Api
-                        from b2.account_info import InMemoryAccountInfo
-                        from b2.download_dest import DownloadDestLocalFile
-                        from b2.exception import NonExistentBucket
-                        from b2.file_version import FileVersionInfoFactory
-                    except ImportError:
-                        if u'b2' in getattr(e, u'name', u'b2'):
-                            raise
-                        raise BackendException(u'B2 backend requires B2 Python SDK (pip install b2sdk)')
+                    raise BackendException(u'B2 backend requires B2 Python SDK (pip install b2sdk)')
 
         self.service = B2Api(InMemoryAccountInfo())
         self.parsed_url.hostname = u'B2'
@@ -139,18 +125,18 @@ class B2Backend(duplicity.backend.Backend):
             try:
                 log.Log(u"Bucket not found, creating one", log.INFO)
                 self.bucket = self.service.create_bucket(bucket_name, u'allPrivate')
-            except:
+            except Exception as e:
                 raise FatalBackendException(u"Bucket cannot be created")
 
     def _get(self, remote_filename, local_path):
         u"""
         Download remote_filename to local_path
         """
-        log.Log(u"Get: %s -> %s" % (self.path + util.fsdecode(remote_filename),
-                                    util.fsdecode(local_path.name)),
+        log.Log(u"Get: %s -> %s" % (self.path + os.fsdecode(remote_filename),
+                                    os.fsdecode(local_path.name)),
                 log.INFO)
         if self.v_num < [1, 11, 0]:
-            self.bucket.download_file_by_name(quote_plus(self.path + util.fsdecode(remote_filename), u'/'),
+            self.bucket.download_file_by_name(quote_plus(self.path + os.fsdecode(remote_filename), u'/'),
                                               DownloadDestLocalFile(local_path.name))
         else:
             df = self.bucket.download_file_by_name(quote_plus(self.path + util.fsdecode(remote_filename), u'/'))
@@ -165,11 +151,11 @@ class B2Backend(duplicity.backend.Backend):
         u"""
         Copy source_path to remote_filename
         """
-        log.Log(u"Put: %s -> %s" % (util.fsdecode(source_path.name),
-                                    self.path + util.fsdecode(remote_filename)),
+        log.Log(u"Put: %s -> %s" % (os.fsdecode(source_path.name),
+                                    self.path + os.fsdecode(remote_filename)),
                 log.INFO)
-        self.bucket.upload_local_file(util.fsdecode(source_path.name),
-                                      quote_plus(self.path + util.fsdecode(remote_filename), u'/'),
+        self.bucket.upload_local_file(os.fsdecode(source_path.name),
+                                      quote_plus(self.path + os.fsdecode(remote_filename), u'/'),
                                       content_type=u'application/pgp-encrypted',
                                       progress_listener=B2ProgressListener())
 
@@ -184,7 +170,7 @@ class B2Backend(duplicity.backend.Backend):
         u"""
         Delete filename from remote server
         """
-        full_filename = self.path + util.fsdecode(filename)
+        full_filename = self.path + os.fsdecode(filename)
         log.Log(u"Delete: %s" % full_filename, log.INFO)
 
         if config.b2_hide_files:
@@ -197,8 +183,8 @@ class B2Backend(duplicity.backend.Backend):
         u"""
         Get size info of filename
         """
-        log.Log(u"Query: %s" % self.path + util.fsdecode(filename), log.INFO)
-        file_version_info = self.file_info(quote_plus(self.path + util.fsdecode(filename), u'/'))
+        log.Log(u"Query: %s" % self.path + os.fsdecode(filename), log.INFO)
+        file_version_info = self.file_info(quote_plus(self.path + os.fsdecode(filename), u'/'))
         return {u'size': int(file_version_info.size)
                 if file_version_info is not None and file_version_info.size is not None else -1}
 

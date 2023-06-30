@@ -19,19 +19,13 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import print_function
-from __future__ import division
-from future import standard_library
-standard_library.install_aliases()
-from builtins import range
-from builtins import object
-from past.utils import old_div
 
 import os
 import platform
-import pytest
 import random
 import unittest
+
+import pytest
 
 from duplicity import gpg
 from duplicity import path
@@ -43,7 +37,7 @@ from . import UnitTestCase
 class GPGTest(UnitTestCase):
     u"""Test GPGFile"""
     def setUp(self):
-        super(GPGTest, self).setUp()
+        super().setUp()
         self.unpack_testfiles()
         self.default_profile = gpg.GPGProfile(passphrase=u"foobar")
 
@@ -187,7 +181,7 @@ class GPGWriteFile_Helper(object):
 
     def get_buffer(self, size):
         u"""Return buffer of size size, consisting of half random data"""
-        s1 = int(old_div(size, 2))
+        s1 = size // 2
         s2 = size - s1
         return b"a" * s1 + self.from_random_fp.read(s2)
 
@@ -211,7 +205,7 @@ class GPGWriteFile_Helper(object):
 class SHATest(UnitTestCase):
     u"""Test making sha signatures"""
     def setUp(self):
-        super(SHATest, self).setUp()
+        super().setUp()
         self.unpack_testfiles()
 
     def test_sha(self):
