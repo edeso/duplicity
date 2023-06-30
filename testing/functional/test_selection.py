@@ -22,10 +22,13 @@
 import io
 import os
 import platform
+import socket
+import stat
 import sys
 import unittest
 
 from . import FunctionalTestCase, CmdError
+from .. import _runtest_dir
 from duplicity import log
 
 
@@ -881,46 +884,6 @@ class TestExcludeFilelistTest(IncludeExcludeFunctionalTest):
         restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, self.expected_restored_tree)
 
-    def test_exclude_globbing_filelist_is_always_globbing(self):
-        u"""Test that exclude globbing filelist works with imperfections in the input file"""
-        # Identical to test_exclude_filelist_combined_imperfections and included to ensure that
-        # the deprecated --exclude-globbing-filelist function works as expected until it is deliberately removed.
-        # This test is required as when --filter-* options are used the standard --exclude-filelist option
-        # may not be in globbing mode, but the deprecated --exclude-globbing-filelist should be even if
-        # preceded by a non-globbing filter mode switch.
-        # Create a filelist
-        with io.open(u"testfiles/exclude.txt", u"w") as f:
-            f.write(u"+ testfiles/select2/3/3sub3/3sub3sub2/3sub3sub2_file.txt\n"
-                    u"testfiles/select2/3/3sub3/3sub3sub2\n"
-                    u"+ testfiles/select2/3/3sub2/3sub2sub2\n"
-                    u" + testfiles/select2/3/3sub3\n"  # Note leading space added here
-                    u"- testfiles/select2/3/3sub1\n"
-                    u"  testfiles/select2/2/2sub1/2sub1sub3\n"  # Note leading spaces added here
-                    u"\n"
-                    u"testfiles/select2/2/2sub1/2sub1sub2\n"
-                    u" + testfiles/select2/2/2sub1 \n"  # Note added trailing/leading space here
-                    u'- "testfiles/select2/1/1sub3/1sub3sub2"\n'  # Unnecessary quotes
-                    u"# Testing a full-line comment\n"
-                    u"'testfiles/select2/1/1sub3/1sub3sub1'  \n"  # Note added spaces and quotes here
-                    u"testfiles/select2/1/1sub2/1sub2sub3\n"
-                    u"    \n"
-                    u"+ testfiles/select2/1/1sub2/1sub2sub1\n"
-                    u"- testfiles/select2/1/1sub1/1sub1sub3/1sub1sub3_file.txt\n"
-                    u"testfiles/select2/1/1sub1/1sub1sub2\n"
-                    u"     # Testing a full-line comment with leading and trailing spaces     \n"
-                    u"testfiles/select2/1/1sub2  \n"  # Note added spaces here
-                    u"+ testfiles/select2/1.py\n"
-                    u"+ testfiles/select2/3 \n"  # Note added space here
-                    u"+ testfiles/select2/1\n"
-                    u"- testfiles/select2/**")
-        self.backup(u"full", u"testfiles/select2",
-                    options=[u"--filter-literal",
-                             u"--exclude-globbing-filelist=testfiles/exclude.txt"])
-        self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
-        self.assertEqual(restored, self.expected_restored_tree)
-
     def test_exclude_filelist_trailing_whitespace_folders_work_with_quotes(self):
         u"""Test that folders with trailing whitespace in the names work correctly if they are enclosed in quotes"""
         # Create a filelist
@@ -1113,47 +1076,6 @@ class TestIncludeFilelistTest(IncludeExcludeFunctionalTest):
         restore_path = u"testfiles/restore_out"
         restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, self.expected_restored_tree)
-
-    def test_include_globbing_filelist_is_always_globbing(self):
-        u"""Test that include globbing filelist works with imperfections in the input file"""
-        # Identical to test_include_globbing+filelist_combined_imperfections and included to ensure that
-        # the deprecated --include-globbing-filelist function works as expected until it is deliberately removed.
-        # This test is required as when --filter-* options are used the standard --include-filelist option
-        # may not be in globbing mode, but the deprecated --include-globbing-filelist should be even if
-        # preceded by a non-globbing filter mode switch.
-        # Create a filelist
-        with io.open(u"testfiles/include.txt", u"w") as f:
-            f.write(u"testfiles/select2/3/3sub3/3sub3sub2/3sub3sub2_file.txt\n"
-                    u"- testfiles/select2/3/3sub3/3sub3sub2\n"
-                    u'"testfiles/select2/3/3sub2/3sub2sub2"\n'
-                    u"  + testfiles/select2/3/3sub3\n"  # + added to ensure it makes no difference
-                    u"- testfiles/select2/3/3sub1\n"
-                    u"- testfiles/select2/2/2sub1/2sub1sub3\n"
-                    u' - "testfiles/select2/2/2sub1/2sub1sub2"\n'
-                    u"testfiles/select2/2/2sub1  \n"
-                    u"\n"
-                    u"- testfiles/select2/1/1sub3/1sub3sub2\n"
-                    u"- testfiles/select2/1/1sub3/1sub3sub1 \n"
-                    u"- 'testfiles/select2/1/1sub2/1sub2sub3'\n"
-                    u"             \n"
-                    u" + testfiles/select2/1/1sub2/1sub2sub1 \n"  # + added to ensure it makes no difference
-                    u"- testfiles/select2/1/1sub1/1sub1sub3/1sub1sub3_file.txt\n"
-                    u"  - testfiles/select2/1/1sub1/1sub1sub2  \n"
-                    u"# Testing full-line comment\n"
-                    u"- testfiles/select2/1/1sub2\n"
-                    u"'testfiles/select2/1.py'\n"
-                    u"testfiles/select2/3\n"
-                    u"        #  Testing another full-line comment      \n"
-                    u"testfiles/select2/1\n"
-                    u"- testfiles/select2/**")
-        self.backup(u"full", u"testfiles/select2",
-                    options=[u"--filter-literal",
-                             u"--include-globbing-filelist=testfiles/include.txt"])
-        self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
-        self.assertEqual(restored, self.expected_restored_tree)
-
 
 class TestIncludeExcludedForContents(IncludeExcludeFunctionalTest):
     u""" Test to check that folders that are excluded are included if they contain includes of higher priority.
@@ -1481,37 +1403,6 @@ class TestGlobbingReplacement(IncludeExcludeFunctionalTest):
         self.restore()
         restore_path = u"testfiles/restore_out"
         restored = self.directory_tree_to_list_of_lists(restore_path)
-        self.assertEqual(restored, self.expected_restored_tree)
-
-    def test_globbing_replacement_in_includes_using_filter_ignorecase(self):
-        u""" Test behaviour of the extended shell globbing pattern replacement functions in both include and exclude.
-        same test as above, but implemented using --filter-*case instead of the ignorecase prefix.
-        """
-        # Identical to test_include_exclude_basic with globbing characters added to both include and exclude lines
-        # Exhibits the issue reported in Bug #884371 (https://bugs.launchpad.net/duplicity/+bug/884371).
-        # See above and the unit tests for more granularity on the issue.
-        self.backup(u"full", u"testfiles/select2",
-                    options=[u"--include", u"testfiles/select2/**/3sub3sub2/3sub3su?2_file.txt",  # Note ** and ? added
-                             u"--exclude", u"testfiles/select2/*/3s*1",  # Note * added in both directory and filename
-                             u"--exclude", u"testfiles/select2/**/2sub1sub3",  # Note ** added
-                             u"--filter-ignorecase",
-                             u"--exclude", u"testfiles/select2/2/2sub1/2Sub1Sub2",  # Note ignorecase added
-                             u"--include", u"testfiles/sel[w,u,e,q]ct2/2/2S?b1",    # Note ignorecase, [] and
-                             u"--filter-strictcase",
-                             # ? added
-                             u"--exclude", u"testfiles/select2/1/1sub3/1s[w,u,p,q]b3sub2",  # Note [] added
-                             u"--exclude", u"testfiles/select2/1/1sub[1-4]/1sub3sub1",  # Note [range] added
-                             u"--include", u"testfiles/select2/*/1sub2/1s[w,u,p,q]b2sub1",  # Note * and [] added
-                             u"--exclude", u"testfiles/select2/1/1sub1/1sub1sub3/1su?1sub3_file.txt",  # Note ? added
-                             u"--exclude", u"testfiles/select2/1/1*1/1sub1sub2",  # Note * added
-                             u"--exclude", u"testfiles/select2/1/1sub2",
-                             u"--include", u"testfiles/select[2-4]/*.py",  # Note * and [range] added
-                             u"--include", u"testfiles/*2/3",  # Note * added
-                             u"--include", u"**/select2/1",  # Note ** added
-                             u"--exclude", u"testfiles/select2/**"])
-        self.restore()
-        restore_dir = u"testfiles/restore_out"
-        restored = self.directory_tree_to_list_of_lists(restore_dir)
         self.assertEqual(restored, self.expected_restored_tree)
 
 

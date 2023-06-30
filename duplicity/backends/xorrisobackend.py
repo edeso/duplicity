@@ -214,7 +214,7 @@ class Xorriso:
             # Parse size into an integer.
             try:
                 size = int(size)
-            except:
+            except Exception as e:
                 raise BackendException(u"Could not parse file size.")
 
             filename = filename[1:-1]  # strip leading and trailing `'`s

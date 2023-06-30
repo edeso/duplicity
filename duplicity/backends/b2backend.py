@@ -143,7 +143,7 @@ class B2Backend(duplicity.backend.Backend):
             try:
                 # b2sdk >= 1.19.0
                 df.save_to(local_path.uc_name)
-            except:
+            except Exception as e:
                 # b2sdk < 1.19.0
                 df.save_to(local_path.name)
 
