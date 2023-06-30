@@ -145,7 +145,8 @@ class WebDAVBackend(duplicity.backend.Backend):
     def __init__(self, parsed_url):
         duplicity.backend.Backend.__init__(self, parsed_url)
 
-        self.headers = {u'Connection': u'keep-alive'}
+        self.headers = {u'Connection': u'keep-alive',
+                        u'Content-Type': u'application/octet-stream'}
         if config.webdav_headers:
             try:
                 self.headers = util.merge_dicts(self.headers,
