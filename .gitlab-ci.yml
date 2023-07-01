@@ -68,24 +68,6 @@ code:
         - python3 -m pip install -r requirements.txt
         - tox -e code
 
-py27:
-    <<: *test-template
-    image: python:2.7
-    stage: test
-    script:
-        - python -m pip install -r requirements.txt
-        - tox -e py27
-    allow_failure: true
-
-py35:
-    <<: *test-template
-    image: python:3.5
-    stage: test
-    script:
-        - python3 -m pip install -r requirements.txt
-        - tox -e py35
-    allow_failure: true
-
 py36:
     <<: *test-template
     image: python:3.6
