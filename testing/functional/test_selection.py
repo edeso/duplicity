@@ -1077,6 +1077,7 @@ class TestIncludeFilelistTest(IncludeExcludeFunctionalTest):
         restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, self.expected_restored_tree)
 
+
 class TestIncludeExcludedForContents(IncludeExcludeFunctionalTest):
     u""" Test to check that folders that are excluded are included if they contain includes of higher priority.
      Exhibits the issue reported in Bug #1408411 (https://bugs.launchpad.net/duplicity/+bug/1408411). """

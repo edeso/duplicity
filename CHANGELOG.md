@@ -1,6 +1,65 @@
-## rel.2.0.0b1 (2023-06-29)
+## (unreleased)
 
 ### Changes
+
+* Resolve some minor merge issues. [Kenneth Loafman]
+
+* Whoops, used f-string to fix #716. Fixed. [Kenneth Loafman]
+
+* Fix #716.  Print filename on read error. [Kenneth Loafman]
+
+* Fix #709.  Add docs on passphrase encryption used. [Kenneth Loafman]
+
+* Fixes for handling snaps again. [Kenneth Loafman]
+
+  Use requirements.txt instead of internal list.
+
+* Fix #707 for test\_get\_stats\_string. [Kenneth Loafman]
+
+  Move UTC set/unset to testing.__init__.
+
+* Fix #707 for test\_get\_stats\_string. [Kenneth Loafman]
+
+  Base time on UTC rather than where the test is run.
+
+* Fix #707 for test\_get\_stats\_string. [Kenneth Loafman]
+
+  Base time on UTC rather than where the test is run.
+
+* Fix #707 for rclone backend testing. [Kenneth Loafman]
+
+  Create 'duptest' config if needed, then remove after   tests are
+  complete.
+  Add some more pytest options to tox.ini.
+
+* Comment out test\_path:test\_compare, flaky. [Kenneth Loafman]
+
+  Fixes #707 - 1.2.3 test failure
+
+* Force cryptography<3.4 for py2 support. [Kenneth Loafman]
+
+* Test if requirements.txt changes. [Kenneth Loafman]
+
+* Revert back to tox < 4.0. [Kenneth Loafman]
+
+### Fix
+
+* Fix #710. Missing Content-Type header on webdav. [Kenneth Loafman]
+
+* S3 filename encoding. [Thomas Laubrock]
+
+* Fix #712 "if cache lost. `*.sigtar.gpg` files not accessible" [Thomas Laubrock]
+
+  solution, do not add signature files to glacier
+
+* Handle read-only remote parent folder better in gio backend. [Michael Terry]
+
+
+## rel.2.0.0b1 (2023-06-30)
+
+### Changes
+
+* Update CHANGELOG.md. [Kenneth Loafman]
 
 * Some basic PEP8 and code cleanup. [Kenneth Loafman]
 
