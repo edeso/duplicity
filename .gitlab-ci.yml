@@ -186,7 +186,7 @@ website:
     script: |
         if [[ $WEBSITE_TRIGGER_TOKEN != "" ]]; then
             curl --fail-with-body \
-                 -X POST 
+                 -X POST \
                  -F token=${WEBSITE_TRIGGER_TOKEN} \
                  -F ref=master https://gitlab.com/api/v4/projects/29130748/trigger/pipeline
         fi
