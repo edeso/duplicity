@@ -1,6 +1,12 @@
-## (unreleased)
+## rel.2.0.0b2 (2023-07-02)
 
 ### Changes
+
+* Fix syntax error in .gitlab-ci.yml. [Kenneth Loafman]
+
+* Fix website to only run with WEBSITE\_TRIGGER\_TOKEN. [Kenneth Loafman]
+
+* Fix PEP8 issue.  Update CHANGELOG.md. [Kenneth Loafman]
 
 * Resolve some minor merge issues. [Kenneth Loafman]
 
