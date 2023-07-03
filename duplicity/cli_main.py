@@ -103,14 +103,15 @@ def pre_parse_cmdline_options(arglist):
         else:
             # implied command usage, figure out which, if any
             if is_path(arg1) and is_url(arg2):
-                log.Info(f"Detected implied 'inc' command: {arg1} {arg2}")
+                log.Notice(_(f"Detected implied backup command: {arg1} {arg2}"))
                 remain = [u'inc'] + args.posargs + remain
+                config.inc_explicit = False
             elif is_url(arg1) and is_path(arg2):
-                log.Info(f"Detected implied 'restore' command: {arg1} {arg2}")
+                log.Notice(_(f"Detected implied restore command: {arg1} {arg2}"))
                 remain = [u'restore'] + args.posargs + remain
             else:
-                command_line_error(f"Implied command detected.  One arg should be a PATH and the other a URL.\n"
-                                   f"Got: {arg1} {arg2}")
+                command_line_error(_(f"Implied command detected.  One arg should be a PATH and the other a URL.\n"
+                                   f"Got: {arg1} {arg2}"))
 
     # harvest args to config
     harvest_namespace(args)

@@ -373,6 +373,9 @@ idr_fakeroot = None
 # whether to check remote manifest (requires private key)
 check_remote = True
 
+# whether 'inc` is explicit or not
+inc_explicit = True
+
 # default filesystem encoding
 # It seems that sys.getfilesystemencoding() will normally return
 # 'utf-8' or some other sane encoding, but will sometimes fail and returns
