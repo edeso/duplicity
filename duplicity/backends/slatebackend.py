@@ -32,152 +32,153 @@ from duplicity.errors import BackendException
 
 
 class SlateBackend(duplicity.backend.Backend):
-    u"""
+    """
     Backend for Slate
     """
+
     def __init__(self, parsed_url):
         duplicity.backend.Backend.__init__(self, parsed_url)
-        log.Debug(u"loading slate backend...")
-        if u'SLATE_API_KEY' not in os.environ.keys():
+        log.Debug("loading slate backend...")
+        if 'SLATE_API_KEY' not in os.environ.keys():
             raise BackendException(
-                u'''You must set an environment variable SLATE_API_KEY
+                '''You must set an environment variable SLATE_API_KEY
                 as the value of your slate API key''')
         else:
-            self.key = os.environ[u'SLATE_API_KEY']
+            self.key = os.environ['SLATE_API_KEY']
 
-        if u'SLATE_SSL_VERIFY' not in os.environ.keys():
+        if 'SLATE_SSL_VERIFY' not in os.environ.keys():
             self.verify = True
         else:
-            if u'SLATE_SSL_VERIFY' == u'0':
+            if 'SLATE_SSL_VERIFY' == '0':
                 self.verify = False
             else:
                 self.verify = True
 
-        data = json.dumps({u'data': {u'private': u'true'}})
+        data = json.dumps({'data': {'private': 'true'}})
         headers = {
-            u'Content-Type': u'application/json',
-            u'Authorization': u'Basic ' + self.key
+            'Content-Type': 'application/json',
+            'Authorization': 'Basic ' + self.key
         }
 
         response = requests.post(
-            u'https://slate.host/api/v1/get',
+            'https://slate.host/api/v1/get',
             data=data,
             headers=headers,
             verify=self.verify)
         if not response.ok:
-            raise BackendException(u"Slate backend requires a valid API key")
+            raise BackendException("Slate backend requires a valid API key")
 
-        self.slate_id = parsed_url.geturl().split(u'/')[-1]
+        self.slate_id = parsed_url.geturl().split('/')[-1]
 
     def _put(self, source_path, remote_filename):
-        data = json.dumps({u'data': {u'private': u'true'}})
+        data = json.dumps({'data': {'private': 'true'}})
         headers = {
-            u'Content-Type': u'application/json',
-            u'Authorization': u'Basic ' + self.key
+            'Content-Type': 'application/json',
+            'Authorization': 'Basic ' + self.key
         }
 
-        log.Debug(u"source_path.name: " + str(source_path.name))
-        log.Debug(u"remote_filename: " + remote_filename.decode(u"utf8"))
+        log.Debug("source_path.name: " + str(source_path.name))
+        log.Debug("remote_filename: " + remote_filename.decode("utf8"))
         rem_filename = str(os.fsdecode(remote_filename))
 
         src = Path(os.fsdecode(source_path.name))
-        if str(src.name).startswith(u"mktemp"):
-            log.Debug(u"copying temp file for upload")
+        if str(src.name).startswith("mktemp"):
+            log.Debug("copying temp file for upload")
             src = shutil.move(str(src), str(src.with_name(rem_filename)))
 
-        log.Debug(u"response")
+        log.Debug("response")
         headers = {
-            u'Authorization': u'Basic ' + self.key
+            'Authorization': 'Basic ' + self.key
         }
-        files = {rem_filename: open(str(src), u'rb')}
-        log.Debug(u"-------------------FILECHECK: " + str(files.keys()))
+        files = {rem_filename: open(str(src), 'rb')}
+        log.Debug("-------------------FILECHECK: " + str(files.keys()))
         response = requests.post(
-            url=u'https://uploads.slate.host/api/public/' + self.slate_id,
+            url='https://uploads.slate.host/api/public/' + self.slate_id,
             files=files,
             headers=headers)
-        log.Debug(u"response handled")
+        log.Debug("response handled")
 
         if not response.ok:
-            raise BackendException(u"An error occurred whilst attempting to upload a file: %s" % (response))
+            raise BackendException("An error occurred whilst attempting to upload a file: %s" % (response))
         else:
-            log.Debug(u"File successfully uploaded to slate with id:" + self.slate_id)
+            log.Debug("File successfully uploaded to slate with id:" + self.slate_id)
 
-        if str(src).endswith(u"difftar.gpg"):
+        if str(src).endswith("difftar.gpg"):
             os.remove(str(src))
 
     def _list(self):
 
         # Checks if a specific slate has been selected, otherwise lists all slates
-        log.Debug(u"Slate ID: %s" % self.slate_id)
-        data = json.dumps({u'data': {u'private': u'true'}})
+        log.Debug("Slate ID: %s" % self.slate_id)
+        data = json.dumps({'data': {'private': 'true'}})
         headers = {
-            u'Content-Type': u'application/json',
-            u'Authorization': u'Basic ' + self.key
+            'Content-Type': 'application/json',
+            'Authorization': 'Basic ' + self.key
         }
         response = requests.post(
-            u'https://slate.host/api/v1/get',
+            'https://slate.host/api/v1/get',
             data=data,
             headers=headers,
             verify=self.verify)
 
         if not response.ok:
-            raise BackendException(u"Slate backend requires a valid API key")
+            raise BackendException("Slate backend requires a valid API key")
 
-        slates = response.json()[u'slates']
+        slates = response.json()['slates']
         # log.Debug("SLATES:\n%s"%(slates))
         file_list = []
         for slate in slates:
-            if slate[u'id'] == self.slate_id:
-                files = slate[u'data'][u'objects']
+            if slate['id'] == self.slate_id:
+                files = slate['data']['objects']
                 for f in files:
-                    file_list.append(f[u'name'])
+                    file_list.append(f['name'])
             else:
-                log.Debug(u"Could not find slate with id: " + self.slate_id)
+                log.Debug("Could not find slate with id: " + self.slate_id)
 
         return file_list
 
     def _get(self, remote_filename, local_path):
         # Downloads chosen file from IPFS by parsing its cid
         found = False
-        data = json.dumps({u'data': {u'private': u'true'}})
+        data = json.dumps({'data': {'private': 'true'}})
         headers = {
-            u'Content-Type': u'application/json',
-            u'Authorization': u'Basic ' + self.key
+            'Content-Type': 'application/json',
+            'Authorization': 'Basic ' + self.key
         }
 
         response = requests.post(
-            u'https://slate.host/api/v1/get',
+            'https://slate.host/api/v1/get',
             data=data,
             headers=headers,
             verify=self.verify)
 
-        slates = response.json()[u'slates']
+        slates = response.json()['slates']
         # file_list = self._list()
 
         # if remote_filename not in file_list:
         #     raise BackendException(u"The chosen file does not exist in the chosen slate")
 
         for slate in slates:
-            if slate[u'id'] == self.slate_id:
+            if slate['id'] == self.slate_id:
                 found = True
-                for obj in slate[u'data'][u'objects']:
-                    if obj[u'name'] == remote_filename.decode(u"utf8"):
-                        cid = obj[u'url'].split(u"/")[-1]
+                for obj in slate['data']['objects']:
+                    if obj['name'] == remote_filename.decode("utf8"):
+                        cid = obj['url'].split("/")[-1]
                         break
                     else:
                         raise BackendException(
-                            u"The file '"
-                            + remote_filename.decode(u"utf8")
-                            + u"' could not be found in the specified slate")
+                            "The file '"
+                            + remote_filename.decode("utf8")
+                            + "' could not be found in the specified slate")
 
         if not found:
-            raise BackendException(u"A slate with id " + self.slate_id + u" does not exist")
+            raise BackendException("A slate with id " + self.slate_id + " does not exist")
 
         try:
-            urllib.request.urlretrieve(u'http://ipfs.io/ipfs/%s' % cid, os.fsdecode(local_path.name))
-            log.Debug(u'Downloaded file with cid: %s' % cid)
+            urllib.request.urlretrieve('http://ipfs.io/ipfs/%s' % cid, os.fsdecode(local_path.name))
+            log.Debug('Downloaded file with cid: %s' % cid)
         except NameError as e:
-            raise BackendException(u"Couldn't download file")
+            raise BackendException("Couldn't download file")
 
 
-duplicity.backend.register_backend(u'slate', SlateBackend)
+duplicity.backend.register_backend('slate', SlateBackend)

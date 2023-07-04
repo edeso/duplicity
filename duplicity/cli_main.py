@@ -18,7 +18,7 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-u"""
+"""
 Main for parse command line, check for consistency, and set config
 """
 import argparse
@@ -38,47 +38,47 @@ from duplicity.cli_util import *
 
 class DuplicityHelpFormatter(argparse.ArgumentDefaultsHelpFormatter,
                              argparse.RawDescriptionHelpFormatter):
-    u"""
+    """
     A working class to combine ArgumentDefaults, RawDescription.
     Use with make_wide() to insure we catch argparse API changes.
     """
 
 
 def make_wide(formatter, w=120, h=46):
-    u"""
+    """
     Return a wider HelpFormatter, if possible.
     See: https://stackoverflow.com/a/5464440
     Beware: "Only the name of this class is considered a public API."
     """
     try:
-        kwargs = {u'width': w, u'max_help_position': h}
+        kwargs = {'width': w, 'max_help_position': h}
         formatter(None, **kwargs)
         return lambda prog: formatter(prog, **kwargs)
     except TypeError:
-        warnings.warn(u"argparse help formatter failed, falling back.")
+        warnings.warn("argparse help formatter failed, falling back.")
         return formatter
 
 
 def harvest_namespace(args):
-    u"""
+    """
     Copy all arguments and their values to the config module.  Don't copy
     attributes that are 'hidden' (start with an underscore) or whose name is
     the empty string (used for arguments that don't directly store a value
     by using dest="")
     """
-    for f in [x for x in dir(args) if x and not x.startswith(u"_")]:
+    for f in [x for x in dir(args) if x and not x.startswith("_")]:
         v = getattr(args, f)
         setattr(config, f, v)
 
 
 def pre_parse_cmdline_options(arglist):
-    u"""
+    """
     Parse the commands and options that need to be handled first.
     Everthing else is passed on to the main parser.
     """
     # set up parent parser
     parser = argparse.ArgumentParser(
-        prog=u'duplicity',
+        prog='duplicity',
         add_help=False,
         argument_default=None)
 
@@ -89,7 +89,7 @@ def pre_parse_cmdline_options(arglist):
         parser.add_argument(*names, **OptionKwargs.__dict__[var])
 
     # add args for implied backup/restore
-    parser.add_argument(u'posargs', nargs=u'*')
+    parser.add_argument('posargs', nargs='*')
 
     # process parent args now
     args, remain = parser.parse_known_args(arglist)
@@ -104,14 +104,14 @@ def pre_parse_cmdline_options(arglist):
             # implied command usage, figure out which, if any
             if is_path(arg1) and is_url(arg2):
                 log.Notice(_(f"Detected implied backup command: {arg1} {arg2}"))
-                remain = [u'inc'] + args.posargs + remain
+                remain = ['inc'] + args.posargs + remain
                 config.inc_explicit = False
             elif is_url(arg1) and is_path(arg2):
                 log.Notice(_(f"Detected implied restore command: {arg1} {arg2}"))
-                remain = [u'restore'] + args.posargs + remain
+                remain = ['restore'] + args.posargs + remain
             else:
                 command_line_error(_(f"Implied command detected.  One arg should be a PATH and the other a URL.\n"
-                                   f"Got: {arg1} {arg2}"))
+                                     f"Got: {arg1} {arg2}"))
 
     # harvest args to config
     harvest_namespace(args)
@@ -120,7 +120,7 @@ def pre_parse_cmdline_options(arglist):
 
 
 def parse_cmdline_options(arglist):
-    u"""
+    """
     Parse remaining argument list once all is defined.
     """
     # preprocess config type args
@@ -128,7 +128,7 @@ def parse_cmdline_options(arglist):
 
     # set up parent parser
     parser = argparse.ArgumentParser(
-        prog=u'duplicity',
+        prog='duplicity',
         argument_default=None,
         formatter_class=make_wide(DuplicityHelpFormatter))
 
@@ -154,13 +154,13 @@ def parse_cmdline_options(arglist):
 
     # set up command subparsers
     subparsers = parser.add_subparsers(
-        title=u"valid commands",
+        title="valid commands",
         required=False)
 
     # add sub_parser for each command
     subparser_dict = dict()
     for var, meta in sorted(DuplicityCommands.__dict__.items()):
-        if var.startswith(u"__"):
+        if var.startswith("__"):
             continue
         cmd = var2cmd(var)
         subparser_dict[cmd] = subparsers.add_parser(
@@ -171,8 +171,8 @@ def parse_cmdline_options(arglist):
             epilog=help_url_formats,
         )
         subparser_dict[cmd].add_argument(
-            dest=u"action",
-            action=u"store_const",
+            dest="action",
+            action="store_const",
             const=cmd)
         for arg in meta:
             func = getattr(cli_util, f"check_{arg}")
@@ -188,7 +188,7 @@ def parse_cmdline_options(arglist):
     args = parser.parse_args(remain)
 
     # if no command, print general help
-    if not hasattr(args, u"action"):
+    if not hasattr(args, "action"):
         parser.print_usage()
         sys.exit(2)
 
@@ -199,7 +199,7 @@ def parse_cmdline_options(arglist):
 
 
 def process_command_line(cmdline_list):
-    u"""
+    """
     Process command line, set config
     """
     # build initial gpg_profile
@@ -217,12 +217,12 @@ def process_command_line(cmdline_list):
             recipients=src.recipients,
             hidden_recipients=src.hidden_recipients)
     else:
-        config.gpg_binary = util.which(u'gpg')
-    gpg_version = u".".join(map(str, config.gpg_profile.gpg_version))
+        config.gpg_binary = util.which('gpg')
+    gpg_version = ".".join(map(str, config.gpg_profile.gpg_version))
     log.Info(_(f"GPG binary is {config.gpg_binary}, version {gpg_version}"))
 
     # shorten incremental to inc
-    config.action = u"inc" if config.action == u"incremental" else config.action
+    config.action = "inc" if config.action == "incremental" else config.action
 
     # import all backends and determine which one we use
     backend.import_backends()
@@ -249,7 +249,7 @@ def process_command_line(cmdline_list):
     config.keep_chains = config.count
 
     # selection only applies to certain commands
-    if config.action in [u"backup", u'full', u'inc', u'verify']:
+    if config.action in ["backup", 'full', 'inc', 'verify']:
         set_selection()
 
     # print derived info
@@ -259,7 +259,7 @@ def process_command_line(cmdline_list):
     return config.action
 
 
-if __name__ == u"__main__":
+if __name__ == "__main__":
     log.setup()
     args = process_command_line(sys.argv[1:])
     for a, v in sorted(args.__dict__.items()):

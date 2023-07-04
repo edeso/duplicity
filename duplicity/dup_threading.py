@@ -19,7 +19,7 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-u"""
+"""
 Duplicity specific but otherwise generic threading interfaces and
 utilities.
 
@@ -35,7 +35,7 @@ from duplicity import errors
 
 
 def with_lock(lock, fn):
-    u"""
+    """
     Call fn with lock acquired. Guarantee that lock is released upon
     the return of fn.
 
@@ -54,7 +54,7 @@ def with_lock(lock, fn):
 
 
 def interruptably_wait(cv, waitFor):
-    u"""
+    """
     cv   - The threading.Condition instance to wait on
     test - Callable returning a boolean to indicate whether
            the criteria being waited on has been satisfied.
@@ -105,7 +105,7 @@ def interruptably_wait(cv, waitFor):
 
 
 def async_split(fn):
-    u"""
+    """
     Splits the act of calling the given function into one front-end
     part for waiting on the result, and a back-end part for performing
     the work in another thread.
@@ -130,20 +130,20 @@ def async_split(fn):
     # used for significant amounts of work.
 
     cv = threading.Condition()
-    state = {u'done': False,
-             u'error': None,
-             u'trace': None,
-             u'value': None}
+    state = {'done': False,
+             'error': None,
+             'trace': None,
+             'value': None}
 
     def waiter():
         cv.acquire()
         try:
-            interruptably_wait(cv, lambda: state[u'done'])
+            interruptably_wait(cv, lambda: state['done'])
 
-            if state[u'error'] is None:
-                return state[u'value']
+            if state['error'] is None:
+                return state['value']
             else:
-                raise state[u'error'].with_traceback(state[u'trace'])
+                raise state['error'].with_traceback(state['trace'])
         finally:
             cv.release()
 
@@ -152,17 +152,17 @@ def async_split(fn):
             value = fn()
 
             cv.acquire()
-            state[u'done'] = True
-            state[u'value'] = value
+            state['done'] = True
+            state['value'] = value
             cv.notify()
             cv.release()
 
             return True, waiter
         except Exception as e:
             cv.acquire()
-            state[u'done'] = True
-            state[u'error'] = e
-            state[u'trace'] = sys.exc_info()[2]
+            state['done'] = True
+            state['error'] = e
+            state['trace'] = sys.exc_info()[2]
             cv.notify()
             cv.release()
 
@@ -172,7 +172,7 @@ def async_split(fn):
 
 
 class Value(object):
-    u"""
+    """
     A thread-safe container of a reference to an object (but not the
     object itself).
 
@@ -197,7 +197,7 @@ class Value(object):
     """
 
     def __init__(self, value=None):
-        u"""
+        """
         Initialuze with the given value.
         """
         self.__value = value
@@ -205,22 +205,23 @@ class Value(object):
         self.__cv = threading.Condition()
 
     def get(self):
-        u"""
+        """
         Returns the value protected by this Value.
         """
         return with_lock(self.__cv, lambda: self.__value)
 
     def set(self, value):
-        u"""
+        """
         Resets the value protected by this Value.
         """
+
         def _set():
             self.__value = value
 
         with_lock(self.__cv, _set)
 
     def transform(self, fn):
-        u"""
+        """
         Call fn with the current value as the parameter, and reset the
         value to the return value of fn.
 
@@ -232,6 +233,7 @@ class Value(object):
         Returns the value returned by fn, or raises the exception
         raised by fn.
         """
+
         def _transform():
             self.__value = fn(self.__value)
             return self.__value
@@ -239,7 +241,7 @@ class Value(object):
         return with_lock(self.cv, _transform)
 
     def acquire(self):
-        u"""
+        """
         Acquire this Value for mutually exclusive access. Only ever
         needed when calling code must perform operations that cannot
         be done with get(), set() or transform().
@@ -247,7 +249,7 @@ class Value(object):
         self.__cv.acquire()
 
     def release(self):
-        u"""
+        """
         Release this Value for mutually exclusive access.
         """
         self.__cv.release()

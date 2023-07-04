@@ -18,7 +18,7 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-u"""
+"""
 Utils for parse command line, check for consistency, and set config
 """
 
@@ -36,7 +36,7 @@ from duplicity import log
 from duplicity import path
 from duplicity import selection
 
-gpg_key_patt = re.compile(u"^(0x)?([0-9A-Fa-f]{8}|[0-9A-Fa-f]{16}|[0-9A-Fa-f]{40})$")
+gpg_key_patt = re.compile("^(0x)?([0-9A-Fa-f]{8}|[0-9A-Fa-f]{16}|[0-9A-Fa-f]{40})$")
 
 
 class CommandLineError(errors.UserError):
@@ -44,11 +44,11 @@ class CommandLineError(errors.UserError):
 
 
 def command_line_error(message):
-    u"""
+    """
     Indicate a command line error and exit
     """
     raise CommandLineError(_(f"{message}\n") +
-                           _(u"Enter 'duplicity --help' for help screen."))
+                           _("Enter 'duplicity --help' for help screen."))
 
 
 class DuplicityAction(argparse.Action):
@@ -75,7 +75,7 @@ class AddFilelistAction(DuplicityAction):
     def __call__(self, parser, namespace, values, option_string=None):
         config.select_opts.append((os.fsdecode(option_string), os.fsdecode(values)))
         try:
-            config.select_files.append(io.open(values, u"rt", encoding=u"UTF-8"))
+            config.select_files.append(io.open(values, "rt", encoding="UTF-8"))
         except Exception as e:
             command_line_error(str(e))
 
@@ -94,8 +94,8 @@ class IgnoreErrorsAction(DuplicityAction):
         super().__init__(option_strings, dest, **kwargs)
 
     def __call__(self, parser, namespace, values, option_string=None):
-        log.Warn(_(u"Running in 'ignore errors' mode due to --ignore-errors.\n"
-                   u"Please reconsider if this was not intended"))
+        log.Warn(_("Running in 'ignore errors' mode due to --ignore-errors.\n"
+                   "Please reconsider if this was not intended"))
         config.ignore_errors = True
 
 
@@ -163,7 +163,7 @@ def check_source_path(val):
 
 
 def check_source_url(val):
-    if u"://" not in val:
+    if "://" not in val:
         command_line_error(_(f"Source should be url, not directory.  Got '{val}' instead."))
     return val
 
@@ -180,7 +180,7 @@ def check_target_dir(val):
 
 
 def check_target_url(val):
-    if u"://" not in val:
+    if "://" not in val:
         command_line_error(_(f"Source should be url, not directory.  Got '{val}' instead."))
     return val
 
@@ -193,7 +193,7 @@ def check_time(val):
 
 
 def check_timeout(val):
-    u"""
+    """
     set timeout for backends
     """
     val = _check_int(val)
@@ -205,15 +205,15 @@ def check_verbosity(val):
     fail = False
     verb = log.NOTICE
     val = val.lower()
-    if val in [u'e', u'error']:
+    if val in ['e', 'error']:
         verb = log.ERROR
-    elif val in [u'w', u'warning']:
+    elif val in ['w', 'warning']:
         verb = log.WARNING
-    elif val in [u'n', u'notice']:
+    elif val in ['n', 'notice']:
         verb = log.NOTICE
-    elif val in [u'i', u'info']:
+    elif val in ['i', 'info']:
         verb = log.INFO
-    elif val in [u'd', u'debug']:
+    elif val in ['d', 'debug']:
         verb = log.DEBUG
     else:
         try:
@@ -228,17 +228,17 @@ def check_verbosity(val):
         # characters are permitted (e, w, n, i, or d); the brackets imply their own
         # meaning in regex; i.e., only one of the characters is allowed in an instance.
         command_line_error(_(
-            u"Verbosity must be one of: digit [0-9], character [ewnid],\n"
-            u"or word ['error', 'warning', 'notice', 'info', 'debug'].\n"
-            u"The default is 4 (Notice).  It is strongly recommended\n"
-            u"that verbosity level is set at 2 (Warning) or higher."))
+            "Verbosity must be one of: digit [0-9], character [ewnid],\n"
+            "or word ['error', 'warning', 'notice', 'info', 'debug'].\n"
+            "The default is 4 (Notice).  It is strongly recommended\n"
+            "that verbosity level is set at 2 (Warning) or higher."))
 
     log.setverbosity(verb)
     return verb
 
 
 def dflt(val):
-    u"""
+    """
     Return printable value for default.
     """
     if isinstance(val, (str, bytes, bool, int)):
@@ -252,17 +252,17 @@ def expand_fn(filename):
 
 
 def expand_archive_dir(archdir, backname):
-    u"""
+    """
     Return expanded version of archdir joined with backname.
     """
     assert config.backup_name is not False, \
-        u"expand_archive_dir() called prior to config.backup_name being set"
+        "expand_archive_dir() called prior to config.backup_name being set"
 
     return expand_fn(os.path.join(archdir, os.fsencode(backname)))
 
 
 def generate_default_backup_name(backend_url):
-    u"""
+    """
     @param backend_url: URL to backend.
     @returns A default backup name (string).
     """
@@ -283,14 +283,14 @@ def generate_default_backup_name(backend_url):
 
 
 def is_url(val):
-    u"""
+    """
     Check if val is URL
     """
-    return u'://' in val
+    return '://' in val
 
 
 def is_path(val):
-    u"""
+    """
     Check if val is PATH
     """
     return not is_url(val)
@@ -298,47 +298,47 @@ def is_path(val):
 
 def make_bytes(value):
     if isinstance(value, str):
-        return bytes(value, u'utf-8')
+        return bytes(value, 'utf-8')
 
 
 def var2cmd(s):
-    u"""
+    """
     Convert var name to command string
     """
-    return s.replace(u"_", u"-")
+    return s.replace("_", "-")
 
 
 def var2opt(s):
-    u"""
+    """
     Convert var name to option string
     """
     if len(s) > 1:
-        return u"--" + s.replace(u"_", u"-")
+        return "--" + s.replace("_", "-")
     else:
-        return u"-" + s
+        return "-" + s
 
 
 def cmd2var(s):
-    u"""
+    """
     Convert command string to var name
     """
-    return s.replace(u"-", u"_")
+    return s.replace("-", "_")
 
 
 def opt2var(s):
-    u"""
+    """
     Convert option string to var name
     """
-    return s.lstrip(u"-").replace(u"-", u"_")
+    return s.lstrip("-").replace("-", "_")
 
 
 def set_log_fd(fd):
     try:
         fd = int(fd)
     except ValueError:
-        command_line_error(u"log_fd must be an integer.")
+        command_line_error("log_fd must be an integer.")
     if fd < 1:
-        command_line_error(u"log-fd must be greater than zero.")
+        command_line_error("log-fd must be greater than zero.")
     log.add_fd(fd)
     return fd
 
@@ -358,7 +358,7 @@ def set_megs(num):
 
 
 def set_archive_dir(dirstring):
-    u"""Check archive dir and set global"""
+    """Check archive dir and set global"""
     if not os.path.exists(dirstring):
         try:
             os.makedirs(dirstring)
@@ -371,7 +371,7 @@ def set_archive_dir(dirstring):
 
 
 def set_encrypt_key(encrypt_key):
-    u"""Set config.gpg_profile.encrypt_key assuming proper key given"""
+    """Set config.gpg_profile.encrypt_key assuming proper key given"""
     if not gpg_key_patt.match(encrypt_key):
         command_line_error(_(f"Encrypt key should be an 8, 16, or 40 character hex string, like 'AA0E73D2'.\n"
                              f"Received '{encrypt_key}' length={len(encrypt_key)} instead."))
@@ -381,7 +381,7 @@ def set_encrypt_key(encrypt_key):
 
 
 def set_hidden_encrypt_key(hidden_encrypt_key):
-    u"""Set config.gpg_profile.hidden_encrypt_key assuming proper key given"""
+    """Set config.gpg_profile.hidden_encrypt_key assuming proper key given"""
     if not gpg_key_patt.match(hidden_encrypt_key):
         command_line_error(_(f"Hidden dncrypt key should be an 8, 16, or 40 character hex string, like 'AA0E73D2'.\n"
                              f"Received '{hidden_encrypt_key}' length={len(hidden_encrypt_key)} instead."))
@@ -391,7 +391,7 @@ def set_hidden_encrypt_key(hidden_encrypt_key):
 
 
 def set_sign_key(sign_key):
-    u"""Set config.gpg_profile.sign_key assuming proper key given"""
+    """Set config.gpg_profile.sign_key assuming proper key given"""
     if not gpg_key_patt.match(sign_key):
         command_line_error(_(f"Sign key should be an 8, 16, or 40 character hex string, like 'AA0E73D2'.\n"
                              f"Received '{sign_key}' length={len(sign_key)} instead."))
@@ -399,7 +399,7 @@ def set_sign_key(sign_key):
 
 
 def set_selection():
-    u"""Return selection iter starting at filename with arguments applied"""
+    """Return selection iter starting at filename with arguments applied"""
     sel = selection.Select(config.local_path)
     sel.ParseArgs(config.select_opts, config.select_files)
     config.select = sel.set_iter()

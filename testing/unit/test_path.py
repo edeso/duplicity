@@ -28,15 +28,15 @@ from . import UnitTestCase
 
 
 class PathTest(UnitTestCase):
-    u"""Test basic path functions"""
+    """Test basic path functions"""
     def setUp(self):
         super().setUp()
         self.unpack_testfiles()
 
     def test_deltree(self):
-        u"""Test deleting a tree"""
-        assert not os.system(u"cp -pR {0}/testfiles/deltree {0}/testfiles/output".format(_runtest_dir).format(_runtest_dir))  # noqa
-        p = Path(u"{0}/testfiles/output".format(_runtest_dir))
+        """Test deleting a tree"""
+        assert not os.system("cp -pR {0}/testfiles/deltree {0}/testfiles/output".format(_runtest_dir).format(_runtest_dir))  # noqa
+        p = Path("{0}/testfiles/output".format(_runtest_dir))
         assert p.isdir()
         p.deltree()
         assert not p.type, p.type
@@ -56,45 +56,45 @@ class PathTest(UnitTestCase):
     #         Path(u"{0}/testfiles/dir2".format(_runtest_dir)), 1)
 
     def test_quote(self):
-        u"""Test path quoting"""
-        p = Path(u"hello")
-        assert p.quote() == u'"hello"'
-        assert p.quote(u"\\") == u'"\\\\"', p.quote(u"\\")
-        assert p.quote(u"$HELLO") == u'"\\$HELLO"'
+        """Test path quoting"""
+        p = Path("hello")
+        assert p.quote() == '"hello"'
+        assert p.quote("\\") == '"\\\\"', p.quote("\\")
+        assert p.quote("$HELLO") == '"\\$HELLO"'
 
     def test_unquote(self):
-        u"""Test path unquoting"""
-        p = Path(u"foo")  # just to provide unquote function
+        """Test path unquoting"""
+        p = Path("foo")  # just to provide unquote function
 
         def t(s):
-            u"""Run test on string s"""
+            """Run test on string s"""
             quoted_version = p.quote(s)
             unquoted = p.unquote(quoted_version)
             assert unquoted == s, (unquoted, s)
 
-        t(u"\\")
-        t(u"$HELLO")
-        t(u" aoe aoe \\ \n`")
+        t("\\")
+        t("$HELLO")
+        t(" aoe aoe \\ \n`")
 
     def test_canonical(self):
-        u"""Test getting canonical version of path"""
-        c = Path(u".").get_canonical()
+        """Test getting canonical version of path"""
+        c = Path(".").get_canonical()
         assert c == b".", c
 
-        c = Path(u"//foo/bar/./").get_canonical()
+        c = Path("//foo/bar/./").get_canonical()
         assert c == b"/foo/bar", c
 
     def test_compare_verbose(self):
-        u"""Run compare_verbose on a few files"""
-        vft = Path(u"{0}/testfiles/various_file_types".format(_runtest_dir))
+        """Run compare_verbose on a few files"""
+        vft = Path("{0}/testfiles/various_file_types".format(_runtest_dir))
         assert vft.compare_verbose(vft)
-        reg_file = vft.append(u"regular_file")
+        reg_file = vft.append("regular_file")
         assert not vft.compare_verbose(reg_file)
         assert reg_file.compare_verbose(reg_file)
-        file2 = vft.append(u"executable")
+        file2 = vft.append("executable")
         assert not file2.compare_verbose(reg_file)
         assert file2.compare_verbose(file2)
 
 
-if __name__ == u"__main__":
+if __name__ == "__main__":
     unittest.main()

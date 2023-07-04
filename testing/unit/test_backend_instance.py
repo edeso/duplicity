@@ -36,24 +36,24 @@ class BackendInstanceBase(UnitTestCase):
 
     def setUp(self):
         UnitTestCase.setUp(self)
-        assert not os.system(u"rm -rf {0}/testfiles".format(_runtest_dir))
-        os.makedirs(u'{0}/testfiles'.format(_runtest_dir))
+        assert not os.system("rm -rf {0}/testfiles".format(_runtest_dir))
+        os.makedirs('{0}/testfiles'.format(_runtest_dir))
         self.backend = None
-        self.local = path.Path(u'{0}/testfiles/local'.format(_runtest_dir))
+        self.local = path.Path('{0}/testfiles/local'.format(_runtest_dir))
         self.local.writefileobj(io.BytesIO(b"hello"))
 
     def tearDown(self):
-        assert not os.system(u"rm -rf {0}/testfiles".format(_runtest_dir))
+        assert not os.system("rm -rf {0}/testfiles".format(_runtest_dir))
         if self.backend is None:
             return
-        if hasattr(self.backend, u'_close'):
+        if hasattr(self.backend, '_close'):
             self.backend._close()
 
     def test_get(self):
         if self.backend is None:
             return
         self.backend._put(self.local, b'file-a')
-        getfile = path.Path(u'{0}/testfiles/getfile'.format(_runtest_dir))
+        getfile = path.Path('{0}/testfiles/getfile'.format(_runtest_dir))
         self.backend._get(b'file-a', getfile)
         self.assertTrue(self.local.compare_data(getfile))
 
@@ -70,8 +70,8 @@ class BackendInstanceBase(UnitTestCase):
     def test_delete(self):
         if self.backend is None:
             return
-        if not hasattr(self.backend, u'_delete'):
-            self.assertTrue(hasattr(self.backend, u'_delete_list'))
+        if not hasattr(self.backend, '_delete'):
+            self.assertTrue(hasattr(self.backend, '_delete_list'))
             return
         self.backend._put(self.local, b'file-a')
         self.backend._put(self.local, b'file-b')
@@ -82,8 +82,8 @@ class BackendInstanceBase(UnitTestCase):
     def test_delete_clean(self):
         if self.backend is None:
             return
-        if not hasattr(self.backend, u'_delete'):
-            self.assertTrue(hasattr(self.backend, u'_delete_list'))
+        if not hasattr(self.backend, '_delete'):
+            self.assertTrue(hasattr(self.backend, '_delete_list'))
             return
         self.backend._put(self.local, b'file-a')
         self.backend._delete(b'file-a')
@@ -92,8 +92,8 @@ class BackendInstanceBase(UnitTestCase):
     def test_delete_missing(self):
         if self.backend is None:
             return
-        if not hasattr(self.backend, u'_delete'):
-            self.assertTrue(hasattr(self.backend, u'_delete_list'))
+        if not hasattr(self.backend, '_delete'):
+            self.assertTrue(hasattr(self.backend, '_delete_list'))
             return
         # Backends can either silently ignore this, or throw an error
         # that gives log.ErrorCode.backend_not_found.
@@ -102,14 +102,14 @@ class BackendInstanceBase(UnitTestCase):
         except BackendException as e:
             pass  # Something went wrong, but it was an 'expected' something
         except Exception as e:
-            code = duplicity.backend._get_code_from_exception(self.backend, u'delete', e)
+            code = duplicity.backend._get_code_from_exception(self.backend, 'delete', e)
             self.assertEqual(code, log.ErrorCode.backend_not_found)
 
     def test_delete_list(self):
         if self.backend is None:
             return
-        if not hasattr(self.backend, u'_delete_list'):
-            self.assertTrue(hasattr(self.backend, u'_delete'))
+        if not hasattr(self.backend, '_delete_list'):
+            self.assertTrue(hasattr(self.backend, '_delete'))
             return
         self.backend._put(self.local, b'file-a')
         self.backend._put(self.local, b'file-b')
@@ -123,33 +123,33 @@ class BackendInstanceBase(UnitTestCase):
     def test_move(self):
         if self.backend is None:
             return
-        if not hasattr(self.backend, u'_move'):
+        if not hasattr(self.backend, '_move'):
             return
 
-        copy = path.Path(u'{0}/testfiles/copy'.format(_runtest_dir))
+        copy = path.Path('{0}/testfiles/copy'.format(_runtest_dir))
         self.local.copy(copy)
 
         self.backend._move(self.local, b'file-a')
         self.assertTrue(b'file-a' in self.backend._list())
         self.assertFalse(self.local.exists())
 
-        getfile = path.Path(u'{0}/testfiles/getfile'.format(_runtest_dir))
+        getfile = path.Path('{0}/testfiles/getfile'.format(_runtest_dir))
         self.backend._get(b'file-a', getfile)
         self.assertTrue(copy.compare_data(getfile))
 
     def test_query_exists(self):
         if self.backend is None:
             return
-        if not hasattr(self.backend, u'_query'):
+        if not hasattr(self.backend, '_query'):
             return
         self.backend._put(self.local, b'file-a')
         info = self.backend._query(b'file-a')
-        self.assertEqual(info[u'size'], self.local.getsize())
+        self.assertEqual(info['size'], self.local.getsize())
 
     def test_query_missing(self):
         if self.backend is None:
             return
-        if not hasattr(self.backend, u'_query'):
+        if not hasattr(self.backend, '_query'):
             return
         # Backends can either return -1 themselves, or throw an error
         # that gives log.ErrorCode.backend_not_found.
@@ -158,40 +158,40 @@ class BackendInstanceBase(UnitTestCase):
         except BackendException as e:  # pylint:
             pass  # Something went wrong, but it was an 'expected' something
         except Exception as e:
-            code = duplicity.backend._get_code_from_exception(self.backend, u'query', e)
+            code = duplicity.backend._get_code_from_exception(self.backend, 'query', e)
             self.assertEqual(code, log.ErrorCode.backend_not_found)
         else:
-            self.assertEqual(info[u'size'], -1)
+            self.assertEqual(info['size'], -1)
 
     def test_query_list(self):
         if self.backend is None:
             return
-        if not hasattr(self.backend, u'_query_list'):
+        if not hasattr(self.backend, '_query_list'):
             return
         self.backend._put(self.local, b'file-a')
         self.backend._put(self.local, b'file-c')
         info = self.backend._query_list([b'file-a', b'file-b'])
-        self.assertEqual(info[b'file-a'][u'size'], self.local.getsize())
-        self.assertEqual(info[b'file-b'][u'size'], -1)
+        self.assertEqual(info[b'file-a']['size'], self.local.getsize())
+        self.assertEqual(info[b'file-b']['size'], -1)
         self.assertFalse(b'file-c' in info)
 
 
 class LocalBackendTest(BackendInstanceBase):
     def setUp(self):
         super().setUp()
-        url = u'file://{0}/testfiles/output'.format(_runtest_dir)
+        url = 'file://{0}/testfiles/output'.format(_runtest_dir)
         self.backend = duplicity.backend.get_backend_object(url)
-        self.assertEqual(self.backend.__class__.__name__, u'LocalBackend')
+        self.assertEqual(self.backend.__class__.__name__, 'LocalBackend')
 
 
 # TODO: Add par2-specific tests here, to confirm that we can recover
-@unittest.skipIf(not util.which(u'par2'), u"par2 not installed")
+@unittest.skipIf(not util.which('par2'), "par2 not installed")
 class Par2BackendTest(BackendInstanceBase):
     def setUp(self):
         super().setUp()
-        url = u'par2+file://{0}/testfiles/output'.format(_runtest_dir)
+        url = 'par2+file://{0}/testfiles/output'.format(_runtest_dir)
         self.backend = duplicity.backend.get_backend_object(url)
-        self.assertEqual(self.backend.__class__.__name__, u'Par2Backend')
+        self.assertEqual(self.backend.__class__.__name__, 'Par2Backend')
 
 
 # TODO: Fix so localhost is not required.  Fails on LP and GitLab
@@ -207,10 +207,10 @@ class Par2BackendTest(BackendInstanceBase):
 class TahoeBackendTest(BackendInstanceBase):
     def setUp(self):
         super().setUp()
-        os.makedirs(u'{0}/testfiles/output'.format(_runtest_dir))
-        url = u'tahoe://{0}/testfiles/output'.format(_runtest_dir)
+        os.makedirs('{0}/testfiles/output'.format(_runtest_dir))
+        url = 'tahoe://{0}/testfiles/output'.format(_runtest_dir)
         self.backend = duplicity.backend.get_backend_object(url)
-        self.assertEqual(self.backend.__class__.__name__, u'TAHOEBackend')
+        self.assertEqual(self.backend.__class__.__name__, 'TAHOEBackend')
 
 
 # TODO: Modernize hsi backend stub
@@ -224,44 +224,44 @@ class TahoeBackendTest(BackendInstanceBase):
 #          self.assertEqual(self.backend.__class__.__name__, 'HSIBackend')
 
 
-@unittest.skipIf(not util.which(u'lftp'), u"lftp not installed")
+@unittest.skipIf(not util.which('lftp'), "lftp not installed")
 class FTPBackendTest(BackendInstanceBase):
     def setUp(self):
         super().setUp()
-        os.makedirs(u'{0}/testfiles/output'.format(_runtest_dir))
-        url = u'ftp://user:pass@hostname/{0}/testfiles/output'.format(_runtest_dir)
+        os.makedirs('{0}/testfiles/output'.format(_runtest_dir))
+        url = 'ftp://user:pass@hostname/{0}/testfiles/output'.format(_runtest_dir)
         self.backend = duplicity.backend.get_backend_object(url)
-        self.assertEqual(self.backend.__class__.__name__, u'LFTPBackend')
+        self.assertEqual(self.backend.__class__.__name__, 'LFTPBackend')
 
 
-@unittest.skipIf(not util.which(u'lftp'), u"lftp not installed")
+@unittest.skipIf(not util.which('lftp'), "lftp not installed")
 class FTPSBackendTest(BackendInstanceBase):
     def setUp(self):
         super().setUp()
-        os.makedirs(u'{0}/testfiles/output'.format(_runtest_dir))
-        url = u'ftps://user:pass@hostname/{0}/testfiles/output'.format(_runtest_dir)
+        os.makedirs('{0}/testfiles/output'.format(_runtest_dir))
+        url = 'ftps://user:pass@hostname/{0}/testfiles/output'.format(_runtest_dir)
         self.backend = duplicity.backend.get_backend_object(url)
-        self.assertEqual(self.backend.__class__.__name__, u'LFTPBackend')
+        self.assertEqual(self.backend.__class__.__name__, 'LFTPBackend')
 
 
-@unittest.skipIf(not util.which(u'rclone'), u"rclone not installed")
+@unittest.skipIf(not util.which('rclone'), "rclone not installed")
 class RCloneBackendTest(BackendInstanceBase):
     def setUp(self):
         super().setUp()
         # make sure rclone config exists
-        assert not os.system(u"rclone config touch")
+        assert not os.system("rclone config touch")
         # add a duptest local config
         try:
-            assert not os.system(u"rclone config create duptest local local=true --non-interactive")
+            assert not os.system("rclone config create duptest local local=true --non-interactive")
             self.delete_config = True
         except Exception as e:
             self.delete_config = False
-        os.makedirs(u'{0}/testfiles/output'.format(_runtest_dir))
-        url = u'rclone://duptest:/%s/{0}/testfiles/output'.format(_runtest_dir)
+        os.makedirs('{0}/testfiles/output'.format(_runtest_dir))
+        url = 'rclone://duptest:/%s/{0}/testfiles/output'.format(_runtest_dir)
         self.backend = duplicity.backend.get_backend_object(url)
-        self.assertEqual(self.backend.__class__.__name__, u'RcloneBackend')
+        self.assertEqual(self.backend.__class__.__name__, 'RcloneBackend')
 
     def tearDown(self):
         super().tearDown()
         if self.delete_config:
-            assert not os.system(u"rclone config delete duptest")
+            assert not os.system("rclone config delete duptest")

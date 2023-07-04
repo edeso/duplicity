@@ -19,7 +19,7 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-u"""Store global configuration information"""
+"""Store global configuration information"""
 
 import os
 import socket
@@ -77,13 +77,13 @@ current_time = None
 # contains the signatures and manifests of the relevent backup
 # collection), and for checkpoint state between volumes.
 # NOTE: this gets expanded in duplicity.commandline
-os.environ[u"XDG_CACHE_HOME"] = os.getenv(u"XDG_CACHE_HOME", os.path.expanduser(u"~/.cache"))
-archive_dir = os.path.expandvars(u"$XDG_CACHE_HOME/duplicity")
+os.environ["XDG_CACHE_HOME"] = os.getenv("XDG_CACHE_HOME", os.path.expanduser("~/.cache"))
+archive_dir = os.path.expandvars("$XDG_CACHE_HOME/duplicity")
 archive_dir_path = None
 
 # config dir for future use
-os.environ[u"XDG_CONFIG_HOME"] = os.getenv(u"XDG_CONFIG_HOME", os.path.expanduser(u"~/.config"))
-config_dir = os.path.expandvars(u"$XDG_CONFIG_HOME/duplicity")
+os.environ["XDG_CONFIG_HOME"] = os.getenv("XDG_CONFIG_HOME", os.path.expanduser("~/.config"))
+config_dir = os.path.expandvars("$XDG_CONFIG_HOME/duplicity")
 config_dir_path = None
 
 # Restores will try to bring back the state as of the following time.
@@ -101,12 +101,12 @@ backend = None
 # See example of use in multibackend.py _list()
 # Do not use in normal cases!
 are_errors_fatal = {
-    u'delete': (True, None),
-    u'get': (True, None),
-    u'list': (True, None),
-    u'move': (True, None),
-    u'put': (True, None),
-    u'query': (True, None),
+    'delete': (True, None),
+    'get': (True, None),
+    'list': (True, None),
+    'move': (True, None),
+    'put': (True, None),
+    'query': (True, None),
 }
 
 # Select object which iterates paths in the local source dir.
@@ -118,7 +118,7 @@ select_files = []
 gpg_binary = None
 
 # Options to pass to gpg
-gpg_options = u''
+gpg_options = ''
 
 # Set to GPGProfile that will be used to compress/uncompress encrypted
 # files.  Replaces encryption_keys, sign_key, and passphrase settings.
@@ -140,11 +140,11 @@ pydevd = False
 # Character used like the ":" in time strings like
 # 2002-08-06T04:22:00-07:00.  The colon isn't good for filenames on
 # windows machines.
-time_separator = u":"
+time_separator = ":"
 
 # Global lockfile used to manage concurrency
 lockfile = None
-lockpath = u""
+lockpath = ""
 
 # If this is true, only warn and don't raise fatal error when backup
 # source directory doesn't match previous backup source directory.
@@ -190,10 +190,10 @@ temproot = None
 timeout = 30
 
 # FTP data connection type
-ftp_connection = u'passive'
+ftp_connection = 'passive'
 
 # Header options for Webdav
-webdav_headers = u""
+webdav_headers = ""
 
 # Asynchronous put/get concurrency limit
 # (default of 0 disables asynchronicity).
@@ -257,7 +257,7 @@ s3_region_name = None
 s3_endpoint_url = None
 
 # Which storage policy to use for Swift containers
-swift_storage_policy = u""
+swift_storage_policy = ""
 
 # The largest size upload supported in a single put call for azure
 azure_max_single_put_size = None
@@ -278,10 +278,10 @@ imap_full_address = False
 
 # Name of the imap folder where we want to store backups.
 # Can be changed with a command line argument.
-imap_mailbox = u"INBOX"
+imap_mailbox = "INBOX"
 
 # Sync partial metadata by default
-metadata_sync_mode = u"partial"
+metadata_sync_mode = "partial"
 
 # Wheter to specify --use-agent in GnuPG options
 use_agent = False
@@ -294,10 +294,10 @@ sftp_command = None
 ssh_askpass = False
 
 # user added ssh options
-ssh_options = u""
+ssh_options = ""
 
 # default cf backend is pyrax
-cf_backend = u"pyrax"
+cf_backend = "pyrax"
 
 # default to fully deleting files in b2
 b2_hide_files = False
@@ -308,7 +308,7 @@ ssl_cacert_path = None
 ssl_no_check_certificate = False
 
 # user added rsync options
-rsync_options = u""
+rsync_options = ""
 
 # will be a Restart object if restarting
 restart = None
@@ -347,7 +347,7 @@ progress_rate = 3
 par2_redundancy = 10
 
 # Verbatim par2 other options
-par2_options = u""
+par2_options = ""
 
 # Number of par2 volumes
 par2_volumes = 1
@@ -381,4 +381,4 @@ inc_explicit = True
 # 'utf-8' or some other sane encoding, but will sometimes fail and returns
 # either 'ascii' or None.  Both are bogus, so default to 'utf-8' if it does.
 fsencoding = sys.getfilesystemencoding()
-fsencoding = fsencoding if fsencoding not in [u'ascii', u'ANSI_X3.4-1968', None] else u'utf-8'
+fsencoding = fsencoding if fsencoding not in ['ascii', 'ANSI_X3.4-1968', None] else 'utf-8'

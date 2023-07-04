@@ -19,8 +19,7 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-u"""Define some lazy data structures and functions acting on them"""
-
+"""Define some lazy data structures and functions acting on them"""
 
 import os
 import sys
@@ -31,51 +30,51 @@ from duplicity import util
 
 
 class Iter(object):
-    u"""Hold static methods for the manipulation of lazy iterators"""
+    """Hold static methods for the manipulation of lazy iterators"""
 
     @staticmethod
     def filter(predicate, iterator):
-        u"""Like filter in a lazy functional programming language"""
+        """Like filter in a lazy functional programming language"""
         for i in iterator:
             if predicate(i):
                 yield i
 
     @staticmethod
     def map(function, iterator):
-        u"""Like map in a lazy functional programming language"""
+        """Like map in a lazy functional programming language"""
         for i in iterator:
             yield function(i)
 
     @staticmethod
     def foreach(function, iterator):
-        u"""Run function on each element in iterator"""
+        """Run function on each element in iterator"""
         for i in iterator:
             function(i)
 
     @staticmethod
     def cat(*iters):
-        u"""Lazily concatenate iterators"""
+        """Lazily concatenate iterators"""
         for iter in iters:  # pylint: disable=redefined-builtin
             for i in iter:
                 yield i
 
     @staticmethod
     def cat2(iter_of_iters):
-        u"""Lazily concatenate iterators, iterated by big iterator"""
+        """Lazily concatenate iterators, iterated by big iterator"""
         for iter in iter_of_iters:  # pylint: disable=redefined-builtin
             for i in iter:
                 yield i
 
     @staticmethod
     def empty(iter):  # pylint: disable=redefined-builtin
-        u"""True if iterator has length 0"""
+        """True if iterator has length 0"""
         for i in iter:
             return None
         return 1
 
     @staticmethod
     def equal(iter1, iter2, verbose=None, operator=lambda x, y: x == y):
-        u"""True if iterator 1 has same elements as iterator 2
+        """True if iterator 1 has same elements as iterator 2
 
         Use equality operator, or == if it is unspecified.
 
@@ -85,23 +84,23 @@ class Iter(object):
                 i2 = next(iter2)
             except StopIteration:
                 if verbose:
-                    print(u"End when i1 = %s" % (i1,), file=sys.stderr)
+                    print("End when i1 = %s" % (i1,), file=sys.stderr)
                 return None
             if not operator(i1, i2):
                 if verbose:
-                    print(u"%s not equal to %s" % (i1, i2), file=sys.stderr)
+                    print("%s not equal to %s" % (i1, i2), file=sys.stderr)
                 return None
         try:
             i2 = next(iter2)
         except StopIteration:
             return 1
         if verbose:
-            print(u"End when i2 = %s" % (i2,), file=sys.stderr)
+            print("End when i2 = %s" % (i2,), file=sys.stderr)
         return None
 
     @staticmethod
     def Or(iter):  # pylint: disable=redefined-builtin
-        u"""True if any element in iterator is true.  Short circuiting"""
+        """True if any element in iterator is true.  Short circuiting"""
         i = None
         for i in iter:
             if i:
@@ -110,7 +109,7 @@ class Iter(object):
 
     @staticmethod
     def And(iter):  # pylint: disable=redefined-builtin
-        u"""True if all elements in iterator are true.  Short circuiting"""
+        """True if all elements in iterator are true.  Short circuiting"""
         i = 1
         for i in iter:
             if not i:
@@ -119,7 +118,7 @@ class Iter(object):
 
     @staticmethod
     def len(iter):  # pylint: disable=redefined-builtin
-        u"""Return length of iterator"""
+        """Return length of iterator"""
         i = 0
         while True:
             try:
@@ -130,7 +129,7 @@ class Iter(object):
 
     @staticmethod
     def foldr(f, default, iter):  # pylint: disable=redefined-builtin
-        u"""foldr the "fundamental list recursion operator"?"""
+        """foldr the "fundamental list recursion operator"?"""
         try:
             next_item = next(iter)
         except StopIteration:
@@ -139,7 +138,7 @@ class Iter(object):
 
     @staticmethod
     def foldl(f, default, iter):  # pylint: disable=redefined-builtin
-        u"""the fundamental list iteration operator.."""
+        """the fundamental list iteration operator.."""
         while True:
             try:
                 next_item = next(iter)
@@ -149,7 +148,7 @@ class Iter(object):
 
     @staticmethod
     def multiplex(iter, num_of_forks, final_func=None, closing_func=None):  # pylint: disable=redefined-builtin
-        u"""Split a single iterater into a number of streams
+        """Split a single iterater into a number of streams
 
         The return val will be a list with length num_of_forks, each
         of which will be an iterator like iter.  final_func is the
@@ -177,7 +176,7 @@ class Iter(object):
         called_closing_func = [None]
 
         def get_next(fork_num):
-            u"""Return the next element requested by fork_num"""
+            """Return the next element requested by fork_num"""
             if forkposition[fork_num] == -1:
                 try:
                     buffer.insert(0, next(iter))
@@ -214,20 +213,21 @@ class Iter(object):
 
 
 class IterMultiplex2(object):
-    u"""Multiplex an iterator into 2 parts
+    """Multiplex an iterator into 2 parts
 
     This is a special optimized case of the Iter.multiplex function,
     used when there is no closing_func or final_func, and we only want
     to split it into 2.  By profiling, this is a time sensitive class.
 
     """
+
     def __init__(self, iter):  # pylint: disable=redefined-builtin
         self.a_leading_by = 0  # How many places a is ahead of b
         self.buffer = []
         self.iter = iter
 
     def yielda(self):
-        u"""Return first iterator"""
+        """Return first iterator"""
         buf, iter = self.buffer, self.iter  # pylint: disable=redefined-builtin
         while True:
             if self.a_leading_by >= 0:
@@ -244,7 +244,7 @@ class IterMultiplex2(object):
             yield elem
 
     def yieldb(self):
-        u"""Return second iterator"""
+        """Return second iterator"""
         buf, iter = self.buffer, self.iter  # pylint: disable=redefined-builtin
         while True:
             if self.a_leading_by <= 0:
@@ -262,7 +262,7 @@ class IterMultiplex2(object):
 
 
 class IterTreeReducer(object):
-    u"""Tree style reducer object for iterator - stolen from rdiff-backup
+    """Tree style reducer object for iterator - stolen from rdiff-backup
 
     The indicies of a RORPIter form a tree type structure.  This class
     can be used on each element of an iter in sequence and the result
@@ -275,8 +275,9 @@ class IterTreeReducer(object):
     call the initializer below with the new class.
 
     """
+
     def __init__(self, branch_class, branch_args):
-        u"""ITR initializer"""
+        """ITR initializer"""
         self.branch_class = branch_class
         self.branch_args = branch_args
         self.index = None
@@ -284,7 +285,7 @@ class IterTreeReducer(object):
         self.branches = [self.root_branch]
 
     def finish_branches(self, index):
-        u"""Run Finish() on all branches index has passed
+        """Run Finish() on all branches index has passed
 
         When we pass out of a branch, delete it and process it with
         the parent.  The innermost branches will be the last in the
@@ -307,13 +308,13 @@ class IterTreeReducer(object):
                 return 1
 
     def add_branch(self):
-        u"""Return branch of type self.branch_class, add to branch list"""
+        """Return branch of type self.branch_class, add to branch list"""
         branch = self.branch_class(*self.branch_args)
         self.branches.append(branch)
         return branch
 
     def process_w_branch(self, index, branch, args):
-        u"""Run start_process on latest branch"""
+        """Run start_process on latest branch"""
         robust.check_common_error(branch.on_error,
                                   branch.start_process, args)
         if not branch.caught_exception:
@@ -321,7 +322,7 @@ class IterTreeReducer(object):
         branch.base_index = index
 
     def Finish(self):
-        u"""Call at end of sequence to tie everything up"""
+        """Call at end of sequence to tie everything up"""
         while True:
             to_be_finished = self.branches.pop()
             to_be_finished.call_end_proc()
@@ -330,7 +331,7 @@ class IterTreeReducer(object):
             self.branches[-1].branch_process(to_be_finished)
 
     def __call__(self, *args):
-        u"""Process args, where args[0] is current position in iterator
+        """Process args, where args[0] is current position in iterator
 
         Returns true if args successfully processed, false if index is
         not in the current tree and thus the final result is
@@ -347,7 +348,7 @@ class IterTreeReducer(object):
             return 1
 
         if index <= self.index:
-            log.Warn(_(u"Warning: oldindex %s >= newindex %s") %
+            log.Warn(_("Warning: oldindex %s >= newindex %s") %
                      (util.uindex(self.index), util.uindex(index)))
             return 1
 
@@ -369,7 +370,7 @@ class IterTreeReducer(object):
 
 
 class ITRBranch(object):
-    u"""Helper class for IterTreeReducer above
+    """Helper class for IterTreeReducer above
 
     There are five stub functions below: start_process, end_process,
     branch_process, fast_process, and can_fast_process.  A class that
@@ -382,7 +383,7 @@ class ITRBranch(object):
     caught_exception = start_successful = None
 
     def call_end_proc(self):
-        u"""Runs the end_process on self, checking for errors"""
+        """Runs the end_process on self, checking for errors"""
         if self.finished or not self.start_successful:
             self.caught_exception = 1
 
@@ -393,45 +394,45 @@ class ITRBranch(object):
         self.finished = 1
 
     def start_process(self, *args):
-        u"""Do some initial processing (stub)"""
+        """Do some initial processing (stub)"""
         pass
 
     def end_process(self):
-        u"""Do any final processing before leaving branch (stub)"""
+        """Do any final processing before leaving branch (stub)"""
         pass
 
     def branch_process(self, branch):
-        u"""Process a branch right after it is finished (stub)"""
+        """Process a branch right after it is finished (stub)"""
         assert branch.finished
         pass
 
     def can_fast_process(self, *args):  # pylint: disable=unused-argument
-        u"""True if object can be processed without new branch (stub)"""
+        """True if object can be processed without new branch (stub)"""
         return None
 
     def fast_process(self, *args):
-        u"""Process args without new child branch (stub)"""
+        """Process args without new child branch (stub)"""
         pass
 
     def on_error(self, exc, *args):
-        u"""This is run on any exception in start/end-process"""
+        """This is run on any exception in start/end-process"""
         self.caught_exception = 1
         if args and args[0] and isinstance(args[0], tuple):
             filename = os.path.join(*args[0])
         elif self.index:
             filename = os.path.join(*self.index)  # pylint: disable=not-an-iterable
         else:
-            filename = u"."
-        log.Warn(_(u"Error '%s' processing %s") % (exc, os.fsdecode(filename)),
+            filename = "."
+        log.Warn(_("Error '%s' processing %s") % (exc, os.fsdecode(filename)),
                  log.WarningCode.cannot_process,
                  util.escape(filename))
 
     def log_prev_error(self, index):
-        u"""Call function if no pending exception"""
+        """Call function if no pending exception"""
         if not index:
-            index_str = u"."
+            index_str = "."
         else:
             index_str = os.path.join(*index)
-        log.Warn(_(u"Skipping %s because of previous error") % os.fsdecode(index_str),
+        log.Warn(_("Skipping %s because of previous error") % os.fsdecode(index_str),
                  log.WarningCode.process_skipped,
                  util.escape(index_str))

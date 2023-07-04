@@ -32,26 +32,26 @@ from duplicity import config
 from duplicity import log
 from duplicity import util
 
-gettext.install(u'duplicity', names=[u'ngettext'])
+gettext.install('duplicity', names=['ngettext'])
 
 log.setup()
 util.start_debugger()
 
 _testing_dir = os.path.dirname(os.path.abspath(__file__))
 _top_dir = os.path.dirname(_testing_dir)
-_overrides_dir = os.path.join(_testing_dir, u'overrides')
-_bin_dir = os.path.join(_testing_dir, u'overrides', u'bin')
+_overrides_dir = os.path.join(_testing_dir, 'overrides')
+_bin_dir = os.path.join(_testing_dir, 'overrides', 'bin')
 
-if platform.system().startswith(u'Darwin'):
+if platform.system().startswith('Darwin'):
     # Use temp space TMPDIR or from getconf, never /tmp
-    _runtest_dir = (os.environ.get(u"TMPDIR", None) or
-                    subprocess.check_output([u'getconf', u'DARWIN_USER_TEMP_DIR']))
-    _runtest_dir = os.fsdecode(_runtest_dir).rstrip().rstrip(u'/')
+    _runtest_dir = (os.environ.get("TMPDIR", None) or
+                    subprocess.check_output(['getconf', 'DARWIN_USER_TEMP_DIR']))
+    _runtest_dir = os.fsdecode(_runtest_dir).rstrip().rstrip('/')
     if not os.path.exists(_runtest_dir):
         os.makedirs(_runtest_dir)
 else:
     # be a little more flexible
-    _runtest_dir = os.getenv(u'TMPDIR', False) or os.getenv(u'TEMP', False) or u'/tmp'
+    _runtest_dir = os.getenv('TMPDIR', False) or os.getenv('TEMP', False) or '/tmp'
 
 if not os.path.exists(_runtest_dir):
     os.makedirs(_runtest_dir)
@@ -60,29 +60,29 @@ if not os.path.exists(_runtest_dir):
 sys.path = [_overrides_dir, _top_dir, _bin_dir] + sys.path
 
 # Also set PYTHONPATH for any subprocesses
-os.environ[u'PYTHONPATH'] = _overrides_dir + u":" + _top_dir + u":" + os.environ.get(u'PYTHONPATH', u'')
+os.environ['PYTHONPATH'] = _overrides_dir + ":" + _top_dir + ":" + os.environ.get('PYTHONPATH', '')
 
 # And PATH for any subprocesses
-os.environ[u'PATH'] = _bin_dir + u":" + os.environ.get(u'PATH', u'')
+os.environ['PATH'] = _bin_dir + ":" + os.environ.get('PATH', '')
 
 # Now set some variables that help standardize test behavior
-os.environ[u'LANG'] = u''
-os.environ[u'GNUPGHOME'] = os.path.join(_testing_dir, u'gnupg')
+os.environ['LANG'] = ''
+os.environ['GNUPGHOME'] = os.path.join(_testing_dir, 'gnupg')
 
 # bzr does not honor perms so fix the perms and avoid annoying error
-os.system(u"chmod 700 %s" % os.path.join(_testing_dir, u'gnupg'))
+os.system("chmod 700 %s" % os.path.join(_testing_dir, 'gnupg'))
 
 # Standardize time
-os.environ[u'TZ'] = u'US/Central'
+os.environ['TZ'] = 'US/Central'
 time.tzset()
 
 
 class DuplicityTestCase(unittest.TestCase):
 
-    sign_key = u'839E6A2856538CCF'
-    sign_passphrase = u'test'
-    encrypt_key1 = u'839E6A2856538CCF'
-    encrypt_key2 = u'453005CE9B736B2A'
+    sign_key = '839E6A2856538CCF'
+    sign_passphrase = 'test'
+    encrypt_key1 = '839E6A2856538CCF'
+    encrypt_key2 = '453005CE9B736B2A'
 
     def setUp(self):
         super().setUp()
@@ -91,15 +91,15 @@ class DuplicityTestCase(unittest.TestCase):
 
         log.setup()
         log.setverbosity(log.WARNING)
-        self.set_config(u'print_statistics', 0)
+        self.set_config('print_statistics', 0)
         backend.import_backends()
 
         self.remove_testfiles()
         self.unpack_testfiles()
 
-        self.set_environ(u"TZ", u"UTC")
+        self.set_environ("TZ", "UTC")
         time.tzset()
-        assert time.tzname[0] == u"UTC", f"{time.tzname[0]} should be 'UTC'"
+        assert time.tzname[0] == "UTC", f"{time.tzname[0]} should be 'UTC'"
 
         # Have all file references in tests relative to our runtest dir
         os.chdir(_runtest_dir)
@@ -119,12 +119,12 @@ class DuplicityTestCase(unittest.TestCase):
         super().tearDown()
 
     def unpack_testfiles(self):
-        assert not os.system(u"rm -rf {0}/testfiles".format(_runtest_dir))
-        assert not os.system(u"tar xzf {0}/testfiles.tar.gz -C {1} > /dev/null 2>&1".format(_testing_dir, _runtest_dir))
-        assert not os.system(u"mkdir {0}/testfiles/output {0}/testfiles/cache".format(_runtest_dir))
+        assert not os.system("rm -rf {0}/testfiles".format(_runtest_dir))
+        assert not os.system("tar xzf {0}/testfiles.tar.gz -C {1} > /dev/null 2>&1".format(_testing_dir, _runtest_dir))
+        assert not os.system("mkdir {0}/testfiles/output {0}/testfiles/cache".format(_runtest_dir))
 
     def remove_testfiles(self):
-        assert not os.system(u"rm -rf {0}/testfiles".format(_runtest_dir))
+        assert not os.system("rm -rf {0}/testfiles".format(_runtest_dir))
 
     def _update_env(self, key, value):
         if value is not None:

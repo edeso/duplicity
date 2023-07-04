@@ -52,7 +52,7 @@ class Iterators(UnitTestCase):
 
     def trueerror_maker(self):
         yield 1
-        yield u"hello"
+        yield "hello"
         yield 2, 3
         raise Exception
 
@@ -75,50 +75,50 @@ class Iterators(UnitTestCase):
 
 
 class IterEqualTestCase(Iterators):
-    u"""Tests for iter_equal function"""
+    """Tests for iter_equal function"""
     def testEmpty(self):
-        u"""Empty iterators should be equal"""
+        """Empty iterators should be equal"""
         assert Iter.equal(self.empty(), iter([]))
 
     def testNormal(self):
-        u"""See if normal iterators are equal"""
+        """See if normal iterators are equal"""
         assert Iter.equal(iter((1, 2, 3)), iter((1, 2, 3)))
         assert Iter.equal(self.odds(), iter(list(range(1, 100, 2))))
         assert Iter.equal(iter((1, 2, 3)), iter(list(range(1, 4))))
 
     def testNormalInequality(self):
-        u"""See if normal unequals work"""
+        """See if normal unequals work"""
         assert not Iter.equal(iter((1, 2, 3)), iter((1, 2, 4)))
-        assert not Iter.equal(self.odds(), iter([u"hello", u"there"]))
+        assert not Iter.equal(self.odds(), iter(["hello", "there"]))
 
     def testGenerators(self):
-        u"""equals works for generators"""
+        """equals works for generators"""
         def f():
             yield 1
-            yield u"hello"
+            yield "hello"
 
         def g():
             yield 1
-            yield u"hello"
+            yield "hello"
 
         assert Iter.equal(f(), g())
 
     def testLength(self):
-        u"""Differently sized iterators"""
+        """Differently sized iterators"""
         assert not Iter.equal(iter((1, 2, 3)), iter((1, 2)))
         assert not Iter.equal(iter((1, 2)), iter((1, 2, 3)))
 
 
 class FilterTestCase(Iterators):
-    u"""Tests for lazy_filter function"""
+    """Tests for lazy_filter function"""
     def testEmpty(self):
-        u"""empty iterators -> empty iterators"""
+        """empty iterators -> empty iterators"""
         assert Iter.empty(Iter.filter(self.alwayserror,
                                       self.empty())), \
-            u"Filtering an empty iterator should result in empty iterator"
+            "Filtering an empty iterator should result in empty iterator"
 
     def testNum1(self):
-        u"""Test numbers 1 - 100 #1"""
+        """Test numbers 1 - 100 #1"""
         assert Iter.equal(Iter.filter(lambda x: x % 2 == 0,
                                       self.one_to_100()),
                           self.evens())
@@ -127,45 +127,45 @@ class FilterTestCase(Iterators):
                           self.odds())
 
     def testError(self):
-        u"""Should raise appropriate error"""
+        """Should raise appropriate error"""
         i = Iter.filter(lambda x: x, self.falseerror_maker())
         self.assertRaises(Exception, i.__next__)
 
 
 class MapTestCase(Iterators):
-    u"""Test mapping of iterators"""
+    """Test mapping of iterators"""
     def testNumbers(self):
-        u"""1 to 100 * 2 = 2 to 200"""
+        """1 to 100 * 2 = 2 to 200"""
         assert Iter.equal(Iter.map(lambda x: 2 * x, self.one_to_100()),
                           iter(list(range(2, 201, 2))))
 
     def testShortcut(self):
-        u"""Map should go in order"""
+        """Map should go in order"""
         def f(x):
-            if x == u"hello":
+            if x == "hello":
                 raise NameError
         i = Iter.map(f, self.trueerror_maker())
         next(i)
         self.assertRaises(NameError, i.__next__)
 
     def testEmpty(self):
-        u"""Map of an empty iterator is empty"""
+        """Map of an empty iterator is empty"""
         assert Iter.empty(Iter.map(lambda x: x, iter([])))
 
 
 class CatTestCase(Iterators):
-    u"""Test concatenation of iterators"""
+    """Test concatenation of iterators"""
     def testEmpty(self):
-        u"""Empty + empty = empty"""
+        """Empty + empty = empty"""
         assert Iter.empty(Iter.cat(iter([]), iter([])))
 
     def testNumbers(self):
-        u"""1 to 50 + 51 to 100 = 1 to 100"""
+        """1 to 50 + 51 to 100 = 1 to 100"""
         assert Iter.equal(Iter.cat(iter(list(range(1, 51))), iter(list(range(51, 101)))),
                           self.one_to_100())
 
     def testShortcut(self):
-        u"""Process iterators in order"""
+        """Process iterators in order"""
         i = Iter.cat(self.typeerror_maker(), self.nameerror_maker())
         next(i)
         next(i)
@@ -173,68 +173,68 @@ class CatTestCase(Iterators):
 
 
 class AndOrTestCase(Iterators):
-    u"""Test And and Or"""
+    """Test And and Or"""
     def testEmpty(self):
-        u"""And() -> true, Or() -> false"""
+        """And() -> true, Or() -> false"""
         assert Iter.And(self.empty())
         assert not Iter.Or(self.empty())
 
     def testAndShortcut(self):
-        u"""And should return if any false"""
+        """And should return if any false"""
         assert Iter.And(self.falseerror_maker()) is None
 
     def testOrShortcut(self):
-        u"""Or should return if any true"""
+        """Or should return if any true"""
         assert Iter.Or(self.trueerror_maker()) == 1
 
     def testNormalAnd(self):
-        u"""And should go through true iterators, picking last"""
+        """And should go through true iterators, picking last"""
         assert Iter.And(iter([1, 2, 3, 4])) == 4
         self.assertRaises(Exception, Iter.And, self.trueerror_maker())
 
     def testNormalOr(self):
-        u"""Or goes through false iterators, picking last"""
+        """Or goes through false iterators, picking last"""
         assert Iter.Or(iter([0, None, []])) == []
         self.assertRaises(Exception, Iter.Or, self.falseerror_maker())
 
 
 class FoldingTest(Iterators):
-    u"""Test folding operations"""
+    """Test folding operations"""
     def f(self, x, y):
         return x + y
 
     def testEmpty(self):
-        u"""Folds of empty iterators should produce defaults"""
+        """Folds of empty iterators should produce defaults"""
         assert Iter.foldl(self.f, 23, self.empty()) == 23
         assert Iter.foldr(self.f, 32, self.empty()) == 32
 
     def testAddition(self):
-        u"""Use folds to sum lists"""
+        """Use folds to sum lists"""
         assert Iter.foldl(self.f, 0, self.one_to_100()) == 5050
         assert Iter.foldr(self.f, 0, self.one_to_100()) == 5050
 
     def testLargeAddition(self):
-        u"""Folds on 10000 element iterators"""
+        """Folds on 10000 element iterators"""
         assert Iter.foldl(self.f, 0, iter(list(range(1, 10001)))) == 50005000
         self.assertRaises(RuntimeError,
                           Iter.foldr, self.f, 0, iter(list(range(1, 10001))))
 
     def testLen(self):
-        u"""Use folds to calculate length of lists"""
+        """Use folds to calculate length of lists"""
         assert Iter.foldl(lambda x, y: x + 1, 0, self.evens()) == 50
         assert Iter.foldr(lambda x, y: y + 1, 0, self.odds()) == 50
 
 
 class MultiplexTest(Iterators):
     def testSingle(self):
-        u"""Test multiplex single stream"""
+        """Test multiplex single stream"""
         i_orig = self.one_to_100()
         i2_orig = self.one_to_100()
         i = Iter.multiplex(i_orig, 1)[0]
         assert Iter.equal(i, i2_orig)
 
     def testTrible(self):
-        u"""Test splitting iterator into three"""
+        """Test splitting iterator into three"""
         counter = [0]
 
         def ff(x):  # pylint: disable=unused-argument
@@ -248,7 +248,7 @@ class MultiplexTest(Iterators):
         assert counter[0] == 100, counter
 
     def testDouble(self):
-        u"""Test splitting into two..."""
+        """Test splitting into two..."""
         i1, i2 = Iter.multiplex(self.one_to_100(), 2)
         assert Iter.equal(i1, self.one_to_100())
         assert Iter.equal(i2, self.one_to_100())
@@ -305,7 +305,7 @@ class TreeReducerTest(UnitTestCase):
         self.i2c = [(0, 2, 1), (0, 3)]
 
     def testTreeReducer(self):
-        u"""testing IterTreeReducer"""
+        """testing IterTreeReducer"""
         itm = IterTreeReducer(ITRBadder, [])
         for index in self.i1:
             val = itm(index)
@@ -324,7 +324,7 @@ class TreeReducerTest(UnitTestCase):
         assert itm2.root_branch.total == 12, itm2.root_branch.total
 
     def testTreeReducerState(self):
-        u"""Test saving and recreation of an IterTreeReducer"""
+        """Test saving and recreation of an IterTreeReducer"""
         itm1a = IterTreeReducer(ITRBadder, [])
         for index in self.i1a:
             val = itm1a(index)
@@ -361,5 +361,5 @@ class TreeReducerTest(UnitTestCase):
         assert itm2c.root_branch.total == 12, itm2c.root_branch.total
 
 
-if __name__ == u"__main__":
+if __name__ == "__main__":
     unittest.main()

@@ -29,13 +29,13 @@ from . import UnitTestCase
 
 
 class StatsObjTest(UnitTestCase):
-    u"""Test StatsObj class"""
+    """Test StatsObj class"""
     def setUp(self):
         super().setUp()
         self.unpack_testfiles()
 
     def set_obj(self, s):
-        u"""Set values of s's statistics"""
+        """Set values of s's statistics"""
         s.SourceFiles = 1
         s.SourceFileSize = 2
         s.NewFiles = 3
@@ -51,24 +51,24 @@ class StatsObjTest(UnitTestCase):
         s.EndTime = 14
 
     def test_get_stats(self):
-        u"""Test reading and writing stat objects"""
+        """Test reading and writing stat objects"""
         s = StatsObj()
-        assert s.get_stat(u'SourceFiles') is None
+        assert s.get_stat('SourceFiles') is None
         self.set_obj(s)
-        assert s.get_stat(u'SourceFiles') == 1
+        assert s.get_stat('SourceFiles') == 1
 
         s1 = StatsDeltaProcess()
-        assert s1.get_stat(u'SourceFiles') == 0
+        assert s1.get_stat('SourceFiles') == 0
 
     def test_get_stats_string(self):
-        u"""Test conversion of stat object into string"""
+        """Test conversion of stat object into string"""
         s = StatsObj()
         stats_string = s.get_stats_string()
-        assert stats_string == u"", stats_string
+        assert stats_string == "", stats_string
 
         self.set_obj(s)
         stats_string = s.get_stats_string()
-        assert stats_string == u"""\
+        assert stats_string == """\
 StartTime 13.00 (Thu Jan  1 00:00:13 1970)
 EndTime 14.00 (Thu Jan  1 00:00:14 1970)
 ElapsedTime 1.00 (1 second)
@@ -83,41 +83,41 @@ ChangedDeltaSize 9 (9 bytes)
 DeltaEntries 10
 RawDeltaSize 11 (11 bytes)
 TotalDestinationSizeChange 12 (12 bytes)
-""", u"'%s'" % stats_string
+""", "'%s'" % stats_string
 
     def test_line_string(self):
-        u"""Test conversion to a single line"""
+        """Test conversion to a single line"""
         s = StatsObj()
         self.set_obj(s)
-        statline = s.get_stats_line((u"sample", u"index", u"w", u"new\nline"))
-        assert statline == u"sample/index/w/new\\nline 1 2 3 4 5 7 8 9 10 11", \
+        statline = s.get_stats_line(("sample", "index", "w", "new\nline"))
+        assert statline == "sample/index/w/new\\nline 1 2 3 4 5 7 8 9 10 11", \
             repr(statline)
 
         statline = s.get_stats_line(())
-        assert statline == u". 1 2 3 4 5 7 8 9 10 11"
+        assert statline == ". 1 2 3 4 5 7 8 9 10 11"
 
-        statline = s.get_stats_line((u"file name with spaces",))
-        assert statline == (u"file\\x20name\\x20with\\x20spaces "
-                            u"1 2 3 4 5 7 8 9 10 11"), repr(statline)
+        statline = s.get_stats_line(("file name with spaces",))
+        assert statline == ("file\\x20name\\x20with\\x20spaces "
+                            "1 2 3 4 5 7 8 9 10 11"), repr(statline)
 
     def test_byte_summary(self):
-        u"""Test conversion of bytes to strings like 7.23MB"""
+        """Test conversion of bytes to strings like 7.23MB"""
         s = StatsObj()
         f = s.get_byte_summary_string
-        assert f(1) == u"1 byte"
-        assert f(234.34) == u"234 bytes"
-        assert f(2048) == u"2.00 KB"
-        assert f(3502243) == u"3.34 MB"
-        assert f(314992230) == u"300 MB"
-        assert f(36874871216) == u"34.3 GB", f(36874871216)
-        assert f(3775986812573450) == u"3434 TB"
+        assert f(1) == "1 byte"
+        assert f(234.34) == "234 bytes"
+        assert f(2048) == "2.00 KB"
+        assert f(3502243) == "3.34 MB"
+        assert f(314992230) == "300 MB"
+        assert f(36874871216) == "34.3 GB", f(36874871216)
+        assert f(3775986812573450) == "3434 TB"
 
     def test_init_stats(self):
-        u"""Test setting stat object from string"""
+        """Test setting stat object from string"""
         s = StatsObj()
-        s.set_stats_from_string(u"NewFiles 3 hello there")
+        s.set_stats_from_string("NewFiles 3 hello there")
         for attr in s.stat_attrs:
-            if attr == u'NewFiles':
+            if attr == 'NewFiles':
                 assert s.get_stat(attr) == 3
             else:
                 assert s.get_stat(attr) is None, (attr, s.__dict__[attr])
@@ -131,8 +131,8 @@ TotalDestinationSizeChange 12 (12 bytes)
         assert s1.stats_equal(s2)
 
     def test_write_path(self):
-        u"""Test reading and writing of statistics object"""
-        p = path.Path(u"{0}/testfiles/statstest".format(_runtest_dir))
+        """Test reading and writing of statistics object"""
+        p = path.Path("{0}/testfiles/statstest".format(_runtest_dir))
         if p.exists():
             p.delete()
         s = StatsObj()
@@ -145,7 +145,7 @@ TotalDestinationSizeChange 12 (12 bytes)
         assert s2.stats_equal(s)
 
     def testAverage(self):
-        u"""Test making an average statsobj"""
+        """Test making an average statsobj"""
         s1 = StatsObj()
         s1.StartTime = 5
         s1.EndTime = 10
@@ -171,5 +171,5 @@ TotalDestinationSizeChange 12 (12 bytes)
         assert s3.SourceFiles == 75
 
 
-if __name__ == u"__main__":
+if __name__ == "__main__":
     unittest.main()

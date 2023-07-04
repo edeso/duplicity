@@ -35,36 +35,36 @@ from testing.unit import UnitTestCase
 
 
 class CommandlineTest(UnitTestCase):
-    u"""
+    """
     Test parse_commandline_options
     """
     good_args = {
-        u"count": u"5",
-        u"remove_time": u"100",
-        u"source_path": u"foo/bar",
-        u"source_url": u"file://duptest",
-        u"target_dir": u"foo/bar",
-        u"target_url": u"file://duptest",
+        "count": "5",
+        "remove_time": "100",
+        "source_path": "foo/bar",
+        "source_url": "file://duptest",
+        "target_dir": "foo/bar",
+        "target_url": "file://duptest",
     }
 
     def setUp(self):
         super().setUp()
         config.gpg_profile = gpg.GPGProfile()
-        os.makedirs(u"foo/bar", exist_ok=True)
+        os.makedirs("foo/bar", exist_ok=True)
 
     def tearDown(self):
         log.shutdown()
-        os.removedirs(u"foo/bar")
+        os.removedirs("foo/bar")
 
     def run_all_commands_with_errors(self, new_args, err_msg):
-        u"""
+        """
         Test all commands with the supplied argument list.
         Only test command if new_args contains needed arg.
         """
         test_args = copy.copy(self.good_args)
         test_args.update(new_args)
         for var in DuplicityCommands.__dict__.keys():
-            if var.startswith(u"__"):
+            if var.startswith("__"):
                 continue
             cmd = var2cmd(var)
             runtest = False
@@ -78,140 +78,140 @@ class CommandlineTest(UnitTestCase):
                 with self.assertRaisesRegex(cli_main.CommandLineError, err_msg) as cm:
                     cli_main.process_command_line(cline)
 
-    @pytest.mark.usefixtures(u"redirect_stdin")
+    @pytest.mark.usefixtures("redirect_stdin")
     def test_full_command(self):
-        u"""
+        """
         test backup, restore, verify with explicit commands
         """
-        for cmd in [u"cleanup"] + cli_main.CommandAliases.cleanup:
+        for cmd in ["cleanup"] + cli_main.CommandAliases.cleanup:
             cli_main.process_command_line(f"{cmd} file://duptest".split())
-            self.assertEqual(config.action, u"cleanup")
-            self.assertEqual(config.target_url, u"file://duptest")
+            self.assertEqual(config.action, "cleanup")
+            self.assertEqual(config.target_url, "file://duptest")
 
-        for cmd in [u"collection-status"] + cli_main.CommandAliases.collection_status:
+        for cmd in ["collection-status"] + cli_main.CommandAliases.collection_status:
             cli_main.process_command_line(f"{cmd} file://duptest".split())
-            self.assertEqual(config.action, u"collection-status")
-            self.assertEqual(config.target_url, u"file://duptest")
+            self.assertEqual(config.action, "collection-status")
+            self.assertEqual(config.target_url, "file://duptest")
 
-        for cmd in [u"full"] + cli_main.CommandAliases.full:
+        for cmd in ["full"] + cli_main.CommandAliases.full:
             cli_main.process_command_line(f"{cmd} foo/bar file://duptest".split())
-            self.assertEqual(config.action, u"full")
-            self.assertTrue(config.source_path.endswith(u"foo/bar"))
-            self.assertEqual(config.target_url, u"file://duptest")
+            self.assertEqual(config.action, "full")
+            self.assertTrue(config.source_path.endswith("foo/bar"))
+            self.assertEqual(config.target_url, "file://duptest")
 
-        for cmd in [u"incremental"] + cli_main.CommandAliases.incremental:
+        for cmd in ["incremental"] + cli_main.CommandAliases.incremental:
             cli_main.process_command_line(f"{cmd} foo/bar file://duptest".split())
-            self.assertEqual(config.action, u"inc")
-            self.assertTrue(config.source_path.endswith(u"foo/bar"))
-            self.assertEqual(config.target_url, u"file://duptest")
+            self.assertEqual(config.action, "inc")
+            self.assertTrue(config.source_path.endswith("foo/bar"))
+            self.assertEqual(config.target_url, "file://duptest")
 
-        for cmd in [u"list-current-files"] + cli_main.CommandAliases.list_current_files:
+        for cmd in ["list-current-files"] + cli_main.CommandAliases.list_current_files:
             cli_main.process_command_line(f"{cmd} file://duptest".split())
-            self.assertEqual(config.action, u"list-current-files")
-            self.assertEqual(config.target_url, u"file://duptest")
+            self.assertEqual(config.action, "list-current-files")
+            self.assertEqual(config.target_url, "file://duptest")
 
-        for cmd in [u"remove-all-but-n-full"] + cli_main.CommandAliases.remove_all_but_n_full:
+        for cmd in ["remove-all-but-n-full"] + cli_main.CommandAliases.remove_all_but_n_full:
             cli_main.process_command_line(f"{cmd} 5 file://duptest".split())
-            self.assertEqual(config.action, u"remove-all-but-n-full")
-            self.assertEqual(config.target_url, u"file://duptest")
+            self.assertEqual(config.action, "remove-all-but-n-full")
+            self.assertEqual(config.target_url, "file://duptest")
 
-        for cmd in [u"remove-all-inc-of-but-n-full"] + cli_main.CommandAliases.remove_all_inc_of_but_n_full:
+        for cmd in ["remove-all-inc-of-but-n-full"] + cli_main.CommandAliases.remove_all_inc_of_but_n_full:
             cli_main.process_command_line(f"{cmd} 5 file://duptest".split())
-            self.assertEqual(config.action, u"remove-all-inc-of-but-n-full")
-            self.assertEqual(config.target_url, u"file://duptest")
+            self.assertEqual(config.action, "remove-all-inc-of-but-n-full")
+            self.assertEqual(config.target_url, "file://duptest")
 
-        for cmd in [u"remove-older-than"] + cli_main.CommandAliases.remove_older_than:
+        for cmd in ["remove-older-than"] + cli_main.CommandAliases.remove_older_than:
             cli_main.process_command_line(f"{cmd} 100 file://duptest".split())
-            self.assertEqual(config.action, u"remove-older-than")
-            self.assertEqual(config.target_url, u"file://duptest")
+            self.assertEqual(config.action, "remove-older-than")
+            self.assertEqual(config.target_url, "file://duptest")
 
-        for cmd in [u"restore"] + cli_main.CommandAliases.restore:
+        for cmd in ["restore"] + cli_main.CommandAliases.restore:
             cli_main.process_command_line(f"{cmd} file://duptest foo/bar".split())
-            self.assertEqual(config.action, u"restore")
-            self.assertTrue(config.source_path.endswith(u"foo/bar"))
-            self.assertEqual(config.target_url, u"file://duptest")
+            self.assertEqual(config.action, "restore")
+            self.assertTrue(config.source_path.endswith("foo/bar"))
+            self.assertEqual(config.target_url, "file://duptest")
 
-        for cmd in [u"verify"] + cli_main.CommandAliases.verify:
+        for cmd in ["verify"] + cli_main.CommandAliases.verify:
             cli_main.process_command_line(f"{cmd} file://duptest foo/bar".split())
-            self.assertEqual(config.action, u"verify")
-            self.assertTrue(config.source_path.endswith(u"foo/bar"))
-            self.assertEqual(config.target_url, u"file://duptest")
+            self.assertEqual(config.action, "verify")
+            self.assertTrue(config.source_path.endswith("foo/bar"))
+            self.assertEqual(config.target_url, "file://duptest")
 
-    @pytest.mark.usefixtures(u"redirect_stdin")
+    @pytest.mark.usefixtures("redirect_stdin")
     def test_full_command_errors_reversed_args(self):
-        u"""
+        """
         test backup, restore, verify with explicit commands - reversed arg
         """
         new_args = {
-            u"source_path": u"file://duptest",
-            u"source_url": u"foo/bar",
-            u"target_dir": u"file://duptest",
-            u"target_url": u"foo/bar",
+            "source_path": "file://duptest",
+            "source_url": "foo/bar",
+            "target_dir": "file://duptest",
+            "target_url": "foo/bar",
         }
-        err_msg = u"should be url|should be pathname"
+        err_msg = "should be url|should be pathname"
         self.run_all_commands_with_errors(new_args, err_msg)
 
-    @pytest.mark.usefixtures(u"redirect_stdin")
+    @pytest.mark.usefixtures("redirect_stdin")
     def test_full_command_errors_bad_url(self):
-        u"""
+        """
         test backup, restore, verify with explicit commands - bad url
         """
         new_args = {
-            u"source_url": u"file:/duptest",
-            u"target_url": u"file:/duptest",
+            "source_url": "file:/duptest",
+            "target_url": "file:/duptest",
         }
-        err_msg = u"should be url"
+        err_msg = "should be url"
         self.run_all_commands_with_errors(new_args, err_msg)
 
-    @pytest.mark.usefixtures(u"redirect_stdin")
+    @pytest.mark.usefixtures("redirect_stdin")
     def test_full_command_errors_bad_integer(self):
-        u"""
+        """
         test backup, restore, verify with explicit commands - bad integer
         """
         new_args = {
-            u"count": u"foo",
+            "count": "foo",
         }
-        err_msg = u"not an int"
+        err_msg = "not an int"
         self.run_all_commands_with_errors(new_args, err_msg)
 
-    @pytest.mark.usefixtures(u"redirect_stdin")
+    @pytest.mark.usefixtures("redirect_stdin")
     def test_full_command_errors_bad_time_string(self):
-        u"""
+        """
         test backup, restore, verify with explicit commands - bad time string
         """
         new_args = {
-            u"remove_time": u"foo",
+            "remove_time": "foo",
         }
-        err_msg = u"Bad time string"
+        err_msg = "Bad time string"
         self.run_all_commands_with_errors(new_args, err_msg)
 
-    @pytest.mark.usefixtures(u"redirect_stdin")
+    @pytest.mark.usefixtures("redirect_stdin")
     def test_option_aliases(self):
-        u"""
+        """
         test short option aliases
         """
-        cline = u"ib foo/bar file:///target_url -v 9".split()
+        cline = "ib foo/bar file:///target_url -v 9".split()
         cli_main.process_command_line(cline)
         self.assertEqual(config.verbosity, 9)
 
-        cline = u"rb file:///source_url foo/bar -t 10000".split()
+        cline = "rb file:///source_url foo/bar -t 10000".split()
         cli_main.process_command_line(cline)
         self.assertEqual(config.restore_time, 10000)
 
-        cline = u"rb file:///source_url foo/bar --time 10000".split()
+        cline = "rb file:///source_url foo/bar --time 10000".split()
         cli_main.process_command_line(cline)
         self.assertEqual(config.restore_time, 10000)
 
-    @pytest.mark.usefixtures(u"redirect_stdin")
+    @pytest.mark.usefixtures("redirect_stdin")
     def test_encryption_options(self):
-        u"""
+        """
         test short option aliases
         """
-        start = u"ib foo/bar file:///target_url "
+        start = "ib foo/bar file:///target_url "
         keys = (
-            u"DEADDEAD",
-            u"DEADDEADDEADDEAD",
-            u"DEADDEADDEADDEADDEADDEADDEADDEADDEADDEAD",
+            "DEADDEAD",
+            "DEADDEADDEADDEAD",
+            "DEADDEADDEADDEADDEADDEADDEADDEADDEADDEAD",
         )
 
         for key in keys:
@@ -227,16 +227,16 @@ class CommandlineTest(UnitTestCase):
             cli_main.process_command_line(cline)
             self.assertEqual(config.gpg_profile.sign_key, key)
 
-    @pytest.mark.usefixtures(u"redirect_stdin")
+    @pytest.mark.usefixtures("redirect_stdin")
     def test_bad_encryption_options(self):
-        u"""
+        """
         test short option aliases
         """
-        start = u"inc foo/bar file:///target_url "
+        start = "inc foo/bar file:///target_url "
         keys = (
-            u"DEADFOO",
-            u"DEADDEADDEADFOO",
-            u"DEADDEADDEADDEADDEADDEADDEADDEADDEADFOO",
+            "DEADFOO",
+            "DEADDEADDEADFOO",
+            "DEADDEADDEADDEADDEADDEADDEADDEADDEADFOO",
         )
 
         for key in keys:
@@ -252,33 +252,33 @@ class CommandlineTest(UnitTestCase):
                 cline = f"{start} --sign-key={key}".split()
                 cli_main.process_command_line(cline)
 
-    @pytest.mark.usefixtures(u"redirect_stdin")
+    @pytest.mark.usefixtures("redirect_stdin")
     def test_implied_commands(self):
-        u"""
+        """
         test implied commands
         """
-        cline = u"foo/bar file:///target_url".split()
+        cline = "foo/bar file:///target_url".split()
         cli_main.process_command_line(cline)
-        self.assertEqual(config.action, u"inc")
+        self.assertEqual(config.action, "inc")
 
-        cline = u"file:///source_url foo/bar".split()
+        cline = "file:///source_url foo/bar".split()
         cli_main.process_command_line(cline)
-        self.assertEqual(config.action, u"restore")
+        self.assertEqual(config.action, "restore")
 
-    @pytest.mark.usefixtures(u"redirect_stdin")
+    @pytest.mark.usefixtures("redirect_stdin")
     def test_integer_args(self):
-        u"""
+        """
         test implied commands
         """
-        cline = u"foo/bar file:///target_url --copy-blocksize=1024 --volsize=1024".split()
+        cline = "foo/bar file:///target_url --copy-blocksize=1024 --volsize=1024".split()
         cli_main.process_command_line(cline)
         self.assertEqual(config.copy_blocksize, 1024 * 1024)
         self.assertEqual(config.volsize, 1024 * 1024 * 1024)
 
         with self.assertRaises(CommandLineError) as cm:
-            cline = u"foo/bar file:///target_url --copy-blocksize=foo --volsize=1024".split()
+            cline = "foo/bar file:///target_url --copy-blocksize=foo --volsize=1024".split()
             cli_main.process_command_line(cline)
 
         with self.assertRaises(CommandLineError) as cm:
-            cline = u"foo/bar file:///target_url --copy-blocksize=1024 --volsize=foo".split()
+            cline = "foo/bar file:///target_url --copy-blocksize=1024 --volsize=foo".split()
             cli_main.process_command_line(cline)

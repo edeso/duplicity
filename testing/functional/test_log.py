@@ -28,7 +28,7 @@ from . import FunctionalTestCase
 
 
 class LogTest(FunctionalTestCase):
-    u"""Test machine-readable functions/classes in log.py"""
+    """Test machine-readable functions/classes in log.py"""
 
     logfile = f"{_runtest_dir}/duplicity.log"
 
@@ -41,11 +41,11 @@ class LogTest(FunctionalTestCase):
         assert not os.system(f"rm -f {self.logfile}")
 
     def test_command_line_error(self):
-        u"""Check notification of a simple error code"""
+        """Check notification of a simple error code"""
 
         # Run actual duplicity command (will fail because bad dirs passed)
         cmd = f"{_top_dir}/bin/duplicity --log-file={self.logfile} full testing baddir >/dev/null 2>&1"
-        basepython = os.environ.get(u'TOXPYTHON', None)
+        basepython = os.environ.get('TOXPYTHON', None)
         if basepython is not None:
             cmd = f"{basepython} {cmd}"
         os.system(cmd)
@@ -56,20 +56,20 @@ class LogTest(FunctionalTestCase):
         # . Blah blah blah.
         #
         # """
-        f = open(self.logfile, u'r')
+        f = open(self.logfile, 'r')
         linecount = 0
         lastline = False
         for line in f:
             assert (not lastline)
             linecount += 1
             if linecount == 1:
-                assert (line == u"ERROR 23 CommandLineError\n")
-            elif line[0] != u"\n":
+                assert (line == "ERROR 23 CommandLineError\n")
+            elif line[0] != "\n":
                 assert (line.startswith(r". "))
             else:
                 lastline = True
         assert lastline
 
 
-if __name__ == u"__main__":
+if __name__ == "__main__":
     unittest.main()

@@ -26,24 +26,23 @@ import sys
 
 import pytest
 
-if os.getenv(u'RUN_CODE_TESTS', None) == u'1':
+if os.getenv('RUN_CODE_TESTS', None) == '1':
     # Make conditional so that we do not have to import in environments that
     # do not run the tests (e.g. the build servers)
     import pycodestyle
 
 from . import _top_dir, DuplicityTestCase
-from tools import find_unadorned_strings
 
-skipCodeTest = pytest.mark.skipif(not os.getenv(u'RUN_CODE_TESTS', None) == u'1',
-                                  reason=u'Must set environment var RUN_CODE_TESTS=1')
+skipCodeTest = pytest.mark.skipif(not os.getenv('RUN_CODE_TESTS', None) == '1',
+                                  reason='Must set environment var RUN_CODE_TESTS=1')
 
 files_to_test = [
-    os.path.join(_top_dir, u'bin/duplicity'),
+    os.path.join(_top_dir, 'bin/duplicity'),
 ]
-files_to_test.extend(glob.glob(os.path.join(_top_dir, u'duplicity/**/*.py'), recursive=True))
-files_to_test.extend(glob.glob(os.path.join(_top_dir, u'testing/functional/*.py')))
-files_to_test.extend(glob.glob(os.path.join(_top_dir, u'testing/unit/*.py')))
-files_to_test.extend(glob.glob(os.path.join(_top_dir, u'testing/*.py')))
+files_to_test.extend(glob.glob(os.path.join(_top_dir, 'duplicity/**/*.py'), recursive=True))
+files_to_test.extend(glob.glob(os.path.join(_top_dir, 'testing/functional/*.py')))
+files_to_test.extend(glob.glob(os.path.join(_top_dir, 'testing/unit/*.py')))
+files_to_test.extend(glob.glob(os.path.join(_top_dir, 'testing/*.py')))
 
 
 class CodeTest(DuplicityTestCase):
@@ -57,48 +56,30 @@ class CodeTest(DuplicityTestCase):
                                    universal_newlines=True)
         output = process.communicate()[0]
         if len(output):
-            for line in output.split(u'\n'):
+            for line in output.split('\n'):
                 print(line, file=sys.stderr)
-            output = u""
+            output = ""
         self.assertTrue(process.returncode in returncodes,
                         f"Test failed: returncode = {process.returncode}")
 
     @skipCodeTest
     def test_pylint(self):
-        u"""Pylint test (requires pylint to be installed to pass)"""
+        """Pylint test (requires pylint to be installed to pass)"""
         self.run_checker([
-            u"pylint",
-            u"--rcfile=" + os.path.join(_top_dir, u".pylintrc"),
+            "pylint",
+            "--rcfile=" + os.path.join(_top_dir, ".pylintrc"),
         ] + files_to_test
         )
 
     @skipCodeTest
     def test_pep8(self):
-        u"""Test that we conform to PEP-8 using pycodestyle."""
+        """Test that we conform to PEP-8 using pycodestyle."""
         # Note that the settings, ignores etc for pycodestyle are set in tox.ini, not here
-        style = pycodestyle.StyleGuide(config_file=os.path.join(_top_dir, u'tox.ini'))
+        style = pycodestyle.StyleGuide(config_file=os.path.join(_top_dir, 'tox.ini'))
         result = style.check_files(files_to_test)
         self.assertEqual(result.total_errors, 0,
-                         u"Found %s code style errors (and warnings)." % result.total_errors)
-
-    @skipCodeTest
-    def test_unadorned_string_literals(self):
-        u"""For predictable results in python/3 all string literals need to be marked as unicode, bytes or raw"""
-
-        do_assert = False
-        for python_source_file in files_to_test:
-            # Check each of the relevant python sources for unadorned string literals
-            unadorned_string_list = find_unadorned_strings.check_file_for_unadorned(python_source_file)
-            if unadorned_string_list:
-                do_assert = True
-                print(f"Found {len(unadorned_string_list):d} "
-                      f"unadorned strings in {python_source_file:s}:",
-                      file=sys.stderr)
-                for unadorned_string in unadorned_string_list:
-                    print(unadorned_string[1:], file=sys.stderr)
-
-        self.assertEqual(do_assert, False, u"Found unadorned strings.")
+                         "Found %s code style errors (and warnings)." % result.total_errors)
 
 
-if __name__ == u"__main__":
+if __name__ == "__main__":
     unittest.main()

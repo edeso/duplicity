@@ -32,36 +32,38 @@ def ensure_dbus():
     # GIO requires a dbus session bus which can start the gvfs daemons
     # when required.  So we make sure that such a bus exists and that our
     # environment points to it.
-    if u'DBUS_SESSION_BUS_ADDRESS' not in os.environ:
-        p = subprocess.Popen([u'dbus-launch'], stdout=subprocess.PIPE, universal_newlines=True)
+    if 'DBUS_SESSION_BUS_ADDRESS' not in os.environ:
+        p = subprocess.Popen(['dbus-launch'], stdout=subprocess.PIPE, universal_newlines=True)
         output = p.communicate()[0]
-        lines = output.split(u'\n')
+        lines = output.split('\n')
         for line in lines:
-            parts = line.split(u'=', 1)
+            parts = line.split('=', 1)
             if len(parts) == 2:
-                if parts[0] == u'DBUS_SESSION_BUS_PID':  # cleanup at end
+                if parts[0] == 'DBUS_SESSION_BUS_PID':  # cleanup at end
                     atexit.register(os.kill, int(parts[1]), signal.SIGTERM)
                 os.environ[parts[0]] = parts[1]
 
 
 class GIOBackend(duplicity.backend.Backend):
-    u"""Use this backend when saving to a GIO URL.
+    """Use this backend when saving to a GIO URL.
        This is a bit of a meta-backend, in that it can handle multiple schemas.
        URLs look like schema://user@server/path.
     """
+
     def __init__(self, parsed_url):
         from gi.repository import Gio  # pylint: disable=import-error
         from gi.repository import GLib  # pylint: disable=import-error
 
         class DupMountOperation(Gio.MountOperation):
-            u"""A simple MountOperation that grabs the password from the environment
+            """A simple MountOperation that grabs the password from the environment
                or the user.
             """
+
             def __init__(self, backend):
                 Gio.MountOperation.__init__(self)
                 self.backend = backend
-                self.connect(u'ask-password', self.ask_password_cb)
-                self.connect(u'ask-question', self.ask_question_cb)
+                self.connect('ask-password', self.ask_password_cb)
+                self.connect('ask-question', self.ask_question_cb)
 
             def ask_password_cb(self, *args, **kwargs):
                 self.set_password(self.backend.get_password())
@@ -103,7 +105,7 @@ class GIOBackend(duplicity.backend.Backend):
         except GLib.GError as e:
             # check for NOT_SUPPORTED because some schemas (e.g. file://) validly don't
             if e.code != Gio.IOErrorEnum.ALREADY_MOUNTED and e.code != Gio.IOErrorEnum.NOT_SUPPORTED:
-                log.FatalError(_(u"Connection failed, please check your password: %s")
+                log.FatalError(_("Connection failed, please check your password: %s")
                                % util.uexc(e), log.ErrorCode.connection_failed)
         loop.quit()
 
@@ -123,7 +125,7 @@ class GIOBackend(duplicity.backend.Backend):
         from gi.repository import Gio  # pylint: disable=import-error
         from gi.repository import GLib  # pylint: disable=import-error
         if isinstance(e, GLib.GError):
-            if e.code == Gio.IOErrorEnum.FAILED and operation == u'delete':
+            if e.code == Gio.IOErrorEnum.FAILED and operation == 'delete':
                 # Sometimes delete will return a generic failure on a file not
                 # found (notably the FTP does that)
                 return log.ErrorCode.backend_not_found
@@ -171,7 +173,7 @@ class GIOBackend(duplicity.backend.Backend):
         target_file = self.remote_file.get_child_for_display_name(os.fsdecode(filename))
         info = target_file.query_info(Gio.FILE_ATTRIBUTE_STANDARD_SIZE,
                                       Gio.FileQueryInfoFlags.NONE, None)
-        return {u'size': info.get_size()}
+        return {'size': info.get_size()}
 
 
-duplicity.backend.register_backend_prefix(u'gio', GIOBackend)
+duplicity.backend.register_backend_prefix('gio', GIOBackend)
