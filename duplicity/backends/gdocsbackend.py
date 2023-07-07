@@ -53,10 +53,10 @@ Google Docs backend requires Google Data APIs Python Client Library (see http://
 Exception: %s""" % str(e))
 
         # Setup client instance.
-        self.client = gdata.docs.client.DocsClient(source='duplicity %s' % __version__)
+        self.client = gdata.docs.client.DocsClient(source=f'duplicity {__version__}')
         self.client.ssl = True
         self.client.http_client.debug = False
-        self._authorize(parsed_url.username + '@' + parsed_url.hostname, self.get_password())
+        self._authorize(f"{parsed_url.username}@{parsed_url.hostname}", self.get_password())
 
         # Fetch destination folder entry (and crete hierarchy if required).
         folder_names = string.split(parsed_url.path[1:], '/')
@@ -75,9 +75,9 @@ Exception: %s""" % str(e))
                 if parent_folder:
                     parent_folder_id = parent_folder.resource_id.text
                 else:
-                    raise BackendException("Error while creating destination folder '%s'." % folder_name)
+                    raise BackendException(f"Error while creating destination folder '{folder_name}'.")
             else:
-                raise BackendException("Error while fetching destination folder '%s'." % folder_name)
+                raise BackendException(f"Error while fetching destination folder '{folder_name}'.")
         self.folder = parent_folder
 
     def _put(self, source_path, remote_filename):
@@ -96,7 +96,7 @@ Exception: %s""" % str(e))
         if uploader:
             # Chunked upload.
             entry = gdata.docs.data.Resource(title=atom.data.Title(text=remote_filename))
-            uri = self.folder.get_resumable_create_media_link().href + '?convert=false'
+            uri = f"{self.folder.get_resumable_create_media_link().href}?convert=false"
             entry = uploader.UploadFile(uri, entry=entry)
             if not entry:
                 raise BackendException("Failed to upload file '%s' to remote folder '%s'"
@@ -127,18 +127,18 @@ Exception: %s""" % str(e))
                                       GDocsBackend.BACKUP_DOCUMENT_TYPE,
                                       filename)
         for entry in entries:
-            self.client.delete(entry.get_edit_link().href + '?delete=true', force=True)
+            self.client.delete(f"{entry.get_edit_link().href}?delete=true", force=True)
 
     def _authorize(self, email, password, captcha_token=None, captcha_response=None):
         try:
             self.client.client_login(email,
                                      password,
-                                     source='duplicity %s' % __version__,
+                                     source=f'duplicity {__version__}',
                                      service='writely',
                                      captcha_token=captcha_token,
                                      captcha_response=captcha_response)
         except gdata.client.CaptchaChallenge as challenge:
-            print('A captcha challenge in required. Please visit ' + challenge.captcha_url)
+            print(f"A captcha challenge in required. Please visit {challenge.captcha_url}")
             answer = None
             while not answer:
                 answer = eval(input('Answer to the challenge? '))
@@ -153,7 +153,7 @@ Exception: %s""" % str(e))
 
     def _fetch_entries(self, folder_id, type, title=None):  # pylint: disable=redefined-builtin
         # Build URI.
-        uri = '/feeds/default/private/full/%s/contents' % folder_id
+        uri = f'/feeds/default/private/full/{folder_id}/contents'
         if type == 'folder':
             uri += '/-/folder?showfolders=true'
         elif type == GDocsBackend.BACKUP_DOCUMENT_TYPE:
@@ -161,7 +161,7 @@ Exception: %s""" % str(e))
         else:
             uri += '?showfolders=true'
         if title:
-            uri += '&title=' + urllib.parse.quote(title) + '&title-exact=true'
+            uri += f"&title={urllib.parse.quote(title)}&title-exact=true"
 
         # Fetch entries.
         entries = self.client.get_all_resources(uri=uri)

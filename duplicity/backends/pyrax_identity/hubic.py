@@ -38,7 +38,7 @@ class BearerTokenAuth(requests.auth.AuthBase):
         self.token = token
 
     def __call__(self, req):
-        req.headers['Authorization'] = 'Bearer ' + self.token
+        req.headers['Authorization'] = f"Bearer {self.token}"
         return req
 
 
@@ -79,7 +79,7 @@ class HubicIdentity(BaseIdentity):
 
     def _get_access_token(self, code):
         r = requests.post(
-            OAUTH_ENDPOINT + 'token/',
+            f"{OAUTH_ENDPOINT}token/",
             data={
                 'code': code,
                 'redirect_uri': self._redirect_uri,
@@ -153,7 +153,7 @@ class HubicIdentity(BaseIdentity):
 
         while retries < max_retries and not success:
             r = requests.post(
-                OAUTH_ENDPOINT + 'token/',
+                f"{OAUTH_ENDPOINT}token/",
                 data={
                     'refresh_token': refresh_token,
                     'grant_type': 'refresh_token',
@@ -235,7 +235,7 @@ class HubicIdentity(BaseIdentity):
                                                "Please run expresslane-hubic-setup.sh")
 
             r = requests.post(
-                OAUTH_ENDPOINT + 'auth/',
+                f"{OAUTH_ENDPOINT}auth/",
                 data={
                     'action': 'accepted',
                     'oauth': oauth,
@@ -261,7 +261,7 @@ class HubicIdentity(BaseIdentity):
             raise exc.AuthenticationFailed("Unsupported access token type")
 
         r = requests.get(
-            API_ENDPOINT + 'account/credentials',
+            f"{API_ENDPOINT}account/credentials",
             auth=BearerTokenAuth(oauth_token['access_token']),
         )
 

@@ -38,9 +38,8 @@ class MediafireBackend(duplicity.backend.Backend):
         try:
             import mediafire.client
         except ImportError as e:
-            raise BackendException("""\
-Mediafire backend requires the mediafire library.
-Exception: %s""" % str(e))
+            raise BackendException(f"""Mediafire backend requires the mediafire library.
+Exception: {str(e)}""")
 
         duplicity.backend.Backend.__init__(self, parsed_url)
 
@@ -58,7 +57,7 @@ Exception: %s""" % str(e))
                           password=mediafire_password)
 
         # //username:password@host/path/to/folder -> path/to/folder
-        uri = 'mf:///' + parsed_url.path.split('/', 3)[3]
+        uri = f"mf:///{parsed_url.path.split('/', 3)[3]}"
 
         # Create folder if it does not exist and make sure it is private
         # See MediaFire Account Settings /Security and Privacy / Share Link
@@ -131,8 +130,7 @@ Exception: %s""" % str(e))
     def _build_uri(self, filename=''):
         """Build relative URI"""
         return (
-            'mf:' + self.folder["folderkey"] +
-            ('/' + os.fsdecode(filename))
+            f"mf:{self.folder['folderkey']}/{os.fsdecode(filename)}"
         )
 
 

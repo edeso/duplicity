@@ -60,7 +60,7 @@ class NCFTPBackend(duplicity.backend.Backend):
                      "see: http://www.ncftpd.com/ncftp/doc/changelog.html\n"
                      "If you have trouble, please upgrade to 3.2.1 or later",
                      log.WarningCode.ftp_ncftp_v320)
-        log.Notice("NcFTP version is %s" % version)
+        log.Notice(f"NcFTP version is {version}")
 
         self.parsed_url = parsed_url
 
@@ -87,14 +87,14 @@ class NCFTPBackend(duplicity.backend.Backend):
 
         self.tempfd, self.tempname = tempdir.default().mkstemp()
         self.tempfile = os.fdopen(self.tempfd, "w")
-        self.tempfile.write("host %s\n" % self.parsed_url.hostname)
-        self.tempfile.write("user %s\n" % self.parsed_url.username)
-        self.tempfile.write("pass %s\n" % self.password)
+        self.tempfile.write(f"host {self.parsed_url.hostname}\n")
+        self.tempfile.write(f"user {self.parsed_url.username}\n")
+        self.tempfile.write(f"pass {self.password}\n")
         self.tempfile.close()
         self.flags = "-f %s %s -t %s -o useCLNT=0,useHELP_SITE=0 " % \
                      (self.tempname, self.conn_opt, config.timeout)
         if parsed_url.port is not None and parsed_url.port != 21:
-            self.flags += " -P '%s'" % parsed_url.port
+            self.flags += f" -P '{parsed_url.port}'"
 
     def _put(self, source_path, remote_filename):
         remote_filename = os.fsdecode(remote_filename)
@@ -114,7 +114,7 @@ class NCFTPBackend(duplicity.backend.Backend):
 
     def _list(self):
         # Do a long listing to avoid connection reset
-        commandline = "ncftpls %s -l '%s'" % (self.flags, self.url_string)
+        commandline = f"ncftpls {self.flags} -l '{self.url_string}'"
         _, l, _ = self.subprocess_popen(commandline)
         # Look for our files as the last element of a long list line
         return [os.fsencode(x.split()[-1]) for x in l.split('\n') if x and not x.startswith("total ")]

@@ -161,12 +161,12 @@ class ROPath(object):
     def getperms(self):
         """Return permissions mode, owner and group"""
         s1 = self.stat
-        return '%s:%s %o' % (s1.st_uid, s1.st_gid, self.mode)
+        return f'{s1.st_uid}:{s1.st_gid} {self.mode:o}'
 
     def open(self, mode):
         """Return fileobj associated with self"""
         assert mode == "rb" and self.fileobj and not self.opened, \
-            "%s %s %s" % (mode, self.fileobj, self.opened)
+            f"{mode} {self.fileobj} {self.opened}"
         self.opened = 1
         return self.fileobj
 
@@ -207,7 +207,7 @@ class ROPath(object):
         elif type == tarfile.FIFOTYPE:
             self.type = "fifo"
         else:
-            raise PathException("Unknown tarinfo type %s" % (type,))
+            raise PathException(f"Unknown tarinfo type {type}")
 
         self.mode = tarinfo.mode
         self.stat = StatResult()
@@ -289,7 +289,7 @@ class ROPath(object):
                     ti.type = tarfile.BLKTYPE
                 ti.devmajor, ti.devminor = self.devnums
             else:
-                raise PathException("Unrecognized type " + str(self.type))
+                raise PathException(f"Unrecognized type {str(self.type)}")
 
             ti.mode = self.mode
             ti.uid, ti.gid = self.stat.st_uid, self.stat.st_gid
@@ -359,7 +359,7 @@ class ROPath(object):
         """
 
         def log_diff(log_string):
-            log_str = _("Difference found:") + " " + log_string
+            log_str = f"{_('Difference found:')} {log_string}"
             log.Notice(log_str % (os.fsdecode(self.get_relative_path())))
 
         if include_data is False:
@@ -485,7 +485,7 @@ class ROPath(object):
 
     def __str__(self):
         """Return string representation"""
-        return "(%s %s)" % (util.uindex(self.index), self.type)
+        return f"({util.uindex(self.index)} {self.type})"
 
 
 class Path(ROPath):
@@ -596,7 +596,7 @@ class Path(ROPath):
         """Make a device file with specified type, major/minor nums"""
         cmdlist = ['mknod', self.name, type, str(major), str(minor)]
         if os.spawnvp(os.P_WAIT, 'mknod', cmdlist) != 0:
-            raise PathException("Error running %s" % cmdlist)
+            raise PathException(f"Error running {cmdlist}")
         self.setdata()
 
     def mkdir(self):
@@ -606,7 +606,7 @@ class Path(ROPath):
             os.makedirs(self.name)
         except OSError:
             if not config.force:
-                raise PathException("Error creating directory %s" % self.uc_name, 7)
+                raise PathException(f"Error creating directory {self.uc_name}", 7)
         self.setdata()
 
     def delete(self):
@@ -691,13 +691,12 @@ class Path(ROPath):
         global _tmp_path_counter
         parent_dir = self.get_parent_dir()
         while True:
-            temp_path = parent_dir.append("duplicity_temp." +
-                                          str(_tmp_path_counter))
+            temp_path = parent_dir.append(f"duplicity_temp.{str(_tmp_path_counter)}")
             if not temp_path.type:
                 return temp_path
             _tmp_path_counter += 1
             assert _tmp_path_counter < 10000, \
-                "Warning too many temp files created for " + self.uc_name
+                f"Warning too many temp files created for {self.uc_name}"
 
     def compare_recursive(self, other, verbose=None):
         """Compare self to other Path, descending down directories"""
@@ -708,7 +707,7 @@ class Path(ROPath):
 
     def __repr__(self):
         """Return string representation"""
-        return "(%s %s %s)" % (self.index, self.uc_name, self.type)
+        return f"({self.index} {self.uc_name} {self.type})"
 
     def quote(self, s=None):
         """
@@ -719,7 +718,7 @@ class Path(ROPath):
         """
         if not s:
             s = self.uc_name
-        return '"%s"' % self.regex_chars_to_quote.sub(lambda m: "\\" + m.group(0), s)
+        return '"%s"' % self.regex_chars_to_quote.sub(lambda m: f"\\{m.group(0)}", s)
 
     def unquote(self, s):
         """Return unquoted version of string s, as quoted by above quote()"""

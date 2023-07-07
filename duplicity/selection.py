@@ -207,7 +207,7 @@ class Select(object):
     def Select(self, path):
         """Run through the selection functions and return dominant val 0/1/2"""
         # Only used by diryield and tests. Internal.
-        log.Debug("Selection: examining path %s" % path.uc_name)
+        log.Debug(f"Selection: examining path {path.uc_name}")
         if not self.selection_functions:
             log.Debug("Selection:     + no selection functions found. Including")
             return 1
@@ -315,7 +315,7 @@ class Select(object):
                 elif opt == "--include-regexp":
                     self.add_selection_func(self.regexp_get_sf(arg, 1, no_case))
                 else:
-                    assert 0, "Bad selection option %s" % opt
+                    assert 0, f"Bad selection option {opt}"
         except GlobbingError as e:
             self.parse_catch_error(e)
         assert filelists_index == len(filelists)
@@ -551,7 +551,7 @@ class Select(object):
         elif mode == "regex":
             return self.regexp_get_sf(pattern_str, include, ignore_case)
         else:
-            assert 0, "Bad selection mode %s" % mode
+            assert 0, f"Bad selection mode {mode}"
 
     def present_get_sf(self, filename, include):
         """Return selection function given by existence of a file in a directory"""
@@ -595,7 +595,7 @@ class Select(object):
     def glob_get_sf(self, glob_str, include, ignore_case=False):
         """Return selection function based on glob_str"""
         assert isinstance(glob_str, str), \
-            "The glob string " + glob_str.decode(sys.getfilesystemencoding(), "ignore") + " is not unicode"
+            f"The glob string {glob_str.decode(sys.getfilesystemencoding(), 'ignore')} is not unicode"
 
         # Check to make sure prefix is ok, i.e. the glob string is within
         # the root folder being backed up
@@ -645,7 +645,7 @@ class Select(object):
             return None
 
         sel_func.exclude = True
-        sel_func.name = "Select older than %s" % (date,)
+        sel_func.name = f"Select older than {date}"
         return sel_func
 
     def select_fn_from_literal(self, lit_str, include, ignore_case=False):

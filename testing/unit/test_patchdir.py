@@ -51,9 +51,9 @@ class PatchingTest(UnitTestCase):
 
     def test_total(self):
         """Test cycle on dirx"""
-        self.total_sequence(['{0}/testfiles/dir1'.format(_runtest_dir),
-                             '{0}/testfiles/dir2'.format(_runtest_dir),
-                             '{0}/testfiles/dir3'.format(_runtest_dir)])
+        self.total_sequence([f'{_runtest_dir}/testfiles/dir1',
+                             f'{_runtest_dir}/testfiles/dir2',
+                             f'{_runtest_dir}/testfiles/dir3'])
 
     def get_sel(self, path):
         """Get selection iter over the given directory"""
@@ -62,9 +62,9 @@ class PatchingTest(UnitTestCase):
     def total_sequence(self, filelist):
         """Test signatures, diffing, and patching on directory list"""
         assert len(filelist) >= 2
-        sig = Path("{0}/testfiles/output/sig.tar".format(_runtest_dir))
-        diff = Path("{0}/testfiles/output/diff.tar".format(_runtest_dir))
-        seq_path = Path("{0}/testfiles/output/sequence".format(_runtest_dir))
+        sig = Path(f"{_runtest_dir}/testfiles/output/sig.tar")
+        diff = Path(f"{_runtest_dir}/testfiles/output/diff.tar")
+        seq_path = Path(f"{_runtest_dir}/testfiles/output/sequence")
         new_path, old_path = None, None  # set below in for loop
 
         # Write initial full backup to diff.tar
@@ -88,7 +88,7 @@ class PatchingTest(UnitTestCase):
         def get_fileobjs():
             """Return iterator yielding open fileobjs of tar files"""
             for i in range(1, 4):
-                p = Path("{0}/testfiles/blocktartest/test{1}.tar".format(_runtest_dir, i))
+                p = Path(f"{_runtest_dir}/testfiles/blocktartest/test{i}.tar")
                 fp = p.open("rb")
                 yield fp
                 fp.close()
@@ -109,8 +109,8 @@ class PatchingTest(UnitTestCase):
 
             # file object will be empty, and tarinfo will have path
             # "snapshot/../warning-security-error"
-            assert not os.system("cat /dev/null > {0}/testfiles/output/file".format(_runtest_dir))
-            path = Path("{0}/testfiles/output/file".format(_runtest_dir))
+            assert not os.system(f"cat /dev/null > {_runtest_dir}/testfiles/output/file")
+            path = Path(f"{_runtest_dir}/testfiles/output/file")
             path.index = (b"diff", b"..", b"warning-security-error")
             ti = path.get_tarinfo()
             fp = io.StringIO("")
@@ -118,13 +118,13 @@ class PatchingTest(UnitTestCase):
 
             tf.close()
 
-        make_bad_tar("{0}/testfiles/output/bad.tar".format(_runtest_dir))
-        os.mkdir("{0}/testfiles/output/temp".format(_runtest_dir))
+        make_bad_tar(f"{_runtest_dir}/testfiles/output/bad.tar")
+        os.mkdir(f"{_runtest_dir}/testfiles/output/temp")
 
         self.assertRaises(patchdir.PatchDirException, patchdir.Patch,
-                          Path("{0}/testfiles/output/temp".format(_runtest_dir)),
-                          open("{0}/testfiles/output/bad.tar".format(_runtest_dir), "rb"))
-        assert not Path("{0}/testfiles/output/warning-security-error".format(_runtest_dir)).exists()
+                          Path(f"{_runtest_dir}/testfiles/output/temp"),
+                          open(f"{_runtest_dir}/testfiles/output/bad.tar", "rb"))
+        assert not Path(f"{_runtest_dir}/testfiles/output/warning-security-error").exists()
 
 
 class index(object):
@@ -194,7 +194,7 @@ class TestInnerFuncs(UnitTestCase):
 
     def check_output(self):
         """Make {0}/testfiles/output exists"""
-        out = Path("{0}/testfiles/output".format(_runtest_dir))
+        out = Path(f"{_runtest_dir}/testfiles/output")
         if not (out.exists() and out.isdir()):
             out.mkdir()
         self.out = out
@@ -295,10 +295,10 @@ class TestInnerFuncs(UnitTestCase):
 
         ids = "%d:%d" % (os.getuid(), os.getgid())
 
-        testseq([self.snapshot()], ("%s 600" % ids), b"hello, world!")
-        testseq([self.snapshot(), self.delta1()], ("%s 640" % ids),
+        testseq([self.snapshot()], (f"{ids} 600"), b"hello, world!")
+        testseq([self.snapshot(), self.delta1()], (f"{ids} 640"),
                 b"aonseuth aosetnuhaonsuhtansoetuhaoe")
-        testseq([self.snapshot(), self.delta1(), self.delta2()], ("%s 644" % ids),
+        testseq([self.snapshot(), self.delta1(), self.delta2()], (f"{ids} 644"),
                 b"3499 34957839485792357 458348573")
 
 

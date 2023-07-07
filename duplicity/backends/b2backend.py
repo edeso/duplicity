@@ -111,7 +111,7 @@ class B2Backend(duplicity.backend.Backend):
             bucket_name = self.url_parts.pop(0)
         else:
             raise BackendException("B2 requires a bucket name")
-        self.path = "".join([url_part + "/" for url_part in self.url_parts])
+        self.path = "".join([f"{url_part}/" for url_part in self.url_parts])
         self.service.authorize_account('production', account_id, account_key)
 
         try:
@@ -174,7 +174,7 @@ class B2Backend(duplicity.backend.Backend):
         Delete filename from remote server
         """
         full_filename = self.path + os.fsdecode(filename)
-        log.Log("Delete: %s" % full_filename, log.INFO)
+        log.Log(f"Delete: {full_filename}", log.INFO)
 
         if config.b2_hide_files:
             self.bucket.hide_file(full_filename)
@@ -186,7 +186,7 @@ class B2Backend(duplicity.backend.Backend):
         """
         Get size info of filename
         """
-        log.Log("Query: %s" % self.path + os.fsdecode(filename), log.INFO)
+        log.Log(f"Query: {self.path}{os.fsdecode(filename)}", log.INFO)
         file_version_info = self.file_info(quote_plus(self.path + os.fsdecode(filename), '/'))
         return {'size': int(file_version_info.size)
                 if file_version_info is not None and file_version_info.size is not None else -1}

@@ -49,7 +49,7 @@ class FileNamingBase(object):
 
         file_naming.prepare_regex(force=True)
         filename = file_naming.get("inc", volume_number=23)
-        log.Info("Inc filename: " + os.fsdecode(filename))
+        log.Info(f"Inc filename: {os.fsdecode(filename)}")
         pr = file_naming.parse(filename)
         assert pr and pr.type == "inc", pr
         assert pr.start_time == 10
@@ -58,7 +58,7 @@ class FileNamingBase(object):
         assert not pr.partial
 
         filename = file_naming.get("full-sig")
-        log.Info("Full sig filename: " + os.fsdecode(filename))
+        log.Info(f"Full sig filename: {os.fsdecode(filename)}")
         pr = file_naming.parse(filename)
         assert pr.type == "full-sig"
         assert pr.time == 20

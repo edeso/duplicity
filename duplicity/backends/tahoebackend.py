@@ -41,21 +41,21 @@ class TAHOEBackend(duplicity.backend.Backend):
         else:
             self.directory = ""
 
-        log.Debug("tahoe: %s -> %s:%s" % (url, self.alias, self.directory))
+        log.Debug(f"tahoe: {url} -> {self.alias}:{self.directory}")
 
     def get_remote_path(self, filename=None):
         if filename is None:
             if self.directory != "":
-                return "%s:%s" % (self.alias, self.directory)
+                return f"{self.alias}:{self.directory}"
             else:
-                return "%s:" % self.alias
+                return f"{self.alias}:"
 
         if isinstance(filename, b"".__class__):
             filename = os.fsdecode(filename)
         if self.directory != "":
-            return "%s:%s/%s" % (self.alias, self.directory, filename)
+            return f"{self.alias}:{self.directory}/{filename}"
         else:
-            return "%s:%s" % (self.alias, filename)
+            return f"{self.alias}:{filename}"
 
     def run(self, *args):
         cmd = " ".join(args)

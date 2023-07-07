@@ -83,7 +83,7 @@ ChangedDeltaSize 9 (9 bytes)
 DeltaEntries 10
 RawDeltaSize 11 (11 bytes)
 TotalDestinationSizeChange 12 (12 bytes)
-""", "'%s'" % stats_string
+""", f"'{stats_string}'"
 
     def test_line_string(self):
         """Test conversion to a single line"""
@@ -132,7 +132,7 @@ TotalDestinationSizeChange 12 (12 bytes)
 
     def test_write_path(self):
         """Test reading and writing of statistics object"""
-        p = path.Path("{0}/testfiles/statstest".format(_runtest_dir))
+        p = path.Path(f"{_runtest_dir}/testfiles/statstest")
         if p.exists():
             p.delete()
         s = StatsObj()

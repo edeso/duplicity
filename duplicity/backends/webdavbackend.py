@@ -103,7 +103,7 @@ class VerifiedHTTPSConnection(http.client.HTTPSConnection):
             return http.client.HTTPSConnection.request(self, *args, **kwargs)
         except ssl.SSLError as e:
             # encapsulate ssl errors
-            raise BackendException("SSL failed: %s" % util.uexc(e),
+            raise BackendException(f"SSL failed: {util.uexc(e)}",
                                    log.ErrorCode.backend_error)
 
 
@@ -134,7 +134,7 @@ class WebDAVBackend(duplicity.backend.Backend):
             except SyntaxError as e:
                 log.FatalError("--webdav-headers value has bad syntax.  Check quoting pairs.")
             except Exception as e:
-                log.FatalErrof("--webdav-headers value caused error: %s" % e)
+                log.FatalErrof(f"--webdav-headers value caused error: {e}")
 
         self.parsed_url = parsed_url
         self.digest_challenge = None
@@ -153,7 +153,7 @@ class WebDAVBackend(duplicity.backend.Backend):
     def sanitize_path(self, path):
         if path:
             foldpath = re.compile('/+')
-            return foldpath.sub('/', path + '/')
+            return foldpath.sub('/', f"{path}/")
         else:
             return '/'
 
@@ -269,17 +269,17 @@ class WebDAVBackend(duplicity.backend.Backend):
 
     def get_kerberos_authorization(self):
         import kerberos  # pylint: disable=import-error
-        _, ctx = kerberos.authGSSClientInit("HTTP@%s" % self.conn.host)
+        _, ctx = kerberos.authGSSClientInit(f"HTTP@{self.conn.host}")
         kerberos.authGSSClientStep(ctx, "")
         tgt = kerberos.authGSSClientResponse(ctx)
-        return 'Negotiate %s' % tgt
+        return f'Negotiate {tgt}'
 
     def get_basic_authorization(self):
         """
         Returns the basic auth header
         """
-        auth_string = '%s:%s' % (self.username, self.password)
-        return 'Basic %s' % base64.b64encode(auth_string.encode()).strip().decode()
+        auth_string = f'{self.username}:{self.password}'
+        return f'Basic {base64.b64encode(auth_string.encode()).strip().decode()}'
 
     def get_digest_authorization(self, path):
         """
@@ -294,12 +294,12 @@ class WebDAVBackend(duplicity.backend.Backend):
         # building a dummy request that gets never sent,
         # needed for call to auth_handler.get_authorization
         scheme = u.scheme == 'webdavs' and 'https' or 'http'
-        hostname = u.port and "%s:%s" % (u.hostname, u.port) or u.hostname
-        dummy_url = "%s://%s%s" % (scheme, hostname, path)
+        hostname = u.port and f"{u.hostname}:{u.port}" or u.hostname
+        dummy_url = f"{scheme}://{hostname}{path}"
         dummy_req = CustomMethodRequest(self.conn._method, dummy_url)
         auth_string = self.digest_auth_handler.get_authorization(dummy_req,
                                                                  self.digest_challenge)
-        return 'Digest %s' % auth_string
+        return f'Digest {auth_string}'
 
     def _list(self):
         response = None
@@ -320,9 +320,9 @@ class WebDAVBackend(duplicity.backend.Backend):
                 status = response.status
                 reason = response.reason
                 response.close()
-                raise BackendException("Bad status code %s reason %s." % (status, reason))
+                raise BackendException(f"Bad status code {status} reason {reason}.")
 
-            log.Debug("%s" % (document,))
+            log.Debug(f"{document}")
             dom = xml.dom.minidom.parseString(document)
             result = []
             for href in dom.getElementsByTagNameNS('*', 'href'):
@@ -344,7 +344,7 @@ class WebDAVBackend(duplicity.backend.Backend):
         if dirs[-1] == '':
             dirs = dirs[0:-1]
         for i in range(1, len(dirs)):
-            d = "/".join(dirs[0:i + 1]) + "/"
+            d = f"{'/'.join(dirs[0:i + 1])}/"
 
             self.headers['Depth'] = "1"
             response = self.request("PROPFIND", d)

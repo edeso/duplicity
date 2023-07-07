@@ -40,10 +40,10 @@ class CleanupTest(FunctionalTestCase):
         after a failed backup.
         """
         self.make_largefiles()
-        good_files = self.backup("full", "{0}/testfiles/largefiles".format(_runtest_dir))
-        good_files |= self.backup("inc", "{0}/testfiles/largefiles".format(_runtest_dir))
-        good_files |= self.backup("inc", "{0}/testfiles/largefiles".format(_runtest_dir))
-        self.backup("full", "{0}/testfiles/largefiles".format(_runtest_dir), fail=1)
+        good_files = self.backup("full", f"{_runtest_dir}/testfiles/largefiles")
+        good_files |= self.backup("inc", f"{_runtest_dir}/testfiles/largefiles")
+        good_files |= self.backup("inc", f"{_runtest_dir}/testfiles/largefiles")
+        self.backup("full", f"{_runtest_dir}/testfiles/largefiles", fail=1)
         bad_files = self.get_backend_files()
         bad_files -= good_files
         self.assertNotEqual(bad_files, set())
@@ -51,15 +51,15 @@ class CleanupTest(FunctionalTestCase):
         self.run_duplicity(options=["cleanup", self.backend_url, "--force"])
         leftovers = self.get_backend_files()
         self.assertEqual(good_files, leftovers)
-        self.backup("inc", "{0}/testfiles/largefiles".format(_runtest_dir))
-        self.verify("{0}/testfiles/largefiles".format(_runtest_dir))
+        self.backup("inc", f"{_runtest_dir}/testfiles/largefiles")
+        self.verify(f"{_runtest_dir}/testfiles/largefiles")
 
     def test_remove_all_but_n_full(self):
         """
         Test that remove-all-but-n works in the simple case.
         """
-        full1_files = self.backup("full", "{0}/testfiles/empty_dir".format(_runtest_dir))
-        full2_files = self.backup("full", "{0}/testfiles/empty_dir".format(_runtest_dir))
+        full1_files = self.backup("full", f"{_runtest_dir}/testfiles/empty_dir")
+        full2_files = self.backup("full", f"{_runtest_dir}/testfiles/empty_dir")
         self.run_duplicity(options=["remove-all-but-n-full", "1", self.backend_url, "--force"])
         leftovers = self.get_backend_files()
         self.assertEqual(full2_files, leftovers)
@@ -68,9 +68,9 @@ class CleanupTest(FunctionalTestCase):
         """
         Test that remove-all-inc-of-but-n-full works in the simple case.
         """
-        full1_files = self.backup("full", "{0}/testfiles/empty_dir".format(_runtest_dir))
-        inc1_files = self.backup("inc", "{0}/testfiles/empty_dir".format(_runtest_dir))
-        full2_files = self.backup("full", "{0}/testfiles/empty_dir".format(_runtest_dir))
+        full1_files = self.backup("full", f"{_runtest_dir}/testfiles/empty_dir")
+        inc1_files = self.backup("inc", f"{_runtest_dir}/testfiles/empty_dir")
+        full2_files = self.backup("full", f"{_runtest_dir}/testfiles/empty_dir")
         self.run_duplicity(options=["remove-all-inc-of-but-n-full", "1", self.backend_url, "--force"])
         leftovers = self.get_backend_files()
         self.assertEqual(full1_files | full2_files, leftovers)

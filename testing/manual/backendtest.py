@@ -212,13 +212,13 @@ class imapTest(ManualBackendBase):
 
 class gioSSHTest(ManualBackendBase):
     def setBackendInfo(self):
-        self.url_string = 'gio+' + test_config.ssh_url if test_config.ssh_url else None
+        self.url_string = f"gio+{test_config.ssh_url}" if test_config.ssh_url else None
         self.password = test_config.ssh_password
 
 
 class gioFTPTest(ManualBackendBase):
     def setBackendInfo(self):
-        self.url_string = 'gio+' + test_config.ftp_url if test_config.ftp_url else None
+        self.url_string = f"gio+{test_config.ftp_url}" if test_config.ftp_url else None
         self.password = test_config.ftp_password
 
 

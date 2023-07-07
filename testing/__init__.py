@@ -60,17 +60,17 @@ if not os.path.exists(_runtest_dir):
 sys.path = [_overrides_dir, _top_dir, _bin_dir] + sys.path
 
 # Also set PYTHONPATH for any subprocesses
-os.environ['PYTHONPATH'] = _overrides_dir + ":" + _top_dir + ":" + os.environ.get('PYTHONPATH', '')
+os.environ['PYTHONPATH'] = f"{_overrides_dir}:{_top_dir}:{os.environ.get('PYTHONPATH', '')}"
 
 # And PATH for any subprocesses
-os.environ['PATH'] = _bin_dir + ":" + os.environ.get('PATH', '')
+os.environ['PATH'] = f"{_bin_dir}:{os.environ.get('PATH', '')}"
 
 # Now set some variables that help standardize test behavior
 os.environ['LANG'] = ''
 os.environ['GNUPGHOME'] = os.path.join(_testing_dir, 'gnupg')
 
 # bzr does not honor perms so fix the perms and avoid annoying error
-os.system("chmod 700 %s" % os.path.join(_testing_dir, 'gnupg'))
+os.system(f"chmod 700 {os.path.join(_testing_dir, 'gnupg')}")
 
 # Standardize time
 os.environ['TZ'] = 'US/Central'
@@ -119,12 +119,12 @@ class DuplicityTestCase(unittest.TestCase):
         super().tearDown()
 
     def unpack_testfiles(self):
-        assert not os.system("rm -rf {0}/testfiles".format(_runtest_dir))
-        assert not os.system("tar xzf {0}/testfiles.tar.gz -C {1} > /dev/null 2>&1".format(_testing_dir, _runtest_dir))
+        assert not os.system(f"rm -rf {_runtest_dir}/testfiles")
+        assert not os.system(f"tar xzf {_testing_dir}/testfiles.tar.gz -C {_runtest_dir} > /dev/null 2>&1")
         assert not os.system("mkdir {0}/testfiles/output {0}/testfiles/cache".format(_runtest_dir))
 
     def remove_testfiles(self):
-        assert not os.system("rm -rf {0}/testfiles".format(_runtest_dir))
+        assert not os.system(f"rm -rf {_runtest_dir}/testfiles")
 
     def _update_env(self, key, value):
         if value is not None:

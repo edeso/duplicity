@@ -43,14 +43,14 @@ class GPGTest(UnitTestCase):
 
     def gpg_cycle(self, s, profile=None):
         """Test encryption/decryption cycle on string s"""
-        epath = path.Path("{0}/testfiles/output/encrypted_file".format(_runtest_dir))
+        epath = path.Path(f"{_runtest_dir}/testfiles/output/encrypted_file")
         if not profile:
             profile = self.default_profile
         encrypted_file = gpg.GPGFile(1, epath, profile)
         encrypted_file.write(s)
         encrypted_file.close()
 
-        epath2 = path.Path("{0}/testfiles/output/encrypted_file".format(_runtest_dir))
+        epath2 = path.Path(f"{_runtest_dir}/testfiles/output/encrypted_file")
         decrypted_file = gpg.GPGFile(0, epath2, profile)
         dec_buf = decrypted_file.read()
         decrypted_file.close()
@@ -104,7 +104,7 @@ class GPGTest(UnitTestCase):
                                          sign_key=self.sign_key,
                                          recipients=[self.encrypt_key1])
 
-        epath = path.Path("{0}/testfiles/output/encrypted_file".format(_runtest_dir))
+        epath = path.Path(f"{_runtest_dir}/testfiles/output/encrypted_file")
         encrypted_signed_file = gpg.GPGFile(1, epath, signing_profile)
         encrypted_signed_file.write(plaintext)
         encrypted_signed_file.close()
@@ -123,7 +123,7 @@ class GPGTest(UnitTestCase):
                                          sign_key=self.sign_key,
                                          hidden_recipients=[self.encrypt_key1])
 
-        epath = path.Path("{0}/testfiles/output/encrypted_file".format(_runtest_dir))
+        epath = path.Path(f"{_runtest_dir}/testfiles/output/encrypted_file")
         encrypted_signed_file = gpg.GPGFile(1, epath, signing_profile)
         encrypted_signed_file.write(plaintext)
         encrypted_signed_file.close()
@@ -141,12 +141,12 @@ class GPGTest(UnitTestCase):
         gwfh = GPGWriteFile_Helper()
         profile = gpg.GPGProfile(passphrase="foobar")
         for i in range(10):
-            gpg.GPGWriteFile(gwfh, "{0}/testfiles/output/gpgwrite.gpg".format(_runtest_dir),
+            gpg.GPGWriteFile(gwfh, f"{_runtest_dir}/testfiles/output/gpgwrite.gpg",
                              profile, size=size)
             # print os.stat("/tmp/testfiles/output/gpgwrite.gpg").st_size-size
-            assert size - 64 * 1024 <= os.stat("{0}/testfiles/output/gpgwrite.gpg".format(_runtest_dir)).st_size <= size + 64 * 1024  # noqa
+            assert size - 64 * 1024 <= os.stat(f"{_runtest_dir}/testfiles/output/gpgwrite.gpg").st_size <= size + 64 * 1024  # noqa
         gwfh.set_at_end()
-        gpg.GPGWriteFile(gwfh, "{0}/testfiles/output/gpgwrite.gpg".format(_runtest_dir),
+        gpg.GPGWriteFile(gwfh, f"{_runtest_dir}/testfiles/output/gpgwrite.gpg",
                          profile, size=size)
         # print os.stat("/tmp/testfiles/output/gpgwrite.gpg").st_size
 
@@ -155,12 +155,12 @@ class GPGTest(UnitTestCase):
         size = 400 * 1000
         gwfh = GPGWriteFile_Helper()
         for i in range(10):
-            gpg.GzipWriteFile(gwfh, "{0}/testfiles/output/gzwrite.gz".format(_runtest_dir),
+            gpg.GzipWriteFile(gwfh, f"{_runtest_dir}/testfiles/output/gzwrite.gz",
                               size=size)
             # print os.stat("/tmp/testfiles/output/gzwrite.gz").st_size-size
-            assert size - 64 * 1024 <= os.stat("{0}/testfiles/output/gzwrite.gz".format(_runtest_dir)).st_size <= size + 64 * 1024  # noqa
+            assert size - 64 * 1024 <= os.stat(f"{_runtest_dir}/testfiles/output/gzwrite.gz").st_size <= size + 64 * 1024  # noqa
         gwfh.set_at_end()
-        gpg.GzipWriteFile(gwfh, "{0}/testfiles/output/gzwrite.gz".format(_runtest_dir), size=size)
+        gpg.GzipWriteFile(gwfh, f"{_runtest_dir}/testfiles/output/gzwrite.gz", size=size)
         # print os.stat("/tmp/testfiles/output/gzwrite.gz").st_size
 
 
@@ -209,7 +209,7 @@ class SHATest(UnitTestCase):
         self.unpack_testfiles()
 
     def test_sha(self):
-        testhash = gpg.get_hash("SHA1", path.Path("{0}/testfiles/various_file_types/regular_file".format(_runtest_dir)))  # noqa
+        testhash = gpg.get_hash("SHA1", path.Path(f"{_runtest_dir}/testfiles/various_file_types/regular_file"))  # noqa
         assert testhash == "886d722999862724e1e62d0ac51c468ee336ef8e", testhash
 
 

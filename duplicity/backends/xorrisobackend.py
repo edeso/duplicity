@@ -96,7 +96,7 @@ class Xorriso:
 
             self.proc = p
         except FileNotFoundError as err:
-            raise FatalBackendException("Xorriso binary not found: {}".format(self.xorriso_cmd))
+            raise FatalBackendException(f"Xorriso binary not found: {self.xorriso_cmd}")
 
         setNonBlocking(self.proc.stdout)
         setNonBlocking(self.proc.stderr)
@@ -361,7 +361,7 @@ class XorrisoBackend(duplicity.backend.Backend):
             self.iso_path += "/"
 
         if not os.path.exists(self.device):
-            raise InvalidBackendURL("Optical disc device does not exist: {}".format(self.device))
+            raise InvalidBackendURL(f"Optical disc device does not exist: {self.device}")
 
         # Start xorriso subprocess.
         self.xorriso = Xorriso(

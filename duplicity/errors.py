@@ -70,7 +70,7 @@ class UnsupportedBackendScheme(InvalidBackendURL, UserError):
 
     def __init__(self, url):
         InvalidBackendURL.__init__(self,
-                                   ("scheme not supported in url: %s" % (url,)))
+                                   f"scheme not supported in url: {url}")
         self.url = url
 
 

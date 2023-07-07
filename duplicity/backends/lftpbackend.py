@@ -63,15 +63,15 @@ class LFTPBackend(duplicity.backend.Backend):
 
         # version is the second word of the second part of the first line
         version = fout.split('\n')[0].split(' | ')[1].split()[1]
-        log.Notice("LFTP version is %s" % version)
+        log.Notice(f"LFTP version is {version}")
 
         self.parsed_url = parsed_url
 
         self.scheme = duplicity.backend.strip_prefix(parsed_url.scheme, 'lftp').lower()
         self.scheme = re.sub('^webdav', 'http', self.scheme)
-        self.url_string = self.scheme + '://' + parsed_url.hostname
+        self.url_string = f"{self.scheme}://{parsed_url.hostname}"
         if parsed_url.port:
-            self.url_string += ":%s" % parsed_url.port
+            self.url_string += f":{parsed_url.port}"
 
         self.remote_path = re.sub('^/', '', parsed_url.path)
 
@@ -87,7 +87,7 @@ class LFTPBackend(duplicity.backend.Backend):
         if self.parsed_url.username:
             self.username = self.parsed_url.username
             self.password = self.get_password()
-            self.authflag = "-u '%s,%s'" % (self.username, self.password)
+            self.authflag = f"-u '{self.username},{self.password}'"
 
         if config.ftp_connection == 'regular':
             self.conn_opt = 'off'
@@ -114,9 +114,9 @@ class LFTPBackend(duplicity.backend.Backend):
         self.tempfile.write("set ssl:verify-certificate " +
                             ("false" if config.ssl_no_check_certificate else "true") + "\n")
         if self.cacert_file:
-            self.tempfile.write("set ssl:ca-file " + cmd_quote(self.cacert_file) + "\n")
+            self.tempfile.write(f"set ssl:ca-file {cmd_quote(self.cacert_file)}\n")
         if config.ssl_cacert_path:
-            self.tempfile.write("set ssl:ca-path " + cmd_quote(config.ssl_cacert_path) + "\n")
+            self.tempfile.write(f"set ssl:ca-path {cmd_quote(config.ssl_cacert_path)}\n")
         if self.parsed_url.scheme == 'ftps':
             self.tempfile.write("set ftp:ssl-allow true\n")
             self.tempfile.write("set ftp:ssl-protect-data true\n")
@@ -128,21 +128,20 @@ class LFTPBackend(duplicity.backend.Backend):
         else:
             self.tempfile.write("set ftp:ssl-allow false\n")
         self.tempfile.write("set http:use-propfind true\n")
-        self.tempfile.write("set net:timeout %s\n" % config.timeout)
-        self.tempfile.write("set net:max-retries %s\n" % config.num_retries)
-        self.tempfile.write("set ftp:passive-mode %s\n" % self.conn_opt)
+        self.tempfile.write(f"set net:timeout {config.timeout}\n")
+        self.tempfile.write(f"set net:max-retries {config.num_retries}\n")
+        self.tempfile.write(f"set ftp:passive-mode {self.conn_opt}\n")
         if log.getverbosity() >= log.DEBUG:
             self.tempfile.write("debug\n")
         if self.parsed_url.scheme == 'ftpes':
-            self.tempfile.write("open %s %s\n" % (self.authflag, self.url_string.replace('ftpes', 'ftp')))
+            self.tempfile.write(f"open {self.authflag} {self.url_string.replace('ftpes', 'ftp')}\n")
         else:
-            self.tempfile.write("open %s %s\n" % (self.authflag, self.url_string))
+            self.tempfile.write(f"open {self.authflag} {self.url_string}\n")
         self.tempfile.close()
         # print settings in debug mode
         if log.getverbosity() >= log.DEBUG:
             f = open(self.tempname, 'r')
-            log.Debug("SETTINGS: \n"
-                      "%s" % f.read())
+            log.Debug(f"SETTINGS: \n{f.read()}")
 
     def _put(self, source_path, remote_filename):
         if isinstance(remote_filename, b"".__class__):
@@ -153,13 +152,11 @@ class LFTPBackend(duplicity.backend.Backend):
             cmd_quote(source_path.uc_name),
             cmd_quote(self.remote_path) + os.fsdecode(remote_filename)
         )
-        log.Debug("CMD: %s" % commandline)
+        log.Debug(f"CMD: {commandline}")
         s, l, e = self.subprocess_popen(commandline)
-        log.Debug("STATUS: %s" % s)
-        log.Debug("STDERR:\n"
-                  "%s" % e)
-        log.Debug("STDOUT:\n"
-                  "%s" % l)
+        log.Debug(f"STATUS: {s}")
+        log.Debug(f"STDERR:\n{e}")
+        log.Debug(f"STDOUT:\n{l}")
 
     def _get(self, remote_filename, local_path):
         if isinstance(remote_filename, b"".__class__):
@@ -169,12 +166,10 @@ class LFTPBackend(duplicity.backend.Backend):
             cmd_quote(self.remote_path) + remote_filename,
             cmd_quote(local_path.uc_name)
         )
-        log.Debug("CMD: %s" % commandline)
+        log.Debug(f"CMD: {commandline}")
         _, l, e = self.subprocess_popen(commandline)
-        log.Debug("STDERR:\n"
-                  "%s" % e)
-        log.Debug("STDOUT:\n"
-                  "%s" % l)
+        log.Debug(f"STDERR:\n{e}")
+        log.Debug(f"STDOUT:\n{l}")
 
     def _list(self):
         # Do a long listing to avoid connection reset
@@ -187,12 +182,10 @@ class LFTPBackend(duplicity.backend.Backend):
             cmd_quote(self.tempname),
             quoted_path, quoted_path, quoted_path
         )
-        log.Debug("CMD: %s" % commandline)
+        log.Debug(f"CMD: {commandline}")
         _, l, e = self.subprocess_popen(commandline)
-        log.Debug("STDERR:\n"
-                  "%s" % e)
-        log.Debug("STDOUT:\n"
-                  "%s" % l)
+        log.Debug(f"STDERR:\n{e}")
+        log.Debug(f"STDOUT:\n{l}")
 
         # Look for our files as the last element of a long list line
         return [os.fsencode(x.split()[-1]) for x in l.split('\n') if x]
@@ -203,12 +196,10 @@ class LFTPBackend(duplicity.backend.Backend):
             cmd_quote(self.remote_path),
             cmd_quote(os.fsdecode(filename))
         )
-        log.Debug("CMD: %s" % commandline)
+        log.Debug(f"CMD: {commandline}")
         _, l, e = self.subprocess_popen(commandline)
-        log.Debug("STDERR:\n"
-                  "%s" % e)
-        log.Debug("STDOUT:\n"
-                  "%s" % l)
+        log.Debug(f"STDERR:\n{e}")
+        log.Debug(f"STDOUT:\n{l}")
 
 
 duplicity.backend.register_backend("ftp", LFTPBackend)

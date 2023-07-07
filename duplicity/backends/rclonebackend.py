@@ -37,7 +37,7 @@ class RcloneBackend(duplicity.backend.Backend):
         self.rclone_cmd = "rclone"
 
         try:
-            rc, o, e = self._subprocess_safe_popen(self.rclone_cmd + " version")
+            rc, o, e = self._subprocess_safe_popen(f"{self.rclone_cmd} version")
         except Exception:
             log.FatalError("rclone not found: please install rclone", log.ErrorCode.backend_error)
 
@@ -78,8 +78,7 @@ class RcloneBackend(duplicity.backend.Backend):
 
     def _list(self):
         filelist = []
-        commandline = "%s lsf '%s'" % (
-            self.rclone_cmd, self.remote_path)
+        commandline = f"{self.rclone_cmd} lsf '{self.remote_path}'"
         rc, o, e = self._subprocess_safe_popen(commandline)
         if rc == 3:
             return filelist

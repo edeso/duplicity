@@ -387,7 +387,7 @@ def GPGWriteFile(block_iter, filename, profile,
                 at_end_of_blockiter = 1
                 break
             except Exception as e:
-                log.FatalError("Read error on {}: {}".format(filename, str(e)))
+                log.FatalError(f"Read error on {filename}: {str(e)}")
             file.write(data)
 
         file.write(block_iter.get_footer())

@@ -58,7 +58,7 @@ class FinalTest(FunctionalTestCase):
             dirname = dirlist[i]
             current_time = 100000 * (i + 1)
             self.restore(time=current_time, options=restore_options)
-            self.check_same(dirname, "{0}/testfiles/restore_out".format(_runtest_dir))
+            self.check_same(dirname, f"{_runtest_dir}/testfiles/restore_out")
             self.verify(dirname,
                         time=current_time, options=restore_options)
 
@@ -74,9 +74,9 @@ class FinalTest(FunctionalTestCase):
             backup_options = ["--no-encrypt", "--no-compress"]
         if restore_options is None:
             restore_options = ["--no-encrypt", "--no-compress"]
-        self.runtest(["{0}/testfiles/dir1".format(_runtest_dir),
-                      "{0}/testfiles/dir2".format(_runtest_dir),
-                      "{0}/testfiles/dir3".format(_runtest_dir)],
+        self.runtest([f"{_runtest_dir}/testfiles/dir1",
+                      f"{_runtest_dir}/testfiles/dir2",
+                      f"{_runtest_dir}/testfiles/dir3"],
                      backup_options=backup_options,
                      restore_options=restore_options)
 
@@ -86,9 +86,9 @@ class FinalTest(FunctionalTestCase):
                                       ('directory_to_file', 200100, 'dir2'),
                                       ('largefile', 300000, 'dir3')]:
             self.restore(filename, time, options=restore_options)
-            self.check_same('{0}/testfiles/{1}/{2}'.format(_runtest_dir, tfdir, filename),
-                            '{0}/testfiles/restore_out'.format(_runtest_dir))
-            self.verify('{0}/testfiles/{1}/{2}'.format(_runtest_dir, tfdir, filename),
+            self.check_same(f'{_runtest_dir}/testfiles/{tfdir}/{filename}',
+                            f'{_runtest_dir}/testfiles/restore_out')
+            self.verify(f'{_runtest_dir}/testfiles/{tfdir}/{filename}',
                         file_to_verify=filename, time=time,
                         options=restore_options)
 
@@ -114,12 +114,12 @@ class FinalTest(FunctionalTestCase):
 
     def test_single_regfile(self):
         """Test backing and restoring up a single regular file"""
-        self.runtest(["{0}/testfiles/various_file_types/regular_file".format(_runtest_dir)])
+        self.runtest([f"{_runtest_dir}/testfiles/various_file_types/regular_file"])
 
     def test_empty_backup(self):
         """Make sure backup works when no files change"""
-        self.backup("full", "{0}/testfiles/empty_dir".format(_runtest_dir))
-        self.backup("inc", "{0}/testfiles/empty_dir".format(_runtest_dir))
+        self.backup("full", f"{_runtest_dir}/testfiles/empty_dir")
+        self.backup("inc", f"{_runtest_dir}/testfiles/empty_dir")
 
     @pytest.mark.slow
     def test_long_filenames(self):
@@ -127,7 +127,7 @@ class FinalTest(FunctionalTestCase):
         # Note that some versions of ecryptfs (at least through Ubuntu 11.10)
         # have a bug where they treat the max path segment length as 143
         # instead of 255.  So make sure that these segments don't break that.
-        lf_dir = path.Path("{0}/testfiles/long_filenames".format(_runtest_dir))
+        lf_dir = path.Path(f"{_runtest_dir}/testfiles/long_filenames")
         if lf_dir.exists():
             lf_dir.deltree()
         lf_dir.mkdir()
@@ -148,28 +148,28 @@ class FinalTest(FunctionalTestCase):
         fp.write(b"hello" * 1000)
         assert not fp.close()
 
-        self.runtest(["{0}/testfiles/empty_dir".format(_runtest_dir), lf_dir.uc_name,
-                      "{0}/testfiles/empty_dir".format(_runtest_dir), lf_dir.uc_name])
+        self.runtest([f"{_runtest_dir}/testfiles/empty_dir", lf_dir.uc_name,
+                      f"{_runtest_dir}/testfiles/empty_dir", lf_dir.uc_name])
 
     def test_empty_restore(self):
         """Make sure error raised when restore doesn't match anything"""
-        self.backup("full", "{0}/testfiles/dir1".format(_runtest_dir),
+        self.backup("full", f"{_runtest_dir}/testfiles/dir1",
                     options=["--allow-source-mismatch"])
         self.assertRaises(CmdError, self.restore, "this_file_does_not_exist")
-        self.backup("inc", "{0}/testfiles/empty_dir".format(_runtest_dir),
+        self.backup("inc", f"{_runtest_dir}/testfiles/empty_dir",
                     options=["--allow-source-mismatch"])
         self.assertRaises(CmdError, self.restore, "this_file_does_not_exist")
 
     @pytest.mark.slow
     def test_remove_older_than(self):
         """Test removing old backup chains"""
-        first_chain = self.backup("full", "{0}/testfiles/dir1".format(_runtest_dir), current_time=10000,
+        first_chain = self.backup("full", f"{_runtest_dir}/testfiles/dir1", current_time=10000,
                                   options=["--allow-source-mismatch"])
-        first_chain |= self.backup("inc", "{0}/testfiles/dir2".format(_runtest_dir), current_time=20000,
+        first_chain |= self.backup("inc", f"{_runtest_dir}/testfiles/dir2", current_time=20000,
                                    options=["--allow-source-mismatch"])
-        second_chain = self.backup("full", "{0}/testfiles/dir1".format(_runtest_dir), current_time=30000,
+        second_chain = self.backup("full", f"{_runtest_dir}/testfiles/dir1", current_time=30000,
                                    options=["--allow-source-mismatch"])
-        second_chain |= self.backup("inc", "{0}/testfiles/dir3".format(_runtest_dir), current_time=40000,
+        second_chain |= self.backup("inc", f"{_runtest_dir}/testfiles/dir3", current_time=40000,
                                     options=["--allow-source-mismatch"])
 
         self.assertEqual(self.get_backend_files(), first_chain | second_chain)
@@ -184,7 +184,7 @@ class FinalTest(FunctionalTestCase):
     def test_piped_password(self):
         """Make sure that prompting for a password works"""
         self.set_environ("PASSPHRASE", None)
-        self.backup("full", "{0}/testfiles/empty_dir".format(_runtest_dir),
+        self.backup("full", f"{_runtest_dir}/testfiles/empty_dir",
                     passphrase_input=[self.sign_passphrase, self.sign_passphrase])
         self.restore(passphrase_input=[self.sign_passphrase])
 

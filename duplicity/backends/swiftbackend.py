@@ -105,7 +105,7 @@ Exception: %s""" % str(e))
 
         # formatting options for swiftclient.SwiftService
         for key in os_options.keys():
-            svc_options['os_' + key] = os_options[key]
+            svc_options[f"os_{key}"] = os_options[key]
 
         conn_kwargs['os_options'] = os_options
 
@@ -116,7 +116,7 @@ Exception: %s""" % str(e))
 
         self.container = url_parts.pop(0)
         if url_parts:
-            self.prefix = '%s/' % '/'.join(url_parts)
+            self.prefix = f"{'/'.join(url_parts)}/"
         else:
             self.prefix = ''
 
@@ -125,20 +125,18 @@ Exception: %s""" % str(e))
 
         container_metadata = None
         try:
-            log.Debug("Starting connection with arguments:'%s'" % conn_kwargs)
+            log.Debug(f"Starting connection with arguments:'{conn_kwargs}'")
             self.conn = Connection(**conn_kwargs)
             container_metadata = self.conn.head_container(self.container)
         except ClientException as e:
-            log.Debug("Connection failed: %s %s"
-                      % (e.__class__.__name__, str(e)))
+            log.Debug(f"Connection failed: {e.__class__.__name__} {str(e)}")
             pass
         except Exception as e:
-            log.FatalError("Connection failed: %s %s"
-                           % (e.__class__.__name__, str(e)),
+            log.FatalError(f"Connection failed: {e.__class__.__name__} {str(e)}",
                            log.ErrorCode.connection_failed)
 
         if container_metadata is None:
-            log.Info("Creating container %s" % self.container)
+            log.Info(f"Creating container {self.container}")
             try:
                 headers = dict([[policy_header, policy]]) if policy else None
                 self.conn.put_container(self.container, headers=headers)
@@ -150,18 +148,17 @@ Exception: %s""" % str(e))
             log.FatalError("Container '%s' exists but its storage policy is '%s' not '%s'."
                            % (self.container, container_metadata[policy_header.lower()], policy))
         else:
-            log.Debug("Container already created: %s" % container_metadata)
+            log.Debug(f"Container already created: {container_metadata}")
 
         # checking service connection
         try:
-            log.Debug("Starting  Swiftservice: '%s'" % svc_options)
+            log.Debug(f"Starting  Swiftservice: '{svc_options}'")
             self.svc = SwiftService(options=svc_options)
             container_stat = self.svc.stat(self.container)
         except ClientException as e:
-            log.FatalError("Connection failed: %s %s"
-                           % (e.__class__.__name__, str(e)),
+            log.FatalError(f"Connection failed: {e.__class__.__name__} {str(e)}",
                            log.ErrorCode.connection_failed)
-        log.Debug("Container stats: %s" % container_stat)
+        log.Debug(f"Container stats: {container_stat}")
 
     def _error_code(self, operation, e):  # pylint: disable=unused-argument
         if isinstance(e, self.resp_exc):
@@ -188,7 +185,7 @@ Exception: %s""" % str(e))
                         raise BackendException(upload['traceback'])
                 return
         rp = self.prefix + os.fsdecode(remote_filename)
-        log.Debug("Uploading '%s' to '%s' in remote container '%s'" % (lp, rp, self.container))
+        log.Debug(f"Uploading '{lp}' to '{rp}' in remote container '{self.container}'")
         self.conn.put_object(container=self.container,
                              obj=self.prefix + os.fsdecode(remote_filename),
                              contents=open(lp, 'rb'))
@@ -214,7 +211,7 @@ Exception: %s""" % str(e))
         # use swiftservice to correctly report filesize in case of multipart uploads
         sobject = [a for a in self.svc.stat(self.container, [self.prefix + os.fsdecode(filename)])][0]
         sobj = {'size': int(sobject['headers']['content-length'])}
-        log.Debug("Objectquery: '%s' has size %s." % (os.fsdecode(filename), sobj['size']))
+        log.Debug(f"Objectquery: '{os.fsdecode(filename)}' has size {sobj['size']}.")
         return sobj
 
 

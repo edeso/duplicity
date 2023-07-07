@@ -42,8 +42,7 @@ def _glob_get_prefix_regexs(glob_str):
     glob_parts = glob_str.split("/")
     if "" in glob_parts[1:-1]:
         # "" OK if comes first or last, as in /foo/
-        raise GlobbingError("Consecutive '/'s found in globbing string " +
-                            glob_str)
+        raise GlobbingError(f"Consecutive '/'s found in globbing string {glob_str}")
 
     prefixes = ["/".join(glob_parts[:i + 1]) for i in range(len(glob_parts))]
     # we must make exception for root "/", only dir to end in slash
@@ -104,13 +103,13 @@ def select_fn_from_glob(glob_str, include, ignore_case=False):
     # Note that the "/" at the end of the regex means that it will match
     # if the glob matches a parent folders of path, i.e. including a folder
     # includes everything within it.
-    glob_comp_re = re_comp("^%s($|/)" % glob_to_regex(glob_str))
+    glob_comp_re = re_comp(f"^{glob_to_regex(glob_str)}($|/)")
 
     if glob_ends_w_slash:
         # Creates a version of glob_comp_re that does not match folder contents
         # This can be used later to check that an exact match is actually a
         # folder, rather than a file.
-        glob_comp_re_exact = re_comp("^%s($)" % glob_to_regex(glob_str))
+        glob_comp_re_exact = re_comp(f"^{glob_to_regex(glob_str)}($)")
 
     if glob_str.find("**") != -1:
         # glob_str has a ** in it
@@ -120,8 +119,7 @@ def select_fn_from_glob(glob_str, include, ignore_case=False):
     # ^ string must be at the beginning of path
     # the regexs corresponding to the parent directories of glob_str
     # $ nothing must follow except for the end of the string or newline
-    scan_comp_re = re_comp("^(%s)$" %
-                           "|".join(_glob_get_prefix_regexs(glob_str)))
+    scan_comp_re = re_comp(f"^({'|'.join(_glob_get_prefix_regexs(glob_str))})$")
 
     def test_fn(path):
         assert not path.uc_name[-1] == "/" or path.uc_name == "/", \
@@ -176,12 +174,12 @@ def glob_to_regex(pat):
         c, s = pat[i], pat[i:i + 2]
         i = i + 1
         if s == '**':
-            res = res + '.*'
+            res = f"{res}.*"
             i = i + 1
         elif c == '*':
-            res = res + '[^/]*'
+            res = f"{res}[^/]*"
         elif c == '?':
-            res = res + '[^/]'
+            res = f"{res}[^/]"
         elif c == '[':
             j = i
             if j < n and pat[j] in '!^':
@@ -191,14 +189,14 @@ def glob_to_regex(pat):
             while j < n and pat[j] != ']':
                 j = j + 1
             if j >= n:
-                res = res + '\\['  # interpret the [ literally
+                res = f"{res}\\["  # interpret the [ literally
             else:
                 # Deal with inside of [..]
                 stuff = pat[i:j].replace('\\', '\\\\')
                 i = j + 1
                 if stuff[0] in '!^':
-                    stuff = '^' + stuff[1:]
-                res = res + '[' + stuff + ']'
+                    stuff = f"^{stuff[1:]}"
+                res = f"{res}[{stuff}]"
         else:
             res = res + re.escape(c)
     return res

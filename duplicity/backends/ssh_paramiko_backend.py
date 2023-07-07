@@ -291,12 +291,12 @@ Are you sure you want to continue connecting (yes/no)? """ % (hostname,
                 raise BackendException("cannot handle directory names with single quotes with scp")
 
             # make directory if needed
-            self.runremote("mkdir -p '%s'" % (self.remote_dir,), False, "scp mkdir ")
+            self.runremote(f"mkdir -p '{self.remote_dir}'", False, "scp mkdir ")
         else:
             try:
                 self.sftp = self.client.open_sftp()
             except Exception as e:
-                raise BackendException("sftp negotiation failed: %s" % e)
+                raise BackendException(f"sftp negotiation failed: {e}")
 
             # move to the appropriate directory, possibly after creating it and its parents
             dirs = self.remote_dir.split(os.sep)
@@ -314,15 +314,15 @@ Are you sure you want to continue connecting (yes/no)? """ % (hostname,
                                 self.sftp.mkdir(d)
                             except Exception as e:
                                 raise BackendException("sftp mkdir %s failed: %s" %
-                                                       (self.sftp.normalize(".") + "/" + d, e))
+                                                       (f"{self.sftp.normalize('.')}/{d}", e))
                         else:
                             raise BackendException("sftp stat %s failed: %s" %
-                                                   (self.sftp.normalize(".") + "/" + d, e))
+                                                   (f"{self.sftp.normalize('.')}/{d}", e))
                     try:
                         self.sftp.chdir(d)
                     except Exception as e:
                         raise BackendException("sftp chdir to %s failed: %s" %
-                                               (self.sftp.normalize(".") + "/" + d, e))
+                                               (f"{self.sftp.normalize('.')}/{d}", e))
 
     def _put(self, source_path, remote_filename):
         # remote_filename is a byte object, not str or unicode
@@ -333,9 +333,9 @@ Are you sure you want to continue connecting (yes/no)? """ % (hostname,
                 chan = self.client.get_transport().open_session()
                 chan.settimeout(config.timeout)
                 # scp in sink mode uses the arg as base directory
-                chan.exec_command("scp -t '%s'" % self.remote_dir)
+                chan.exec_command(f"scp -t '{self.remote_dir}'")
             except Exception as e:
-                raise BackendException("scp execution failed: %s" % e)
+                raise BackendException(f"scp execution failed: {e}")
             # scp protocol: one 0x0 after startup, one after the Create meta,
             # one after saving if there's a problem: 0x1 or 0x02 and some error
             # text
@@ -358,7 +358,7 @@ Are you sure you want to continue connecting (yes/no)? """ % (hostname,
             f.close()
             response = chan.recv(1)
             if response != b"\0":
-                raise BackendException("scp remote error: %s" % chan.recv(-1))
+                raise BackendException(f"scp remote error: {chan.recv(-1)}")
             chan.close()
         else:
             self.sftp.put(source_path.name, remote_filename, callback=progress.report_transfer)
@@ -370,10 +370,9 @@ Are you sure you want to continue connecting (yes/no)? """ % (hostname,
             try:
                 chan = self.client.get_transport().open_session()
                 chan.settimeout(config.timeout)
-                chan.exec_command("scp -f '%s/%s'" % (self.remote_dir,
-                                                      remote_filename))
+                chan.exec_command(f"scp -f '{self.remote_dir}/{remote_filename}'")
             except Exception as e:
-                raise BackendException("scp execution failed: %s" % e)
+                raise BackendException(f"scp execution failed: {e}")
 
             chan.send('\0')  # overall ready indicator
             msg = chan.recv(-1)
@@ -399,7 +398,7 @@ Are you sure you want to continue connecting (yes/no)? """ % (hostname,
                     f.write(buff)
                     togo -= len(buff)
             except Exception as e:
-                raise BackendException("scp get %s failed: %s" % (remote_filename, e))
+                raise BackendException(f"scp get {remote_filename} failed: {e}")
 
             msg = chan.recv(1)  # check the final status
             if msg != b'\0':
@@ -415,7 +414,7 @@ Are you sure you want to continue connecting (yes/no)? """ % (hostname,
         # In scp mode unavoidable quoting issues will make this fail if the
         # directory name contains single quotes.
         if self.use_scp:
-            output = self.runremote("ls -1 '%s'" % self.remote_dir, False,
+            output = self.runremote(f"ls -1 '{self.remote_dir}'", False,
                                     "scp dir listing ")
             return output.splitlines()
         else:
@@ -427,7 +426,7 @@ Are you sure you want to continue connecting (yes/no)? """ % (hostname,
         # In scp mode unavoidable quoting issues will cause failures if
         # filenames containing single quotes are encountered.
         if self.use_scp:
-            self.runremote("rm '%s/%s'" % (self.remote_dir, filename), False,
+            self.runremote(f"rm '{self.remote_dir}/{filename}'", False,
                            "scp rm ")
         else:
             self.sftp.remove(filename)
@@ -442,8 +441,7 @@ Are you sure you want to continue connecting (yes/no)? """ % (hostname,
             return output
         except Exception as e:
             if not ignoreexitcode:
-                raise BackendException("%sfailed: %s \n %s" % (
-                    errorprefix, cmd, util.uexc(e)))
+                raise BackendException(f"{errorprefix}failed: {cmd} \n {util.uexc(e)}")
 
     def gethostconfig(self, file, host):
         file = os.path.expanduser(file)
@@ -454,7 +452,7 @@ Are you sure you want to continue connecting (yes/no)? """ % (hostname,
         try:
             sshconfig.parse(open(file))
         except Exception as e:
-            raise BackendException("could not load '%s', maybe corrupt?" % file)
+            raise BackendException(f"could not load '{file}', maybe corrupt?")
 
         return sshconfig.lookup(host)
 

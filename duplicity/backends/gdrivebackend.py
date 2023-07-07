@@ -86,7 +86,7 @@ Exception: %s""" % str(e))
             raise BackendException(
                 "gdrive: backend requires a query paramater should either be driveID or myDriveFolderID")
         if parsed_url.username is not None:
-            client_id = parsed_url.username + '@' + parsed_url.hostname
+            client_id = f"{parsed_url.username}@{parsed_url.hostname}"
         else:
             client_id = parsed_url.hostname
 
@@ -211,7 +211,7 @@ Exception: %s""" % str(e))
 
         # Not found in the cache, so use directory listing. This is less
         # reliable because there is no strong consistency.
-        q = "name = '%s' and '%s' in parents and trashed = false" % (filename, self.folder)
+        q = f"name = '{filename}' and '{self.folder}' in parents and trashed = false"
         results = self.drive.files().list(q=q, fields='files(name,id,size),nextPageToken',
                                           pageSize=2,
                                           **self.shared_drive_corpora,
@@ -220,7 +220,7 @@ Exception: %s""" % str(e))
                                           **self.shared_drive_flags_support).execute()
         file_list = results.get('files', [])
         if len(file_list) > 1:
-            log.FatalError("GDrive backend: multiple files called '%s'." % (filename,))
+            log.FatalError(f"GDrive backend: multiple files called '{filename}'.")
         elif len(file_list) > 0:
             file_id = file_list[0]['id']
             self.id_cache[filename] = file_list[0]['id']
@@ -228,8 +228,7 @@ Exception: %s""" % str(e))
                      "adding to cache" % (filename, file_id))
             return file_list[0]
 
-        log.Info("GDrive backend: file '%s' not found in cache or on server" %
-                 (filename,))
+        log.Info(f"GDrive backend: file '{filename}' not found in cache or on server")
         return None
 
     def id_by_name(self, filename):
@@ -262,7 +261,7 @@ Exception: %s""" % str(e))
             # No existing file, make a new one
             file_metadata = {'name': remote_filename, 'parents': [self.folder]}
             file_metadata.update(self.shared_drive_id)
-            log.Info("GDrive backend: creating new file '%s'" % (remote_filename,))
+            log.Info(f"GDrive backend: creating new file '{remote_filename}'")
             drive_file = self.drive.files().create(
                 body=file_metadata,
                 media_body=media,
@@ -294,7 +293,7 @@ Exception: %s""" % str(e))
         drive_files = []
         while True:
             response = self.drive.files().list(
-                q="'" + self.folder + "' in parents and trashed=false",
+                q=f"'{self.folder}' in parents and trashed=false",
                 pageSize=self.PAGE_SIZE,
                 fields="files(name,id),nextPageToken",
                 pageToken=page_token,
@@ -322,7 +321,7 @@ Exception: %s""" % str(e))
     def _delete(self, filename):
         file_id = self.id_by_name(filename)
         if file_id == '':
-            log.Warn("File '%s' does not exist while trying to delete it" % (os.fsdecode(filename),))
+            log.Warn(f"File '{os.fsdecode(filename)}' does not exist while trying to delete it")
         else:
             self.drive.files().delete(fileId=file_id,
                                       **self.shared_drive_flags_support).execute()

@@ -175,9 +175,9 @@ def inttopretty(seconds):
         partlist.append("1 second")
     elif not partlist or seconds > 1:
         if isinstance(seconds, int):
-            partlist.append("%s seconds" % seconds)
+            partlist.append(f"{seconds} seconds")
         else:
-            partlist.append("%.2f seconds" % seconds)
+            partlist.append(f"{seconds:.2f} seconds")
     return " ".join(partlist)
 
 

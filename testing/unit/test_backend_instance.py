@@ -36,14 +36,14 @@ class BackendInstanceBase(UnitTestCase):
 
     def setUp(self):
         UnitTestCase.setUp(self)
-        assert not os.system("rm -rf {0}/testfiles".format(_runtest_dir))
-        os.makedirs('{0}/testfiles'.format(_runtest_dir))
+        assert not os.system(f"rm -rf {_runtest_dir}/testfiles")
+        os.makedirs(f'{_runtest_dir}/testfiles')
         self.backend = None
-        self.local = path.Path('{0}/testfiles/local'.format(_runtest_dir))
+        self.local = path.Path(f'{_runtest_dir}/testfiles/local')
         self.local.writefileobj(io.BytesIO(b"hello"))
 
     def tearDown(self):
-        assert not os.system("rm -rf {0}/testfiles".format(_runtest_dir))
+        assert not os.system(f"rm -rf {_runtest_dir}/testfiles")
         if self.backend is None:
             return
         if hasattr(self.backend, '_close'):
@@ -53,7 +53,7 @@ class BackendInstanceBase(UnitTestCase):
         if self.backend is None:
             return
         self.backend._put(self.local, b'file-a')
-        getfile = path.Path('{0}/testfiles/getfile'.format(_runtest_dir))
+        getfile = path.Path(f'{_runtest_dir}/testfiles/getfile')
         self.backend._get(b'file-a', getfile)
         self.assertTrue(self.local.compare_data(getfile))
 
@@ -126,14 +126,14 @@ class BackendInstanceBase(UnitTestCase):
         if not hasattr(self.backend, '_move'):
             return
 
-        copy = path.Path('{0}/testfiles/copy'.format(_runtest_dir))
+        copy = path.Path(f'{_runtest_dir}/testfiles/copy')
         self.local.copy(copy)
 
         self.backend._move(self.local, b'file-a')
         self.assertTrue(b'file-a' in self.backend._list())
         self.assertFalse(self.local.exists())
 
-        getfile = path.Path('{0}/testfiles/getfile'.format(_runtest_dir))
+        getfile = path.Path(f'{_runtest_dir}/testfiles/getfile')
         self.backend._get(b'file-a', getfile)
         self.assertTrue(copy.compare_data(getfile))
 
@@ -179,7 +179,7 @@ class BackendInstanceBase(UnitTestCase):
 class LocalBackendTest(BackendInstanceBase):
     def setUp(self):
         super().setUp()
-        url = 'file://{0}/testfiles/output'.format(_runtest_dir)
+        url = f'file://{_runtest_dir}/testfiles/output'
         self.backend = duplicity.backend.get_backend_object(url)
         self.assertEqual(self.backend.__class__.__name__, 'LocalBackend')
 
@@ -189,7 +189,7 @@ class LocalBackendTest(BackendInstanceBase):
 class Par2BackendTest(BackendInstanceBase):
     def setUp(self):
         super().setUp()
-        url = 'par2+file://{0}/testfiles/output'.format(_runtest_dir)
+        url = f'par2+file://{_runtest_dir}/testfiles/output'
         self.backend = duplicity.backend.get_backend_object(url)
         self.assertEqual(self.backend.__class__.__name__, 'Par2Backend')
 
@@ -207,8 +207,8 @@ class Par2BackendTest(BackendInstanceBase):
 class TahoeBackendTest(BackendInstanceBase):
     def setUp(self):
         super().setUp()
-        os.makedirs('{0}/testfiles/output'.format(_runtest_dir))
-        url = 'tahoe://{0}/testfiles/output'.format(_runtest_dir)
+        os.makedirs(f'{_runtest_dir}/testfiles/output')
+        url = f'tahoe://{_runtest_dir}/testfiles/output'
         self.backend = duplicity.backend.get_backend_object(url)
         self.assertEqual(self.backend.__class__.__name__, 'TAHOEBackend')
 
@@ -228,8 +228,8 @@ class TahoeBackendTest(BackendInstanceBase):
 class FTPBackendTest(BackendInstanceBase):
     def setUp(self):
         super().setUp()
-        os.makedirs('{0}/testfiles/output'.format(_runtest_dir))
-        url = 'ftp://user:pass@hostname/{0}/testfiles/output'.format(_runtest_dir)
+        os.makedirs(f'{_runtest_dir}/testfiles/output')
+        url = f'ftp://user:pass@hostname/{_runtest_dir}/testfiles/output'
         self.backend = duplicity.backend.get_backend_object(url)
         self.assertEqual(self.backend.__class__.__name__, 'LFTPBackend')
 
@@ -238,8 +238,8 @@ class FTPBackendTest(BackendInstanceBase):
 class FTPSBackendTest(BackendInstanceBase):
     def setUp(self):
         super().setUp()
-        os.makedirs('{0}/testfiles/output'.format(_runtest_dir))
-        url = 'ftps://user:pass@hostname/{0}/testfiles/output'.format(_runtest_dir)
+        os.makedirs(f'{_runtest_dir}/testfiles/output')
+        url = f'ftps://user:pass@hostname/{_runtest_dir}/testfiles/output'
         self.backend = duplicity.backend.get_backend_object(url)
         self.assertEqual(self.backend.__class__.__name__, 'LFTPBackend')
 
@@ -256,8 +256,8 @@ class RCloneBackendTest(BackendInstanceBase):
             self.delete_config = True
         except Exception as e:
             self.delete_config = False
-        os.makedirs('{0}/testfiles/output'.format(_runtest_dir))
-        url = 'rclone://duptest:/%s/{0}/testfiles/output'.format(_runtest_dir)
+        os.makedirs(f'{_runtest_dir}/testfiles/output')
+        url = f'rclone://duptest:/%s/{_runtest_dir}/testfiles/output'
         self.backend = duplicity.backend.get_backend_object(url)
         self.assertEqual(self.backend.__class__.__name__, 'RcloneBackend')
 

@@ -95,7 +95,7 @@ class JottaCloudBackend(duplicity.backend.Backend):
         self.client = JFS.JFS()
 
         self.folder = self.get_or_create_directory(parsed_url.path.lstrip('/'))
-        log.Debug("Jottacloud folder for duplicity: %r" % self.folder.path)
+        log.Debug(f"Jottacloud folder for duplicity: {self.folder.path!r}")
 
     def get_or_create_directory(self, directory_name):
         root_directory = get_root_dir(self.client)
@@ -109,13 +109,13 @@ class JottaCloudBackend(duplicity.backend.Backend):
         # - Upload one file
         # - Retried if an exception is thrown
         resp = self.folder.up(source_path.open(), remote_filename)
-        log.Debug('jottacloud.put(%s,%s): %s' % (source_path.name, remote_filename, resp))
+        log.Debug(f'jottacloud.put({source_path.name},{remote_filename}): {resp}')
 
     def _get(self, remote_filename, local_path):
         # - Get one file
         # - Retried if an exception is thrown
         remote_file = self.client.getObject(posixpath.join(self.folder.path, remote_filename))
-        log.Debug('jottacloud.get(%s,%s): %s' % (remote_filename, local_path.name, remote_file))
+        log.Debug(f'jottacloud.get({remote_filename},{local_path.name}): {remote_file}')
         with open(local_path.name, 'wb') as to_file:
             for chunk in remote_file.stream():
                 to_file.write(chunk)
@@ -132,7 +132,7 @@ class JottaCloudBackend(duplicity.backend.Backend):
         # - Retried if an exception is thrown
         remote_path = posixpath.join(self.folder.path, filename)
         remote_file = self.client.getObject(remote_path)
-        log.Debug('jottacloud.delete deleting: %s (%s)' % (remote_file, type(remote_file)))
+        log.Debug(f'jottacloud.delete deleting: {remote_file} ({type(remote_file)})')
         remote_file.delete()
 
     def _query(self, filename):
@@ -140,7 +140,7 @@ class JottaCloudBackend(duplicity.backend.Backend):
         #  - Query metadata of one file
         #  - Return a dict with a 'size' key, and a file size value (-1 for not found)
         #  - Retried if an exception is thrown
-        log.Info('Querying size of %s' % filename)
+        log.Info(f'Querying size of {filename}')
         remote_path = posixpath.join(self.folder.path, filename)
         try:
             remote_file = self.client.getObject(remote_path)

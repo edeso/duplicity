@@ -61,19 +61,19 @@ class RsyncBackend(duplicity.backend.Backend):
         if self.over_rsyncd():
             # its a module path
             (path, port) = self.get_rsync_path()
-            self.url_string = "%s::%s" % (host, path.lstrip('/:'))
+            self.url_string = f"{host}::{path.lstrip('/:')}"
             if port:
-                port = " --port=%s" % port
+                port = f" --port={port}"
         else:
-            host_string = host + ":" if host else ""
+            host_string = f"{host}:" if host else ""
             if parsed_url.path.startswith("//"):
                 # its an absolute path
-                self.url_string = "%s/%s" % (host_string, parsed_url.path.lstrip('/'))
+                self.url_string = f"{host_string}/{parsed_url.path.lstrip('/')}"
             else:
                 # its a relative path
-                self.url_string = "%s%s" % (host_string, parsed_url.path.lstrip('/'))
+                self.url_string = f"{host_string}{parsed_url.path.lstrip('/')}"
             if parsed_url.port:
-                port = "-p %s" % parsed_url.port
+                port = f"-p {parsed_url.port}"
         # add trailing slash if missing
         if self.url_string[-1] != '/':
             self.url_string += '/'
@@ -82,7 +82,7 @@ class RsyncBackend(duplicity.backend.Backend):
             if self.over_rsyncd():
                 os.environ['USER'] = parsed_url.username
             else:
-                self.url_string = parsed_url.username + "@" + self.url_string
+                self.url_string = f"{parsed_url.username}@{self.url_string}"
         # password?, don't ask if none was given
         self.use_getpass = False
         password = self.get_password()
@@ -91,10 +91,10 @@ class RsyncBackend(duplicity.backend.Backend):
         if self.over_rsyncd():
             portOption = port
         else:
-            portOption = "-e 'ssh %s -oBatchMode=yes %s'" % (port, config.ssh_options)
+            portOption = f"-e 'ssh {port} -oBatchMode=yes {config.ssh_options}'"
         rsyncOptions = config.rsync_options
         # build cmd
-        self.cmd = "rsync %s %s" % (portOption, rsyncOptions)
+        self.cmd = f"rsync {portOption} {rsyncOptions}"
 
     def over_rsyncd(self):
         url = self.parsed_url.url_string
@@ -114,13 +114,13 @@ class RsyncBackend(duplicity.backend.Backend):
     def _put(self, source_path, remote_filename):
         remote_filename = os.fsdecode(remote_filename)
         remote_path = os.path.join(self.url_string, remote_filename)
-        commandline = "%s %s %s" % (self.cmd, source_path.uc_name, remote_path)
+        commandline = f"{self.cmd} {source_path.uc_name} {remote_path}"
         self.subprocess_popen(commandline)
 
     def _get(self, remote_filename, local_path):
         remote_filename = os.fsdecode(remote_filename)
         remote_path = os.path.join(self.url_string, remote_filename)
-        commandline = "%s %s %s" % (self.cmd, remote_path, local_path.uc_name)
+        commandline = f"{self.cmd} {remote_path} {local_path.uc_name}"
         self.subprocess_popen(commandline)
 
     def _list(self):
@@ -131,7 +131,7 @@ class RsyncBackend(duplicity.backend.Backend):
             else:
                 return None
 
-        commandline = "%s %s" % (self.cmd, self.url_string)
+        commandline = f"{self.cmd} {self.url_string}"
         result, stdout, stderr = self.subprocess_popen(commandline)
         return [os.fsencode(x) for x in map(split, stdout.split('\n')) if x]
 

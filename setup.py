@@ -94,7 +94,7 @@ def get_data_files():
                 'bin/duplicity.1',
                 ]
             ),
-            ('share/doc/duplicity-%s' % Version,
+            (f'share/doc/duplicity-{Version}',
                 [
                 'CHANGELOG.md',
                 'CONTRIBUTING.md',
@@ -121,8 +121,8 @@ def get_data_files():
             os.mkdir(os.path.join("po", lang))
         except os.error:
             pass
-        assert not os.system("cp po/%s.po po/%s" % (lang, lang)), lang
-        assert not os.system("msgfmt po/%s.po -o po/%s/duplicity.mo" % (lang, lang)), lang
+        assert not os.system(f"cp po/{lang}.po po/{lang}"), lang
+        assert not os.system(f"msgfmt po/{lang}.po -o po/{lang}/duplicity.mo"), lang
 
     for root, dirs, files in os.walk("po"):
         for file in files:
@@ -130,8 +130,8 @@ def get_data_files():
             if path.endswith("duplicity.mo"):
                 lang = os.path.split(root)[-1]
                 data_files.append(
-                    ('share/locale/%s/LC_MESSAGES' % lang,
-                     ["po/%s/duplicity.mo" % lang]))
+                    (f'share/locale/{lang}/LC_MESSAGES',
+                     [f"po/{lang}/duplicity.mo"]))
 
     return data_files
 
@@ -168,11 +168,11 @@ class SdistCommand(sdist):
     def run(self):
         sdist.run(self)
 
-        orig = "%s/duplicity-%s.tar.gz" % (self.dist_dir, Version)
-        tardir = "duplicity-%s" % Version
-        tarball = "%s/duplicity-%s.tar.gz" % (self.dist_dir, Version)
+        orig = f"{self.dist_dir}/duplicity-{Version}.tar.gz"
+        tardir = f"duplicity-{Version}"
+        tarball = f"{self.dist_dir}/duplicity-{Version}.tar.gz"
 
-        assert not os.system("tar -xf %s" % orig)
+        assert not os.system(f"tar -xf {orig}")
         assert not os.remove(orig)
 
         # make sure executables are

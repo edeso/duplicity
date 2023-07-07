@@ -44,7 +44,7 @@ class MegaBackend(duplicity.backend.Backend):
         self._hostname = parsed_url.hostname
 
         if parsed_url.password is None:
-            self._megarc = os.getenv('HOME') + '/.megarc'
+            self._megarc = f"{os.getenv('HOME')}/.megarc"
         else:
             self._megarc = False
             self._username = parsed_url.username
@@ -52,7 +52,7 @@ class MegaBackend(duplicity.backend.Backend):
 
         # remote folder (Can we assume /Root prefix?)
         self._root = '/Root'
-        self._folder = self._root + '/' + parsed_url.path[1:]
+        self._folder = f"{self._root}/{parsed_url.path[1:]}"
 
         # make sure the remote folder exists (the whole path)
         self._makedir_recursive(parsed_url.path[1:].split('/'))
@@ -64,7 +64,7 @@ class MegaBackend(duplicity.backend.Backend):
             # ignore the output, we only need the return code
             subprocess.check_output(['which', cmd])
         except Exception as e:
-            raise BackendException("command '%s' not found, make sure megatools are installed" % (cmd,))
+            raise BackendException(f"command '{cmd}' not found, make sure megatools are installed")
 
     def _makedir(self, path):
         """creates a remote directory"""
@@ -79,12 +79,12 @@ class MegaBackend(duplicity.backend.Backend):
     def _makedir_recursive(self, path):
         """creates a remote directory (recursively the whole path), ingores errors"""
 
-        print("mkdir: %s" % ('/'.join(path),))
+        print(f"mkdir: {'/'.join(path)}")
 
         p = self._root
 
         for folder in path:
-            p = p + '/' + folder
+            p = f"{p}/{folder}"
             try:
                 self._makedir(p)
             except Exception as e:
@@ -120,7 +120,7 @@ class MegaBackend(duplicity.backend.Backend):
     def folder_contents(self, files_only=False):
         """lists contents of a folder, optionally ignoring subdirectories"""
 
-        print("megals: %s" % (self._folder,))
+        print(f"megals: {self._folder}")
 
         if self._megarc:
             cmd = ['megals', '--config', self._megarc, self._folder]
@@ -141,27 +141,27 @@ class MegaBackend(duplicity.backend.Backend):
 
     def download(self, remote_file, local_file):
 
-        print("megaget: %s" % (remote_file,))
+        print(f"megaget: {remote_file}")
 
         if self._megarc:
             cmd = ['megaget', '--config', self._megarc, '--no-progress',
-                   '--path', local_file, self._folder + '/' + remote_file]
+                   '--path', local_file, f"{self._folder}/{remote_file}"]
         else:
             cmd = ['megaget', '-u', self._username, '-p', self._password, '--no-progress',
-                   '--path', local_file, self._folder + '/' + remote_file]
+                   '--path', local_file, f"{self._folder}/{remote_file}"]
 
         self.subprocess_popen(cmd)
 
     def upload(self, local_file, remote_file):
 
-        print("megaput: %s" % (remote_file,))
+        print(f"megaput: {remote_file}")
 
         if self._megarc:
             cmd = ['megaput', '--config', self._megarc, '--no-progress',
-                   '--path', self._folder + '/' + remote_file, local_file]
+                   '--path', f"{self._folder}/{remote_file}", local_file]
         else:
             cmd = ['megaput', '-u', self._username, '-p', self._password, '--no-progress',
-                   '--path', self._folder + '/' + remote_file, local_file]
+                   '--path', f"{self._folder}/{remote_file}", local_file]
 
         try:
             self.subprocess_popen(cmd)
@@ -172,16 +172,16 @@ class MegaBackend(duplicity.backend.Backend):
                                        "Upgrade your storage at https://mega.nz/pro or remove some data." %
                                        (remote_file,))
             else:
-                raise BackendException("Failed writing file '%s' to MEGA , reason : '%s'" % (remote_file, e))
+                raise BackendException(f"Failed writing file '{remote_file}' to MEGA , reason : '{e}'")
 
     def delete(self, remote_file):
 
-        print("megarm: %s" % (remote_file,))
+        print(f"megarm: {remote_file}")
 
         if self._megarc:
-            cmd = ['megarm', '--config', self._megarc, self._folder + '/' + remote_file]
+            cmd = ['megarm', '--config', self._megarc, f"{self._folder}/{remote_file}"]
         else:
-            cmd = ['megarm', '-', self._username, '-p', self._password, self._folder + '/' + remote_file]
+            cmd = ['megarm', '-', self._username, '-p', self._password, f"{self._folder}/{remote_file}"]
 
         self.subprocess_popen(cmd)
 

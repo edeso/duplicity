@@ -155,7 +155,7 @@ class OptionsTests(BasicTest):
         self.gnupg.options = gpginterface.Options()
 
     def option_to_arg(self, option):
-        return '--' + option.replace('_', '-')
+        return f"--{option.replace('_', '-')}"
 
     def test_boolean_args(self):
         """test Options boolean options that they generate

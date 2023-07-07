@@ -692,7 +692,7 @@ class OptionKwargs:
     }
     version = {
         "action": "version",
-        "version": "%(prog)s " + f"{__version__}",
+        "version": f"%(prog)s {__version__}",
         "help": "Display version and exit",
     }
     volsize = {

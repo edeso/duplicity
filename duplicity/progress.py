@@ -65,11 +65,11 @@ class Snapshot(sys_collections.deque):
         # If restarting Full, discard marshalled data and start over
         if config.restart is not None and config.restart.start_vol >= 1:
             try:
-                progressfd = open('%s/progress' % config.archive_dir_path.name, 'r')
+                progressfd = open(f'{config.archive_dir_path.name}/progress', 'r')
                 snapshot = pickle.load(progressfd)
                 progressfd.close()
             except Exception as e:
-                log.Warn("Warning, cannot read stored progress info from previous backup: {}".format(util.uexc(e)),
+                log.Warn(f"Warning, cannot read stored progress info from previous backup: {util.uexc(e)}",
                          log.WarningCode.cannot_stat)
                 snapshot = Snapshot()
         # Reached here no cached data found or wrong marshalling

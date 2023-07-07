@@ -84,18 +84,18 @@ class Iter(object):
                 i2 = next(iter2)
             except StopIteration:
                 if verbose:
-                    print("End when i1 = %s" % (i1,), file=sys.stderr)
+                    print(f"End when i1 = {i1}", file=sys.stderr)
                 return None
             if not operator(i1, i2):
                 if verbose:
-                    print("%s not equal to %s" % (i1, i2), file=sys.stderr)
+                    print(f"{i1} not equal to {i2}", file=sys.stderr)
                 return None
         try:
             i2 = next(iter2)
         except StopIteration:
             return 1
         if verbose:
-            print("End when i2 = %s" % (i2,), file=sys.stderr)
+            print(f"End when i2 = {i2}", file=sys.stderr)
         return None
 
     @staticmethod

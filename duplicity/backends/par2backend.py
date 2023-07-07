@@ -49,7 +49,7 @@ class Par2Backend(backend.Backend):
             self.volumes = 1
 
         try:
-            self.common_options = config.par2_options + " -q -q"
+            self.common_options = f"{config.par2_options} -q -q"
         except AttributeError:
             self.common_options = "-q -q"
 
@@ -141,8 +141,8 @@ class Par2Backend(backend.Backend):
             returncode, out, err = self.subprocess_popen(par2verify)
 
             if returncode:
-                log.Warn("File is corrupt. Try to repair %s" % remote_filename)
-                c = re.compile('%s\\.vol[\\d+]*\\.par2' % remote_filename.decode())
+                log.Warn(f"File is corrupt. Try to repair {remote_filename}")
+                c = re.compile(f'{remote_filename.decode()}\\.vol[\\d+]*\\.par2')
                 par2volumes = [f for f in self.wrapped_backend._list() if c.match(os.fsdecode(f))]
 
                 for filename in par2volumes:
@@ -155,9 +155,9 @@ class Par2Backend(backend.Backend):
                 returncode, out, err = self.subprocess_popen(par2repair)
 
                 if returncode:
-                    log.Error("Failed to repair %s" % remote_filename)
+                    log.Error(f"Failed to repair {remote_filename}")
                 else:
-                    log.Warn("Repair successful %s" % remote_filename)
+                    log.Warn(f"Repair successful {remote_filename}")
         except BackendException:
             # par2 file not available
             pass
@@ -172,7 +172,7 @@ class Par2Backend(backend.Backend):
 
         remote_list = self.unfiltered_list()
 
-        c = re.compile('%s(?:\\.vol[\\d+]*)?\\.par2' % os.fsdecode(filename))
+        c = re.compile(f'{os.fsdecode(filename)}(?:\\.vol[\\d+]*)?\\.par2')
         for remote_filename in remote_list:
             if c.match(os.fsdecode(remote_filename)):
                 self.wrapped_backend._delete(os.fsencode(remote_filename))
@@ -183,7 +183,7 @@ class Par2Backend(backend.Backend):
         remote_list = self.unfiltered_list()
 
         for filename in filename_list[:]:
-            c = re.compile('%s(?:\\.vol[\\d+]*)?\\.par2' % os.fsdecode(filename))
+            c = re.compile(f'{os.fsdecode(filename)}(?:\\.vol[\\d+]*)?\\.par2')
             for remote_filename in remote_list:
                 if c.match(os.fsdecode(remote_filename)):
                     # insert here to make sure par2 files will be removed first

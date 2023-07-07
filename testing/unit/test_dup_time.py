@@ -121,8 +121,8 @@ class TimeTest(object):
         assert g2t('2001-09-01T21:49:04Z') == \
                dup_time.stringtotime('2001-09-01T21:49:04Z')
         assert g2t('2002-04-26T04:22:01') == \
-               dup_time.stringtotime('2002-04-26T04:22:01' + dup_time.gettzd(0))
-        t = dup_time.stringtotime('2001-05-12T00:00:00' + dup_time.gettzd(0))
+               dup_time.stringtotime(f"2002-04-26T04:22:01{dup_time.gettzd(0)}")
+        t = dup_time.stringtotime(f"2001-05-12T00:00:00{dup_time.gettzd(0)}")
         assert g2t('2001-05-12') == t
         assert g2t('2001/05/12') == t
         assert g2t('5/12/2001') == t

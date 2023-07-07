@@ -112,7 +112,7 @@ Exception: %s""" % str(e))
 
         self.container = url_parts.pop(0)
         if url_parts:
-            self.prefix = '%s/' % '/'.join(url_parts)
+            self.prefix = f"{'/'.join(url_parts)}/"
         else:
             self.prefix = ''
 
@@ -126,12 +126,11 @@ Exception: %s""" % str(e))
         except ClientException:
             pass
         except Exception as e:
-            log.FatalError("Connection failed: %s %s"
-                           % (e.__class__.__name__, str(e)),
+            log.FatalError(f"Connection failed: {e.__class__.__name__} {str(e)}",
                            log.ErrorCode.connection_failed)
 
         if container_metadata is None:
-            log.Info("Creating container %s" % self.container)
+            log.Info(f"Creating container {self.container}")
             try:
                 headers = dict([[policy_header, policy]])
                 self.conn.put_container(self.container, headers=headers)
@@ -192,7 +191,7 @@ Exception: %s""" % str(e))
         try:
             _, body = self.conn.get_object(self.container, remote_filename,
                                            resp_chunk_size=1024)
-            log.Info("File %s was successfully unsealed." % remote_filename)
+            log.Info(f"File {remote_filename} was successfully unsealed.")
             return body
         except self.resp_exc as e:
             # The object is sealed but being released.
@@ -206,7 +205,7 @@ Exception: %s""" % str(e))
                 log.Info("File %s is being unsealed, operation ETA is %s." %
                          (remote_filename, eta))
             else:
-                log.FatalError("Connection failed: %s %s" % (e.__class__.__name__, str(e)),
+                log.FatalError(f"Connection failed: {e.__class__.__name__} {str(e)}",
                                log.ErrorCode.connection_failed)
         return None
 
@@ -228,9 +227,9 @@ Exception: %s""" % str(e))
             filename = os.fsdecode(o['name'])
             # see ovh documentation for policy_retrieval_state definition
             policy_retrieval_state = o['policy_retrieval_state']
-            log.Info("Volume %s. State : %s. " % (filename, policy_retrieval_state))
+            log.Info(f"Volume {filename}. State : {policy_retrieval_state}. ")
             if policy_retrieval_state == 'sealed':
-                log.Notice("Launching unseal of volume %s." % filename)
+                log.Notice(f"Launching unseal of volume {filename}.")
                 self.unseal(o['name'])
                 one_object_not_unsealed = True
             elif policy_retrieval_state == "unsealing":
@@ -256,8 +255,8 @@ Exception: %s""" % str(e))
             policy_retrieval_state = o['policy_retrieval_state']
             filename = os.fsdecode(o['name'])
             if policy_retrieval_state == 'sealed':
-                log.Notice("Error: volume is still in sealed state : %s." % filename)
-                log.Notice("Launching unseal of volume %s." % filename)
+                log.Notice(f"Error: volume is still in sealed state : {filename}.")
+                log.Notice(f"Launching unseal of volume {filename}.")
                 self.unseal(o['name'])
                 one_object_not_unsealed = True
             elif policy_retrieval_state == "unsealing":
@@ -270,7 +269,7 @@ Exception: %s""" % str(e))
         m, s = divmod(max_duration, 60)
         h, m = divmod(m, 60)
         max_duration_eta = "%dh%02dm%02ds" % (h, m, s)
-        log.Notice("Need to wait %s before all volumes are unsealed." % max_duration_eta)
+        log.Notice(f"Need to wait {max_duration_eta} before all volumes are unsealed.")
         return one_object_not_unsealed
 
 

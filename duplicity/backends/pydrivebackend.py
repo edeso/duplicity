@@ -123,8 +123,7 @@ Exception: %s""" % str(e))
         for folder_name in folder_names:
             if not folder_name:
                 continue
-            list_file_args = {'q': "'" + parent_folder_id +
-                                   "' in parents and trashed=false"}
+            list_file_args = {'q': f"'{parent_folder_id}' in parents and trashed=false"}
             list_file_args.update(self.api_params)
             file_list = self.drive.ListFile(list_file_args).GetList()
             folder = next((item for item in file_list if item['title'] == folder_name and
@@ -172,7 +171,7 @@ Exception: %s""" % str(e))
 
         # Not found in the cache, so use directory listing. This is less
         # reliable because there is no strong consistency.
-        q = "title='%s' and '%s' in parents and trashed=false" % (filename, self.folder)
+        q = f"title='{filename}' and '{self.folder}' in parents and trashed=false"
         fields = 'items(title,id,fileSize,downloadUrl,exportLinks),nextPageToken'
         list_file_args = {'q': q, 'fields': fields}
         list_file_args.update(self.api_params)
@@ -185,8 +184,7 @@ Exception: %s""" % str(e))
             log.Info("PyDrive backend: found file '%s' with id %s on server, "
                      "adding to cache" % (filename, file_id))
             return flist[0]
-        log.Info("PyDrive backend: file '%s' not found in cache or on server" %
-                 (filename,))
+        log.Info(f"PyDrive backend: file '{filename}' not found in cache or on server")
         return None
 
     def id_by_name(self, filename):
@@ -206,7 +204,7 @@ Exception: %s""" % str(e))
                                              "id": self.folder}]}
             create_file_args['parents'][0].update(self.api_params)
             drive_file = self.drive.CreateFile(create_file_args)
-            log.Info("PyDrive backend: creating new file '%s'" % (remote_filename,))
+            log.Info(f"PyDrive backend: creating new file '{remote_filename}'")
         else:
             log.Info("PyDrive backend: replacing existing file '%s' with id '%s'" % (
                 remote_filename, drive_file['id']))
@@ -223,7 +221,7 @@ Exception: %s""" % str(e))
 
     def _list(self):
         list_file_args = {
-            'q': "'" + self.folder + "' in parents and trashed=false",
+            'q': f"'{self.folder}' in parents and trashed=false",
             'fields': 'items(title,id),nextPageToken'}
         list_file_args.update(self.api_params)
         drive_files = self.drive.ListFile(list_file_args).GetList()
@@ -240,7 +238,7 @@ Exception: %s""" % str(e))
     def _delete(self, filename):
         file_id = self.id_by_name(filename)
         if file_id == '':
-            log.Warn("File '%s' does not exist while trying to delete it" % (os.fsdecode(filename),))
+            log.Warn(f"File '{os.fsdecode(filename)}' does not exist while trying to delete it")
         elif self.shared_drive_id:
             self.drive.auth.service.files().delete(fileId=file_id, param={'supportsTeamDrives': True}).execute()
         else:

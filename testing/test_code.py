@@ -67,7 +67,7 @@ class CodeTest(DuplicityTestCase):
         """Pylint test (requires pylint to be installed to pass)"""
         self.run_checker([
             "pylint",
-            "--rcfile=" + os.path.join(_top_dir, ".pylintrc"),
+            f"--rcfile={os.path.join(_top_dir, '.pylintrc')}",
         ] + files_to_test
         )
 
@@ -78,7 +78,7 @@ class CodeTest(DuplicityTestCase):
         style = pycodestyle.StyleGuide(config_file=os.path.join(_top_dir, 'tox.ini'))
         result = style.check_files(files_to_test)
         self.assertEqual(result.total_errors, 0,
-                         "Found %s code style errors (and warnings)." % result.total_errors)
+                         f"Found {result.total_errors} code style errors (and warnings).")
 
 
 if __name__ == "__main__":

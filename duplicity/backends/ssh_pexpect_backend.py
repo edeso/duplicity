@@ -71,7 +71,7 @@ class SSHPExpectBackend(duplicity.backend.Backend):
 
         # host string of form [user@]hostname
         if parsed_url.username:
-            self.host_string = parsed_url.username + "@" + parsed_url.hostname
+            self.host_string = f"{parsed_url.username}@{parsed_url.hostname}"
         else:
             self.host_string = parsed_url.hostname
         # make sure remote_dir is always valid
@@ -80,10 +80,10 @@ class SSHPExpectBackend(duplicity.backend.Backend):
             self.remote_dir = re.sub(r'^/', r'', parsed_url.path, 1)
         else:
             self.remote_dir = '.'
-        self.remote_prefix = self.remote_dir + '/'
+        self.remote_prefix = f"{self.remote_dir}/"
         # maybe use different ssh port
         if parsed_url.port:
-            config.ssh_options = config.ssh_options + " -oPort=%s" % parsed_url.port
+            config.ssh_options = f"{config.ssh_options} -oPort={parsed_url.port}"
         # set some defaults if user has not specified already.
         if "ServerAliveInterval" not in config.ssh_options:
             config.ssh_options += " -oServerAliveInterval=%d" % (int(config.timeout / 2))
@@ -96,7 +96,7 @@ class SSHPExpectBackend(duplicity.backend.Backend):
 
     def run_scp_command(self, commandline):
         """ Run an scp command, responding to password prompts """
-        log.Info("Running '%s'" % commandline)
+        log.Info(f"Running '{commandline}'")
         child = pexpect.spawn(commandline, timeout=None, use_poll=True)
         if config.ssh_askpass:
             state = "authorizing"
@@ -109,7 +109,7 @@ class SSHPExpectBackend(duplicity.backend.Backend):
                                       "(?i)pass(word|phrase .*):",
                                       "(?i)permission denied",
                                       "authenticity"])
-                log.Debug("State = %s, Before = '%s'" % (state, child.before.strip()))
+                log.Debug(f"State = {state}, Before = '{child.before.strip()}'")
                 if match == 0:
                     log.Warn("Failed to authenticate")
                     break
@@ -131,7 +131,7 @@ class SSHPExpectBackend(duplicity.backend.Backend):
                                       "stalled",
                                       "authenticity",
                                       "ETA"])
-                log.Debug("State = %s, Before = '%s'" % (state, child.before.strip()))
+                log.Debug(f"State = {state}, Before = '{child.before.strip()}'")
                 if match == 0:
                     break
                 elif match == 1:
@@ -146,7 +146,7 @@ class SSHPExpectBackend(duplicity.backend.Backend):
                 match = child.expect([pexpect.EOF,
                                       "(?i)timeout, server not responding",
                                       "ETA"])
-                log.Debug("State = %s, Before = '%s'" % (state, child.before.strip()))
+                log.Debug(f"State = {state}, Before = '{child.before.strip()}'")
                 if match == 0:
                     break
                 elif match == 1:
@@ -156,7 +156,7 @@ class SSHPExpectBackend(duplicity.backend.Backend):
                     state = "copying"
         child.close(force=True)
         if child.exitstatus != 0:
-            raise BackendException("Error running '%s'" % commandline)
+            raise BackendException(f"Error running '{commandline}'")
 
     def run_sftp_command(self, commandline, commands):
         """ Run an sftp command, responding to password prompts, passing commands from list """
@@ -172,7 +172,7 @@ class SSHPExpectBackend(duplicity.backend.Backend):
                      "Couldn't delete file",
                      "open(.*): Failure"]
         max_response_len = max([len(p) for p in responses[1:]])
-        log.Info("Running '%s'" % commandline)
+        log.Info(f"Running '{commandline}'")
         child = pexpect.spawn(commandline, timeout=None, maxread=maxread, encoding=config.fsencoding, use_poll=True)
         cmdloc = 0
         passprompt = 0
@@ -180,7 +180,7 @@ class SSHPExpectBackend(duplicity.backend.Backend):
             msg = ""
             match = child.expect(responses,
                                  searchwindowsize=maxread + max_response_len)
-            log.Debug("State = sftp, Before = '%s'" % (child.before.strip()))
+            log.Debug(f"State = sftp, Before = '{child.before.strip()}'")
             if match == 0:
                 break
             elif match == 1:
@@ -189,7 +189,7 @@ class SSHPExpectBackend(duplicity.backend.Backend):
             if match == 2:
                 if cmdloc < len(commands):
                     command = commands[cmdloc]
-                    log.Info("sftp command: '%s'" % (command,))
+                    log.Info(f"sftp command: '{command}'")
                     child.sendline(command)
                     cmdloc += 1
                 else:
@@ -210,23 +210,23 @@ class SSHPExpectBackend(duplicity.backend.Backend):
                 break
             elif match == 6:
                 if not child.before.strip().startswith("rm"):
-                    msg = "Remote file or directory does not exist in command='%s'" % (commandline,)
+                    msg = f"Remote file or directory does not exist in command='{commandline}'"
                     break
             elif match == 7:
                 if not child.before.strip().startswith("Removing"):
-                    msg = "Could not delete file in command='%s'" % (commandline,)
+                    msg = f"Could not delete file in command='{commandline}'"
                     break
             elif match == 8:
-                msg = "Could not delete file in command='%s'" % (commandline,)
+                msg = f"Could not delete file in command='{commandline}'"
                 break
             elif match == 9:
-                msg = "Could not open file in command='%s'" % (commandline,)
+                msg = f"Could not open file in command='{commandline}'"
                 break
         child.close(force=True)
         if child.exitstatus == 0:
             return res
         else:
-            raise BackendException("Error running '%s': %s" % (commandline, msg))
+            raise BackendException(f"Error running '{commandline}': {msg}")
 
     def _put(self, source_path, remote_filename):
         remote_filename = os.fsdecode(remote_filename)
@@ -240,9 +240,7 @@ class SSHPExpectBackend(duplicity.backend.Backend):
                     (source_path.uc_name, self.remote_prefix, remote_filename),
                     "rename \"%s.%s.part\" \"%s%s\"" %
                     (self.remote_prefix, remote_filename, self.remote_prefix, remote_filename)]
-        commandline = ("%s %s %s" % (self.sftp_command,
-                                     config.ssh_options,
-                                     self.host_string))
+        commandline = f"{self.sftp_command} {config.ssh_options} {self.host_string}"
         self.run_sftp_command(commandline, commands)
 
     def put_scp(self, source_path, remote_filename):
@@ -261,9 +259,7 @@ class SSHPExpectBackend(duplicity.backend.Backend):
     def get_sftp(self, remote_filename, local_path):
         commands = ["get \"%s%s\" \"%s\"" %
                     (self.remote_prefix, remote_filename, local_path.uc_name)]
-        commandline = ("%s %s %s" % (self.sftp_command,
-                                     config.ssh_options,
-                                     self.host_string))
+        commandline = f"{self.sftp_command} {config.ssh_options} {self.host_string}"
         self.run_sftp_command(commandline, commands)
 
     def get_scp(self, remote_filename, local_path):
@@ -282,28 +278,26 @@ class SSHPExpectBackend(duplicity.backend.Backend):
                 dirs[0] = '/'
         mkdir_commands = []
         for d in dirs:
-            mkdir_commands += ["mkdir \"%s\"" % d] + ["cd \"%s\"" % d]
+            mkdir_commands += [f"mkdir \"{d}\""] + [f"cd \"{d}\""]
 
         commands = mkdir_commands + ["ls -1"]
-        commandline = ("%s %s %s" % (self.sftp_command,
-                                     config.ssh_options,
-                                     self.host_string))
+        commandline = f"{self.sftp_command} {config.ssh_options} {self.host_string}"
 
         l = self.run_sftp_command(commandline, commands).split('\n')[1:]
 
         return [x for x in map(string.strip, l) if x]
 
     def _delete(self, filename):
-        commands = ["cd \"%s\"" % (self.remote_dir,)]
-        commands.append("rm \"%s\"" % os.fsdecode(filename))
-        commandline = ("%s %s %s" % (self.sftp_command, config.ssh_options, self.host_string))
+        commands = [f"cd \"{self.remote_dir}\""]
+        commands.append(f"rm \"{os.fsdecode(filename)}\"")
+        commandline = f"{self.sftp_command} {config.ssh_options} {self.host_string}"
         self.run_sftp_command(commandline, commands)
 
     def _delete_list(self, filename_list):
-        commands = ["cd \"%s\"" % (self.remote_dir,)]
+        commands = [f"cd \"{self.remote_dir}\""]
         for filename in filename_list:
-            commands.append("rm \"%s\"" % os.fsdecode(filename))
-        commandline = ("%s %s %s" % (self.sftp_command, config.ssh_options, self.host_string))
+            commands.append(f"rm \"{os.fsdecode(filename)}\"")
+        commandline = f"{self.sftp_command} {config.ssh_options} {self.host_string}"
         self.run_sftp_command(commandline, commands)
 
 

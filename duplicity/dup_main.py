@@ -168,12 +168,12 @@ def get_passphrase(n, action, for_signing=False):
                     if use_cache and config.gpg_profile.signing_passphrase:
                         pass1 = config.gpg_profile.signing_passphrase
                     else:
-                        pass1 = getpass_safe(_("GnuPG passphrase for signing key:") + " ")
+                        pass1 = getpass_safe(f"{_('GnuPG passphrase for signing key:')} ")
                 else:
                     if use_cache and config.gpg_profile.passphrase:
                         pass1 = config.gpg_profile.passphrase
                     else:
-                        pass1 = getpass_safe(_("GnuPG passphrase for decryption:") + " ")
+                        pass1 = getpass_safe(f"{_('GnuPG passphrase for decryption:')} ")
 
             if n == 1:
                 pass2 = pass1
@@ -824,7 +824,7 @@ def restore_get_enc_fileobj(backend, filename, volume_info):
             log.Error(error_msg, code=log.ErrorCode.mismatched_hash)
     else:
         if config.ignore_errors:
-            exc = duplicity.errors.BadVolumeException("Hash mismatch for: %s" % os.fsdecode(filename))
+            exc = duplicity.errors.BadVolumeException(f"Hash mismatch for: {os.fsdecode(filename)}")
             log.Warn(_("IGNORED_ERROR: Warning: ignoring error as requested: %s: %s")
                      % (exc.__class__.__name__, util.uexc(exc)))
         else:
@@ -927,7 +927,7 @@ def cleanup(col_stats):
 
     filestr = "\n".join(map(os.fsdecode, extraneous))
     if config.force:
-        log.Notice(_("Deleting these file(s) from backend:") + "\n" + filestr)
+        log.Notice(f"{_('Deleting these file(s) from backend:')}\n{filestr}")
         if not config.dry_run:
             col_stats.backend.delete(ext_remote)
             for fn in ext_local:
@@ -1330,10 +1330,10 @@ def log_startup_parms(verbosity=log.INFO):
     log Python, duplicity, and system versions
     """
     log.Log('=' * 80, verbosity)
-    log.Log("duplicity %s" % __version__, verbosity)
-    log.Log("Args: %s" % ' '.join([os.fsdecode(arg) for arg in sys.argv]), verbosity)
+    log.Log(f"duplicity {__version__}", verbosity)
+    log.Log(f"Args: {' '.join([os.fsdecode(arg) for arg in sys.argv])}", verbosity)
     log.Log(' '.join(platform.uname()), verbosity)
-    log.Log("%s %s" % (sys.executable or sys.platform, sys.version), verbosity)
+    log.Log(f"{sys.executable or sys.platform} {sys.version}", verbosity)
     log.Log('=' * 80, verbosity)
 
 
@@ -1489,11 +1489,11 @@ def do_backup(action):
                         dup_time.setcurtime(config.restart.end_time)
                         dup_time.setprevtime(config.restart.start_time)
                     # log it -- main restart heavy lifting is done in write_multivol
-                    log.Notice(_("Last %s backup left a partial set, restarting." % action))
+                    log.Notice(_(f"Last {action} backup left a partial set, restarting."))
                     break
                 else:
                     # remove last partial backup and get new collection status
-                    log.Notice(_("Cleaning up previous partial %s backup set, restarting." % action))
+                    log.Notice(_(f"Cleaning up previous partial {action} backup set, restarting."))
                     last_backup.delete()
                     col_stats = dup_collections.CollectionsStatus(config.backend,
                                                                   config.archive_dir_path,
@@ -1505,7 +1505,7 @@ def do_backup(action):
     # OK, now we have a stable collection
     last_full_time = col_stats.get_last_full_backup_time()
     if last_full_time > 0:
-        log.Notice(_("Last full backup date:") + " " + dup_time.timetopretty(last_full_time))
+        log.Notice(f"{_('Last full backup date:')} {dup_time.timetopretty(last_full_time)}")
     else:
         log.Notice(_("Last full backup date: none"))
     if not config.restart and action == "inc" and config.full_if_older_than is not None and \

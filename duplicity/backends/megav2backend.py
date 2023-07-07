@@ -56,7 +56,7 @@ class Megav2Backend(duplicity.backend.Backend):
         # securely store the username and password
         self._hostname = parsed_url.hostname
         if parsed_url.password is None:
-            self._megarc = os.getenv('HOME') + '/.megav2rc'
+            self._megarc = f"{os.getenv('HOME')}/.megav2rc"
             try:
                 conf_file = open(self._megarc, "r")
             except Exception as e:
@@ -77,7 +77,7 @@ class Megav2Backend(duplicity.backend.Backend):
             self._password = self.get_password()
 
         # Remote folder ("MEGAcmd" no longer shows "Root/" at the top of the hierarchy)
-        self._folder = '/' + parsed_url.path[1:]
+        self._folder = f"/{parsed_url.path[1:]}"
 
         # Only create the remote folder if it doesn't exist yet
         self.mega_login()
@@ -110,7 +110,7 @@ class Megav2Backend(duplicity.backend.Backend):
                 raise BackendException("Folder '%s' could not be created on MEGA because it already exists. "
                                        "Use another path or remove the folder in MEGA manually" % (path,))
             else:
-                raise BackendException("Folder '%s' could not be created, reason : '%s'" % (path, e))
+                raise BackendException(f"Folder '{path}' could not be created, reason : '{e}'")
 
     def _put(self, source_path, remote_filename):
         """Uploads file to the specified remote folder (tries to delete it first to make
@@ -158,7 +158,7 @@ class Megav2Backend(duplicity.backend.Backend):
             try:
                 subprocess.check_output(cmd, stderr=subprocess.DEVNULL)
             except Exception as e:
-                raise BackendException("Could not log in to MEGA, error : '%s'" % (e,))
+                raise BackendException(f"Could not log in to MEGA, error : '{e}'")
 
     def folder_contents(self, files_only=False):
         """Lists contents of a remote MEGA path, optionally ignoring subdirectories"""
@@ -178,14 +178,14 @@ class Megav2Backend(duplicity.backend.Backend):
     def download(self, remote_file, local_file):
         """Downloads a file from a remote MEGA path"""
 
-        cmd = ['mega-get', self._folder + '/' + remote_file, local_file]
+        cmd = ['mega-get', f"{self._folder}/{remote_file}", local_file]
         self.mega_login()
         self.subprocess_popen(cmd)
 
     def upload(self, local_file, remote_file):
         """Uploads a file to a remote MEGA path"""
 
-        cmd = ['mega-put', local_file, self._folder + '/' + remote_file]
+        cmd = ['mega-put', local_file, f"{self._folder}/{remote_file}"]
         self.mega_login()
         try:
             self.subprocess_popen(cmd)
@@ -196,12 +196,12 @@ class Megav2Backend(duplicity.backend.Backend):
                                        "Upgrade your storage at https://mega.nz/pro or remove some data." %
                                        (remote_file,))
             else:
-                raise BackendException("Failed writing file '%s' to MEGA, reason : '%s'" % (remote_file, e))
+                raise BackendException(f"Failed writing file '{remote_file}' to MEGA, reason : '{e}'")
 
     def delete(self, remote_file):
         """Deletes a file from a remote MEGA path"""
 
-        cmd = ['mega-rm', '-f', self._folder + '/' + remote_file]
+        cmd = ['mega-rm', '-f', f"{self._folder}/{remote_file}"]
         self.mega_login()
         self.subprocess_popen(cmd)
 

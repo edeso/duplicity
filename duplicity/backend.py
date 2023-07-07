@@ -83,12 +83,12 @@ def import_backends():
     for fn in files:
         if fn.endswith("backend.py"):
             fn = fn[:-3]
-            imp = "duplicity.backends.%s" % (fn,)
+            imp = f"duplicity.backends.{fn}"
             try:
                 __import__(imp)
                 res = "Succeeded"
             except Exception:
-                res = "Failed: " + str(sys.exc_info()[1])
+                res = f"Failed: {str(sys.exc_info()[1])}"
             log.Log(_("Import of %s %s") % (imp, res), log.INFO)
         else:
             continue
@@ -150,7 +150,7 @@ def strip_prefix(url_string, prefix_scheme):
     """
     strip the prefix from a string e.g. par2+ftp://... -> ftp://...
     """
-    return re.sub(r'(?i)^' + re.escape(prefix_scheme) + r'\+', r'', url_string)
+    return re.sub(f"(?i)^{re.escape(prefix_scheme)}\\+", r'', url_string)
 
 
 def is_backend_url(url_string):
@@ -184,7 +184,7 @@ def get_backend_object(url_string):
     factory = None
 
     for prefix in _backend_prefixes:
-        if url_string.startswith(prefix + '+'):
+        if url_string.startswith(f"{prefix}+"):
             factory = _backend_prefixes[prefix]
             pu = ParsedUrl(strip_prefix(url_string, prefix))
             break
@@ -241,29 +241,29 @@ class ParsedUrl(object):
         try:
             pu = urllib.parse.urlparse(url_string)
         except Exception:
-            raise InvalidBackendURL("Syntax error in: %s" % url_string)
+            raise InvalidBackendURL(f"Syntax error in: {url_string}")
 
         try:
             self.scheme = pu.scheme
         except Exception:
-            raise InvalidBackendURL("Syntax error (scheme) in: %s" % url_string)
+            raise InvalidBackendURL(f"Syntax error (scheme) in: {url_string}")
 
         try:
             self.netloc = pu.netloc
         except Exception:
-            raise InvalidBackendURL("Syntax error (netloc) in: %s" % url_string)
+            raise InvalidBackendURL(f"Syntax error (netloc) in: {url_string}")
 
         try:
             self.path = pu.path
             if self.path:
                 self.path = urllib.parse.unquote(self.path)
         except Exception:
-            raise InvalidBackendURL("Syntax error (path) in: %s" % url_string)
+            raise InvalidBackendURL(f"Syntax error (path) in: {url_string}")
 
         try:
             self.username = pu.username
         except Exception:
-            raise InvalidBackendURL("Syntax error (username) in: %s" % url_string)
+            raise InvalidBackendURL(f"Syntax error (username) in: {url_string}")
         if self.username:
             self.username = urllib.parse.unquote(pu.username)
         else:
@@ -272,7 +272,7 @@ class ParsedUrl(object):
         try:
             self.password = pu.password
         except Exception:
-            raise InvalidBackendURL("Syntax error (password) in: %s" % url_string)
+            raise InvalidBackendURL(f"Syntax error (password) in: {url_string}")
         if self.password:
             self.password = urllib.parse.unquote(self.password)
         else:
@@ -281,12 +281,12 @@ class ParsedUrl(object):
         try:
             self.hostname = pu.hostname
         except Exception:
-            raise InvalidBackendURL("Syntax error (hostname) in: %s" % url_string)
+            raise InvalidBackendURL(f"Syntax error (hostname) in: {url_string}")
 
         try:
             self.query = pu.query
         except Exception:
-            raise InvalidBackendURL("Syntax error (query) in: %s" % url_string)
+            raise InvalidBackendURL(f"Syntax error (query) in: {url_string}")
         if self.query:
             self.query_args = urllib.parse.parse_qs(self.query)
         else:
@@ -311,11 +311,11 @@ class ParsedUrl(object):
         # a netloc where we don't want one, that we correct it.
         if self.scheme not in uses_netloc:
             if self.netloc:
-                self.path = '//' + self.netloc + self.path
+                self.path = f"//{self.netloc}{self.path}"
                 self.netloc = ''
                 self.hostname = None
             elif not self.path.startswith('//') and self.path.startswith('/'):
-                self.path = '//' + self.path
+                self.path = f"//{self.path}"
 
         # This happens for implicit local paths.
         if not self.scheme:
@@ -519,7 +519,7 @@ class Backend(object):
                 return 0, '', ''
             except (KeyError, ValueError):
                 raise BackendException("Error running '%s': returned %d, with output:\n%s" %
-                                       (logstr, result, stdout + '\n' + stderr + '\n'))
+                                       (logstr, result, f"{stdout}\n{stderr}\n"))
         return result, stdout, stderr
 
 

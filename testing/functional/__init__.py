@@ -66,7 +66,7 @@ class FunctionalTestCase(DuplicityTestCase):
         self.unpack_testfiles()
 
         self.class_args = []
-        self.backend_url = "file://{0}/testfiles/output".format(_runtest_dir)
+        self.backend_url = f"file://{_runtest_dir}/testfiles/output"
         self.last_backup = None
         self.set_environ('PASSPHRASE', self.sign_passphrase)
         self.set_environ("SIGN_PASSPHRASE", self.sign_passphrase)
@@ -111,7 +111,7 @@ class FunctionalTestCase(DuplicityTestCase):
         if run_coverage := os.environ.get('RUN_COVERAGE', None):
             cmd_list.extend(["-m", "coverage", "run", "--source=duplicity", "-p"])
 
-        cmd_list.extend(["{0}/bin/duplicity".format(_top_dir)])
+        cmd_list.extend([f"{_top_dir}/bin/duplicity"])
         cmd_list.extend(options)
 
         if run_debugger := os.environ.get("PYDEVD", None):
@@ -119,7 +119,7 @@ class FunctionalTestCase(DuplicityTestCase):
 
         cmd_list.extend(["-v0"])
         cmd_list.extend(["--no-print-statistics"])
-        cmd_list.extend(["--archive-dir={0}/testfiles/cache".format(_runtest_dir)])
+        cmd_list.extend([f"--archive-dir={_runtest_dir}/testfiles/cache"])
 
         if current_time:
             cmd_list.extend(["--current-time", current_time])
@@ -129,7 +129,7 @@ class FunctionalTestCase(DuplicityTestCase):
         if fail:
             cmd_list.extend(["--fail", "".__class__(fail)])
 
-        cmdline = " ".join(['"%s"' % x for x in cmd_list])
+        cmdline = " ".join([f'"{x}"' for x in cmd_list])
 
         if not passphrase_input:
             cmdline += " < /dev/null"
@@ -185,8 +185,8 @@ class FunctionalTestCase(DuplicityTestCase):
     def restore(self, file_to_restore=None, time=None, options=None, **kwargs):
         if options is None:
             options = []
-        assert not os.system("rm -rf {0}/testfiles/restore_out".format(_runtest_dir))
-        options = ["restore", self.backend_url, "{0}/testfiles/restore_out".format(_runtest_dir)] + options
+        assert not os.system(f"rm -rf {_runtest_dir}/testfiles/restore_out")
+        options = ["restore", self.backend_url, f"{_runtest_dir}/testfiles/restore_out"] + options
         if file_to_restore:
             options.extend(['--path-to-restore', file_to_restore])
         if time:
@@ -224,7 +224,7 @@ class FunctionalTestCase(DuplicityTestCase):
         Makes a number of large files in /tmp/testfiles/largefiles that each are
         the specified number of megabytes.
         """
-        assert not os.system("mkdir {0}/testfiles/largefiles".format(_runtest_dir))
+        assert not os.system(f"mkdir {_runtest_dir}/testfiles/largefiles")
         for n in range(count):
             assert not os.system(
                 "dd if=/dev/urandom of={0}/testfiles/largefiles/file{1} bs=1024 count={2} > /dev/null 2>&1".format(

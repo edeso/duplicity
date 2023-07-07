@@ -145,7 +145,7 @@ def get_tarinfo_name(ti):
     # and later ensure they they *don't* have /.  ::shrug::  Internally, we
     # continue to use pre-2.6 method.
     if ti.isdir() and not ti.name.endswith(r"/"):
-        return ti.name + r"/"
+        return f"{ti.name}/"
     else:
         return ti.name
 
@@ -176,7 +176,7 @@ def release_lockfile():
             config.lockfile = None
             config.lockpath = ""
         except Exception as e:
-            log.Error("Could not release lockfile: %s" % str(e))
+            log.Error(f"Could not release lockfile: {str(e)}")
             pass
 
 

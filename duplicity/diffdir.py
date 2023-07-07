@@ -122,7 +122,7 @@ def get_delta_path(new_path, sig_path, sigTarFile=None):
         Callback activated when FileWithSignature read to end
         """
         ti.size = len(sig_string)
-        ti.name = "signature/" + os.fsdecode(b"/".join(index))
+        ti.name = f"signature/{os.fsdecode(b'/'.join(index))}"
         sigTarFile.addfile(ti, io.BytesIO(sig_string))
 
     if new_path.isreg() and sig_path and sig_path.isreg() and sig_path.difftype == "signature":
@@ -136,7 +136,7 @@ def get_delta_path(new_path, sig_path, sigTarFile=None):
     else:
         delta_path.difftype = "snapshot"
         if sigTarFile:
-            ti.name = "snapshot/" + os.fsdecode(b"/".join(index))
+            ti.name = f"snapshot/{os.fsdecode(b'/'.join(index))}"
         if not new_path.isreg():
             if sigTarFile:
                 sigTarFile.addfile(ti)
@@ -203,7 +203,7 @@ def get_delta_iter(new_iter, sig_iter, sig_fileobj=None):
                          util.escape(sig_path.get_relative_path()))
                 if sigTarFile:
                     ti = ROPath(sig_path.index).get_tarinfo()
-                    ti.name = "deleted/" + util.uindex(sig_path.index)
+                    ti.name = f"deleted/{util.uindex(sig_path.index)}"
                     sigTarFile.addfile(ti)
                 stats.add_deleted_file(sig_path)
                 yield ROPath(sig_path.index)
@@ -240,7 +240,7 @@ def sigtar2path_iter(sigtarobj):
                 name, difftype = tiname[len(prefix):], prefix[:-1]
                 break
         else:
-            raise DiffDirException("Bad tarinfo name %s" % (tiname,))
+            raise DiffDirException(f"Bad tarinfo name {tiname}")
 
         index = tuple(os.fsencode(name).split(b"/"))
         if not index[-1]:
@@ -642,7 +642,7 @@ class DeltaTarBlockIter(TarBlockIter):
         def add_prefix(tarinfo, prefix):
             """Add prefix to the name of a tarinfo file"""
             if tarinfo.name == r".":
-                tarinfo.name = prefix + r"/"
+                tarinfo.name = f"{prefix}/"
             else:
                 tarinfo.name = r"%s/%s" % (prefix, tarinfo.name)
 
@@ -674,7 +674,7 @@ class DeltaTarBlockIter(TarBlockIter):
 
         # Finally, do multivol snapshot or diff case
         full_name = r"multivol_%s/%s" % (delta_ropath.difftype, ti.name)
-        ti.name = full_name + r"/1"
+        ti.name = f"{full_name}/1"
         self.process_prefix = full_name
         self.process_fp = fp
         self.process_ropath = delta_ropath

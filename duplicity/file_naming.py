@@ -173,7 +173,7 @@ def from_base36(s):
         elif ord('a') <= digit_ord <= ord('z'):
             total += digit_ord - ord('a') + 10
         else:
-            assert 0, "Digit %s in %s not in proper range" % (s[i], s)
+            assert 0, f"Digit {s[i]} in {s} not in proper range"
     return total
 
 

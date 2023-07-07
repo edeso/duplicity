@@ -76,7 +76,7 @@ class S3Boto3Backend(duplicity.backend.Backend):
             raise BackendException('S3 requires a bucket name.')
 
         if url_path_parts:
-            self.key_prefix = '%s/' % '/'.join(url_path_parts)
+            self.key_prefix = f"{'/'.join(url_path_parts)}/"
         else:
             self.key_prefix = ''
 
@@ -101,7 +101,7 @@ class S3Boto3Backend(duplicity.backend.Backend):
         except botocore.exceptions.ClientError as bce:
             error_code = bce.response['Error']['Code']
             if error_code == '404':
-                raise FatalBackendException('S3 bucket "%s" does not exist' % self.bucket_name,
+                raise FatalBackendException(f'S3 bucket "{self.bucket_name}" does not exist',
                                             code=log.ErrorCode.backend_not_found)
             else:
                 raise
@@ -175,7 +175,7 @@ class S3Boto3Backend(duplicity.backend.Backend):
         remote_filename = util.fsdecode(remote_filename)
         key = self.key_prefix + remote_filename
 
-        log.Info("Uploading %s/%s to %s Storage" % (self.straight_url, remote_filename, storage_class))
+        log.Info(f"Uploading {self.straight_url}/{remote_filename} to {storage_class} Storage")
         self.s3.Object(self.bucket.name, key).upload_file(local_source_path.uc_name,
                                                           Callback=tracker.progress_cb,
                                                           Config=transfer_config,
@@ -198,7 +198,7 @@ class S3Boto3Backend(duplicity.backend.Backend):
             try:
                 filename = obj.key.replace(self.key_prefix, '', 1)
                 filename_list.append(os.fsencode(filename))
-                log.Debug("Listed %s/%s" % (self.straight_url, filename))
+                log.Debug(f"Listed {self.straight_url}/{filename}")
             except AttributeError:
                 pass
         return filename_list

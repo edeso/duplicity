@@ -161,8 +161,7 @@ def get_index_from_tarinfo(tarinfo):
                     re.subn("(?s)^multivol_(diff|snapshot)/?(.*)/[0-9]+$",
                             "\\2", tiname)
                 if num_subs != 1:
-                    raise PatchDirException("Unrecognized diff entry %s" %
-                                            tiname)
+                    raise PatchDirException(f"Unrecognized diff entry {tiname}")
             else:
                 difftype = prefix[:-1]  # strip trailing /
                 name = tiname[len(prefix):]
@@ -171,8 +170,7 @@ def get_index_from_tarinfo(tarinfo):
                 multivol = 0
             break
     else:
-        raise PatchDirException("Unrecognized diff entry %s" %
-                                tiname)
+        raise PatchDirException(f"Unrecognized diff entry {tiname}")
     if name == r"." or name == r"":
         index = ()
     else:
@@ -462,7 +460,7 @@ class IndexedTuple(object):
             return False
 
     def __str__(self):
-        return "(%s).%s" % (", ".join(map(str, self.data)), self.index)
+        return f"({', '.join(map(str, self.data))}).{self.index}"
 
 
 def normalize_ps(patch_sequence):
@@ -490,8 +488,7 @@ def normalize_ps(patch_sequence):
 def patch_seq2ropath(patch_seq):
     """Apply the patches in patch_seq, return single ropath"""
     first = patch_seq[0]
-    assert first.difftype != "diff", "First patch in sequence " \
-                                     "%s was a diff" % patch_seq
+    assert first.difftype != "diff", f"First patch in sequence {patch_seq} was a diff"
     if not first.isreg():
         # No need to bother with data if not regular file
         assert len(patch_seq) == 1, "Patch sequence isn't regular, but " \
@@ -622,7 +619,7 @@ class ROPath_IterWriter(ITRBranch):
         log.Info(_("Writing %s of type %s") %
                  (os.fsdecode(ropath.get_relative_path()), ropath.type),
                  log.InfoCode.patch_file_writing,
-                 "%s %s" % (util.escape(ropath.get_relative_path()), ropath.type))
+                 f"{util.escape(ropath.get_relative_path())} {ropath.type}")
         return not ropath.isdir()
 
     def fast_process(self, index, ropath):

@@ -313,9 +313,9 @@ def var2opt(s):
     Convert var name to option string
     """
     if len(s) > 1:
-        return "--" + s.replace("_", "-")
+        return f"--{s.replace('_', '-')}"
     else:
-        return "-" + s
+        return f"-{s}"
 
 
 def cmd2var(s):

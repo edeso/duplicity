@@ -113,7 +113,7 @@ class StatsObj(object):
         """Set statistics from given line"""
 
         def error():
-            raise StatsException("Bad line '%s'" % line)
+            raise StatsException(f"Bad line '{line}'")
 
         if line[-1] == "\n":
             line = line[:-1]
@@ -165,10 +165,9 @@ class StatsObj(object):
             if val is None:
                 return ""
             if in_bytes:
-                return "%s %s (%s)\n" % (attr, val,
-                                         self.get_byte_summary_string(val))
+                return f"{attr} {val} ({self.get_byte_summary_string(val)})\n"
             else:
-                return "%s %s\n" % (attr, val)
+                return f"{attr} {val}\n"
 
         return "".join(map(fileline, self.stat_file_pairs))
 
@@ -205,21 +204,21 @@ class StatsObj(object):
                     % (abbrev_count,)
         byte_count = round(byte_count)
         if byte_count == 1:
-            return sign + "1 byte"
+            return f"{sign}1 byte"
         else:
             return "%s%d bytes" % (sign, byte_count)
 
     def get_stats_logstring(self, title):
         """Like get_stats_string, but add header and footer"""
-        header = "--------------[ %s ]--------------" % title
+        header = f"--------------[ {title} ]--------------"
         footer = "-" * len(header)
-        return "%s\n%s%s\n" % (header, self.get_stats_string(), footer)
+        return f"{header}\n{self.get_stats_string()}{footer}\n"
 
     def set_stats_from_string(self, s):
         """Initialize attributes from string, return self for convenience"""
 
         def error(line):
-            raise StatsException("Bad line '%s'" % line)
+            raise StatsException(f"Bad line '{line}'")
 
         for line in s.split("\n"):
             if not line:

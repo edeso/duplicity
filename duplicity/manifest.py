@@ -96,7 +96,7 @@ class Manifest(object):
                        "Current hostname: %s\n"
                        "Previous hostname: %s") % (config.hostname, self.hostname)
             code = log.ErrorCode.hostname_mismatch
-            code_extra = "%s %s" % (util.escape(config.hostname), util.escape(self.hostname))
+            code_extra = f"{util.escape(config.hostname)} {util.escape(self.hostname)}"
 
         elif self.local_dirname and self.local_dirname != config.local_path.name:
             errmsg = _(f"Fatal Error: Backup source directory has changed.\n"
@@ -413,7 +413,7 @@ class VolumeInfo(object):
         # Set volume number
         m = re.search(b"^Volume ([0-9]+):", linelist[0], re.I)
         if not m:
-            raise VolumeInfoError("Bad first line '%s'" % (linelist[0],))
+            raise VolumeInfoError(f"Bad first line '{linelist[0]}'")
         self.volume_number = int(m.group(1))
 
         # Set other fields

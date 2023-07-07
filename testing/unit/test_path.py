@@ -36,7 +36,7 @@ class PathTest(UnitTestCase):
     def test_deltree(self):
         """Test deleting a tree"""
         assert not os.system("cp -pR {0}/testfiles/deltree {0}/testfiles/output".format(_runtest_dir).format(_runtest_dir))  # noqa
-        p = Path("{0}/testfiles/output".format(_runtest_dir))
+        p = Path(f"{_runtest_dir}/testfiles/output")
         assert p.isdir()
         p.deltree()
         assert not p.type, p.type
@@ -86,7 +86,7 @@ class PathTest(UnitTestCase):
 
     def test_compare_verbose(self):
         """Run compare_verbose on a few files"""
-        vft = Path("{0}/testfiles/various_file_types".format(_runtest_dir))
+        vft = Path(f"{_runtest_dir}/testfiles/various_file_types")
         assert vft.compare_verbose(vft)
         reg_file = vft.append("regular_file")
         assert not vft.compare_verbose(reg_file)

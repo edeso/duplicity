@@ -64,7 +64,7 @@ class AsyncScheduler(object):
         log.Info("%s: %s" % (self.__class__.__name__,
                              _("instantiating at concurrency %d") %
                              concurrency))
-        assert concurrency >= 0, "%s concurrency level must be >= 0" % (self.__class__.__name__,)
+        assert concurrency >= 0, f"{self.__class__.__name__} concurrency level must be >= 0"
 
         self.__failed = False  # has at least one task failed so far?
         self.__failed_waiter = None  # when __failed, the waiter of the first task that failed
@@ -87,7 +87,7 @@ class AsyncScheduler(object):
         barrier must be inserted in between to guarantee that A
         happens before B.
         """
-        log.Debug("%s: %s" % (self.__class__.__name__, _("inserting barrier")))
+        log.Debug(f"{self.__class__.__name__}: {_('inserting barrier')}")
         # With concurrency 0 it's a NOOP, and due to the special case in
         # task scheduling we do not want to append to the queue (will never
         # be popped).
@@ -171,8 +171,7 @@ class AsyncScheduler(object):
         def _waiter():
             return ret
 
-        log.Info("%s: %s" % (self.__class__.__name__,
-                             _("task completed successfully")),
+        log.Info(f"{self.__class__.__name__}: {_('task completed successfully')}",
                  log.InfoCode.synchronous_upload_done)
 
         return _waiter
