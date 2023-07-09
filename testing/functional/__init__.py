@@ -227,5 +227,5 @@ class FunctionalTestCase(DuplicityTestCase):
         assert not os.system(f"mkdir {_runtest_dir}/testfiles/largefiles")
         for n in range(count):
             assert not os.system(
-                "dd if=/dev/urandom of={0}/testfiles/largefiles/file{1} bs=1024 count={2} > /dev/null 2>&1".format(
-                    _runtest_dir, n + 1, size * 1024))
+                f"dd if=/dev/urandom of={_runtest_dir}/testfiles/largefiles/file{n+1} "
+                f"bs=1024 count={size*1024} > /dev/null 2>&1")

@@ -302,9 +302,8 @@ class MultiBackend(duplicity.backend.Backend):
             log.Notice(_("MultiBackend: %s: %d files")
                        % (s.backend.parsed_url.strip_auth(), len(l)))
             if len(l) == 0 and duplicity.backend._last_exception:
-                log.Warn(_("Exception during list of %s: %s"
-                           % (s.backend.parsed_url.strip_auth(),
-                              util.uexc(duplicity.backend._last_exception))))
+                log.Warn(_(f"Exception during list of {s.backend.parsed_url.strip_auth()}: "
+                           f"{util.uexc(duplicity.backend._last_exception)}"))
                 duplicity.backend._last_exception = None
             lists.append(l)
         # combine the lists into a single flat list w/o duplicates via set:

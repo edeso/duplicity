@@ -702,7 +702,7 @@ class DeltaTarBlockIter(TarBlockIter):
         assert self.process_waiting
         ropath = self.process_ropath
         ti, index = ropath.get_tarinfo(), ropath.index
-        ti.name = "%s/%d" % (self.process_prefix, self.process_next_vol_number)
+        ti.name = f"{self.process_prefix}/{int(self.process_next_vol_number)}"
         data, last_block = self.get_data_block(self.process_fp)
         if stats:
             stats.RawDeltaSize += len(data)

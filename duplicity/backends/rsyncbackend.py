@@ -108,8 +108,7 @@ class RsyncBackend(duplicity.backend.Backend):
         m = re.search(r"(:\d+|)?::([^:]*)$", url)
         if m:
             return m.group(2), m.group(1).lstrip(':')
-        raise InvalidBackendURL("Could not determine rsync path: %s"
-                                "" % self.munge_password(url))
+        raise InvalidBackendURL(f"Could not determine rsync path: {self.munge_password(url)}")
 
     def _put(self, source_path, remote_filename):
         remote_filename = os.fsdecode(remote_filename)
@@ -159,8 +158,7 @@ class RsyncBackend(duplicity.backend.Backend):
             print(file, file=exclude)
             f.close()
         exclude.close()
-        commandline = ("%s --recursive --delete --exclude-from=%s %s/ %s" %
-                       (self.cmd, exclude_name, dir, self.url_string))
+        commandline = f"{self.cmd} --recursive --delete --exclude-from={exclude_name} {dir}/ {self.url_string}"
         self.subprocess_popen(commandline)
         for file in to_delete:
             try:

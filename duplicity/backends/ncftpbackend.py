@@ -91,8 +91,7 @@ class NCFTPBackend(duplicity.backend.Backend):
         self.tempfile.write(f"user {self.parsed_url.username}\n")
         self.tempfile.write(f"pass {self.password}\n")
         self.tempfile.close()
-        self.flags = "-f %s %s -t %s -o useCLNT=0,useHELP_SITE=0 " % \
-                     (self.tempname, self.conn_opt, config.timeout)
+        self.flags = f"-f {self.tempname} {self.conn_opt} -t {config.timeout} -o useCLNT=0,useHELP_SITE=0 "
         if parsed_url.port is not None and parsed_url.port != 21:
             self.flags += f" -P '{parsed_url.port}'"
 
@@ -100,16 +99,15 @@ class NCFTPBackend(duplicity.backend.Backend):
         remote_filename = os.fsdecode(remote_filename)
         remote_path = os.path.join(urllib.parse.unquote(re.sub('^/', '', self.parsed_url.path)),
                                    remote_filename).rstrip()
-        commandline = "ncftpput %s -m -V -C '%s' '%s'" % \
-                      (self.flags, source_path.uc_name, remote_path)
+        commandline = f"ncftpput {self.flags} -m -V -C '{source_path.uc_name}' '{remote_path}'"
         self.subprocess_popen(commandline)
 
     def _get(self, remote_filename, local_path):
         remote_filename = os.fsdecode(remote_filename)
         remote_path = os.path.join(urllib.parse.unquote(re.sub('^/', '', self.parsed_url.path)),
                                    remote_filename).rstrip()
-        commandline = "ncftpget %s -V -C '%s' '%s' '%s'" % \
-                      (self.flags, self.parsed_url.hostname, remote_path.lstrip('/'), local_path.uc_name)
+        commandline = f"ncftpget {self.flags} -V -C '{self.parsed_url.hostname}' " \
+                      f"'{remote_path.lstrip('/')}' '{local_path.uc_name}'"
         self.subprocess_popen(commandline)
 
     def _list(self):
@@ -120,8 +118,7 @@ class NCFTPBackend(duplicity.backend.Backend):
         return [os.fsencode(x.split()[-1]) for x in l.split('\n') if x and not x.startswith("total ")]
 
     def _delete(self, filename):
-        commandline = "ncftpls %s -l -X 'DELE %s' '%s'" % \
-                      (self.flags, filename, self.url_string)
+        commandline = f"ncftpls {self.flags} -l -X 'DELE {filename}' '{self.url_string}'"
         self.subprocess_popen(commandline)
 
 

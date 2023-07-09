@@ -24,9 +24,8 @@ try:
     )
     import pyrax.exceptions as exc
 except ImportError as e:
-    raise BackendException("""\
-Hubic backend requires the pyrax library available from Rackspace.
-Exception: %s""" % str(e))
+    raise BackendException(f"""Hubic backend requires the pyrax library available from Rackspace.
+Exception: {str(e)}""")
 
 OAUTH_ENDPOINT = "https://api.hubic.com/oauth/"
 API_ENDPOINT = "https://api.hubic.com/1.0/"
@@ -94,9 +93,8 @@ class HubicIdentity(BaseIdentity):
             except Exception as e:
                 err = {}
 
-            raise exc.AuthenticationFailed("Unable to get oauth access token, "
-                                           "wrong client_id or client_secret ? (%s)" %
-                                           str(err))
+            raise exc.AuthenticationFailed(f"Unable to get oauth access token, wrong client_id or client_secret ? "
+                                           f"({str(err)})")
 
         oauth_token = r.json()
 
@@ -112,8 +110,7 @@ class HubicIdentity(BaseIdentity):
                 config.write(configfile)
         else:
             raise exc.AuthenticationFailed(
-                "Unable to get oauth access token, wrong client_id or client_secret ? (%s)" %
-                str(err))
+                f"Unable to get oauth access token, wrong client_id or client_secret ? ({str(err)})")
 
         if oauth_token['refresh_token'] is not None:
             config.set("hubic", "refresh_token", oauth_token['refresh_token'])
@@ -176,8 +173,7 @@ class HubicIdentity(BaseIdentity):
                         err = {}
 
                     raise exc.AuthenticationFailed(
-                        "Unable to get oauth access token, wrong client_id or client_secret ? (%s)" %
-                        str(err))
+                        f"Unable to get oauth access token, wrong client_id or client_secret ? ({str(err)})")
             else:
                 success = True
 
@@ -201,17 +197,12 @@ class HubicIdentity(BaseIdentity):
             oauth_token = self._refresh_access_token()
         else:
             r = requests.get(
-                OAUTH_ENDPOINT + 'auth/?client_id={0}&redirect_uri={1}'
-                                 '&scope=credentials.r,account.r&response_type=code&state={2}'.format(
-                                     quote(self._client_id),
-                                     quote_plus(self._redirect_uri),
-                                     pyrax.utils.random_ascii()  # csrf ? wut ?..
-                                 ),
-                allow_redirects=False
-            )
+                OAUTH_ENDPOINT +
+                f'auth/?client_id={quote(self._client_id)}&redirect_uri={quote_plus(self._redirect_uri)}'
+                f'&scope=credentials.r,account.r&response_type=code&state={pyrax.utils.random_ascii()}',
+                allow_redirects=False)
             if r.status_code != 200:
-                raise exc.AuthenticationFailed("Incorrect/unauthorized "
-                                               "client_id (%s)" % str(self._parse_error(r)))
+                raise exc.AuthenticationFailed(f"Incorrect/unauthorized client_id ({str(self._parse_error(r))})")
 
             try:
                 from lxml import html as lxml_html

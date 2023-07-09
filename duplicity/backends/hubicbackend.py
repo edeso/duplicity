@@ -38,9 +38,8 @@ class HubicBackend(PyraxBackend):
         try:
             import pyrax
         except ImportError as e:
-            raise BackendException("""\
-Hubic backend requires the pyrax library available from Rackspace.
-Exception: %s""" % str(e))
+            raise BackendException(f"""Hubic backend requires the pyrax library available from Rackspace.
+Exception: {str(e)}""")
 
         # Inform Pyrax that we're talking to Hubic
         pyrax.set_setting("identity_type", "duplicity.backends.pyrax_identity.hubic.HubicIdentity")
@@ -50,8 +49,8 @@ Exception: %s""" % str(e))
             try:
                 pyrax.set_credential_file(CREDENTIALS_FILE)
             except Exception as e:
-                log.FatalError("Connection failed, please check your credentials: %s %s"
-                               % (e.__class__.__name__, util.uexc(e)),
+                log.FatalError(f"Connection failed, please check your credentials: "
+                               f"{e.__class__.__name__} {util.uexc(e)}",
                                log.ErrorCode.connection_failed)
 
         else:

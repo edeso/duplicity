@@ -120,10 +120,9 @@ class DPBXBackend(duplicity.backend.Backend):
             )
             from dropbox.oauth import DropboxOAuth2FlowNoRedirect
         except ImportError as e:
-            raise BackendException("""\
-This backend requires the dropbox package version 6.9.0
+            raise BackendException(f"""This backend requires the dropbox package version 6.9.0
 To install use "sudo pip install dropbox==6.9.0"
-Exception: %s""" % str(e))
+Exception: {str(e)}""")
 
         self.api_account = None
         self.api_client = None
@@ -144,8 +143,7 @@ Exception: %s""" % str(e))
         return os.environ.get('DPBX_ACCESS_TOKEN', None)
 
     def save_access_token(self, access_token):
-        raise BackendException('dpbx: Please set DPBX_ACCESS_TOKEN=\"%s\" environment variable' %
-                               access_token)
+        raise BackendException(f'dpbx: Please set DPBX_ACCESS_TOKEN="{access_token}" environment variable')
 
     def obtain_access_token(self):
         log.Info("dpbx: trying to obtain access token")
@@ -199,8 +197,7 @@ Exception: %s""" % str(e))
             # So this line should not be reached
             raise BackendException("dpbx: Please update DPBX_ACCESS_TOKEN and try again")
 
-        log.Info("dpbx: Successfully authenticated as %s" %
-                 self.api_account.name.display_name)
+        log.Info(f"dpbx: Successfully authenticated as {self.api_account.name.display_name}")
 
     def _error_code(self, operation, e):  # pylint: disable=unused-argument
         if isinstance(e, ApiError):
@@ -230,11 +227,9 @@ Exception: %s""" % str(e))
 
         # A few sanity checks
         if res_metadata.path_display != remote_path:
-            raise BackendException('dpbx: result path mismatch: %s (expected: %s)' %
-                                   (res_metadata.path_display, remote_path))
+            raise BackendException(f'dpbx: result path mismatch: {res_metadata.path_display} (expected: {remote_path})')
         if res_metadata.size != file_size:
-            raise BackendException('dpbx: result size mismatch: %s (expected: %s)' %
-                                   (res_metadata.size, file_size))
+            raise BackendException(f'dpbx: result size mismatch: {res_metadata.size} (expected: {file_size})')
 
     def put_file_small(self, source_path, remote_path):
         if not self.user_authenticated():
@@ -243,7 +238,7 @@ Exception: %s""" % str(e))
         file_size = os.path.getsize(source_path.name)
         f = source_path.open('rb')
         try:
-            log.Debug('dpbx,files_upload(%s, [%d bytes])' % (remote_path, file_size))
+            log.Debug(f'dpbx,files_upload({remote_path}, [{int(file_size)} bytes])')
 
             res_metadata = self.api_client.files_upload(f.read(), remote_path,
                                                         mode=WriteMode.overwrite,
@@ -264,8 +259,7 @@ Exception: %s""" % str(e))
         f = source_path.open('rb')
         try:
             buf = f.read(DPBX_UPLOAD_CHUNK_SIZE)
-            log.Debug('dpbx,files_upload_session_start([%d bytes]), total: %d' %
-                      (len(buf), file_size))
+            log.Debug(f'dpbx,files_upload_session_start([{len(buf)} bytes]), total: {int(file_size)}')
             upload_sid = self.api_client.files_upload_session_start(buf)
             log.Debug(f'dpbx,files_upload_session_start(): {upload_sid}')
             upload_cursor = UploadSessionCursor(upload_sid.session_id, f.tell())
@@ -303,21 +297,20 @@ Exception: %s""" % str(e))
 
                     if not is_eof:
                         assert len(buf) != 0
-                        log.Debug('dpbx,files_upload_sesssion_append([%d bytes], offset=%d)' %
-                                  (len(buf), upload_cursor.offset))
+                        log.Debug(f'dpbx,files_upload_sesssion_append([{len(buf)} bytes], '
+                                  f'offset={int(upload_cursor.offset)})')
                         self.api_client.files_upload_session_append(buf,
                                                                     upload_cursor.session_id,
                                                                     upload_cursor.offset)
                     else:
-                        log.Debug('dpbx,files_upload_sesssion_finish([%d bytes], offset=%d)' %
-                                  (len(buf), upload_cursor.offset))
+                        log.Debug(f'dpbx,files_upload_sesssion_finish([{len(buf)} bytes], '
+                                  f'offset={int(upload_cursor.offset)})')
                         res_metadata = self.api_client.files_upload_session_finish(buf,
                                                                                    upload_cursor,
                                                                                    commit_info)
 
                     upload_cursor.offset = f.tell()
-                    log.Debug('progress: %d of %d' % (upload_cursor.offset,
-                                                      file_size))
+                    log.Debug(f'progress: {int(upload_cursor.offset)} of {int(file_size)}')
                     progress.report_transfer(upload_cursor.offset, file_size)
                 except ApiError as e:
                     error = e.error
@@ -328,8 +321,8 @@ Exception: %s""" % str(e))
                         # expected offset from server and it's enough to just
                         # seek() and retry again
                         new_offset = error.get_incorrect_offset().correct_offset
-                        log.Debug('dpbx,files_upload_session_append: incorrect offset: %d (expected: %s)' %
-                                  (upload_cursor.offset, new_offset))
+                        log.Debug(f'dpbx,files_upload_session_append: incorrect offset: {int(upload_cursor.offset)} '
+                                  f'(expected: {new_offset})')
                         if requested_offset is not None:
                             # chunk failed even after seek attempt. Something
                             # strange and no safe way to recover
@@ -399,8 +392,7 @@ Exception: %s""" % str(e))
         # again. Since this check is free, it's better to have it here
         local_size = os.path.getsize(local_path.name)
         if local_size != file_size:
-            raise BackendException("dpbx: wrong file size: %d (expected: %d)" %
-                                   (local_size, file_size))
+            raise BackendException(f"dpbx: wrong file size: {int(local_size)} (expected: {int(file_size)})")
 
         local_path.setdata()
 

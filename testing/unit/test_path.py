@@ -35,25 +35,11 @@ class PathTest(UnitTestCase):
 
     def test_deltree(self):
         """Test deleting a tree"""
-        assert not os.system("cp -pR {0}/testfiles/deltree {0}/testfiles/output".format(_runtest_dir).format(_runtest_dir))  # noqa
+        assert not os.system(f"cp -pR {_runtest_dir}/testfiles/deltree {_runtest_dir}/testfiles/output")
         p = Path(f"{_runtest_dir}/testfiles/output")
         assert p.isdir()
         p.deltree()
         assert not p.type, p.type
-
-    # Commented out because of flakiness.  See:
-    # https://gitlab.com/duplicity/duplicity/-/issues/707
-    # @unittest.skipIf(os.path.exists(u"/.dockenv") or                        # Docker
-    #                  os.environ.get(u"USER", None) == u"buildd" or          # Launchpad
-    #                  os.environ.get(u"NON_NATIVE", None) == u"true",        # GitLab
-    #                  u"Skip on non-native environs")
-    # def test_compare(self):
-    #     u"""Test directory comparisons"""
-    #     assert not os.system(u"cp -pR {0}/testfiles/dir1/ {0}/testfiles/output".format(_runtest_dir))
-    #     assert Path(u"{0}/testfiles/dir1".format(_runtest_dir)).compare_recursive(
-    #         Path(u"{0}/testfiles/output".format(_runtest_dir)), 1)
-    #     assert not Path(u"{0}/testfiles/dir1".format(_runtest_dir)).compare_recursive(
-    #         Path(u"{0}/testfiles/dir2".format(_runtest_dir)), 1)
 
     def test_quote(self):
         """Test path quoting"""

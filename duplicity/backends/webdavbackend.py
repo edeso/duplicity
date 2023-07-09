@@ -350,7 +350,7 @@ class WebDAVBackend(duplicity.backend.Backend):
             response = self.request("PROPFIND", d)
             del self.headers['Depth']
 
-            log.Info("Checking existence dir %s: %d" % (d, response.status))
+            log.Info(f"Checking existence dir {d}: {int(response.status)}")
 
             if response.status == 404:
                 log.Info(_("Creating missing directory %s") % d)
@@ -381,14 +381,9 @@ class WebDAVBackend(duplicity.backend.Backend):
         # what the WebDAV protocol mandages.
         if parsed_url.hostname is not None \
                 and not (parsed_url.hostname == self.parsed_url.hostname):
-            m = "Received filename was in the form of a " \
-                "full url, but the hostname (%s) did " \
-                "not match that of the webdav backend " \
-                "url (%s) - aborting as a conservative " \
-                "safety measure. If this happens to you, " \
-                "please report the problem" \
-                "" % (parsed_url.hostname,
-                      self.parsed_url.hostname)
+            m = f"Received filename was in the form of a full url, but the hostname ({parsed_url.hostname}) " \
+                f"did not match that of the webdav backend url ({self.parsed_url.hostname}) - " \
+                f"aborting as a conservative safety measure. If this happens to you, please report the problem"
             raise BackendException(m)
 
         if filename.startswith(self.directory):

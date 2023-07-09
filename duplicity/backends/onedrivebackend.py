@@ -60,7 +60,7 @@ class OneDriveBackend(duplicity.backend.Backend):
         # 'sites/<xxxx.sharepoint.com>,<site id>/drive'
         self.drive_root = os.environ.get('DUPLICITY_ONEDRIVE_ROOT', 'me/drive')
 
-        self.directory_onedrive_path = '%s:/%s/' % (self.drive_root + '/root', self.directory)
+        self.directory_onedrive_path = f"{self.drive_root + '/root'}:/{self.directory}/"
         if self.directory == "":
             raise BackendException((
                 'You did not specify a path. '
@@ -103,7 +103,7 @@ class OneDriveBackend(duplicity.backend.Backend):
             responseJson = response.json()
             if 'value' not in responseJson:
                 raise BackendException((
-                    'Malformed JSON: expected "value" member in %s' % (responseJson)))
+                    f'Malformed JSON: expected "value" member in {responseJson}'))
             accum += responseJson['value']
             if '@odata.nextLink' in responseJson:
                 next_url = responseJson['@odata.nextLink']
@@ -137,14 +137,12 @@ class OneDriveBackend(duplicity.backend.Backend):
         if 'quota' in response.json():
             available = response.json()['quota'].get('remaining', None)
             if available:
-                log.Debug('Bytes available: %d' % available)
+                log.Debug(f'Bytes available: {int(available)}')
                 if source_size > available:
                     raise BackendException((
-                        'Out of space: trying to store "%s" (%d bytes), but only '
-                        '%d bytes available on OneDrive.' % (
-                            source_path.name, source_size,
-                            available)))
-        log.Debug("Checked quota in %fs" % (time.time() - start))
+                        f'Out of space: trying to store "{source_path.name}" ({int(source_size)} bytes), '
+                        f'but only {int(available)} bytes available on OneDrive.'))
+        log.Debug(f"Checked quota in {time.time() - start:f}s")
 
         with source_path.open() as source_file:
             start = time.time()
@@ -155,8 +153,8 @@ class OneDriveBackend(duplicity.backend.Backend):
             response_json = json.loads(response.content.decode("UTF-8"))
             if 'uploadUrl' not in response_json:
                 raise BackendException((
-                    'File "%s" cannot be uploaded: could not create upload session: %s' %
-                    (remote_filename, response.content)))
+                    f'File "{remote_filename}" cannot be uploaded: '
+                    f'could not create upload session: {response.content}'))
             uploadUrl = response_json['uploadUrl']
 
             # https://docs.microsoft.com/en-us/onedrive/developer/rest-api/api/driveitem_createuploadsession?
@@ -168,10 +166,10 @@ class OneDriveBackend(duplicity.backend.Backend):
                 if len(chunk) == 0:
                     break
                 headers = {
-                    'Content-Length': '%d' % (len(chunk)),
-                    'Content-Range': 'bytes %d-%d/%d' % (offset, offset + len(chunk) - 1, source_size),
+                    'Content-Length': f'{len(chunk)}',
+                    'Content-Range': f'bytes {int(offset)}-{int(offset + len(chunk) - 1)}/{int(source_size)}',
                 }
-                log.Debug('PUT %s %s' % (remote_filename, headers['Content-Range']))
+                log.Debug(f"PUT {remote_filename} {headers['Content-Range']}")
                 response = self.http_client.put(
                     uploadUrl,
                     headers=headers,
@@ -180,7 +178,7 @@ class OneDriveBackend(duplicity.backend.Backend):
                 response.raise_for_status()
                 offset += len(chunk)
 
-            log.Debug("PUT file in %fs" % (time.time() - start))
+            log.Debug(f"PUT file in {time.time() - start:f}s")
 
     def _delete(self, remote_filename):
         remote_filename = remote_filename.decode("UTF-8")
@@ -188,8 +186,7 @@ class OneDriveBackend(duplicity.backend.Backend):
             self.API_URI + self.directory_onedrive_path + remote_filename, timeout=config.timeout)
         if response.status_code == 404:
             raise BackendException((
-                'File "%s" cannot be deleted: it does not exist' %
-                (remote_filename)))
+                f'File "{remote_filename}" cannot be deleted: it does not exist'))
         response.raise_for_status()
 
     def _query(self, remote_filename):
@@ -200,8 +197,7 @@ class OneDriveBackend(duplicity.backend.Backend):
             return {'size': -1}
         if 'size' not in response.json():
             raise BackendException((
-                'Malformed JSON: expected "size" member in %s' %
-                (response.json())))
+                f'Malformed JSON: expected "size" member in {response.json()}'))
         return {'size': response.json()['size']}
 
     def _retry_cleanup(self):
@@ -230,9 +226,8 @@ class OneDriveOAuth2Session(object):
             from requests_oauthlib import OAuth2Session
             self.session_class = OAuth2Session
         except ImportError as e:
-            raise BackendException((
-                'OneDrive backend requires python-requests-oauthlib to be '
-                'installed. Please install it and try again.\n' + str(e)))
+            raise BackendException(f'OneDrive backend requires python-requests-oauthlib to be '
+                                   f'installed. Please install it and try again.\n{str(e)}')
 
         # Should be filled by a subclass
         self.session = None
@@ -280,8 +275,7 @@ class DefaultOAuth2Session(OneDriveOAuth2Session):
             with open(self.OAUTH_TOKEN_PATH) as f:
                 token = json.load(f)
         except IOError as e:
-            log.Error(('Could not load OAuth2 token. '
-                       'Trying to create a new one. (original error: %s)' % e))
+            log.Error(f'Could not load OAuth2 token. Trying to create a new one. (original error: {e})')
 
         self.session = self.session_class(
             self.CLIENT_ID,
@@ -308,18 +302,14 @@ class DefaultOAuth2Session(OneDriveOAuth2Session):
 
         if token is None:
             if not sys.stdout.isatty() or not sys.stdin.isatty():
-                log.FatalError(('The OAuth2 token could not be loaded from %s '
-                                'and you are not running duplicity '
-                                'interactively, so duplicity cannot possibly '
-                                'access OneDrive.' % self.OAUTH_TOKEN_PATH))
+                log.FatalError(
+                    f'The OAuth2 token could not be loaded from {self.OAUTH_TOKEN_PATH} and you are not '
+                    f'running duplicity interactively, so duplicity cannot possibly access OneDrive.')
             authorization_url, state = self.session.authorization_url(
                 self.OAUTH_AUTHORIZE_URI, display='touch')
 
-            print()
-            print('In order to authorize duplicity to access your OneDrive, '
-                  'please open %s in a browser and copy the URL of the blank '
-                  'page the dialog leads to.' % authorization_url)
-            print()
+            print(f'\nIn order to authorize duplicity to access your OneDrive, please open {authorization_url} '
+                  f'in a browser and copy the URL of the blank page the dialog leads to.\n')
 
             redirected_to = input('URL of the blank page: ').strip()
 
@@ -336,22 +326,18 @@ class DefaultOAuth2Session(OneDriveOAuth2Session):
                 with open(self.OAUTH_TOKEN_PATH, 'w') as f:
                     json.dump(token, f)
             except Exception as e:
-                log.Error(('Could not save the OAuth2 token to %s. '
-                           'This means you need to do the OAuth2 authorization '
-                           'process on every start of duplicity. '
-                           'Original error: %s' % (
-                               self.OAUTH_TOKEN_PATH, e)))
+                log.Error(
+                    f'Could not save the OAuth2 token to {self.OAUTH_TOKEN_PATH}. This means you need to do the '
+                    f'OAuth2 authorization process on every start of duplicity. Original error: {e}')
 
     def token_updater(self, token):
         try:
             with open(self.OAUTH_TOKEN_PATH, 'w') as f:
                 json.dump(token, f)
         except Exception as e:
-            log.Error(('Could not save the OAuth2 token to %s. '
-                       'This means you may need to do the OAuth2 '
-                       'authorization process again soon. '
-                       'Original error: %s' % (
-                           self.OAUTH_TOKEN_PATH, e)))
+            log.Error(
+                f'Could not save the OAuth2 token to {self.OAUTH_TOKEN_PATH}. This means you may need to do the '
+                f'OAuth2 authorization process again soon. Original error: {e}')
 
 
 class ExternalOAuth2Session(OneDriveOAuth2Session):

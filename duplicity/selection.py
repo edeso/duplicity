@@ -214,8 +214,7 @@ class Select(object):
         scan_pending = False
         for sf in self.selection_functions:
             result = sf(path)
-            log.Debug("Selection:     result: %4s from function: %s" %
-                      (str(result), sf.name))
+            log.Debug(f"Selection:     result: {str(result):4} from function: {sf.name}")
             if result == 2:
                 # Selection function says that the path should be scanned for matching files, but keep going
                 # through the selection functions looking for a real match (0 or 1).
@@ -507,8 +506,8 @@ class Select(object):
                 return None
 
         sel_func.exclude = not include
-        sel_func.name = "regular expression %s %scase: %s" % \
-                        (include and "include" or "exclude", ignore_case and "no-" or "", regexp_string)
+        sel_func.name = f"regular expression {include and 'include' or 'exclude'} " \
+                        f"{ignore_case and 'no-' or ''}case: {regexp_string}"
         return sel_func
 
     def devfiles_get_sf(self):
@@ -588,8 +587,7 @@ class Select(object):
                            log.ErrorCode.not_implemented)
 
         sel_func.exclude = not include
-        sel_func.name = "Command-line %s filename: %s" % \
-                        (include and "include-if-present" or "exclude-if-present", filename)
+        sel_func.name = f"Command-line {include and 'include-if-present' or 'exclude-if-present'} filename: {filename}"
         return sel_func
 
     def glob_get_sf(self, glob_str, include, ignore_case=False):
@@ -609,8 +607,7 @@ class Select(object):
             sel_func = select_fn_from_glob(glob_str, include, ignore_case)
 
         sel_func.exclude = not include
-        sel_func.name = "shell glob %s %scase: %s" % \
-                        (include and "include" or "exclude", ignore_case and "no-" or "", glob_str)
+        sel_func.name = f"shell glob {include and 'include' or 'exclude'} {ignore_case and 'no-' or ''}case: {glob_str}"
 
         return sel_func
 
@@ -625,8 +622,8 @@ class Select(object):
 
         sel_func = self.select_fn_from_literal(lit_str, include, ignore_case)
         sel_func.exclude = not include
-        sel_func.name = "literal string %s %scase: %s" % \
-                        (include and "include" or "exclude", ignore_case and "no-" or "", lit_str)
+        sel_func.name = f"literal string {include and 'include' or 'exclude'} " \
+                        f"{ignore_case and 'no-' or ''}case: {lit_str}"
         return sel_func
 
     def exclude_older_get_sf(self, date):

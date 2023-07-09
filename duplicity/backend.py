@@ -113,9 +113,7 @@ def register_backend(scheme, backend_factory):
     assert callable(backend_factory), "backend factory must be callable"
 
     if scheme in _backends:
-        raise ConflictingScheme("the scheme %s already has a backend "
-                                "associated with it"
-                                "" % (scheme,))
+        raise ConflictingScheme(f"the scheme {scheme} already has a backend associated with it")
 
     _backends[scheme] = backend_factory
 
@@ -139,9 +137,7 @@ def register_backend_prefix(scheme, backend_factory):
     assert callable(backend_factory), "backend factory must be callable"
 
     if scheme in _backend_prefixes:
-        raise ConflictingScheme("the prefix %s already has a backend "
-                                "associated with it"
-                                "" % (scheme,))
+        raise ConflictingScheme(f"the prefix {scheme} already has a backend associated with it")
 
     _backend_prefixes[scheme] = backend_factory
 
@@ -302,9 +298,8 @@ class ParsedUrl(object):
                 pass
             # old style rsync://host::[/]dest, are still valid, though they contain no port
             elif not ('rsync' in self.scheme and re.search('::[^:]*$', self.url_string)):
-                raise InvalidBackendURL("Syntax error (port) in: %s A%s B%s C%s" %
-                                        (url_string, ('rsync' in self.scheme),
-                                         re.search('::[^:]+$', self.netloc), self.netloc))
+                raise InvalidBackendURL(f"Syntax error (port) in: {url_string} A{'rsync' in self.scheme} "
+                                        f"B{re.search('::[^:]+$', self.netloc)} C{self.netloc}")
 
         # Our URL system uses two slashes more than urlparse's does when using
         # non-netloc URLs.  And we want to make sure that if urlparse assuming
@@ -323,15 +318,13 @@ class ParsedUrl(object):
 
         # Our backends do not handle implicit hosts.
         if self.scheme in uses_netloc and not self.hostname:
-            raise InvalidBackendURL("Missing hostname in a backend URL which "
-                                    "requires an explicit hostname: %s"
-                                    "" % url_string)
+            raise InvalidBackendURL(f"Missing hostname in a backend URL which requires an "
+                                    f"explicit hostname: {url_string}")
 
         # Our backends do not handle implicit relative paths.
         if self.scheme not in uses_netloc and not self.path.startswith('//'):
-            raise InvalidBackendURL("missing // - relative paths not supported "
-                                    "for scheme %s: %s"
-                                    "" % (self.scheme, url_string))
+            raise InvalidBackendURL(f"missing // - relative paths not supported for "
+                                    f"scheme {self.scheme}: {url_string}")
 
     def geturl(self):
         return self.url_string
@@ -449,8 +442,7 @@ class Backend(object):
             password = os.environ['FTP_PASSWORD']
         except KeyError:
             if self.use_getpass:
-                password = getpass.getpass("Password for '%s@%s': " %
-                                           (self.parsed_url.username, self.parsed_url.hostname))
+                password = getpass.getpass(f"Password for '{self.parsed_url.username}@{self.parsed_url.hostname}': ")
                 os.environ['FTP_PASSWORD'] = password
             else:
                 password = None

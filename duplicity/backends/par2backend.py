@@ -83,15 +83,14 @@ class Par2Backend(backend.Backend):
         source_symlink.setdata()
 
         log.Info("Create Par2 recovery files")
-        par2create = 'par2 c -r%d -n%d %s "%s"' % (self.redundancy, self.volumes,
-                                                   self.common_options,
-                                                   os.fsdecode(source_symlink.get_canonical()))
+        par2create = f'par2 c -r{int(self.redundancy)} -n{int(self.volumes)} {self.common_options} ' \
+                     f'"{os.fsdecode(source_symlink.get_canonical())}"'
         returncode, out, err = self.subprocess_popen(par2create)
 
         if returncode:
             log.Warn("Failed to create par2 file with requested options, retrying with -n1")
-            par2create = 'par2 c -r%d -n1 %s "%s"' % (self.redundancy, self.common_options,
-                                                      os.fsdecode(source_symlink.get_canonical()))
+            par2create = f'par2 c -r{int(self.redundancy)} -n1 {self.common_options} ' \
+                         f'"{os.fsdecode(source_symlink.get_canonical())}"'
             returncode, out, err = self.subprocess_popen(par2create)
             if not returncode:
                 log.Warn("Successfully created par2 file with -n1")
@@ -102,7 +101,7 @@ class Par2Backend(backend.Backend):
             for file in par2temp.listdir():
                 files_to_transfer.append(par2temp.append(file))
         else:
-            log.Error("FAILED to create par2 file with returncode %d" % returncode)
+            log.Error(f"FAILED to create par2 file with returncode {int(returncode)}")
 
         method(source_path, remote_filename)
         for file in files_to_transfer:
@@ -135,9 +134,8 @@ class Par2Backend(backend.Backend):
             par2file = par2temp.append(remote_filename + b'.par2')
             self.wrapped_backend._get(par2file.get_filename(), par2file)
 
-            par2verify = 'par2 v %s %s "%s"' % (self.common_options,
-                                                os.fsdecode(par2file.get_canonical()),
-                                                os.fsdecode(local_path_temp.get_canonical()))
+            par2verify = f'par2 v {self.common_options} {os.fsdecode(par2file.get_canonical())} ' \
+                         f'"{os.fsdecode(local_path_temp.get_canonical())}"'
             returncode, out, err = self.subprocess_popen(par2verify)
 
             if returncode:
@@ -149,9 +147,8 @@ class Par2Backend(backend.Backend):
                     file = par2temp.append(filename)
                     self.wrapped_backend._get(filename, file)
 
-                par2repair = 'par2 r %s %s "%s"' % (self.common_options,
-                                                    os.fsdecode(par2file.get_canonical()),
-                                                    os.fsdecode(local_path_temp.get_canonical()))
+                par2repair = f'par2 r {self.common_options} {os.fsdecode(par2file.get_canonical())} ' \
+                             f'"{os.fsdecode(local_path_temp.get_canonical())}"'
                 returncode, out, err = self.subprocess_popen(par2repair)
 
                 if returncode:

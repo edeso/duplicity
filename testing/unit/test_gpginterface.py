@@ -175,8 +175,7 @@ class OptionsTests(BasicTest):
             result = self.gnupg.options.get_args()
 
             assert should_be == result, \
-                "failure to set option '%s'; should be %s, but result is %s" \
-                % (option, should_be, result)
+                f"failure to set option '{option}'; should be {should_be}, but result is {result}"
 
     def test_string_args(self):
         """test Options string-taking options that they generate
@@ -196,8 +195,7 @@ class OptionsTests(BasicTest):
             result = self.gnupg.options.get_args()
 
             assert should_be == result, \
-                "failure to set option '%s'; should be %s, but result is %s" \
-                % (option, should_be, result)
+                f"failure to set option '{option}'; should be {should_be}, but result is {result}"
 
     def test_list_args(self):
         """test Options string-taking options that they generate
@@ -224,8 +222,7 @@ class OptionsTests(BasicTest):
             result = self.gnupg.options.get_args()
 
             assert should_be == result, \
-                "failure to set option '%s'; should be %s, but result is %s" \
-                % (option, should_be, result)
+                f"failure to set option '{option}'; should be {should_be}, but result is {result}"
 
 
 class PipesTests(unittest.TestCase):

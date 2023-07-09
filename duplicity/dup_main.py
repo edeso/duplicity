@@ -316,7 +316,7 @@ def write_multivol(backup_type, tarblock_iter, man_outfp, sig_outfp, backend):
                 dest_filename), orig_size))
             time.sleep(2 ** attempt)
         if size != orig_size:
-            code_extra = "%s %d %d" % (util.escape(dest_filename), orig_size, size)
+            code_extra = f"{util.escape(dest_filename)} {int(orig_size)} {int(size)}"
             log.FatalError(_("File %s was corrupted during upload.") % os.fsdecode(dest_filename),
                            log.ErrorCode.volume_wrong_size, code_extra)
 
@@ -460,7 +460,7 @@ def write_multivol(backup_type, tarblock_iter, man_outfp, sig_outfp, backend):
             progress.tracker.snapshot_progress(vol_num)
 
         # for testing purposes only - assert on inc or full
-        assert config.fail_on_volume != vol_num, "Forced assertion for testing at volume %d" % vol_num
+        assert config.fail_on_volume != vol_num, f"Forced assertion for testing at volume {int(vol_num)}"
 
     # Collect byte count from all asynchronous jobs; also implicitly waits
     # for them all to complete.
@@ -703,11 +703,8 @@ def list_current(col_stats):
     path_iter = diffdir.get_combined_path_iter(sig_chain.get_fileobjs(time))
     for path in path_iter:
         if path.difftype != "deleted":
-            user_info = "%s %s" % (dup_time.timetopretty(path.getmtime()),
-                                   os.fsdecode(path.get_relative_path()))
-            log_info = "%s %s %s" % (dup_time.timetostring(path.getmtime()),
-                                     util.escape(path.get_relative_path()),
-                                     path.type)
+            user_info = f"{dup_time.timetopretty(path.getmtime())} {os.fsdecode(path.get_relative_path())}"
+            log_info = f"{dup_time.timetostring(path.getmtime())} {util.escape(path.get_relative_path())} {path.type}"
             log.Log(user_info, log.INFO, log.InfoCode.file_list,
                     log_info, True)
 

@@ -970,38 +970,38 @@ trans = {
     'remote': _("remote"),
 }
 
-help_url_formats = _("Backends and their URL formats:") + """
-  azure://%(container_name)s
-  b2://%(account_id)s[:%(application_key)s]@%(bucket_name)s/[%(some_dir)s/]
-  boto3+s3://%(bucket_name)s[/%(prefix)s]
-  cf+http://%(container_name)s
-  dpbx:///%(some_dir)s
-  file:///%(some_dir)s
-  ftp://%(user)s[:%(password)s]@%(other_host)s[:%(port)s]/%(some_dir)s
-  ftps://%(user)s[:%(password)s]@%(other_host)s[:%(port)s]/%(some_dir)s
-  gdocs://%(user)s[:%(password)s]@%(other_host)s/%(some_dir)s
+help_url_formats = _("Backends and their URL formats:") + f"""
+  azure://{trans['container_name']}
+  b2://{trans['account_id']}[:{trans['application_key']}]@{trans['bucket_name']}/[{trans['some_dir']}/]
+  boto3+s3://{trans['bucket_name']}[/{trans['prefix']}]
+  cf+http://{trans['container_name']}
+  dpbx:///{trans['some_dir']}
+  file:///{trans['some_dir']}
+  ftp://{trans['user']}[:{trans['password']}]@{trans['other_host']}[:{trans['port']}]/{trans['some_dir']}
+  ftps://{trans['user']}[:{trans['password']}]@{trans['other_host']}[:{trans['port']}]/{trans['some_dir']}
+  gdocs://{trans['user']}[:{trans['password']}]@{trans['other_host']}/{trans['some_dir']}
   for gdrive:// a <service-account-url> like the following is required
         <serviceaccount-name>@<serviceaccount-name>.iam.gserviceaccount.com
   gdrive://<service-account-url>/target-folder/?driveID=<SHARED DRIVE ID> (for GOOGLE Shared Drive)
   gdrive://<service-account-url>/target-folder/?myDriveFolderID=<google-myDrive-folder-id> (for GOOGLE MyDrive)
-  hsi://%(user)s[:%(password)s]@%(other_host)s[:%(port)s]/%(some_dir)s
-  imap://%(user)s[:%(password)s]@%(other_host)s[:%(port)s]/%(some_dir)s
-  mega://%(user)s[:%(password)s]@%(other_host)s/%(some_dir)s
-  megav2://%(user)s[:%(password)s]@%(other_host)s/%(some_dir)s
-  mf://%(user)s[:%(password)s]@%(other_host)s/%(some_dir)s
-  onedrive://%(some_dir)s
-  pca://%(container_name)s
-  pydrive://%(user)s@%(other_host)s/%(some_dir)s
-  rclone://%(remote)s:/%(some_dir)s
-  rsync://%(user)s[:%(password)s]@%(other_host)s[:%(port)s]/%(relative_path)s
-  rsync://%(user)s[:%(password)s]@%(other_host)s[:%(port)s]//%(absolute_path)s
-  rsync://%(user)s[:%(password)s]@%(other_host)s[:%(port)s]::/%(module)s/%(some_dir)s
-  s3+http://%(bucket_name)s[/%(prefix)s]
-  s3://%(other_host)s[:%(port)s]/%(bucket_name)s[/%(prefix)s]
-  scp://%(user)s[:%(password)s]@%(other_host)s[:%(port)s]/%(some_dir)s
-  ssh://%(user)s[:%(password)s]@%(other_host)s[:%(port)s]/%(some_dir)s
-  swift://%(container_name)s
-  tahoe://%(alias)s/%(directory)s
-  webdav://%(user)s[:%(password)s]@%(other_host)s/%(some_dir)s
-  webdavs://%(user)s[:%(password)s]@%(other_host)s/%(some_dir)s
-""" % trans
+  hsi://{trans['user']}[:{trans['password']}]@{trans['other_host']}[:{trans['port']}]/{trans['some_dir']}
+  imap://{trans['user']}[:{trans['password']}]@{trans['other_host']}[:{trans['port']}]/{trans['some_dir']}
+  mega://{trans['user']}[:{trans['password']}]@{trans['other_host']}/{trans['some_dir']}
+  megav2://{trans['user']}[:{trans['password']}]@{trans['other_host']}/{trans['some_dir']}
+  mf://{trans['user']}[:{trans['password']}]@{trans['other_host']}/{trans['some_dir']}
+  onedrive://{trans['some_dir']}
+  pca://{trans['container_name']}
+  pydrive://{trans['user']}@{trans['other_host']}/{trans['some_dir']}
+  rclone://{trans['remote']}:/{trans['some_dir']}
+  rsync://{trans['user']}[:{trans['password']}]@{trans['other_host']}[:{trans['port']}]/{trans['relative_path']}
+  rsync://{trans['user']}[:{trans['password']}]@{trans['other_host']}[:{trans['port']}]//{trans['absolute_path']}
+  rsync://{trans['user']}[:{trans['password']}]@{trans['other_host']}[:{trans['port']}]::/{trans['module']}/{trans['some_dir']}
+  s3+http://{trans['bucket_name']}[/{trans['prefix']}]
+  s3://{trans['other_host']}[:{trans['port']}]/{trans['bucket_name']}[/{trans['prefix']}]
+  scp://{trans['user']}[:{trans['password']}]@{trans['other_host']}[:{trans['port']}]/{trans['some_dir']}
+  ssh://{trans['user']}[:{trans['password']}]@{trans['other_host']}[:{trans['port']}]/{trans['some_dir']}
+  swift://{trans['container_name']}
+  tahoe://{trans['alias']}/{trans['directory']}
+  webdav://{trans['user']}[:{trans['password']}]@{trans['other_host']}/{trans['some_dir']}
+  webdavs://{trans['user']}[:{trans['password']}]@{trans['other_host']}/{trans['some_dir']}
+"""

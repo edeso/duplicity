@@ -63,9 +63,8 @@ class Megav3Backend(duplicity.backend.Backend):
                 conf_file = open(self._megarc, "r")
             except Exception as e:
                 raise BackendException(
-                    "No password provided in URL and MEGA configuration "
-                    "file for duplicity does not exist as '%s'"
-                    % (self._megarc,)
+                    f"No password provided in URL and MEGA configuration file for "
+                    f"duplicity does not exist as '{self._megarc}'"
                 )
 
             myvars = {}
@@ -106,9 +105,8 @@ class Megav3Backend(duplicity.backend.Backend):
             subprocess.check_output(['which', cmd])
         except Exception as e:
             raise BackendException(
-                "Command '%s' not found, make sure 'MEGAcmd' tools (https://mega.nz/cmd) is "
-                "properly installed and in the running user command path"
-                % (cmd,)
+                f"Command '{cmd}' not found, make sure 'MEGAcmd' tools (https://mega.nz/cmd) is properly installed "
+                f"and in the running user command path"
             )
 
     def ensure_mega_cmd_running(self):
@@ -133,9 +131,8 @@ class Megav3Backend(duplicity.backend.Backend):
             error_str = str(e)
             if "Folder already exists" in error_str:
                 raise BackendException(
-                    "Folder '%s' could not be created on MEGA because it already exists. "
-                    "Use another path or remove the folder in MEGA manually"
-                    % (path,)
+                    f"Folder '{path}' could not be created on MEGA because it already exists. "
+                    f"Use another path or remove the folder in MEGA manually"
                 )
             else:
                 raise BackendException(
@@ -252,9 +249,8 @@ class Megav3Backend(duplicity.backend.Backend):
             error_str = str(e)
             if "Reached storage quota" in error_str:
                 raise BackendException(
-                    "MEGA account over quota, could not write file : '%s' . "
-                    "Upgrade your storage at https://mega.nz/pro or remove some data."
-                    % (remote_file,)
+                    f"MEGA account over quota, could not write file : '{remote_file}' . "
+                    f"Upgrade your storage at https://mega.nz/pro or remove some data."
                 )
             else:
                 raise BackendException(

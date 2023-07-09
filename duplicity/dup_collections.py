@@ -102,14 +102,11 @@ class BackupSet(object):
             self.set_manifest(filename)
         else:
             assert pr.volume_number is not None
-            assert pr.volume_number not in self.volume_name_dict, \
-                """Volume %d is already in the volume list as "%s".
-                "%s" has the same volume number.
-                Please check your command line and retry.""" % (
-                    pr.volume_number,
-                    os.fsdecode(self.volume_name_dict[pr.volume_number]),
-                    os.fsdecode(filename)
-                )
+            assert pr.volume_number not in self.volume_name_dict, (
+                f"Volume {int(pr.volume_number)} is already in the volume list as "
+                f"{os.fsdecode(self.volume_name_dict[pr.volume_number])}. "
+                f"{os.fsdecode(filename)} has the same volume number. "
+                f"Please check your command line and retry.")
             self.volume_name_dict[pr.volume_number] = filename
 
         return True
@@ -140,10 +137,7 @@ class BackupSet(object):
         Add local and remote manifest filenames to backup set
         """
         assert not self.remote_manifest_name, \
-            "Cannot set filename of remote manifest to %s; already set to %s." % (
-                remote_filename,
-                self.remote_manifest_name,
-            )
+            f"Cannot set filename of remote manifest to {remote_filename}; already set to {self.remote_manifest_name}."
         self.remote_manifest_name = remote_filename
 
         local_filename_list = config.archive_dir_path.listdir()
@@ -191,7 +185,7 @@ class BackupSet(object):
         if self.remote_manifest_name:
             filelist.append(self.remote_manifest_name)
         filelist.extend(list(self.volume_name_dict.values()))
-        return "[%s]" % ", ".join(map(os.fsdecode, filelist))
+        return f"[{', '.join(map(os.fsdecode, filelist))}]"
 
     def get_timestr(self):
         """
@@ -398,8 +392,7 @@ class BackupChain(object):
         Return a short one-line description of the chain,
         suitable for log messages.
         """
-        return "[%s]-[%s]" % (dup_time.timetopretty(self.start_time),
-                              dup_time.timetopretty(self.end_time))
+        return f"[{dup_time.timetopretty(self.start_time)}]-[{dup_time.timetopretty(self.end_time)}]"
 
     def to_log_info(self, prefix=''):
         """
@@ -417,7 +410,7 @@ class BackupChain(object):
                 enc = "enc"
             else:
                 enc = "noenc"
-            l.append("%s%s %s %d %s" % (prefix, btype, dup_time.timetostring(time), (len(s)), enc))
+            l.append(f"{prefix}{btype} {dup_time.timetostring(time)} {len(s)} {enc}")
         return l
 
     def __str__(self):
@@ -507,7 +500,7 @@ class SignatureChain(object):
         if self.fullsig:
             filelist.append(self.fullsig)
         filelist.extend(self.inclist)
-        return "%s: [%s]" % (place, ", ".join(filelist))
+        return f"{place}: [{', '.join(filelist)}]"
 
     def check_times(self, time_list):
         """
@@ -515,7 +508,7 @@ class SignatureChain(object):
         """
         for time in time_list:
             if not isinstance(time, int):
-                assert 0, "Time %s in %s wrong type" % (time, time_list)
+                assert 0, f"Time {time} in {time_list} wrong type"
 
     def islocal(self):
         """
@@ -637,20 +630,20 @@ class CollectionsStatus(object):
         """
         Return summary of the collection, suitable for printing to log
         """
-        l = ["backend %s" % (self.backend.__class__.__name__,),
-             "archive-dir %s" % (self.archive_dir_path,)]
+        l = [f"backend {self.backend.__class__.__name__}",
+             f"archive-dir {self.archive_dir_path}"]
 
         for i in range(len(self.other_backup_chains)):
             # A bit of a misnomer.  Chain might have a sig.
-            l.append("chain-no-sig %d" % (i,))
+            l.append(f"chain-no-sig {int(i)}")
             l += self.other_backup_chains[i].to_log_info(' ')
 
         if self.matched_chain_pair:
             l.append("chain-complete")
             l += self.matched_chain_pair[1].to_log_info(' ')
 
-        l.append("orphaned-sets-num %d" % (len(self.orphaned_backup_sets),))
-        l.append("incomplete-sets-num %d" % (len(self.incomplete_backup_sets),))
+        l.append(f"orphaned-sets-num {len(self.orphaned_backup_sets)}")
+        l.append(f"incomplete-sets-num {len(self.incomplete_backup_sets)}")
 
         return l
 

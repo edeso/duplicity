@@ -146,12 +146,9 @@ class LFTPBackend(duplicity.backend.Backend):
     def _put(self, source_path, remote_filename):
         if isinstance(remote_filename, b"".__class__):
             remote_filename = os.fsdecode(remote_filename)
-        commandline = "lftp -c \"source %s; mkdir -p %s; put %s -o %s\"" % (
-            self.tempname,
-            cmd_quote(self.remote_path),
-            cmd_quote(source_path.uc_name),
-            cmd_quote(self.remote_path) + os.fsdecode(remote_filename)
-        )
+        commandline = f"lftp -c \"source {self.tempname}; mkdir -p {cmd_quote(self.remote_path)}; " \
+                      f"put {cmd_quote(source_path.uc_name)} " \
+                      f"-o {cmd_quote(self.remote_path) + os.fsdecode(remote_filename)}\""
         log.Debug(f"CMD: {commandline}")
         s, l, e = self.subprocess_popen(commandline)
         log.Debug(f"STATUS: {s}")
@@ -161,11 +158,9 @@ class LFTPBackend(duplicity.backend.Backend):
     def _get(self, remote_filename, local_path):
         if isinstance(remote_filename, b"".__class__):
             remote_filename = os.fsdecode(remote_filename)
-        commandline = "lftp -c \"source %s; get %s -o %s\"" % (
-            cmd_quote(self.tempname),
-            cmd_quote(self.remote_path) + remote_filename,
-            cmd_quote(local_path.uc_name)
-        )
+        commandline = f"lftp -c \"source {cmd_quote(self.tempname)}; " \
+                      f"get {cmd_quote(self.remote_path) + remote_filename} " \
+                      f"-o {cmd_quote(local_path.uc_name)}\""
         log.Debug(f"CMD: {commandline}")
         _, l, e = self.subprocess_popen(commandline)
         log.Debug(f"STDERR:\n{e}")
@@ -178,10 +173,8 @@ class LFTPBackend(duplicity.backend.Backend):
         # print remote_dir
         quoted_path = cmd_quote(self.remote_path)
         # failing to cd into the folder might be because it was not created already
-        commandline = "lftp -c \"source %s; ( cd %s && ls ) || ( mkdir -p %s && cd %s && ls )\"" % (
-            cmd_quote(self.tempname),
-            quoted_path, quoted_path, quoted_path
-        )
+        commandline = f"lftp -c \"source {cmd_quote(self.tempname)}; ( cd {quoted_path} && ls ) || " \
+                      f"( mkdir -p {quoted_path} && cd {quoted_path} && ls )\""
         log.Debug(f"CMD: {commandline}")
         _, l, e = self.subprocess_popen(commandline)
         log.Debug(f"STDERR:\n{e}")
@@ -191,11 +184,8 @@ class LFTPBackend(duplicity.backend.Backend):
         return [os.fsencode(x.split()[-1]) for x in l.split('\n') if x]
 
     def _delete(self, filename):
-        commandline = "lftp -c \"source %s; cd %s; rm %s\"" % (
-            cmd_quote(self.tempname),
-            cmd_quote(self.remote_path),
-            cmd_quote(os.fsdecode(filename))
-        )
+        commandline = f"lftp -c \"source {cmd_quote(self.tempname)}; cd {cmd_quote(self.remote_path)}; " \
+                      f"rm {cmd_quote(os.fsdecode(filename))}\""
         log.Debug(f"CMD: {commandline}")
         _, l, e = self.subprocess_popen(commandline)
         log.Debug(f"STDERR:\n{e}")

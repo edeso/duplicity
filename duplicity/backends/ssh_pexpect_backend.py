@@ -49,12 +49,12 @@ class SSHPExpectBackend(duplicity.backend.Backend):
             raise
 
         if pexpect.__version__ < "4.5.0":
-            log.FatalError("""
-                The version of pexpect, '%s`, is too old.  We need version 4.5.0 or above to run.
+            log.FatalError(f"""
+                The version of pexpect, '{pexexpect.__version__}`, is too old.  We need version 4.5.0 or above to run.
                 See https://gitlab.com/duplicity/duplicity/-/issues/125 for the gory details.
 
                 Use "python3 -m pip install pexpect" to install the latest version.
-                """ % pexexpect.__version__)
+                """)
 
         self.retry_delay = 10
 
@@ -86,7 +86,7 @@ class SSHPExpectBackend(duplicity.backend.Backend):
             config.ssh_options = f"{config.ssh_options} -oPort={parsed_url.port}"
         # set some defaults if user has not specified already.
         if "ServerAliveInterval" not in config.ssh_options:
-            config.ssh_options += " -oServerAliveInterval=%d" % (int(config.timeout / 2))
+            config.ssh_options += f" -oServerAliveInterval={int(int(config.timeout / 2))}"
         if "ServerAliveCountMax" not in config.ssh_options:
             config.ssh_options += " -oServerAliveCountMax=2"
 
@@ -236,17 +236,14 @@ class SSHPExpectBackend(duplicity.backend.Backend):
             self.put_sftp(source_path, remote_filename)
 
     def put_sftp(self, source_path, remote_filename):
-        commands = ["put \"%s\" \"%s.%s.part\"" %
-                    (source_path.uc_name, self.remote_prefix, remote_filename),
-                    "rename \"%s.%s.part\" \"%s%s\"" %
-                    (self.remote_prefix, remote_filename, self.remote_prefix, remote_filename)]
+        commands = [f"put \"{source_path.uc_name}\" \"{self.remote_prefix}.{remote_filename}.part\"",
+                    f"rename \"{self.remote_prefix}.{remote_filename}.part\" \"{self.remote_prefix}{remote_filename}\""]
         commandline = f"{self.sftp_command} {config.ssh_options} {self.host_string}"
         self.run_sftp_command(commandline, commands)
 
     def put_scp(self, source_path, remote_filename):
-        commandline = "%s %s %s %s:%s%s" % \
-                      (self.scp_command, config.ssh_options, source_path.uc_name, self.host_string,
-                       self.remote_prefix, remote_filename)
+        commandline = f"{self.scp_command} {config.ssh_options} {source_path.uc_name} " \
+                      f"{self.host_string}:{self.remote_prefix}{remote_filename}"
         self.run_scp_command(commandline)
 
     def _get(self, remote_filename, local_path):
@@ -257,15 +254,15 @@ class SSHPExpectBackend(duplicity.backend.Backend):
             self.get_sftp(remote_filename, local_path)
 
     def get_sftp(self, remote_filename, local_path):
-        commands = ["get \"%s%s\" \"%s\"" %
-                    (self.remote_prefix, remote_filename, local_path.uc_name)]
+        commands = [f"get \"{self.remote_prefix}{remote_filename}\" \"{local_path.uc_name}\""]
         commandline = f"{self.sftp_command} {config.ssh_options} {self.host_string}"
         self.run_sftp_command(commandline, commands)
 
     def get_scp(self, remote_filename, local_path):
-        commandline = "%s %s %s:%s%s %s" % \
-                      (self.scp_command, config.ssh_options, self.host_string, self.remote_prefix,
-                       remote_filename, local_path.uc_name)
+        commandline = f"{self.scp_command} " \
+                      f"{config.ssh_options} " \
+                      f"{self.host_string}:{self.remote_prefix}{remote_filename} " \
+                      f"{local_path.uc_name}"
         self.run_scp_command(commandline)
 
     def _list(self):

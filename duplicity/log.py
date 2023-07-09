@@ -69,9 +69,9 @@ def Log(s, verb_level, code=1, extra=None, force_print=False, transfer_progress=
     """Write s to stderr if verbosity level low enough"""
     global _logger
     if extra:
-        controlLine = '%d %s' % (code, extra)
+        controlLine = f'{int(code)} {extra}'
     else:
-        controlLine = '%d' % code
+        controlLine = f'{int(code)}'
     if not s:
         s = ''  # If None is passed, standard logging would render it as 'None'
 
@@ -130,9 +130,9 @@ def Info(s, code=InfoCode.generic, extra=None):
 def Progress(s, current, total=None):
     """Shortcut used for progress messages (verbosity 5)."""
     if total:
-        controlLine = '%d %d' % (current, total)
+        controlLine = f'{int(current)} {int(total)}'
     else:
-        controlLine = '%d' % current
+        controlLine = f'{int(current)}'
     Log(s, INFO, InfoCode.progress, controlLine)
 
 
@@ -142,8 +142,8 @@ def _ElapsedSecs2Str(secs):
     minutes, seconds = divmod(rem, 60)
     fmt = ""
     if tdelta.days > 0:
-        fmt = "%dd," % tdelta.days
-    fmt = "%s%02d:%02d:%02d" % (fmt, hours, minutes, seconds)
+        fmt = f"{int(tdelta.days)}d,"
+    fmt = f"{fmt}{int(hours):02}:{int(minutes):02}:{int(seconds):02}"
     return fmt
 
 
@@ -153,21 +153,21 @@ def _RemainingSecs2Str(secs):
     minutes, seconds = divmod(rem, 60)
     fmt = ""
     if tdelta.days > 0:
-        fmt = "%dd" % tdelta.days
+        fmt = f"{int(tdelta.days)}d"
         if hours > 0:
-            fmt = "%s %dh" % (fmt, hours)
+            fmt = f"{fmt} {int(hours)}h"
         if minutes > 0:
-            fmt = "%s %dmin" % (fmt, minutes)
+            fmt = f"{fmt} {int(minutes)}min"
     elif hours > 0:
-        fmt = "%dh" % hours
+        fmt = f"{int(hours)}h"
         if minutes > 0:
-            fmt = "%s %dmin" % (fmt, minutes)
+            fmt = f"{fmt} {int(minutes)}min"
     elif minutes > 5:
-        fmt = "%dmin" % minutes
+        fmt = f"{int(minutes)}min"
     elif minutes > 0:
-        fmt = "%dmin" % minutes
+        fmt = f"{int(minutes)}min"
         if seconds >= 30:
-            fmt = "%s 30sec" % fmt
+            fmt = f"{fmt} 30sec"
     elif seconds > 45:
         fmt = "< 1min"
     elif seconds > 30:
@@ -175,7 +175,7 @@ def _RemainingSecs2Str(secs):
     elif seconds > 15:
         fmt = "< 30sec"
     else:
-        fmt = "%dsec" % seconds
+        fmt = f"{int(seconds)}sec"
     return fmt
 
 
@@ -204,15 +204,10 @@ def TransferProgress(progress, eta, changed_bytes, elapsed, speed, stalled):
         if speed_amount > 1000.0:
             speed_amount /= 1024.0
             speed_scale = "GB"
-    s = "%.1f%s %s [%.1f%s/s] [%s>%s] %d%% ETA %s" % (data_amount, data_scale,
-                                                      _ElapsedSecs2Str(elapsed),
-                                                      speed_amount, speed_scale,
-                                                      '=' * dots, ' ' * (40 - dots),
-                                                      progress,
-                                                      eta_str
-                                                      )
+    s = f"{data_amount:.1f}{data_scale} {_ElapsedSecs2Str(elapsed)} [{speed_amount:.1f}{speed_scale}/s] " \
+        f"[{'=' * dots}>{' ' * (40 - dots)}] {int(progress)}% ETA {eta_str}"
 
-    controlLine = "%d %d %d %d %d %d" % (changed_bytes, elapsed, progress, eta, speed, stalled)
+    controlLine = f"{int(changed_bytes)} {int(elapsed)} {int(progress)} {int(eta)} {int(speed)} {int(stalled)}"
     Log(s, NOTICE, InfoCode.upload_progress, controlLine, transfer_progress=True)
 
 

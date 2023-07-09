@@ -121,7 +121,7 @@ class DuplicityTestCase(unittest.TestCase):
     def unpack_testfiles(self):
         assert not os.system(f"rm -rf {_runtest_dir}/testfiles")
         assert not os.system(f"tar xzf {_testing_dir}/testfiles.tar.gz -C {_runtest_dir} > /dev/null 2>&1")
-        assert not os.system("mkdir {0}/testfiles/output {0}/testfiles/cache".format(_runtest_dir))
+        assert not os.system(f"mkdir {_runtest_dir}/testfiles/output {_runtest_dir}/testfiles/cache")
 
     def remove_testfiles(self):
         assert not os.system(f"rm -rf {_runtest_dir}/testfiles")

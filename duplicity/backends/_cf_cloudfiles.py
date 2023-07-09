@@ -39,9 +39,8 @@ class CloudFilesBackend(duplicity.backend.Backend):
             from cloudfiles import consts
             from cloudfiles.errors import NoSuchObject
         except ImportError as e:
-            raise BackendException("""\
-Cloudfiles backend requires the cloudfiles library available from Rackspace.
-Exception: %s""" % str(e))
+            raise BackendException(f"""Cloudfiles backend requires the cloudfiles library available from Rackspace.
+Exception: {str(e)}""")
 
         self.resp_exc = ResponseError
         conn_kwargs = {}
@@ -66,8 +65,7 @@ Exception: %s""" % str(e))
         try:
             conn = Connection(**conn_kwargs)
         except Exception as e:
-            log.FatalError("Connection failed, please check your credentials: %s %s"
-                           % (e.__class__.__name__, util.uexc(e)),
+            log.FatalError(f"Connection failed, please check your credentials: {e.__class__.__name__} {util.uexc(e)}",
                            log.ErrorCode.connection_failed)
         self.container = conn.create_container(container)
 

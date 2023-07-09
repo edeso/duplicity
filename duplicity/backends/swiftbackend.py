@@ -39,9 +39,8 @@ class SwiftBackend(duplicity.backend.Backend):
             from swiftclient import Connection
             from swiftclient import ClientException
         except ImportError as e:
-            raise BackendException("""\
-Swift backend requires the python-swiftclient library.
-Exception: %s""" % str(e))
+            raise BackendException(f"""Swift backend requires the python-swiftclient library.
+Exception: {str(e)}""")
 
         self.resp_exc = ClientException
         conn_kwargs = {}
@@ -141,12 +140,11 @@ Exception: %s""" % str(e))
                 headers = dict([[policy_header, policy]]) if policy else None
                 self.conn.put_container(self.container, headers=headers)
             except Exception as e:
-                log.FatalError("Container creation failed: %s %s"
-                               % (e.__class__.__name__, str(e)),
+                log.FatalError(f"Container creation failed: {e.__class__.__name__} {str(e)}",
                                log.ErrorCode.connection_failed)
         elif policy and container_metadata[policy_header.lower()] != policy:
-            log.FatalError("Container '%s' exists but its storage policy is '%s' not '%s'."
-                           % (self.container, container_metadata[policy_header.lower()], policy))
+            log.FatalError(f"Container '{self.container}' exists but its storage policy is "
+                           f"'{container_metadata[policy_header.lower()]}' not '{policy}'.")
         else:
             log.Debug(f"Container already created: {container_metadata}")
 

@@ -48,9 +48,9 @@ class GDocsBackend(duplicity.backend.Backend):
             import gdata.docs.client
             import gdata.docs.data
         except ImportError as e:
-            raise BackendException("""\
-Google Docs backend requires Google Data APIs Python Client Library (see http://code.google.com/p/gdata-python-client/).
-Exception: %s""" % str(e))
+            raise BackendException(f"Google Docs backend requires Google Data APIs Python Client Library\n"
+                                   f"(see http://code.google.com/p/gdata-python-client/).\n"
+                                   f"Exception: {str(e)}")
 
         # Setup client instance.
         self.client = gdata.docs.client.DocsClient(source=f'duplicity {__version__}')
@@ -99,11 +99,11 @@ Exception: %s""" % str(e))
             uri = f"{self.folder.get_resumable_create_media_link().href}?convert=false"
             entry = uploader.UploadFile(uri, entry=entry)
             if not entry:
-                raise BackendException("Failed to upload file '%s' to remote folder '%s'"
-                                       % (source_path.get_filename(), self.folder.title.text))
+                raise BackendException(f"Failed to upload file '{source_path.get_filename()}' "
+                                       f"to remote folder '{self.folder.title.text}'")
         else:
-            raise BackendException("Failed to initialize upload of file '%s' to remote folder '%s'"
-                                   % (source_path.get_filename(), self.folder.title.text))
+            raise BackendException(f"Failed to initialize upload of file '{source_path.get_filename()}' "
+                                   f"to remote folder '{self.folder.title.text}'")
         assert not file.close()
 
     def _get(self, remote_filename, local_path):
@@ -114,8 +114,8 @@ Exception: %s""" % str(e))
             entry = entries[0]
             self.client.DownloadResource(entry, local_path.name)
         else:
-            raise BackendException("Failed to find file '%s' in remote folder '%s'"
-                                   % (remote_filename, self.folder.title.text))
+            raise BackendException(f"Failed to find file '{remote_filename}' "
+                                   f"in remote folder '{self.folder.title.text}'")
 
     def _list(self):
         entries = self._fetch_entries(self.folder.resource_id.text,

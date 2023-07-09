@@ -60,9 +60,8 @@ class Megav2Backend(duplicity.backend.Backend):
             try:
                 conf_file = open(self._megarc, "r")
             except Exception as e:
-                raise BackendException("No password provided in URL and MEGA configuration "
-                                       "file for duplicity does not exist as '%s'" %
-                                       (self._megarc,))
+                raise BackendException(f"No password provided in URL and MEGA configuration file for "
+                                       f"duplicity does not exist as '{self._megarc}'")
 
             myvars = {}
             for line in conf_file:
@@ -94,8 +93,8 @@ class Megav2Backend(duplicity.backend.Backend):
             # Ignore the output, as we only need the return code
             subprocess.check_output(['which', cmd])
         except Exception as e:
-            raise BackendException("Command '%s' not found, make sure 'MEGAcmd' tools (https://mega.nz/cmd) is "
-                                   "properly installed and in the running user command path" % (cmd,))
+            raise BackendException(f"Command '{cmd}' not found, make sure 'MEGAcmd' tools (https://mega.nz/cmd) "
+                                   f"is properly installed and in the running user command path")
 
     def _makedir(self, path):
         """Creates a remote directory (recursively if necessary)"""
@@ -107,8 +106,8 @@ class Megav2Backend(duplicity.backend.Backend):
         except Exception as e:
             error_str = str(e)
             if "Folder already exists" in error_str:
-                raise BackendException("Folder '%s' could not be created on MEGA because it already exists. "
-                                       "Use another path or remove the folder in MEGA manually" % (path,))
+                raise BackendException(f"Folder '{path}' could not be created on MEGA because it already exists. "
+                                       f"Use another path or remove the folder in MEGA manually")
             else:
                 raise BackendException(f"Folder '{path}' could not be created, reason : '{e}'")
 
@@ -192,9 +191,8 @@ class Megav2Backend(duplicity.backend.Backend):
         except Exception as e:
             error_str = str(e)
             if "Reached storage quota" in error_str:
-                raise BackendException("MEGA account over quota, could not write file : '%s' . "
-                                       "Upgrade your storage at https://mega.nz/pro or remove some data." %
-                                       (remote_file,))
+                raise BackendException(f"MEGA account over quota, could not write file : '{remote_file}'. "
+                                       f"Upgrade your storage at https://mega.nz/pro or remove some data.")
             else:
                 raise BackendException(f"Failed writing file '{remote_file}' to MEGA, reason : '{e}'")
 

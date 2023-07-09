@@ -1,4 +1,3 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
 # Copyright 2002 Ben Escoto <ben@emerose.org>
 # Copyright 2007 Kenneth Loafman <kenneth@loafman.com>
@@ -368,7 +367,7 @@ def parse(filename):
     return pr
 
 
-class ParseResults(object):
+class ParseResults:
     """
     Hold information taken from a duplicity filename
     """

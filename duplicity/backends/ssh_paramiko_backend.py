@@ -99,11 +99,9 @@ class SSHParamikoBackend(duplicity.backend.Backend):
             def missing_host_key(self, client, hostname, key):
                 fp = hexlify(key.get_fingerprint())
                 fingerprint = ':'.join(str(a + b) for a, b in list(zip(fp[::2], fp[1::2])))
-                question = """The authenticity of host '%s' can't be established.
-%s key fingerprint is %s.
-Are you sure you want to continue connecting (yes/no)? """ % (hostname,
-                                                              key.get_name().upper(),
-                                                              fingerprint)
+                question = f"""The authenticity of host '{hostname}' can't be established.
+{key.get_name().upper()} key fingerprint is {fingerprint}.
+Are you sure you want to continue connecting (yes/no)? """
                 while True:
                     sys.stdout.write(question)
                     choice = input().lower()
@@ -119,8 +117,7 @@ Are you sure you want to continue connecting (yes/no)? """ % (hostname,
         class AuthenticityException(paramiko.SSHException):
             def __init__(self, hostname):
                 paramiko.SSHException.__init__(self,
-                                               'Host key verification for server %s failed.' %
-                                               hostname)
+                                               f'Host key verification for server {hostname} failed.')
 
         self.client = paramiko.SSHClient()
         self.client.set_missing_host_key_policy(AgreedAddPolicy())
@@ -274,10 +271,9 @@ Are you sure you want to continue connecting (yes/no)? """ % (hostname,
                                 look_for_keys=True,
                                 key_filename=self.config['identityfile'])
         except Exception as e:
-            raise BackendException("ssh connection to %s@%s:%d failed: %s" % (
-                self.config['user'],
-                self.config['hostname'],
-                self.config['port'], e))
+            raise BackendException(f"ssh connection to "
+                                   f"{self.config['user']}@{self.config['hostname']}:{int(self.config['port'])} "
+                                   f"failed: {e}")
         self.client.get_transport().set_keepalive(int(config.timeout / 2))
 
         self.scheme = duplicity.backend.strip_prefix(parsed_url.scheme,
@@ -313,16 +309,13 @@ Are you sure you want to continue connecting (yes/no)? """ % (hostname,
                             try:
                                 self.sftp.mkdir(d)
                             except Exception as e:
-                                raise BackendException("sftp mkdir %s failed: %s" %
-                                                       (f"{self.sftp.normalize('.')}/{d}", e))
+                                raise BackendException(f"sftp mkdir {self.sftp.normalize('.')}/{d} failed: {e}")
                         else:
-                            raise BackendException("sftp stat %s failed: %s" %
-                                                   (f"{self.sftp.normalize('.')}/{d}", e))
+                            raise BackendException(f"sftp stat {self.sftp.normalize('.')}/{d} failed: {e}")
                     try:
                         self.sftp.chdir(d)
                     except Exception as e:
-                        raise BackendException("sftp chdir to %s failed: %s" %
-                                               (f"{self.sftp.normalize('.')}/{d}", e))
+                        raise BackendException(f"sftp chdir to {self.sftp.normalize('.')}/{d} failed: {e}")
 
     def _put(self, source_path, remote_filename):
         # remote_filename is a byte object, not str or unicode
@@ -343,8 +336,7 @@ Are you sure you want to continue connecting (yes/no)? """ % (hostname,
             if response != b"\0":
                 raise BackendException(b"scp remote error: %b" % chan.recv(-1))
             fstat = os.stat(source_path.name)
-            chan.send('C%s %d %s\n' % (oct(fstat.st_mode)[-4:], fstat.st_size,
-                                       remote_filename))
+            chan.send(f'C{oct(fstat.st_mode)[-4:]} {int(fstat.st_size)} {remote_filename}\n')
             response = chan.recv(1)
             if response != b"\0":
                 raise BackendException(b"scp remote error: %b" % chan.recv(-1))
@@ -380,8 +372,7 @@ Are you sure you want to continue connecting (yes/no)? """ % (hostname,
                 msg = msg.decode()
             m = re.match(r"C([0-7]{4})\s+(\d+)\s+(\S.*)$", msg)
             if m is None or m.group(3) != remote_filename:
-                raise BackendException("scp get %s failed: incorrect response '%s'" %
-                                       (remote_filename, msg))
+                raise BackendException(f"scp get {remote_filename} failed: incorrect response '{msg}'")
             chan.recv(1)  # dispose of the newline trailing the C message
 
             size = int(m.group(2))
@@ -402,8 +393,7 @@ Are you sure you want to continue connecting (yes/no)? """ % (hostname,
 
             msg = chan.recv(1)  # check the final status
             if msg != b'\0':
-                raise BackendException("scp get %s failed: %s" % (remote_filename,
-                                                                  chan.recv(-1)))
+                raise BackendException(f"scp get {remote_filename} failed: {chan.recv(-1)}")
             f.close()
             chan.send('\0')  # send final done indicator
             chan.close()

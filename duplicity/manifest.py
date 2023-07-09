@@ -103,8 +103,7 @@ class Manifest(object):
                        f"Current directory: {config.local_path.uc_name}\n"
                        f"Previous directory: {os.fsdecode(self.local_dirname)}")
             code = log.ErrorCode.source_path_mismatch
-            code_extra = "%s %s" % (util.escape(config.local_path.name),
-                                    util.escape(self.local_dirname))
+            code_extra = f"{util.escape(config.local_path.name)} {util.escape(self.local_dirname)}"
         else:
             return
 
@@ -151,7 +150,7 @@ class Manifest(object):
         try:
             del self.volume_info_dict[vol_num]
         except Exception:
-            raise ManifestError("Volume %d not present in manifest" % (vol_num,))
+            raise ManifestError(f"Volume {int(vol_num)} not present in manifest")
 
     def to_string(self):
         """
@@ -237,8 +236,8 @@ class Manifest(object):
                 self.files_changed = list(map(parse_fileinfo, match.group(3).split(b'\n')))
 
             if filecount != len(self.files_changed):
-                log.Error(_("Manifest file '%s' is corrupt: File count says %d, File list contains %d" %
-                            (self.fh.base if self.fh else "", filecount, len(self.files_changed))))
+                log.Error(_(f"Manifest file '{self.fh.base if self.fh else ''}' is corrupt: "
+                            f"File count says {int(filecount)}, File list contains {len(self.files_changed)}"))
                 self.corrupt_filelist = True
 
         return self

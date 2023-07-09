@@ -38,10 +38,9 @@ class GDriveBackend(duplicity.backend.Backend):
             from googleapiclient.discovery import build
             from google.oauth2.service_account import Credentials
         except ImportError as e:
-            raise BackendException("""\
-GDrive backend requires Google API client installation.
+            raise BackendException(f"""GDrive backend requires Google API client installation.
 Please read the manpage for setup details.
-Exception: %s""" % str(e))
+Exception: {str(e)}""")
 
         # Note Google has 2 drive methods, `Shared(previously Team) Drives` and `My Drive`
         #   both can be shared but require different addressing
@@ -94,8 +93,8 @@ Exception: %s""" % str(e))
             credentials = Credentials.from_service_account_file(os.environ['GOOGLE_SERVICE_JSON_FILE'])
             if credentials.service_account_email != client_id:
                 raise BackendException(
-                    'Service account email in the JSON file (%s) does not match the URL (%s)' %
-                    (credentials.service_account_email, client_id))
+                    f'Service account email in the JSON file ({credentials.service_account_email}) '
+                    f'does not match the URL ({client_id})')
 
         elif 'GOOGLE_CLIENT_SECRET_JSON_FILE' in os.environ and 'GOOGLE_CREDENTIALS_FILE' in os.environ:
             from google_auth_oauthlib.flow import InstalledAppFlow
@@ -117,8 +116,8 @@ Exception: %s""" % str(e))
 
                     if flow.client_config['client_id'] != client_id:
                         raise BackendException(
-                            'Client ID in the JSON file (%s) does not match the URL (%s)' %
-                            (flow.client_config['client_id'], client_id))
+                            f"Client ID in the JSON file ({flow.client_config['client_id']}) "
+                            f"does not match the URL ({client_id})")
 
                     flow_args = {}
                     if 'GOOGLE_OAUTH_LOCAL_SERVER_PORT' in os.environ:
@@ -132,8 +131,7 @@ Exception: %s""" % str(e))
 
             if credentials.client_id != client_id:
                 raise BackendException(
-                    'Client ID in the credentials file (%s) does not match the URL (%s)' %
-                    (credentials.client_id, client_id))
+                    f'Client ID in the credentials file ({credentials.client_id}) does not match the URL ({client_id})')
 
         else:
             raise BackendException(
@@ -197,16 +195,14 @@ Exception: %s""" % str(e))
                 if drive_file['name'] == filename and not drive_file['trashed']:
                     for parent in drive_file['parents']:
                         if parent == self.folder:
-                            log.Info("GDrive backend: found file '%s' with id %s in ID cache" %
-                                     (filename, file_id))
+                            log.Info(f"GDrive backend: found file '{filename}' with id {file_id} in ID cache")
                             return drive_file
             except HttpError as error:
                 # A 404 occurs if the ID is no longer valid
                 if error.resp.status != 404:
                     raise
             # If we get here, the cache entry is invalid
-            log.Info("GDrive backend: invalidating '%s' (previously ID %s) from ID cache" %
-                     (filename, file_id))
+            log.Info(f"GDrive backend: invalidating '{filename}' (previously ID {file_id}) from ID cache")
             del self.id_cache[filename]
 
         # Not found in the cache, so use directory listing. This is less
@@ -224,8 +220,7 @@ Exception: %s""" % str(e))
         elif len(file_list) > 0:
             file_id = file_list[0]['id']
             self.id_cache[filename] = file_list[0]['id']
-            log.Info("GDrive backend: found file '%s' with id %s on server, "
-                     "adding to cache" % (filename, file_id))
+            log.Info(f"GDrive backend: found file '{filename}' with id {file_id} on server, adding to cache")
             return file_list[0]
 
         log.Info(f"GDrive backend: file '{filename}' not found in cache or on server")
@@ -267,8 +262,7 @@ Exception: %s""" % str(e))
                 media_body=media,
                 **self.shared_drive_flags_support).execute(num_retries=num_retries)
         else:
-            log.Info("GDrive backend: replacing existing file '%s' with id '%s'" % (
-                remote_filename, drive_file['id']))
+            log.Info(f"GDrive backend: replacing existing file '{remote_filename}' with id '{drive_file['id']}'")
             drive_file = self.drive.files().update(
                 media_body=media,
                 fileId=drive_file['id'],

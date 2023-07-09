@@ -191,7 +191,7 @@ class SdistCommand(sdist):
         os.environ['COPYFILE_DISABLE'] = 'true'
 
         # make the new tarball and remove tardir
-        assert not os.system("""tar czf %s \
+        assert not os.system(f"""tar czf {tarball} \
                                  --exclude '.*' \
                                  --exclude Makefile \
                                  --exclude debian \
@@ -200,8 +200,8 @@ class SdistCommand(sdist):
                                  --exclude testing/docker \
                                  --exclude testing/manual \
                                  --exclude tools \
-                                  %s
-                              """ % (tarball, tardir))
+                                 {tardir}
+                              """)
         assert not shutil.rmtree(tardir)
 
 
@@ -225,9 +225,7 @@ class TestCommand(test):
                 except Exception:
                     pass
 
-        os.environ['PATH'] = "%s:%s" % (
-            os.path.abspath(build_scripts_cmd.build_dir),
-            os.environ.get('PATH'))
+        os.environ['PATH'] = f"{os.path.abspath(build_scripts_cmd.build_dir)}:{os.environ.get('PATH')}"
 
         test.run(self)
 

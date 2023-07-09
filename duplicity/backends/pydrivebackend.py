@@ -33,10 +33,9 @@ class PyDriveBackend(duplicity.backend.Backend):
             import httplib2
             from apiclient.discovery import build
         except ImportError as e:
-            raise BackendException("""\
-PyDrive backend requires PyDrive2 and Google API client installation.
+            raise BackendException(f"""PyDrive backend requires PyDrive2 and Google API client installation.
 Please read the manpage for setup details.
-Exception: %s""" % str(e))
+Exception: {str(e)}""")
 
         # Shared Drive ID specified as a query parameter in the backend URL.
         # Example: pydrive://developer.gserviceaccount.com/target-folder/?driveID=<SHARED DRIVE ID>
@@ -57,9 +56,9 @@ Exception: %s""" % str(e))
                 FileNotUploadedError,
             )
         except ImportError as e:
-            raise BackendException("""\
-PyDrive backend requires PyDrive2 installation.  Please read the manpage for setup details.
-Exception: %s""" % str(e))
+            raise BackendException(f"PyDrive backend requires PyDrive2 installation.\n"
+                                   f"Please read the manpage for setup details.\n"
+                                   f"Exception: {str(e)}")
 
         # let user get by with old client while he can
         try:
@@ -157,16 +156,14 @@ Exception: %s""" % str(e))
                 if drive_file['title'] == filename and not drive_file['labels']['trashed']:
                     for parent in drive_file['parents']:
                         if parent['id'] == self.folder:
-                            log.Info("PyDrive backend: found file '%s' with id %s in ID cache" %
-                                     (filename, file_id))
+                            log.Info(f"PyDrive backend: found file '{filename}' with id {file_id} in ID cache")
                             return drive_file
             except ApiRequestError as error:
                 # A 404 occurs if the ID is no longer valid
                 if error.args[0].resp.status != 404:
                     raise
             # If we get here, the cache entry is invalid
-            log.Info("PyDrive backend: invalidating '%s' (previously ID %s) from ID cache" %
-                     (filename, file_id))
+            log.Info(f"PyDrive backend: invalidating '{filename}' (previously ID {file_id}) from ID cache")
             del self.id_cache[filename]
 
         # Not found in the cache, so use directory listing. This is less
@@ -181,8 +178,7 @@ Exception: %s""" % str(e))
         elif flist:
             file_id = flist[0]['id']
             self.id_cache[filename] = flist[0]['id']
-            log.Info("PyDrive backend: found file '%s' with id %s on server, "
-                     "adding to cache" % (filename, file_id))
+            log.Info(f"PyDrive backend: found file '{filename}' with id {file_id} on server, adding to cache")
             return flist[0]
         log.Info(f"PyDrive backend: file '{filename}' not found in cache or on server")
         return None
@@ -206,8 +202,7 @@ Exception: %s""" % str(e))
             drive_file = self.drive.CreateFile(create_file_args)
             log.Info(f"PyDrive backend: creating new file '{remote_filename}'")
         else:
-            log.Info("PyDrive backend: replacing existing file '%s' with id '%s'" % (
-                remote_filename, drive_file['id']))
+            log.Info(f"PyDrive backend: replacing existing file '{remote_filename}' with id '{drive_file['id']}'")
         drive_file.SetContentFile(os.fsdecode(source_path.name))
         if self.shared_drive_id:
             drive_file.Upload(param={'supportsTeamDrives': True})

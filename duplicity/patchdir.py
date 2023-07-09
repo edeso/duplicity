@@ -176,8 +176,7 @@ def get_index_from_tarinfo(tarinfo):
     else:
         index = tuple(os.fsencode(name).split(b"/"))
         if b'..' in index:
-            raise PatchDirException("Tar entry %s contains '..'.  Security "
-                                    "violation" % os.fsdecode(tiname))
+            raise PatchDirException(f"Tar entry {os.fsdecode(tiname)} contains '..'.  Security violation")
     return index, difftype, multivol
 
 
@@ -491,8 +490,7 @@ def patch_seq2ropath(patch_seq):
     assert first.difftype != "diff", f"First patch in sequence {patch_seq} was a diff"
     if not first.isreg():
         # No need to bother with data if not regular file
-        assert len(patch_seq) == 1, "Patch sequence isn't regular, but " \
-                                    "has %d entries" % len(patch_seq)
+        assert len(patch_seq) == 1, f"Patch sequence isn't regular, but has {len(patch_seq)} entries"
         return first.get_ropath()
 
     current_file = first.open("rb")

@@ -115,11 +115,11 @@ class B2Backend(duplicity.backend.Backend):
         self.service.authorize_account('production', account_id, account_key)
 
         try:
-            log.Log("B2 Backend (path= %s, bucket= %s, recommended_part_size= %s)" %
-                    (self.path, bucket_name, self.service.account_info.get_recommended_part_size()), log.INFO)
+            log.Log(f"B2 Backend (path= {self.path}, bucket= {bucket_name}, "
+                    f"recommended_part_size= {self.service.account_info.get_recommended_part_size()})", log.INFO)
         except AttributeError:
-            log.Log("B2 Backend (path= %s, bucket= %s, minimum_part_size= %s)" %
-                    (self.path, bucket_name, self.service.account_info.get_minimum_part_size()), log.INFO)
+            log.Log(f"B2 Backend (path= {self.path}, bucket= {bucket_name}, "
+                    f"minimum_part_size= {self.service.account_info.get_minimum_part_size()})", log.INFO)
 
         try:
             self.bucket = self.service.get_bucket_by_name(bucket_name)
@@ -135,8 +135,7 @@ class B2Backend(duplicity.backend.Backend):
         """
         Download remote_filename to local_path
         """
-        log.Log("Get: %s -> %s" % (self.path + os.fsdecode(remote_filename),
-                                   os.fsdecode(local_path.name)),
+        log.Log(f"Get: {self.path + os.fsdecode(remote_filename)} -> {os.fsdecode(local_path.name)}",
                 log.INFO)
         if self.v_num < [1, 11, 0]:
             self.bucket.download_file_by_name(quote_plus(self.path + os.fsdecode(remote_filename), '/'),
@@ -154,8 +153,7 @@ class B2Backend(duplicity.backend.Backend):
         """
         Copy source_path to remote_filename
         """
-        log.Log("Put: %s -> %s" % (os.fsdecode(source_path.name),
-                                   self.path + os.fsdecode(remote_filename)),
+        log.Log(f"Put: {os.fsdecode(source_path.name)} -> {self.path + os.fsdecode(remote_filename)}",
                 log.INFO)
         self.bucket.upload_local_file(os.fsdecode(source_path.name),
                                       quote_plus(self.path + os.fsdecode(remote_filename), '/'),

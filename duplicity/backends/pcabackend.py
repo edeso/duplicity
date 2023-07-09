@@ -39,9 +39,8 @@ class PCABackend(duplicity.backend.Backend):
             from swiftclient import Connection
             from swiftclient import ClientException
         except ImportError as e:
-            raise BackendException("""\
-PCA backend requires the python-swiftclient library.
-Exception: %s""" % str(e))
+            raise BackendException(f"""PCA backend requires the python-swiftclient library.
+Exception: {str(e)}""")
 
         self.resp_exc = ClientException
         self.conn_cls = Connection
@@ -135,12 +134,11 @@ Exception: %s""" % str(e))
                 headers = dict([[policy_header, policy]])
                 self.conn.put_container(self.container, headers=headers)
             except Exception as e:
-                log.FatalError("Container creation failed: %s %s"
-                               % (e.__class__.__name__, str(e)),
+                log.FatalError(f"Container creation failed: {e.__class__.__name__} {str(e)}",
                                log.ErrorCode.connection_failed)
         elif policy and container_metadata[policy_header.lower()] != policy:
-            log.FatalError("Container '%s' exists but its storage policy is '%s' not '%s'."
-                           % (self.container, container_metadata[policy_header.lower()], policy))
+            log.FatalError(f"Container '{self.container}' exists but its storage policy is "
+                           f"'{container_metadata[policy_header.lower()]}' not '{policy}'.")
 
     def _error_code(self, operation, e):  # pylint: disable= unused-argument
         if isinstance(e, self.resp_exc):
@@ -201,9 +199,8 @@ Exception: %s""" % str(e))
                 duration = int(e.http_response_headers['Retry-After'])
                 m, s = divmod(duration, 60)
                 h, m = divmod(m, 60)
-                eta = "%dh%02dm%02ds" % (h, m, s)
-                log.Info("File %s is being unsealed, operation ETA is %s." %
-                         (remote_filename, eta))
+                eta = f"{int(h)}h{int(m):02}m{int(s):02}s"
+                log.Info(f"File {remote_filename} is being unsealed, operation ETA is {eta}.")
             else:
                 log.FatalError(f"Connection failed: {e.__class__.__name__} {str(e)}",
                                log.ErrorCode.connection_failed)
@@ -261,14 +258,14 @@ Exception: %s""" % str(e))
                 one_object_not_unsealed = True
             elif policy_retrieval_state == "unsealing":
                 duration = int(o['policy_retrieval_delay'])
-                log.Info("%s available in %d seconds." % (filename, duration))
+                log.Info(f"{filename} available in {int(duration)} seconds.")
                 if duration > max_duration:
                     max_duration = duration
                 one_object_not_unsealed = True
 
         m, s = divmod(max_duration, 60)
         h, m = divmod(m, 60)
-        max_duration_eta = "%dh%02dm%02ds" % (h, m, s)
+        max_duration_eta = f"{int(h)}h{int(m):02}m{int(s):02}s"
         log.Notice(f"Need to wait {max_duration_eta} before all volumes are unsealed.")
         return one_object_not_unsealed
 

@@ -37,9 +37,8 @@ class PyraxBackend(duplicity.backend.Backend):
         try:
             import pyrax
         except ImportError as e:
-            raise BackendException("""\
-Pyrax backend requires the pyrax library available from Rackspace.
-Exception: %s""" % str(e))
+            raise BackendException(f"""Pyrax backend requires the pyrax library available from Rackspace.
+Exception: {str(e)}""")
 
         # Inform Pyrax that we're talking to Rackspace
         # per Jesus Monzon (gsusmonzon)
@@ -65,8 +64,7 @@ Exception: %s""" % str(e))
         try:
             pyrax.set_credentials(**conn_kwargs)
         except Exception as e:
-            log.FatalError("Connection failed, please check your credentials: %s %s"
-                           % (e.__class__.__name__, util.uexc(e)),
+            log.FatalError(f"Connection failed, please check your credentials: {e.__class__.__name__} {util.uexc(e)}",
                            log.ErrorCode.connection_failed)
 
         self.client_exc = pyrax.exceptions.ClientException
@@ -76,7 +74,7 @@ Exception: %s""" % str(e))
         try:
             self.container = pyrax.cloudfiles.get_container(container)
         except pyrax.exceptions.Forbidden as e:
-            log.FatalError("%s : %s \n" % (e.__class__.__name__, util.uexc(e)) +
+            log.FatalError(f"{e.__class__.__name__} : {util.uexc(e)} \n" +
                            "Container may exist, but access was denied.\n" +
                            "If this container exists, please check its X-Container-Read/Write headers.\n" +
                            "Otherwise, please check your credentials and permissions.",
@@ -85,7 +83,7 @@ Exception: %s""" % str(e))
             try:
                 self.container = pyrax.cloudfiles.create_container(container)
             except pyrax.exceptions.Forbidden as e:
-                log.FatalError("%s : %s \n" % (e.__class__.__name__, util.uexc(e)) +
+                log.FatalError(f"{e.__class__.__name__} : {util.uexc(e)} \n" +
                                "Container does not exist, but creation was denied.\n" +
                                "You may be using a read-only user that can view but not create containers.\n" +
                                "Please check your credentials and permissions.",

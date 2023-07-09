@@ -168,9 +168,8 @@ class MegaBackend(duplicity.backend.Backend):
         except Exception as e:
             error_str = str(e)
             if "EOVERQUOTA" in error_str:
-                raise BackendException("MEGA account over quota, could not write file : '%s' . "
-                                       "Upgrade your storage at https://mega.nz/pro or remove some data." %
-                                       (remote_file,))
+                raise BackendException(f"MEGA account over quota, could not write file : '{remote_file}'. "
+                                       f"Upgrade your storage at https://mega.nz/pro or remove some data.")
             else:
                 raise BackendException(f"Failed writing file '{remote_file}' to MEGA , reason : '{e}'")
 

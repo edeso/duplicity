@@ -195,7 +195,7 @@ class TemporaryDirectory(object):
         self.__lock.acquire()
         try:
             self.__tempcount = self.__tempcount + 1
-            suffix = "-%d" % (self.__tempcount,)
+            suffix = f"-{int(self.__tempcount)}"
             filename = os.fsencode(tempfile.mktemp(suffix, "mktemp-", self.__dir))
 
             log.Debug(_("Registering (mktemp) temporary file %s") % os.fsdecode(filename))
@@ -217,7 +217,7 @@ class TemporaryDirectory(object):
         self.__lock.acquire()
         try:
             self.__tempcount = self.__tempcount + 1
-            suffix = "-%d" % (self.__tempcount,)
+            suffix = f"-{int(self.__tempcount)}"
             fd, filename = tempfile.mkstemp(suffix, "mkstemp-", self.__dir, )
 
             log.Debug(_("Registering (mkstemp) temporary file %s") % filename)

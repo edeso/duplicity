@@ -161,13 +161,13 @@ def inttopretty(seconds):
     partlist = []
     hours, seconds = divmod(seconds, 3600)
     if hours > 1:
-        partlist.append("%d hours" % hours)
+        partlist.append(f"{int(hours)} hours")
     elif hours == 1:
         partlist.append("1 hour")
 
     minutes, seconds = divmod(seconds, 60)
     if minutes > 1:
-        partlist.append("%d minutes" % minutes)
+        partlist.append(f"{int(minutes)} minutes")
     elif minutes == 1:
         partlist.append("1 minute")
 
@@ -230,7 +230,7 @@ def gettzd(dstflag):
     hours, minutes = list(map(abs, divmod(offset, 60)))
     assert 0 <= hours <= 23
     assert 0 <= minutes <= 59
-    return "%s%02d%s%02d" % (prefix, hours, config.time_separator, minutes)
+    return f"{prefix}{int(hours):02}{config.time_separator}{int(minutes):02}"
 
 
 def tzdtoseconds(tzd):
@@ -296,10 +296,8 @@ def genstrtotime(timestr, override_curtime=None):
              _genstr_date_regexp3.search(timestr))
     if not match:
         error()
-    timestr = "%s-%02d-%02dT00:00:00%s" % (match.group('year'),
-                                           int(match.group('month')),
-                                           int(match.group('day')),
-                                           gettzd(0))
+    timestr = f"{match.group('year')}-{int(int(match.group('month'))):02}-{int(int(match.group('day'))):02}" \
+              f"T00:00:00{gettzd(0)}"
     t = stringtotime(timestr)
     if t:
         return t

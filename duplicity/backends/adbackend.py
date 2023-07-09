@@ -98,18 +98,16 @@ class ADBackend(duplicity.backend.Backend):
                 with open(self.OAUTH_TOKEN_PATH, 'w') as f:
                     json.dump(token, f)
             except Exception as err:
-                log.Error('Could not save the OAuth2 token to %s. This means '
-                          'you may need to do the OAuth2 authorization '
-                          'process again soon. Original error: %s' % (
-                              self.OAUTH_TOKEN_PATH, err))
+                log.Error(f'Could not save the OAuth2 token to {self.OAUTH_TOKEN_PATH}. '
+                          f'This means you may need to do the OAuth2 authorization process again soon. '
+                          f'Original error: {err}')
 
         token = None
         try:
             with open(self.OAUTH_TOKEN_PATH) as f:
                 token = json.load(f)
         except IOError as err:
-            log.Notice('Could not load OAuth2 token. '
-                       'Trying to create a new one. (original error: %s)' % err)
+            log.Notice(f'Could not load OAuth2 token. Trying to create a new one. (original error: {err})')
 
         self.http_client = OAuth2Session(
             self.CLIENT_ID,
@@ -133,10 +131,9 @@ class ADBackend(duplicity.backend.Backend):
 
         if token is None:
             if not sys.stdout.isatty() or not sys.stdin.isatty():
-                log.FatalError('The OAuth2 token could not be loaded from %s '
-                               'and you are not running duplicity '
-                               'interactively, so duplicity cannot possibly '
-                               'access Amazon Drive.' % self.OAUTH_TOKEN_PATH)
+                log.FatalError(f'The OAuth2 token could not be loaded from {self.OAUTH_TOKEN_PATH} '
+                               f'and you are not running duplicity interactively, so duplicity '
+                               f'cannot possibly access Amazon Drive.')
             authorization_url, _ = self.http_client.authorization_url(
                 self.OAUTH_AUTHORIZE_URL)
 
@@ -181,21 +178,19 @@ class ADBackend(duplicity.backend.Backend):
                 query = query + '*'
 
             matches = self.read_all_pages(
-                self.metadata_url + 'nodes?filters=kind:FOLDER AND name:%s '
-                                    'AND parents:%s' % (query, parent_node_id))
+                self.metadata_url + f'nodes?filters=kind:FOLDER AND name:{query} AND parents:{parent_node_id}')
             candidates = [f for f in matches if f.get('name') == component]
 
             if len(candidates) >= 2:
-                log.FatalError('There are multiple folders with the same name '
-                               'below one parent.\nParentID: %s\nFolderName: '
-                               '%s' % (parent_node_id, component))
+                log.FatalError(f'There are multiple folders with the same name below one parent.\n'
+                               f'ParentID: {parent_node_id}\nFolderName: {component}')
             elif len(candidates) == 1:
                 parent_node_id = candidates[0]['id']
             else:
-                log.Debug('Folder %s does not exist yet. Creating.' % component)
+                log.Debug(f'Folder {component} does not exist yet. Creating.')
                 parent_node_id = self.mkdir(parent_node_id, component)
 
-        log.Debug("Backup target folder has id: %s" % parent_node_id)
+        log.Debug(f"Backup target folder has id: {parent_node_id}")
         self.backup_target_id = parent_node_id
 
     def get_file_id(self, remote_filename):
@@ -221,10 +216,9 @@ class ADBackend(duplicity.backend.Backend):
 
         boundary = self.MULTIPART_BOUNDARY
 
-        yield str.encode('--%s\r\nContent-Disposition: form-data; '
-                         'name="metadata"\r\n\r\n' % boundary +
-                         '%s\r\n' % json.dumps(metadata) +
-                         '--%s\r\n' % boundary)
+        yield str.encode(f'--{boundary}\r\nContent-Disposition: form-data; name="metadata"\r\n\r\n' +
+                         f'{json.dumps(metadata)}\r\n' +
+                         f'--{boundary}\r\n')
         yield b'Content-Disposition: form-data; name="content"; filename="i_love_backups"\r\n'
         yield b'Content-Type: application/octet-stream\r\n\r\n'
 
@@ -236,8 +230,8 @@ class ADBackend(duplicity.backend.Backend):
                 else:
                     break
 
-        yield str.encode('\r\n--%s--\r\n' % boundary +
-                         'multipart/form-data; boundary=%s' % boundary)
+        yield str.encode(f'\r\n--{boundary}--\r\n' +
+                         f'multipart/form-data; boundary={boundary}')
 
     def read_all_pages(self, url):
         """Iterates over nodes API URL until all pages were read"""
@@ -250,8 +244,7 @@ class ADBackend(duplicity.backend.Backend):
             paginated_url = url + token_param + next_token
             response = self.http_client.get(paginated_url)
             if response.status_code != 200:
-                raise BackendException("Pagination failed with status=%s on "
-                                       "URL=%s" % (response.status_code, url))
+                raise BackendException(f"Pagination failed with status={response.status_code} on URL={url}")
 
             parsed = response.json()
             if 'data' in parsed and len(parsed['data']) > 0:
@@ -273,10 +266,9 @@ class ADBackend(duplicity.backend.Backend):
         """Report error when file already existed in location and delete it"""
 
         self._delete(remote_filename)
-        raise BackendException('Upload failed, because there was a file with '
-                               'the same name as %s already present. The file was '
-                               'deleted, and duplicity will retry the upload unless '
-                               'the retry limit has been reached.' % remote_filename)
+        raise BackendException(f'Upload failed, because there was a file with the same name as {remote_filename} '
+                               f'already present. The file was deleted, and duplicity will retry the upload '
+                               f'unless the retry limit has been reached.')
 
     def _put(self, source_path, remote_filename):
         """Upload a local file to Amazon Drive"""
@@ -289,20 +281,19 @@ class ADBackend(duplicity.backend.Backend):
 
         if source_size > available:
             raise BackendException(
-                'Out of space: trying to store "%s" (%d bytes), but only '
-                '%d bytes available on Amazon Drive.' % (
-                    source_path.name, source_size, available))
+                f'Out of space: trying to store "{source_path.name}" ({int(source_size)} bytes), '
+                f'but only {int(available)} bytes available on Amazon Drive.')
 
         # Just check the cached list, to avoid _list for every new file being
         # uploaded
         if remote_filename in self.names_to_ids:
-            log.Debug('File %s seems to already exist on Amazon Drive. Deleting '
-                      'before attempting to upload it again.' % remote_filename)
+            log.Debug(f'File {remote_filename} seems to already exist on Amazon Drive. '
+                      f'Deleting before attempting to upload it again.')
             self._delete(remote_filename)
 
         metadata = {'name': remote_filename, 'kind': 'FILE',
                     'parents': [self.backup_target_id]}
-        headers = {'Content-Type': 'multipart/form-data; boundary=%s' % self.MULTIPART_BOUNDARY}
+        headers = {'Content-Type': f'multipart/form-data; boundary={self.MULTIPART_BOUNDARY}'}
         data = self.multipart_stream(metadata, source_path)
 
         response = self.http_client.post(
@@ -313,12 +304,11 @@ class ADBackend(duplicity.backend.Backend):
         if response.status_code == 409:  # "409 : Duplicate file exists."
             self.raise_for_existing_file(remote_filename)
         elif response.status_code == 201:
-            log.Debug('%s uploaded successfully' % remote_filename)
+            log.Debug(f'{remote_filename} uploaded successfully')
         elif response.status_code == 408 or response.status_code == 504:
-            log.Info('%s upload failed with timeout status code=%d. Speculatively '
-                     'waiting for %d seconds to see if Amazon Drive finished the '
-                     'upload anyway' % (remote_filename, response.status_code,
-                                        config.timeout))
+            log.Info(f'{remote_filename} upload failed with timeout status code={int(response.status_code)}. '
+                     f'Speculatively waiting for {int(config.timeout)} seconds to see if Amazon Drive '
+                     f'finished the upload anyway')
             tries = config.timeout / 15
             while tries >= 0:
                 tries -= 1
@@ -329,23 +319,19 @@ class ADBackend(duplicity.backend.Backend):
                     log.Debug('Upload turned out to be successful after all.')
                     return
                 elif remote_size == -1:
-                    log.Debug('Uploaded file is not yet there, %d tries left.'
-                              % (tries + 1))
+                    log.Debug(f'Uploaded file is not yet there, {int(tries + 1)} tries left.')
                     continue
                 else:
                     self.raise_for_existing_file(remote_filename)
-            raise BackendException('%s upload failed and file did not show up '
-                                   'within time limit.' % remote_filename)
+            raise BackendException(f'{remote_filename} upload failed and file did not show up within time limit.')
         else:
-            log.Debug('%s upload returned an undesirable status code %s'
-                      % (remote_filename, response.status_code))
+            log.Debug(f'{remote_filename} upload returned an undesirable status code {response.status_code}')
             response.raise_for_status()
 
         parsed = response.json()
         if 'id' not in parsed:
-            raise BackendException('%s was uploaded, but returned JSON does not '
-                                   'contain ID of new file. Retrying.\nJSON:\n\n%s'
-                                   % (remote_filename, parsed))
+            raise BackendException(f'{remote_filename} was uploaded but returned JSON does not contain ID of new file. '
+                                   f'Retrying.\nJSON:\n\n{parsed}')
 
         # XXX: The upload may be considered finished before the file shows up
         # in the file listing. As such, the following is required to avoid race
@@ -359,8 +345,7 @@ class ADBackend(duplicity.backend.Backend):
             file_id = self.get_file_id(remote_filename)
             if file_id is None:
                 raise BackendException(
-                    'File "%s" cannot be downloaded: it does not exist' %
-                    remote_filename)
+                    f'File "{remote_filename}" cannot be downloaded: it does not exist')
 
             response = self.http_client.get(
                 self.content_url + '/nodes/' + file_id + '/content', stream=True)
@@ -398,8 +383,7 @@ class ADBackend(duplicity.backend.Backend):
         file_id = self.get_file_id(remote_filename)
         if file_id is None:
             raise BackendException(
-                'File "%s" cannot be deleted: it does not exist' % (
-                    remote_filename))
+                f'File "{remote_filename}" cannot be deleted: it does not exist')
         response = self.http_client.put(self.metadata_url + 'trash/' + file_id)
         response.raise_for_status()
         del self.names_to_ids[remote_filename]

@@ -134,9 +134,7 @@ class StatsObj(object):
 
     def get_stats_string(self):
         """Return extended string printing out statistics"""
-        return "%s%s%s" % (self.get_timestats_string(),
-                           self.get_filestats_string(),
-                           self.get_miscstats_string())
+        return f"{self.get_timestats_string()}{self.get_filestats_string()}{self.get_miscstats_string()}"
 
     def get_timestats_string(self):
         """Return portion of statistics string dealing with time"""
@@ -151,8 +149,7 @@ class StatsObj(object):
                                 self.EndTime is not None):
             if self.ElapsedTime is None:  # pylint:disable=access-member-before-definition
                 self.ElapsedTime = self.EndTime - self.StartTime
-            timelist.append("ElapsedTime %.2f (%s)\n" %
-                            (self.ElapsedTime, dup_time.inttopretty(self.ElapsedTime)))
+            timelist.append(f"ElapsedTime {self.ElapsedTime:.2f} ({dup_time.inttopretty(self.ElapsedTime)})\n")
         return "".join(timelist)
 
     def get_filestats_string(self):
@@ -176,10 +173,9 @@ class StatsObj(object):
         misc_string = ""
         tdsc = self.TotalDestinationSizeChange
         if tdsc is not None:
-            misc_string += ("TotalDestinationSizeChange %s (%s)\n" %
-                            (tdsc, self.get_byte_summary_string(tdsc)))
+            misc_string += f"TotalDestinationSizeChange {tdsc} ({self.get_byte_summary_string(tdsc)})\n"
         if self.Errors is not None:
-            misc_string += "Errors %d\n" % self.Errors
+            misc_string += f"Errors {int(self.Errors)}\n"
         return misc_string
 
     def get_byte_summary_string(self, byte_count):
@@ -200,13 +196,13 @@ class StatsObj(object):
                     precision = 1
                 else:
                     precision = 2
-                return "%s%%.%df %s" % (sign, precision, abbrev_string) \
+                return f"{sign}%.{int(precision)}f {abbrev_string}" \
                     % (abbrev_count,)
         byte_count = round(byte_count)
         if byte_count == 1:
             return f"{sign}1 byte"
         else:
-            return "%s%d bytes" % (sign, byte_count)
+            return f"{sign}{int(byte_count)} bytes"
 
     def get_stats_logstring(self, title):
         """Like get_stats_string, but add header and footer"""

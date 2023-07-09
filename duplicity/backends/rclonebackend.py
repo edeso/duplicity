@@ -59,22 +59,20 @@ class RcloneBackend(duplicity.backend.Backend):
     def _get(self, remote_filename, local_path):
         remote_filename = os.fsdecode(remote_filename)
         local_pathname = os.fsdecode(local_path.name)
-        commandline = "%s copyto '%s/%s' '%s'" % (
-            self.rclone_cmd, self.remote_path, remote_filename, local_pathname)
+        commandline = f"{self.rclone_cmd} copyto '{self.remote_path}/{remote_filename}' '{local_pathname}'"
         rc, o, e = self._subprocess_safe_popen(commandline)
         if rc != 0:
             if os.path.isfile(local_pathname):
                 os.remove(local_pathname)
-            raise BackendException("rclone returned rc = %d: %s" % (rc, e))
+            raise BackendException(f"rclone returned rc = {int(rc)}: {e}")
 
     def _put(self, source_path, remote_filename):
         source_pathname = os.fsdecode(source_path.name)
         remote_filename = os.fsdecode(remote_filename)
-        commandline = "%s copyto '%s' '%s/%s'" % (
-            self.rclone_cmd, source_pathname, self.remote_path, remote_filename)
+        commandline = f"{self.rclone_cmd} copyto '{source_pathname}' '{self.remote_path}/{remote_filename}'"
         rc, o, e = self._subprocess_safe_popen(commandline)
         if rc != 0:
-            raise BackendException("rclone returned rc = %d: %s" % (rc, e))
+            raise BackendException(f"rclone returned rc = {int(rc)}: {e}")
 
     def _list(self):
         filelist = []
@@ -83,18 +81,17 @@ class RcloneBackend(duplicity.backend.Backend):
         if rc == 3:
             return filelist
         if rc != 0:
-            raise BackendException("rclone returned rc = %d: %s" % (rc, e))
+            raise BackendException(f"rclone returned rc = {int(rc)}: {e}")
         if not o:
             return filelist
         return [os.fsencode(x) for x in o.split('\n') if x]
 
     def _delete(self, remote_filename):
         remote_filename = os.fsdecode(remote_filename)
-        commandline = "%s deletefile --drive-use-trash=false '%s/%s'" % (
-            self.rclone_cmd, self.remote_path, remote_filename)
+        commandline = f"{self.rclone_cmd} deletefile --drive-use-trash=false '{self.remote_path}/{remote_filename}'"
         rc, o, e = self._subprocess_safe_popen(commandline)
         if rc != 0:
-            raise BackendException("rclone returned rc = %d: %s" % (rc, e))
+            raise BackendException(f"rclone returned rc = {int(rc)}: {e}")
 
     def _subprocess_safe_popen(self, commandline):
         import shlex

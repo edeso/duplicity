@@ -83,16 +83,13 @@ class CollectionTest(UnitTestCase):
 
         self.unpack_testfiles()
 
-        col_test_dir = path.Path("{0}/testfiles/collectionstest".format(_runtest_dir))
+        col_test_dir = path.Path(f"{_runtest_dir}/testfiles/collectionstest")
         archive_dir_path = col_test_dir.append("archive_dir")
         self.set_config('archive_dir_path', archive_dir_path)
-        self.archive_dir_backend = backend.get_backend("file://{0}/testfiles/collectionstest".format(_runtest_dir) +
-                                                       "/archive_dir")
-
-        self.real_backend = backend.get_backend("file://%s/%s" %
-                                                (col_test_dir.uc_name, "remote_dir"))
-        self.output_dir = path.Path("{0}/testfiles/output".format(_runtest_dir))  # used as a temp directory
-        self.output_dir_backend = backend.get_backend("file://{0}/testfiles/output".format(_runtest_dir))
+        self.archive_dir_backend = backend.get_backend(f"file://{_runtest_dir}/testfiles/collectionstest/archive_dir")
+        self.real_backend = backend.get_backend(f"file://{col_test_dir.uc_name}/remote_dir")
+        self.output_dir = path.Path(f"{_runtest_dir}/testfiles/output")  # used as a temp directory
+        self.output_dir_backend = backend.get_backend(f"file://{_runtest_dir}/testfiles/output")
 
     def set_gpg_profile(self):
         """Set gpg profile to standard "foobar" sym"""

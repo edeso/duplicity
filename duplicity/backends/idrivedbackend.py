@@ -184,8 +184,8 @@ class IDriveBackend(duplicity.backend.Backend):
                     log.Debug(f"Using existing directory {self.fakeroot} as fake-root")
                 else:
                     log.Warn("-" * 72)
-                    log.Warn("WARNING: Creation of FAKEROOT {0} failed; backup will use system temp directory"
-                             .format(self.fakeroot))
+                    log.Warn(f"WARNING: Creation of FAKEROOT {self.fakeroot} failed; "
+                             f"backup will use system temp directory")
                     log.Warn("This might interfere with incremental backups")
                     log.Warn("-" * 72)
                     raise BackendException(f"Creation of the directory {self.fakeroot} failed")
@@ -231,8 +231,7 @@ class IDriveBackend(duplicity.backend.Backend):
         self.idriveserver = el.attrib["cmdUtilityServer"]
 
         # get the device list - primarely used to get device-id string
-        el = self.request(self.cmd + self.auth_switch + " --list-device {0}@{1}::home".
-                          format(self.idriveid, self.idriveserver))
+        el = self.request(self.cmd + self.auth_switch + f" --list-device {self.idriveid}@{self.idriveserver}::home")
         # scan all returned devices for requested device (== bucket)
         self.idrivedevid = None
         for item in el.findall('item'):
@@ -242,8 +241,8 @@ class IDriveBackend(duplicity.backend.Backend):
         if self.idrivedevid is None:
             el = self.request(
                 self.cmd + self.auth_switch +
-                " --create-bucket --bucket-type=D --nick-name={0} --os=Linux --uid=987654321 {1}@{2}::home/"
-                .format(self.bucket, self.idriveid, self.idriveserver)).find('item')
+                f" --create-bucket --bucket-type=D --nick-name={self.bucket} --os=Linux --uid=987654321 "
+                f"{self.idriveid}@{self.idriveserver}::home/").find('item')
             # prefix and suffix reverse-engineered from Common.pl!
             self.idrivedevid = f"5c0b{el.attrib['device_id']}4b5z"
 
@@ -255,8 +254,9 @@ class IDriveBackend(duplicity.backend.Backend):
         # get raw list; used by _list, _query and _query_list
         remote_path = os.path.join(urllib.parse.unquote(self.parsed_url.path.lstrip('/')),
                                    self.fakeroot.lstrip('/')).rstrip()
-        commandline = ((self.cmd + self.auth_switch + " --auth-list --device-id={0} {1}@{2}::home/{3}"
-                        .format(self.idrivedevid, self.idriveid, self.idriveserver, remote_path)))
+        commandline = (self.cmd + self.auth_switch +
+                       f" --auth-list --device-id={self.idrivedevid} "
+                       f"{self.idriveid}@{self.idriveserver}::home/{remote_path}")
         try:
             _, l, _ = self.subprocess_popen(commandline)
         except Exception as e:
@@ -316,8 +316,8 @@ class IDriveBackend(duplicity.backend.Backend):
         remote_path = os.path.join(urllib.parse.unquote(self.parsed_url.path.lstrip('/')),
                                    self.fakeroot.lstrip('/'), filename).rstrip()
 
-        log.Debug("_get: remote_filename={0}, local_path={1}, remote_path={2}, parsed_url.path={3}"
-                  .format(filename, local_path, remote_path, self.parsed_url.path))
+        log.Debug(f"_get: remote_filename={filename}, local_path={local_path}, "
+                  f"remote_path={remote_path}, parsed_url.path={self.parsed_url.path}")
 
         # Create tempdir to downlaod file into
         tmpdir = tempfile.mkdtemp()
@@ -328,8 +328,11 @@ class IDriveBackend(duplicity.backend.Backend):
         flist.write(remote_path)
         flist.seek(0)
 
-        commandline = (f"{self.cmd + self.auth_switch} --device-id={{0}} --files-from={{1}} {{2}}@{{3}}::home/ {{4}}"
-                       .format(self.idrivedevid, flist.name, self.idriveid, self.idriveserver, tmpdir))
+        commandline = f"{self.cmd + self.auth_switch} " \
+                      f"--device-id={self.idrivedevid} " \
+                      f"--files-from={flist.name} " \
+                      f"{self.idriveid}@{self.idriveserver}::home/ " \
+                      f"{tmpdir}"
         log.Debug(f"get command: {commandline}")
         _, getresponse, _ = self.subprocess_popen(commandline)
         log.Debug(f"_get response: {getresponse}")
