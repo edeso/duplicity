@@ -1,6 +1,23 @@
+## rel.2.0.0rc0 (2023-07-09)
+
+### Fix
+
+* Finish conversions to f-strings. [Kenneth Loafman]
+
+  See https://github.com/ikamensh/flynt/issues/185
+
+* Convert to f-strings via 'flynt -tc -tj'. [Kenneth Loafman]
+
+* With py2 gone remove unicode string adornments. [Kenneth Loafman]
+
+* Fix implied command when target is empty. [Kenneth Loafman]
+
+
 ## rel.2.0.0b2 (2023-07-02)
 
 ### Changes
+
+* Update CHANGELOG.md. [Kenneth Loafman]
 
 * Fix syntax error in .gitlab-ci.yml. [Kenneth Loafman]
 
@@ -1288,7 +1305,7 @@
 
 * Revert "chg:dev:core20 usess py38, not py36." [Kenneth Loafman]
 
-  This reverts commit 05eda5828c7bdde1003357439cfcb4d93124a377.
+  This reverts commit b5e4baac09b4533c2395aa392a0b8c170fb1a052.
 
 * Slate Backend. [Shr1ftyy]
 
@@ -1433,10 +1450,6 @@ Multibackend as well. [Erwan B]
 
 * Better looping.  Increase to 100 loops. [Kenneth Loafman]
 
-* Repeating test for LP bug 487720. [Kenneth Loafman]
-
-  Restore fails with "Invalid data - SHA1 hash mismatch"
-
 ### Changes
 
 * Build\_ext now builds inplace for development ease. [Kenneth Loafman]
@@ -1531,8 +1544,6 @@ Multibackend as well. [Erwan B]
 * Fix issue #57 SSH backends - IndexError: list index out of range. [Kenneth Loafman]
 
 ### Other
-
-* Remove backup file. [kenneth@loafman.com]
 
 * Don't skip CI. [Kenneth Loafman]
 
@@ -1660,7 +1671,7 @@ out" [Christian Perreault]
 * Revert "fix:pkg:Remove requirement for python3-pytest-runner.  Not
 used." [Kenneth Loafman]
 
-  This reverts commit 90e7e2acb6d158437cab3210114da46df72a7c85.
+  This reverts commit c7cbc6bd531f90be1ea9a65cc237e1017dd935f4.
 
 * List required volumes when called with 'restore --dry-run' [Matthias Blankertz]
 
@@ -1960,8 +1971,8 @@ registering more than one affinity prefix per backend. [KheOps]
 
 * Revert "Merge branch 's3-boto3-region-and-endpoint' into 'master'" [Kenneth Loafman]
 
-  This reverts commit f25e9740e17d24cf309aee136953d8fd51a7bf9b,
-  reversing   changes made to 2890326dfd7a5bf9ea340aca76d96ebcd25aa8b6.
+  This reverts commit 16947e6aa490fd0cb96f1954b410c003c6a5b101,
+  reversing   changes made to cf8bb66e8b87cf8b57680d6ab7a8a83ca9c955f9.
 
 * Bump version for LP dev build. [Kenneth Loafman]
 
@@ -1982,7 +1993,7 @@ registering more than one affinity prefix per backend. [KheOps]
 
 * Fix missing FileNotUploadedError in pydrive backend. [Martin Sucha]
 
-  Since dadbe2d2c22751f68f179833d36c94f2777ba425, FileNotUploadedError
+  Since 69eb0376ef6a1b32b8d6bf0f075247d49f06719e, FileNotUploadedError
   is not imported anymore, resulting in an exception in case   some of
   the files failed to upload. Adding the import back.
 
