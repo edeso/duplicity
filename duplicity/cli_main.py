@@ -95,23 +95,25 @@ def pre_parse_cmdline_options(arglist):
     args, remain = parser.parse_known_args(arglist)
 
     # maybe process implied backup/restore
-    if len(args.posargs) >= 2:
-        arg1, arg2 = args.posargs[0:2]
+    if len(args.posargs) >= 1:
+        arg1 = args.posargs[0]
         if arg1 in all_commands:
             # standard command usage, put everything back
             remain = args.posargs + remain
         else:
             # implied command usage, figure out which, if any
-            if is_path(arg1) and is_url(arg2):
-                log.Notice(_(f"Detected implied backup command: {arg1} {arg2}"))
-                remain = ['inc'] + args.posargs + remain
-                config.inc_explicit = False
-            elif is_url(arg1) and is_path(arg2):
-                log.Notice(_(f"Detected implied restore command: {arg1} {arg2}"))
-                remain = ['restore'] + args.posargs + remain
-            else:
-                command_line_error(_(f"Implied command detected.  One arg should be a PATH and the other a URL.\n"
-                                     f"Got: {arg1} {arg2}"))
+            if len(args.posargs) >= 2:
+                arg2 = args.posargs[1]
+                if is_path(arg1) and is_url(arg2):
+                    log.Notice(_(f"Detected implied backup command: {arg1} {arg2}"))
+                    remain = ['inc'] + args.posargs + remain
+                    config.inc_explicit = False
+                elif is_url(arg1) and is_path(arg2):
+                    log.Notice(_(f"Detected implied restore command: {arg1} {arg2}"))
+                    remain = ['restore'] + args.posargs + remain
+                else:
+                    command_line_error(_(f"Implied command attempted, but one arg should be a PATH, the other a URL.\n"
+                                         f"Got: {args.posargs}"))
 
     # harvest args to config
     harvest_namespace(args)
