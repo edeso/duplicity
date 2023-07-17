@@ -1,4 +1,17 @@
-## rel.2.0.0rc0 (2023-07-09)
+## rel.2.0.0rc1 (2023-07-17)
+
+### Changes
+
+* Fix implied command handling. [Kenneth Loafman]
+
+* Create regression test dir from old scripts. [Kenneth Loafman]
+
+
+## rel.2.0.0rc0 (2023-07-10)
+
+### Changes
+
+* Update CHANGELOG.md. [Kenneth Loafman]
 
 ### Fix
 
