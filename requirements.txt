@@ -2,9 +2,9 @@
 ##### installed first to avoid conflicts #####
 
 chardet<3.10
-urllib3<1.26
 cryptography==3.4.8
 requests
+urllib3<1.26
 
 ##### basic requirements #####
 
@@ -39,13 +39,12 @@ pydrive2
 pyrax
 python-swiftclient
 python-keystoneclient
-requests
 requests-oauthlib
 
 ##### testing libraries #####
 
 coverage
-mock >= 3.0.5
+mock>=3.0.5
 pycodestyle
 pylint
 pytest

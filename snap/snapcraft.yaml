@@ -54,6 +54,10 @@ parts:
             curl -s https://bootstrap.pypa.io/get-pip.py -o get-pip.py
             python3 get-pip.py
             snapcraftctl build
+            # Some python modules cause snap build to import argparse from pypi.
+            # argparse in pypi supports <= 3.4 so we need the distribution version.
+            # Let pip remove that version since the new one is in the distribution.
+            python3 -m pip uninstall -y argparse
             # python module tahoe-lafs dies trying to compile really old pycddl 
             # on other archs than amd64, as python plugin does not support 
             # conditions we only include it in amd64 snaps manually here
