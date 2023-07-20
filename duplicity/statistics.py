@@ -196,8 +196,7 @@ class StatsObj(object):
                     precision = 1
                 else:
                     precision = 2
-                fmt = f"{sign}%%.{precision}f {abbrev_string}"
-                return fmt % abbrev_count
+                return f"{sign}{abbrev_count:.{precision}f} {abbrev_string}"
         byte_count = round(byte_count)
         if byte_count == 1:
             return f"{sign}1 byte"
