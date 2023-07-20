@@ -295,8 +295,8 @@ class IDriveBackend(duplicity.backend.Backend):
         flist.write(intrim_file)
         flist.seek(0)
 
-        putrequest = (f"{self.cmd + self.auth_switch}  --device-id={{0}} --files-from={{1}} / {{2}}@{{3}}::home/{{4}}"
-                      .format(self.idrivedevid, flist.name, self.idriveid, self.idriveserver, remote_dirpath))
+        putrequest = f"{self.cmd}{self.auth_switch} --device-id={self.idriveid} " \
+                     f"--files-from={flist.name} / {self.idriveid}@{self.idriveserver}::home/{remote_dirpath}"
         log.Debug(f"put_file put command: {putrequest}")
         _, putresponse, _ = self.subprocess_popen(putrequest)
         log.Debug(f"put_file put response: {putresponse}")

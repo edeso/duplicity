@@ -98,7 +98,7 @@ class PatchingTest(UnitTestCase):
         for tarinfo in tf:
             namelist.append(tarinfo.name)
         for i in range(1, 6):
-            assert (f"tmp/{int(i)}") in namelist, namelist
+            assert f"tmp/{int(i)}" in namelist, namelist
 
     def test_doubledot_hole(self):
         """Test for the .. bug that lets tar overwrite parent dir"""
@@ -295,10 +295,10 @@ class TestInnerFuncs(UnitTestCase):
 
         ids = f"{int(os.getuid())}:{int(os.getgid())}"
 
-        testseq([self.snapshot()], (f"{ids} 600"), b"hello, world!")
-        testseq([self.snapshot(), self.delta1()], (f"{ids} 640"),
+        testseq([self.snapshot()], f"{ids} 600", b"hello, world!")
+        testseq([self.snapshot(), self.delta1()], f"{ids} 640",
                 b"aonseuth aosetnuhaonsuhtansoetuhaoe")
-        testseq([self.snapshot(), self.delta1(), self.delta2()], (f"{ids} 644"),
+        testseq([self.snapshot(), self.delta1(), self.delta2()], f"{ids} 644",
                 b"3499 34957839485792357 458348573")
 
 

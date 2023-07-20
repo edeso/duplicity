@@ -259,7 +259,7 @@ def compare_tar(tarfile1, tarfile2):
         try:
             ti2 = next(tf2_iter)
         except StopIteration:
-            assert 0, (f"Premature end to second tarfile, ti1.name = {ti1.name}")
+            assert 0, f"Premature end to second tarfile, ti1.name = {ti1.name}"
         # print "Comparing ", ti1.name, ti2.name
         assert tarinfo_eq(ti1, ti2), f"{ti1.name} {ti2.name}"
         if ti1.size != 0:
@@ -275,7 +275,7 @@ def compare_tar(tarfile1, tarfile2):
     except StopIteration:
         pass
     else:
-        assert 0, (f"Premature end to first tarfile, ti2.name = {ti2.name}")
+        assert 0, f"Premature end to first tarfile, ti2.name = {ti2.name}"
 
     tarfile1.close()
     tarfile2.close()
