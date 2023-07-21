@@ -240,8 +240,9 @@ class IDriveBackend(duplicity.backend.Backend):
                 self.idrivedevid = f"5c0b{item.attrib['device_id']}4b5z"
         if self.idrivedevid is None:
             el = self.request(
-                self.cmd + self.auth_switch +
-                f" --create-bucket --bucket-type=D --nick-name={self.bucket} --os=Linux --uid=987654321 "
+                f"{self.cmd}{self.auth_switch} "
+                f"--create-bucket --bucket-type=D --nick-name={self.bucket} "
+                f"--os=Linux --uid=987654321 "
                 f"{self.idriveid}@{self.idriveserver}::home/").find('item')
             # prefix and suffix reverse-engineered from Common.pl!
             self.idrivedevid = f"5c0b{el.attrib['device_id']}4b5z"
@@ -295,8 +296,10 @@ class IDriveBackend(duplicity.backend.Backend):
         flist.write(intrim_file)
         flist.seek(0)
 
-        putrequest = f"{self.cmd}{self.auth_switch} --device-id={self.idriveid} " \
-                     f"--files-from={flist.name} / {self.idriveid}@{self.idriveserver}::home/{remote_dirpath}"
+        putrequest = f"{self.cmd}{self.auth_switch} " \
+                     f"--device-id={self.idrivedevid} " \
+                     f"--files-from={flist.name} / " \
+                     f"{self.idriveid}@{self.idriveserver}::home/{remote_dirpath}"
         log.Debug(f"put_file put command: {putrequest}")
         _, putresponse, _ = self.subprocess_popen(putrequest)
         log.Debug(f"put_file put response: {putresponse}")
@@ -328,7 +331,7 @@ class IDriveBackend(duplicity.backend.Backend):
         flist.write(remote_path)
         flist.seek(0)
 
-        commandline = f"{self.cmd + self.auth_switch} " \
+        commandline = f"{self.cmd}{self.auth_switch} " \
                       f"--device-id={self.idrivedevid} " \
                       f"--files-from={flist.name} " \
                       f"{self.idriveid}@{self.idriveserver}::home/ " \
@@ -378,9 +381,11 @@ class IDriveBackend(duplicity.backend.Backend):
         log.Debug(f"delete: {filename} from remote file path {remote_path}")
 
         # delete files from file-list
-        delrequest = ((self.cmd + self.auth_switch +
-                       " --delete-items --device-id={0} --files-from={1} {2}@{3}::home/{4}")
-                      .format(self.idrivedevid, flist.name, self.idriveid, self.idriveserver, remote_path))
+        delrequest = f"{self.cmd}{self.auth_switch} " \
+                     f"--delete-items " \
+                     f"--device-id={self.idrivedevid} " \
+                     f"--files-from={flist.name} " \
+                     f"{self.idriveid}@{self.idriveserver}::home/{remote_path}"
         log.Debug(f"delete: {delrequest}")
         _, delresponse, _ = self.subprocess_popen(delrequest)
         log.Debug(f"delete response: {delresponse}")
@@ -408,9 +413,11 @@ class IDriveBackend(duplicity.backend.Backend):
         log.Debug(f"delete multiple files from remote file path {remote_path}")
 
         # delete files from file-list
-        delrequest = ((self.cmd + self.auth_switch +
-                       " --delete-items --device-id={0} --files-from={1} {2}@{3}::home/{4}")
-                      .format(self.idrivedevid, flist.name, self.idriveid, self.idriveserver, remote_path))
+        delrequest = f"{self.cmd}{self.auth_switch} " \
+                     f"--delete-items " \
+                     f"--device-id={self.idrivedevid} " \
+                     f"--files-from={flist.name} " \
+                     f"{self.idriveid}@{self.idriveserver}::home/{remote_path}"
         log.Debug(f"delete: {delrequest}")
         _, delresponse, _ = self.subprocess_popen(delrequest)
         log.Debug(f"delete response: {delresponse}")
