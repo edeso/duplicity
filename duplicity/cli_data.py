@@ -675,6 +675,7 @@ class OptionKwargs:
     }
     time_separator = {
         "metavar": _("char"),
+        "type": check_char,
         "help": "Character used like the ':' in time strings like\n"
                 "2002-08-06T04:22:00-07:00",
         "default": dflt(config.time_separator)

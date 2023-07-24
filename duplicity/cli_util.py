@@ -107,7 +107,7 @@ class DeprecationAction(DuplicityAction):
         command_line_error(dedent(
             f"""\
             Option '{option_string} was removed in 2.0.0.
-            The following options were deprecated in 2.0.0
+            These additional options were deprecated in 2.0.0
                 --exclude-filelist-stdin
                 --exclude-globbing-filelist
                 --gio
@@ -117,7 +117,9 @@ class DeprecationAction(DuplicityAction):
                 --s3-multipart-max-timeout
                 --s3-use-multiprocessing
                 --s3-use-server-side-encryption
-                --short-filenames"""))
+                --short-filenames
+                --time-separator
+                """))
 
 
 class ChangedOptionAction(DuplicityAction):
@@ -137,6 +139,13 @@ def _check_int(val):
         return int(val)
     except Exception as e:
         command_line_error(_(f"'{val}' is not an int: {str(e)}"))
+
+
+def check_char(val):
+    if len(val) == 1:
+        return val
+    else:
+        command_line_error(_(f"'{val} is not a single character."))
 
 
 def check_count(val):
