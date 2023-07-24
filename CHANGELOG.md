@@ -1,6 +1,30 @@
+## rel.2.0.0rc2 (2023-07-24)
+
+### Changes
+
+* Fix format strings in idrivedbackend.py. [Kenneth Loafman]
+
+* Add additional CLI checks. [Kenneth Loafman]
+
+* Fix format strings in idrivedbackend.py. [Kenneth Loafman]
+
+* Fix format string in statistics.py. [Kenneth Loafman]
+
+* Remove kerberos from snap builds. [Kenneth Loafman]
+
+  kerberos will not build in snapcraft.
+
+* Changes to allow building snaps. [Kenneth Loafman]
+
+  Found another bug in snapcraft, see:
+  https://bugs.launchpad.net/snapcraft/+bug/2028303
+
+
 ## rel.2.0.0rc1 (2023-07-17)
 
 ### Changes
+
+* Update CHANGELOG.md. [Kenneth Loafman]
 
 * Fix implied command handling. [Kenneth Loafman]
 
