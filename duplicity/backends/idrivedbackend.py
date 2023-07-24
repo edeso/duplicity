@@ -331,13 +331,13 @@ class IDriveBackend(duplicity.backend.Backend):
         flist.write(remote_path)
         flist.seek(0)
 
-        commandline = f"{self.cmd}{self.auth_switch} " \
-                      f"--device-id={self.idrivedevid} " \
-                      f"--files-from={flist.name} " \
-                      f"{self.idriveid}@{self.idriveserver}::home/ " \
-                      f"{tmpdir}"
-        log.Debug(f"get command: {commandline}")
-        _, getresponse, _ = self.subprocess_popen(commandline)
+        getrequest = f"{self.cmd}{self.auth_switch} " \
+                     f"--device-id={self.idrivedevid} " \
+                     f"--files-from={flist.name} " \
+                     f"{self.idriveid}@{self.idriveserver}::home/ " \
+                     f"{tmpdir}"
+        log.Debug(f"get command: {getrequest}")
+        _, getresponse, _ = self.subprocess_popen(getrequest)
         log.Debug(f"_get response: {getresponse}")
 
         flist.close()
