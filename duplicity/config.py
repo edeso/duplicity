@@ -204,10 +204,6 @@ async_concurrency = 0
 # that are otherwise not expressable in a valid hostname.
 s3_use_new_style = False
 
-# Whether to create European buckets (sorry, hard-coded to only
-# support european for now).
-s3_european_buckets = False
-
 # File owner uid keeps number from tar file. Like same option in GNU tar.
 numeric_owner = False
 

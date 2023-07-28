@@ -262,7 +262,10 @@ def process_command_line(cmdline_list):
 
 
 if __name__ == "__main__":
+    import types
     log.setup()
-    args = process_command_line(sys.argv[1:])
-    for a, v in sorted(args.__dict__.items()):
-        print(f"{a} = {v}")
+    action = process_command_line(sys.argv[1:])
+    for a, v in sorted(config.__dict__.items()):
+        if a.startswith("_") or isinstance(config.__dict__[a], types.ModuleType):
+            continue
+        print(f"{a} = {v} ({type(config.__dict__[a])})")

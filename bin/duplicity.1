@@ -839,26 +839,6 @@ were set.
 .RE
 
 .TP
-.BI "--s3-european-buckets"
-.RS
-When using the Amazon S3 backend, create buckets in Europe instead of
-the default (requires
-.B --s3-use-new-style
-). Also see the
-.B EUROPEAN S3 BUCKETS
-section.
-
-.B NOTE:
-This option does not apply when using the
-.B boto3
-backend, which does not create buckets.
-
-See also
-.B "A NOTE ON AMAZON S3"
-below.
-.RE
-
-.TP
 .BI "--s3-multipart-chunk-size"
 .RS
 Chunk size (in MB, default is 20MB) used for S3 multipart uploads. Adjust this
@@ -884,24 +864,6 @@ and CPU utilization.
 
 .B NOTE:
 Too many concurrent uploads may have diminishing returns.
-
-See also
-.B "A NOTE ON AMAZON S3"
-below.
-.RE
-
-.TP
-.BI "--s3-multipart-max-timeout"
-.RS
-You can control the maximum time (in seconds) a multipart upload can spend on
-uploading a single chunk to S3. This may be useful if you find your system
-hanging on multipart uploads or if you'd like to control the time variance
-when uploading to S3 to ensure you kill connections to slow S3 endpoints.
-
-.B NOTE:
-This has no effect when using
-.B boto3
-backend.
 
 See also
 .B "A NOTE ON AMAZON S3"
@@ -990,25 +952,6 @@ This storage class has a lower storage cost but a higher per-request cost, and
 the storage cost is calculated against a 30-day storage minimum. According to
 Amazon, this storage is ideal for long-term file storage, backups, and disaster
 recovery.
-
-.TP
-.BI "--s3-use-multiprocessing"
-.RS
-Allow multipart volumne uploads to S3 through multiprocessing. This option
-requires Python 2.6 and can be used to make uploads to S3 more efficient.
-If enabled, files duplicity uploads to S3 will be split into chunks and
-uploaded in parallel. Useful if you want to saturate your bandwidth
-or if large files are failing during upload.
-
-.B NOTE:
-This has no effect when using the
-.B boto3
-backend. Boto3 always attempts to use multiprocessing.
-
-See also
-.B "A NOTE ON AMAZON S3"
-below.
-.RE
 
 .TP
 .BI "--s3-use-new-style"
@@ -2334,42 +2277,6 @@ ones in the Apps folder, will be synced to all connected computers.  You
 may prefer to use a separate Dropbox account specially for the backups,
 and not connect any computers to that account. Alternatively you can
 configure selective sync on all computers to avoid syncing of backup files
-
-.SH A NOTE ON EUROPEAN S3 BUCKETS
-Amazon S3 provides the ability to choose the location of a bucket upon
-its creation. The purpose is to enable the user to choose a location
-which is better located network topologically relative to the user,
-because it may allow for faster data transfers.
-.PP
-duplicity will create a new bucket the first time a bucket access is
-attempted. At this point, the bucket will be created in Europe if
-.BI --s3-european-buckets
-was given. For reasons having to do with how the Amazon S3 service
-works, this also requires the use of the
-.BI --s3-use-new-style
-option. This option turns on subdomain based bucket addressing in
-S3. The details are beyond the scope of this man page, but it is
-important to know that your bucket must not contain upper case letters
-or any other characters that are not valid parts of a
-hostname. Consequently, for reasons of backwards compatibility, use of
-subdomain based bucket addressing is not enabled by default.
-.PP
-Note that you will need to use
-.BI --s3-use-new-style
-for all operations on European buckets; not just upon initial
-creation.
-.PP
-You only need to use
-.BI --s3-european-buckets
-upon initial creation, but you may may use it at all times for
-consistency.
-.PP
-Further note that when creating a new European bucket, it can take a
-while before the bucket is fully accessible. At the time of this
-writing it is unclear to what extent this is an expected feature of
-Amazon S3, but in practice you may experience timeouts, socket errors
-or HTTP errors when trying to upload files to your newly created
-bucket. Give it a few minutes and the bucket should function normally.
 
 .SH A NOTE ON FILENAME PREFIXES
 

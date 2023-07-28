@@ -526,11 +526,6 @@ class OptionKwargs:
         "help": "Specity S3 endpoint",
         "default": dflt(config.s3_endpoint_url)
     }
-    s3_european_buckets = {
-        "action": "store_true",
-        "help": "Whether to create European buckets",
-        "default": dflt(config.s3_european_buckets)
-    }
     s3_unencrypted_connection = {
         "action": "store_true",
         "help": "Whether to use plain HTTP (without SSL) to send data to S3",
@@ -676,8 +671,8 @@ class OptionKwargs:
     time_separator = {
         "metavar": _("char"),
         "type": check_char,
-        "help": "Character used like the ':' in time strings like\n"
-                "2002-08-06T04:22:00-07:00",
+        "help": "Character used like the ':' in time strings like: 2002-08-06T04:22:00-07:00\n"
+                "Note: Not valid for backup commands full and inc, only to read older backups",
         "default": dflt(config.time_separator)
     }
     use_agent = {

@@ -282,3 +282,29 @@ class CommandlineTest(UnitTestCase):
         with self.assertRaises(CommandLineError) as cm:
             cline = "foo/bar file:///target_url --copy-blocksize=1024 --volsize=foo".split()
             cli_main.process_command_line(cline)
+
+    @pytest.mark.usefixtures("redirect_stdin")
+    def test_bad_command(self):
+        """
+        test bad commands
+        """
+        with self.assertRaises(CommandLineError) as cm:
+            cline = "fbx foo/bar file:///target_url".split()
+            cli_main.process_command_line(cline)
+
+        with self.assertRaises(CommandLineError) as cm:
+            cline = "rbx file:///target_url foo/bar".split()
+            cli_main.process_command_line(cline)
+
+    @pytest.mark.usefixtures("redirect_stdin")
+    def test_too_many_positionals(self):
+        """
+        test bad commands
+        """
+        with self.assertRaises(SystemExit) as cm:
+            cline = "fb foo/bar file:///target_url extra".split()
+            cli_main.process_command_line(cline)
+
+        with self.assertRaises(SystemExit) as cm:
+            cline = "rb file:///target_url foo/bar extra".split()
+            cli_main.process_command_line(cline)

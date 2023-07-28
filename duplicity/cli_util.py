@@ -26,6 +26,7 @@ import argparse
 import io
 import os
 import re
+import sys
 from textwrap import dedent
 from hashlib import md5
 
@@ -47,7 +48,8 @@ def command_line_error(message):
     """
     Indicate a command line error and exit
     """
-    raise CommandLineError(_(f"{message}\n") +
+    sys.tracebacklimit = 0
+    raise CommandLineError(f"{message}\n" +
                            _("Enter 'duplicity --help' for help screen."))
 
 
@@ -114,6 +116,7 @@ class DeprecationAction(DuplicityAction):
                 --include-filelist-stdin
                 --include-globbing-filelist
                 --old-filenames
+                --s3-auropean-buckets
                 --s3-multipart-max-timeout
                 --s3-use-multiprocessing
                 --s3-use-server-side-encryption
