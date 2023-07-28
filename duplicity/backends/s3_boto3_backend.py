@@ -115,20 +115,12 @@ class S3Boto3Backend(duplicity.backend.Backend):
             self.reset_connection()
 
         # files that should not in glacier and deep_archive, to allow smooth operation
-        if config.short_filenames:
-            glacier_exceptions = [
-                file_naming.full_manifest_re_short,
-                file_naming.inc_manifest_re_short,
-                file_naming.full_sig_re_short,
-                file_naming.new_sig_re_short
-            ]
-        else:
-            glacier_exceptions = [
-                file_naming.full_manifest_re,
-                file_naming.inc_manifest_re,
-                file_naming.full_sig_re,
-                file_naming.new_sig_re
-            ]
+        glacier_exceptions = [
+            file_naming.full_manifest_re,
+            file_naming.inc_manifest_re,
+            file_naming.full_sig_re,
+            file_naming.new_sig_re
+        ]
 
         def is_glacier_exception(filename):
             return any([x.match(filename) for x in glacier_exceptions])
