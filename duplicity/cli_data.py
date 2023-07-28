@@ -681,9 +681,9 @@ class OptionKwargs:
         "default": dflt(config.use_agent)
     }
     verbosity = {
-        "metavar": _("[0-9]"),
+        "metavar": _("verb"),
         "type": check_verbosity,
-        "help": "Logging verbosity",
+        "help": "Logging verbosity: [0-9] or [e, w, n, i, d] or [error, warning, notice, info, debug]",
         "default": dflt(log.NOTICE)
     }
     version = {
