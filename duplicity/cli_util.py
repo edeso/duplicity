@@ -232,7 +232,7 @@ def check_verbosity(val):
             verb = int(val)
             if verb < 0 or verb > 9:
                 fail = True
-        except valError:
+        except ValueError:
             fail = True
 
     if fail:
