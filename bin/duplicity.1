@@ -351,6 +351,11 @@ Specify the number of maximum connections to transfer one blob to Azure
 blob size exceeds 64MB. The default values is 2.
 
 .TP
+.BI --b2-hide-files
+Causes Duplicity to hide files in B2 instead of deleting them. Useful in
+combination with B2's lifecycle rules.
+
+.TP
 .BI "--backend-retry-delay " number
 Specifies the number of seconds that duplicity waits after an error has
 occurred before attempting to repeat the operation.
@@ -363,9 +368,15 @@ Alternatively you might choose
 .BR cloudfiles .
 
 .TP
-.BI --b2-hide-files
-Causes Duplicity to hide files in B2 instead of deleting them. Useful in
-combination with B2's lifecycle rules.
+.BI "--config-dir " path
+Allows selection of duplicity's configuratin dir.  Defaults to
+.BR ~/.config/duplicity .
+
+.TP
+.BI "--copy-blocksize " kilos
+Allows selection of blocksize in kilobytes to use in copying.  Increasing this may speed copying of large files.
+Defaults to
+.BR 128 .
 
 .TP
 .BI --no-check-remote
@@ -584,10 +595,6 @@ out.
 Use regular (PORT) data connections.
 
 .TP
-.BI --gio
-Use the GIO backend and interpret any URLs as GIO would.
-
-.TP
 .BI "--hidden-encrypt-key " key-id
 Same as
 .BR --encrypt-key ,
@@ -646,6 +653,19 @@ list should be of the form "--opt1 --opt2=parm" where the string is
 quoted and the only spaces allowed are between options.
 
 .TP
+.BI "--idr-fakeroot "
+idrived uses the concept of a "fakeroot" directory, defined via the
+--idr-fakeroot=... switch. This can be an existing directory, or the directory is
+created at runtime on the root of the (host) files system. (caveat: you have to have
+write access to the root!). Directories created at runtime are auto-removed on exit!
+.br
+So, in the above scheme, we could do:
+    duplicity --idr-fakeroot=nicepath idrived://DUPLICITY
+.br
+our files end-up at
+    <MYBUCKET>/DUPLICITY/nicepath
+
+.TP
 .BI "--include " shell_pattern
 Similar to
 .BI --exclude
@@ -686,21 +706,31 @@ Write specially-formatted versions of output messages to the specified file.
 The format used is designed to be easily consumable by other programs.
 
 .TP
+.BI --log-timestamp
+Write the log with timestamp and log level before the message, similar to syslog.
+
+.TP
 .BI "--max-blocksize " number
 .RS
 determines the number of the blocks examined for changes during the diff process.
 For files < 1MB the blocksize is a constant of 512.
 For files over 1MB the size is given by:
-
-file_blocksize = int((file_len / (2000 * 512)) * 512)
 .br
-return min(file_blocksize, config.max_blocksize)
-
+    file_blocksize = int((file_len / (2000 * 512)) * 512)
+    return min(file_blocksize, config.max_blocksize)
 where config.max_blocksize defaults to 2048.
 If you specify a larger max_blocksize, your difftar files will be larger, but your sigtar files will be smaller.
 If you specify a smaller max_blocksize, the reverse occurs.
 The --max-blocksize option should be in multiples of 512.
 .RE
+
+.TP
+.BI mf-purge
+Option for mediafire to purge files on delete instead of sending to trash.
+
+.TP
+.BI "mp-segment-size " megs
+Swift backend segment size in megabytes
 
 .TP
 .BI "--name " symbolicname
@@ -717,6 +747,13 @@ more than one distinct backup are encouraged to use this option.
 
 If not specified, the default value is a hash of the backend URL.
 .RE
+
+.TP
+.BI --no-check-remote
+Turn off validation of the remote manifest.  Checking is the default.
+No checking will allow you to backup without the private key, but will
+mean that the remote manifest may exist and be corrupted, leading to the
+possibility that the backup might not be recoverable.
 
 .TP
 .BI --no-compression
