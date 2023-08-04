@@ -265,7 +265,6 @@ this switch.
 
 .TP
 .BI "--archive-dir " path
-.RS
 The archive directory.
 
 .B NOTE:
@@ -313,7 +312,6 @@ no --archive-dir, --name=foo
 .IP 4.
 --archive-dir=/arch, --name=foo
  /arch/foo
-.RE
 .RE
 
 .TP
@@ -377,7 +375,6 @@ Allows selection of duplicity's configuratin dir.  Defaults to
 Allows selection of blocksize in kilobytes to use in copying.  Increasing this may speed copying of large files.
 Defaults to
 .BR 128 .
-
 .TP
 .BI --no-check-remote
 Turn off validation of the remote manifest.  Checking is the default.
@@ -489,6 +486,7 @@ section for more information.
 
 .TP
 .BI "--files-from " filename
+.RS
 Read a list of files to backup from filename rather than searching the entire
 backup source directory. Operation is otherwise normal, just on the specified
 subset of the backup source directory.
@@ -503,26 +501,23 @@ switch was given.
 It is not necessary to include the parent directory of listed files, their
 inclusion is implied. However, the content of any explicitly listed directories
 is not implied. All required files must be listed when this option is used.
+.RE
 
 .TP
 .BI "--file-prefix " prefix
 .PD 0
-
 .TP
 .BI "--file-prefix-manifest " prefix
 .PD 0
-
 .TP
 .BI "--file-prefix-archive " prefix
 .PD 0
-
 .TP
 .BI "--file-prefix-signature " prefix
 .RS
 Adds a prefix to either all files or only manifest, archive, signature files.
-
 The same set of prefixes must be passed in on backup and restore.
-
+.br
 If both global and type-specific prefixes are set, global prefix will go before
 type-specific prefixes.
 
@@ -719,17 +714,18 @@ For files over 1MB the size is given by:
     file_blocksize = int((file_len / (2000 * 512)) * 512)
     return min(file_blocksize, config.max_blocksize)
 where config.max_blocksize defaults to 2048.
+
 If you specify a larger max_blocksize, your difftar files will be larger, but your sigtar files will be smaller.
 If you specify a smaller max_blocksize, the reverse occurs.
 The --max-blocksize option should be in multiples of 512.
 .RE
 
 .TP
-.BI mf-purge
+.BI --mf-purge
 Option for mediafire to purge files on delete instead of sending to trash.
 
 .TP
-.BI "mp-segment-size " megs
+.BI "--mp-segment-size " megs
 Swift backend segment size in megabytes
 
 .TP
@@ -858,21 +854,6 @@ duplicity --rsync-options="--partial-dir=.rsync-partial" /home/me rsync://uid@ot
 .BI "--s3-endpoint-url " url
 .RS
 Specifies the endpoint URL of the S3 storage.
-
-.B NOTE:
-Due to API restrictions the legacy backend
-.B boto
-will use only the values
-.I scheme (protocol)
-and
-.I hostname
-from the given
-.IR url .
-Choosing
-.B 'http://'
-will disable SSL encryption, just as if
-.B --s3-unencrypted-connection
-were set.
 .RE
 
 .TP
@@ -911,11 +892,6 @@ below.
 .BI "--s3-region-name"
 .RS
 Specifies the region of the S3 storage. Usually mandatory if the bucket is created in a specific region.
-
-.B NOTE:
-Only in
-.B boto3
-backend.
 .RE
 
 .TP
@@ -984,62 +960,47 @@ all other data is stored in S3 Glacier.
 
 .TP
 .BI "--s3-use-ia"
+.RS
 Store volumes using Standard - Infrequent Access when uploading to Amazon S3.
 This storage class has a lower storage cost but a higher per-request cost, and
 the storage cost is calculated against a 30-day storage minimum. According to
 Amazon, this storage is ideal for long-term file storage, backups, and disaster
 recovery.
-
-.TP
-.BI "--s3-use-new-style"
-.RS
-When operating on Amazon S3 buckets, use new-style subdomain bucket
-addressing. This is now the preferred method to access Amazon S3, but
-is not backwards compatible if your bucket name contains upper-case
-characters or other characters that are not valid in a hostname.
-
-.B NOTE:
-This option has no effect when using the
-.B boto3
-backend, which will always use new style subdomain bucket naming.
-
-See also
-.B "A NOTE ON AMAZON S3"
-below.
 .RE
 
 .TP
 .BI "--s3-use-onezone-ia"
+.RS
 Store volumes using One Zone - Infrequent Access when uploading to Amazon S3.
 This storage is similar to Standard - Infrequent Access, but only stores object
 data in one Availability Zone.
+.RE
 
 .TP
 .BI "--s3-use-rrs"
+.RS
 Store volumes using Reduced Redundancy Storage when uploading to Amazon S3.
 This will lower the cost of storage but also lower the durability of stored
 volumes to 99.99% instead the 99.999999999% durability offered by Standard
 Storage on S3.
-
-.TP
-.BI "--s3-use-server-side-encryption"
-Allow use of server side encryption in S3
+.RE
 
 .TP
 .B --s3-use-server-side-kms-encryption
 .PD 0
-
 .TP
 .BI "--s3-kms-key-id " key_id
 .PD 0
-
 .TP
 .BI "--s3-kms-grant " grant
+.RS
 Enable server-side encryption using key management service.
+.RE
 
 .TP
 .BI "--scp-command " command
 .B (only ssh pexpect backend with --use-scp enabled)
+.RS
 The
 .I command
 will be used instead of "scp" to send or receive files.
@@ -1049,10 +1010,12 @@ See also
 .B "A NOTE ON SSH BACKENDS"
 section
 .BR "SSH pexpect backend" .
+.RE
 
 .TP
 .BI "--sftp-command " command
 .B (only ssh pexpect backend)
+.RS
 The
 .I command
 will be used instead of "sftp".
@@ -1061,9 +1024,11 @@ See also
 .B "A NOTE ON SSH BACKENDS"
 section
 .BR "SSH pexpect backend" .
+.RE
 
 .TP
 .BI "--sign-key " key-id
+.RS
 This option can be used when backing up, restoring or verifying.
 When backing up, all backup files will be signed with keyid
 .IR key .
@@ -1078,12 +1043,15 @@ signing key is supported. Last entry overrides all other entries.
 .br
 See also
 .BI "A NOTE ON SYMMETRIC ENCRYPTION AND SIGNING"
+.RE
 
 .TP
 .BI --ssh-askpass
+.RS
 Tells the ssh backend to prompt the user for the remote system password,
 if it was not defined in target url and no FTP_PASSWORD env var is set.
 This password is also used for passphrase-protected ssh keys.
+.RE
 
 .TP
 .BI "--ssh-options " options
@@ -1098,13 +1066,16 @@ will be passed verbatim to both scp and sftp, whose command line syntax
 differs slightly hence the options should therefore be given in the long option format described in
 .BR ssh_config(5).
 
+
 example of a list:
 
-duplicity --ssh-options="-oProtocol=2 -oIdentityFile='/my/backup/id'" /home/me scp://user@host/some_dir
+    duplicity --ssh-options="-oProtocol=2 -oIdentityFile='/my/backup/id'" /home/me scp://user@host/some_dir
+
 
 example with multiple parameters:
 
-duplicity --ssh-options="-oProtocol=2" --ssh-options="-oIdentityFile='/my/backup/id'" /home/me scp://user@host/some_dir
+    duplicity --ssh-options="-oProtocol=2" --ssh-options="-oIdentityFile='/my/backup/id'" /home/me scp://user@host/some_dir
+
 
 .B NOTE:
 The
@@ -1118,7 +1089,6 @@ or
 or
 .B -oGlobalKnownHostsFile
 settings. If needed provide more host specific options via ssh_config file.
-.RE
 .RE
 
 .TP
@@ -1185,11 +1155,18 @@ See also
 .RE
 
 .TP
-.BI -t time ", --time " time ", --restore-time " time
+.BI "-t " time ", --time " time ", --restore-time " time
+.RS
 Specify the time from which to restore or list files.
+
+See section
+.B TIME FORMATS
+for details. 
+.RE
 
 .TP
 .BI "--time-separator " char
+.RS
 Use
 .IR char
 as the time separator in filenames instead of colon (":").
@@ -1198,13 +1175,16 @@ as the time separator in filenames instead of colon (":").
 This option only applies to recovery and status style commands.
 We no longer create or write filenames with time separators,
 but will read older backups that may need this option.
+.RE
 
 .TP
 .BI "--timeout " seconds
+.RS
 Use
 .IR seconds
 as the socket timeout value if duplicity begins to timeout during
 network operations.  The default is 30 seconds.
+.RE
 
 .TP
 .BI --use-agent
@@ -1254,13 +1234,17 @@ upper-case versions -vN, -vNotice and -vNOTICE.
 
 .TP
 .BI --version
+.RS
 Print duplicity's version and quit.
+.RE
 
 .TP
 .BI "--volsize " number
+.RS
 Change the volume size to
 .IR number
 MB. Default is 200MB.
+.RE
 
 .TP
 .BI "--webdav-headers " "csv formatted key,value pairs"
@@ -1427,11 +1411,6 @@ use lftp+, ncftp+ prefixes to enforce a specific backend, default is lftp+ftp://
 .RS
 s3://bucket[/path]
 
-.B NOTE:
-use boto+gs://bucket[/path] or boto+s3://bucket[/path] to use legacy
-.B boto
-backend. default is boto3+s3://
-
 See
 .B "A NOTE ON GOOGLE CLOUD STORAGE"
 about
@@ -1588,13 +1567,7 @@ rsync://user@host.com[:port]/[relative|/absolute]_path
 .RS
 s3:///bucket_name[/path]
 
-.BR "defaults" " to the"
-.BR boto3 " backend boto3+s3://"
-.br
-.BR "alternatively" " try the legacy"
-.BR boto " backend boto+s3://host[:port]/bucket_name[/path]"
-
-For details see
+See also
 .B "A NOTE ON AMAZON S3"
 below.
 .RE
@@ -2086,26 +2059,13 @@ to setup the OAuth once again, but can otherwise keep your backups and config.
 .RE
 
 .SH A NOTE ON AMAZON S3
-When backing up to Amazon S3, two backend implementations are available.
-The older
-.B boto
-library, which is deprecated and is no longer maintained.
-And the recent
+Backing up to Amazon S3 utilizes the
 .B boto3
-backend based on the newer boto3 library. The new backend fixes several known
-limitations in the older backend, which developed as Amazon S3 evolved.
+library.
 
 The
 .B boto3
-backend should behave largely the same as the older backend,
-but there are some differences in the supported "--s3-..." options.
-Additionally, there are some compatibility differences.
-.br
-See the documentation of each option above regarding differences related to
-each backend.
-
-The
-.BR boto3 " backend does not support bucket creation."
+backend does not support bucket creation.
 This deliberate choice simplifies the code, and side steps
 problems related to region selection.  Additionally, it is probably
 not a good practice to give your backup role bucket creation rights.
@@ -2116,9 +2076,6 @@ The
 .B boto3
 backend only supports newer domain style buckets. Amazon is moving
 to deprecate the older bucket style, so migration is recommended.
-Use the
-.B boto
-backend for compatibility with buckets using older naming conventions.
 
 The
 .B boto3
@@ -2129,7 +2086,9 @@ restored out of band.  There are multiple options when restoring
 backups from cold storage, which vary in both cost and speed.
 See Amazon's documentation for details.
 
-Both backends use environment variables for authentication:
+The following environment variables are
+.B required
+for authentication:
 .br
 .RS
 .BR AWS_ACCESS_KEY_ID " (required),"
@@ -2141,7 +2100,9 @@ or
 .BR BOTO_CONFIG " (required) pointing to a boto config file."
 .RE
 For simplicity's sake we will document the use of the AWS_* vars only.
-Research boto documentation available in the web if you want to use  the config file.
+Research 
+.B boto3
+documentation available in the web if you want to use  the config file.
 
 .BR "boto3 backend" " example backup command line:"
 
@@ -2156,17 +2117,6 @@ AWS_ACCESS_KEY_ID=<key_id> AWS_SECRET_ACCESS_KEY=<access_key> duplicity /some/pa
 and other
 .B "--s3-..."
 options documented above.
-
-legacy
-.BR "boto backend" " example backup command line:"
-
-.RS
-AWS_ACCESS_KEY_ID=<key_id> AWS_SECRET_ACCESS_KEY=<access_key> duplicity /some/path boto+s3://[host:port]/bucket/subfolder
-.RE
-
-.RB "The url host setting is optional and allows one to define a custom endpoint host. you may add " "--s3-european-buckets"
-and other s3 options documented above if needed.
-
 
 .SH A NOTE ON AZURE ACCESS
 The Azure backend requires the Microsoft Azure Storage Blobs client library
@@ -2333,17 +2283,6 @@ Duplicity access to GCS currently relies on it's Interoperability API (basically
 This needs to actively be enabled before access is possible. For details read the next section
 .B Preparations
 below.
-.PP
-Two backends are available to access S3 namely
-.B boto3
-which is used via
-.I s3://
-(alias for
-.I boto3+s3://
-) and the legacy
-.B boto
-backend, usable via
-.IR boto+s3:// .
 
 .SS Preparations
 .IP 1.
@@ -2384,41 +2323,8 @@ supplying the
 manually.
 
 .RS
- AWS_ACCESS_KEY_ID=<keyid> AWS_SECRET_ACCESS_KEY=<secret> duplicity collection-status s3://<bucket>/<folder> --s3-endpoint-url=https://storage.googleapis.com
+AWS_ACCESS_KEY_ID=<keyid> AWS_SECRET_ACCESS_KEY=<secret> duplicity collection-status s3:///<bucket>/<folder> --s3-endpoint-url=https://storage.googleapis.com
 .RE
-
-.RB "or alternatively with legacy " boto
-using either
-.IR boto+gs:// .
-
-.RS
-GS_ACCESS_KEY_ID=<keyid> GS_SECRET_ACCESS_KEY=<secret> duplicity collection-status boto+gs://<bucket>/<folder>
-
-.BR NOTE: " The auth env vars are prefixed"
-.B GS_
-in this case!
-.RE
-
-or
-.I boto+s3://
-supplying the
-.B --s3-endpoint-url
-manually.
-
-.RS
- AWS_ACCESS_KEY_ID=<keyid> AWS_SECRET_ACCESS_KEY=<secret> duplicity collection-status s3://<bucket>/<folder> --s3-endpoint-url=https://storage.googleapis.com
-.RE
-
-Alternatively, you can run
-.B "gsutil config -a"
-to have the Google Cloud Storage utility populate the
-.B ~/.boto
-configuration file.
-
-.B NOTE:
-Also see section
-.B URL FORMAT
-for a brief overview about the url format expected.
 
 .SH A NOTE ON GDRIVE BACKEND
 GDrive: is a rewritten PyDrive: backend with less dependencies, and a
@@ -3100,11 +3006,6 @@ Some backends also require additional components (probably available as packages
 .BR "azure backend" " (Azure Storage Blob Service)"
 .B Microsoft Azure Storage Blobs client library for Python
 - https://pypi.org/project/azure-storage-blob/
-
-.TP
-.BR "boto backend" " (S3 Amazon Web Services, Google Cloud Storage) (legacy)"
-.B boto version 2.49 (2018/07/11)
-- http://github.com/boto/boto
 
 .TP
 .BR "boto3 backend" " (S3 Amazon Web Services, Google Cloud Storage) (default)"
