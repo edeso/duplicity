@@ -29,7 +29,7 @@ fi
 if [ "$#" -gt 1 ]; then
     echo "usage: $0 <comma-sep-list-of-architectures>"
     echo "      - default is amd64 only"
-    echo "      - working arch: arm64,amd64,armhf,ppc64el"
+    echo "      - working arch: amd64,arm64,armhf,ppc64el"
     exit 2
 elif [ "$#" -eq 1 ]; then
     BUILD="$1"
@@ -53,10 +53,8 @@ cd build/duplicity-"${VERSION}"
 # print version in build copy of snapcraft.yaml
 head -2 snap/snapcraft.yaml | tail -1
 
-if [ ${BUILD} == "amd64" ]; then
-    # build snap locally w/o multipass
-    snapcraft snap --destructive-mode
-else
-    # build snap via remote build on LP
-    snapcraft remote-build --build-on=${BUILD} --launchpad-accept-public-upload
-fi
+# kerberos will not build in snap so remove it
+sed -i s/kerberos/#kerberos/g requirements.txt
+
+# build snap via remote build on LP
+snapcraft remote-build --build-on=${BUILD} --launchpad-accept-public-upload

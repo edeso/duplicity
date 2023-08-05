@@ -25,14 +25,6 @@ apps:
             PYTHONPATH: "$SNAP/lib/python3.8/site-packages:\
                          $HOME/.local/lib/python3.8/site-packages:\
                          /lib/python3.8/site-packages"
-    rdiffdir:
-        command: bin/rdiffdir.sh
-        environment:
-            # see above
-            PATH: "$SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH:/snap/core20/current/usr/bin"
-            PYTHONPATH: "$SNAP/lib/python3.8/site-packages:\
-                         $HOME/.local/lib/python3.8/site-packages:\
-                         /lib/python3.8/site-packages"
     # printing env in snap for debug purposes, help's pinning snap startup issues (missing libs, _rsync ...)
     debug:
         command: bin/debug.sh
@@ -62,6 +54,10 @@ parts:
             curl -s https://bootstrap.pypa.io/get-pip.py -o get-pip.py
             python3 get-pip.py
             snapcraftctl build
+            # Some python modules cause snap build to import argparse from pypi.
+            # argparse in pypi supports <= 3.4 so we need the distribution version.
+            # Let pip remove that version since the new one is in the distribution.
+            python3 -m pip uninstall -y argparse
             # python module tahoe-lafs dies trying to compile really old pycddl 
             # on other archs than amd64, as python plugin does not support 
             # conditions we only include it in amd64 snaps manually here
@@ -74,7 +70,6 @@ parts:
         override-prime: |
             snapcraftctl prime
             cp -v "$SNAPCRAFT_PROJECT_DIR"/snap/local/launcher.sh "$SNAPCRAFT_PRIME"/bin/duplicity.sh
-            cp -v "$SNAPCRAFT_PROJECT_DIR"/snap/local/launcher.sh "$SNAPCRAFT_PRIME"/bin/rdiffdir.sh
             cp -v "$SNAPCRAFT_PROJECT_DIR"/snap/local/debug.sh "$SNAPCRAFT_PRIME"/bin/
         build-environment:
             - PYTHONPATH: "$SNAPCRAFT_PART_INSTALL/usr/lib/python3.8/dist-packages:\

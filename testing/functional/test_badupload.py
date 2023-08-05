@@ -20,34 +20,32 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
 
 import pytest
 import unittest
 
 from testing import _runtest_dir
-from . import CmdError, FunctionalTestCase
+from . import CmdError
+from . import FunctionalTestCase
 
 
 class BadUploadTest(FunctionalTestCase):
-    u"""
+    """
     Test missing volume upload using duplicity binary
     """
     @pytest.mark.slow
     def test_missing_file(self):
-        u"""
+        """
         Test basic lost file
         """
         try:
-            self.backup(u"full", u"{0}/testfiles/dir1".format(_runtest_dir), options=[u"--skip-volume=1"])
+            self.backup("full", f"{_runtest_dir}/testfiles/dir1", options=["--skip-volume=1"])
             self.fail()
         except CmdError as e:
             self.assertEqual(e.exit_status, 44, str(e))
         else:
-            self.fail(u'Expected CmdError not thrown')
+            self.fail('Expected CmdError not thrown')
 
 
-if __name__ == u"__main__":
+if __name__ == "__main__":
     unittest.main()

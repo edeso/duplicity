@@ -19,64 +19,62 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
+
+import unittest
 
 import pytest
-import unittest
 
 from testing import _runtest_dir
 from . import FunctionalTestCase
 
 
 class CleanupTest(FunctionalTestCase):
-    u"""
+    """
     Test cleanup using duplicity binary
     """
     @pytest.mark.slow
     def test_cleanup_after_partial(self):
-        u"""
+        """
         Regression test for https://bugs.launchpad.net/bugs/409593
         where duplicity deletes all the signatures during a cleanup
         after a failed backup.
         """
         self.make_largefiles()
-        good_files = self.backup(u"full", u"{0}/testfiles/largefiles".format(_runtest_dir))
-        good_files |= self.backup(u"inc", u"{0}/testfiles/largefiles".format(_runtest_dir))
-        good_files |= self.backup(u"inc", u"{0}/testfiles/largefiles".format(_runtest_dir))
-        self.backup(u"full", u"{0}/testfiles/largefiles".format(_runtest_dir), fail=1)
+        good_files = self.backup("full", f"{_runtest_dir}/testfiles/largefiles")
+        good_files |= self.backup("inc", f"{_runtest_dir}/testfiles/largefiles")
+        good_files |= self.backup("inc", f"{_runtest_dir}/testfiles/largefiles")
+        self.backup("full", f"{_runtest_dir}/testfiles/largefiles", fail=1)
         bad_files = self.get_backend_files()
         bad_files -= good_files
         self.assertNotEqual(bad_files, set())
         # the cleanup should go OK
-        self.run_duplicity(options=[u"cleanup", self.backend_url, u"--force"])
+        self.run_duplicity(options=["cleanup", self.backend_url, "--force"])
         leftovers = self.get_backend_files()
         self.assertEqual(good_files, leftovers)
-        self.backup(u"inc", u"{0}/testfiles/largefiles".format(_runtest_dir))
-        self.verify(u"{0}/testfiles/largefiles".format(_runtest_dir))
+        self.backup("inc", f"{_runtest_dir}/testfiles/largefiles")
+        self.verify(f"{_runtest_dir}/testfiles/largefiles")
 
-    def test_remove_all_but_n(self):
-        u"""
+    def test_remove_all_but_n_full(self):
+        """
         Test that remove-all-but-n works in the simple case.
         """
-        full1_files = self.backup(u"full", u"{0}/testfiles/empty_dir".format(_runtest_dir))
-        full2_files = self.backup(u"full", u"{0}/testfiles/empty_dir".format(_runtest_dir))
-        self.run_duplicity(options=[u"remove-all-but-n", u"1", self.backend_url, u"--force"])
+        full1_files = self.backup("full", f"{_runtest_dir}/testfiles/empty_dir")
+        full2_files = self.backup("full", f"{_runtest_dir}/testfiles/empty_dir")
+        self.run_duplicity(options=["remove-all-but-n-full", "1", self.backend_url, "--force"])
         leftovers = self.get_backend_files()
         self.assertEqual(full2_files, leftovers)
 
-    def test_remove_all_inc_of_but_n(self):
-        u"""
+    def test_remove_all_inc_of_but_n_full(self):
+        """
         Test that remove-all-inc-of-but-n-full works in the simple case.
         """
-        full1_files = self.backup(u"full", u"{0}/testfiles/empty_dir".format(_runtest_dir))
-        inc1_files = self.backup(u"inc", u"{0}/testfiles/empty_dir".format(_runtest_dir))
-        full2_files = self.backup(u"full", u"{0}/testfiles/empty_dir".format(_runtest_dir))
-        self.run_duplicity(options=[u"remove-all-inc-of-but-n-full", u"1", self.backend_url, u"--force"])
+        full1_files = self.backup("full", f"{_runtest_dir}/testfiles/empty_dir")
+        inc1_files = self.backup("inc", f"{_runtest_dir}/testfiles/empty_dir")
+        full2_files = self.backup("full", f"{_runtest_dir}/testfiles/empty_dir")
+        self.run_duplicity(options=["remove-all-inc-of-but-n-full", "1", self.backend_url, "--force"])
         leftovers = self.get_backend_files()
         self.assertEqual(full1_files | full2_files, leftovers)
 
 
-if __name__ == u"__main__":
+if __name__ == "__main__":
     unittest.main()

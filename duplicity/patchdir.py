@@ -19,28 +19,16 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from builtins import map
-from builtins import next
-from builtins import object
-from builtins import range
 
-import re
-import sys
 import tempfile
 
-from duplicity import errors
 from duplicity import diffdir
-from duplicity import config
-from duplicity import librsync
-from duplicity import log
+from duplicity import errors
 from duplicity import selection
-from duplicity import tarfile
 from duplicity import tempdir
-from duplicity import util
-from duplicity.lazy import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 from duplicity.path import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 
-u"""Functions for patching of directories"""
+"""Functions for patching of directories"""
 
 
 class PatchDirException(Exception):
@@ -48,20 +36,20 @@ class PatchDirException(Exception):
 
 
 def Patch(base_path, difftar_fileobj):
-    u"""Patch given base_path and file object containing delta"""
-    diff_tarfile = tarfile.TarFile(u"arbitrary", u"r", difftar_fileobj)
+    """Patch given base_path and file object containing delta"""
+    diff_tarfile = tarfile.TarFile("arbitrary", "r", difftar_fileobj)
     patch_diff_tarfile(base_path, diff_tarfile)
     assert not difftar_fileobj.close()
 
 
 def Patch_from_iter(base_path, fileobj_iter, restrict_index=()):
-    u"""Patch given base_path and iterator of delta file objects"""
+    """Patch given base_path and iterator of delta file objects"""
     diff_tarfile = TarFile_FromFileobjs(fileobj_iter)
     patch_diff_tarfile(base_path, diff_tarfile, restrict_index)
 
 
 def patch_diff_tarfile(base_path, diff_tarfile, restrict_index=()):
-    u"""Patch given Path object using delta tarfile (as in tarfile.TarFile)
+    """Patch given Path object using delta tarfile (as in tarfile.TarFile)
 
     If restrict_index is set, ignore any deltas in diff_tarfile that
     don't start with restrict_index.
@@ -80,12 +68,12 @@ def patch_diff_tarfile(base_path, diff_tarfile, restrict_index=()):
     ITR = IterTreeReducer(PathPatcher, [base_path])
     for basis_path, diff_ropath in collated:
         if basis_path:
-            log.Info(_(u"Patching %s") % (util.fsdecode(basis_path.get_relative_path())),
+            log.Info(_("Patching %s") % (os.fsdecode(basis_path.get_relative_path())),
                      log.InfoCode.patch_file_patching,
                      util.escape(basis_path.get_relative_path()))
             ITR(basis_path.index, basis_path, diff_ropath)
         else:
-            log.Info(_(u"Patching %s") % (util.fsdecode(diff_ropath.get_relative_path())),
+            log.Info(_("Patching %s") % (os.fsdecode(diff_ropath.get_relative_path())),
                      log.InfoCode.patch_file_patching,
                      util.escape(diff_ropath.get_relative_path()))
             ITR(diff_ropath.index, basis_path, diff_ropath)
@@ -99,7 +87,7 @@ def empty_iter():
 
 
 def filter_path_iter(path_iter, index):
-    u"""Rewrite path elements of path_iter so they start with index
+    """Rewrite path elements of path_iter so they start with index
 
     Discard any that doesn't start with index, and remove the index
     prefix from the rest.
@@ -114,7 +102,7 @@ def filter_path_iter(path_iter, index):
 
 
 def difftar2path_iter(diff_tarfile):
-    u"""Turn file-like difftarobj into iterator of ROPaths"""
+    """Turn file-like difftarobj into iterator of ROPaths"""
     tar_iter = iter(diff_tarfile)
     multivol_fileobj = None
 
@@ -126,7 +114,7 @@ def difftar2path_iter(diff_tarfile):
     except StopIteration:
         return
 
-    while 1:
+    while True:
         # This section relevant when a multivol diff is last in tar
         if not tarinfo_list[0]:
             return
@@ -138,7 +126,7 @@ def difftar2path_iter(diff_tarfile):
         ropath = ROPath(index)
         ropath.init_from_tarinfo(tarinfo_list[0])
         ropath.difftype = difftype
-        if difftype == u"deleted":
+        if difftype == "deleted":
             ropath.type = None
         elif ropath.isreg():
             if multivol:
@@ -157,26 +145,23 @@ def difftar2path_iter(diff_tarfile):
 
 
 def get_index_from_tarinfo(tarinfo):
-    u"""Return (index, difftype, multivol) pair from tarinfo object"""
-    for prefix in [u"snapshot/", u"diff/", u"deleted/",
-                   u"multivol_diff/", u"multivol_snapshot/"]:
+    """Return (index, difftype, multivol) pair from tarinfo object"""
+    for prefix in ["snapshot/", "diff/", "deleted/",
+                   "multivol_diff/", "multivol_snapshot/"]:
         tiname = util.get_tarinfo_name(tarinfo)
-        if sys.version_info.major == 2 and isinstance(prefix, unicode):
-            prefix = prefix.encode()
         if tiname.startswith(prefix):
             name = tiname[len(prefix):]  # strip prefix
-            if prefix.startswith(u"multivol"):
-                if prefix == u"multivol_diff/":
-                    difftype = u"diff"
+            if prefix.startswith("multivol"):
+                if prefix == "multivol_diff/":
+                    difftype = "diff"
                 else:
-                    difftype = u"snapshot"
+                    difftype = "snapshot"
                 multivol = 1
                 name, num_subs = \
-                    re.subn(u"(?s)^multivol_(diff|snapshot)/?(.*)/[0-9]+$",
-                            u"\\2", tiname)
+                    re.subn("(?s)^multivol_(diff|snapshot)/?(.*)/[0-9]+$",
+                            "\\2", tiname)
                 if num_subs != 1:
-                    raise PatchDirException(u"Unrecognized diff entry %s" %
-                                            tiname)
+                    raise PatchDirException(f"Unrecognized diff entry {tiname}")
             else:
                 difftype = prefix[:-1]  # strip trailing /
                 name = tiname[len(prefix):]
@@ -185,30 +170,26 @@ def get_index_from_tarinfo(tarinfo):
                 multivol = 0
             break
     else:
-        raise PatchDirException(u"Unrecognized diff entry %s" %
-                                tiname)
+        raise PatchDirException(f"Unrecognized diff entry {tiname}")
     if name == r"." or name == r"":
         index = ()
     else:
-        if sys.version_info.major >= 3:
-            index = tuple(util.fsencode(name).split(b"/"))
-        else:
-            index = tuple(name.split(b"/"))
+        index = tuple(os.fsencode(name).split(b"/"))
         if b'..' in index:
-            raise PatchDirException(u"Tar entry %s contains '..'.  Security "
-                                    u"violation" % util.fsdecode(tiname))
+            raise PatchDirException(f"Tar entry {os.fsdecode(tiname)} contains '..'.  Security violation")
     return index, difftype, multivol
 
 
 class Multivol_Filelike(object):
-    u"""Emulate a file like object from multivols
+    """Emulate a file like object from multivols
 
     Maintains a buffer about the size of a volume.  When it is read()
     to the end, pull in more volumes as desired.
 
     """
+
     def __init__(self, tf, tar_iter, tarinfo_list, index):
-        u"""Initializer.  tf is TarFile obj, tarinfo is first tarinfo"""
+        """Initializer.  tf is TarFile obj, tarinfo is first tarinfo"""
         self.tf, self.tar_iter = tf, tar_iter
         self.tarinfo_list = tarinfo_list  # must store as list for write access
         self.index = index
@@ -216,7 +197,7 @@ class Multivol_Filelike(object):
         self.at_end = False
 
     def read(self, length=-1):
-        u"""Read length bytes from file"""
+        """Read length bytes from file"""
         if length < 0:
             while self.addtobuffer():
                 pass
@@ -232,7 +213,7 @@ class Multivol_Filelike(object):
         return result
 
     def addtobuffer(self):
-        u"""Add next chunk to buffer"""
+        """Add next chunk to buffer"""
         if self.at_end:
             return False
         index, difftype, multivol = get_index_from_tarinfo(self.tarinfo_list[0])
@@ -255,7 +236,7 @@ class Multivol_Filelike(object):
         return True
 
     def close(self):
-        u"""If not at end, read remaining data"""
+        """If not at end, read remaining data"""
         if not self.at_end:
             while True:
                 self.buffer = b""
@@ -265,15 +246,16 @@ class Multivol_Filelike(object):
 
 
 class PathPatcher(ITRBranch):
-    u"""Used by DirPatch, process the given basis and diff"""
+    """Used by DirPatch, process the given basis and diff"""
+
     def __init__(self, base_path):
-        u"""Set base_path, Path of root of tree"""
+        """Set base_path, Path of root of tree"""
         self.dir_basis_path = None
         self.base_path = base_path
         self.dir_diff_ropath = None
 
     def start_process(self, index, basis_path, diff_ropath):
-        u"""Start processing when diff_ropath is a directory"""
+        """Start processing when diff_ropath is a directory"""
         if not (diff_ropath and diff_ropath.isdir()):
             assert index == (), util.uindex(index)  # should only happen for first elem
             self.fast_process(index, basis_path, diff_ropath)
@@ -290,44 +272,45 @@ class PathPatcher(ITRBranch):
         self.dir_diff_ropath = diff_ropath
 
     def end_process(self):
-        u"""Copy directory permissions when leaving tree"""
+        """Copy directory permissions when leaving tree"""
         if self.dir_diff_ropath:
             self.dir_diff_ropath.copy_attribs(self.dir_basis_path)
 
     def can_fast_process(self, index, basis_path, diff_ropath):  # pylint: disable=unused-argument
-        u"""No need to recurse if diff_ropath isn't a directory"""
+        """No need to recurse if diff_ropath isn't a directory"""
         return not (diff_ropath and diff_ropath.isdir())
 
     def fast_process(self, index, basis_path, diff_ropath):
-        u"""For use when neither is a directory"""
+        """For use when neither is a directory"""
         if not diff_ropath:
             return  # no change
         elif not basis_path:
-            if diff_ropath.difftype == u"deleted":
+            if diff_ropath.difftype == "deleted":
                 pass  # already deleted
             else:
                 # just copy snapshot over
                 diff_ropath.copy(self.base_path.new_index(index))
-        elif diff_ropath.difftype == u"deleted":
+        elif diff_ropath.difftype == "deleted":
             if basis_path.isdir():
                 basis_path.deltree()
             else:
                 basis_path.delete()
-        elif not basis_path.isreg() or (basis_path.isreg() and diff_ropath.difftype == u"snapshot"):
+        elif not basis_path.isreg() or (basis_path.isreg() and diff_ropath.difftype == "snapshot"):
             if basis_path.isdir():
                 basis_path.deltree()
             else:
                 basis_path.delete()
             diff_ropath.copy(basis_path)
         else:
-            assert diff_ropath.difftype == u"diff", diff_ropath.difftype
+            assert diff_ropath.difftype == "diff", diff_ropath.difftype
             basis_path.patch_with_attribs(diff_ropath)
 
 
 class TarFile_FromFileobjs(object):
-    u"""Like a tarfile.TarFile iterator, but read from multiple fileobjs"""
+    """Like a tarfile.TarFile iterator, but read from multiple fileobjs"""
+
     def __init__(self, fileobj_iter):
-        u"""Make new tarinfo iterator
+        """Make new tarinfo iterator
 
         fileobj_iter should be an iterator of file objects opened for
         reading.  They will be closed at end of reading.
@@ -341,7 +324,7 @@ class TarFile_FromFileobjs(object):
         return self
 
     def set_tarfile(self):
-        u"""Set tarfile from next file object, or raise StopIteration"""
+        """Set tarfile from next file object, or raise StopIteration"""
         if self.current_fp:
             assert not self.current_fp.close()
 
@@ -354,7 +337,7 @@ class TarFile_FromFileobjs(object):
                 self.current_fp = x
                 break
 
-        self.tarfile = util.make_tarfile(u"r", self.current_fp)
+        self.tarfile = util.make_tarfile("r", self.current_fp)
         self.tar_iter = iter(self.tarfile)
 
     def __next__(self):
@@ -371,12 +354,12 @@ class TarFile_FromFileobjs(object):
             return next(self.tar_iter)
 
     def extractfile(self, tarinfo):
-        u"""Return data associated with given tarinfo"""
+        """Return data associated with given tarinfo"""
         return self.tarfile.extractfile(tarinfo)
 
 
 def collate_iters(iter_list):
-    u"""Collate iterators by index
+    """Collate iterators by index
 
     Input is a list of n iterators each of which must iterate elements
     with an index attribute.  The elements must come out in increasing
@@ -397,7 +380,7 @@ def collate_iters(iter_list):
     elems = overflow[:]
 
     def setrorps(overflow, elems):
-        u"""Set the overflow and rorps list"""
+        """Set the overflow and rorps list"""
         for i in range(iter_num):
             if not overflow[i] and elems[i] is None:
                 try:
@@ -407,11 +390,11 @@ def collate_iters(iter_list):
                     elems[i] = None
 
     def getleastindex(elems):
-        u"""Return the first index in elems, assuming elems isn't empty"""
+        """Return the first index in elems, assuming elems isn't empty"""
         return min([elem.index for elem in [x for x in elems if x]])
 
     def yield_tuples(iter_num, overflow, elems):
-        while 1:
+        while True:
             setrorps(overflow, elems)
             if None not in overflow:
                 break
@@ -425,11 +408,13 @@ def collate_iters(iter_list):
                 else:
                     yieldval.append(None)
             yield tuple(yieldval)
+
     return yield_tuples(iter_num, overflow, elems)
 
 
 class IndexedTuple(object):
-    u"""Like a tuple, but has .index (used previously by collate_iters)"""
+    """Like a tuple, but has .index (used previously by collate_iters)"""
+
     def __init__(self, index, sequence):
         self.index = index
         self.data = tuple(sequence)
@@ -438,7 +423,7 @@ class IndexedTuple(object):
         return len(self.data)
 
     def __getitem__(self, key):
-        u"""This only works for numerical keys (easier this way)"""
+        """This only works for numerical keys (easier this way)"""
         return self.data[key]
 
     def __lt__(self, other):
@@ -474,11 +459,11 @@ class IndexedTuple(object):
             return False
 
     def __str__(self):
-        return u"(%s).%s" % (u", ".join(map(str, self.data)), self.index)
+        return f"({', '.join(map(str, self.data))}).{self.index}"
 
 
 def normalize_ps(patch_sequence):
-    u"""Given an sequence of ROPath deltas, remove blank and unnecessary
+    """Given an sequence of ROPath deltas, remove blank and unnecessary
 
     The sequence is assumed to be in patch order (later patches apply
     to earlier ones).  A patch is unnecessary if a later one doesn't
@@ -493,31 +478,29 @@ def normalize_ps(patch_sequence):
         if delta is not None:
             # skip blank entries
             result_list.insert(0, delta)
-            if delta.difftype != u"diff":
+            if delta.difftype != "diff":
                 break
         i -= 1
     return result_list
 
 
 def patch_seq2ropath(patch_seq):
-    u"""Apply the patches in patch_seq, return single ropath"""
+    """Apply the patches in patch_seq, return single ropath"""
     first = patch_seq[0]
-    assert first.difftype != u"diff", u"First patch in sequence " \
-                                      u"%s was a diff" % patch_seq
+    assert first.difftype != "diff", f"First patch in sequence {patch_seq} was a diff"
     if not first.isreg():
         # No need to bother with data if not regular file
-        assert len(patch_seq) == 1, u"Patch sequence isn't regular, but " \
-                                    u"has %d entries" % len(patch_seq)
+        assert len(patch_seq) == 1, f"Patch sequence isn't regular, but has {len(patch_seq)} entries"
         return first.get_ropath()
 
-    current_file = first.open(u"rb")
+    current_file = first.open("rb")
 
     for delta_ropath in patch_seq[1:]:
-        assert delta_ropath.difftype == u"diff", delta_ropath.difftype
+        assert delta_ropath.difftype == "diff", delta_ropath.difftype
         try:
             cur_file.fileno()
-        except:
-            u"""
+        except Exception as e:
+            """
             librsync insists on a real file object, which we create manually
             by using the duplicity.tempdir to tell us where.
 
@@ -531,14 +514,14 @@ def patch_seq2ropath(patch_seq):
             tempfp.seek(0)
             current_file = tempfp
         current_file = librsync.PatchedFile(current_file,
-                                            delta_ropath.open(u"rb"))
+                                            delta_ropath.open("rb"))
     result = patch_seq[-1].get_ropath()
     result.setfileobj(current_file)
     return result
 
 
 def integrate_patch_iters(iter_list):
-    u"""Combine a list of iterators of ropath patches
+    """Combine a list of iterators of ropath patches
 
     The iter_list should be sorted in patch order, and the elements in
     each iter_list need to be orderd by index.  The output will be an
@@ -555,14 +538,14 @@ def integrate_patch_iters(iter_list):
                 yield final_ropath
         except Exception as e:
             filename = normalized[-1].get_ropath().get_relative_path()
-            log.Warn(_(u"Error '%s' patching %s") %
-                     (util.uexc(e), util.fsdecode(filename)),
+            log.Warn(_("Error '%s' patching %s") %
+                     (util.uexc(e), os.fsdecode(filename)),
                      log.WarningCode.cannot_process,
                      util.escape(filename))
 
 
 def tarfiles2rop_iter(tarfile_list, restrict_index=()):
-    u"""Integrate tarfiles of diffs into single ROPath iter
+    """Integrate tarfiles of diffs into single ROPath iter
 
     Then filter out all the diffs in that index which don't start with
     the restrict_index.
@@ -576,7 +559,7 @@ def tarfiles2rop_iter(tarfile_list, restrict_index=()):
 
 
 def Write_ROPaths(base_path, rop_iter):
-    u"""Write out ropaths in rop_iter starting at base_path
+    """Write out ropaths in rop_iter starting at base_path
 
     Returns 1 if something was actually written, 0 otherwise.
 
@@ -592,20 +575,21 @@ def Write_ROPaths(base_path, rop_iter):
 
 
 class ROPath_IterWriter(ITRBranch):
-    u"""Used in Write_ROPaths above
+    """Used in Write_ROPaths above
 
     We need to use an ITR because we have to update the
     permissions/times of directories after we write the files in them.
 
     """
+
     def __init__(self, base_path):
-        u"""Set base_path, Path of root of tree"""
+        """Set base_path, Path of root of tree"""
         self.base_path = base_path
         self.dir_diff_ropath = None
         self.dir_new_path = None
 
     def start_process(self, index, ropath):
-        u"""Write ropath.  Only handles the directory case"""
+        """Write ropath.  Only handles the directory case"""
         if not ropath.isdir():
             # Base may not be a directory, but rest should
             assert ropath.index == (), ropath.index
@@ -624,19 +608,19 @@ class ROPath_IterWriter(ITRBranch):
         self.dir_diff_ropath = ropath
 
     def end_process(self):
-        u"""Update information of a directory when leaving it"""
+        """Update information of a directory when leaving it"""
         if self.dir_diff_ropath:
             self.dir_diff_ropath.copy_attribs(self.dir_new_path)
 
     def can_fast_process(self, index, ropath):  # pylint: disable=unused-argument
-        u"""Can fast process (no recursion) if ropath isn't a directory"""
-        log.Info(_(u"Writing %s of type %s") %
-                 (util.fsdecode(ropath.get_relative_path()), ropath.type),
+        """Can fast process (no recursion) if ropath isn't a directory"""
+        log.Info(_("Writing %s of type %s") %
+                 (os.fsdecode(ropath.get_relative_path()), ropath.type),
                  log.InfoCode.patch_file_writing,
-                 u"%s %s" % (util.escape(ropath.get_relative_path()), ropath.type))
+                 f"{util.escape(ropath.get_relative_path())} {ropath.type}")
         return not ropath.isdir()
 
     def fast_process(self, index, ropath):
-        u"""Write non-directory ropath to destination"""
+        """Write non-directory ropath to destination"""
         if ropath.exists():
             ropath.copy(self.base_path.new_index(index))

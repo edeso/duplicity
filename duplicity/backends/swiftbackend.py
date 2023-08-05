@@ -18,20 +18,19 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from builtins import str
 import os
 
 import duplicity.backend
 from duplicity import config
 from duplicity import log
-from duplicity import util
 from duplicity.errors import BackendException
 
 
 class SwiftBackend(duplicity.backend.Backend):
-    u"""
+    """
     Backend for Swift
     """
+
     def __init__(self, parsed_url):
         duplicity.backend.Backend.__init__(self, parsed_url)
 
@@ -40,9 +39,8 @@ class SwiftBackend(duplicity.backend.Backend):
             from swiftclient import Connection
             from swiftclient import ClientException
         except ImportError as e:
-            raise BackendException(u"""\
-Swift backend requires the python-swiftclient library.
-Exception: %s""" % str(e))
+            raise BackendException(f"""Swift backend requires the python-swiftclient library.
+Exception: {str(e)}""")
 
         self.resp_exc = ClientException
         conn_kwargs = {}
@@ -50,119 +48,115 @@ Exception: %s""" % str(e))
         svc_options = {}
 
         # if the user has already authenticated
-        if u'SWIFT_PREAUTHURL' in os.environ and u'SWIFT_PREAUTHTOKEN' in os.environ:
-            conn_kwargs[u'preauthurl'] = os.environ[u'SWIFT_PREAUTHURL']
-            conn_kwargs[u'preauthtoken'] = os.environ[u'SWIFT_PREAUTHTOKEN']
+        if 'SWIFT_PREAUTHURL' in os.environ and 'SWIFT_PREAUTHTOKEN' in os.environ:
+            conn_kwargs['preauthurl'] = os.environ['SWIFT_PREAUTHURL']
+            conn_kwargs['preauthtoken'] = os.environ['SWIFT_PREAUTHTOKEN']
 
         else:
-            if u'SWIFT_USERNAME' not in os.environ:
-                raise BackendException(u'SWIFT_USERNAME environment variable '
-                                       u'not set.')
+            if 'SWIFT_USERNAME' not in os.environ:
+                raise BackendException('SWIFT_USERNAME environment variable '
+                                       'not set.')
 
-            if u'SWIFT_PASSWORD' not in os.environ:
-                raise BackendException(u'SWIFT_PASSWORD environment variable '
-                                       u'not set.')
+            if 'SWIFT_PASSWORD' not in os.environ:
+                raise BackendException('SWIFT_PASSWORD environment variable '
+                                       'not set.')
 
-            if u'SWIFT_AUTHURL' not in os.environ:
-                raise BackendException(u'SWIFT_AUTHURL environment variable '
-                                       u'not set.')
+            if 'SWIFT_AUTHURL' not in os.environ:
+                raise BackendException('SWIFT_AUTHURL environment variable '
+                                       'not set.')
 
-            svc_options[u'os_username'] = conn_kwargs[u'user'] = os.environ[u'SWIFT_USERNAME']
-            svc_options[u'os_password'] = conn_kwargs[u'key'] = os.environ[u'SWIFT_PASSWORD']
-            svc_options[u'os_auth_url'] = conn_kwargs[u'authurl'] = os.environ[u'SWIFT_AUTHURL']
+            svc_options['os_username'] = conn_kwargs['user'] = os.environ['SWIFT_USERNAME']
+            svc_options['os_password'] = conn_kwargs['key'] = os.environ['SWIFT_PASSWORD']
+            svc_options['os_auth_url'] = conn_kwargs['authurl'] = os.environ['SWIFT_AUTHURL']
 
-        if u'SWIFT_AUTHVERSION' in os.environ:
-            svc_options[u'auth_version'] = conn_kwargs[u'auth_version'] = os.environ[u'SWIFT_AUTHVERSION']
-            if os.environ[u'SWIFT_AUTHVERSION'] == u'3':
-                if u'SWIFT_USER_DOMAIN_NAME' in os.environ:
-                    os_options.update({u'user_domain_name': os.environ[u'SWIFT_USER_DOMAIN_NAME']})
-                if u'SWIFT_USER_DOMAIN_ID' in os.environ:
-                    os_options.update({u'user_domain_id': os.environ[u'SWIFT_USER_DOMAIN_ID']})
-                if u'SWIFT_PROJECT_DOMAIN_NAME' in os.environ:
-                    os_options.update({u'project_domain_name': os.environ[u'SWIFT_PROJECT_DOMAIN_NAME']})
-                if u'SWIFT_PROJECT_DOMAIN_ID' in os.environ:
-                    os_options.update({u'project_domain_id': os.environ[u'SWIFT_PROJECT_DOMAIN_ID']})
-                if u'SWIFT_PROJECT_ID' in os.environ:
-                    os_options.update({u'project_id': os.environ[u'SWIFT_PROJECT_ID']})
-                if u'SWIFT_PROJECT_NAME' in os.environ:
-                    os_options.update({u'project_name': os.environ[u'SWIFT_PROJECT_NAME']})
-                if u'SWIFT_TENANTNAME' in os.environ:
-                    os_options.update({u'tenant_name': os.environ[u'SWIFT_TENANTNAME']})
-                if u'SWIFT_ENDPOINT_TYPE' in os.environ:
-                    os_options.update({u'endpoint_type': os.environ[u'SWIFT_ENDPOINT_TYPE']})
-                if u'SWIFT_USERID' in os.environ:
-                    os_options.update({u'user_id': os.environ[u'SWIFT_USERID']})
-                if u'SWIFT_TENANTID' in os.environ:
-                    os_options.update({u'tenant_id': os.environ[u'SWIFT_TENANTID']})
-                if u'SWIFT_REGIONNAME' in os.environ:
-                    os_options.update({u'region_name': os.environ[u'SWIFT_REGIONNAME']})
+        if 'SWIFT_AUTHVERSION' in os.environ:
+            svc_options['auth_version'] = conn_kwargs['auth_version'] = os.environ['SWIFT_AUTHVERSION']
+            if os.environ['SWIFT_AUTHVERSION'] == '3':
+                if 'SWIFT_USER_DOMAIN_NAME' in os.environ:
+                    os_options.update({'user_domain_name': os.environ['SWIFT_USER_DOMAIN_NAME']})
+                if 'SWIFT_USER_DOMAIN_ID' in os.environ:
+                    os_options.update({'user_domain_id': os.environ['SWIFT_USER_DOMAIN_ID']})
+                if 'SWIFT_PROJECT_DOMAIN_NAME' in os.environ:
+                    os_options.update({'project_domain_name': os.environ['SWIFT_PROJECT_DOMAIN_NAME']})
+                if 'SWIFT_PROJECT_DOMAIN_ID' in os.environ:
+                    os_options.update({'project_domain_id': os.environ['SWIFT_PROJECT_DOMAIN_ID']})
+                if 'SWIFT_PROJECT_ID' in os.environ:
+                    os_options.update({'project_id': os.environ['SWIFT_PROJECT_ID']})
+                if 'SWIFT_PROJECT_NAME' in os.environ:
+                    os_options.update({'project_name': os.environ['SWIFT_PROJECT_NAME']})
+                if 'SWIFT_TENANTNAME' in os.environ:
+                    os_options.update({'tenant_name': os.environ['SWIFT_TENANTNAME']})
+                if 'SWIFT_ENDPOINT_TYPE' in os.environ:
+                    os_options.update({'endpoint_type': os.environ['SWIFT_ENDPOINT_TYPE']})
+                if 'SWIFT_USERID' in os.environ:
+                    os_options.update({'user_id': os.environ['SWIFT_USERID']})
+                if 'SWIFT_TENANTID' in os.environ:
+                    os_options.update({'tenant_id': os.environ['SWIFT_TENANTID']})
+                if 'SWIFT_REGIONNAME' in os.environ:
+                    os_options.update({'region_name': os.environ['SWIFT_REGIONNAME']})
 
         else:
-            conn_kwargs[u'auth_version'] = u'1'
-        if u'SWIFT_TENANTNAME' in os.environ:
-            conn_kwargs[u'tenant_name'] = os.environ[u'SWIFT_TENANTNAME']
-        if u'SWIFT_REGIONNAME' in os.environ:
-            os_options.update({u'region_name': os.environ[u'SWIFT_REGIONNAME']})
+            conn_kwargs['auth_version'] = '1'
+        if 'SWIFT_TENANTNAME' in os.environ:
+            conn_kwargs['tenant_name'] = os.environ['SWIFT_TENANTNAME']
+        if 'SWIFT_REGIONNAME' in os.environ:
+            os_options.update({'region_name': os.environ['SWIFT_REGIONNAME']})
 
         # formatting options for swiftclient.SwiftService
         for key in os_options.keys():
-            svc_options[u'os_' + key] = os_options[key]
+            svc_options[f"os_{key}"] = os_options[key]
 
-        conn_kwargs[u'os_options'] = os_options
+        conn_kwargs['os_options'] = os_options
 
         # This folds the null prefix and all null parts, which means that:
         #  //MyContainer/ and //MyContainer are equivalent.
         #  //MyContainer//My/Prefix/ and //MyContainer/My/Prefix are equivalent.
-        url_parts = [x for x in parsed_url.path.split(u'/') if x != u'']
+        url_parts = [x for x in parsed_url.path.split('/') if x != '']
 
         self.container = url_parts.pop(0)
         if url_parts:
-            self.prefix = u'%s/' % u'/'.join(url_parts)
+            self.prefix = f"{'/'.join(url_parts)}/"
         else:
-            self.prefix = u''
+            self.prefix = ''
 
         policy = config.swift_storage_policy
-        policy_header = u'X-Storage-Policy'
+        policy_header = 'X-Storage-Policy'
 
         container_metadata = None
         try:
-            log.Debug(u"Starting connection with arguments:'%s'" % conn_kwargs)
+            log.Debug(f"Starting connection with arguments:'{conn_kwargs}'")
             self.conn = Connection(**conn_kwargs)
             container_metadata = self.conn.head_container(self.container)
         except ClientException as e:
-            log.Debug(u"Connection failed: %s %s"
-                      % (e.__class__.__name__, str(e)))
+            log.Debug(f"Connection failed: {e.__class__.__name__} {str(e)}")
             pass
         except Exception as e:
-            log.FatalError(u"Connection failed: %s %s"
-                           % (e.__class__.__name__, str(e)),
+            log.FatalError(f"Connection failed: {e.__class__.__name__} {str(e)}",
                            log.ErrorCode.connection_failed)
 
         if container_metadata is None:
-            log.Info(u"Creating container %s" % self.container)
+            log.Info(f"Creating container {self.container}")
             try:
                 headers = dict([[policy_header, policy]]) if policy else None
                 self.conn.put_container(self.container, headers=headers)
             except Exception as e:
-                log.FatalError(u"Container creation failed: %s %s"
-                               % (e.__class__.__name__, str(e)),
+                log.FatalError(f"Container creation failed: {e.__class__.__name__} {str(e)}",
                                log.ErrorCode.connection_failed)
         elif policy and container_metadata[policy_header.lower()] != policy:
-            log.FatalError(u"Container '%s' exists but its storage policy is '%s' not '%s'."
-                           % (self.container, container_metadata[policy_header.lower()], policy))
+            log.FatalError(f"Container '{self.container}' exists but its storage policy is "
+                           f"'{container_metadata[policy_header.lower()]}' not '{policy}'.")
         else:
-            log.Debug(u"Container already created: %s" % container_metadata)
+            log.Debug(f"Container already created: {container_metadata}")
 
         # checking service connection
         try:
-            log.Debug(u"Starting  Swiftservice: '%s'" % svc_options)
+            log.Debug(f"Starting  Swiftservice: '{svc_options}'")
             self.svc = SwiftService(options=svc_options)
             container_stat = self.svc.stat(self.container)
         except ClientException as e:
-            log.FatalError(u"Connection failed: %s %s"
-                           % (e.__class__.__name__, str(e)),
+            log.FatalError(f"Connection failed: {e.__class__.__name__} {str(e)}",
                            log.ErrorCode.connection_failed)
-        log.Debug(u"Container stats: %s" % container_stat)
+        log.Debug(f"Container stats: {container_stat}")
 
     def _error_code(self, operation, e):  # pylint: disable=unused-argument
         if isinstance(e, self.resp_exc):
@@ -170,53 +164,53 @@ Exception: %s""" % str(e))
                 return log.ErrorCode.backend_not_found
 
     def _put(self, source_path, remote_filename):
-        lp = util.fsdecode(source_path.name)
+        lp = os.fsdecode(source_path.name)
         if config.mp_segment_size > 0:
             from swiftclient.service import SwiftUploadObject
             st = os.stat(lp)
             # only upload using Dynamic Large Object if mpvolsize is triggered
             if st.st_size >= config.mp_segment_size:
-                log.Debug(u"Uploading Dynamic Large Object")
+                log.Debug("Uploading Dynamic Large Object")
                 mp = self.svc.upload(
                     self.container,
                     [SwiftUploadObject(lp,
-                                       object_name=self.prefix + util.fsdecode(remote_filename))],
-                    options={u'segment_size': config.mp_segment_size}
+                                       object_name=self.prefix + os.fsdecode(remote_filename))],
+                    options={'segment_size': config.mp_segment_size}
                 )
-                uploads = [a for a in mp if u'container' not in a[u'action']]
+                uploads = [a for a in mp if 'container' not in a['action']]
                 for upload in uploads:
-                    if not upload[u'success']:
-                        raise BackendException(upload[u'traceback'])
+                    if not upload['success']:
+                        raise BackendException(upload['traceback'])
                 return
-        rp = self.prefix + util.fsdecode(remote_filename)
-        log.Debug(u"Uploading '%s' to '%s' in remote container '%s'" % (lp, rp, self.container))
+        rp = self.prefix + os.fsdecode(remote_filename)
+        log.Debug(f"Uploading '{lp}' to '{rp}' in remote container '{self.container}'")
         self.conn.put_object(container=self.container,
-                             obj=self.prefix + util.fsdecode(remote_filename),
-                             contents=open(lp, u'rb'))
+                             obj=self.prefix + os.fsdecode(remote_filename),
+                             contents=open(lp, 'rb'))
 
     def _get(self, remote_filename, local_path):
         headers, body = self.conn.get_object(self.container,
-                                             self.prefix + util.fsdecode(remote_filename),
+                                             self.prefix + os.fsdecode(remote_filename),
                                              resp_chunk_size=1024)
-        with open(local_path.name, u'wb') as f:
+        with open(local_path.name, 'wb') as f:
             for chunk in body:
                 f.write(chunk)
 
     def _list(self):
         headers, objs = self.conn.get_container(self.container, full_listing=True, path=self.prefix)
         # removes prefix from return values. should check for the prefix ?
-        return [o[u'name'][len(self.prefix):] for o in objs]
+        return [o['name'][len(self.prefix):] for o in objs]
 
     def _delete(self, filename):
         # use swiftservice to correctly delete all segments in case of multipart uploads
-        deleted = [a for a in self.svc.delete(self.container, [self.prefix + util.fsdecode(filename)])]
+        deleted = [a for a in self.svc.delete(self.container, [self.prefix + os.fsdecode(filename)])]
 
     def _query(self, filename):
         # use swiftservice to correctly report filesize in case of multipart uploads
-        sobject = [a for a in self.svc.stat(self.container, [self.prefix + util.fsdecode(filename)])][0]
-        sobj = {u'size': int(sobject[u'headers'][u'content-length'])}
-        log.Debug(u"Objectquery: '%s' has size %s." % (util.fsdecode(filename), sobj[u'size']))
+        sobject = [a for a in self.svc.stat(self.container, [self.prefix + os.fsdecode(filename)])][0]
+        sobj = {'size': int(sobject['headers']['content-length'])}
+        log.Debug(f"Objectquery: '{os.fsdecode(filename)}' has size {sobj['size']}.")
         return sobj
 
 
-duplicity.backend.register_backend(u"swift", SwiftBackend)
+duplicity.backend.register_backend("swift", SwiftBackend)

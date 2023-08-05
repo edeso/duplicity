@@ -26,38 +26,21 @@
 # Please send mail to me or the mailing list if you find bugs or have
 # any suggestions.
 
-from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
-
-import json
-import os
 import sys
 
-from duplicity.dup_main import main
 import duplicity.errors
-
 from duplicity import gpg
 from duplicity import log
 from duplicity import tempdir
 from duplicity import util
+from duplicity.dup_main import main
 
-
-if sys.version_info[:2] >= (3, 7):
-    sys.stdout.reconfigure(errors=u'surrogateescape')
-    sys.stderr.reconfigure(errors=u'surrogateescape')
-elif sys.version_info.major == 3:
-    import codecs
-    sys.stdout = codecs.getwriter(u'utf-8')(sys.stdout.buffer, u'surrogateescape')
-    sys.stderr = codecs.getwriter(u'utf-8')(sys.stderr.buffer, u'surrogateescape')
-elif sys.version_info.major == 2:
-    import codecs
-    sys.stdout = codecs.getwriter(u'utf-8')(sys.stdout, u'replace')
-    sys.stderr = codecs.getwriter(u'utf-8')(sys.stderr, u'replace')
+sys.stdout.reconfigure(errors='surrogateescape')
+sys.stderr.reconfigure(errors='surrogateescape')
 
 
 def with_tempdir(fn):
-    u"""
+    """
     Execute function and guarantee cleanup of tempdir is called
 
     @type fn: callable function
@@ -72,24 +55,11 @@ def with_tempdir(fn):
         tempdir.default().cleanup()
 
 
-if __name__ == u"__main__":
+if __name__ == "__main__":
     try:
-
-        #         import cProfile
-        #         import pstats
-        #         import StringIO
-        #         prof = cProfile.Profile()
-        #         prof.enable(subcalls=True, builtins=True)
-
         log.setup()
         util.start_debugger()
         with_tempdir(main)
-
-        #         prof.disable()
-        #         s = StringIO.StringIO()
-        #         ps = pstats.Stats(prof, stream=s).sort_stats('cumulative')
-        #         ps.print_stats(20)
-        #         print s.getvalue()
 
     # Don't move this lower.  In order to get an exit
     # status out of the system, you have to call the
@@ -103,7 +73,7 @@ if __name__ == u"__main__":
 
     except KeyboardInterrupt as e:
         # No traceback, just get out
-        log.Info(_(u"INT intercepted...exiting."))
+        log.Info(_("INT intercepted...exiting."))
         util.release_lockfile()
         sys.exit(4)
 
@@ -111,9 +81,9 @@ if __name__ == u"__main__":
         # For gpg errors, don't show an ugly stack trace by
         # default. But do with sufficient verbosity.
         util.release_lockfile()
-        log.Info(_(u"GPG error detail: %s")
+        log.Info(_("GPG error detail: %s")
                  % util.exception_traceback())
-        log.FatalError(u"%s: %s" % (e.__class__.__name__, e.args[0]),
+        log.FatalError("%s: %s" % (e.__class__.__name__, e.args[0]),
                        log.ErrorCode.gpg_failed,
                        e.__class__.__name__)
 
@@ -121,9 +91,9 @@ if __name__ == u"__main__":
         util.release_lockfile()
         # For user errors, don't show an ugly stack trace by
         # default. But do with sufficient verbosity.
-        log.Info(_(u"User error detail: %s")
+        log.Info(_("User error detail: %s")
                  % util.exception_traceback())
-        log.FatalError(u"%s: %s" % (e.__class__.__name__, util.uexc(e)),
+        log.FatalError("%s: %s" % (e.__class__.__name__, util.uexc(e)),
                        log.ErrorCode.user_error,
                        e.__class__.__name__)
 
@@ -131,16 +101,16 @@ if __name__ == u"__main__":
         util.release_lockfile()
         # For backend errors, don't show an ugly stack trace by
         # default. But do with sufficient verbosity.
-        log.Info(_(u"Backend error detail: %s")
+        log.Info(_("Backend error detail: %s")
                  % util.exception_traceback())
-        log.FatalError(u"%s: %s" % (e.__class__.__name__, util.uexc(e)),
+        log.FatalError("%s: %s" % (e.__class__.__name__, util.uexc(e)),
                        log.ErrorCode.user_error,
                        e.__class__.__name__)
 
     except Exception as e:
         util.release_lockfile()
-        if u"Forced assertion for testing" in util.uexc(e):
-            log.FatalError(u"%s: %s" % (e.__class__.__name__, util.uexc(e)),
+        if "Forced assertion for testing" in util.uexc(e):
+            log.FatalError("%s: %s" % (e.__class__.__name__, util.uexc(e)),
                            log.ErrorCode.exception,
                            e.__class__.__name__)
         else:

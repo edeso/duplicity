@@ -1,4 +1,4 @@
-source ~/swift-auth.env
+source ~/issue73.env
 
 dd if=/dev/zero of=/tmp/testfile bs=1000000 count=100
 
@@ -14,5 +14,3 @@ duplicity \
   --mp-segment-size 10 \
   --no-compression \
   /tmp/testfile swift://issue73-2
-
-

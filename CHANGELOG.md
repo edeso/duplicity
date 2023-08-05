@@ -1,3 +1,498 @@
+## rel.2.0.0rc2 (2023-07-24)
+
+### Changes
+
+* Fix format strings in idrivedbackend.py. [Kenneth Loafman]
+
+* Add additional CLI checks. [Kenneth Loafman]
+
+* Fix format strings in idrivedbackend.py. [Kenneth Loafman]
+
+* Fix format string in statistics.py. [Kenneth Loafman]
+
+* Remove kerberos from snap builds. [Kenneth Loafman]
+
+  kerberos will not build in snapcraft.
+
+* Changes to allow building snaps. [Kenneth Loafman]
+
+  Found another bug in snapcraft, see:
+  https://bugs.launchpad.net/snapcraft/+bug/2028303
+
+
+## rel.2.0.0rc1 (2023-07-17)
+
+### Changes
+
+* Update CHANGELOG.md. [Kenneth Loafman]
+
+* Fix implied command handling. [Kenneth Loafman]
+
+* Create regression test dir from old scripts. [Kenneth Loafman]
+
+
+## rel.2.0.0rc0 (2023-07-10)
+
+### Changes
+
+* Update CHANGELOG.md. [Kenneth Loafman]
+
+### Fix
+
+* Finish conversions to f-strings. [Kenneth Loafman]
+
+  See https://github.com/ikamensh/flynt/issues/185
+
+* Convert to f-strings via 'flynt -tc -tj'. [Kenneth Loafman]
+
+* With py2 gone remove unicode string adornments. [Kenneth Loafman]
+
+* Fix implied command when target is empty. [Kenneth Loafman]
+
+
+## rel.2.0.0b2 (2023-07-02)
+
+### Changes
+
+* Update CHANGELOG.md. [Kenneth Loafman]
+
+* Fix syntax error in .gitlab-ci.yml. [Kenneth Loafman]
+
+* Fix website to only run with WEBSITE\_TRIGGER\_TOKEN. [Kenneth Loafman]
+
+* Fix PEP8 issue.  Update CHANGELOG.md. [Kenneth Loafman]
+
+* Resolve some minor merge issues. [Kenneth Loafman]
+
+* Whoops, used f-string to fix #716. Fixed. [Kenneth Loafman]
+
+* Fix #716.  Print filename on read error. [Kenneth Loafman]
+
+* Fix #709.  Add docs on passphrase encryption used. [Kenneth Loafman]
+
+* Fixes for handling snaps again. [Kenneth Loafman]
+
+  Use requirements.txt instead of internal list.
+
+* Fix #707 for test\_get\_stats\_string. [Kenneth Loafman]
+
+  Move UTC set/unset to testing.__init__.
+
+* Fix #707 for test\_get\_stats\_string. [Kenneth Loafman]
+
+  Base time on UTC rather than where the test is run.
+
+* Fix #707 for test\_get\_stats\_string. [Kenneth Loafman]
+
+  Base time on UTC rather than where the test is run.
+
+* Fix #707 for rclone backend testing. [Kenneth Loafman]
+
+  Create 'duptest' config if needed, then remove after   tests are
+  complete.
+  Add some more pytest options to tox.ini.
+
+* Comment out test\_path:test\_compare, flaky. [Kenneth Loafman]
+
+  Fixes #707 - 1.2.3 test failure
+
+* Force cryptography<3.4 for py2 support. [Kenneth Loafman]
+
+* Test if requirements.txt changes. [Kenneth Loafman]
+
+* Revert back to tox < 4.0. [Kenneth Loafman]
+
+### Fix
+
+* Fix #710. Missing Content-Type header on webdav. [Kenneth Loafman]
+
+* S3 filename encoding. [Thomas Laubrock]
+
+* Fix #712 "if cache lost. `*.sigtar.gpg` files not accessible" [Thomas Laubrock]
+
+  solution, do not add signature files to glacier
+
+* Handle read-only remote parent folder better in gio backend. [Michael Terry]
+
+
+## rel.2.0.0b1 (2023-06-30)
+
+### Changes
+
+* Update CHANGELOG.md. [Kenneth Loafman]
+
+* Some basic PEP8 and code cleanup. [Kenneth Loafman]
+
+* Set socket default timeout in CLI. [Kenneth Loafman]
+
+* Fixes for deprecated/changed options. [Kenneth Loafman]
+
+
+## rel.2.0.0b0 (2023-06-24)
+
+### Changes
+
+* Misc changes for compatibility. [Kenneth Loafman]
+
+* Fix #24.  Allow users to tune copy block size. [Kenneth Loafman]
+
+  - Added --copy-blocksize, default 128k to options.   - Added tests for
+  same and improved other testss.
+
+* Fix .gitlab-ci.yml to skip website step if no token. [Kenneth Loafman]
+
+
+## rel.2.0.0a2 (2023-06-14)
+
+### Changes
+
+* Remove pathvalidate from use.  Fixes #27. [Kenneth Loafman]
+
+
+## rel.2.0.0a1 (2023-06-14)
+
+### Changes
+
+* More CLI improvements. [Kenneth Loafman]
+
+  - Improve error message for implied commands.   - Code and testing
+  clean up.   - Remove deprecated option handling.
+
+* Add implied backup/restore back. [Kenneth Loafman]
+
+* CLI improvements and cleanup. [Kenneth Loafman]
+
+  - Remove 'backup' command.   - Preparse options for config.
+
+* Minor cleanup, rm dead code. [Kenneth Loafman]
+
+* RcloneBackendTest now creates its own config. [Kenneth Loafman]
+
+* "--ignore-errors" gets proper handling in CLI. [Kenneth Loafman]
+
+### Fix
+
+* Fix #22, “--no-compression” doesn't have effect. [Kenneth Loafman]
+
+* Fix .gitlab-ci.yml file syntax error. [Kenneth Loafman]
+
+
+## rel.2.0.0a0 (2023-06-01)
+
+### Changes
+
+* Fix initial version. [Kenneth Loafman]
+
+* Give up. Let setup mangle as it will. [Kenneth Loafman]
+
+* Use semver tags, let setup mangle. [Kenneth Loafman]
+
+* Make PEP 440 compatible, not semver yet. [Kenneth Loafman]
+
+* Changes to allow alpha, beta, rc prerelease. [Kenneth Loafman]
+
+* Update gitlab-ci.yml. [Kenneth Loafman]
+
+* Update gitlab-ci.yml. [Kenneth Loafman]
+
+* Remove 'rdiffdir'.  Not used. [Kenneth Loafman]
+
+* Add 'make sdist' to Makefile. [Kenneth Loafman]
+
+* Update .gitignore. [Kenneth Loafman]
+
+* Setuptools\_scm.get\_version now uses 'fallback\_version'. [Kenneth Loafman]
+
+* Remove old s3\_boto\_backend.py. [Kenneth Loafman]
+
+  Deprecated options:   --s3-multipart-max-timeout   --s3-use-
+  multiprocessing   --s3-use-server-side-encryption   --s3-use-server-
+  side-kms-encryption
+  Retired error codes:   boto_old_style = 24   boto_lib_too_old = 25
+  boto_calling_format = 26
+
+* Remove spaces in version specs. [Kenneth Loafman]
+
+* Cleanup py2 cruft and more. [Kenneth Loafman]
+
+* Cleanup py2 cruft and more. [Kenneth Loafman]
+
+* Uncomment log.test\_command\_line\_error. [Kenneth Loafman]
+
+* Raise CommandLineError on deprecated/changed options. [Kenneth Loafman]
+
+* Whoops, don't move import\_backends. [Kenneth Loafman]
+
+* Fix code, tests, and do cleanup. [Kenneth Loafman]
+
+* Requirements and code cleanup. [Kenneth Loafman]
+
+* Whoops, fix code style. [Kenneth Loafman]
+
+* Add error/ignored msg for deprecated options. [Kenneth Loafman]
+
+* Some cli cleanup for subcommands. [Kenneth Loafman]
+
+* Normalize error handling in cli\_util.py. [Kenneth Loafman]
+
+* Some small command line fixes. [Michael Terry]
+
+  - Fix --verbosity   - Fix --log-fd   - Fix list-current-files
+
+* Clean out the last py2 cruft, I hope. [Kenneth Loafman]
+
+* Change optparse to argparse. Checkpoint. [Kenneth Loafman]
+
+* Change optparse to argparse. Checkpoint. [Kenneth Loafman]
+
+* Change optparse to argparse. Checkpoint. [Kenneth Loafman]
+
+* Change optparse to argparse. Checkpoint. [Kenneth Loafman]
+
+* Change optparse to argparse. Checkpoint. [Kenneth Loafman]
+
+* Change optparse to argparse. Checkpoint. [Kenneth Loafman]
+
+* Some py2 to py3 cleanup. [Kenneth Loafman]
+
+  Ran '2to3 -f filter -f map -f xrange -f zip -f idioms'.  It put some
+  list calls around some of the stuff that returns iterators (redundant
+  in most cases I think).  Mainly it converted code to idiomatic python.
+
+* Update a couple of lists in conf.py. [Kenneth Loafman]
+
+* Whoops, still need Makefile in docs. [Kenneth Loafman]
+
+* Port ReadTheDocs changes from main branch. [Kenneth Loafman]
+
+* Port ReadTheDocs changes from main branch. [Kenneth Loafman]
+
+* Change optparse to argparse. Checkpoint. [Kenneth Loafman]
+
+* Change optparse to argparse. Checkpoint. [Kenneth Loafman]
+
+* Change optparse to argparse. Checkpoint. [Kenneth Loafman]
+
+* Change optparse to argparse. Checkpoint. [Kenneth Loafman]
+
+* Change optparse to argparse. Checkpoint. [Kenneth Loafman]
+
+* Change optparse to argparse. Checkpoint. [Kenneth Loafman]
+
+* Change optparse to argparse. Checkpoint. [Kenneth Loafman]
+
+* Change optparse to argparse. Checkpoint. [Kenneth Loafman]
+
+* Change optparse to argparse. Checkpoint. [Kenneth Loafman]
+
+* Change optparse to argparse. Checkpoint. [Kenneth Loafman]
+
+* Change optparse to argparse. Checkpoint. [Kenneth Loafman]
+
+* Change optparse to argparse. Checkpoint. [Kenneth Loafman]
+
+* Change optparse to argparse. Checkpoint. [Kenneth Loafman]
+
+* Change optparse to argparse. Checkpoint. [Kenneth Loafman]
+
+* Change optparse to argparse. Checkpoint. [Kenneth Loafman]
+
+* Change optparse to argparse. Checkpoint. [Kenneth Loafman]
+
+* Change optparse to argparse. Checkpoint. [Kenneth Loafman]
+
+* Change optparse to argparse. Checkpoint. [Kenneth Loafman]
+
+* Change optparse to argparse. Checkpoint. [Kenneth Loafman]
+
+* Change optparse to argparse. Checkpoint. [Kenneth Loafman]
+
+* Change optparse to argparse. Checkpoint. [Kenneth Loafman]
+
+* Fix version and required python version. [Kenneth Loafman]
+
+* Fix version and required python version. [Kenneth Loafman]
+
+* More refactoring and cleanup after merge. [Kenneth Loafman]
+
+* Change optparse to argparse.  Checkpoint. [Kenneth Loafman]
+
+* Change optparse to argparse.  Checkpoint. [Kenneth Loafman]
+
+* Change optparse to argparse.  Checkpoint. [Kenneth Loafman]
+
+* Change optparse to argparse.  Checkpoint. [Kenneth Loafman]
+
+* Change optparse to argparse.  Checkpoint. [Kenneth Loafman]
+
+* Change optparse to argparse. Checkpoint. [Kenneth Loafman]
+
+* Fix version and required python version. [Kenneth Loafman]
+
+* More refactoring and cleanup after merge. [Kenneth Loafman]
+
+* Change optparse to argparse.  Checkpoint. [Kenneth Loafman]
+
+  chg:usr: Change optparse to argparse.  Checkpoint.
+  chg:usr: Change optparse to argparse.  Checkpoint.
+  chg:usr: Change optparse to argparse.  Checkpoint.
+  chg:usr: Change optparse to argparse.  Checkpoint.
+
+* Add Note on --time-separator in manpage. [Kenneth Loafman]
+
+* Remove refs to --old/short-filenames.  Fix CI. [Kenneth Loafman]
+
+* Remove deprecated --short-filenames code. [Kenneth Loafman]
+
+* Remove deprecated --old-filenames code. [Kenneth Loafman]
+
+* Remove deprecated --gio code. [Kenneth Loafman]
+
+* Remove globbing deprecated code. [Kenneth Loafman]
+
+* Remove stdin deprecated code. [Kenneth Loafman]
+
+* Remove incomplete replicate command. [Kenneth Loafman]
+
+* Remove LINGUAS.  Replace with globbing. [Kenneth Loafman]
+
+* More cleanup from inspections. [Kenneth Loafman]
+
+* Util.fsdecode ==> os.fsdecode. [Kenneth Loafman]
+
+* Remove par2+ from target schema.  Does not matter. [Kenneth Loafman]
+
+* Add limits to chardet and urlllib to keep requests quiet. [Kenneth Loafman]
+
+* Lower test to ulimit 2048 and reverse filename order. [Kenneth Loafman]
+
+### Fix
+
+* Add a missing super() call in path.py. [Kenneth Loafman]
+
+* Add a missing method to some super calls. [Michael Terry]
+
+* Add missing ':''. [Kenneth Loafman]
+
+* Remove requirement for kerberos. [Kenneth Loafman]
+
+  - it's an optional package in webdavbackend.py   - it does not install
+  properly under Docker
+
+* Remove most 'pylint: disable=import-error'. [Kenneth Loafman]
+
+  - add packages to requirements   - 'gi' is not available on PyPi
+
+* Fix more py3 problems. [Kenneth Loafman]
+
+  - remove import future in some places,   - fix azurebackend.py to use
+  new azure.
+
+* Recurse glob to include duplicity/backends. [Kenneth Loafman]
+
+* Remove extra print statement. [Kenneth Loafman]
+
+* Add back test\_unadorned...  Cleanup. [Kenneth Loafman]
+
+* Fix pylint code issue. [Kenneth Loafman]
+
+* Fix case where gpg return code is None. [Kenneth Loafman]
+
+* Add pydevd-pycharm to requirements.txt. [Kenneth Loafman]
+
+* Fix to allow using PyCharm or LiClipse pydevd. [Kenneth Loafman]
+
+* Fix doctests to run again. [Kenneth Loafman]
+
+* Remove redundant code. [Kenneth Loafman]
+
+* Print stderr on gpg fail plus error code and string. [Kenneth Loafman]
+
+* Fix handling of gpg\_error\_codes. [Kenneth Loafman]
+
+  - return an 'unknown error code' message if not found   - ignore error
+  2 GPG_ERR_UNKNOWN_PACKET, was "invalid packet (ctb=14)"
+
+* Add \_() for translations of msgs in gpg\_error\_codes.py. [Kenneth Loafman]
+
+* Add stderr\_fp back in.  Too much noise otherwise. [Kenneth Loafman]
+
+* Remove stderr\_fp and use process return code to report errors. [Kenneth Loafman]
+
+  - Added file make_gpg_error_codes.py which creates gpg_error_codes.py.
+  - Modded gpg.py to remove use of stderr_fp, thus reducing FDs used.
+
+* Remove status\_fd if no sign\_key in gpg.py. [Kenneth Loafman]
+
+  - updated issue125.sh to use testing/gnupg keys   - issue125.sh passes
+  with `ulimit 1024`
+
+* Cleanup, remove all uses of logger\_fd. [Kenneth Loafman]
+
+* Add back status\_fd for signature verification. [Kenneth Loafman]
+
+* Remove unused GPG file handles. [Kenneth Loafman]
+
+  - removed status and logger filehandles for decrypt   -
+  testing/manual/issue125 now runs with 'ulimit -n 1536'
+
+* Fix indentation cause by adorning. [Kenneth Loafman]
+
+* Adorn python strings to make merges easier. [Kenneth Loafman]
+
+* Remove extra newline in print. [Kenneth Loafman]
+
+* Add list\_python\_files to tools. [Kenneth Loafman]
+
+* Move find/fix un/adorned to tools. [Kenneth Loafman]
+
+* Unadorn bin/duplicity and bin/rdiffdir. [Kenneth Loafman]
+
+* Recover and add find/fix un/adorned strings. [Kenneth Loafman]
+
+* Fix PEP8 issue. [Kenneth Loafman]
+
+* Optimize imports. [Kenneth Loafman]
+
+  - Remove 'from __future__ import .*'   - Remove 'from past.utils
+  import old_div'   - Replace old_div with / or // as needed.
+
+* Optimize imports. [Kenneth Loafman]
+
+* Use os modules fsencode/fsdecode not ours. [Kenneth Loafman]
+
+* Cleanup, remove test\_2to3. [Kenneth Loafman]
+
+* Remove support for Python 2.7.  Second pass. [Kenneth Loafman]
+
+  - remove test_unadorned_string_literals   - remove
+  find/fix_unadorned_strings.py   - fix u'string' to be just 'string'
+
+* Remove support for Python 2.7.  First pass. [Kenneth Loafman]
+
+  - remove 'import future' and its call   - remove 'import builtin *'
+  - remove conditionals based on sys.version_info   - remove mentions in
+  readme and other docs
+
+### Other
+
+* Merge remote-tracking branch 'alpha/duplicity-py3' into duplicity-py3. [Kenneth Loafman]
+
+  # Conflicts:   #     duplicity/cli_main.py
+
+* Merge branch 'main' into branch 'duplicity-py3' [Kenneth Loafman]
+
+* Merge branch 'main' into branch 'duplicity-py3' [Kenneth Loafman]
+
+* Merge branch main into branch duplicity-py3. [Kenneth Loafman]
+
+* Merge branch cleanup into branch duplicity-py3. [Kenneth Loafman]
+
+* Merge main into duplicity-py3. [Kenneth Loafman]
+
+* Merge main into branch duplicity-py3. [Kenneth Loafman]
+
+
 ## rel.1.2.3 (2023-05-09)
 
 ### New
@@ -7,6 +502,8 @@
 * Onedrive for Business Support. [Tobias Simetsreiter]
 
 ### Changes
+
+* Fix tools release-prep & makechangelog. [Kenneth Loafman]
 
 * Fix tools/release-prep. [Kenneth Loafman]
 
@@ -156,8 +653,6 @@
 
 * Update duplicity.pot. [Kenneth Loafman]
 
-* More changes to get release process working. [Kenneth Loafman]
-
 ### Fix
 
 * Fix to work with b2sdk 1.19.0. [Adam Jacobs]
@@ -186,6 +681,8 @@
 ## rel.1.2.1 (2022-12-02)
 
 ### Changes
+
+* More changes to get release process working. [Kenneth Loafman]
 
 * Fix for setuptools changes.  Add testing data files to mix. [Kenneth Loafman]
 
@@ -845,7 +1342,7 @@
 
 * Revert "chg:dev:core20 usess py38, not py36." [Kenneth Loafman]
 
-  This reverts commit 05eda5828c7bdde1003357439cfcb4d93124a377.
+  This reverts commit b5e4baac09b4533c2395aa392a0b8c170fb1a052.
 
 * Slate Backend. [Shr1ftyy]
 
@@ -990,10 +1487,6 @@ Multibackend as well. [Erwan B]
 
 * Better looping.  Increase to 100 loops. [Kenneth Loafman]
 
-* Repeating test for LP bug 487720. [Kenneth Loafman]
-
-  Restore fails with "Invalid data - SHA1 hash mismatch"
-
 ### Changes
 
 * Build\_ext now builds inplace for development ease. [Kenneth Loafman]
@@ -1088,8 +1581,6 @@ Multibackend as well. [Erwan B]
 * Fix issue #57 SSH backends - IndexError: list index out of range. [Kenneth Loafman]
 
 ### Other
-
-* Remove backup file. [kenneth@loafman.com]
 
 * Don't skip CI. [Kenneth Loafman]
 
@@ -1217,7 +1708,7 @@ out" [Christian Perreault]
 * Revert "fix:pkg:Remove requirement for python3-pytest-runner.  Not
 used." [Kenneth Loafman]
 
-  This reverts commit 90e7e2acb6d158437cab3210114da46df72a7c85.
+  This reverts commit c7cbc6bd531f90be1ea9a65cc237e1017dd935f4.
 
 * List required volumes when called with 'restore --dry-run' [Matthias Blankertz]
 
@@ -1517,8 +2008,8 @@ registering more than one affinity prefix per backend. [KheOps]
 
 * Revert "Merge branch 's3-boto3-region-and-endpoint' into 'master'" [Kenneth Loafman]
 
-  This reverts commit f25e9740e17d24cf309aee136953d8fd51a7bf9b,
-  reversing   changes made to 2890326dfd7a5bf9ea340aca76d96ebcd25aa8b6.
+  This reverts commit 16947e6aa490fd0cb96f1954b410c003c6a5b101,
+  reversing   changes made to cf8bb66e8b87cf8b57680d6ab7a8a83ca9c955f9.
 
 * Bump version for LP dev build. [Kenneth Loafman]
 
@@ -1539,7 +2030,7 @@ registering more than one affinity prefix per backend. [KheOps]
 
 * Fix missing FileNotUploadedError in pydrive backend. [Martin Sucha]
 
-  Since dadbe2d2c22751f68f179833d36c94f2777ba425, FileNotUploadedError
+  Since 69eb0376ef6a1b32b8d6bf0f075247d49f06719e, FileNotUploadedError
   is not imported anymore, resulting in an exception in case   some of
   the files failed to upload. Adding the import back.
 
