@@ -7,12 +7,14 @@
 ._.DS_Store
 .cache
 .coverage*
+.devcontainer/
 .eggs
 .idea/
 .project
 .pydevproject
 .pytest_cache/
 .run/
+.secrets
 .settings
 .tox/
 .vscode
@@ -33,8 +35,8 @@ po/duplicity.pot-e
 random_seed
 report.xml
 testfiles
-testing/gnupg/S.*
 testing/gnupg/.gpg-v21-migrated
+testing/gnupg/S.*
 testing/gnupg/private-keys-v1.d/
 testing/manual/test_config.py.tmpl
 venv

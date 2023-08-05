@@ -199,11 +199,6 @@ webdav_headers = ""
 # (default of 0 disables asynchronicity).
 async_concurrency = 0
 
-# Whether to use "new-style" subdomain addressing for S3 buckets. Such
-# use is not backwards-compatible with upper-case buckets, or buckets
-# that are otherwise not expressable in a valid hostname.
-s3_use_new_style = False
-
 # File owner uid keeps number from tar file. Like same option in GNU tar.
 numeric_owner = False
 
@@ -244,7 +239,11 @@ s3_multipart_minimum_chunk_size = 5 * 1024 * 1024
 # Maximum number of processes to use while doing a multipart upload to S3
 s3_multipart_max_procs = 4
 
+# Use server side encryption in s3
+s3_use_sse = False
+
 # Use server side kms encryption in s3
+s3_use_sse_kms = False
 s3_kms_key_id = None
 s3_kms_grant = None
 

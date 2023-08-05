@@ -20,6 +20,7 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+import os
 import duplicity.backend
 from duplicity import config
 from duplicity import file_naming
@@ -164,7 +165,7 @@ class S3Boto3Backend(duplicity.backend.Backend):
         # tracker = UploadProgressTracker() # Scope the tracker to the put()
         tracker = self.tracker
 
-        remote_filename = util.fsdecode(remote_filename)
+        remote_filename = os.fsdecode(remote_filename)
         key = self.key_prefix + remote_filename
 
         log.Info(f"Uploading {self.straight_url}/{remote_filename} to {storage_class} Storage")
@@ -174,12 +175,22 @@ class S3Boto3Backend(duplicity.backend.Backend):
                                                           ExtraArgs=extra_args)
 
     def _get(self, remote_filename, local_path):
+        from botocore.exceptions import ClientError
         if not self.s3:
             self.reset_connection()
 
         remote_filename = os.fsdecode(remote_filename)
         key = self.key_prefix + remote_filename
-        self.s3.Object(self.bucket.name, key).download_file(local_path.uc_name)
+        try:
+            self.s3.Object(self.bucket.name, key).download_file(local_path.uc_name)
+        except ClientError as ios:
+            if ios.response['Error']['Code'] == 'InvalidObjectState':
+                log.FatalError(
+                    f"File {remote_filename} seems to be in a long term storage, "
+                    f"please use AWS Console/API to initiate restore.\nAPI-Error: {ios}"
+                )
+            else:
+                raise ios
 
     def _list(self):
         if not self.s3:

@@ -119,7 +119,6 @@ class DeprecationAction(DuplicityAction):
                 --s3-auropean-buckets
                 --s3-multipart-max-timeout
                 --s3-use-multiprocessing
-                --s3-use-server-side-encryption
                 --short-filenames
                 --time-separator
                 """))
@@ -144,6 +143,13 @@ def _check_int(val):
         command_line_error(_(f"'{val}' is not an int: {str(e)}"))
 
 
+def _check_time(val):
+    try:
+        return dup_time.genstrtotime(val)
+    except dup_time.TimeException as e:
+        command_line_error(str(e))
+
+
 def check_char(val):
     if len(val) == 1:
         return val
@@ -155,15 +161,15 @@ def check_count(val):
     return _check_int(val)
 
 
-def check_file(value):
-    return os.fsencode(expand_fn(value))
+def check_file(val):
+    try:
+        return os.fsencode(expand_fn(val))
+    except Exception as e:
+        command_line_error(f"{val} is not a valide pathname: {str(e)}")
 
 
 def check_remove_time(val):
-    try:
-        return dup_time.genstrtotime(val)
-    except Exception as e:
-        command_line_error(str(e))
+    return _check_time(val)
 
 
 def check_source_path(val):
@@ -198,10 +204,7 @@ def check_target_url(val):
 
 
 def check_time(val):
-    try:
-        return dup_time.genstrtotime(val)
-    except dup_time.TimeException as e:
-        command_line_error(str(e))
+    return _check_time(val)
 
 
 def check_timeout(val):

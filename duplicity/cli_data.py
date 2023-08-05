@@ -551,13 +551,6 @@ class OptionKwargs:
         "help": "Whether to use S3 Infrequent Access Storage",
         "default": dflt(config.s3_use_ia)
     }
-    s3_use_new_style = {
-        "action": "store_true",
-        "help": "Whether to use new-style subdomain addressing for S3 buckets. Such\n"
-                "use is not backwards-compatible with upper-case buckets, or buckets\n"
-                "that are otherwise not expressable in a valid hostname",
-        "default": dflt(config.s3_use_new_style)
-    }
     s3_use_onezone_ia = {
         "action": "store_true",
         "help": "Whether to use S3 One Zone Infrequent Access Storage",
@@ -582,6 +575,12 @@ class OptionKwargs:
         "help": "Number of processes to set the Processor Pool to when uploading multipart\n"
                 "uploads to S3. Use this to control the maximum simultaneous uploads to S3",
         "default": dflt(config.s3_multipart_max_procs)
+    }
+    s3_use_server_side_kms_encryption = {
+        u"action": u"store_true",
+        u"dest": u"s3_use_sse_kms",
+        u"help": u"Allow use of server side KMS encryption",
+        u"default": dflt(config.s3_use_sse_kms)
     }
     s3_kms_key_id = {
         "metavar": _("s3_kms_key_id"),
@@ -738,7 +737,7 @@ parent_only_options = {
 }
 
 backup_only_options = {
-    "--allow_source-mismatch", "--asynchronous-upload", "--dry-run", "--volsize",
+    "--allow-source-mismatch", "--asynchronous-upload", "--dry-run", "--volsize",
 }
 
 selection_only_options = {
@@ -755,7 +754,7 @@ changed_options = {
 deprecated_options = {
     "--gio", "--old-filenames", "--short-filenames", "--exclude-globbing-filelist",
     "--include-globbing-filelist", "--exclude-filelist-stdin", "--include-filelist-stdin",
-    "--s3-multipart-max-timeout", "--s3-use-multiprocessing", "--s3-use-server-side-encryption",
+    "--s3-multipart-max-timeout", "--s3-use-multiprocessing",
 }
 
 deprecated_backup_options = {

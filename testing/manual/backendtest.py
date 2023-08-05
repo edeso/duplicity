@@ -124,26 +124,26 @@ class gsTest(ManualBackendBase):
         self.set_environ("GS_SECRET_ACCESS_KEY", test_config.gs_secret_key)
 
 
-class s3SingleTest(ManualBackendBase):
-    def setBackendInfo(self):
-        from duplicity.backends import _boto_single
-        duplicity.backend._backends['s3+http'] = _boto_single.BotoBackend
-        self.set_config('s3_use_new_style', True)
-        self.set_environ("AWS_ACCESS_KEY_ID", test_config.s3_access_key)
-        self.set_environ("AWS_SECRET_ACCESS_KEY", test_config.s3_secret_key)
-        self.url_string = test_config.s3_url
-
-
-class s3MultiTest(ManualBackendBase):
-    def setBackendInfo(self):
-        from duplicity.backends import _boto_multi
-        duplicity.backend._backends['s3+http'] = _boto_multi.BotoBackend
-        self.set_config('s3_use_new_style', True)
-        self.set_environ("AWS_ACCESS_KEY_ID", test_config.s3_access_key)
-        self.set_environ("AWS_SECRET_ACCESS_KEY", test_config.s3_secret_key)
-        self.url_string = test_config.s3_url
-
-
+# class s3SingleTest(ManualBackendBase):
+#     def setBackendInfo(self):
+#         from duplicity.backends import _boto_single
+#         duplicity.backend._backends['s3+http'] = _boto_single.BotoBackend
+#         self.set_config('s3_use_new_style', True)
+#         self.set_environ("AWS_ACCESS_KEY_ID", test_config.s3_access_key)
+#         self.set_environ("AWS_SECRET_ACCESS_KEY", test_config.s3_secret_key)
+#         self.url_string = test_config.s3_url
+#
+#
+# class s3MultiTest(ManualBackendBase):
+#     def setBackendInfo(self):
+#         from duplicity.backends import _boto_multi
+#         duplicity.backend._backends['s3+http'] = _boto_multi.BotoBackend
+#         self.set_config('s3_use_new_style', True)
+#         self.set_environ("AWS_ACCESS_KEY_ID", test_config.s3_access_key)
+#         self.set_environ("AWS_SECRET_ACCESS_KEY", test_config.s3_secret_key)
+#         self.url_string = test_config.s3_url
+#
+#
 class cfCloudfilesTest(ManualBackendBase):
     def setBackendInfo(self):
         from duplicity.backends import _cf_cloudfiles
