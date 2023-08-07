@@ -36,7 +36,7 @@ from duplicity.cli_util import *
 from testing.unit import UnitTestCase
 
 
-@unittest.skipIf(os.environ.get("USER", "") == "buildd",  "Skip test on Launchpad")
+@unittest.skipIf(os.environ.get("USER", "") == "buildd", "Skip test on Launchpad")
 class CommandlineTest(UnitTestCase):
     """
     Test parse_commandline_options
