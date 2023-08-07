@@ -20,9 +20,8 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import print_function
-
 import os
+import glob
 import re
 import shutil
 import subprocess
@@ -36,132 +35,130 @@ from setuptools.command.build_ext import build_ext
 from setuptools.command.install import install
 from setuptools.command.sdist import sdist
 from setuptools.command.test import test
+from setuptools_scm import get_version
 
 
 # check that we can function here
-if not ((sys.version_info[0] == 2 and sys.version_info[1] >= 7) or
-        (sys.version_info[0] == 3 and sys.version_info[1] >= 5)):
-    print(u"Sorry, duplicity requires version 2.7 or version 3.5 or later of Python.")
+if not (sys.version_info[0] == 3 and sys.version_info[1] >= 8):
+    print("Sorry, duplicity requires version 3.8 or later of Python3.")
     sys.exit(1)
 
 
+Version = "2.0.0"
 scm_version_args = {
-    u'tag_regex': r'^(?P<prefix>rel.)?(?P<version>[^\+]+)(?P<suffix>.*)?$',
-    u'local_scheme': u'no-local-version',
+    'tag_regex': r'^(?P<prefix>rel.)?(?P<version>[^\+]+)(?P<suffix>.*)?$',
+    'local_scheme': 'no-local-version',
+    'fallback_version': Version,
     }
-
 try:
     from setuptools_scm import get_version  # pylint: disable=import-error
     Version = get_version(**scm_version_args)
 except Exception as e:
-    Version = u"1.2.4-dev"
-    print(u"Unable to get SCM version: %s\ndefaulting to %s" % (str(e), Version))
-Reldate = time.strftime(u"%B %d, %Y", time.gmtime(int(os.environ.get(u'SOURCE_DATE_EPOCH', time.time()))))
+    print(f"Unable to get SCM version: {str(e)}\n"
+          f"Defaulting to {Version}")
+Reldate = time.strftime("%B %d, %Y", time.gmtime(int(os.environ.get('SOURCE_DATE_EPOCH', time.time()))))
 
 
 # READTHEDOCS uses setup.py sdist but can't handle extensions
 ext_modules = list()
 incdir_list = list()
 libdir_list = list()
-if not os.environ.get(u'READTHEDOCS') == u'True':
+if not os.environ.get('READTHEDOCS') == 'True':
     # set incdir and libdir for librsync
-    if os.name == u'posix':
-        LIBRSYNC_DIR = os.environ.get(u'LIBRSYNC_DIR', u'')
+    if os.name == 'posix':
+        LIBRSYNC_DIR = os.environ.get('LIBRSYNC_DIR', '')
         args = sys.argv[:]
         for arg in args:
-            if arg.startswith(u'--librsync-dir='):
-                LIBRSYNC_DIR = arg.split(u'=')[1]
+            if arg.startswith('--librsync-dir='):
+                LIBRSYNC_DIR = arg.split('=')[1]
                 sys.argv.remove(arg)
         if LIBRSYNC_DIR:
-            incdir_list = [os.path.join(LIBRSYNC_DIR, u'include')]
-            libdir_list = [os.path.join(LIBRSYNC_DIR, u'lib')]
+            incdir_list = [os.path.join(LIBRSYNC_DIR, 'include')]
+            libdir_list = [os.path.join(LIBRSYNC_DIR, 'lib')]
 
     # build the librsync extension
     ext_modules=[Extension(name=r"duplicity._librsync",
                            sources=[r"duplicity/_librsyncmodule.c"],
                            include_dirs=incdir_list,
                            library_dirs=libdir_list,
-                           libraries=[u"rsync"])]
+                           libraries=["rsync"])]
 
 
 def get_data_files():
-    u"""gen list of data files"""
+    """gen list of data files"""
 
     # static data files
     data_files = [
-            (u'share/man/man1',
+            ('share/man/man1',
                 [
-                u'bin/duplicity.1',
-                u'bin/rdiffdir.1'
+                'bin/duplicity.1',
                 ]
             ),
-            (u'share/doc/duplicity-%s' % Version,
+            (f'share/doc/duplicity-{Version}',
                 [
-                u'CHANGELOG.md',
-                u'CONTRIBUTING.md',
-                u'COPYING',
-                u'README.md',
-                u'README-LOG.md',
-                u'README-REPO.md',
-                u'README-TESTING.md',
+                'CHANGELOG.md',
+                'CONTRIBUTING.md',
+                'COPYING',
+                'README.md',
+                'README-LOG.md',
+                'README-REPO.md',
+                'README-TESTING.md',
                 ],
             ),
         ]
 
     # short circuit fot READTHEDOCS
-    if os.environ.get(u'READTHEDOCS') == u'True':
+    if os.environ.get('READTHEDOCS') == 'True':
         return data_files
 
     # msgfmt the translation files
-    assert os.path.exists(u"po"), u"Missing 'po' directory."
+    assert os.path.exists("po"), "Missing 'po' directory."
 
-    if os.path.exists(u'po/LINGUAS'):
-        linguas = open(u'po/LINGUAS').readlines()
-        for line in linguas:
-            langs = line.split()
-            for lang in langs:
-                try:
-                    os.mkdir(os.path.join(u"po", lang))
-                except os.error:
-                    pass
-                assert not os.system(u"cp po/%s.po po/%s" % (lang, lang)), lang
-                assert not os.system(u"msgfmt po/%s.po -o po/%s/duplicity.mo" % (lang, lang)), lang
+    linguas = glob.glob('po/*.po')
+    for lang in linguas:
+        lang = lang[3:-3]
+        try:
+            os.mkdir(os.path.join("po", lang))
+        except os.error:
+            pass
+        assert not os.system(f"cp po/{lang}.po po/{lang}"), lang
+        assert not os.system(f"msgfmt po/{lang}.po -o po/{lang}/duplicity.mo"), lang
 
-    for root, dirs, files in os.walk(u"po"):
+    for root, dirs, files in os.walk("po"):
         for file in files:
             path = os.path.join(root, file)
-            if path.endswith(u"duplicity.mo"):
+            if path.endswith("duplicity.mo"):
                 lang = os.path.split(root)[-1]
                 data_files.append(
-                    (u'share/locale/%s/LC_MESSAGES' % lang,
-                     [u"po/%s/duplicity.mo" % lang]))
+                    (f'share/locale/{lang}/LC_MESSAGES',
+                     [f"po/{lang}/duplicity.mo"]))
 
     return data_files
 
 
 def VersionedCopy(source, dest):
-    u"""
+    """
     Copy source to dest, substituting $version with version
     $reldate with today's date, i.e. December 28, 2008.
     """
-    with open(source, u"rt") as fd:
+    with open(source, "rt") as fd:
         buffer = fd.read()
 
-    buffer = re.sub(u"\$version", Version, buffer)
-    buffer = re.sub(u"\$reldate", Reldate, buffer)
+    buffer = re.sub("\$version", Version, buffer)
+    buffer = re.sub("\$reldate", Reldate, buffer)
 
-    with open(dest, u"wt") as fd:
+    with open(dest, "wt") as fd:
         fd.write(buffer)
 
 
 def cleanup():
-    if os.path.exists(u'po/LINGUAS'):
-        linguas = open(u'po/LINGUAS').readlines()
+    if os.path.exists('po/LINGUAS'):
+        linguas = open('po/LINGUAS').readlines()
         for line in linguas:
             langs = line.split()
             for lang in langs:
                 try:
-                    shutil.rmtree(os.path.join(u"po", lang))
+                    shutil.rmtree(os.path.join("po", lang))
                 except Exception:
                     pass
 
@@ -171,33 +168,30 @@ class SdistCommand(sdist):
     def run(self):
         sdist.run(self)
 
-        orig = u"%s/duplicity-%s.tar.gz" % (self.dist_dir, Version)
-        tardir = u"duplicity-%s" % Version
-        tarfile = u"%s/duplicity-%s.tar.gz" % (self.dist_dir, Version)
+        orig = f"{self.dist_dir}/duplicity-{Version}.tar.gz"
+        tardir = f"duplicity-{Version}"
+        tarball = f"{self.dist_dir}/duplicity-{Version}.tar.gz"
 
-        assert not os.system(u"tar -xf %s" % orig)
+        assert not os.system(f"tar -xf {orig}")
         assert not os.remove(orig)
 
         # make sure executables are
-        assert not os.chmod(os.path.join(tardir, u"setup.py"), 0o755)
-        assert not os.chmod(os.path.join(tardir, u"bin", u"duplicity"), 0o755)
-        assert not os.chmod(os.path.join(tardir, u"bin", u"rdiffdir"), 0o755)
+        assert not os.chmod(os.path.join(tardir, "setup.py"), 0o755)
+        assert not os.chmod(os.path.join(tardir, "bin", "duplicity"), 0o755)
 
         # recopy the unversioned files and add correct version
-        VersionedCopy(os.path.join(u"bin", u"duplicity.1"),
-                      os.path.join(tardir, u"bin", u"duplicity.1"))
-        VersionedCopy(os.path.join(u"bin", u"rdiffdir.1"),
-                      os.path.join(tardir, u"bin", u"rdiffdir.1"))
-        VersionedCopy(os.path.join(u"duplicity", u"__init__.py"),
-                      os.path.join(tardir, u"duplicity", u"__init__.py"))
-        VersionedCopy(os.path.join(u"snap", u"snapcraft.yaml"),
-                      os.path.join(tardir, u"snap", u"snapcraft.yaml"))
+        VersionedCopy(os.path.join("bin", "duplicity.1"),
+                      os.path.join(tardir, "bin", "duplicity.1"))
+        VersionedCopy(os.path.join("duplicity", "__init__.py"),
+                      os.path.join(tardir, "duplicity", "__init__.py"))
+        VersionedCopy(os.path.join("snap", "snapcraft.yaml"),
+                      os.path.join(tardir, "snap", "snapcraft.yaml"))
 
         # set COPYFILE_DISABLE to disable appledouble file creation
-        os.environ[u'COPYFILE_DISABLE'] = u'true'
+        os.environ['COPYFILE_DISABLE'] = 'true'
 
-        # make the new tarfile and remove tardir
-        assert not os.system(u"""tar czf %s \
+        # make the new tarball and remove tardir
+        assert not os.system(f"""tar czf {tarball} \
                                  --exclude '.*' \
                                  --exclude Makefile \
                                  --exclude debian \
@@ -206,8 +200,8 @@ class SdistCommand(sdist):
                                  --exclude testing/docker \
                                  --exclude testing/manual \
                                  --exclude tools \
-                                  %s
-                              """ % (tarfile, tardir))
+                                 {tardir}
+                              """)
         assert not shutil.rmtree(tardir)
 
 
@@ -215,25 +209,23 @@ class TestCommand(test):
 
     def run(self):
         # Make sure all modules are ready
-        build_cmd = self.get_finalized_command(u"build_py")
+        build_cmd = self.get_finalized_command("build_py")
         build_cmd.run()
         # And make sure our scripts are ready
-        build_scripts_cmd = self.get_finalized_command(u"build_scripts")
+        build_scripts_cmd = self.get_finalized_command("build_scripts")
         build_scripts_cmd.run()
 
         # make symlinks for test data
         if build_cmd.build_lib != top_dir:
-            for path in [u'source_files.tar.gz', u'gnupg']:
-                src = os.path.join(top_dir, u'testing', path)
-                target = os.path.join(build_cmd.build_lib, u'testing', path)
+            for path in ['source_files.tar.gz', 'gnupg']:
+                src = os.path.join(top_dir, 'testing', path)
+                target = os.path.join(build_cmd.build_lib, 'testing', path)
                 try:
                     os.symlink(src, target)
                 except Exception:
                     pass
 
-        os.environ[u'PATH'] = u"%s:%s" % (
-            os.path.abspath(build_scripts_cmd.build_dir),
-            os.environ.get(u'PATH'))
+        os.environ['PATH'] = f"{os.path.abspath(build_scripts_cmd.build_dir)}:{os.environ.get('PATH')}"
 
         test.run(self)
 
@@ -246,13 +238,13 @@ class InstallCommand(install):
         # Normally, install will call build().  But we want to delete the
         # testing dir between building and installing.  So we manually build
         # and mark ourselves to skip building when we run() for real.
-        self.run_command(u'build')
+        self.run_command('build')
         self.skip_build = True
 
         # remove testing dir
         top_dir = os.path.dirname(os.path.abspath(__file__))
         if self.build_lib != top_dir:
-            testing_dir = os.path.join(self.build_lib, u'testing')
+            testing_dir = os.path.join(self.build_lib, 'testing')
             shutil.rmtree(testing_dir)
 
         install.run(self)
@@ -266,124 +258,116 @@ class InstallDataCommand(install_data):
         # version the man pages
         for tup in self.data_files:
             base, filenames = tup
-            if base == u'share/man/man1':
+            if base == 'share/man/man1':
                 for fn in filenames:
                     fn = os.path.split(fn)[-1]
                     path = os.path.join(self.install_dir, base, fn)
                     VersionedCopy(path, path)
 
 class BuildExtCommand(build_ext):
-    u"""Build extension modules."""
+    """Build extension modules."""
 
     def run(self):
         # build the _librsync.so module
-        print(u"Building extension for librsync...")
+        print("Building extension for librsync...")
         self.inplace = True
         build_ext.run(self)
 
 
-with open(u"README.md") as fh:
+with open("README.md") as fh:
     long_description = fh.read()
 
 
-setup(name=u"duplicity",
+setup(name="duplicity",
     version=Version,
-    description=u"Encrypted backup using rsync algorithm",
+    description="Encrypted backup using rsync algorithm",
     long_description=long_description,
-    long_description_content_type=u"text/plain",
-    author=u"Ben Escoto <ben@emrose.org>",
-    author_email=u"ben@emrose.org",
-    maintainer=u"Kenneth Loafman <kenneth@loafman.com>",
-    maintainer_email=u"kenneth@loafman.com",
-    url=u"http://duplicity.us",
-    python_requires=u">2.6, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <4",
-    platforms=[u"any"],
+    long_description_content_type="text/plain",
+    author="Ben Escoto <ben@emrose.org>",
+    author_email="ben@emrose.org",
+    maintainer="Kenneth Loafman <kenneth@loafman.com>",
+    maintainer_email="kenneth@loafman.com",
+    url="http://duplicity.us",
+    python_requires=">=3.8, <4",
+    platforms=["any"],
     packages=[
-        u"duplicity",
-        u"duplicity.backends",
-        u"duplicity.backends.pyrax_identity",
-        u"testing",
-        u"testing.functional",
-        u"testing.unit",
+        "duplicity",
+        "duplicity.backends",
+        "duplicity.backends.pyrax_identity",
+        "testing",
+        "testing.functional",
+        "testing.unit",
         ],
     package_dir={
-        u"duplicity": u"duplicity",
-        u"duplicity.backends": u"duplicity/backends",
+        "duplicity": "duplicity",
+        "duplicity.backends": "duplicity/backends",
         },
     package_data={
-        u"testing": [
-            u"testing/gnupg",
-            u"testing/gnupg/.gpg-v21-migrated",
-            u"testing/gnupg/README",
-            u"testing/gnupg/gpg-agent.conf",
-            u"testing/gnupg/gpg.conf",
-            u"testing/gnupg/private-keys-v1.d",
-            u"testing/gnupg/private-keys-v1.d/1DBE767B921015FD5466978BAC968320E5BF6812.key",
-            u"testing/gnupg/private-keys-v1.d/4572B9686180E88EA52ED65F1416E486F7A8CAF5.key",
-            u"testing/gnupg/private-keys-v1.d/7229722CD5A4726D5CC5588034ADA07429FDECAB.key",
-            u"testing/gnupg/private-keys-v1.d/910D6B4035D3FEE3DA5960C1EE573C5F9ECE2B8D.key",
-            u"testing/gnupg/private-keys-v1.d/B29B24778338E7F20437B21704EA434E522BC1FE.key",
-            u"testing/gnupg/private-keys-v1.d/D2DF6D795DFD90DB4F7A109970F506692731CA67.key",
-            u"testing/gnupg/pubring.gpg",
-            u"testing/gnupg/random_seed",
-            u"testing/gnupg/secring.gpg",
-            u"testing/gnupg/trustdb.gpg",
-            u"testing/overrides",
-            u"testing/overrides/__init__.py",
-            u"testing/overrides/bin",
-            u"testing/overrides/bin/hsi",
-            u"testing/overrides/bin/lftp",
-            u"testing/overrides/bin/ncftpget",
-            u"testing/overrides/bin/ncftpls",
-            u"testing/overrides/bin/ncftpput",
-            u"testing/overrides/bin/tahoe",
+        "testing": [
+            "testing/gnupg",
+            "testing/gnupg/.gpg-v21-migrated",
+            "testing/gnupg/README",
+            "testing/gnupg/gpg-agent.conf",
+            "testing/gnupg/gpg.conf",
+            "testing/gnupg/private-keys-v1.d",
+            "testing/gnupg/private-keys-v1.d/1DBE767B921015FD5466978BAC968320E5BF6812.key",
+            "testing/gnupg/private-keys-v1.d/4572B9686180E88EA52ED65F1416E486F7A8CAF5.key",
+            "testing/gnupg/private-keys-v1.d/7229722CD5A4726D5CC5588034ADA07429FDECAB.key",
+            "testing/gnupg/private-keys-v1.d/910D6B4035D3FEE3DA5960C1EE573C5F9ECE2B8D.key",
+            "testing/gnupg/private-keys-v1.d/B29B24778338E7F20437B21704EA434E522BC1FE.key",
+            "testing/gnupg/private-keys-v1.d/D2DF6D795DFD90DB4F7A109970F506692731CA67.key",
+            "testing/gnupg/pubring.gpg",
+            "testing/gnupg/random_seed",
+            "testing/gnupg/secring.gpg",
+            "testing/gnupg/trustdb.gpg",
+            "testing/overrides",
+            "testing/overrides/__init__.py",
+            "testing/overrides/bin",
+            "testing/overrides/bin/hsi",
+            "testing/overrides/bin/lftp",
+            "testing/overrides/bin/ncftpget",
+            "testing/overrides/bin/ncftpls",
+            "testing/overrides/bin/ncftpput",
+            "testing/overrides/bin/tahoe",
         ],
     },
     ext_modules=ext_modules,
     scripts=[
-        u"bin/rdiffdir",
-        u"bin/duplicity",
+        "bin/duplicity",
         ],
     data_files=get_data_files(),
     include_package_data=True,
     install_requires=[
-        u"fasteners",
-        u"future",
+        "fasteners",
         ],
     tests_require=[
-        u"fasteners",
-        u"future",
-        u"mock",
-        u"pexpect",
-        u"pytest",
-        u"pytest-runner",
+        "fasteners",
+        "mock",
+        "pexpect",
+        "pytest",
+        "pytest-runner",
         ],
-    test_suite=u"testing",
+    test_suite="testing",
     cmdclass={
-        u"build_ext": BuildExtCommand,
-        u"install": InstallCommand,
-        u"install_data": InstallDataCommand,
-        u"sdist": SdistCommand,
-        u"test": TestCommand,
+        "build_ext": BuildExtCommand,
+        "install": InstallCommand,
+        "install_data": InstallDataCommand,
+        "sdist": SdistCommand,
+        "test": TestCommand,
         },
     classifiers=[
-        u"Development Status :: 6 - Mature",
-        u"Environment :: Console",
-        u"License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
-        u"Operating System :: MacOS",
-        u"Operating System :: POSIX",
-        u"Programming Language :: C",
-        u"Programming Language :: Python :: 2",
-        u"Programming Language :: Python :: 2.7",
-        u"Programming Language :: Python :: 3",
-        u"Programming Language :: Python :: 3.5",
-        u"Programming Language :: Python :: 3.6",
-        u"Programming Language :: Python :: 3.7",
-        u"Programming Language :: Python :: 3.8",
-        u"Programming Language :: Python :: 3.9",
-        u"Programming Language :: Python :: 3.10",
-        u"Programming Language :: Python :: 3.11",
-        u"Topic :: System :: Archiving :: Backup"
+        "Development Status :: 6 - Mature",
+        "Environment :: Console",
+        "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
+        "Operating System :: MacOS",
+        "Operating System :: POSIX",
+        "Programming Language :: C",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Topic :: System :: Archiving :: Backup"
         ],
     )
 

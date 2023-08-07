@@ -18,11 +18,9 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
 
 import unittest
+
 from duplicity import cached_ops
 from duplicity import tarfile
 from . import UnitTestCase
@@ -34,5 +32,5 @@ class TarfileTest(UnitTestCase):
         self.assertTrue(tarfile.pwd is cached_ops)
 
 
-if __name__ == u"__main__":
+if __name__ == "__main__":
     unittest.main()

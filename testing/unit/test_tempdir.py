@@ -19,9 +19,6 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
 
 import os
 import tempfile
@@ -57,14 +54,14 @@ class TempDirTest(UnitTestCase):
         td.cleanup()
 
     def test_dirname(self):
-        u"""
+        """
         test if we generated a dirname
         """
         td = tempdir.default()
         dirname = td.dir()
         self.assertTrue(dirname is not None)
 
-        u"""
+        """
         test if duplicity's temp files are created in our temp dir
         """
         f1d, f1_name = tempdir.default().mkstemp()
@@ -72,7 +69,7 @@ class TempDirTest(UnitTestCase):
 
         self.assertTrue(dirname == f1_dirname)
 
-        u"""
+        """
         test if tempfile creates in our temp dir now as well by default
         """
         f2 = tempfile.NamedTemporaryFile()
@@ -89,5 +86,5 @@ class TempDirTest(UnitTestCase):
         td.cleanup()
 
 
-if __name__ == u"__main__":
+if __name__ == "__main__":
     unittest.main()

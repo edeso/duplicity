@@ -19,12 +19,10 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
 
 import re
 import unittest
+
 try:
     from unittest.mock import patch
 except ImportError:
@@ -38,21 +36,21 @@ from . import UnitTestCase
 
 
 class VolumeInfoTest(UnitTestCase):
-    u"""Test VolumeInfo"""
+    """Test VolumeInfo"""
     def test_basic(self):
-        u"""Basic VolumeInfoTest"""
+        """Basic VolumeInfoTest"""
         vi = manifest.VolumeInfo()
         vi.set_info(3, (b"hello", b"there"), None, (), None)
-        vi.set_hash(u"MD5", u"aoseutaohe")
+        vi.set_hash("MD5", "aoseutaohe")
         s = vi.to_string()
-        assert isinstance(s, (b"".__class__, u"".__class__))
+        assert isinstance(s, (b"".__class__, "".__class__))
         # print "---------\n%s\n---------" % s
         vi2 = manifest.VolumeInfo()
         vi2.from_string(s)
         assert vi == vi2
 
     def test_special(self):
-        u"""Test VolumeInfo with special characters"""
+        """Test VolumeInfo with special characters"""
         vi = manifest.VolumeInfo()
         vi.set_info(3234,
                     (b"\n eu \x233", b"heuo", b'\xd8\xab\xb1Wb\xae\xc5]\x8a\xbb\x15v*\xf4\x0f!\xf9>\xe2Y\x86\xbb\xab\xdbp\xb0\x84\x13k\x1d\xc2\xf1\xf5e\xa5U\x82\x9aUV\xa0\xf4\xdf4\xba\xfdX\x03\x82\x07s\xce\x9e\x8b\xb34\x04\x9f\x17 \xf4\x8f\xa6\xfa\x97\xab\xd8\xac\xda\x85\xdcKvC\xfa#\x94\x92\x9e\xc9\xb7\xc3_\x0f\x84g\x9aB\x11<=^\xdbM\x13\x96c\x8b\xa7|*"\\\'^$@#!(){}?+ ~` '),  # noqa
@@ -67,30 +65,30 @@ class VolumeInfoTest(UnitTestCase):
         assert vi == vi2
 
     def test_contains(self):
-        u"""Test to see if contains() works"""
+        """Test to see if contains() works"""
         vi = manifest.VolumeInfo()
-        vi.set_info(1, (u"1", u"2"), None, (u"1", u"3"), None)
-        assert vi.contains((u"1",), recursive=1)
-        assert not vi.contains((u"1",), recursive=0)
+        vi.set_info(1, ("1", "2"), None, ("1", "3"), None)
+        assert vi.contains(("1",), recursive=1)
+        assert not vi.contains(("1",), recursive=0)
 
         vi2 = manifest.VolumeInfo()
-        vi2.set_info(1, (u"A",), None, (u"Z",), None)
-        assert vi2.contains((u"M",), recursive=1)
-        assert vi2.contains((u"M",), recursive=0)
+        vi2.set_info(1, ("A",), None, ("Z",), None)
+        assert vi2.contains(("M",), recursive=1)
+        assert vi2.contains(("M",), recursive=0)
 
         vi3 = manifest.VolumeInfo()
-        vi3.set_info(1, (u"A",), None, (u"Z",), None)
-        assert not vi3.contains((u"3",), recursive=1)
-        assert not vi3.contains((u"3",), recursive=0)
+        vi3.set_info(1, ("A",), None, ("Z",), None)
+        assert not vi3.contains(("3",), recursive=1)
+        assert not vi3.contains(("3",), recursive=0)
 
 
 class ManifestTest(UnitTestCase):
-    u"""Test Manifest class"""
+    """Test Manifest class"""
 
     def setUp(self):
         UnitTestCase.setUp(self)
         self.old_files_changed = config.file_changed
-        config.file_changed = u'testing'
+        config.file_changed = 'testing'
 
     def tearDown(self):
         config.file_changed = self.old_files_changed
@@ -106,7 +104,7 @@ class ManifestTest(UnitTestCase):
         for vi in [vi1, vi2, vi3]:
             m.add_volume_info(vi)
 
-        self.set_config(u'local_path', path.Path(u"Foobar"))
+        self.set_config('local_path', path.Path("Foobar"))
         m.set_dirinfo()
         m.set_files_changed_info([])
 
@@ -128,7 +126,7 @@ class ManifestTest(UnitTestCase):
         for vi in [vi1, vi2, vi3]:
             m.add_volume_info(vi)
 
-        self.set_config(u'local_path', path.Path(u"Foobar"))
+        self.set_config('local_path', path.Path("Foobar"))
         m.set_dirinfo()
         m.set_files_changed_info([
             (b'one', b'new'),
@@ -142,29 +140,29 @@ class ManifestTest(UnitTestCase):
         # make filecount higher than files in list
         s2 = re.sub(b'Filelist 3', b'Filelist 5', s)
         m2 = manifest.Manifest().from_string(s2)
-        assert hasattr(m2, u'corrupt_filelist')
+        assert hasattr(m2, 'corrupt_filelist')
 
     def test_hostname_checks(self):
-        self.set_config(u'hostname', u'hostname')
-        self.set_config(u'fqdn', u'fqdn')
+        self.set_config('hostname', 'hostname')
+        self.set_config('fqdn', 'fqdn')
         m = manifest.Manifest()
 
         # Matching hostname should work
-        m.hostname = u'hostname'
+        m.hostname = 'hostname'
         m.check_dirinfo()
 
         # Matching fqdn should also work for backwards compatibility
-        m.hostname = u'fqdn'
+        m.hostname = 'fqdn'
         m.check_dirinfo()
 
         # Bad match should throw a fatal error and quit
-        m.hostname = u'foobar'
+        m.hostname = 'foobar'
         self.assertRaises(SystemExit, m.check_dirinfo)
 
         # But not if we tell the system to ignore it
-        self.set_config(u'allow_source_mismatch', True)
+        self.set_config('allow_source_mismatch', True)
         m.check_dirinfo()
 
 
-if __name__ == u"__main__":
+if __name__ == "__main__":
     unittest.main()

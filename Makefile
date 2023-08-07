@@ -4,7 +4,8 @@ help:
 	@echo	"ext          -- build C extensions"
 	@echo 	"docs         -- build Sphinx docs"
 	@echo 	"help         -- this text"
-	@echo   "pot          -- update pot"
+	@echo   "pot          -- update duplicity.pot"
+	@echo   "sdist        -- make versioned source"
 
 genned_files=\
 	'*.egg-info' \
@@ -46,11 +47,13 @@ ifndef READTHEDOCS
 	$(MAKE) -C docs html
 endif
 
-
 ext:
 	./setup.py build_ext
 
 pot:
 	po/update-pot
 
-.PHONY: clean docs ext help pot
+sdist:
+	./setup.py sdist --dist-dir=.
+
+.PHONY: clean docs ext help pot sdist

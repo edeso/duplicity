@@ -19,39 +19,41 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import os.path
+
 import duplicity.backend
 import duplicity.util
 
 
 class SXBackend(duplicity.backend.Backend):
-    u"""Connect to remote store using Skylable Protocol"""
+    """Connect to remote store using Skylable Protocol"""
+
     def __init__(self, parsed_url):
         duplicity.backend.Backend.__init__(self, parsed_url)
         self.url_string = parsed_url.url_string
 
     def _put(self, source_path, remote_filename):
-        remote_filename = util.fsdecode(remote_filename)
+        remote_filename = os.fsdecode(remote_filename)
         remote_path = os.path.join(self.url_string, remote_filename)
-        commandline = u"sxcp {0} {1}".format(source_path.uc_name, remote_path)
+        commandline = f"sxcp {source_path.uc_name} {remote_path}"
         self.subprocess_popen(commandline)
 
     def _get(self, remote_filename, local_path):
-        remote_filename = util.fsdecode(remote_filename)
+        remote_filename = os.fsdecode(remote_filename)
         remote_path = os.path.join(self.url_string, remote_filename)
-        commandline = u"sxcp {0} {1}".format(remote_path, local_path.uc_name)
+        commandline = f"sxcp {remote_path} {local_path.uc_name}"
         self.subprocess_popen(commandline)
 
     def _list(self):
         # Do a long listing to avoid connection reset
-        commandline = u"sxls {0}/".format(self.url_string)
+        commandline = f"sxls {self.url_string}/"
         _, l, _ = self.subprocess_popen(commandline)
         # Look for our files as the last element of a long list line
-        return [util.fsencode(x[x.rindex(u'/') + 1:].split()[-1]) for x in l.split(u'\n')
-                if x and not x.startswith(u"total ")]
+        return [os.fsencode(x[x.rindex('/') + 1:].split()[-1]) for x in l.split('\n')
+                if x and not x.startswith("total ")]
 
     def _delete(self, filename):
-        commandline = u"sxrm {0}/{1}".format(self.url_string, filename)
+        commandline = f"sxrm {self.url_string}/{filename}"
         self.subprocess_popen(commandline)
 
 
-duplicity.backend.register_backend(u"sx", SXBackend)
+duplicity.backend.register_backend("sx", SXBackend)

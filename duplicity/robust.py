@@ -28,14 +28,13 @@ tmp_file_index = 1
 
 
 def check_common_error(error_handler, function, args=()):
-    u"""Apply function to args, if error, run error_handler on exception
+    """Apply function to args, if error, run error_handler on exception
 
     This only catches certain exceptions which seem innocent
     enough.
 
     """
-    # todo: import here to avoid circular dependency issue
-    from duplicity import path
+    from duplicity import path  # TODO: avoid circ. dep. issue
 
     try:
         return function(*args)
@@ -45,11 +44,11 @@ def check_common_error(error_handler, function, args=()):
     #    TracebackArchive.add()
     except (IOError, EnvironmentError, librsync.librsyncError, path.PathException) as exc:
         if (not isinstance(exc, EnvironmentError) or
-            hasattr(exc, u"errno") and
-            errno.errorcode[exc.errno] in
-            [u'EPERM', u'ENOENT', u'EACCES', u'EBUSY', u'EEXIST',
-             u'ENOTDIR', u'ENAMETOOLONG', u'EINTR', u'ENOTEMPTY',
-             u'EIO', u'ETXTBSY', u'ESRCH', u'EINVAL', u'EOPNOTSUPP']):
+                hasattr(exc, "errno") and
+                errno.errorcode[exc.errno] in
+                ['EPERM', 'ENOENT', 'EACCES', 'EBUSY', 'EEXIST',
+                 'ENOTDIR', 'ENAMETOOLONG', 'EINTR', 'ENOTEMPTY',
+                 'EIO', 'ETXTBSY', 'ESRCH', 'EINVAL', 'EOPNOTSUPP']):
             # Log.exception()
             if error_handler:
                 return error_handler(exc, *args)
@@ -59,10 +58,11 @@ def check_common_error(error_handler, function, args=()):
 
 
 def listpath(path):
-    u"""Like path.listdir() but return [] if error, and sort results"""
+    """Like path.listdir() but return [] if error, and sort results"""
+
     def error_handler(exc):  # pylint: disable=unused-argument
-        log.Warn(_(u"Error listing directory %s") % path.uc_name)
+        log.Warn(_("Error listing directory %s") % path.uc_name)
         return []
-    dir_listing = check_common_error(error_handler, path.listdir)
-    dir_listing.sort()
+
+    dir_listing = sorted(check_common_error(error_handler, path.listdir))
     return dir_listing

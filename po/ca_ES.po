@@ -1704,4 +1704,3 @@ msgstr ""
 #, python-format
 msgid "Deleting tree %s"
 msgstr ""
-

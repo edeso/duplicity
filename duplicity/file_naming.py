@@ -1,4 +1,3 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
 # Copyright 2002 Ben Escoto <ben@emerose.org>
 # Copyright 2007 Kenneth Loafman <kenneth@loafman.com>
@@ -19,15 +18,12 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-u"""Produce and parse the names of duplicity's backup files"""
+"""Produce and parse the names of duplicity's backup files"""
 
-from builtins import str
-from builtins import range
-from builtins import object
 import re
-from duplicity import dup_time
+
 from duplicity import config
-import sys
+from duplicity import dup_time
 
 full_vol_re = None
 full_vol_re_short = None
@@ -145,16 +141,15 @@ def prepare_regex(force=False):
 
 
 def to_base36(n):
-    u"""
+    """
     Return string representation of n in base 36 (use 0-9 and a-z)
     """
     div, mod = divmod(n, 36)
     if mod <= 9:
         last_digit = str(mod)
     else:
-        last_digit = chr(ord(u'a') + mod - 10)
-    if sys.version_info.major >= 3:
-        last_digit = last_digit.encode()
+        last_digit = chr(ord('a') + mod - 10)
+    last_digit = last_digit.encode()
     if n == mod:
         return last_digit
     else:
@@ -162,42 +157,35 @@ def to_base36(n):
 
 
 def from_base36(s):
-    u"""
+    """
     Convert string s in base 36 to long int
     """
     total = 0
     for i in range(len(s)):
         total *= 36
-        if sys.version_info.major >= 3 and isinstance(s, bytes):
+        if isinstance(s, bytes):
             digit_ord = s[i]
         else:
             digit_ord = ord(s[i])
-        if ord(u'0') <= digit_ord <= ord(u'9'):
-            total += digit_ord - ord(u'0')
-        elif ord(u'a') <= digit_ord <= ord(u'z'):
-            total += digit_ord - ord(u'a') + 10
+        if ord('0') <= digit_ord <= ord('9'):
+            total += digit_ord - ord('0')
+        elif ord('a') <= digit_ord <= ord('z'):
+            total += digit_ord - ord('a') + 10
         else:
-            assert 0, u"Digit %s in %s not in proper range" % (s[i], s)
+            assert 0, f"Digit {s[i]} in {s} not in proper range"
     return total
 
 
 def get_suffix(encrypted, gzipped):
-    u"""
-    Return appropriate suffix depending on status of
-    encryption, compression, and short_filenames.
+    """
+    Return appropriate suffix depending on status of encryption or compression or neither.
     """
     if encrypted:
         gzipped = False
     if encrypted:
-        if config.short_filenames:
-            suffix = b'.g'
-        else:
-            suffix = b".gpg"
+        suffix = b".gpg"
     elif gzipped:
-        if config.short_filenames:
-            suffix = b".z"
-        else:
-            suffix = b'.gz'
+        suffix = b'.gz'
     else:
         suffix = b""
     return suffix
@@ -205,7 +193,7 @@ def get_suffix(encrypted, gzipped):
 
 def get(type, volume_number=None, manifest=False,  # pylint: disable=redefined-builtin
         encrypted=False, gzipped=False, partial=False):
-    u"""
+    """
     Return duplicity filename of specified type
 
     type can be "full", "inc", "full-sig", or "new-sig". volume_number
@@ -216,38 +204,19 @@ def get(type, volume_number=None, manifest=False,  # pylint: disable=redefined-b
     if encrypted:
         gzipped = False
     suffix = get_suffix(encrypted, gzipped)
-    part_string = b""
-    if config.short_filenames:
-        if partial:
-            part_string = b".p"
-    else:
-        if partial:
-            part_string = b".part"
-
-    if type == u"full-sig" or type == u"new-sig":
+    part_string = b".part" if partial else b""
+    if type == "full-sig" or type == "new-sig":
         assert not volume_number and not manifest
         assert not (volume_number and part_string)
-        if type == u"full-sig":
-            if config.short_filenames:
-                return (config.file_prefix + config.file_prefix_signature +
-                        b"dfs.%s.st%s%s" %
-                        (to_base36(dup_time.curtime), part_string, suffix))
-            else:
-                return (config.file_prefix + config.file_prefix_signature +
-                        b"duplicity-full-signatures.%s.sigtar%s%s" %
-                        (dup_time.curtimestr.encode(), part_string, suffix))
-        elif type == u"new-sig":
-            if config.short_filenames:
-                return (config.file_prefix + config.file_prefix_signature +
-                        b"dns.%s.%s.st%s%s" %
-                        (to_base36(dup_time.prevtime),
-                         to_base36(dup_time.curtime),
-                         part_string, suffix))
-            else:
-                return (config.file_prefix + config.file_prefix_signature +
-                        b"duplicity-new-signatures.%s.to.%s.sigtar%s%s" %
-                        (dup_time.prevtimestr.encode(), dup_time.curtimestr.encode(),
-                         part_string, suffix))
+        if type == "full-sig":
+            return (config.file_prefix + config.file_prefix_signature +
+                    b"duplicity-full-signatures.%s.sigtar%s%s" %
+                    (dup_time.curtimestr.encode(), part_string, suffix))
+        elif type == "new-sig":
+            return (config.file_prefix + config.file_prefix_signature +
+                    b"duplicity-new-signatures.%s.to.%s.sigtar%s%s" %
+                    (dup_time.prevtimestr.encode(), dup_time.curtimestr.encode(),
+                     part_string, suffix))
     else:
         assert volume_number or manifest
         assert not (volume_number and manifest)
@@ -255,44 +224,30 @@ def get(type, volume_number=None, manifest=False,  # pylint: disable=redefined-b
         prefix = config.file_prefix
 
         if volume_number:
-            if config.short_filenames:
-                vol_string = b"%s.dt" % to_base36(volume_number)
-            else:
-                vol_string = b"vol%d.difftar" % volume_number
+            vol_string = b"vol%d.difftar" % volume_number
             prefix += config.file_prefix_archive
         else:
-            if config.short_filenames:
-                vol_string = b"m"
-            else:
-                vol_string = b"manifest"
+            vol_string = b"manifest"
             prefix += config.file_prefix_manifest
 
-        if type == u"full":
-            if config.short_filenames:
-                return (b"%sdf.%s.%s%s%s" % (prefix, to_base36(dup_time.curtime),
-                                             vol_string, part_string, suffix))
-            else:
-                return (b"%sduplicity-full.%s.%s%s%s" % (prefix, dup_time.curtimestr.encode(),
-                                                         vol_string, part_string, suffix))
-        elif type == u"inc":
-            if config.short_filenames:
-                return (b"%sdi.%s.%s.%s%s%s" % (prefix, to_base36(dup_time.prevtime),
-                                                to_base36(dup_time.curtime),
-                                                vol_string, part_string, suffix))
-            else:
-                return (b"%sduplicity-inc.%s.to.%s.%s%s%s" % (prefix, dup_time.prevtimestr.encode(),
-                                                              dup_time.curtimestr.encode(),
-                                                              vol_string, part_string, suffix))
+        if type == "full":
+            return (b"%sduplicity-full.%s.%s%s%s" % (prefix, dup_time.curtimestr.encode(),
+                                                     vol_string, part_string, suffix))
+        elif type == "inc":
+            return (b"%sduplicity-inc.%s.to.%s.%s%s%s" % (prefix, dup_time.prevtimestr.encode(),
+                                                          dup_time.curtimestr.encode(),
+                                                          vol_string, part_string, suffix))
         else:
             assert 0
 
 
 def parse(filename):
-    u"""
+    """
     Parse duplicity filename, return None or ParseResults object
     """
+
     def str2time(timestr, short):
-        u"""
+        """
         Return time in seconds if string can be converted, None otherwise
         """
         if isinstance(timestr, bytes):
@@ -308,7 +263,7 @@ def parse(filename):
         return t
 
     def get_vol_num(s, short):
-        u"""
+        """
         Return volume number from volume number string
         """
         if short:
@@ -317,98 +272,89 @@ def parse(filename):
             return int(s)
 
     def check_full():
-        u"""
+        """
         Return ParseResults if file is from full backup, None otherwise
         """
         prepare_regex()
         short = True
         m1 = full_vol_re_short.search(filename)
         m2 = full_manifest_re_short.search(filename)
-        if not m1 and not m2 and not config.short_filenames:
+        if not m1 and not m2:
             short = False
             m1 = full_vol_re.search(filename)
             m2 = full_manifest_re.search(filename)
         if m1 or m2:
-            t = str2time((m1 or m2).group(u"time"), short)
+            t = str2time((m1 or m2).group("time"), short)
             if t:
                 if m1:
-                    return ParseResults(u"full", time=t,
-                                        volume_number=get_vol_num(m1.group(u"num"), short))
+                    return ParseResults("full", time=t,
+                                        volume_number=get_vol_num(m1.group("num"), short))
                 else:
-                    return ParseResults(u"full", time=t, manifest=True,
-                                        partial=(m2.group(u"partial") is not None))
+                    return ParseResults("full", time=t, manifest=True,
+                                        partial=(m2.group("partial") is not None))
         return None
 
     def check_inc():
-        u"""
+        """
         Return ParseResults if file is from inc backup, None otherwise
         """
         prepare_regex()
         short = True
         m1 = inc_vol_re_short.search(filename)
         m2 = inc_manifest_re_short.search(filename)
-        if not m1 and not m2 and not config.short_filenames:
+        if not m1 and not m2:
             short = False
             m1 = inc_vol_re.search(filename)
             m2 = inc_manifest_re.search(filename)
         if m1 or m2:
-            t1 = str2time((m1 or m2).group(u"start_time"), short)
-            t2 = str2time((m1 or m2).group(u"end_time"), short)
+            t1 = str2time((m1 or m2).group("start_time"), short)
+            t2 = str2time((m1 or m2).group("end_time"), short)
             if t1 and t2:
                 if m1:
-                    return ParseResults(u"inc", start_time=t1,
-                                        end_time=t2, volume_number=get_vol_num(m1.group(u"num"), short))
+                    return ParseResults("inc", start_time=t1,
+                                        end_time=t2, volume_number=get_vol_num(m1.group("num"), short))
                 else:
-                    return ParseResults(u"inc", start_time=t1, end_time=t2, manifest=1,
-                                        partial=(m2.group(u"partial") is not None))
+                    return ParseResults("inc", start_time=t1, end_time=t2, manifest=1,
+                                        partial=(m2.group("partial") is not None))
         return None
 
     def check_sig():
-        u"""
+        """
         Return ParseResults if file is a signature, None otherwise
         """
         prepare_regex()
         short = True
         m = full_sig_re_short.search(filename)
-        if not m and not config.short_filenames:
+        if not m:
             short = False
             m = full_sig_re.search(filename)
         if m:
-            t = str2time(m.group(u"time"), short)
+            t = str2time(m.group("time"), short)
             if t:
-                return ParseResults(u"full-sig", time=t,
-                                    partial=(m.group(u"partial") is not None))
+                return ParseResults("full-sig", time=t,
+                                    partial=(m.group("partial") is not None))
             else:
                 return None
 
         short = True
         m = new_sig_re_short.search(filename)
-        if not m and not config.short_filenames:
+        if not m:
             short = False
             m = new_sig_re.search(filename)
         if m:
-            t1 = str2time(m.group(u"start_time"), short)
-            t2 = str2time(m.group(u"end_time"), short)
+            t1 = str2time(m.group("start_time"), short)
+            t2 = str2time(m.group("end_time"), short)
             if t1 and t2:
-                return ParseResults(u"new-sig", start_time=t1, end_time=t2,
-                                    partial=(m.group(u"partial") is not None))
+                return ParseResults("new-sig", start_time=t1, end_time=t2,
+                                    partial=(m.group("partial") is not None))
         return None
 
     def set_encryption_or_compression(pr):
-        u"""
+        """
         Set encryption and compression flags in ParseResults pr
         """
-        if (filename.endswith(b'.z') or
-                not config.short_filenames and filename.endswith(b'gz')):
-            pr.compressed = 1
-        else:
-            pr.compressed = None
-
-        if (filename.endswith(b'.g') or
-                not config.short_filenames and filename.endswith(b'.gpg')):
-            pr.encrypted = 1
-        else:
-            pr.encrypted = None
+        pr.compressed = filename.endswith(b'.z') or filename.endswith(b'.gz')
+        pr.encrypted = filename.endswith(b'.g') or filename.endswith(b'.gpg')
 
     pr = check_full()
     if not pr:
@@ -421,20 +367,21 @@ def parse(filename):
     return pr
 
 
-class ParseResults(object):
-    u"""
+class ParseResults:
+    """
     Hold information taken from a duplicity filename
     """
+
     def __init__(self, type, manifest=None, volume_number=None,  # pylint: disable=redefined-builtin
                  time=None, start_time=None, end_time=None,
                  encrypted=None, compressed=None, partial=False):
 
-        assert type in [u"full-sig", u"new-sig", u"inc", u"full"]
+        assert type in ["full-sig", "new-sig", "inc", "full"]
 
         self.type = type
-        if type == u"inc" or type == u"full":
+        if type == "inc" or type == "full":
             assert manifest or volume_number
-        if type == u"inc" or type == u"new-sig":
+        if type == "inc" or type == "new-sig":
             assert start_time and end_time
         else:
             assert time

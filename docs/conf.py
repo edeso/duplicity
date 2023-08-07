@@ -53,12 +53,13 @@ language = 'en'
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = [
-    '_build',
-    'Thumbs.db',
     '.DS_Store',
+    'README*',
+    'Thumbs.db',
+    '_build',
+    'setup.py',
     'testing/manual',
     'testing/override',
-    'setup.py',
 ]
 
 
@@ -89,7 +90,7 @@ autodoc_default_options = {
     'autofunction': True,
     'members': True,
     'member-order': 'alphabetical',
-    'special-members': '__init__',
+    'special-members': '__init__, __call__, __next__',
     'undoc-members': True,
 }
 
