@@ -1,3 +1,28 @@
+## rel.2.0.0 (2023-08-07)
+
+### Changes
+
+* Remove boto related doc. some reformatting. [ede]
+
+* Add missing user options to manpage. [Kenneth Loafman]
+
+* Improve --verbosity help. [Kenneth Loafman]
+
+* Remove implied command support for now. [Kenneth Loafman]
+
+* Remove --s3-european-buckets used by boto. [Kenneth Loafman]
+
+* Fix short filenames use in new s3 files. [Kenneth Loafman]
+
+### Fix
+
+* S3 backend issues. Fixes #31. [Kenneth Loafman]
+
+* Fix Exception Type for verbosity level. [Thomas Laubrock]
+
+* Remove tests for py27 and py35. [Kenneth Loafman]
+
+
 ## rel.2.0.0rc2 (2023-07-24)
 
 ### Changes
@@ -37,6 +62,8 @@
 
 * Update CHANGELOG.md. [Kenneth Loafman]
 
+* Update CHANGELOG.md. [Kenneth Loafman]
+
 ### Fix
 
 * Finish conversions to f-strings. [Kenneth Loafman]
@@ -63,6 +90,10 @@
 * Fix PEP8 issue.  Update CHANGELOG.md. [Kenneth Loafman]
 
 * Resolve some minor merge issues. [Kenneth Loafman]
+
+* Update CHANGELOG.md. [Kenneth Loafman]
+
+* Some basic PEP8 and code cleanup. [Kenneth Loafman]
 
 * Whoops, used f-string to fix #716. Fixed. [Kenneth Loafman]
 
@@ -115,17 +146,17 @@
 * Handle read-only remote parent folder better in gio backend. [Michael Terry]
 
 
-## rel.2.0.0b1 (2023-06-30)
+## rel.2.0.0b1 (2023-06-29)
 
 ### Changes
-
-* Update CHANGELOG.md. [Kenneth Loafman]
 
 * Some basic PEP8 and code cleanup. [Kenneth Loafman]
 
 * Set socket default timeout in CLI. [Kenneth Loafman]
 
 * Fixes for deprecated/changed options. [Kenneth Loafman]
+
+* Misc changes for compatibility. [Kenneth Loafman]
 
 
 ## rel.2.0.0b0 (2023-06-24)
@@ -141,12 +172,19 @@
 
 * Fix .gitlab-ci.yml to skip website step if no token. [Kenneth Loafman]
 
+* Remove pathvalidate from use.  Fixes #27. [Kenneth Loafman]
+
 
 ## rel.2.0.0a2 (2023-06-14)
 
 ### Changes
 
 * Remove pathvalidate from use.  Fixes #27. [Kenneth Loafman]
+
+* More CLI improvements. [Kenneth Loafman]
+
+  - Improve error message for implied commands.   - Code and testing
+  clean up.   - Remove deprecated option handling.
 
 
 ## rel.2.0.0a1 (2023-06-14)
@@ -169,6 +207,8 @@
 * RcloneBackendTest now creates its own config. [Kenneth Loafman]
 
 * "--ignore-errors" gets proper handling in CLI. [Kenneth Loafman]
+
+* Fix initial version. [Kenneth Loafman]
 
 ### Fix
 
