@@ -71,10 +71,39 @@ def harvest_namespace(args):
         setattr(config, f, v)
 
 
+def pre_parse_cmdline_options(arglist):
+    """
+    Parse the commands and options that need to be handled first.
+    Everthing else is passed on to the main parser.
+    """
+    # set up parent parser
+    parser = argparse.ArgumentParser(
+        prog='duplicity',
+        add_help=False,
+        argument_default=None)
+
+    # add parent_only options to the parser
+    for opt in sorted(parent_only_options):
+        var = opt2var(opt)
+        names = [opt] + OptionAliases.__dict__.get(var, [])
+        parser.add_argument(*names, **OptionKwargs.__dict__[var])
+
+    # process parent args now
+    args, remain = parser.parse_known_args(arglist)
+
+    # harvest args to config
+    harvest_namespace(args)
+
+    return args, remain
+
+
 def parse_cmdline_options(arglist):
     """
     Parse remaining argument list once all is defined.
     """
+    # preprocess config type args
+    args, remain = pre_parse_cmdline_options(arglist)
+
     # set up parent parser
     parser = argparse.ArgumentParser(
         prog='duplicity',
@@ -134,7 +163,7 @@ def parse_cmdline_options(arglist):
             subparser_dict[cmd].add_argument(*names, **OptionKwargs.__dict__[var])
 
     # parse the options
-    args = parser.parse_args(arglist)
+    args = parser.parse_args(remain)
 
     # if no command, print general help
     if not hasattr(args, "action"):
