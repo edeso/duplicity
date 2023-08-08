@@ -26,6 +26,7 @@ import argparse
 import io
 import os
 import re
+import socket
 import sys
 from textwrap import dedent
 from hashlib import md5
