@@ -823,7 +823,6 @@ class CommandOptions:
         all_options
         - parent_only_options
         - backup_only_options
-        - selection_only_options
     )
 
 
