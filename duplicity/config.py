@@ -118,7 +118,7 @@ select_files = []
 gpg_binary = None
 
 # Options to pass to gpg
-gpg_options = ''
+gpg_options = ""
 
 # Set to GPGProfile that will be used to compress/uncompress encrypted
 # files.  Replaces encryption_keys, sign_key, and passphrase settings.

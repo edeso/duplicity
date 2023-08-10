@@ -324,9 +324,9 @@ class OptionKwargs:
     }
     gpg_options = {
         "metavar": _("options"),
-        "action": "append",
-        "help": "Options to append to GNUpg invocation",
-        "default": dflt(None)
+        "action": SplitOptionsAction,
+        "help": "Verbatim gpg options.  May be supplied multiple times.",
+        "default": dflt(config.gpg_options)
     }
     hidden_encrypt_key = {
         "metavar": _("gpg-key-id"),
@@ -467,7 +467,7 @@ class OptionKwargs:
     }
     par2_options = {
         "metavar": _("options"),
-        "action": "append",
+        "action": SplitOptionsAction,
         "help": "Verbatim par2 options.  May be supplied multiple times.",
         "default": dflt(config.par2_options)
     }
@@ -516,8 +516,8 @@ class OptionKwargs:
     }
     rsync_options = {
         "metavar": _("options"),
-        "action": "append",
-        "help": "User added rsync options",
+        "action": SplitOptionsAction,
+        "help": "Verbatim rsync options.  May be supplied multiple times.",
         "default": dflt(config.rsync_options)
     }
     s3_endpoint_url = {
@@ -635,8 +635,8 @@ class OptionKwargs:
     }
     ssh_options = {
         "metavar": _("options"),
-        "action": "append",
-        "help": "SSH options to add",
+        "action": SplitOptionsAction,
+        "help": "Verbatim ssh options.  May be supplied multiple times.",
         "default": dflt(config.ssh_options)
     }
     ssl_cacert_file = {

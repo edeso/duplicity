@@ -22,6 +22,7 @@
 import argparse
 import copy
 import os
+import shlex
 import unittest
 
 import pytest
@@ -312,3 +313,20 @@ class CommandlineTest(UnitTestCase):
         with self.assertRaises(SystemExit) as cm:
             cline = "rb file:///target_url foo/bar extra".split()
             cli_main.process_command_line(cline)
+
+    @pytest.mark.usefixtures("redirect_stdin")
+    def test_list_commands(self):
+        """
+        test list commands like ssh_options, etc.
+        """
+        cline = shlex.split("inc foo/bar file:///target_url --ssh-options=\'--foo\'")
+        cli_main.process_command_line(cline)
+        self.assertEqual(config.ssh_options, "--foo")
+
+        cline = shlex.split("inc foo/bar file:///target_url --ssh-options=\'--foo\' --ssh-options=\'--bar\'")
+        cli_main.process_command_line(cline)
+        self.assertEqual(config.ssh_options, "--foo --bar")
+
+        cline = shlex.split("inc foo/bar file:///target_url --ssh-options=\'--foo --bar\'")
+        cli_main.process_command_line(cline)
+        self.assertEqual(config.ssh_options, "--foo --bar")

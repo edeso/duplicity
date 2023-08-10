@@ -92,6 +92,20 @@ class AddRenameAction(DuplicityAction):
         config.rename[key] = os.fsencode(values[1])
 
 
+class SplitOptionsAction(DuplicityAction):
+    def __init__(self, option_strings, dest, **kwargs):
+        super().__init__(option_strings, dest, **kwargs)
+
+    def __call__(self, parser, namespace, values, option_string=None):
+        var = opt2var(option_string)
+        opts = getattr(namespace, var)
+        values = values.strip('"').strip("'")
+        if opts == "":
+            opts = values
+        else:
+            opts = f"{opts} {values}"
+        setattr(namespace, var, opts)
+
 class IgnoreErrorsAction(DuplicityAction):
     def __init__(self, option_strings, dest, **kwargs):
         super().__init__(option_strings, dest, **kwargs)
@@ -257,10 +271,7 @@ def dflt(val):
     """
     Return printable value for default.
     """
-    if isinstance(val, (str, bytes, bool, int)):
-        return val
-    else:
-        return None
+    return val
 
 
 def expand_fn(filename):
