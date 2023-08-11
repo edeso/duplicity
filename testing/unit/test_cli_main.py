@@ -210,7 +210,7 @@ class CommandlineTest(UnitTestCase):
     @pytest.mark.usefixtures("redirect_stdin")
     def test_encryption_options(self):
         """
-        test short option aliases
+        test encrypt/sign key handling
         """
         start = "ib foo/bar file:///target_url "
         keys = (
@@ -223,6 +223,11 @@ class CommandlineTest(UnitTestCase):
             cline = f"{start} --encrypt-key={key}".split()
             cli_main.process_command_line(cline)
             self.assertEqual(config.gpg_profile.recipients, [key])
+
+            cline = f"{start} --encrypt-sign-key={key}".split()
+            cli_main.process_command_line(cline)
+            self.assertEqual(config.gpg_profile.recipients, [key])
+            self.assertEqual(config.gpg_profile.sign_key, key)
 
             cline = f"{start} --hidden-encrypt-key={key}".split()
             cli_main.process_command_line(cline)

@@ -408,6 +408,12 @@ def set_encrypt_key(encrypt_key):
     config.gpg_profile.recipients.append(encrypt_key)
 
 
+def set_encrypt_sign_key(encrypt_sign_key):
+    """Set config.gpg_profile.encrypt_sign_key assuming proper key given"""
+    set_encrypt_key(encrypt_sign_key)
+    set_sign_key(encrypt_sign_key)
+
+
 def set_hidden_encrypt_key(hidden_encrypt_key):
     """Set config.gpg_profile.hidden_encrypt_key assuming proper key given"""
     if not gpg_key_patt.match(hidden_encrypt_key):

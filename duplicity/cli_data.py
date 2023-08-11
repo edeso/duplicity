@@ -174,6 +174,12 @@ class OptionKwargs:
         "help": "GNUpg key for encryption/decryption",
         "default": dflt(None)
     }
+    encrypt_sign_key = {
+        "metavar": _("gpg-key-id"),
+        "type": set_encrypt_sign_key,
+        "help": "GNUpg key for encryption/decryption and signing",
+        "default": dflt(None)
+    }
     encrypt_secret_keyring = {
         "metavar": _("path"),
         "help": "Path to secret GNUpg keyring",
