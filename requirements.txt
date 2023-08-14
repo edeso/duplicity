@@ -14,7 +14,6 @@ python-gettext
 ##### backend libraries #####
 
 atom
-azure-core
 azure-storage-blob
 b2sdk
 boto
