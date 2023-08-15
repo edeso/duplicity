@@ -1,20 +1,23 @@
-## rel.2.0.1 (2023-08-08)
-
-### Changes
-
-* Remove boto related doc. some reformatting. [ede]
-
-* Add missing user options to manpage. [Kenneth Loafman]
-
-* Improve --verbosity help. [Kenneth Loafman]
-
-* Remove implied command support for now. [Kenneth Loafman]
-
-* Remove --s3-european-buckets used by boto. [Kenneth Loafman]
-
-* Fix short filenames use in new s3 files. [Kenneth Loafman]
+## rel.2.0.2 (2023-08-15)
 
 ### Fix
+
+* Adjust to new azure module structure.  Fixes #731. [Kenneth Loafman]
+
+* Handle --encrypt-sign-key.  Fixes #736. [Kenneth Loafman]
+
+* Fix PEP8 error. [Kenneth Loafman]
+
+* Fix *-options commands.  Fixes #732. [Kenneth Loafman]
+
+* Enable selection options for verify.  Fixes #734. [vin01]
+
+
+## rel.2.0.1 (2023-08-08)
+
+### Fix
+
+* Adjust regex for 2.0.0x. [Kenneth Loafman]
 
 * Restore pre-parser. Fixes #727. [Kenneth Loafman]
 
@@ -32,6 +35,25 @@
   fix:pkg: Adjust to build under LP Mantic.
 
 * Fix PEP8 issue. [Kenneth Loafman]
+
+
+## rel.2.0.0x (2023-08-07)
+
+### Changes
+
+* Remove boto related doc. some reformatting. [ede]
+
+* Add missing user options to manpage. [Kenneth Loafman]
+
+* Improve --verbosity help. [Kenneth Loafman]
+
+* Remove implied command support for now. [Kenneth Loafman]
+
+* Remove --s3-european-buckets used by boto. [Kenneth Loafman]
+
+* Fix short filenames use in new s3 files. [Kenneth Loafman]
+
+### Fix
 
 * Cannot run CLI tests on Launchpad. [Kenneth Loafman]
 
