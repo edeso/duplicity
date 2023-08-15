@@ -2,6 +2,8 @@
 
 ### Fix
 
+* Fixes to tools/release-prep. [Kenneth Loafman]
+
 * Adjust to new azure module structure.  Fixes #731. [Kenneth Loafman]
 
 * Handle --encrypt-sign-key.  Fixes #736. [Kenneth Loafman]
