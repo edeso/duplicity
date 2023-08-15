@@ -44,7 +44,7 @@ if not (sys.version_info[0] == 3 and sys.version_info[1] >= 8):
     sys.exit(1)
 
 
-Version = "2.0.1dev"
+Version = "2.0.2"
 scm_version_args = {
     'tag_regex': r'^(?P<prefix>rel.)?(?P<version>[^\+]+)(?P<suffix>.*)?$',
     'local_scheme': 'no-local-version',
@@ -52,7 +52,7 @@ scm_version_args = {
     }
 try:
     from setuptools_scm import get_version  # pylint: disable=import-error
-    Version = get_version(**scm_version_args)
+    Version = "2.0.2"
 except Exception as e:
     pass
 Reldate = time.strftime("%B %d, %Y", time.gmtime(int(os.environ.get('SOURCE_DATE_EPOCH', time.time()))))

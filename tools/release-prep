@@ -48,7 +48,7 @@ fi
 set -v
 
 # put in correct version for Launchpad
-${SED} -i s/${REL}dev/${REL}/g setup.py
+${SED} -i s/Version\ =\ .*/Version\ =\ \"${REL}\"/g setup.py
 git commit -a -m"chg:pkg: Prep for ${REL}"
 
 # add release tag and push it
