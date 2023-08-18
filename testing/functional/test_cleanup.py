@@ -64,6 +64,16 @@ class CleanupTest(FunctionalTestCase):
         leftovers = self.get_backend_files()
         self.assertEqual(full2_files, leftovers)
 
+    def test_remove_all_but_n_incl_jsonstat(self):
+        u"""
+        Test that remove-all-but-n works in the simple case.
+        """
+        full1_files = self.backup("full", f"{_runtest_dir}/testfiles/empty_dir", options=['--jsonstat'])
+        full2_files = self.backup("full", f"{_runtest_dir}/testfiles/empty_dir", options=['--jsonstat'])
+        self.run_duplicity(options=["remove-all-but-n-full", "1", self.backend_url, "--force"])
+        leftovers = self.get_backend_files()
+        self.assertEqual(full2_files, leftovers)
+
     def test_remove_all_inc_of_but_n_full(self):
         """
         Test that remove-all-inc-of-but-n-full works in the simple case.

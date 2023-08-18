@@ -188,6 +188,21 @@ class FinalTest(FunctionalTestCase):
                     passphrase_input=[self.sign_passphrase, self.sign_passphrase])
         self.restore(passphrase_input=[self.sign_passphrase])
 
+    @pytest.mark.slow
+    def test_jsonstat(self):
+        u"""Test cycle with json stats enabled"""
+        backup_options = ["--jsonstat"]
+        restore_options = ["--jsonstat"]
+        self.test_basic_cycle(backup_options=backup_options,
+                              restore_options=restore_options)
+
+    def test_jsonstat_missing(self):
+        u"""Make sure collection_status works if one set misses jsonstat"""
+        self.backup("full", f"{_runtest_dir}/testfiles/dir1", options=["--jsonstat", "--allow-source-mismatch"])
+        self.backup("inc", f"{_runtest_dir}/testfiles/empty_dir", options=["--jsonstat", "--allow-source-mismatch"])
+        self.backup("inc", f"{_runtest_dir}/testfiles/dir2", options=["--allow-source-mismatch"])
+        self.collection_status(options=["--show-changes-in-set", "-1", "--jsonstat"])
+
 
 if __name__ == "__main__":
     unittest.main()

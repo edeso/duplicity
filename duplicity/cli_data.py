@@ -255,6 +255,12 @@ class OptionKwargs:
         "help": "String prefix for duplicity signature files",
         "default": dflt(config.file_prefix_signature)
     }
+    file_prefix_jsonstat = {
+        "metavar": "string",
+        "type": make_bytes,
+        "help": "String prefix for duplicity jsonstat files",
+        "default": dflt(config.file_prefix_jsonstat)
+    }
     files_from = {
         "metavar": _("filename"),
         "type": check_file,
@@ -379,6 +385,13 @@ class OptionKwargs:
         "action": AddSelectionAction,
         "help": "Include based on regex pattern",
         "default": dflt(None)
+    }
+    jsonstat = {
+        "action": "store_true",
+        "help": "if set, an extra file with statistices in json format will bestored with each backup. "
+        "it includes the staistics printed out on stdout by default. "
+        "With 'collection-status' it returs these stats.",
+        "default": dflt(config.jsonstat)
     }
     log_fd = {
         "metavar": _("file_descriptor"),

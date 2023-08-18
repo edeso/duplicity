@@ -22,7 +22,7 @@ source_url target_directory
 
 .B duplicity collection-status
 .I [options] [--file-changed <relpath>] [--show-changes-in-set <index>]
-target_url
+[--jsonstat]] target_url
 
 .B duplicity list-current-files
 .I [options] [--time time]
@@ -185,7 +185,7 @@ The
 option enables data comparison (see below).
 
 .TP
-.BI "collection-status " "[--file-changed <relpath>] [--show-changes-in-set <index>] <url>"
+.BI "collection-status " "[--file-changed <relpath>] [--show-changes-in-set <index> [--jsonstat]] <url>"
 Summarize the status of the backup repository by printing the chains
 and sets found, and the number of volumes in each.
 .br
@@ -194,7 +194,12 @@ The
 option summarizes the changes to the file (in the most recent backup chain).
 The
 .I --show-changes-in-set
-option summarizes all the file changes in the index:th backup set (where index 0 means the latest set, 1 means the next to latest, etc.).
+option summarizes all the file changes in the index:th backup set 
+(where index 0 means the latest set, 1 means the next to latest, etc.).
+.I --jsonstat
+prints the changes in json format and statistics from the jsonstat files if the
+backups were created with --jsonstat. If <index> is set to -1 statistics for the whole
+backup chain printed
 
 .TP
 .BI "list-current-files " "[--time <time>] <url>"
@@ -590,6 +595,24 @@ out.
 Use regular (PORT) data connections.
 
 .TP
+.BI --gio
+Use the GIO backend and interpret any URLs as GIO would.
+
+.TP
+.BI "--gpg-binary " file_path
+Allows you to force duplicity to use
+.I file_path
+as gpg command line binary. Can be an absolute or relative file path or a file name.
+Default value is 'gpg'. The binary will be localized via the PATH environment variable.
+
+.TP
+.BI "--gpg-options " options
+Allows you to pass options to gpg encryption.  The
+.I options
+list should be of the form "--opt1 --opt2=parm" where the string is
+quoted and the only spaces allowed are between options.
+
+.TP
 .BI "--hidden-encrypt-key " key-id
 Same as
 .BR --encrypt-key ,
@@ -634,18 +657,17 @@ Allows you to specify a different mailbox.  The default is
 Other languages may require a different mailbox than the default.
 
 .TP
-.BI "--gpg-binary " file_path
-Allows you to force duplicity to use
-.I file_path
-as gpg command line binary. Can be an absolute or relative file path or a file name.
-Default value is 'gpg'. The binary will be localized via the PATH environment variable.
-
-.TP
-.BI "--gpg-options " options
-Allows you to pass options to gpg encryption.  The
-.I options
-list should be of the form "--opt1 --opt2=parm" where the string is
-quoted and the only spaces allowed are between options.
+.BI "--idr-fakeroot "
+idrived uses the concept of a "fakeroot" directory, defined via the
+--idr-fakeroot=... switch. This can be an existing directory, or the directory is
+created at runtime on the root of the (host) files system. (caveat: you have to have
+write access to the root!). Directories created at runtime are auto-removed on exit!
+.br
+So, in the above scheme, we could do:
+    duplicity --idr-fakeroot=nicepath idrived://DUPLICITY
+.br
+our files end-up at
+    <MYBUCKET>/DUPLICITY/nicepath
 
 .TP
 .BI "--idr-fakeroot "
@@ -688,6 +710,19 @@ Only files explicitly matched by
 will be included by this option.  See the
 .B FILE SELECTION
 section for more information.
+
+.TP
+.BI --jsonstat
+Record statistic data similar to the default stats printed at the end of a
+backup job, addtional it includes some meta data about the backup chain e.g. when
+the full backup was created and how many incremental backups were made before.
+Output format is json. It written to stdout at notice level (as classic stats)
+and the statistics are kept as a separte file next to the manifest but with
+"jsonstat" as extension.
+.B collection-status --show-changes-in-set <index> --jsonstat
+adds data collected in the backup job and switch the output format to json.
+If <index> is set to -1 statistics for the whole backup chain are printed.
+
 
 .TP
 .BI "--log-fd " number
@@ -924,7 +959,7 @@ To restore a backup you will have to manually migrate all data stored on AWS
 Glacier Deep Archive back to Standard S3 and wait for AWS to complete the migration.
 
 .B NOTE:
-Duplicity will store the manifest.gpg files from full and incremental backups on
+Duplicity will store the manifest.gpg and sigtar.gpg files from full and incremental backups on
 AWS S3 standard storage to allow quick retrieval for later incremental backups,
 all other data is stored in S3 Glacier Deep Archive.
 .RE
@@ -941,7 +976,7 @@ To restore a backup you will have to manually migrate all data stored on AWS
 Glacier back to Standard S3 and wait for AWS to complete the migration.
 
 .B NOTE:
-Duplicity will store the manifest.gpg files from full and incremental backups on
+Duplicity will store the manifest.gpg and sigtar.gpg files from full and incremental backups on
 AWS S3 standard storage to allow quick retrieval for later incremental backups,
 all other data is stored in S3 Glacier.
 .RE
@@ -953,7 +988,7 @@ Store volumes using Glacier Instant Retrieval when uploading to Amazon S3. This 
 is similar to Glacier Flexible Storage but offers instant retrieval at standard speeds.
 
 .B NOTE:
-Duplicity will store the manifest.gpg files from full and incremental backups on
+Duplicity will store the manifest.gpg and sigtar.gpg files from full and incremental backups on
 AWS S3 standard storage to allow quick retrieval for later incremental backups,
 all other data is stored in S3 Glacier.
 .RE
@@ -1548,7 +1583,6 @@ rclone://remote:/some_dir
 
 See also
 .B "A NOTE ON RCLONE BACKEND"
-.RE
 
 .TP
 .B "Rsync via daemon"
@@ -2056,7 +2090,6 @@ backend, it is strongly recommended to update to the
 backend instead, since it interfaces directly with Amazon Drive. You will need
 to setup the OAuth once again, but can otherwise keep your backups and config.
 .IR
-.RE
 
 .SH A NOTE ON AMAZON S3
 Backing up to Amazon S3 utilizes the

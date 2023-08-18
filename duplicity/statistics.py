@@ -21,12 +21,15 @@
 
 """Generate and process backup statistics"""
 
+import json
 import os
 import re
 import time
 
 from duplicity import config
 from duplicity import dup_time
+from duplicity import util
+from duplicity import log
 
 
 class StatsException(Exception):
@@ -202,6 +205,68 @@ class StatsObj(object):
             return f"{sign}1 byte"
         else:
             return f"{sign}{int(byte_count)} bytes"
+
+    def get_stats_json(self, col_stat):
+        """
+        Return enriched statistics in JSON format
+        @type col_stat: dup_collections.CollectionsStatus
+        @param col_stat: allow to gather information about the whole
+            backup chain
+
+        @rtype: String
+        @return: JSON formated string
+        """
+
+        def fail_save_read(parent, *attributes, is_function=False, default="N/A"):
+            """
+            retruns "N/A" if value can't de determined.
+            @type parent: object
+            @param parent: oject where vale should received from. Oject must exists
+            @type *attributes: list of str
+            @param *attribures: path down to the attribute that should be read
+            @type is_function: boolean
+            @param is_function: run last attribute as function instead of reading the value direct
+            @param default: overwrite return value if value can't be determined
+            """
+            try:
+                attr_path = parent
+                for attibute in attributes:
+                    try:
+                        attr_path = getattr(attr_path, attibute)
+                    except AttributeError:
+                        return default
+                if is_function:
+                    return attr_path()
+                else:
+                    return attr_path
+            except Exception as e:
+                log.Error(f"Can't read expected attribute: {e}")
+                return default
+
+        py_obj = {key: self.__dict__[key] for key in self.stat_attrs}
+        for t in ('StartTime', 'EndTime'):
+            t_str = f"{t}_str"
+            py_obj[t_str] = dup_time.timetostring(py_obj[t])
+        if col_stat:
+            backup_meta = {}
+            backup_chain = col_stat.matched_chain_pair[1]
+            backup_meta["action"] = col_stat.action
+            backup_meta["time_full_bkp"] = backup_chain.fullset.time
+            backup_meta["time_full_bkp_str"] = dup_time.timetostring(backup_meta["time_full_bkp"])
+            backup_meta["no_of_inc"] = len(backup_chain.incset_list)
+            backup_meta["target"] = fail_save_read(config, "target_url")
+            backup_meta["source"] = fail_save_read(config, "source_path")
+            backup_meta["local_json_stat"] = [fail_save_read(
+                backup_chain, "fullset", "local_jsonstat_path", "get_filename", is_function=True)]
+            for inc in backup_chain.incset_list:
+                backup_meta["local_json_stat"].append(fail_save_read(
+                    inc, "local_jsonstat_path", "get_filename", is_function=True))
+            py_obj["backup_meta"] = backup_meta
+
+        return json.dumps(
+            py_obj,
+            cls=util.BytesEncoder, indent=4
+        )
 
     def get_stats_logstring(self, title):
         """Like get_stats_string, but add header and footer"""

@@ -24,6 +24,7 @@ import re
 
 from duplicity import config
 from duplicity import dup_time
+from duplicity.errors import DuplicityError
 
 full_vol_re = None
 full_vol_re_short = None
@@ -52,6 +53,8 @@ def prepare_regex(force=False):
     global full_sig_re_short
     global new_sig_re
     global new_sig_re_short
+    global stat_re
+    global stat_re_short
 
     # we force regex re-generation in unit tests because file prefixes might have changed
     if full_vol_re and not force:
@@ -138,6 +141,21 @@ def prepare_regex(force=False):
                                   b"\\.st"
                                   b"(?P<partial>(\\.p))?"
                                   b"(\\.|$)")
+    stat_re = re.compile(b"^" + config.file_prefix + config.file_prefix_jsonstat +
+                         b"duplicity-(?P<type>full|inc)"
+                         b"\\.(?P<time>.*?)"
+                         b"(?:\\.to\\.(?P<end_time>.+?))?"
+                         b"\\.jsonstat"
+                         b"(?P<partial>(\\.part))?"
+                         b"(\\.|$)")
+
+    stat_re_short = re.compile(b"^" + config.file_prefix + config.file_prefix_jsonstat +
+                               b"(?P<type>dfst|dist)"
+                               b"\\.(?P<time>.*?)"
+                               b"(?:\\.to\\.(?P<end_time>.+?))?"
+                               b"\\.jst"
+                               b"(?P<partial>(\\.p))?"
+                               b"(\\.|$)")
 
 
 def to_base36(n):
@@ -196,7 +214,7 @@ def get(type, volume_number=None, manifest=False,  # pylint: disable=redefined-b
     """
     Return duplicity filename of specified type
 
-    type can be "full", "inc", "full-sig", or "new-sig". volume_number
+    type can be "full", "inc", "full-sig", "new-sig", "full-stat", "inc-stat". volume_number
     can be given with the full and inc types.  If manifest is true the
     filename is of a full or inc manifest file.
     """
@@ -217,6 +235,22 @@ def get(type, volume_number=None, manifest=False,  # pylint: disable=redefined-b
                     b"duplicity-new-signatures.%s.to.%s.sigtar%s%s" %
                     (dup_time.prevtimestr.encode(), dup_time.curtimestr.encode(),
                      part_string, suffix))
+    elif type == "full-stat" or type == "inc-stat":
+        assert not volume_number and not manifest
+        assert not (volume_number and part_string)
+        type_suffix = b"jsonstat"
+        if type == "full-stat":
+            main_name = b"duplicity-full"
+            timestamp = b"%s" % (dup_time.curtimestr.encode())
+        elif type == "inc-stat":
+            main_name = b"duplicity-inc"
+            start = dup_time.prevtimestr.encode()
+            end = dup_time.curtimestr.encode()
+            timestamp = b"%s.to.%s" % (start, end)
+        else:
+            raise ValueError("Not a know type {type}.")
+        return (config.file_prefix + config.file_prefix_jsonstat +
+                b"%s.%s.%s%s%s" % (main_name, timestamp, type_suffix, part_string, suffix))
     else:
         assert volume_number or manifest
         assert not (volume_number and manifest)
@@ -349,6 +383,33 @@ def parse(filename):
                                     partial=(m.group("partial") is not None))
         return None
 
+    def check_stat():
+        u"""
+        Return ParseResults if file is a signature, None otherwise
+        """
+        prepare_regex()
+        short = True
+        type = None
+        time = None
+        start_time = None
+        end_time = None
+        m = stat_re_short.search(filename)
+        if not m:
+            short = False
+            m = stat_re.search(filename)
+        if m:
+            if m.group("type") in (b"full", b"dfst"):
+                type = "full-stat"
+                time = str2time(m.group("time"), short)
+            elif m.group("type") in (b"inc", b"dist"):
+                type = "inc-stat"
+                start_time = str2time(m.group("time"), short)
+                end_time = str2time(m.group("end_time"), short)
+            else:
+                raise DuplicityError(f'Statistic filename "{filename}" not valid')
+            return ParseResults(type, time=time, start_time=start_time, end_time=end_time,
+                                partial=(m.group("partial") is not None))
+
     def set_encryption_or_compression(pr):
         """
         Set encryption and compression flags in ParseResults pr
@@ -356,15 +417,12 @@ def parse(filename):
         pr.compressed = filename.endswith(b'.z') or filename.endswith(b'.gz')
         pr.encrypted = filename.endswith(b'.g') or filename.endswith(b'.gpg')
 
-    pr = check_full()
-    if not pr:
-        pr = check_inc()
-        if not pr:
-            pr = check_sig()
-            if not pr:
-                return None
-    set_encryption_or_compression(pr)
-    return pr
+    for check in (check_full, check_inc, check_sig, check_stat):
+        pr = check()
+        if pr:
+            set_encryption_or_compression(pr)
+            return pr
+    return None
 
 
 class ParseResults:
@@ -376,12 +434,12 @@ class ParseResults:
                  time=None, start_time=None, end_time=None,
                  encrypted=None, compressed=None, partial=False):
 
-        assert type in ["full-sig", "new-sig", "inc", "full"]
+        assert type in ["full-sig", "new-sig", "inc", "full", "full-stat", "inc-stat"]
 
         self.type = type
-        if type == "inc" or type == "full":
+        if type in ["inc", "full"]:
             assert manifest or volume_number
-        if type == "inc" or type == "new-sig":
+        if type in ["inc", "new-sig", "inc-stat"]:
             assert start_time and end_time
         else:
             assert time

@@ -56,6 +56,9 @@ file_prefix_archive = b""
 # Prefix for sig files only
 file_prefix_signature = b""
 
+# Prefix for jsonstat files only
+file_prefix_jsonstat = b""
+
 # The name of the current host
 hostname = socket.gethostname()
 
@@ -152,6 +155,9 @@ allow_source_mismatch = False
 
 # If set, print the statistics after every backup session
 print_statistics = True
+
+# If set, write extra statistic in json format to file
+jsonstat = False
 
 # If set, forces a full backup if the last full backup is older than
 # the time specified

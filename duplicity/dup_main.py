@@ -536,6 +536,37 @@ def get_sig_fileobj(sig_type):
     return fh
 
 
+def get_stat_fileobj(stat_type):
+    """
+    Return a fileobj opened for writing, save statistic as json
+
+    Save statistics in config.archive_dir gzipped.
+    Save them on the backend encrypted as needed.
+
+    @type stat_type: string
+    @param stat_type: either "full-stat" or "new-stat"
+
+    @rtype: fileobj
+    @return: fileobj opened for writing
+    """
+    assert stat_type in [u"full-stat", u"inc-stat"]
+
+    part_stat_filename = file_naming.get(stat_type,
+                                         gzipped=False,
+                                         partial=True)
+    perm_stat_filename = file_naming.get(stat_type,
+                                         gzipped=True)
+    remote_stat_filename = file_naming.get(stat_type, encrypted=config.encryption,
+                                           gzipped=config.compression)
+
+    fh = dup_temp.get_fileobj_duppath(config.archive_dir_path,
+                                      part_stat_filename,
+                                      perm_stat_filename,
+                                      remote_stat_filename,
+                                      overwrite=True)
+    return fh
+
+
 def full_backup(col_stats):
     """
     Do full backup of directory to backend, using archive_dir_path
@@ -591,6 +622,7 @@ def full_backup(col_stats):
 
         col_stats.set_values(sig_chain_warning=None)
 
+    write_json_stat("full-stat", bytes_written, col_stats)
     print_statistics(diffdir.stats, bytes_written)
 
 
@@ -625,7 +657,7 @@ def print_statistics(stats, bytes_written):  # pylint: disable=unused-argument
         log.Log(logstring, log.NOTICE, force_print=True)
 
 
-def incremental_backup(sig_chain):
+def incremental_backup(sig_chain, col_stats=None):
     """
     Do incremental backup of directory to backend, using archive_dir_path
 
@@ -685,7 +717,31 @@ def incremental_backup(sig_chain):
                                  progress.tracker.total_elapsed_seconds(),
                                  progress.tracker.speed, False)
 
+    write_json_stat("inc-stat", bytes_written, col_stats)
     print_statistics(diffdir.stats, bytes_written)
+
+
+def write_json_stat(stat_type, bytes_written, col_stats):
+    """
+    If "--jsonstat" is given in the command line, write extra statistic file.
+
+    @type stat_type: string
+    @param stat_type: Name of the json_stat should be full-stat or inc-stat
+    @type bytes_written: int
+    @param bytes_written: no of bytes written, in this run
+    @type col_stats: CollectionStatus object
+    @param col_stats: collection status
+    """
+    if config.jsonstat:
+        json_stat = diffdir.stats.get_stats_json(col_stats)
+        log.Log(json_stat, log.NOTICE, force_print=True)
+        if not config.dry_run:
+            stat_outfp = get_stat_fileobj(stat_type)
+            diffdir.stats.TotalDestinationSizeChange = bytes_written
+            stat_outfp.write(json_stat.encode())
+            stat_outfp.close()
+            stat_outfp.to_remote()
+            stat_outfp.to_final()
 
 
 def list_current(col_stats):
@@ -1522,7 +1578,13 @@ def do_backup(action):
         list_current(col_stats)
     elif action == "collection-status":
         if config.show_changes_in_set is not None:
-            log.PrintCollectionChangesInSet(col_stats, config.show_changes_in_set, True)
+            if not config.jsonstat:
+                # print classic stats
+                log.PrintCollectionChangesInSet(col_stats, config.show_changes_in_set, True)
+            else:
+                # print json stat
+                json_stat = col_stats.get_changes_in_set_json(config.show_changes_in_set)
+                log.Log(str(json_stat), 8, log.InfoCode.collection_status, None, True)
         elif not config.file_changed:
             log.PrintCollectionStatus(col_stats, True)
         else:
@@ -1571,7 +1633,7 @@ def do_backup(action):
                     if col_stats.all_backup_chains:
                         config.gpg_profile.passphrase = get_passphrase(1, action)
                         check_last_manifest(col_stats)  # not needed for full backups
-                incremental_backup(sig_chain)
+                incremental_backup(sig_chain, col_stats)
 
     config.backend.close()
     log.shutdown()

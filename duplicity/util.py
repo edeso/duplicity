@@ -317,3 +317,13 @@ def casefold_compat(s):
         return s.casefold()
     else:
         return s.lower()
+
+
+class BytesEncoder(json.JSONEncoder):
+    u"""
+    JSON doesn't allow byte type values. Converting them to unicode strings
+    """
+    def default(self, obj):
+        if isinstance(obj, bytes):
+            return obj.decode()
+        return json.JSONEncoder.default(self, obj)

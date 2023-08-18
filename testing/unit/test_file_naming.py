@@ -71,6 +71,20 @@ class FileNamingBase(object):
         assert pr.end_time == 20
         assert not pr.partial
 
+        filename = file_naming.get("full-stat")
+        log.Info(f"Full sig filename: {os.fsdecode(filename)}")
+        pr = file_naming.parse(filename)
+        assert pr.type == "full-stat"
+        assert pr.time == 20
+        assert not pr.partial
+
+        filename = file_naming.get("inc-stat")
+        pr = file_naming.parse(filename)
+        assert pr.type == "inc-stat"
+        assert pr.start_time == 10
+        assert pr.end_time == 20
+        assert not pr.partial
+
     def test_suffix(self):
         """Test suffix (encrypt/compressed) encoding and generation"""
         file_naming.prepare_regex(force=True)
@@ -140,6 +154,7 @@ class FileNamingPrefixes(UnitTestCase, FileNamingBase):
         self.set_config('file_prefix_manifest', b"mani-")
         self.set_config('file_prefix_signature', b"sign-")
         self.set_config('file_prefix_archive', b"arch-")
+        self.set_config('file_prefix_jsonstat', b"jsonstat-")
 
 
 if __name__ == "__main__":

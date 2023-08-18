@@ -22,6 +22,8 @@
 """Classes and functions on collections of backup volumes"""
 
 import os
+import gzip
+import json
 
 from duplicity import config
 from duplicity import dup_time
@@ -51,6 +53,8 @@ class BackupSet(object):
         self.volume_name_dict = {}  # dict from volume number to filename
         self.remote_manifest_name = None  # full name of remote manifest
         self.local_manifest_path = None  # full path to local manifest
+        self.remote_jsonstat_name = None  # full name of remote jsonstat
+        self.local_jsonstat_path = None  # full path to local jsonstat
         self.time = None  # will be set if is full backup set
         self.start_time = None  # will be set if inc
         self.end_time = None  # will be set if inc
@@ -81,13 +85,17 @@ class BackupSet(object):
         """
         if not pr:
             pr = file_naming.parse(filename)
-        if not pr or not (pr.type == "full" or pr.type == "inc"):
+        if not pr or not (
+                pr.type == "full" or
+                pr.type == "inc" or
+                pr.type == "full-stat" or
+                pr.type == "inc-stat"):
             return False
 
         if not self.info_set:
             self.set_info(pr)
         else:
-            if pr.type != self.type:
+            if pr.type.replace("-stat", "") != self.type:
                 return False
             if pr.time != self.time:
                 return False
@@ -98,7 +106,10 @@ class BackupSet(object):
                 if self.partial and pr.encrypted:
                     self.encrypted = pr.encrypted
 
-        if pr.manifest:
+        if u"-stat" in pr.type:
+            self.type = pr.type.replace("-stat", "")
+            self.set_jsonstat(filename)
+        elif pr.manifest:
             self.set_manifest(filename)
         else:
             assert pr.volume_number is not None
@@ -127,6 +138,29 @@ class BackupSet(object):
         self.partial = pr.partial
         self.encrypted = bool(pr.encrypted)
         self.info_set = True
+
+    def set_jsonstat(self, remote_filename):
+        u"""
+        Add local and remote manifest filenames to backup set
+        """
+        assert not self.remote_jsonstat_name, \
+            f"Cannot set filename of remote manifest to {remote_filename}; already set to {self.remote_jsonstat_name}."
+        self.remote_jsonstat_name = remote_filename
+
+        if self.action != u"replicate":
+            local_filename_list = config.archive_dir_path.listdir()
+        else:
+            local_filename_list = []
+        for local_filename in local_filename_list:
+            pr = file_naming.parse(local_filename)
+            if (pr and not pr.manifest and pr.type == f"{self.type}-stat" and
+                    pr.time == self.time and
+                    pr.start_time == self.start_time and
+                    pr.end_time == self.end_time):
+                self.local_jsonstat_path = \
+                    config.archive_dir_path.append(local_filename)
+
+                break
 
     def set_files_changed(self):
         mf = self.get_manifest()
@@ -240,15 +274,17 @@ class BackupSet(object):
         Return manifest by reading remote manifest on backend
         """
         assert self.remote_manifest_name
-        try:
-            manifest_buffer = self.backend.get_data(self.remote_manifest_name)
-        except GPGError as message:
-            log.Error(_("Error processing remote manifest (%s): %s") %
-                      (os.fsdecode(self.remote_manifest_name), util.uexc(message)))
-            return None
-        log.Info(_("Processing remote manifest %s (%s)") % (
-            os.fsdecode(self.remote_manifest_name), len(manifest_buffer)))
+        manifest_buffer = self.get_remote_file(self.remote_manifest_name)
         return manifest.Manifest().from_string(manifest_buffer)
+
+    def get_remote_file(self, remote_file):
+        try:
+            remote_file_buffer = self.backend.get_data(remote_file)
+        except GPGError as message:
+            log.FatalError(_(f"Error processing remote file ({os.fsdecode(remote_file)}): {util.uexc(message)}"))
+            return b""
+        log.Info(_(f"Processing remote file {os.fsdecode(remote_file)} ({len(remote_file_buffer)})"))
+        return remote_file_buffer
 
     def get_manifest(self):
         """
@@ -258,6 +294,16 @@ class BackupSet(object):
             return self.get_local_manifest()
         else:
             return self.get_remote_manifest()
+
+    def get_jsonstat(self):
+        if self.local_jsonstat_path:
+            json_stat_bytes = gzip.decompress(self.local_jsonstat_path.get_data())
+        elif self.remote_jsonstat_name:
+            json_stat_bytes = self.get_remote_file(self.remote_jsonstat_name)
+        else:
+            log.Info(_(u"No Jsonstat file found, return enmty."))
+            return {}
+        return json.loads(json_stat_bytes)
 
     def get_filenames(self):
         """
@@ -274,6 +320,8 @@ class BackupSet(object):
             pr = file_naming.parse(self.remote_manifest_name)
             if pr and not pr.partial:
                 volume_filenames.append(self.remote_manifest_name)
+        if self.remote_jsonstat_name:
+            volume_filenames.append(self.remote_jsonstat_name)
         return volume_filenames
 
     def get_time(self):
@@ -1187,6 +1235,33 @@ class CollectionsStatus(object):
 
         all_backup_set = list(reversed(self.matched_chain_pair[1].get_all_sets()))
         return BackupSetChangesStatus(all_backup_set[set_index])
+
+    def get_changes_in_set_json(self, set_index):
+        """
+        @param idex_set: index of the backup set.
+            0: most recent backup
+            max: full backup set
+            -1 statistics for all sets of the most recent chain will be returned
+        @return: statistics for "last - index_set" backup as json formated string.
+        """
+        if not self.matched_chain_pair:
+            return ""
+        all_backup_set = list(reversed(self.matched_chain_pair[1].get_all_sets()))
+        json_obj = {}
+        if set_index >= 0:
+            all_backup_set = [all_backup_set[set_index]]
+        for set in all_backup_set:
+            name = f"{set.type}-{dup_time.timetostring(set.get_time())}"
+            json_stat = set.get_jsonstat()
+            json_obj[name] = {}
+            json_obj[name]["json_stat"] = json_stat
+            json_obj[name]["files_changed"] = {}
+            for file in set.get_files_changed():
+                json_obj[name]["files_changed"][os.fsdecode(file[1])] = file[0]
+        return json.dumps(
+            json_obj,
+            cls=util.BytesEncoder, indent=4
+        )
 
 
 class FileChangedStatus(object):

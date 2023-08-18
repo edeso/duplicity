@@ -213,6 +213,13 @@ class FunctionalTestCase(DuplicityTestCase):
         options = ["cleanup", self.backend_url, "--force"] + options
         self.run_duplicity(options=options)
 
+    def collection_status(self, options=[]):
+        u"""
+        Run duplicity collection-status to default directory
+        """
+        options = [u"collection-status", self.backend_url] + options
+        self.run_duplicity(options=options)
+
     def get_backend_files(self):
         backend_inst = backend.get_backend(self.backend_url)
         bl = backend_inst.list()
