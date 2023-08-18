@@ -35,7 +35,6 @@ from setuptools.command.build_ext import build_ext
 from setuptools.command.install import install
 from setuptools.command.sdist import sdist
 from setuptools.command.test import test
-from setuptools_scm import get_version
 
 
 # check that we can function here
@@ -52,7 +51,7 @@ scm_version_args = {
     }
 try:
     from setuptools_scm import get_version  # pylint: disable=import-error
-    Version = "2.0.2"
+    Version = get_version(**scm_version_args)
 except Exception as e:
     pass
 Reldate = time.strftime("%B %d, %Y", time.gmtime(int(os.environ.get('SOURCE_DATE_EPOCH', time.time()))))
@@ -338,6 +337,7 @@ setup(name="duplicity",
     include_package_data=True,
     install_requires=[
         "fasteners",
+        "setuptools_scm",
         ],
     tests_require=[
         "fasteners",
