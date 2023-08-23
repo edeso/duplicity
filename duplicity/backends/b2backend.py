@@ -141,7 +141,7 @@ class B2Backend(duplicity.backend.Backend):
             self.bucket.download_file_by_name(quote_plus(self.path + os.fsdecode(remote_filename), '/'),
                                               DownloadDestLocalFile(local_path.name))
         else:
-            df = self.bucket.download_file_by_name(quote_plus(self.path + util.fsdecode(remote_filename), '/'))
+            df = self.bucket.download_file_by_name(quote_plus(self.path + os.fsdecode(remote_filename), '/'))
             try:
                 # b2sdk >= 1.19.0
                 df.save_to(local_path.uc_name)

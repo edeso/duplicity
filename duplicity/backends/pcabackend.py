@@ -215,7 +215,7 @@ Exception: {str(e)}""")
         retry_interval = 60  # status will be shown every 60s
         # remote_filenames are bytes string
         u_remote_filenames = list(map(os.fsdecode, remote_filenames))
-        objs = self.__list_objs(ffilter=lambda x: util.fsdecode(x['name'])
+        objs = self.__list_objs(ffilter=lambda x: os.fsdecode(x['name'])
                                 in [self.prefix + s for s in u_remote_filenames])
         # first step: retrieve pca seal status for all required volumes
         # and launch unseal for all sealed files

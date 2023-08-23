@@ -248,7 +248,7 @@ class BackupSet(object):
                                    log.ErrorCode.mismatched_manifests)
                 else:
                     log.Error(_("Error processing remote manifest (%s): %s") %
-                              (util.fsdecode(self.remote_manifest_name), util.uexc(message)))
+                              (os.fsdecode(self.remote_manifest_name), util.uexc(message)))
                     return None
         if not remote_manifest:
             if self.local_manifest_path:

@@ -306,19 +306,6 @@ def csv_args_to_dict(arg):
     return mydict
 
 
-# TODO: just use util.fsdecode().casefold() directly when python27 is gone
-def casefold_compat(s):
-    """
-    Compatability function for casefolding which provides an acceptable for
-    older pythons. Can likely be removed once python2 support is no longer o
-    any interest.
-    """
-    if sys.version_info.major >= 3 and sys.version_info.minor >= 3:
-        return s.casefold()
-    else:
-        return s.lower()
-
-
 class BytesEncoder(json.JSONEncoder):
     u"""
     JSON doesn't allow byte type values. Converting them to unicode strings
