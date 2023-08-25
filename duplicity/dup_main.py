@@ -448,19 +448,28 @@ def write_multivol(backup_type, tarblock_iter, man_outfp, sig_outfp, backend):
             sig_outfp.flush()
             man_outfp.flush()
 
-        async_waiters.append(io_scheduler.schedule_task(lambda tdp, dest_filename,
-                                                        vol_num: put(tdp, dest_filename, vol_num),
-                                                        (tdp, dest_filename, vol_num)))
+        if config.skip_if_no_change and diffdir.stats.DeltaEntries == 0 and at_end and vol_num == 1:
+            # if nothing changed, skip upload if configured.
+            msg = _(f"Skipped volume upload, as effectivly nothing has changed")
+            log.Progress(msg, diffdir.stats.SourceFileSize)
+            log.Notice(_(msg))
+            config.skipped_inc = True
+            tdp.delete()
+        else:
+            # Write Volume to backend
+            async_waiters.append(io_scheduler.schedule_task(lambda tdp, dest_filename,
+                                                            vol_num: put(tdp, dest_filename, vol_num),
+                                                            (tdp, dest_filename, vol_num)))
 
-        # Log human-readable version as well as raw numbers for machine consumers
-        log.Progress(_('Processed volume %d') % vol_num, diffdir.stats.SourceFileSize)
-        # Snapshot (serialize) progress now as a Volume has been completed.
-        # This is always the last restore point when it comes to restart a failed backup
-        if config.progress:
-            progress.tracker.snapshot_progress(vol_num)
+            # Log human-readable version as well as raw numbers for machine consumers
+            log.Progress(_('Processed volume %d') % vol_num, diffdir.stats.SourceFileSize)
+            # Snapshot (serialize) progress now as a Volume has been completed.
+            # This is always the last restore point when it comes to restart a failed backup
+            if config.progress:
+                progress.tracker.snapshot_progress(vol_num)
 
-        # for testing purposes only - assert on inc or full
-        assert config.fail_on_volume != vol_num, f"Forced assertion for testing at volume {int(vol_num)}"
+            # for testing purposes only - assert on inc or full
+            assert config.fail_on_volume != vol_num, f"Forced assertion for testing at volume {int(vol_num)}"
 
     # Collect byte count from all asynchronous jobs; also implicitly waits
     # for them all to complete.
@@ -699,15 +708,24 @@ def incremental_backup(sig_chain, col_stats=None):
                                        new_man_outfp, new_sig_outfp,
                                        config.backend)
 
-        # close sig file and rename to final
-        new_sig_outfp.close()
-        new_sig_outfp.to_remote()
-        new_sig_outfp.to_final()
+        if not config.skipped_inc:
+            # write metadata to cache and remote
+            # close sig file and rename to final
+            new_sig_outfp.close()
+            new_sig_outfp.to_remote()
+            new_sig_outfp.to_final()
 
-        # close manifest and rename to final
-        new_man_outfp.close()
-        new_man_outfp.to_remote()
-        new_man_outfp.to_final()
+            # close manifest and rename to final
+            new_man_outfp.close()
+            new_man_outfp.to_remote()
+            new_man_outfp.to_final()
+
+        else:
+            # drop metadata as no files as changed.
+            new_sig_outfp.close()
+            new_sig_outfp.clean_up()
+            new_man_outfp.close()
+            new_man_outfp.clean_up()
 
         if config.progress:
             # Terminate the background thread now, if any
@@ -740,8 +758,11 @@ def write_json_stat(stat_type, bytes_written, col_stats):
             diffdir.stats.TotalDestinationSizeChange = bytes_written
             stat_outfp.write(json_stat.encode())
             stat_outfp.close()
-            stat_outfp.to_remote()
-            stat_outfp.to_final()
+            if not config.skipped_inc:
+                stat_outfp.to_remote()
+                stat_outfp.to_final()
+            else:
+                stat_outfp.clean_up()
 
 
 def list_current(col_stats):

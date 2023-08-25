@@ -230,6 +230,12 @@ class FileobjHooked(object):
         for hook in self.hooklist:
             hook()
 
+    def clean_up(self):
+        """
+        delete partial files
+        """
+        self.dirpath.append(self.partname).delete()
+
     def addhook(self, hook):
         """
         Add hook (function taking no arguments) to run upon closing

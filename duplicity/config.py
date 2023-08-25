@@ -163,6 +163,11 @@ jsonstat = False
 # the time specified
 full_if_older_than = None
 
+# If set the incremental backup will be skipped if not DeltaEntries are detected
+skip_if_no_change = False
+# Track if incremental backup was skipped, no cli option
+skipped_inc = False
+
 # Used to confirm certain destructive operations like deleting old files.
 force = None
 

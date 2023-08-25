@@ -647,6 +647,11 @@ class OptionKwargs:
         "help": "Sign key for encryption/decryption",
         "default": dflt(None)
     }
+    skip_if_no_change = {
+        "action": "store_true",
+        "help": "Skip incremental backup if nothing changed.",
+        "default": dflt(config.skip_if_no_change)
+    }
     ssh_askpass = {
         "action": "store_true",
         "help": "Ask the user for the SSH password. Not for batch usage",
