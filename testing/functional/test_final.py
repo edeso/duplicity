@@ -33,6 +33,7 @@ class FinalTest(FunctionalTestCase):
     """
     Test backup/restore using duplicity binary
     """
+
     def runtest(self, dirlist, backup_options=None, restore_options=None):
         """Run backup/restore test on directories in dirlist"""
         if backup_options is None:
@@ -68,23 +69,27 @@ class FinalTest(FunctionalTestCase):
         assert path1.compare_recursive(path2, verbose=1)
 
     @pytest.mark.slow
-    def test_basic_cycle(self, backup_options=None, restore_options=None):
+    def test_basic_cycle(self, backup_options=None, restore_options=None, dirlist=None, testfiles=None):
         """Run backup/restore test on basic directories"""
         if backup_options is None:
             backup_options = ["--no-encrypt", "--no-compress"]
         if restore_options is None:
             restore_options = ["--no-encrypt", "--no-compress"]
-        self.runtest([f"{_runtest_dir}/testfiles/dir1",
-                      f"{_runtest_dir}/testfiles/dir2",
-                      f"{_runtest_dir}/testfiles/dir3"],
+        if dirlist is None:
+            dirlist = [f"{_runtest_dir}/testfiles/dir1",
+                       f"{_runtest_dir}/testfiles/dir2",
+                       f"{_runtest_dir}/testfiles/dir3"]
+        self.runtest(dirlist,
                      backup_options=backup_options,
                      restore_options=restore_options)
 
+        if testfiles is None:
+            testfiles = [('symbolic_link', 99999, 'dir1'),
+                         ('directory_to_file', 100100, 'dir1'),
+                         ('directory_to_file', 200100, 'dir2'),
+                         ('largefile', 300000, 'dir3')]
         # Test restoring various sub files
-        for filename, time, tfdir in [('symbolic_link', 99999, 'dir1'),
-                                      ('directory_to_file', 100100, 'dir1'),
-                                      ('directory_to_file', 200100, 'dir2'),
-                                      ('largefile', 300000, 'dir3')]:
+        for filename, time, tfdir in testfiles:
             self.restore(filename, time, options=restore_options)
             self.check_same(f'{_runtest_dir}/testfiles/{tfdir}/{filename}',
                             f'{_runtest_dir}/testfiles/restore_out')
@@ -202,6 +207,21 @@ class FinalTest(FunctionalTestCase):
         self.backup("inc", f"{_runtest_dir}/testfiles/empty_dir", options=["--jsonstat", "--allow-source-mismatch"])
         self.backup("inc", f"{_runtest_dir}/testfiles/dir2", options=["--allow-source-mismatch"])
         self.collection_status(options=["--show-changes-in-set", "-1", "--jsonstat"])
+
+    @pytest.mark.slow
+    def test_skip_if_no_change(self):
+        """Like test_basic_cycle but use asymmetric encryption and signing"""
+        backup_options = ["--skip-if-no-change"]
+        restore_options = []
+        testfiles = [('symbolic_link', 99999, 'dir1'),
+                     ('directory_to_file', 100100, 'dir1'),
+                     ('directory_to_file', 300100, 'dir2'),
+                     ('largefile', 400000, 'dir3')]
+        self.test_basic_cycle(backup_options=backup_options,
+                              restore_options=restore_options,
+                              dirlist=['/tmp/testfiles/dir1', '/tmp/testfiles/dir1',
+                                       '/tmp/testfiles/dir2', '/tmp/testfiles/dir3'],
+                              testfiles=testfiles)
 
 
 if __name__ == "__main__":

@@ -1038,6 +1038,12 @@ Enable server-side encryption using key management service.
 .RE
 
 .TP
+.BI "--skip-if-no-change " command
+.RS
+By default an emty incremental backup is stored if no files has changed. Setting this optioin will skip the backup. Nothing will be send to the traget nor information cached.
+.RE
+
+.TP
 .BI "--scp-command " command
 .B (only ssh pexpect backend with --use-scp enabled)
 .RS

@@ -251,6 +251,7 @@ class StatsObj(object):
             backup_meta = {}
             backup_chain = col_stat.matched_chain_pair[1]
             backup_meta["action"] = col_stat.action
+            backup_meta["skipped_inc"] = config.skipped_inc
             backup_meta["time_full_bkp"] = backup_chain.fullset.time
             backup_meta["time_full_bkp_str"] = dup_time.timetostring(backup_meta["time_full_bkp"])
             backup_meta["no_of_inc"] = len(backup_chain.incset_list)
