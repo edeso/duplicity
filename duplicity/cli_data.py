@@ -93,7 +93,7 @@ class OptionKwargs:
         "default": dflt(config.archive_dir)
     }
     asynchronous_upload = {
-        "action": "store_const",
+        "action": WarnAsyncStoreConstAction,
         "const": 1,
         "dest": "async_concurrency",
         "help": "Number of async upload tasks, max of 1",

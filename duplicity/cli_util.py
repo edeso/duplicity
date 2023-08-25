@@ -152,6 +152,15 @@ class ChangedOptionAction(DuplicityAction):
                 --do-not-restore-ownership to --no-restore-ownership"""))
 
 
+class WarnAsyncStoreConstAction(argparse._StoreConstAction):
+    def __call__(self, parser, namespace, values, option_string=None):
+        log.Warn(_("Use of the --asynchronous-upload option is experimental "
+                   "and not safe for production! There are reported cases of "
+                   "undetected data loss during upload. Be aware and "
+                   "periodically verify your backups to be safe."))
+        setattr(namespace, self.dest, self.const)
+
+
 def _check_int(val):
     try:
         return int(val)
