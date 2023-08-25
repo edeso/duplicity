@@ -38,7 +38,8 @@ from duplicity import log
 from duplicity import path
 from duplicity import selection
 
-gpg_key_patt = re.compile("^(0x)?([0-9A-Fa-f]{8}|[0-9A-Fa-f]{16}|[0-9A-Fa-f]{40})$")
+gpg_key_patt = re.compile(r"^(0x)?([0-9A-Fa-f]{8}|[0-9A-Fa-f]{16}|[0-9A-Fa-f]{40})$")
+url_regexp = re.compile(r"^[\w\+]+://")
 
 
 class CommandLineError(errors.UserError):
@@ -60,6 +61,11 @@ class DuplicityAction(argparse.Action):
 
     def __call__(self, parser, namespace, values, option_string=None):
         raise NotImplementedError
+
+
+class DoNothingAction(DuplicityAction):
+    def __call__(self, parser, *args, **kw):
+        pass
 
 
 class AddSelectionAction(DuplicityAction):
@@ -206,7 +212,7 @@ def check_source_path(val):
 
 
 def check_source_url(val):
-    if "://" not in val:
+    if not is_url(val):
         command_line_error(_(f"Source should be url, not directory.  Got '{val}' instead."))
     return val
 
@@ -223,7 +229,7 @@ def check_target_dir(val):
 
 
 def check_target_url(val):
-    if "://" not in val:
+    if not is_url(val):
         command_line_error(_(f"Source should be url, not directory.  Got '{val}' instead."))
     return val
 
@@ -323,7 +329,7 @@ def is_url(val):
     """
     Check if val is URL
     """
-    return '://' in val
+    return len(val.splitlines()) <= 1 and url_regexp.match(val)
 
 
 def is_path(val):

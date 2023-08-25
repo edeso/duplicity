@@ -634,7 +634,7 @@ def check_sig_chain(col_stats):
     @param col_stats: collection status
     """
     if not col_stats.matched_chain_pair:
-        if config.inc_explicit:
+        if config.action == 'inc':
             log.FatalError(_("Fatal Error: Unable to start incremental backup.  "
                              "Old signatures not found and incremental specified"),
                            log.ErrorCode.inc_without_sigs)
@@ -1530,7 +1530,7 @@ def do_backup(action):
                 break
             last_backup = last_full_chain.get_last()
             if last_backup.partial:
-                if action in ["full", "inc"]:
+                if action in ["backup", "full", "inc"]:
                     # set restart parms from last_backup info
                     config.restart = Restart(last_backup)
                     # (possibly) reset action
@@ -1598,7 +1598,7 @@ def do_backup(action):
     elif action == "sync":
         sync_archive(col_stats)
     else:
-        assert action == "inc" or action == "full", action
+        assert action in ["backup", "full", "inc"], action
         # the passphrase for full and inc is used by --sign-key
         # the sign key can have a different passphrase than the encrypt
         # key, therefore request a passphrase

@@ -18,7 +18,6 @@
 # You should have received a copy of the GNU General Public License
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-
 import argparse
 import copy
 import os
@@ -38,7 +37,6 @@ from duplicity.cli_util import *
 from testing.unit import UnitTestCase
 
 
-@unittest.skipIf(os.environ.get("USER", "") == "buildd", "Skip test on Launchpad")
 class CommandlineTest(UnitTestCase):
     """
     Test parse_commandline_options
@@ -56,10 +54,14 @@ class CommandlineTest(UnitTestCase):
         super().setUp()
         config.gpg_profile = gpg.GPGProfile()
         os.makedirs("foo/bar", exist_ok=True)
+        os.makedirs("inc", exist_ok=True)
+        os.makedirs("full", exist_ok=True)
 
     def tearDown(self):
         log.shutdown()
         os.removedirs("foo/bar")
+        os.removedirs("inc")
+        os.removedirs("full")
 
     def run_all_commands_with_errors(self, new_args, err_msg):
         """
@@ -262,35 +264,120 @@ class CommandlineTest(UnitTestCase):
                 cline = f"{start} --sign-key={key}".split()
                 cli_main.process_command_line(cline)
 
-    # @pytest.mark.usefixtures("redirect_stdin")
-    # def test_implied_commands(self):
-    #     """
-    #     test implied commands
-    #     """
-    #     cline = "foo/bar file:///target_url".split()
-    #     cli_main.process_command_line(cline)
-    #     self.assertEqual(config.action, "inc")
-    #
-    #     cline = "file:///source_url foo/bar".split()
-    #     cli_main.process_command_line(cline)
-    #     self.assertEqual(config.action, "restore")
+    @pytest.mark.usefixtures("redirect_stdin")
+    def test_implied_commands(self):
+        """
+        test implied commands
+        """
+        cline = "foo/bar file:///target_url".split()
+        cli_main.process_command_line(cline)
+        self.assertEqual(config.action, "backup")
+        self.assertEqual(config.source_path, "foo/bar")
+        self.assertEqual(config.target_url, "file:///target_url")
+
+        cline = "file:///source_url foo/bar".split()
+        cli_main.process_command_line(cline)
+        self.assertEqual(config.action, "restore")
+        self.assertEqual(config.source_url, "file:///source_url")
+        self.assertEqual(config.target_dir, "foo/bar")
+
+        cline = "-v9 foo/bar file:///target_url".split()
+        cli_main.process_command_line(cline)
+        self.assertEqual(config.action, "backup")
+        self.assertEqual(config.source_path, "foo/bar")
+        self.assertEqual(config.target_url, "file:///target_url")
+
+        cline = "-v9 file:///source_url foo/bar".split()
+        cli_main.process_command_line(cline)
+        self.assertEqual(config.action, "restore")
+        self.assertEqual(config.source_url, "file:///source_url")
+        self.assertEqual(config.target_dir, "foo/bar")
+
+        cline = "foo/bar -v9 file:///target_url".split()
+        cli_main.process_command_line(cline)
+        self.assertEqual(config.action, "backup")
+        self.assertEqual(config.source_path, "foo/bar")
+        self.assertEqual(config.target_url, "file:///target_url")
+
+        cline = "file:///source_url -v9 foo/bar".split()
+        cli_main.process_command_line(cline)
+        self.assertEqual(config.action, "restore")
+        self.assertEqual(config.source_url, "file:///source_url")
+        self.assertEqual(config.target_dir, "foo/bar")
+
+        cline = "--verbosity n foo/bar file:///target_url".split()
+        cli_main.process_command_line(cline)
+        self.assertEqual(config.action, "backup")
+        self.assertEqual(config.source_path, "foo/bar")
+        self.assertEqual(config.target_url, "file:///target_url")
+
+        cline = "--verbosity n file:///source_url foo/bar".split()
+        cli_main.process_command_line(cline)
+        self.assertEqual(config.action, "restore")
+        self.assertEqual(config.source_url, "file:///source_url")
+        self.assertEqual(config.target_dir, "foo/bar")
+
+        cline = "foo/bar --verbosity n file:///target_url".split()
+        cli_main.process_command_line(cline)
+        self.assertEqual(config.action, "backup")
+        self.assertEqual(config.source_path, "foo/bar")
+        self.assertEqual(config.target_url, "file:///target_url")
+
+        cline = "file:///source_url --verbosity n foo/bar".split()
+        cli_main.process_command_line(cline)
+        self.assertEqual(config.action, "restore")
+        self.assertEqual(config.source_url, "file:///source_url")
+        self.assertEqual(config.target_dir, "foo/bar")
+
+        # this incremental misses the path argument
+        with self.assertRaises(CommandLineError) as cm:
+            cline = "inc file:///target_url".split()
+            cli_main.process_command_line(cline)
+
+        # this full backup lacks the path argument
+        with self.assertRaises(CommandLineError) as cm:
+            cline = "full file:///target_url".split()
+            cli_main.process_command_line(cline)
+
+        # implied inc works if '/' supplied
+        cline = "inc/ file:///target_url".split()
+        cli_main.process_command_line(cline)
+        self.assertEqual(config.action, "backup")
+        self.assertEqual(config.source_path, "inc/")
+        self.assertEqual(config.target_url, "file:///target_url")
+
+    @pytest.mark.usefixtures("redirect_stdin")
+    def test_miscellaneous(self):
+        """
+        test miscellaneous parameters
+        """
+        start = "ib foo/bar file:///target_url"
+
+        # check defaults, might add more asserts here
+        cline = start.split()
+        cli_main.process_command_line(cline)
+        self.assertEqual(config.print_statistics, True)
+
+        cline = f"{start} --no-print-statistics".split()
+        cli_main.process_command_line(cline)
+        self.assertEqual(config.print_statistics, False)
 
     @pytest.mark.usefixtures("redirect_stdin")
     def test_integer_args(self):
         """
         test implied commands
         """
-        cline = "inc foo/bar file:///target_url --copy-blocksize=1024 --volsize=1024".split()
+        cline = "foo/bar file:///target_url --copy-blocksize=1024 --volsize=1024".split()
         cli_main.process_command_line(cline)
         self.assertEqual(config.copy_blocksize, 1024 * 1024)
         self.assertEqual(config.volsize, 1024 * 1024 * 1024)
 
         with self.assertRaises(CommandLineError) as cm:
-            cline = "inc foo/bar file:///target_url --copy-blocksize=foo --volsize=1024".split()
+            cline = "foo/bar file:///target_url --copy-blocksize=foo --volsize=1024".split()
             cli_main.process_command_line(cline)
 
         with self.assertRaises(CommandLineError) as cm:
-            cline = "inc foo/bar file:///target_url --copy-blocksize=1024 --volsize=foo".split()
+            cline = "foo/bar file:///target_url --copy-blocksize=1024 --volsize=foo".split()
             cli_main.process_command_line(cline)
 
     @pytest.mark.usefixtures("redirect_stdin")
@@ -298,11 +385,11 @@ class CommandlineTest(UnitTestCase):
         """
         test bad commands
         """
-        with self.assertRaises(SystemExit) as cm:
+        with self.assertRaises((CommandLineError, SystemExit)) as cm:
             cline = "fbx foo/bar file:///target_url".split()
             cli_main.process_command_line(cline)
 
-        with self.assertRaises(SystemExit) as cm:
+        with self.assertRaises((CommandLineError, SystemExit)) as cm:
             cline = "rbx file:///target_url foo/bar".split()
             cli_main.process_command_line(cline)
 
@@ -311,13 +398,15 @@ class CommandlineTest(UnitTestCase):
         """
         test bad commands
         """
-        with self.assertRaises(SystemExit) as cm:
+        with self.assertRaises((argparse.ArgumentError, SystemExit)) as cm:
             cline = "fb foo/bar file:///target_url extra".split()
             cli_main.process_command_line(cline)
+        self.assertEqual(cm.exception.code, 2)
 
-        with self.assertRaises(SystemExit) as cm:
+        with self.assertRaises((argparse.ArgumentError, SystemExit)) as cm:
             cline = "rb file:///target_url foo/bar extra".split()
             cli_main.process_command_line(cline)
+        self.assertEqual(cm.exception.code, 2)
 
     @pytest.mark.usefixtures("redirect_stdin")
     def test_list_commands(self):

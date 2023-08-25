@@ -375,7 +375,7 @@ idr_fakeroot = None
 check_remote = True
 
 # whether 'inc` is explicit or not
-inc_explicit = True
+# inc_explicit = True
 
 # default filesystem encoding
 # It seems that sys.getfilesystemencoding() will normally return

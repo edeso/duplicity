@@ -12,7 +12,7 @@ duplicity \- Encrypted incremental backup to local or remote storage.
 For detailed descriptions for each command see chapter
 .BR ACTIONS .
 
-.B duplicity [full|incremental]
+.B duplicity [backup|full|incremental]
 .I [options]
 source_directory target_url
 
@@ -135,35 +135,40 @@ password:
 FTP_PASSWORD=mypassword duplicity /local/dir ftp://user@other.host/some_dir
 
 .SH ACTIONS
-Duplicity knows action commands, which can be finetuned with options.
+Duplicity uses action commands, which can be give in long or in short form
+and finetuned with options.
 .br
-The actions for backup (full,incr) and restoration (restore) can as well be
-left out as duplicity detects in what mode it should switch to by the order
-of target URL and local folder. If the target URL comes before the local folder
-a restore is in order, is the local folder before target URL then this folder
-is about to be backed up to the target URL.
+The action commands 'backup' or 'restore' can be implied from the order local path
+and remote url are given. Other actions need to be given explicitly.
+For the rare case that the local path may be a valid duplicity action command name
+you may append a '/' to the local path name so it can no longer be mistaken for
+an action command.
 .br
-If a backup is in order and old signatures can be found duplicity automatically
-performs an incremental backup.
+
 .PP
 .B NOTE:
 The following explanations explain some but
 .B not
 all options that can be used in connection with that action command.
-Consult the OPTIONS section for more detailed information.
+Consult the OPTIONS section for more detailed descriptions.
 
 .TP
-.BI "full " "<folder> <url>"
+.BI "backup, b "  "<folder> <url>"
+Perform a backup. Duplicity automatically performs an incremental backup
+if old signatures can be found. Else a new backup chain is started.
+
+.TP
+.BI "full, fb " "<folder> <url>"
 Perform a full backup. A new backup chain is started even if
 signatures are available for an incremental backup.
 
 .TP
-.BI "incr " "<folder> <url>"
+.BI "incremental, ib " "<folder> <url>"
 If this is requested an incremental backup will be performed.
 Duplicity will abort if no old signatures can be found.
 
 .TP
-.BI "verify " "[--compare-data] [--time <time>] [--path-to-restore <rel_path>] <url> <local_path>"
+.BI "verify, vb " "[--compare-data] [--time <time>] [--path-to-restore <rel_path>] <url> <local_path>"
 Verify tests the integrity of the backup archives at the remote location by downloading each file
 and checking both that it can restore the archive and that the restored file matches the signature
 of that file stored in the backup, i.e. compares the archived file with its hash value from archival
@@ -185,7 +190,7 @@ The
 option enables data comparison (see below).
 
 .TP
-.BI "collection-status " "[--file-changed <relpath>] [--show-changes-in-set <index> [--jsonstat]] <url>"
+.BI "collection-status, st " "[--file-changed <relpath>] [--show-changes-in-set <index>] <url>"
 Summarize the status of the backup repository by printing the chains
 and sets found, and the number of volumes in each.
 .br
@@ -194,7 +199,7 @@ The
 option summarizes the changes to the file (in the most recent backup chain).
 The
 .I --show-changes-in-set
-option summarizes all the file changes in the index:th backup set 
+option summarizes all the file changes in the index:th backup set
 (where index 0 means the latest set, 1 means the next to latest, etc.).
 .I --jsonstat
 prints the changes in json format and statistics from the jsonstat files if the
@@ -202,7 +207,7 @@ backups were created with --jsonstat. If <index> is set to -1 statistics for the
 backup chain printed
 
 .TP
-.BI "list-current-files " "[--time <time>] <url>"
+.BI "list-current-files, ls " "[--time <time>] <url>"
 Lists the files contained in the most current backup or backup at time.
 The information will be extracted from the signature files, not the archive data
 itself. Thus the whole archive does not have to be downloaded, but on
@@ -210,7 +215,7 @@ the other hand if the archive has been deleted or corrupted, this
 command will not detect it.
 
 .TP
-.BI "restore " "[--path-to-restore <relpath>] [--time <time>] <url> <target_folder>"
+.BI "restore, rb " "[--path-to-restore <relpath>] [--time <time>] <url> <target_folder>"
 You can restore the full monty or selected folders/files from a specific time.
 Use the relative path as it is printed by
 .BR list-current-files .
@@ -218,7 +223,7 @@ Usually not needed as duplicity enters restore mode when it detects that the URL
 comes before the local folder.
 
 .TP
-.BI "remove-older-than " "<time> [--force] <url>"
+.BI "remove-older-than, ro " "<time> [--force] <url>"
 Delete all backup sets older than the given time.  Old backup sets
 will not be deleted if backup sets newer than
 .I time
@@ -230,7 +235,7 @@ with backup or other actions, such as cleanup.  Note also that
 will be needed to delete the files instead of just listing them.
 
 .TP
-.BI "remove-all-but-n-full " "<count> [--force] <url>"
+.BI "remove-all-but-n-full, ra " "<count> [--force] <url>"
 Delete all backups sets that are older than the count:th last full
 backup (in other words, keep the last
 .I count
@@ -242,7 +247,7 @@ recent backup chain will be kept.  Note that
 will be needed to delete the files instead of just listing them.
 
 .TP
-.BI "remove-all-inc-of-but-n-full " "<count> [--force] <url>"
+.BI "remove-all-inc-of-but-n-full, ri " "<count> [--force] <url>"
 Delete incremental sets of all backups sets that are older than the count:th last full
 backup (in other words, keep only old full backups and not their increments).
 .I count
@@ -252,7 +257,7 @@ recent backup chain will be kept intact.  Note that
 will be needed to delete the files instead of just listing them.
 
 .TP
-.BI "cleanup " "[--force] <url>"
+.BI "cleanup, cl " "[--force] <url>"
 Delete the extraneous duplicity files on the given backend.
 Non-duplicity files, or files in complete data sets will not be
 deleted.  This should only be necessary after a duplicity session
@@ -272,6 +277,7 @@ this switch.
 .BI "--archive-dir " path
 The archive directory.
 
+.RS
 .B NOTE:
 This option changed in 0.6.0.  The archive directory is now necessary
 in order to manage persistence for current and future enhancements.
@@ -302,7 +308,6 @@ and the
 .BI --name
 options allows for four possible combinations for the location of the archive dir:
 
-.RS
 .IP 1.
 neither specified (default)
  ~/.cache/duplicity/\c
@@ -1196,7 +1201,7 @@ Specify the time from which to restore or list files.
 
 See section
 .B TIME FORMATS
-for details. 
+for details.
 .RE
 
 .TP
@@ -2133,7 +2138,7 @@ or
 .BR BOTO_CONFIG " (required) pointing to a boto config file."
 .RE
 For simplicity's sake we will document the use of the AWS_* vars only.
-Research 
+Research
 .B boto3
 documentation available in the web if you want to use  the config file.
 

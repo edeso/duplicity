@@ -24,6 +24,7 @@ Main for parse command line, check for consistency, and set config
 import argparse
 import copy
 import sys
+import inspect
 
 from duplicity import backend
 from duplicity import cli_util
@@ -71,6 +72,52 @@ def harvest_namespace(args):
         setattr(config, f, v)
 
 
+def parse_implied_command(arglist):
+    """
+    Add implied commands if
+    - no or wrong command was given
+    - number of positional arguments is 2
+    - the order of positional arguments implies backup (2nd is url) or restore (first is url)
+    """
+    parser = argparse.ArgumentParser(
+        prog='duplicity',
+        add_help=False,
+        argument_default=None)
+    # add all known options
+    for opt in all_options:
+        var = opt2var(opt)
+        names = [opt] + OptionAliases.__dict__.get(var, [])
+        # arparse store and friends define nargs, so we keep em
+        # strip actually config retrieving action classes _and_ type functions checking validity
+        selected_args_only = {
+            k: (
+                v
+                if not (inspect.isclass(v) and issubclass(v, argparse.Action))
+                else DoNothingAction
+            )
+            for k, v in OptionKwargs.__dict__[var].items()
+            if k not in {'type'}
+        }
+        # needed as store action does not tolerate nargs=0, we do not want to interpret just now anyway
+        parser.add_argument(*names, **selected_args_only)
+    # strip known arguments should leave us with pos_args only and unknown options paramters unfortunately
+    args, remainder = parser.parse_known_args(arglist)
+
+    if (len(remainder) > 0 and remainder[0] not in all_commands):
+        if (len(remainder) == 2 and is_path(remainder[0]) and is_url(remainder[1])):
+            log.Notice(_("No valid action command found. Will imply 'backup' because "
+                         "a path source was given and target is a url location."))
+            arglist.insert(0, 'backup')
+            # config.inc_explicit = False
+        elif (len(remainder) == 2 and is_url(remainder[0]) and is_path(remainder[1])):
+            log.Notice(_("No valid action command found. Will imply 'restore' because "
+                         "url source was given and target is a local path."))
+            arglist.insert(0, 'restore')
+        else:
+            command_line_error(
+                _(f"Invalid or missing action command and cannot be implied from the given arguments. {remainder}"))
+
+
 def pre_parse_cmdline_options(arglist):
     """
     Parse the commands and options that need to be handled first.
@@ -101,6 +148,9 @@ def parse_cmdline_options(arglist):
     """
     Parse remaining argument list once all is defined.
     """
+    # fixup implied commands
+    parse_implied_command(arglist)
+
     # preprocess config type args
     args, remain = pre_parse_cmdline_options(arglist)
 
@@ -132,7 +182,7 @@ def parse_cmdline_options(arglist):
 
     # set up command subparsers
     subparsers = parser.add_subparsers(
-        title="valid commands",
+        title=_("Valid action commands"),
         required=False)
 
     # add sub_parser for each command

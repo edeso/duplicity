@@ -38,6 +38,7 @@ class DuplicityCommands:
     NOTE: cli_util must contain a function named check_* for each positional arg,
           for example check_source_path() to check for source path validity.
     """
+    backup = ["source_path", "target_url"]
     cleanup = ["target_url"]
     collection_status = ["target_url"]
     full = ["source_path", "target_url"]
@@ -55,10 +56,11 @@ class CommandAliases:
     """
     commands and aliases
     """
+    backup = ["bu"]
     cleanup = ["cl"]
     collection_status = ["st"]
     full = ["fb"]
-    incremental = ["inc", "ib"]
+    incremental = ["incr", "inc", "ib"]
     list_current_files = ["ls"]
     remove_older_than = ["ro"]
     remove_all_but_n_full = ["ra"]
@@ -786,6 +788,11 @@ class CommandOptions:
     """
     legal options by command
     """
+    backup = list(
+        all_options
+        - parent_only_options
+        - deprecated_backup_options
+    )
     cleanup = list(
         all_options
         - parent_only_options
