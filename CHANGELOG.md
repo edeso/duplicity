@@ -1,3 +1,31 @@
+## rel.2.1.0 (2023-08-26)
+
+### New
+
+* Skip inc backup if nothing has changed. [Thomas Laubrock]
+
+* Log a warning when using dangerous --asynchronous-upload option. [ed]
+
+* Keep stats in files.  Fixes #722. [Thomas Laubrock]
+
+### Changes
+
+* Run po/update-pot. [Kenneth Loafman]
+
+### Fix
+
+* Implement implied commands via pre parsing. Fixes #733. [Kenneth Loafman]
+
+  - detect 'backup' or 'restore' by parsing the arguments   - new action
+  command 'backup'   - document 'backup' in man page   - document new
+  action command short aliases in man page   - streamline url parameter
+  checking   - add more tests for implied commands
+
+* Replace util.fsdecode with os.fsdecode.  Fixes #748. [Kenneth Loafman]
+
+* Try import of setuptools\_scm.  Fixes #746. [Kenneth Loafman]
+
+
 ## rel.2.0.2 (2023-08-15)
 
 ### Fix
