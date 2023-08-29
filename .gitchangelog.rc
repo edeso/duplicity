@@ -139,8 +139,7 @@ body_process = (strip |
     ReSub(r'((^|\n)[A-Z]\w+(-\w+)*: .*(\n\s+.*)*)+$', r'') |
     ReSub(r'\[.*\s+skip\]', r'') |
     ReSub(r'\[skip\s+.*\]', r'') |
-    Indent(chars="  ") |
-    Wrap(regexp=r"\n\n"))
+    Indent(chars="  "))
 
 
 ## ``subject_process`` is a callable
