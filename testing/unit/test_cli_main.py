@@ -18,6 +18,7 @@
 # You should have received a copy of the GNU General Public License
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
 import argparse
 import copy
 import os
@@ -425,3 +426,19 @@ class CommandlineTest(UnitTestCase):
         cline = shlex.split("inc foo/bar file:///target_url --ssh-options=\'--foo --bar\'")
         cli_main.process_command_line(cline)
         self.assertEqual(config.ssh_options, "--foo --bar")
+
+    @pytest.mark.usefixtures("redirect_stdin")
+    def test_help_commands(self):
+        """
+        Test -h/--help
+        """
+        with self.assertRaises(SystemExit) as cm:
+            cli_main.process_command_line(shlex.split("-h"))
+        with self.assertRaises(SystemExit) as cm:
+            cli_main.process_command_line(shlex.split(f"--help"))
+
+        for cmd in [var2cmd(v) for v in DuplicityCommands.__dict__.keys() if not v.startswith("__")]:
+            with self.assertRaises(SystemExit) as cm:
+                cli_main.process_command_line(shlex.split(f"{cmd} -h"))
+            with self.assertRaises(SystemExit) as cm:
+                cli_main.process_command_line(shlex.split(f"{cmd} --help"))

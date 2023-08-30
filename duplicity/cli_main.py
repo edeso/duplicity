@@ -83,6 +83,10 @@ def parse_implied_command(arglist):
         prog='duplicity',
         add_help=False,
         argument_default=None)
+
+    # add dummy -h and --help
+    parser.add_argument("-h", "--help", action="store_true")
+
     # add all known options
     for opt in all_options:
         var = opt2var(opt)
@@ -100,16 +104,17 @@ def parse_implied_command(arglist):
         }
         # needed as store action does not tolerate nargs=0, we do not want to interpret just now anyway
         parser.add_argument(*names, **selected_args_only)
+
     # strip known arguments should leave us with pos_args only and unknown options paramters unfortunately
     args, remainder = parser.parse_known_args(arglist)
 
-    if (len(remainder) > 0 and remainder[0] not in all_commands):
-        if (len(remainder) == 2 and is_path(remainder[0]) and is_url(remainder[1])):
+    if len(remainder) > 0 and remainder[0] not in all_commands:
+        if len(remainder) == 2 and is_path(remainder[0]) and is_url(remainder[1]):
             log.Notice(_("No valid action command found. Will imply 'backup' because "
                          "a path source was given and target is a url location."))
             arglist.insert(0, 'backup')
             # config.inc_explicit = False
-        elif (len(remainder) == 2 and is_url(remainder[0]) and is_path(remainder[1])):
+        elif len(remainder) == 2 and is_url(remainder[0]) and is_path(remainder[1]):
             log.Notice(_("No valid action command found. Will imply 'restore' because "
                          "url source was given and target is a local path."))
             arglist.insert(0, 'restore')
@@ -136,12 +141,12 @@ def pre_parse_cmdline_options(arglist):
         parser.add_argument(*names, **OptionKwargs.__dict__[var])
 
     # process parent args now
-    args, remain = parser.parse_known_args(arglist)
+    args, remainder = parser.parse_known_args(arglist)
 
     # harvest args to config
     harvest_namespace(args)
 
-    return args, remain
+    return args, remainder
 
 
 def parse_cmdline_options(arglist):
