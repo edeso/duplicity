@@ -78,6 +78,7 @@ def parse_implied_command(arglist):
     - no or wrong command was given
     - number of positional arguments is 2
     - the order of positional arguments implies backup (2nd is url) or restore (first is url)
+    Check if there is a valid action command or throw command line error
     """
     parser = argparse.ArgumentParser(
         prog='duplicity',
@@ -108,6 +109,8 @@ def parse_implied_command(arglist):
     # strip known arguments should leave us with pos_args only and unknown options paramters unfortunately
     args, remainder = parser.parse_known_args(arglist)
 
+    # let's test the action command and try to assume,
+    # eventually err out if no valid action could be determined/was given
     if len(remainder) > 0 and remainder[0] not in all_commands:
         if len(remainder) == 2 and is_path(remainder[0]) and is_url(remainder[1]):
             log.Notice(_("No valid action command found. Will imply 'backup' because "
@@ -119,8 +122,17 @@ def parse_implied_command(arglist):
                          "url source was given and target is a local path."))
             arglist.insert(0, 'restore')
         else:
-            command_line_error(
-                _(f"Invalid or missing action command and cannot be implied from the given arguments. {remainder}"))
+            remainder_string = ', '.join(f"'{c}'" for c in remainder)
+            all_long_commands = set()
+            for var, aliases in CommandAliases.__dict__.items():
+                if var.startswith("__") or len(var) <= 2:
+                    continue
+                all_long_commands.add(var2cmd(var))
+            all_long_commands_string = ', '.join(f"'{c}'" for c in sorted(all_long_commands))
+            msg = _("Invalid or missing action command and cannot be implied from the "
+                    f"given arguments. {remainder_string}\n"
+                    f"Valid action commands are: {all_long_commands_string}")
+            command_line_error(msg)
 
 
 def pre_parse_cmdline_options(arglist):
