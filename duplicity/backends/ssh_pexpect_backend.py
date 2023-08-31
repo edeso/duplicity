@@ -282,7 +282,7 @@ class SSHPExpectBackend(duplicity.backend.Backend):
 
         l = self.run_sftp_command(commandline, commands).split('\n')[1:]
 
-        return [x for x in map(string.strip, l) if x]
+        return [x for x in map(str.strip, l) if x]
 
     def _delete(self, filename):
         commands = [f"cd \"{self.remote_dir}\""]
