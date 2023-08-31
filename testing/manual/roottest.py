@@ -31,12 +31,13 @@ from duplicity.path import *  # pylint: disable=unused-wildcard-import,redefined
 
 config.setup()
 
+
 class RootTest(unittest.TestCase):
     """Test doing operations that only root can"""
 
     def setUp(self):
         # must run with euid/egid of root
-        assert(os.geteuid() == 0)
+        assert os.geteuid() == 0
         # make sure uid/gid match euid/egid
         os.setuid(os.geteuid())
         os.setgid(os.getegid())
@@ -50,7 +51,8 @@ class RootTest(unittest.TestCase):
         blocksize = 32 * 1024
         while True:
             buf = infp.read(blocksize)
-            if not buf: break
+            if not buf:
+                break
             outfp.write(buf)
         assert not infp.close()
         assert not outfp.close()
@@ -75,12 +77,13 @@ class RootTest(unittest.TestCase):
         for dirname in filelist[1:]:
             new_path = Path(dirname)
             diffdir.write_block_iter(
-                diffdir.DirSig(selection.Select(seq_path).set_iter()), sig)
+                diffdir.DirSig(selection.Select(seq_path).set_iter()), sig
+            )
 
             diffdir.write_block_iter(
-                diffdir.DirDelta(selection.Select(new_path).set_iter(),
-                                 sig.open("rb")),
-                diff)
+                diffdir.DirDelta(selection.Select(new_path).set_iter(), sig.open("rb")),
+                diff,
+            )
 
             patchdir.Patch(seq_path, diff.open("rb"))
 
@@ -88,7 +91,7 @@ class RootTest(unittest.TestCase):
 
     def test_basic_cycle(self):
         """Test cycle on dir with devices, changing uid/gid, etc."""
-        self.total_sequence(['/tmp/testfiles/root1', '/tmp/testfiles/root2'])
+        self.total_sequence(["/tmp/testfiles/root1", "/tmp/testfiles/root2"])
 
     def test_patchdir(self):
         """Test changing uid/gid, devices"""
@@ -119,11 +122,15 @@ class RootTest(unittest.TestCase):
         tar_path = Path("/tmp/testfiles/output/tar.tar")
         basis_path = Path("/tmp/testfiles/root1")
 
-        deltablock = diffdir.DirFull_WriteSig(self.get_sel(basis_path),
-                                              sig_path.open("wb"))
+        deltablock = diffdir.DirFull_WriteSig(
+            self.get_sel(basis_path), sig_path.open("wb")
+        )
         diffdir.write_block_iter(deltablock, tar_path)
 
-def runtests(): unittest.main()
+
+def runtests():
+    unittest.main()
+
 
 if __name__ == "__main__":
     unittest.main()

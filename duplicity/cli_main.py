@@ -37,8 +37,9 @@ from duplicity.cli_data import *
 from duplicity.cli_util import *
 
 
-class DuplicityHelpFormatter(argparse.ArgumentDefaultsHelpFormatter,
-                             argparse.RawDescriptionHelpFormatter):
+class DuplicityHelpFormatter(
+    argparse.ArgumentDefaultsHelpFormatter, argparse.RawDescriptionHelpFormatter
+):
     """
     A working class to combine ArgumentDefaults, RawDescription.
     Use with make_wide() to insure we catch argparse API changes.
@@ -52,7 +53,7 @@ def make_wide(formatter, w=120, h=46):
     Beware: "Only the name of this class is considered a public API."
     """
     try:
-        kwargs = {'width': w, 'max_help_position': h}
+        kwargs = {"width": w, "max_help_position": h}
         formatter(None, **kwargs)
         return lambda prog: formatter(prog, **kwargs)
     except TypeError:
@@ -81,9 +82,8 @@ def parse_implied_command(arglist):
     Check if there is a valid action command or throw command line error
     """
     parser = argparse.ArgumentParser(
-        prog='duplicity',
-        add_help=False,
-        argument_default=None)
+        prog="duplicity", add_help=False, argument_default=None
+    )
 
     # add dummy -h and --help
     parser.add_argument("-h", "--help", action="store_true")
@@ -101,7 +101,7 @@ def parse_implied_command(arglist):
                 else DoNothingAction
             )
             for k, v in OptionKwargs.__dict__[var].items()
-            if k not in {'type'}
+            if k not in {"type"}
         }
         # needed as store action does not tolerate nargs=0, we do not want to interpret just now anyway
         parser.add_argument(*names, **selected_args_only)
@@ -113,25 +113,37 @@ def parse_implied_command(arglist):
     # eventually err out if no valid action could be determined/was given
     if len(remainder) > 0 and remainder[0] not in all_commands:
         if len(remainder) == 2 and is_path(remainder[0]) and is_url(remainder[1]):
-            log.Notice(_("No valid action command found. Will imply 'backup' because "
-                         "a path source was given and target is a url location."))
-            arglist.insert(0, 'backup')
+            log.Notice(
+                _(
+                    "No valid action command found. Will imply 'backup' because "
+                    "a path source was given and target is a url location."
+                )
+            )
+            arglist.insert(0, "backup")
             # config.inc_explicit = False
         elif len(remainder) == 2 and is_url(remainder[0]) and is_path(remainder[1]):
-            log.Notice(_("No valid action command found. Will imply 'restore' because "
-                         "url source was given and target is a local path."))
-            arglist.insert(0, 'restore')
+            log.Notice(
+                _(
+                    "No valid action command found. Will imply 'restore' because "
+                    "url source was given and target is a local path."
+                )
+            )
+            arglist.insert(0, "restore")
         else:
-            remainder_string = ', '.join(f"'{c}'" for c in remainder)
+            remainder_string = ", ".join(f"'{c}'" for c in remainder)
             all_long_commands = set()
             for var, aliases in CommandAliases.__dict__.items():
                 if var.startswith("__") or len(var) <= 2:
                     continue
                 all_long_commands.add(var2cmd(var))
-            all_long_commands_string = ', '.join(f"'{c}'" for c in sorted(all_long_commands))
-            msg = _("Invalid or missing action command and cannot be implied from the "
-                    f"given arguments. {remainder_string}\n"
-                    f"Valid action commands are: {all_long_commands_string}")
+            all_long_commands_string = ", ".join(
+                f"'{c}'" for c in sorted(all_long_commands)
+            )
+            msg = _(
+                "Invalid or missing action command and cannot be implied from the "
+                f"given arguments. {remainder_string}\n"
+                f"Valid action commands are: {all_long_commands_string}"
+            )
             command_line_error(msg)
 
 
@@ -142,9 +154,8 @@ def pre_parse_cmdline_options(arglist):
     """
     # set up parent parser
     parser = argparse.ArgumentParser(
-        prog='duplicity',
-        add_help=False,
-        argument_default=None)
+        prog="duplicity", add_help=False, argument_default=None
+    )
 
     # add parent_only options to the parser
     for opt in sorted(parent_only_options):
@@ -173,9 +184,10 @@ def parse_cmdline_options(arglist):
 
     # set up parent parser
     parser = argparse.ArgumentParser(
-        prog='duplicity',
+        prog="duplicity",
         argument_default=None,
-        formatter_class=make_wide(DuplicityHelpFormatter))
+        formatter_class=make_wide(DuplicityHelpFormatter),
+    )
 
     # add all options to the parser
     for opt in sorted(all_options):
@@ -185,22 +197,18 @@ def parse_cmdline_options(arglist):
 
     # add changed options to the parser
     for opt in sorted(changed_options):
-        parser.add_argument(opt,
-                            nargs=0,
-                            action=ChangedOptionAction,
-                            help=argparse.SUPPRESS)
+        parser.add_argument(
+            opt, nargs=0, action=ChangedOptionAction, help=argparse.SUPPRESS
+        )
 
     # add deprecated options to the parser
     for opt in sorted(deprecated_options):
-        parser.add_argument(opt,
-                            nargs=0,
-                            action=DeprecationAction,
-                            help=argparse.SUPPRESS)
+        parser.add_argument(
+            opt, nargs=0, action=DeprecationAction, help=argparse.SUPPRESS
+        )
 
     # set up command subparsers
-    subparsers = parser.add_subparsers(
-        title=_("Valid action commands"),
-        required=False)
+    subparsers = parser.add_subparsers(title=_("Valid action commands"), required=False)
 
     # add sub_parser for each command
     subparser_dict = dict()
@@ -215,10 +223,7 @@ def parse_cmdline_options(arglist):
             formatter_class=make_wide(DuplicityHelpFormatter),
             epilog=help_url_formats,
         )
-        subparser_dict[cmd].add_argument(
-            dest="action",
-            action="store_const",
-            const=cmd)
+        subparser_dict[cmd].add_argument(dest="action", action="store_const", const=cmd)
         for arg in meta:
             func = getattr(cli_util, f"check_{arg}")
             subparser_dict[cmd].add_argument(arg, type=func)
@@ -260,9 +265,10 @@ def process_command_line(cmdline_list):
             passphrase=src.passphrase,
             sign_key=src.sign_key,
             recipients=src.recipients,
-            hidden_recipients=src.hidden_recipients)
+            hidden_recipients=src.hidden_recipients,
+        )
     else:
-        config.gpg_binary = util.which('gpg')
+        config.gpg_binary = util.which("gpg")
     gpg_version = ".".join(map(str, config.gpg_profile.gpg_version))
     log.Info(_(f"GPG binary is {config.gpg_binary}, version {gpg_version}"))
 
@@ -287,14 +293,13 @@ def process_command_line(cmdline_list):
     # generate backup name and set up archive dir
     if config.backup_name is None:
         config.backup_name = generate_default_backup_name(remote_url)
-    set_archive_dir(expand_archive_dir(config.archive_dir,
-                                       config.backup_name))
+    set_archive_dir(expand_archive_dir(config.archive_dir, config.backup_name))
 
     # count is only used by the remove-* commands
     config.keep_chains = config.count
 
     # selection only applies to certain commands
-    if config.action in ["backup", 'full', 'inc', 'verify']:
+    if config.action in ["backup", "full", "inc", "verify"]:
         set_selection()
 
     # print derived info
@@ -306,6 +311,7 @@ def process_command_line(cmdline_list):
 
 if __name__ == "__main__":
     import types
+
     log.setup()
     action = process_command_line(sys.argv[1:])
     for a, v in sorted(config.__dict__.items()):

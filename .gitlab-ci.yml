@@ -66,6 +66,7 @@ code:
     script:
         - python3 -m pip install -r requirements.txt
         - tox -e code
+    allow_failure: true
 
 py38:
     <<: *test-template

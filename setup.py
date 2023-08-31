@@ -45,41 +45,48 @@ if not (sys.version_info[0] == 3 and sys.version_info[1] >= 8):
 
 Version = "2.1.0"
 scm_version_args = {
-    'tag_regex': r'^(?P<prefix>rel.)?(?P<version>[^\+]+)(?P<suffix>.*)?$',
-    'local_scheme': 'no-local-version',
-    'fallback_version': Version,
-    }
+    "tag_regex": r"^(?P<prefix>rel.)?(?P<version>[^\+]+)(?P<suffix>.*)?$",
+    "local_scheme": "no-local-version",
+    "fallback_version": Version,
+}
 try:
     from setuptools_scm import get_version  # pylint: disable=import-error
+
     Version = get_version(**scm_version_args)
 except Exception as e:
     pass
-Reldate = time.strftime("%B %d, %Y", time.gmtime(int(os.environ.get('SOURCE_DATE_EPOCH', time.time()))))
+Reldate = time.strftime(
+    "%B %d, %Y", time.gmtime(int(os.environ.get("SOURCE_DATE_EPOCH", time.time())))
+)
 
 
 # READTHEDOCS uses setup.py sdist but can't handle extensions
 ext_modules = list()
 incdir_list = list()
 libdir_list = list()
-if not os.environ.get('READTHEDOCS') == 'True':
+if not os.environ.get("READTHEDOCS") == "True":
     # set incdir and libdir for librsync
-    if os.name == 'posix':
-        LIBRSYNC_DIR = os.environ.get('LIBRSYNC_DIR', '')
+    if os.name == "posix":
+        LIBRSYNC_DIR = os.environ.get("LIBRSYNC_DIR", "")
         args = sys.argv[:]
         for arg in args:
-            if arg.startswith('--librsync-dir='):
-                LIBRSYNC_DIR = arg.split('=')[1]
+            if arg.startswith("--librsync-dir="):
+                LIBRSYNC_DIR = arg.split("=")[1]
                 sys.argv.remove(arg)
         if LIBRSYNC_DIR:
-            incdir_list = [os.path.join(LIBRSYNC_DIR, 'include')]
-            libdir_list = [os.path.join(LIBRSYNC_DIR, 'lib')]
+            incdir_list = [os.path.join(LIBRSYNC_DIR, "include")]
+            libdir_list = [os.path.join(LIBRSYNC_DIR, "lib")]
 
     # build the librsync extension
-    ext_modules=[Extension(name=r"duplicity._librsync",
-                           sources=[r"duplicity/_librsyncmodule.c"],
-                           include_dirs=incdir_list,
-                           library_dirs=libdir_list,
-                           libraries=["rsync"])]
+    ext_modules = [
+        Extension(
+            name=r"duplicity._librsync",
+            sources=[r"duplicity/_librsyncmodule.c"],
+            include_dirs=incdir_list,
+            library_dirs=libdir_list,
+            libraries=["rsync"],
+        )
+    ]
 
 
 def get_data_files():
@@ -87,32 +94,34 @@ def get_data_files():
 
     # static data files
     data_files = [
-            ('share/man/man1',
-                [
-                'bin/duplicity.1',
-                ]
-            ),
-            (f'share/doc/duplicity-{Version}',
-                [
-                'CHANGELOG.md',
-                'CONTRIBUTING.md',
-                'COPYING',
-                'README.md',
-                'README-LOG.md',
-                'README-REPO.md',
-                'README-TESTING.md',
-                ],
-            ),
-        ]
+        (
+            "share/man/man1",
+            [
+                "bin/duplicity.1",
+            ],
+        ),
+        (
+            f"share/doc/duplicity-{Version}",
+            [
+                "CHANGELOG.md",
+                "CONTRIBUTING.md",
+                "COPYING",
+                "README.md",
+                "README-LOG.md",
+                "README-REPO.md",
+                "README-TESTING.md",
+            ],
+        ),
+    ]
 
     # short circuit fot READTHEDOCS
-    if os.environ.get('READTHEDOCS') == 'True':
+    if os.environ.get("READTHEDOCS") == "True":
         return data_files
 
     # msgfmt the translation files
     assert os.path.exists("po"), "Missing 'po' directory."
 
-    linguas = glob.glob('po/*.po')
+    linguas = glob.glob("po/*.po")
     for lang in linguas:
         lang = lang[3:-3]
         try:
@@ -128,8 +137,8 @@ def get_data_files():
             if path.endswith("duplicity.mo"):
                 lang = os.path.split(root)[-1]
                 data_files.append(
-                    (f'share/locale/{lang}/LC_MESSAGES',
-                     [f"po/{lang}/duplicity.mo"]))
+                    (f"share/locale/{lang}/LC_MESSAGES", [f"po/{lang}/duplicity.mo"])
+                )
 
     return data_files
 
@@ -150,8 +159,8 @@ def VersionedCopy(source, dest):
 
 
 def cleanup():
-    if os.path.exists('po/LINGUAS'):
-        linguas = open('po/LINGUAS').readlines()
+    if os.path.exists("po/LINGUAS"):
+        linguas = open("po/LINGUAS").readlines()
         for line in linguas:
             langs = line.split()
             for lang in langs:
@@ -162,7 +171,6 @@ def cleanup():
 
 
 class SdistCommand(sdist):
-
     def run(self):
         sdist.run(self)
 
@@ -178,18 +186,25 @@ class SdistCommand(sdist):
         assert not os.chmod(os.path.join(tardir, "bin", "duplicity"), 0o755)
 
         # recopy the unversioned files and add correct version
-        VersionedCopy(os.path.join("bin", "duplicity.1"),
-                      os.path.join(tardir, "bin", "duplicity.1"))
-        VersionedCopy(os.path.join("duplicity", "__init__.py"),
-                      os.path.join(tardir, "duplicity", "__init__.py"))
-        VersionedCopy(os.path.join("snap", "snapcraft.yaml"),
-                      os.path.join(tardir, "snap", "snapcraft.yaml"))
+        VersionedCopy(
+            os.path.join("bin", "duplicity.1"),
+            os.path.join(tardir, "bin", "duplicity.1"),
+        )
+        VersionedCopy(
+            os.path.join("duplicity", "__init__.py"),
+            os.path.join(tardir, "duplicity", "__init__.py"),
+        )
+        VersionedCopy(
+            os.path.join("snap", "snapcraft.yaml"),
+            os.path.join(tardir, "snap", "snapcraft.yaml"),
+        )
 
         # set COPYFILE_DISABLE to disable appledouble file creation
-        os.environ['COPYFILE_DISABLE'] = 'true'
+        os.environ["COPYFILE_DISABLE"] = "true"
 
         # make the new tarball and remove tardir
-        assert not os.system(f"""tar czf {tarball} \
+        assert not os.system(
+            f"""tar czf {tarball} \
                                  --exclude '.*' \
                                  --exclude Makefile \
                                  --exclude debian \
@@ -199,12 +214,12 @@ class SdistCommand(sdist):
                                  --exclude testing/manual \
                                  --exclude tools \
                                  {tardir}
-                              """)
+                              """
+        )
         assert not shutil.rmtree(tardir)
 
 
 class TestCommand(test):
-
     def run(self):
         # Make sure all modules are ready
         build_cmd = self.get_finalized_command("build_py")
@@ -215,15 +230,17 @@ class TestCommand(test):
 
         # make symlinks for test data
         if build_cmd.build_lib != top_dir:
-            for path in ['source_files.tar.gz', 'gnupg']:
-                src = os.path.join(top_dir, 'testing', path)
-                target = os.path.join(build_cmd.build_lib, 'testing', path)
+            for path in ["source_files.tar.gz", "gnupg"]:
+                src = os.path.join(top_dir, "testing", path)
+                target = os.path.join(build_cmd.build_lib, "testing", path)
                 try:
                     os.symlink(src, target)
                 except Exception:
                     pass
 
-        os.environ['PATH'] = f"{os.path.abspath(build_scripts_cmd.build_dir)}:{os.environ.get('PATH')}"
+        os.environ[
+            "PATH"
+        ] = f"{os.path.abspath(build_scripts_cmd.build_dir)}:{os.environ.get('PATH')}"
 
         test.run(self)
 
@@ -231,36 +248,35 @@ class TestCommand(test):
 
 
 class InstallCommand(install):
-
     def run(self):
         # Normally, install will call build().  But we want to delete the
         # testing dir between building and installing.  So we manually build
         # and mark ourselves to skip building when we run() for real.
-        self.run_command('build')
+        self.run_command("build")
         self.skip_build = True
 
         # remove testing dir
         top_dir = os.path.dirname(os.path.abspath(__file__))
         if self.build_lib != top_dir:
-            testing_dir = os.path.join(self.build_lib, 'testing')
+            testing_dir = os.path.join(self.build_lib, "testing")
             shutil.rmtree(testing_dir)
 
         install.run(self)
 
 
 class InstallDataCommand(install_data):
-
     def run(self):
         install_data.run(self)
 
         # version the man pages
         for tup in self.data_files:
             base, filenames = tup
-            if base == 'share/man/man1':
+            if base == "share/man/man1":
                 for fn in filenames:
                     fn = os.path.split(fn)[-1]
                     path = os.path.join(self.install_dir, base, fn)
                     VersionedCopy(path, path)
+
 
 class BuildExtCommand(build_ext):
     """Build extension modules."""
@@ -276,7 +292,8 @@ with open("README.md") as fh:
     long_description = fh.read()
 
 
-setup(name="duplicity",
+setup(
+    name="duplicity",
     version=Version,
     description="Encrypted backup using rsync algorithm",
     long_description=long_description,
@@ -295,11 +312,11 @@ setup(name="duplicity",
         "testing",
         "testing.functional",
         "testing.unit",
-        ],
+    ],
     package_dir={
         "duplicity": "duplicity",
         "duplicity.backends": "duplicity/backends",
-        },
+    },
     package_data={
         "testing": [
             "testing/gnupg",
@@ -332,20 +349,20 @@ setup(name="duplicity",
     ext_modules=ext_modules,
     scripts=[
         "bin/duplicity",
-        ],
+    ],
     data_files=get_data_files(),
     include_package_data=True,
     install_requires=[
         "fasteners",
         "setuptools_scm",
-        ],
+    ],
     tests_require=[
         "fasteners",
         "mock",
         "pexpect",
         "pytest",
         "pytest-runner",
-        ],
+    ],
     test_suite="testing",
     cmdclass={
         "build_ext": BuildExtCommand,
@@ -353,7 +370,7 @@ setup(name="duplicity",
         "install_data": InstallDataCommand,
         "sdist": SdistCommand,
         "test": TestCommand,
-        },
+    },
     classifiers=[
         "Development Status :: 6 - Mature",
         "Environment :: Console",
@@ -366,8 +383,8 @@ setup(name="duplicity",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
-        "Topic :: System :: Archiving :: Backup"
-        ],
-    )
+        "Topic :: System :: Archiving :: Backup",
+    ],
+)
 
 cleanup()

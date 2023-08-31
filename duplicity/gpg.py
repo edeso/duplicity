@@ -47,6 +47,7 @@ class GPGError(Exception):
     """
     Indicate some GPG Error
     """
+
     pass
 
 
@@ -55,8 +56,9 @@ class GPGProfile(object):
     Just hold some GPG settings, avoid passing tons of arguments
     """
 
-    def __init__(self, passphrase=None, sign_key=None,
-                 recipients=None, hidden_recipients=None):
+    def __init__(
+        self, passphrase=None, sign_key=None, recipients=None, hidden_recipients=None
+    ):
         """
         Set all data with initializer
 
@@ -86,7 +88,9 @@ class GPGProfile(object):
         self.gpg_version = self.get_gpg_version(config.gpg_binary)
 
     rc = re.compile
-    _version_re = rc(b'^gpg.*\\(GnuPG(?:/MacGPG2)?\\) (?P<maj>[0-9]+)\\.(?P<min>[0-9]+)\\.(?P<bug>[0-9]+)(-.+)?$')
+    _version_re = rc(
+        b"^gpg.*\\(GnuPG(?:/MacGPG2)?\\) (?P<maj>[0-9]+)\\.(?P<min>[0-9]+)\\.(?P<bug>[0-9]+)(-.+)?$"
+    )
 
     def get_gpg_version(self, binary):
         gnupg = gpginterface.GnuPG()
@@ -138,14 +142,14 @@ class GPGFile(object):
         if config.gpg_binary is not None:
             gnupg.call = config.gpg_binary
         gnupg.options.meta_interactive = 0
-        gnupg.options.extra_args.append('--no-secmem-warning')
-        gnupg.options.extra_args.append('--ignore-mdc-error')
+        gnupg.options.extra_args.append("--no-secmem-warning")
+        gnupg.options.extra_args.append("--ignore-mdc-error")
 
         # Support three versions of gpg present 1.x, 2.0.x, 2.1.x
         if profile.gpg_version[:1] == (1,):
             if config.use_agent:
                 # gpg1 agent use is optional
-                gnupg.options.extra_args.append('--use-agent')
+                gnupg.options.extra_args.append("--use-agent")
 
         elif profile.gpg_version[:2] == (2, 0):
             pass
@@ -154,7 +158,7 @@ class GPGFile(object):
             if not config.use_agent:
                 # This forces gpg2 to ignore the agent.
                 # Necessary to enforce truly non-interactive operation.
-                gnupg.options.extra_args.append('--pinentry-mode=loopback')
+                gnupg.options.extra_args.append("--pinentry-mode=loopback")
 
         else:
             raise GPGError(f"Unsupported GNUPG version, {profile.gpg_version}")
@@ -186,48 +190,55 @@ class GPGFile(object):
             if profile.hidden_recipients:
                 gnupg.options.hidden_recipients = profile.hidden_recipients
             if profile.recipients or profile.hidden_recipients:
-                cmdlist.append('--encrypt')
+                cmdlist.append("--encrypt")
             else:
-                cmdlist.append('--symmetric')
+                cmdlist.append("--symmetric")
             # use integrity protection
-            gnupg.options.extra_args.append('--force-mdc')
+            gnupg.options.extra_args.append("--force-mdc")
             # Skip the passphrase if using the agent
             if config.use_agent:
-                gnupg_fhs = ['stdin', ]
+                gnupg_fhs = [
+                    "stdin",
+                ]
             else:
-                gnupg_fhs = ['stdin', 'passphrase']
+                gnupg_fhs = ["stdin", "passphrase"]
             # Turn off compression if needed
             if not config.compression:
-                cmdlist.append('--compress-algo=none')
-            p1 = gnupg.run(cmdlist,
-                           create_fhs=gnupg_fhs,
-                           attach_fhs={'stdout': encrypt_path.open("wb"),
-                                       'stderr': self.stderr_fp})
+                cmdlist.append("--compress-algo=none")
+            p1 = gnupg.run(
+                cmdlist,
+                create_fhs=gnupg_fhs,
+                attach_fhs={
+                    "stdout": encrypt_path.open("wb"),
+                    "stderr": self.stderr_fp,
+                },
+            )
             if not config.use_agent:
-                p1.handles['passphrase'].write(passphrase)
-                p1.handles['passphrase'].close()
-            self.gpg_input = p1.handles['stdin']
+                p1.handles["passphrase"].write(passphrase)
+                p1.handles["passphrase"].close()
+            self.gpg_input = p1.handles["stdin"]
         else:
-            if (profile.recipients or profile.hidden_recipients) and profile.encrypt_secring:
-                cmdlist.append('--secret-keyring')
+            if (
+                profile.recipients or profile.hidden_recipients
+            ) and profile.encrypt_secring:
+                cmdlist.append("--secret-keyring")
                 cmdlist.append(profile.encrypt_secring)
-            gpg_attach = {'stdin': encrypt_path.open("rb"),
-                          'stderr': self.stderr_fp}
+            gpg_attach = {"stdin": encrypt_path.open("rb"), "stderr": self.stderr_fp}
             if profile.sign_key:
                 self.status_fp = tempfile.TemporaryFile(dir=tempdir.default().dir())
-                gpg_attach['status'] = self.status_fp
+                gpg_attach["status"] = self.status_fp
             # Skip the passphrase if using the agent
             if config.use_agent:
-                gnupg_fhs = ['stdout', ]
+                gnupg_fhs = [
+                    "stdout",
+                ]
             else:
-                gnupg_fhs = ['stdout', 'passphrase']
-            p1 = gnupg.run(['--decrypt'],
-                           create_fhs=gnupg_fhs,
-                           attach_fhs=gpg_attach)
+                gnupg_fhs = ["stdout", "passphrase"]
+            p1 = gnupg.run(["--decrypt"], create_fhs=gnupg_fhs, attach_fhs=gpg_attach)
             if not config.use_agent:
-                p1.handles['passphrase'].write(passphrase)
-                p1.handles['passphrase'].close()
-            self.gpg_output = p1.handles['stdout']
+                p1.handles["passphrase"].write(passphrase)
+                p1.handles["passphrase"].close()
+            self.gpg_output = p1.handles["stdout"]
         self.gpg_process = p1
         self.encrypt = encrypt
 
@@ -264,7 +275,9 @@ class GPGFile(object):
         self.stderr_fp.seek(0)
         for line in self.stderr_fp:
             try:
-                msg += f"{str(line.strip(), locale.getpreferredencoding(), u'replace')}\n"
+                msg += (
+                    f"{str(line.strip(), locale.getpreferredencoding(), u'replace')}\n"
+                )
             except Exception as e:
                 msg += f"{line.strip()}\n"
         msg += "===== End GnuPG log =====\n"
@@ -315,8 +328,7 @@ class GPGFile(object):
         """
         self.status_fp.seek(0)
         status_buf = self.status_fp.read()
-        match = re.search(b"GOODSIG ([0-9A-F]*)",
-                          status_buf, re.M)
+        match = re.search(b"GOODSIG ([0-9A-F]*)", status_buf, re.M)
         if not match:
             self.signature = None
         else:
@@ -331,9 +343,9 @@ class GPGFile(object):
         return self.signature
 
 
-def GPGWriteFile(block_iter, filename, profile,
-                 size=200 * 1024 * 1024,
-                 max_footer_size=16 * 1024):
+def GPGWriteFile(
+    block_iter, filename, profile, size=200 * 1024 * 1024, max_footer_size=16 * 1024
+):
     """
     Write GPG compressed file of given size
 

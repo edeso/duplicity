@@ -33,6 +33,7 @@ class ManifestError(Exception):
     """
     Exception raised when problem with manifest
     """
+
     pass
 
 
@@ -89,31 +90,44 @@ class Manifest(object):
 
         # Check both hostname and fqdn (we used to write the fqdn into the
         # manifest, so we want to keep comparing against that)
-        if (self.hostname and
-                self.hostname != config.hostname and
-                self.hostname != config.fqdn):
-            errmsg = _("Fatal Error: Backup source host has changed.\n"
-                       "Current hostname: %s\n"
-                       "Previous hostname: %s") % (config.hostname, self.hostname)
+        if (
+            self.hostname
+            and self.hostname != config.hostname
+            and self.hostname != config.fqdn
+        ):
+            errmsg = _(
+                "Fatal Error: Backup source host has changed.\n"
+                "Current hostname: %s\n"
+                "Previous hostname: %s"
+            ) % (config.hostname, self.hostname)
             code = log.ErrorCode.hostname_mismatch
             code_extra = f"{util.escape(config.hostname)} {util.escape(self.hostname)}"
 
         elif self.local_dirname and self.local_dirname != config.local_path.name:
-            errmsg = _(f"Fatal Error: Backup source directory has changed.\n"
-                       f"Current directory: {config.local_path.uc_name}\n"
-                       f"Previous directory: {os.fsdecode(self.local_dirname)}")
+            errmsg = _(
+                f"Fatal Error: Backup source directory has changed.\n"
+                f"Current directory: {config.local_path.uc_name}\n"
+                f"Previous directory: {os.fsdecode(self.local_dirname)}"
+            )
             code = log.ErrorCode.source_path_mismatch
             code_extra = f"{util.escape(config.local_path.name)} {util.escape(self.local_dirname)}"
         else:
             return
 
-        log.FatalError(errmsg + "\n\n" +
-                       _("Aborting because you may have accidentally tried to "
-                         "backup two different data sets to the same remote "
-                         "location, or using the same archive directory.  If "
-                         "this is not a mistake, use the "
-                         "--allow-source-mismatch switch to avoid seeing this "
-                         "message"), code, code_extra)
+        log.FatalError(
+            errmsg
+            + "\n\n"
+            + _(
+                "Aborting because you may have accidentally tried to "
+                "backup two different data sets to the same remote "
+                "location, or using the same archive directory.  If "
+                "this is not a mistake, use the "
+                "--allow-source-mismatch switch to avoid seeing this "
+                "message"
+            ),
+            code,
+            code_extra,
+        )
 
     def set_files_changed_info(self, files_changed):
         if files_changed:
@@ -174,8 +188,7 @@ class Manifest(object):
         def vol_num_to_string(vol_num):
             return self.volume_info_dict[vol_num].to_string()
 
-        result = b"%s%s\n" % (result,
-                              b"\n".join(map(vol_num_to_string, vol_num_list)))
+        result = b"%s%s\n" % (result, b"\n".join(map(vol_num_to_string, vol_num_list)))
         return result
 
     __str__ = to_string
@@ -204,7 +217,9 @@ class Manifest(object):
 
         highest_vol = 0
         latest_vol = 0
-        vi_regexp = re.compile(b"(?:^|\\n)(volume\\s.*(?:\\n.*)*?)(?=\\nvolume\\s|$)", re.I)
+        vi_regexp = re.compile(
+            b"(?:^|\\n)(volume\\s.*(?:\\n.*)*?)(?=\\nvolume\\s|$)", re.I
+        )
         vi_iterator = vi_regexp.finditer(s)
         for match in vi_iterator:
             vi = VolumeInfo().from_string(match.group(1))
@@ -224,20 +239,29 @@ class Manifest(object):
         # --show-changes-in-set are not present
         filecount = 0
         if config.file_changed is not None or config.show_changes_in_set is not None:
-            filelist_regexp = re.compile(b"(^|\\n)filelist\\s([0-9]+)\\n(.*?)(\\nvolume\\s|$)", re.I | re.S)
+            filelist_regexp = re.compile(
+                b"(^|\\n)filelist\\s([0-9]+)\\n(.*?)(\\nvolume\\s|$)", re.I | re.S
+            )
             match = filelist_regexp.search(s)
             if match:
                 filecount = int(match.group(2))
             if filecount > 0:
+
                 def parse_fileinfo(line):
                     fileinfo = line.strip().split()
-                    return fileinfo[0], b''.join(fileinfo[1:])
+                    return fileinfo[0], b"".join(fileinfo[1:])
 
-                self.files_changed = list(map(parse_fileinfo, match.group(3).split(b'\n')))
+                self.files_changed = list(
+                    map(parse_fileinfo, match.group(3).split(b"\n"))
+                )
 
             if filecount != len(self.files_changed):
-                log.Error(_(f"Manifest file '{self.fh.base if self.fh else ''}' is corrupt: "
-                            f"File count says {int(filecount)}, File list contains {len(self.files_changed)}"))
+                log.Error(
+                    _(
+                        f"Manifest file '{self.fh.base if self.fh else ''}' is corrupt: "
+                        f"File count says {int(filecount)}, File list contains {len(self.files_changed)}"
+                    )
+                )
                 self.corrupt_filelist = True
 
         return self
@@ -261,8 +285,7 @@ class Manifest(object):
                 log.Notice(_("Manifests not equal because volume lists differ"))
                 return False
 
-        if (self.hostname != other.hostname or
-                self.local_dirname != other.local_dirname):
+        if self.hostname != other.hostname or self.local_dirname != other.local_dirname:
             log.Notice(_("Manifests not equal because hosts or directories differ"))
             return False
 
@@ -290,14 +313,18 @@ class Manifest(object):
         """
         if len(index_prefix) == 1 and isinstance(index_prefix[0], "".__class__):
             index_prefix = (index_prefix[0].encode(),)
-        return [vol_num for vol_num in list(self.volume_info_dict.keys()) if
-                self.volume_info_dict[vol_num].contains(index_prefix)]
+        return [
+            vol_num
+            for vol_num in list(self.volume_info_dict.keys())
+            if self.volume_info_dict[vol_num].contains(index_prefix)
+        ]
 
 
 class VolumeInfoError(Exception):
     """
     Raised when there is a problem initializing a VolumeInfo from string
     """
+
     pass
 
 
@@ -315,9 +342,7 @@ class VolumeInfo(object):
         self.end_block = None
         self.hashes = {}
 
-    def set_info(self, vol_number,
-                 start_index, start_block,
-                 end_index, end_block):
+    def set_info(self, vol_number, start_index, start_block, end_index, end_block):
         """
         Set essential VolumeInfo information, return self
 
@@ -353,11 +378,11 @@ class VolumeInfo(object):
         if not self.hashes:
             return None
         try:
-            return "SHA1", self.hashes['SHA1']
+            return "SHA1", self.hashes["SHA1"]
         except KeyError:
             pass
         try:
-            return "MD5", self.hashes['MD5']
+            return "MD5", self.hashes["MD5"]
         except KeyError:
             pass
         return list(self.hashes.items())[0]
@@ -382,13 +407,18 @@ class VolumeInfo(object):
 
         slist = [b"Volume %d:" % self.volume_number]
         whitespace = b"    "
-        slist.append(b"%sStartingPath   %s %s" %
-                     (whitespace, index_to_string(self.start_index), bfmt(self.start_block)))
-        slist.append(b"%sEndingPath     %s %s" %
-                     (whitespace, index_to_string(self.end_index), bfmt(self.end_block)))
+        slist.append(
+            b"%sStartingPath   %s %s"
+            % (whitespace, index_to_string(self.start_index), bfmt(self.start_block))
+        )
+        slist.append(
+            b"%sEndingPath     %s %s"
+            % (whitespace, index_to_string(self.end_index), bfmt(self.end_block))
+        )
         for key in self.hashes:
-            slist.append(b"%sHash %s %s" %
-                         (whitespace, key.encode(), self.hashes[key].encode()))
+            slist.append(
+                b"%sHash %s %s" % (whitespace, key.encode(), self.hashes[key].encode())
+            )
         return b"\n".join(slist)
 
     __str__ = to_string
@@ -483,8 +513,9 @@ class VolumeInfo(object):
         indicies.
         """
         if recursive:
-            return (self.start_index[:len(index_prefix)] <=
-                    index_prefix <= self.end_index)
+            return (
+                self.start_index[: len(index_prefix)] <= index_prefix <= self.end_index
+            )
         else:
             return self.start_index <= index_prefix <= self.end_index
 
@@ -500,7 +531,7 @@ def Quote(s):
         return s  # no quoting necessary
     slist = []
     for i in range(0, len(s)):
-        char = s[i:i + 1]
+        char = s[i : i + 1]
         if nonnormal_char_re.search(char):
             slist.append(b"\\x%02x" % ord(char))
         else:
@@ -522,11 +553,15 @@ def Unquote(quoted_string):
     return_list = []
     i = 1  # skip initial char
     while i < len(quoted_string) - 1:
-        char = quoted_string[i:i + 1]
+        char = quoted_string[i : i + 1]
         if char == b"\\":
             # quoted section
             assert maybe_chr(quoted_string[i + 1]) == "x"
-            return_list.append(int(quoted_string[i + 2:i + 4].decode(), 16).to_bytes(1, byteorder='big'))
+            return_list.append(
+                int(quoted_string[i + 2 : i + 4].decode(), 16).to_bytes(
+                    1, byteorder="big"
+                )
+            )
             i += 4
         else:
             return_list.append(char)

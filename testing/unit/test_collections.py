@@ -34,50 +34,57 @@ from duplicity import path
 from testing import _runtest_dir
 from . import UnitTestCase
 
-filename_list1 = [b"duplicity-full.2002-08-17T16:17:01-07:00.manifest.gpg",
-                  b"duplicity-full.2002-08-17T16:17:01-07:00.vol1.difftar.gpg",
-                  b"duplicity-full.2002-08-17T16:17:01-07:00.vol2.difftar.gpg",
-                  b"duplicity-full.2002-08-17T16:17:01-07:00.vol3.difftar.gpg",
-                  b"duplicity-full.2002-08-17T16:17:01-07:00.vol4.difftar.gpg",
-                  b"duplicity-full.2002-08-17T16:17:01-07:00.vol5.difftar.gpg",
-                  b"duplicity-full.2002-08-17T16:17:01-07:00.vol6.difftar.gpg",
-                  b"duplicity-inc.2002-08-17T16:17:01-07:00.to.2002-08-18T00:04:30-07:00.manifest.gpg",
-                  b"duplicity-inc.2002-08-17T16:17:01-07:00.to.2002-08-18T00:04:30-07:00.vol1.difftar.gpg",
-                  b"Extra stuff to be ignored"]
+filename_list1 = [
+    b"duplicity-full.2002-08-17T16:17:01-07:00.manifest.gpg",
+    b"duplicity-full.2002-08-17T16:17:01-07:00.vol1.difftar.gpg",
+    b"duplicity-full.2002-08-17T16:17:01-07:00.vol2.difftar.gpg",
+    b"duplicity-full.2002-08-17T16:17:01-07:00.vol3.difftar.gpg",
+    b"duplicity-full.2002-08-17T16:17:01-07:00.vol4.difftar.gpg",
+    b"duplicity-full.2002-08-17T16:17:01-07:00.vol5.difftar.gpg",
+    b"duplicity-full.2002-08-17T16:17:01-07:00.vol6.difftar.gpg",
+    b"duplicity-inc.2002-08-17T16:17:01-07:00.to.2002-08-18T00:04:30-07:00.manifest.gpg",
+    b"duplicity-inc.2002-08-17T16:17:01-07:00.to.2002-08-18T00:04:30-07:00.vol1.difftar.gpg",
+    b"Extra stuff to be ignored",
+]
 
-remote_sigchain_filename_list = \
-    [b"duplicity-full-signatures.2002-08-17T16:17:01-07:00.sigtar.gpg",
-     b"duplicity-new-signatures.2002-08-17T16:17:01-07:00.to.2002-08-18T00:04:30-07:00.sigtar.gpg",
-     b"duplicity-new-signatures.2002-08-18T00:04:30-07:00.to.2002-08-20T00:00:00-07:00.sigtar.gpg"]
+remote_sigchain_filename_list = [
+    b"duplicity-full-signatures.2002-08-17T16:17:01-07:00.sigtar.gpg",
+    b"duplicity-new-signatures.2002-08-17T16:17:01-07:00.to.2002-08-18T00:04:30-07:00.sigtar.gpg",
+    b"duplicity-new-signatures.2002-08-18T00:04:30-07:00.to.2002-08-20T00:00:00-07:00.sigtar.gpg",
+]
 
-local_sigchain_filename_list = \
-    [b"duplicity-full-signatures.2002-08-17T16:17:01-07:00.sigtar.gz",
-     b"duplicity-new-signatures.2002-08-17T16:17:01-07:00.to.2002-08-18T00:04:30-07:00.sigtar.gz",
-     b"duplicity-new-signatures.2002-08-18T00:04:30-07:00.to.2002-08-20T00:00:00-07:00.sigtar.gz"]
+local_sigchain_filename_list = [
+    b"duplicity-full-signatures.2002-08-17T16:17:01-07:00.sigtar.gz",
+    b"duplicity-new-signatures.2002-08-17T16:17:01-07:00.to.2002-08-18T00:04:30-07:00.sigtar.gz",
+    b"duplicity-new-signatures.2002-08-18T00:04:30-07:00.to.2002-08-20T00:00:00-07:00.sigtar.gz",
+]
 
 # A filename list with some incomplete volumes, an older full volume,
 # and a complete chain.
-filename_list2 = [b"duplicity-full.2001-01-01T16:17:01-07:00.manifest.gpg",
-                  b"duplicity-full.2001-01-01T16:17:01-07:00.vol1.difftar.gpg",
-                  b"duplicity-full.2002-08-17T16:17:01-07:00.manifest.gpg",
-                  b"duplicity-full.2002-08-17T16:17:01-07:00.vol1.difftar.gpg",
-                  b"duplicity-full.2002-08-17T16:17:01-07:00.vol2.difftar.gpg",
-                  b"duplicity-full.2002-08-17T16:17:01-07:00.vol3.difftar.gpg",
-                  b"duplicity-full.2002-08-17T16:17:01-07:00.vol4.difftar.gpg",
-                  b"duplicity-full.2002-08-17T16:17:01-07:00.vol5.difftar.gpg",
-                  b"duplicity-full.2002-08-17T16:17:01-07:00.vol6.difftar.gpg",
-                  b"duplicity-inc.2002-08-17T16:17:01-07:00.to.2002-08-18T00:04:30-07:00.manifest.gpg",
-                  b"duplicity-inc.2002-08-17T16:17:01-07:00.to.2002-08-18T00:04:30-07:00.vol1.difftar.gpg",
-                  b"The following are extraneous duplicity files",
-                  b"duplicity-new-signatures.2001-08-17T02:05:13-05:00.to.2002-08-17T05:05:14-05:00.sigtar.gpg",
-                  b"duplicity-full.2002-08-15T01:01:01-07:00.vol1.difftar.gpg",
-                  b"duplicity-inc.2000-08-17T16:17:01-07:00.to.2000-08-18T00:04:30-07:00.manifest.gpg",
-                  b"duplicity-inc.2000-08-17T16:17:01-07:00.to.2000-08-18T00:04:30-07:00.vol1.difftar.gpg",
-                  b"Extra stuff to be ignored"]
+filename_list2 = [
+    b"duplicity-full.2001-01-01T16:17:01-07:00.manifest.gpg",
+    b"duplicity-full.2001-01-01T16:17:01-07:00.vol1.difftar.gpg",
+    b"duplicity-full.2002-08-17T16:17:01-07:00.manifest.gpg",
+    b"duplicity-full.2002-08-17T16:17:01-07:00.vol1.difftar.gpg",
+    b"duplicity-full.2002-08-17T16:17:01-07:00.vol2.difftar.gpg",
+    b"duplicity-full.2002-08-17T16:17:01-07:00.vol3.difftar.gpg",
+    b"duplicity-full.2002-08-17T16:17:01-07:00.vol4.difftar.gpg",
+    b"duplicity-full.2002-08-17T16:17:01-07:00.vol5.difftar.gpg",
+    b"duplicity-full.2002-08-17T16:17:01-07:00.vol6.difftar.gpg",
+    b"duplicity-inc.2002-08-17T16:17:01-07:00.to.2002-08-18T00:04:30-07:00.manifest.gpg",
+    b"duplicity-inc.2002-08-17T16:17:01-07:00.to.2002-08-18T00:04:30-07:00.vol1.difftar.gpg",
+    b"The following are extraneous duplicity files",
+    b"duplicity-new-signatures.2001-08-17T02:05:13-05:00.to.2002-08-17T05:05:14-05:00.sigtar.gpg",
+    b"duplicity-full.2002-08-15T01:01:01-07:00.vol1.difftar.gpg",
+    b"duplicity-inc.2000-08-17T16:17:01-07:00.to.2000-08-18T00:04:30-07:00.manifest.gpg",
+    b"duplicity-inc.2000-08-17T16:17:01-07:00.to.2000-08-18T00:04:30-07:00.vol1.difftar.gpg",
+    b"Extra stuff to be ignored",
+]
 
 
 class CollectionTest(UnitTestCase):
     """Test collections"""
+
     def setUp(self):
         super().setUp()
 
@@ -85,15 +92,23 @@ class CollectionTest(UnitTestCase):
 
         col_test_dir = path.Path(f"{_runtest_dir}/testfiles/collectionstest")
         archive_dir_path = col_test_dir.append("archive_dir")
-        self.set_config('archive_dir_path', archive_dir_path)
-        self.archive_dir_backend = backend.get_backend(f"file://{_runtest_dir}/testfiles/collectionstest/archive_dir")
-        self.real_backend = backend.get_backend(f"file://{col_test_dir.uc_name}/remote_dir")
-        self.output_dir = path.Path(f"{_runtest_dir}/testfiles/output")  # used as a temp directory
-        self.output_dir_backend = backend.get_backend(f"file://{_runtest_dir}/testfiles/output")
+        self.set_config("archive_dir_path", archive_dir_path)
+        self.archive_dir_backend = backend.get_backend(
+            f"file://{_runtest_dir}/testfiles/collectionstest/archive_dir"
+        )
+        self.real_backend = backend.get_backend(
+            f"file://{col_test_dir.uc_name}/remote_dir"
+        )
+        self.output_dir = path.Path(
+            f"{_runtest_dir}/testfiles/output"
+        )  # used as a temp directory
+        self.output_dir_backend = backend.get_backend(
+            f"file://{_runtest_dir}/testfiles/output"
+        )
 
     def set_gpg_profile(self):
         """Set gpg profile to standard "foobar" sym"""
-        self.set_config('gpg_profile', gpg.GPGProfile(passphrase="foobar"))
+        self.set_config("gpg_profile", gpg.GPGProfile(passphrase="foobar"))
 
     def test_backup_chains(self):
         """Test basic backup chain construction"""
@@ -111,6 +126,7 @@ class CollectionTest(UnitTestCase):
 
     def test_collections_status(self):
         """Test CollectionStatus object's set_values()"""
+
         def check_cs(cs):
             """Check values of collections status"""
             assert cs.values_set
@@ -119,7 +135,9 @@ class CollectionTest(UnitTestCase):
             assert cs.matched_chain_pair[0].end_time == 1029826800
             assert len(cs.all_backup_chains) == 1, cs.all_backup_chains
 
-        cs = dup_collections.CollectionsStatus(self.real_backend, config.archive_dir_path, "full").set_values()
+        cs = dup_collections.CollectionsStatus(
+            self.real_backend, config.archive_dir_path, "full"
+        ).set_values()
         check_cs(cs)
         assert cs.matched_chain_pair[0].islocal()
 
@@ -129,7 +147,8 @@ class CollectionTest(UnitTestCase):
         for filename in local_sigchain_filename_list:
             assert chain.add_filename(filename)
         assert not chain.add_filename(
-            b"duplicity-new-signatures.2002-08-18T00:04:30-07:00.to.2002-08-20T00:00:00-07:00.sigtar.gpg")
+            b"duplicity-new-signatures.2002-08-18T00:04:30-07:00.to.2002-08-20T00:00:00-07:00.sigtar.gpg"
+        )
 
     def test_sig_chains(self):
         """Test making signature chains from filename list"""
@@ -139,7 +158,9 @@ class CollectionTest(UnitTestCase):
 
     def test_sig_chains2(self):
         """Test making signature chains from filename list on backend"""
-        cs = dup_collections.CollectionsStatus(self.archive_dir_backend, config.archive_dir_path, "full")
+        cs = dup_collections.CollectionsStatus(
+            self.archive_dir_backend, config.archive_dir_path, "full"
+        )
         chains, orphaned_paths = cs.get_signature_chains(local=None)
         self.sig_chains_helper(chains, orphaned_paths)
 
@@ -197,7 +218,9 @@ class CollectionTest(UnitTestCase):
             p = self.output_dir.append(filename)
             p.touch()
 
-        cs = dup_collections.CollectionsStatus(self.output_dir_backend, config.archive_dir_path, "full")
+        cs = dup_collections.CollectionsStatus(
+            self.output_dir_backend, config.archive_dir_path, "full"
+        )
         cs.set_values()
         return cs
 
@@ -209,10 +232,12 @@ class CollectionTest(UnitTestCase):
         assert len(cs.remote_orphaned_sig_names) == 1, cs.remote_orphaned_sig_names
         assert len(cs.incomplete_backup_sets) == 1, cs.incomplete_backup_sets
 
-        right_list = [b"duplicity-new-signatures.2001-08-17T02:05:13-05:00.to.2002-08-17T05:05:14-05:00.sigtar.gpg",
-                      b"duplicity-full.2002-08-15T01:01:01-07:00.vol1.difftar.gpg",
-                      b"duplicity-inc.2000-08-17T16:17:01-07:00.to.2000-08-18T00:04:30-07:00.manifest.gpg",
-                      b"duplicity-inc.2000-08-17T16:17:01-07:00.to.2000-08-18T00:04:30-07:00.vol1.difftar.gpg"]
+        right_list = [
+            b"duplicity-new-signatures.2001-08-17T02:05:13-05:00.to.2002-08-17T05:05:14-05:00.sigtar.gpg",
+            b"duplicity-full.2002-08-15T01:01:01-07:00.vol1.difftar.gpg",
+            b"duplicity-inc.2000-08-17T16:17:01-07:00.to.2000-08-18T00:04:30-07:00.manifest.gpg",
+            b"duplicity-inc.2000-08-17T16:17:01-07:00.to.2000-08-18T00:04:30-07:00.vol1.difftar.gpg",
+        ]
         local_received_list, remote_received_list = cs.get_extraneous()
         errors = []
         for filename in remote_received_list:
@@ -227,19 +252,20 @@ class CollectionTest(UnitTestCase):
     def test_get_olderthan(self):
         """Test getting list of files older than a certain time"""
         cs = self.get_filelist2_cs()
-        oldsets = cs.get_older_than(
-            dup_time.genstrtotime("2002-05-01T16:17:01-07:00"))
+        oldsets = cs.get_older_than(dup_time.genstrtotime("2002-05-01T16:17:01-07:00"))
         oldset_times = [s.get_time() for s in oldsets]
-        right_times = [dup_time.genstrtotime('2001-01-01T16:17:01-07:00')]
-        assert oldset_times == right_times, \
-            [oldset_times, right_times]
+        right_times = [dup_time.genstrtotime("2001-01-01T16:17:01-07:00")]
+        assert oldset_times == right_times, [oldset_times, right_times]
 
         oldsets_required = cs.get_older_than_required(
-            dup_time.genstrtotime("2002-08-17T20:00:00-07:00"))
+            dup_time.genstrtotime("2002-08-17T20:00:00-07:00")
+        )
         oldset_times = [s.get_time() for s in oldsets_required]
-        right_times_required = [dup_time.genstrtotime('2002-08-17T16:17:01-07:00')]
-        assert oldset_times == right_times_required, \
-            [oldset_times, right_times_required]
+        right_times_required = [dup_time.genstrtotime("2002-08-17T16:17:01-07:00")]
+        assert oldset_times == right_times_required, [
+            oldset_times,
+            right_times_required,
+        ]
 
 
 if __name__ == "__main__":

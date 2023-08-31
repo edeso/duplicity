@@ -52,58 +52,59 @@ class GnuPGTests(BasicTest):
         self.gnupg.passphrase = "Three blind mice"
         self.gnupg.options.armor = 1
         self.gnupg.options.meta_interactive = 0
-        self.gnupg.options.extra_args.append('--no-secmem-warning')
+        self.gnupg.options.extra_args.append("--no-secmem-warning")
 
-    def do_create_fh_operation(self, args, input, passphrase=None):  # pylint: disable=redefined-builtin
-        creations = ['stdin', 'stdout']
+    def do_create_fh_operation(
+        self, args, input, passphrase=None
+    ):  # pylint: disable=redefined-builtin
+        creations = ["stdin", "stdout"]
 
         # Make sure we're getting the passphrase to GnuPG
         # somehow!
-        assert passphrase is not None or self.gnupg.passphrase is not None, \
-            "No way to send the passphrase to GnuPG!"
+        assert (
+            passphrase is not None or self.gnupg.passphrase is not None
+        ), "No way to send the passphrase to GnuPG!"
 
         # We'll handle the passphrase manually
         if passphrase is not None:
-            creations.append('passphrase')
+            creations.append("passphrase")
 
         proc = self.gnupg.run(args, create_fhs=creations)
 
         if passphrase is not None:
-            proc.handles['passphrase'].write(passphrase)
-            proc.handles['passphrase'].close()
+            proc.handles["passphrase"].write(passphrase)
+            proc.handles["passphrase"].close()
 
-        proc.handles['stdin'].write(input)
-        proc.handles['stdin'].close()
+        proc.handles["stdin"].write(input)
+        proc.handles["stdin"].close()
 
-        ciphertext = proc.handles['stdout'].read()
-        proc.handles['stdout'].close()
+        ciphertext = proc.handles["stdout"].read()
+        proc.handles["stdout"].close()
 
         # Checking to make sure GnuPG exited successfully
         proc.wait()
 
         return ciphertext
 
-    def do_attach_fh_operation(self, args, stdin, stdout,
-                               passphrase=None):
-
+    def do_attach_fh_operation(self, args, stdin, stdout, passphrase=None):
         # Make sure we're getting the passphrase to GnuPG
         # somehow!
-        assert passphrase is not None or self.gnupg.passphrase is not None, \
-            "No way to send the passphrase to GnuPG!"
+        assert (
+            passphrase is not None or self.gnupg.passphrase is not None
+        ), "No way to send the passphrase to GnuPG!"
 
         creations = []
-        attachments = {'stdin': stdin, 'stdout': stdout}
+        attachments = {"stdin": stdin, "stdout": stdout}
 
-        proc = self.gnupg.run(args, create_fhs=creations,
-                              attach_fhs=attachments)
+        proc = self.gnupg.run(args, create_fhs=creations, attach_fhs=attachments)
 
         # We'll handle the passphrase manually
         if passphrase is not None:
-            proc.handles.append('passphrase')
+            proc.handles.append("passphrase")
 
         if passphrase is not None:
-            proc.handles['passphrase'].write(passphrase)
-            proc.handles['passphrase'].close()
+            proc.handles["passphrase"].write(passphrase)
+            proc.handles["passphrase"].close()
 
         # Checking to make sure GnuPG exited successfully
         proc.wait()
@@ -112,14 +113,14 @@ class GnuPGTests(BasicTest):
         """Do GnuPG operations using solely the create_fhs feature"""
         plaintext = b"Three blind mice"
 
-        ciphertext = self.do_create_fh_operation(['--symmetric'],
-                                                 plaintext)
+        ciphertext = self.do_create_fh_operation(["--symmetric"], plaintext)
 
-        decryption = self.do_create_fh_operation(['--decrypt'],
-                                                 ciphertext,
-                                                 self.gnupg.passphrase)
-        assert decryption == plaintext, \
-            "GnuPG decrypted output does not match original input"
+        decryption = self.do_create_fh_operation(
+            ["--decrypt"], ciphertext, self.gnupg.passphrase
+        )
+        assert (
+            decryption == plaintext
+        ), "GnuPG decrypted output does not match original input"
 
     def test_attach_fhs(self):
         """Do GnuPG operations using the attach_fhs feature"""
@@ -129,19 +130,18 @@ class GnuPGTests(BasicTest):
         temp1 = tempfile.TemporaryFile()
         temp2 = tempfile.TemporaryFile()
 
-        self.do_attach_fh_operation(['--symmetric'],
-                                    stdin=plainfile, stdout=temp1)
+        self.do_attach_fh_operation(["--symmetric"], stdin=plainfile, stdout=temp1)
 
         temp1.seek(0)
 
-        self.do_attach_fh_operation(['--decrypt'],
-                                    stdin=temp1, stdout=temp2)
+        self.do_attach_fh_operation(["--decrypt"], stdin=temp1, stdout=temp2)
 
         plainfile.seek(0)
         temp2.seek(0)
 
-        assert fh_cmp(plainfile, temp2), \
-            "GnuPG decrypted output does not match original input"
+        assert fh_cmp(
+            plainfile, temp2
+        ), "GnuPG decrypted output does not match original input"
 
 
 class OptionsTests(BasicTest):
@@ -161,10 +161,19 @@ class OptionsTests(BasicTest):
         """test Options boolean options that they generate
         proper arguments"""
 
-        booleans = ['armor', 'no_greeting', 'no_verbose',
-                    'batch', 'always_trust', 'rfc1991',
-                    'quiet', 'openpgp', 'force_v3_sigs',
-                    'no_options', 'textmode']
+        booleans = [
+            "armor",
+            "no_greeting",
+            "no_verbose",
+            "batch",
+            "always_trust",
+            "rfc1991",
+            "quiet",
+            "openpgp",
+            "force_v3_sigs",
+            "no_options",
+            "textmode",
+        ]
 
         for option in booleans:
             self.reset_options()
@@ -174,17 +183,17 @@ class OptionsTests(BasicTest):
             should_be = [arg]
             result = self.gnupg.options.get_args()
 
-            assert should_be == result, \
-                f"failure to set option '{option}'; should be {should_be}, but result is {result}"
+            assert (
+                should_be == result
+            ), f"failure to set option '{option}'; should be {should_be}, but result is {result}"
 
     def test_string_args(self):
         """test Options string-taking options that they generate
         proper arguments"""
 
-        strings = ['homedir', 'default_key', 'comment', 'compress_algo',
-                   'options']
+        strings = ["homedir", "default_key", "comment", "compress_algo", "options"]
 
-        string_value = 'test-argument'
+        string_value = "test-argument"
 
         for option in strings:
             self.reset_options()
@@ -194,15 +203,16 @@ class OptionsTests(BasicTest):
             should_be = [arg, string_value]
             result = self.gnupg.options.get_args()
 
-            assert should_be == result, \
-                f"failure to set option '{option}'; should be {should_be}, but result is {result}"
+            assert (
+                should_be == result
+            ), f"failure to set option '{option}'; should be {should_be}, but result is {result}"
 
     def test_list_args(self):
         """test Options string-taking options that they generate
         proper arguments"""
 
-        lists = ['recipients', 'encrypt_to']
-        list_value = ['test1', 'test2']
+        lists = ["recipients", "encrypt_to"]
+        list_value = ["test1", "test2"]
 
         for option in lists:
             self.reset_options()
@@ -210,8 +220,8 @@ class OptionsTests(BasicTest):
 
             # special case for recipients, since their
             # respective argument is 'recipient', not 'recipients'
-            if option == 'recipients':
-                arg = '--recipient'
+            if option == "recipients":
+                arg = "--recipient"
             else:
                 arg = self.option_to_arg(option)
 
@@ -221,8 +231,9 @@ class OptionsTests(BasicTest):
 
             result = self.gnupg.options.get_args()
 
-            assert should_be == result, \
-                f"failure to set option '{option}'; should be {should_be}, but result is {result}"
+            assert (
+                should_be == result
+            ), f"failure to set option '{option}'; should be {should_be}, but result is {result}"
 
 
 class PipesTests(unittest.TestCase):
@@ -233,6 +244,7 @@ class PipesTests(unittest.TestCase):
         assert self.pipe.parent == 1
         assert self.pipe.child == 2
         assert not self.pipe.direct
+
 
 ########################################################################
 
@@ -245,6 +257,7 @@ def fh_cmp(f1, f2, bufsize=8192):
             return 0
         if not b1:
             return 1
+
 
 ########################################################################
 

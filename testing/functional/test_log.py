@@ -45,7 +45,7 @@ class LogTest(FunctionalTestCase):
 
         # Run actual duplicity command (will fail because bad dirs passed)
         cmd = f"{_top_dir}/bin/duplicity --log-file={self.logfile} full testing baddir >/dev/null 2>&1"
-        basepython = os.environ.get('TOXPYTHON', None)
+        basepython = os.environ.get("TOXPYTHON", None)
         if basepython is not None:
             cmd = f"{basepython} {cmd}"
         os.system(cmd)
@@ -56,16 +56,16 @@ class LogTest(FunctionalTestCase):
         # . Blah blah blah.
         #
         # """
-        f = open(self.logfile, 'r')
+        f = open(self.logfile, "r")
         linecount = 0
         lastline = False
         for line in f:
-            assert (not lastline)
+            assert not lastline
             linecount += 1
             if linecount == 1:
-                assert (line == "ERROR 23 CommandLineError\n")
+                assert line == "ERROR 23 CommandLineError\n"
             elif line[0] != "\n":
-                assert (line.startswith(r". "))
+                assert line.startswith(r". ")
             else:
                 lastline = True
         assert lastline

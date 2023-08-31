@@ -36,6 +36,7 @@ class UserError(DuplicityError):
     the error is a user generated one, and that it is therefore
     typically unsuitable to display a full stack trace.
     """
+
     pass
 
 
@@ -44,6 +45,7 @@ class NotSupported(DuplicityError):
     Exception raised when an action cannot be completed because some
     particular feature is not supported by the environment.
     """
+
     pass
 
 
@@ -52,6 +54,7 @@ class ConflictingScheme(DuplicityError):
     Raised to indicate an attempt was made to register a backend for a
     scheme for which there is already a backend registered.
     """
+
     pass
 
 
@@ -59,6 +62,7 @@ class InvalidBackendURL(UserError):
     """
     Raised to indicate a URL was not a valid backend URL.
     """
+
     pass
 
 
@@ -69,8 +73,7 @@ class UnsupportedBackendScheme(InvalidBackendURL, UserError):
     """
 
     def __init__(self, url):
-        InvalidBackendURL.__init__(self,
-                                   f"scheme not supported in url: {url}")
+        InvalidBackendURL.__init__(self, f"scheme not supported in url: {url}")
         self.url = url
 
 
@@ -88,6 +91,7 @@ class FatalBackendException(BackendException):
     """
     Raised to indicate a backend failed fatally.
     """
+
     pass
 
 
@@ -96,6 +100,7 @@ class TemporaryLoadException(BackendException):
     Raised to indicate a temporary issue on the backend.
     Duplicity should back off for a bit and try again.
     """
+
     pass
 
 

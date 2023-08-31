@@ -34,6 +34,7 @@ from . import UnitTestCase
 
 class PatchingTest(UnitTestCase):
     """Test patching"""
+
     def setUp(self):
         super().setUp()
         self.unpack_testfiles()
@@ -51,9 +52,13 @@ class PatchingTest(UnitTestCase):
 
     def test_total(self):
         """Test cycle on dirx"""
-        self.total_sequence([f'{_runtest_dir}/testfiles/dir1',
-                             f'{_runtest_dir}/testfiles/dir2',
-                             f'{_runtest_dir}/testfiles/dir3'])
+        self.total_sequence(
+            [
+                f"{_runtest_dir}/testfiles/dir1",
+                f"{_runtest_dir}/testfiles/dir2",
+                f"{_runtest_dir}/testfiles/dir3",
+            ]
+        )
 
     def get_sel(self, path):
         """Get selection iter over the given directory"""
@@ -73,8 +78,7 @@ class PatchingTest(UnitTestCase):
             if old_path:
                 sigblock = diffdir.DirSig(self.get_sel(seq_path))
                 diffdir.write_block_iter(sigblock, sig)
-                deltablock = diffdir.DirDelta(self.get_sel(new_path),
-                                              sig.open("rb"))
+                deltablock = diffdir.DirDelta(self.get_sel(new_path), sig.open("rb"))
             else:
                 deltablock = diffdir.DirFull(self.get_sel(new_path))
             diffdir.write_block_iter(deltablock, diff)
@@ -85,6 +89,7 @@ class PatchingTest(UnitTestCase):
 
     def test_block_tar(self):
         """Test building block tar from a number of files"""
+
         def get_fileobjs():
             """Return iterator yielding open fileobjs of tar files"""
             for i in range(1, 4):
@@ -109,7 +114,9 @@ class PatchingTest(UnitTestCase):
 
             # file object will be empty, and tarinfo will have path
             # "snapshot/../warning-security-error"
-            assert not os.system(f"cat /dev/null > {_runtest_dir}/testfiles/output/file")
+            assert not os.system(
+                f"cat /dev/null > {_runtest_dir}/testfiles/output/file"
+            )
             path = Path(f"{_runtest_dir}/testfiles/output/file")
             path.index = (b"diff", b"..", b"warning-security-error")
             ti = path.get_tarinfo()
@@ -121,14 +128,20 @@ class PatchingTest(UnitTestCase):
         make_bad_tar(f"{_runtest_dir}/testfiles/output/bad.tar")
         os.mkdir(f"{_runtest_dir}/testfiles/output/temp")
 
-        self.assertRaises(patchdir.PatchDirException, patchdir.Patch,
-                          Path(f"{_runtest_dir}/testfiles/output/temp"),
-                          open(f"{_runtest_dir}/testfiles/output/bad.tar", "rb"))
-        assert not Path(f"{_runtest_dir}/testfiles/output/warning-security-error").exists()
+        self.assertRaises(
+            patchdir.PatchDirException,
+            patchdir.Patch,
+            Path(f"{_runtest_dir}/testfiles/output/temp"),
+            open(f"{_runtest_dir}/testfiles/output/bad.tar", "rb"),
+        )
+        assert not Path(
+            f"{_runtest_dir}/testfiles/output/warning-security-error"
+        ).exists()
 
 
 class index(object):
     """Used below to test the iter collation"""
+
     def __init__(self, index):
         self.index = index
 
@@ -148,24 +161,39 @@ class CollateItersTest(UnitTestCase):
         makeiter3 = lambda: map(helper, [1, 2])
 
         outiter = patchdir.collate_iters([makeiter1(), makeiter2()])
-        assert Iter.equal(outiter,
-                          iter([(indicies[0], indicies[0]),
-                                (indicies[1], indicies[1]),
-                                (indicies[2], None),
-                                (indicies[3], indicies[3])]))
+        assert Iter.equal(
+            outiter,
+            iter(
+                [
+                    (indicies[0], indicies[0]),
+                    (indicies[1], indicies[1]),
+                    (indicies[2], None),
+                    (indicies[3], indicies[3]),
+                ]
+            ),
+        )
 
-        assert Iter.equal(patchdir.collate_iters([makeiter1(),
-                                                 makeiter2(),
-                                                 makeiter3()]),
-                          iter([(indicies[0], indicies[0], None),
-                                (indicies[1], indicies[1], indicies[1]),
-                                (indicies[2], None, indicies[2]),
-                                (indicies[3], indicies[3], None)]), 1)
+        assert Iter.equal(
+            patchdir.collate_iters([makeiter1(), makeiter2(), makeiter3()]),
+            iter(
+                [
+                    (indicies[0], indicies[0], None),
+                    (indicies[1], indicies[1], indicies[1]),
+                    (indicies[2], None, indicies[2]),
+                    (indicies[3], indicies[3], None),
+                ]
+            ),
+            1,
+        )
 
-        assert Iter.equal(patchdir.collate_iters([makeiter1(), iter([])]),
-                          iter([(i, None) for i in indicies]))
-        assert Iter.equal([(i, None) for i in indicies],
-                          patchdir.collate_iters([makeiter1(), iter([])]))
+        assert Iter.equal(
+            patchdir.collate_iters([makeiter1(), iter([])]),
+            iter([(i, None) for i in indicies]),
+        )
+        assert Iter.equal(
+            [(i, None) for i in indicies],
+            patchdir.collate_iters([makeiter1(), iter([])]),
+        )
 
     def test_tuple(self):
         """Test indexed tuple"""
@@ -187,6 +215,7 @@ class CollateItersTest(UnitTestCase):
 
 class TestInnerFuncs(UnitTestCase):
     """Test some other functions involved in patching"""
+
     def setUp(self):
         super().setUp()
         self.unpack_testfiles()
@@ -224,8 +253,9 @@ class TestInnerFuncs(UnitTestCase):
         """Make a delta ROPath, permissions 0o640"""
         delta1 = self.out.append("delta1")
         fout = delta1.open("wb")
-        fout.write(self.get_delta(b"hello, world!",
-                                  b"aonseuth aosetnuhaonsuhtansoetuhaoe"))
+        fout.write(
+            self.get_delta(b"hello, world!", b"aonseuth aosetnuhaonsuhtansoetuhaoe")
+        )
         assert not fout.close()
         delta1.chmod(0o640)
         delta1.difftype = "diff"
@@ -235,8 +265,12 @@ class TestInnerFuncs(UnitTestCase):
         """Make another delta ROPath, permissions 0o644"""
         delta2 = self.out.append("delta1")
         fout = delta2.open("wb")
-        fout.write(self.get_delta(b"aonseuth aosetnuhaonsuhtansoetuhaoe",
-                                  b"3499 34957839485792357 458348573"))
+        fout.write(
+            self.get_delta(
+                b"aonseuth aosetnuhaonsuhtansoetuhaoe",
+                b"3499 34957839485792357 458348573",
+            )
+        )
         assert not fout.close()
         delta2.chmod(0o644)
         delta2.difftype = "diff"
@@ -282,9 +316,12 @@ class TestInnerFuncs(UnitTestCase):
     # E       assert '501:0 600' == '501:20 600'
     # E         - 501:0 600
     # E         + 501:20 600
-    @unittest.skipUnless(platform.platform().startswith("Linux"), "Skip on non-Linux systems")
+    @unittest.skipUnless(
+        platform.platform().startswith("Linux"), "Skip on non-Linux systems"
+    )
     def test_patch_seq2ropath(self):
         """Test patching sequence"""
+
         def testseq(seq, perms, buf):
             result = patchdir.patch_seq2ropath(seq)
             assert result.getperms() == perms, (result.getperms(), perms)
@@ -296,10 +333,16 @@ class TestInnerFuncs(UnitTestCase):
         ids = f"{int(os.getuid())}:{int(os.getgid())}"
 
         testseq([self.snapshot()], f"{ids} 600", b"hello, world!")
-        testseq([self.snapshot(), self.delta1()], f"{ids} 640",
-                b"aonseuth aosetnuhaonsuhtansoetuhaoe")
-        testseq([self.snapshot(), self.delta1(), self.delta2()], f"{ids} 644",
-                b"3499 34957839485792357 458348573")
+        testseq(
+            [self.snapshot(), self.delta1()],
+            f"{ids} 640",
+            b"aonseuth aosetnuhaonsuhtansoetuhaoe",
+        )
+        testseq(
+            [self.snapshot(), self.delta1(), self.delta2()],
+            f"{ids} 644",
+            b"3499 34957839485792357 458348573",
+        )
 
 
 if __name__ == "__main__":

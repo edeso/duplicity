@@ -33,30 +33,40 @@ class TimeException(Exception):
     pass
 
 
-_interval_conv_dict = {"s": 1, "m": 60, "h": 3600, "D": 86400,
-                       "W": 7 * 86400, "M": 30 * 86400, "Y": 365 * 86400}
+_interval_conv_dict = {
+    "s": 1,
+    "m": 60,
+    "h": 3600,
+    "D": 86400,
+    "W": 7 * 86400,
+    "M": 30 * 86400,
+    "Y": 365 * 86400,
+}
 _integer_regexp = re.compile("^[0-9]+$")
 _interval_regexp = re.compile("^([0-9]+)([smhDWMY])")
-_genstr_date_regexp1 = re.compile("^(?P<year>[0-9]{4})[-/]"
-                                  "(?P<month>[0-9]{1,2})[-/]"
-                                  "(?P<day>[0-9]{1,2})$")
-_genstr_date_regexp2 = re.compile("^(?P<month>[0-9]{1,2})[-/]"
-                                  "(?P<day>[0-9]{1,2})[-/]"
-                                  "(?P<year>[0-9]{4})$")
-_genstr_date_regexp3 = re.compile("^(?P<year>[0-9]{4})"
-                                  "(?P<month>[0-9]{2})"
-                                  "(?P<day>[0-9]{2})Z$")
+_genstr_date_regexp1 = re.compile(
+    "^(?P<year>[0-9]{4})[-/]" "(?P<month>[0-9]{1,2})[-/]" "(?P<day>[0-9]{1,2})$"
+)
+_genstr_date_regexp2 = re.compile(
+    "^(?P<month>[0-9]{1,2})[-/]" "(?P<day>[0-9]{1,2})[-/]" "(?P<year>[0-9]{4})$"
+)
+_genstr_date_regexp3 = re.compile(
+    "^(?P<year>[0-9]{4})" "(?P<month>[0-9]{2})" "(?P<day>[0-9]{2})Z$"
+)
 curtime = curtimestr = None
 prevtime = prevtimestr = None
 
-bad_interval_string = _("""\
+bad_interval_string = _(
+    """\
 Bad interval string "%s"
 
 Intervals are specified like 2Y (2 years) or 2h30m (2.5 hours).  The
 allowed special characters are s, m, h, D, W, M, and Y.  See the man
-page for more information.""")
+page for more information."""
+)
 
-bad_time_string = _("""\
+bad_time_string = _(
+    """\
 Bad time string "%s"
 
 The acceptible time strings are intervals (like "3D64s"), w3-datetime
@@ -64,7 +74,8 @@ strings, like "2002-04-26T04:22:01-07:00" (strings like
 "2002-04-26T04:22:01" are also acceptable - duplicity will use the
 current time zone), or ordinary dates like 2/4/1997 or 2001-04-23
 (various combinations are acceptable, but the month always precedes
-the day).""")
+the day)."""
+)
 
 
 def setcurtime(time_in_secs=None):
@@ -100,15 +111,14 @@ def stringtotime(timestring):
         date, daytime = timestring[:19].split("T")
         if len(timestring) == 16:
             # new format for filename time
-            year, month, day = list(map(int,
-                                        [date[0:4], date[4:6], date[6:8]]))
-            hour, minute, second = list(map(int,
-                                            [daytime[0:2], daytime[2:4], daytime[4:6]]))
+            year, month, day = list(map(int, [date[0:4], date[4:6], date[6:8]]))
+            hour, minute, second = list(
+                map(int, [daytime[0:2], daytime[2:4], daytime[4:6]])
+            )
         else:
             # old format for filename time
             year, month, day = list(map(int, date.split("-")))
-            hour, minute, second = list(map(int,
-                                            daytime.split(config.time_separator)))
+            hour, minute, second = list(map(int, daytime.split(config.time_separator)))
         assert 1900 < year < 2100, year
         assert 1 <= month <= 12
         assert 1 <= day <= 31
@@ -199,7 +209,7 @@ def intstringtoseconds(interval_string):
         if ext not in _interval_conv_dict or num < 0:
             error()
         total += num * _interval_conv_dict[ext]
-        interval_string = interval_string[match.end(0):]
+        interval_string = interval_string[match.end(0) :]
     return total
 
 
@@ -238,8 +248,7 @@ def tzdtoseconds(tzd):
     if tzd == "Z":
         return 0
     assert len(tzd) == 6  # only accept forms like +08:00 for now
-    assert (tzd[0] == "-" or tzd[0] == "+") and \
-           tzd[3] == config.time_separator
+    assert (tzd[0] == "-" or tzd[0] == "+") and tzd[3] == config.time_separator
     return -60 * (60 * int(tzd[:3]) + int(tzd[4:]))
 
 
@@ -291,13 +300,17 @@ def genstrtotime(timestr, override_curtime=None):
         pass
 
     # Now check for dates like 2001/3/23
-    match = (_genstr_date_regexp1.search(timestr) or
-             _genstr_date_regexp2.search(timestr) or
-             _genstr_date_regexp3.search(timestr))
+    match = (
+        _genstr_date_regexp1.search(timestr)
+        or _genstr_date_regexp2.search(timestr)
+        or _genstr_date_regexp3.search(timestr)
+    )
     if not match:
         error()
-    timestr = f"{match.group('year')}-{int(int(match.group('month'))):02}-{int(int(match.group('day'))):02}" \
-              f"T00:00:00{gettzd(0)}"
+    timestr = (
+        f"{match.group('year')}-{int(int(match.group('month'))):02}-{int(int(match.group('day'))):02}"
+        f"T00:00:00{gettzd(0)}"
+    )
     t = stringtotime(timestr)
     if t:
         return t

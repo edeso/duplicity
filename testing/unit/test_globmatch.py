@@ -63,7 +63,7 @@ def exc_sel_file(glob_str, file_path):
 
 def sel_dir(glob_str, include, file_path):
     """As per sel_file, but mocks file_path to be a directory"""
-    with patch('duplicity.path.Path.isdir') as mock_isdir:
+    with patch("duplicity.path.Path.isdir") as mock_isdir:
         mock_isdir.return_value = True
         return sel_file(glob_str, include, file_path)
 
@@ -85,16 +85,13 @@ class TestGlobToRegex(UnitTestCase):
         """test_glob_re - test translation of shell pattern to regular exp"""
         self.assertEqual(glob_to_regex("hello"), "hello")
         self.assertEqual(glob_to_regex(".e?ll**o"), "\\.e[^/]ll.*o")
-        self.assertEqual(glob_to_regex("[abc]el[^de][!fg]h"),
-                         "[abc]el[^de][^fg]h")
+        self.assertEqual(glob_to_regex("[abc]el[^de][!fg]h"), "[abc]el[^de][^fg]h")
 
         # see https://bugs.python.org/issue29995 for details
         if sys.version_info[:2] == (3, 6):
-            self.assertEqual(glob_to_regex("/usr/*/bin/"),
-                             "\\/usr\\/[^/]*\\/bin\\/")
+            self.assertEqual(glob_to_regex("/usr/*/bin/"), "\\/usr\\/[^/]*\\/bin\\/")
         elif sys.version_info[:2] >= (3, 7):
-            self.assertEqual(glob_to_regex("/usr/*/bin/"),
-                             "/usr/[^/]*/bin/")
+            self.assertEqual(glob_to_regex("/usr/*/bin/"), "/usr/[^/]*/bin/")
         else:
             pass
 
@@ -108,9 +105,19 @@ class TestSelectValuesFromGlobs(UnitTestCase):
     def test_glob_scans_parent_directories(self):
         """Test glob scans parent"""
         self.assertEqual(
-            inc_sel_dir(f"{_runtest_dir}/testfiles/parent/sub", f"{_runtest_dir}/testfiles/parent"), 2)  # noqa
+            inc_sel_dir(
+                f"{_runtest_dir}/testfiles/parent/sub",
+                f"{_runtest_dir}/testfiles/parent",
+            ),
+            2,
+        )  # noqa
         self.assertEqual(
-            inc_sel_dir(f"{_runtest_dir}/testfiles/select2/3/3sub2", f"{_runtest_dir}/testfiles/select2/3"), 2)  # noqa
+            inc_sel_dir(
+                f"{_runtest_dir}/testfiles/select2/3/3sub2",
+                f"{_runtest_dir}/testfiles/select2/3",
+            ),
+            2,
+        )  # noqa
 
     def test_double_asterisk_include(self):
         """Test a few globbing patterns, including **"""
@@ -162,20 +169,32 @@ class TestTrailingSlash(UnitTestCase):
         """Test that files within an included folder are matched with /"""
         # Bug #1624725
         # https://bugs.launchpad.net/duplicity/+bug/1624725
-        self.assertEqual(inc_sel_file(
-            f"{_runtest_dir}/testfiles/select2/1/1sub1/1sub1sub1/",
-            f"{_runtest_dir}/testfiles/select2/1/1sub1/1sub1sub1/1sub1sub1_file.txt"), 1)
+        self.assertEqual(
+            inc_sel_file(
+                f"{_runtest_dir}/testfiles/select2/1/1sub1/1sub1sub1/",
+                f"{_runtest_dir}/testfiles/select2/1/1sub1/1sub1sub1/1sub1sub1_file.txt",
+            ),
+            1,
+        )
 
     def test_included_files_are_matched_slash_2_parents(self):
         """Test that duplicity will scan parent of glob/"""
         # Bug #1624725
         # https://bugs.launchpad.net/duplicity/+bug/1624725
-        self.assertEqual(inc_sel_dir(
-            f"{_runtest_dir}/testfiles/select2/1/1sub1/1sub1sub1/",
-            f"{_runtest_dir}/testfiles/select2/1/1sub1/1sub1sub1"), 1)
-        self.assertEqual(inc_sel_dir(
-            f"{_runtest_dir}/testfiles/select2/1/1sub1/1sub1sub1/",
-            f"{_runtest_dir}/testfiles/select2/1/1sub1"), 2)
+        self.assertEqual(
+            inc_sel_dir(
+                f"{_runtest_dir}/testfiles/select2/1/1sub1/1sub1sub1/",
+                f"{_runtest_dir}/testfiles/select2/1/1sub1/1sub1sub1",
+            ),
+            1,
+        )
+        self.assertEqual(
+            inc_sel_dir(
+                f"{_runtest_dir}/testfiles/select2/1/1sub1/1sub1sub1/",
+                f"{_runtest_dir}/testfiles/select2/1/1sub1",
+            ),
+            2,
+        )
 
     def test_included_files_are_matched_slash_wildcard(self):
         """Test that files within an included folder are matched with /"""
@@ -185,7 +204,9 @@ class TestTrailingSlash(UnitTestCase):
 
     def test_slash_matches_everything(self):
         """Test / matches everything"""
-        self.assertEqual(inc_sel_dir("/", f"/tmp/{_runtest_dir}/testfiles/select/1/2"), 1)
+        self.assertEqual(
+            inc_sel_dir("/", f"/tmp/{_runtest_dir}/testfiles/select/1/2"), 1
+        )
         self.assertEqual(inc_sel_dir("/", "/test/random/path"), 1)
         self.assertEqual(exc_sel_dir("/", "/test/random/path"), 0)
         self.assertEqual(inc_sel_dir("/", "/"), 1)
@@ -210,17 +231,28 @@ class TestTrailingSlash(UnitTestCase):
 
     def test_simple_trailing_slash_match(self):
         """Test that a normal folder string ending in / matches that path"""
-        self.assertEqual(inc_sel_dir(f"{_runtest_dir}/testfiles/select/1/2/1/",
-                                     f"{_runtest_dir}/testfiles/select/1/2/1"), 1)
+        self.assertEqual(
+            inc_sel_dir(
+                f"{_runtest_dir}/testfiles/select/1/2/1/",
+                f"{_runtest_dir}/testfiles/select/1/2/1",
+            ),
+            1,
+        )
 
     def test_double_asterisk_string_slash(self):
         """Test string starting with ** and ending in /"""
-        self.assertEqual(inc_sel_dir("**/1/2/", f"{_runtest_dir}/testfiles/select/1/2"), 1)
+        self.assertEqual(
+            inc_sel_dir("**/1/2/", f"{_runtest_dir}/testfiles/select/1/2"), 1
+        )
 
     def test_string_double_asterisk_string_slash(self):
         """Test string ** string /"""
-        self.assertEqual(inc_sel_dir(f"{_runtest_dir}/testfiles**/2/",
-                                     f"{_runtest_dir}/testfiles/select/1/2"), 1)
+        self.assertEqual(
+            inc_sel_dir(
+                f"{_runtest_dir}/testfiles**/2/", f"{_runtest_dir}/testfiles/select/1/2"
+            ),
+            1,
+        )
 
 
 class TestDoubleAsterisk(UnitTestCase):
@@ -232,14 +264,10 @@ class TestDoubleAsterisk(UnitTestCase):
 
     def test_double_asterisk_match(self):
         """Test that a folder string ending in /** matches that path"""
-        self.assertEqual(inc_sel_dir("/test/folder/**",
-                                     "/test/folder/foo"), 1)
-        self.assertEqual(inc_sel_file("/test/folder/**",
-                                      "/test/folder/foo.txt"), 1)
-        self.assertEqual(inc_sel_dir("/test/folder/**",
-                                     "/test/folder/2/foo"), 1)
-        self.assertEqual(inc_sel_file("/test/folder/**",
-                                      "/test/folder/2/foo.txt"), 1)
+        self.assertEqual(inc_sel_dir("/test/folder/**", "/test/folder/foo"), 1)
+        self.assertEqual(inc_sel_file("/test/folder/**", "/test/folder/foo.txt"), 1)
+        self.assertEqual(inc_sel_dir("/test/folder/**", "/test/folder/2/foo"), 1)
+        self.assertEqual(inc_sel_file("/test/folder/**", "/test/folder/2/foo.txt"), 1)
 
     def test_asterisk_slash_double_asterisk(self):
         """Test folder string ending in */**"""
@@ -251,8 +279,13 @@ class TestSimpleUnicode(UnitTestCase):
 
     def test_simple_unicode(self):
         """Test simple unicode comparison"""
-        self.assertEqual(inc_sel_file("прыклад/пример/例/Παράδειγμα/उदाहरण.txt",
-                                      "прыклад/пример/例/Παράδειγμα/उदाहरण.txt"), 1)
+        self.assertEqual(
+            inc_sel_file(
+                "прыклад/пример/例/Παράδειγμα/उदाहरण.txt",
+                "прыклад/пример/例/Παράδειγμα/उदाहरण.txt",
+            ),
+            1,
+        )
 
 
 class TestSquareBrackets(UnitTestCase):
@@ -260,43 +293,65 @@ class TestSquareBrackets(UnitTestCase):
 
     def test_square_bracket_options(self):
         """Test file including options in []s"""
-        self.assertEqual(inc_sel_file("/test/f[o,s,p]lder/foo.txt",
-                                      "/test/folder/foo.txt"), 1)
-        self.assertEqual(inc_sel_file("/test/f[i,s,p]lder/foo.txt",
-                                      "/test/folder/foo.txt"), None)
-        self.assertEqual(inc_sel_file("/test/f[s,o,p]lder/foo.txt",
-                                      "/test/folder/foo.txt"), 1)
+        self.assertEqual(
+            inc_sel_file("/test/f[o,s,p]lder/foo.txt", "/test/folder/foo.txt"), 1
+        )
+        self.assertEqual(
+            inc_sel_file("/test/f[i,s,p]lder/foo.txt", "/test/folder/foo.txt"), None
+        )
+        self.assertEqual(
+            inc_sel_file("/test/f[s,o,p]lder/foo.txt", "/test/folder/foo.txt"), 1
+        )
 
     def test_square_bracket_options_unicode(self):
         """Test file including options in []s"""
-        self.assertEqual(inc_sel_file("прыклад/пр[и,j,l]мер/例/Παράδειγμα/उदाहरण.txt",
-                                      "прыклад/пример/例/Παράδειγμα/उदाहरण.txt"), 1)
-        self.assertEqual(inc_sel_file("прыклад/п[a,b,c]имер/例/Παράδειγμα/उदाहरण.txt",
-                                      "прыклад/пример/例/Παράδειγμα/उदाहरण.txt"), None)
+        self.assertEqual(
+            inc_sel_file(
+                "прыклад/пр[и,j,l]мер/例/Παράδειγμα/उदाहरण.txt",
+                "прыклад/пример/例/Παράδειγμα/उदाहरण.txt",
+            ),
+            1,
+        )
+        self.assertEqual(
+            inc_sel_file(
+                "прыклад/п[a,b,c]имер/例/Παράδειγμα/उदाहरण.txt",
+                "прыклад/пример/例/Παράδειγμα/उदाहरण.txt",
+            ),
+            None,
+        )
 
     def test_not_square_bracket_options(self):
         """Test file including options in [!]s"""
-        self.assertEqual(inc_sel_file("/test/f[!o,s,p]lder/foo.txt",
-                                      "/test/folder/foo.txt"), None)
-        self.assertEqual(inc_sel_file("/test/f[!i,s,p]lder/foo.txt",
-                                      "/test/folder/foo.txt"), 1)
-        self.assertEqual(inc_sel_file("/test/f[!s,o,p]lder/foo.txt",
-                                      "/test/folder/foo.txt"), None)
+        self.assertEqual(
+            inc_sel_file("/test/f[!o,s,p]lder/foo.txt", "/test/folder/foo.txt"), None
+        )
+        self.assertEqual(
+            inc_sel_file("/test/f[!i,s,p]lder/foo.txt", "/test/folder/foo.txt"), 1
+        )
+        self.assertEqual(
+            inc_sel_file("/test/f[!s,o,p]lder/foo.txt", "/test/folder/foo.txt"), None
+        )
 
     def test_square_bracket_range(self):
         """Test file including range in []s"""
-        self.assertEqual(inc_sel_file("/test/folder[1-5]/foo.txt",
-                                      "/test/folder4/foo.txt"), 1)
-        self.assertEqual(inc_sel_file("/test/folder[5-9]/foo.txt",
-                                      "/test/folder4/foo.txt"), None)
-        self.assertEqual(inc_sel_file("/test/folder[1-5]/foo.txt",
-                                      "/test/folder6/foo.txt"), None)
+        self.assertEqual(
+            inc_sel_file("/test/folder[1-5]/foo.txt", "/test/folder4/foo.txt"), 1
+        )
+        self.assertEqual(
+            inc_sel_file("/test/folder[5-9]/foo.txt", "/test/folder4/foo.txt"), None
+        )
+        self.assertEqual(
+            inc_sel_file("/test/folder[1-5]/foo.txt", "/test/folder6/foo.txt"), None
+        )
 
     def test_square_bracket_not_range(self):
         """Test file including range in [!]s"""
-        self.assertEqual(inc_sel_file("/test/folder[!1-5]/foo.txt",
-                                      "/test/folder4/foo.txt"), None)
-        self.assertEqual(inc_sel_file("/test/folder[!5-9]/foo.txt",
-                                      "/test/folder4/foo.txt"), 1)
-        self.assertEqual(inc_sel_file("/test/folder[!1-5]/foo.txt",
-                                      "/test/folder6/foo.txt"), 1)
+        self.assertEqual(
+            inc_sel_file("/test/folder[!1-5]/foo.txt", "/test/folder4/foo.txt"), None
+        )
+        self.assertEqual(
+            inc_sel_file("/test/folder[!5-9]/foo.txt", "/test/folder4/foo.txt"), 1
+        )
+        self.assertEqual(
+            inc_sel_file("/test/folder[!1-5]/foo.txt", "/test/folder6/foo.txt"), 1
+        )

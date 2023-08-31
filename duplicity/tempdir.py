@@ -147,9 +147,9 @@ class TemporaryDirectory(object):
         if isinstance(temproot, b"".__class__):
             temproot = os.fsdecode(temproot)
 
-        if platform.system().startswith('Darwin') and defaults_to_tmp(temproot):
+        if platform.system().startswith("Darwin") and defaults_to_tmp(temproot):
             # Use temp space from getconf, never /tmp
-            temproot = subprocess.check_output(['getconf', 'DARWIN_USER_TEMP_DIR'])
+            temproot = subprocess.check_output(["getconf", "DARWIN_USER_TEMP_DIR"])
             temproot = os.fsdecode(temproot).rstrip()
 
         self.__dir = tempfile.mkdtemp("-tempdir", "duplicity-", temproot)
@@ -163,7 +163,9 @@ class TemporaryDirectory(object):
         # sets are O(1), while dictionaries are.
         self.__pending = {}
 
-        self.__lock = threading.Lock()  # protect private resources *AND* mktemp/mkstemp calls
+        self.__lock = (
+            threading.Lock()
+        )  # protect private resources *AND* mktemp/mkstemp calls
 
     def dir(self):
         """
@@ -198,7 +200,9 @@ class TemporaryDirectory(object):
             suffix = f"-{int(self.__tempcount)}"
             filename = os.fsencode(tempfile.mktemp(suffix, "mktemp-", self.__dir))
 
-            log.Debug(_("Registering (mktemp) temporary file %s") % os.fsdecode(filename))
+            log.Debug(
+                _("Registering (mktemp) temporary file %s") % os.fsdecode(filename)
+            )
             self.__pending[filename] = None
         finally:
             self.__lock.release()
@@ -218,7 +222,11 @@ class TemporaryDirectory(object):
         try:
             self.__tempcount = self.__tempcount + 1
             suffix = f"-{int(self.__tempcount)}"
-            fd, filename = tempfile.mkstemp(suffix, "mkstemp-", self.__dir, )
+            fd, filename = tempfile.mkstemp(
+                suffix,
+                "mkstemp-",
+                self.__dir,
+            )
 
             log.Debug(_("Registering (mkstemp) temporary file %s") % filename)
             self.__pending[filename] = None
@@ -255,7 +263,10 @@ class TemporaryDirectory(object):
                 log.Debug(_("Forgetting temporary file %s") % os.fsdecode(fname))
                 del self.__pending[fname]
             else:
-                log.Warn(_("Attempt to forget unknown tempfile %s - this is probably a bug.") % os.fsdecode(fname))
+                log.Warn(
+                    _("Attempt to forget unknown tempfile %s - this is probably a bug.")
+                    % os.fsdecode(fname)
+                )
                 pass
         finally:
             self.__lock.release()
@@ -274,16 +285,26 @@ class TemporaryDirectory(object):
             if self.__dir is not None:
                 for file in list(self.__pending.keys()):
                     try:
-                        log.Debug(_("Removing still remembered temporary file %s") % os.fsdecode(file))
+                        log.Debug(
+                            _("Removing still remembered temporary file %s")
+                            % os.fsdecode(file)
+                        )
                         util.ignore_missing(os.unlink, file)
                     except Exception:
-                        log.Info(_("Cleanup of temporary file %s failed") % os.fsdecode(file))
+                        log.Info(
+                            _("Cleanup of temporary file %s failed") % os.fsdecode(file)
+                        )
                         pass
                 try:
                     os.rmdir(self.__dir)
                 except Exception:
-                    log.Warn(_("Cleanup of temporary directory %s failed - "
-                               "this is probably a bug.") % os.fsdecode(self.__dir))
+                    log.Warn(
+                        _(
+                            "Cleanup of temporary directory %s failed - "
+                            "this is probably a bug."
+                        )
+                        % os.fsdecode(self.__dir)
+                    )
                     pass
                 self.__pending = None
                 self.__dir = None

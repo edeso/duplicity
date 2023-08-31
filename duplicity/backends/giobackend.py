@@ -32,22 +32,24 @@ def ensure_dbus():
     # GIO requires a dbus session bus which can start the gvfs daemons
     # when required.  So we make sure that such a bus exists and that our
     # environment points to it.
-    if 'DBUS_SESSION_BUS_ADDRESS' not in os.environ:
-        p = subprocess.Popen(['dbus-launch'], stdout=subprocess.PIPE, universal_newlines=True)
+    if "DBUS_SESSION_BUS_ADDRESS" not in os.environ:
+        p = subprocess.Popen(
+            ["dbus-launch"], stdout=subprocess.PIPE, universal_newlines=True
+        )
         output = p.communicate()[0]
-        lines = output.split('\n')
+        lines = output.split("\n")
         for line in lines:
-            parts = line.split('=', 1)
+            parts = line.split("=", 1)
             if len(parts) == 2:
-                if parts[0] == 'DBUS_SESSION_BUS_PID':  # cleanup at end
+                if parts[0] == "DBUS_SESSION_BUS_PID":  # cleanup at end
                     atexit.register(os.kill, int(parts[1]), signal.SIGTERM)
                 os.environ[parts[0]] = parts[1]
 
 
 class GIOBackend(duplicity.backend.Backend):
     """Use this backend when saving to a GIO URL.
-       This is a bit of a meta-backend, in that it can handle multiple schemas.
-       URLs look like schema://user@server/path.
+    This is a bit of a meta-backend, in that it can handle multiple schemas.
+    URLs look like schema://user@server/path.
     """
 
     def __init__(self, parsed_url):
@@ -56,14 +58,14 @@ class GIOBackend(duplicity.backend.Backend):
 
         class DupMountOperation(Gio.MountOperation):
             """A simple MountOperation that grabs the password from the environment
-               or the user.
+            or the user.
             """
 
             def __init__(self, backend):
                 Gio.MountOperation.__init__(self)
                 self.backend = backend
-                self.connect('ask-password', self.ask_password_cb)
-                self.connect('ask-question', self.ask_question_cb)
+                self.connect("ask-password", self.ask_password_cb)
+                self.connect("ask-question", self.ask_question_cb)
 
             def ask_password_cb(self, *args, **kwargs):
                 self.set_password(self.backend.get_password())
@@ -88,9 +90,9 @@ class GIOBackend(duplicity.backend.Backend):
         # Now we make sure the location is mounted
         op = DupMountOperation(self)
         loop = GLib.MainLoop()
-        self.remote_file.mount_enclosing_volume(Gio.MountMountFlags.NONE,
-                                                op, None,
-                                                self.__done_with_mount, loop)
+        self.remote_file.mount_enclosing_volume(
+            Gio.MountMountFlags.NONE, op, None, self.__done_with_mount, loop
+        )
         loop.run()  # halt program until we're done mounting
 
         # Now make the directory if it doesn't exist
@@ -100,13 +102,20 @@ class GIOBackend(duplicity.backend.Backend):
     def __done_with_mount(self, fileobj, result, loop):
         from gi.repository import Gio  # pylint: disable=import-error
         from gi.repository import GLib  # pylint: disable=import-error
+
         try:
             fileobj.mount_enclosing_volume_finish(result)
         except GLib.GError as e:
             # check for NOT_SUPPORTED because some schemas (e.g. file://) validly don't
-            if e.code != Gio.IOErrorEnum.ALREADY_MOUNTED and e.code != Gio.IOErrorEnum.NOT_SUPPORTED:
-                log.FatalError(_("Connection failed, please check your password: %s")
-                               % util.uexc(e), log.ErrorCode.connection_failed)
+            if (
+                e.code != Gio.IOErrorEnum.ALREADY_MOUNTED
+                and e.code != Gio.IOErrorEnum.NOT_SUPPORTED
+            ):
+                log.FatalError(
+                    _("Connection failed, please check your password: %s")
+                    % util.uexc(e),
+                    log.ErrorCode.connection_failed,
+                )
         loop.quit()
 
     def __copy_progress(self, *args, **kwargs):
@@ -114,18 +123,20 @@ class GIOBackend(duplicity.backend.Backend):
 
     def __copy_file(self, source, target):
         from gi.repository import Gio  # pylint: disable=import-error
+
         # Don't pass NOFOLLOW_SYMLINKS here. Some backends (e.g. google-drive:)
         # use symlinks internally for all files. In the normal course of
         # events, we never deal with symlinks anyway, just tarballs.
-        source.copy(target,
-                    Gio.FileCopyFlags.OVERWRITE,
-                    None, self.__copy_progress, None)
+        source.copy(
+            target, Gio.FileCopyFlags.OVERWRITE, None, self.__copy_progress, None
+        )
 
     def _error_code(self, operation, e):
         from gi.repository import Gio  # pylint: disable=import-error
         from gi.repository import GLib  # pylint: disable=import-error
+
         if isinstance(e, GLib.GError):
-            if e.code == Gio.IOErrorEnum.FAILED and operation == 'delete':
+            if e.code == Gio.IOErrorEnum.FAILED and operation == "delete":
                 # Sometimes delete will return a generic failure on a file not
                 # found (notably the FTP does that)
                 return log.ErrorCode.backend_not_found
@@ -138,26 +149,31 @@ class GIOBackend(duplicity.backend.Backend):
 
     def _put(self, source_path, remote_filename):
         from gi.repository import Gio  # pylint: disable=import-error
+
         source_file = Gio.File.new_for_path(source_path.name)
-        target_file = self.remote_file.get_child_for_display_name(os.fsdecode(remote_filename))
+        target_file = self.remote_file.get_child_for_display_name(
+            os.fsdecode(remote_filename)
+        )
         self.__copy_file(source_file, target_file)
 
     def _get(self, filename, local_path):
         from gi.repository import Gio  # pylint: disable=import-error
+
         source_file = self.remote_file.get_child_for_display_name(os.fsdecode(filename))
         target_file = Gio.File.new_for_path(local_path.name)
         self.__copy_file(source_file, target_file)
 
     def _list(self):
         from gi.repository import Gio  # pylint: disable=import-error
+
         files = []
         # We grab display name, rather than file name because some backends
         # (e.g. google-drive:) use filesystem-specific IDs as file names and
         # only expose the "normal" name as display names. We need the display
         # name, because we try to parse them.
-        enum = self.remote_file.enumerate_children(Gio.FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME,
-                                                   Gio.FileQueryInfoFlags.NONE,
-                                                   None)
+        enum = self.remote_file.enumerate_children(
+            Gio.FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME, Gio.FileQueryInfoFlags.NONE, None
+        )
         info = enum.next_file(None)
         while info:
             files.append(info.get_display_name())
@@ -170,10 +186,12 @@ class GIOBackend(duplicity.backend.Backend):
 
     def _query(self, filename):
         from gi.repository import Gio  # pylint: disable=import-error
+
         target_file = self.remote_file.get_child_for_display_name(os.fsdecode(filename))
-        info = target_file.query_info(Gio.FILE_ATTRIBUTE_STANDARD_SIZE,
-                                      Gio.FileQueryInfoFlags.NONE, None)
-        return {'size': info.get_size()}
+        info = target_file.query_info(
+            Gio.FILE_ATTRIBUTE_STANDARD_SIZE, Gio.FileQueryInfoFlags.NONE, None
+        )
+        return {"size": info.get_size()}
 
 
-duplicity.backend.register_backend_prefix('gio', GIOBackend)
+duplicity.backend.register_backend_prefix("gio", GIOBackend)

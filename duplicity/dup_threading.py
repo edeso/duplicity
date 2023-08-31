@@ -130,20 +130,17 @@ def async_split(fn):
     # used for significant amounts of work.
 
     cv = threading.Condition()
-    state = {'done': False,
-             'error': None,
-             'trace': None,
-             'value': None}
+    state = {"done": False, "error": None, "trace": None, "value": None}
 
     def waiter():
         cv.acquire()
         try:
-            interruptably_wait(cv, lambda: state['done'])
+            interruptably_wait(cv, lambda: state["done"])
 
-            if state['error'] is None:
-                return state['value']
+            if state["error"] is None:
+                return state["value"]
             else:
-                raise state['error'].with_traceback(state['trace'])
+                raise state["error"].with_traceback(state["trace"])
         finally:
             cv.release()
 
@@ -152,17 +149,17 @@ def async_split(fn):
             value = fn()
 
             cv.acquire()
-            state['done'] = True
-            state['value'] = value
+            state["done"] = True
+            state["value"] = value
             cv.notify()
             cv.release()
 
             return True, waiter
         except Exception as e:
             cv.acquire()
-            state['done'] = True
-            state['error'] = e
-            state['trace'] = sys.exc_info()[2]
+            state["done"] = True
+            state["error"] = e
+            state["trace"] = sys.exc_info()[2]
             cv.notify()
             cv.release()
 

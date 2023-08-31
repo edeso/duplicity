@@ -52,22 +52,24 @@ class ImapBackend(duplicity.backend.Backend):
     def __init__(self, parsed_url):
         duplicity.backend.Backend.__init__(self, parsed_url)
 
-        log.Debug(f"I'm {self.__class__.__name__} (scheme {parsed_url.scheme}) connecting to "
-                  f"{parsed_url.hostname} as {parsed_url.username}")
+        log.Debug(
+            f"I'm {self.__class__.__name__} (scheme {parsed_url.scheme}) connecting to "
+            f"{parsed_url.hostname} as {parsed_url.username}"
+        )
 
         #  Store url for reconnection on error
         self.url = parsed_url
 
         #  Set the username
         if parsed_url.username is None:
-            username = eval(input('Enter account userid: '))
+            username = eval(input("Enter account userid: "))
         else:
             username = parsed_url.username
 
         #  Set the password
         if not parsed_url.password:
-            if 'IMAP_PASSWORD' in os.environ:
-                password = os.environ.get('IMAP_PASSWORD')
+            if "IMAP_PASSWORD" in os.environ:
+                password = os.environ.get("IMAP_PASSWORD")
             else:
                 password = getpass.getpass("Enter account password: ")
         else:
@@ -80,7 +82,7 @@ class ImapBackend(duplicity.backend.Backend):
     def resetConnection(self):
         parsed_url = self.url
         try:
-            imap_server = os.environ['IMAP_SERVER']
+            imap_server = os.environ["IMAP_SERVER"]
         except KeyError:
             imap_server = parsed_url.hostname
 
@@ -98,7 +100,7 @@ class ImapBackend(duplicity.backend.Backend):
             self.conn = cl(imap_server, 993)
 
         log.Debug(f"Type of imap class: {cl.__name__}")
-        self.remote_dir = re.sub(r'^/', r'', parsed_url.path, 1)
+        self.remote_dir = re.sub(r"^/", r"", parsed_url.path, 1)
 
         #  Login
         if not config.imap_full_address:
@@ -166,12 +168,12 @@ class ImapBackend(duplicity.backend.Backend):
         while allowedTimeout > 0:
             try:
                 self.conn.select(config.imap_mailbox)
-                (result, flist) = self.conn.search(None, 'Subject', remote_filename)
+                (result, flist) = self.conn.search(None, "Subject", remote_filename)
                 if result != "OK":
                     raise Exception(flist[0])
 
                 # check if there is any result
-                if flist[0] == '':
+                if flist[0] == "":
                     raise Exception("no mail with subject %s")
 
                 (result, flist) = self.conn.fetch(flist[0], "(RFC822)")
@@ -217,10 +219,10 @@ class ImapBackend(duplicity.backend.Backend):
         # address
 
         # Search returns an error if you haven't selected an IMAP folder.
-        (result, flist) = self.conn.search(None, 'FROM', self.remote_dir)
+        (result, flist) = self.conn.search(None, "FROM", self.remote_dir)
         if result != "OK":
             raise Exception(flist[0])
-        if flist[0] == b'':
+        if flist[0] == b"":
             return ret
         nums = flist[0].strip().split(b" ")
         set = b"%s:%s" % (nums[0], nums[-1])  # pylint: disable=redefined-builtin
@@ -232,7 +234,10 @@ class ImapBackend(duplicity.backend.Backend):
             if len(msg) == 1:
                 continue
             headers = Parser(policy=default).parsestr(
-                msg[1].decode("unicode-escape"))  # noqa  # pylint: disable=unsubscriptable-object
+                msg[1].decode(  # noqa  # pylint: disable=unsubscriptable-object
+                    "unicode-escape"
+                )
+            )
             subj = headers["subject"]
             header_from = headers["from"]
 
@@ -250,7 +255,7 @@ class ImapBackend(duplicity.backend.Backend):
         return flist
 
     def delete_single_mail(self, i):
-        self.imapf(self.conn.store, i, "+FLAGS", '\\DELETED')
+        self.imapf(self.conn.store, i, "+FLAGS", "\\DELETED")
 
     def expunge(self):
         flist = self.imapf(self.conn.expunge)
@@ -273,4 +278,4 @@ class ImapBackend(duplicity.backend.Backend):
 
 duplicity.backend.register_backend("imap", ImapBackend)
 duplicity.backend.register_backend("imaps", ImapBackend)
-duplicity.backend.uses_netloc.extend(['imap', 'imaps'])
+duplicity.backend.uses_netloc.extend(["imap", "imaps"])

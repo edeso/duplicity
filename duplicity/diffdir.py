@@ -79,18 +79,23 @@ def DirDelta(path_iter, dirsig_fileobj_list):
     global stats
     stats = statistics.StatsDeltaProcess()
     if isinstance(dirsig_fileobj_list, list):
-        sig_iter = combine_path_iters([sigtar2path_iter(x) for x
-                                       in dirsig_fileobj_list])
+        sig_iter = combine_path_iters(
+            [sigtar2path_iter(x) for x in dirsig_fileobj_list]
+        )
     else:
         sig_iter = sigtar2path_iter(dirsig_fileobj_list)
     delta_iter = get_delta_iter(path_iter, sig_iter)
-    if config.dry_run or (config.progress and not progress.tracker.has_collected_evidence()):
+    if config.dry_run or (
+        config.progress and not progress.tracker.has_collected_evidence()
+    ):
         return DummyBlockIter(delta_iter)
     else:
         return DeltaTarBlockIter(delta_iter)
 
 
-def delta_iter_error_handler(exc, new_path, sig_path, sig_tar=None):  # pylint: disable=unused-argument
+def delta_iter_error_handler(
+    exc, new_path, sig_path, sig_tar=None
+):  # pylint: disable=unused-argument
     """
     Called by get_delta_iter, report error in getting delta
     """
@@ -100,8 +105,9 @@ def delta_iter_error_handler(exc, new_path, sig_path, sig_tar=None):  # pylint: 
         index_string = sig_path.get_relative_path()
     else:
         assert 0, "Both new and sig are None for some reason"
-    log.Warn(_("Error %s getting delta for %s")
-             % (util.uexc(exc), os.fsdecode(index_string)))
+    log.Warn(
+        _("Error %s getting delta for %s") % (util.uexc(exc), os.fsdecode(index_string))
+    )
     return None
 
 
@@ -125,13 +131,17 @@ def get_delta_path(new_path, sig_path, sigTarFile=None):
         ti.name = f"signature/{os.fsdecode(b'/'.join(index))}"
         sigTarFile.addfile(ti, io.BytesIO(sig_string))
 
-    if new_path.isreg() and sig_path and sig_path.isreg() and sig_path.difftype == "signature":
+    if (
+        new_path.isreg()
+        and sig_path
+        and sig_path.isreg()
+        and sig_path.difftype == "signature"
+    ):
         delta_path.difftype = "diff"
         old_sigfp = sig_path.open("rb")
         newfp = FileWithReadCounter(new_path.open("rb"))
         if sigTarFile:
-            newfp = FileWithSignature(newfp, callback,
-                                      new_path.getsize())
+            newfp = FileWithSignature(newfp, callback, new_path.getsize())
         delta_path.setfileobj(librsync.DeltaFile(old_sigfp, newfp))
     else:
         delta_path.difftype = "snapshot"
@@ -145,8 +155,7 @@ def get_delta_path(new_path, sig_path, sigTarFile=None):
         else:
             newfp = FileWithReadCounter(new_path.open("rb"))
             if sigTarFile:
-                newfp = FileWithSignature(newfp, callback,
-                                          new_path.getsize())
+                newfp = FileWithSignature(newfp, callback, new_path.getsize())
             delta_path.setfileobj(newfp)
     new_path.copy_attribs(delta_path)
     delta_path.stat.st_size = new_path.stat.st_size
@@ -160,17 +169,19 @@ def log_delta_path(delta_path, new_path=None, stats=None):
     if delta_path.difftype == "snapshot":
         if new_path and stats:
             stats.add_new_file(new_path)
-        log.Info(_("A %s") %
-                 (os.fsdecode(delta_path.get_relative_path())),
-                 log.InfoCode.diff_file_new,
-                 util.escape(delta_path.get_relative_path()))
+        log.Info(
+            _("A %s") % (os.fsdecode(delta_path.get_relative_path())),
+            log.InfoCode.diff_file_new,
+            util.escape(delta_path.get_relative_path()),
+        )
     else:
         if new_path and stats:
             stats.add_changed_file(new_path)
-        log.Info(_("M %s") %
-                 (os.fsdecode(delta_path.get_relative_path())),
-                 log.InfoCode.diff_file_changed,
-                 util.escape(delta_path.get_relative_path()))
+        log.Info(
+            _("M %s") % (os.fsdecode(delta_path.get_relative_path())),
+            log.InfoCode.diff_file_changed,
+            util.escape(delta_path.get_relative_path()),
+        )
 
 
 def get_delta_iter(new_iter, sig_iter, sig_fileobj=None):
@@ -189,18 +200,24 @@ def get_delta_iter(new_iter, sig_iter, sig_fileobj=None):
     else:
         sigTarFile = None
     for new_path, sig_path in collated:
-        log.Debug(_("Comparing %s and %s") % (new_path and util.uindex(new_path.index),
-                                              sig_path and util.uindex(sig_path.index)))
+        log.Debug(
+            _("Comparing %s and %s")
+            % (
+                new_path and util.uindex(new_path.index),
+                sig_path and util.uindex(sig_path.index),
+            )
+        )
         if not new_path or not new_path.type:
             # File doesn't exist (but ignore attempts to delete base dir;
             # old versions of duplicity could have written out the sigtar in
             # such a way as to fool us; LP: #929067)
             if sig_path and sig_path.exists() and sig_path.index != ():
                 # but signature says it did
-                log.Info(_("D %s") %
-                         (os.fsdecode(sig_path.get_relative_path())),
-                         log.InfoCode.diff_file_deleted,
-                         util.escape(sig_path.get_relative_path()))
+                log.Info(
+                    _("D %s") % (os.fsdecode(sig_path.get_relative_path())),
+                    log.InfoCode.diff_file_deleted,
+                    util.escape(sig_path.get_relative_path()),
+                )
                 if sigTarFile:
                     ti = ROPath(sig_path.index).get_tarinfo()
                     ti.name = f"deleted/{util.uindex(sig_path.index)}"
@@ -209,9 +226,11 @@ def get_delta_iter(new_iter, sig_iter, sig_fileobj=None):
                 yield ROPath(sig_path.index)
         elif not sig_path or new_path != sig_path:
             # Must calculate new signature and create delta
-            delta_path = robust.check_common_error(delta_iter_error_handler,
-                                                   get_delta_path,
-                                                   (new_path, sig_path, sigTarFile))
+            delta_path = robust.check_common_error(
+                delta_iter_error_handler,
+                get_delta_path,
+                (new_path, sig_path, sigTarFile),
+            )
             if delta_path:
                 # log and collect stats
                 log_delta_path(delta_path, new_path, stats)
@@ -237,7 +256,7 @@ def sigtar2path_iter(sigtarobj):
         for prefix in [r"signature/", r"snapshot/", r"deleted/"]:
             if tiname.startswith(prefix):
                 # strip prefix and '/' from name and set it to difftype
-                name, difftype = tiname[len(prefix):], prefix[:-1]
+                name, difftype = tiname[len(prefix) :], prefix[:-1]
                 break
         else:
             raise DiffDirException(f"Bad tarinfo name {tiname}")
@@ -365,7 +384,9 @@ def DirDelta_WriteSig(path_iter, sig_infp_list, newsig_outfp):
     else:
         sig_path_iter = sigtar2path_iter(sig_infp_list)
     delta_iter = get_delta_iter(path_iter, sig_path_iter, newsig_outfp)
-    if config.dry_run or (config.progress and not progress.tracker.has_collected_evidence()):
+    if config.dry_run or (
+        config.progress and not progress.tracker.has_collected_evidence()
+    ):
         return DummyBlockIter(delta_iter)
     else:
         return DeltaTarBlockIter(delta_iter)
@@ -392,8 +413,10 @@ class FileWithReadCounter(object):
             buf = self.infile.read(length)
         except IOError as ex:
             buf = b""
-            log.Warn(_("Error %s getting delta for %s")
-                     % (util.uexc(ex), os.fsdecode(self.infile.name)))
+            log.Warn(
+                _("Error %s getting delta for %s")
+                % (util.uexc(ex), os.fsdecode(self.infile.name))
+            )
         if stats:
             stats.SourceFileSize += len(buf)
         return buf
@@ -406,6 +429,7 @@ class FileWithSignature(object):
     """
     File-like object which also computes signature as it is read
     """
+
     blocksize = 32 * 1024
 
     def __init__(self, infile, callback, filelen, *extra_args):
@@ -481,7 +505,7 @@ class TarBlockIter(object):
         Make tarblock out of tarinfo and file data
         """
         tarinfo.size = len(file_data)
-        headers = tarinfo.tobuf(errors='replace', encoding=config.fsencoding)
+        headers = tarinfo.tobuf(errors="replace", encoding=config.fsencoding)
         blocks, remainder = divmod(tarinfo.size, tarfile.BLOCKSIZE)
         if remainder > 0:
             filler_data = b"\0" * (tarfile.BLOCKSIZE - remainder)
@@ -517,10 +541,14 @@ class TarBlockIter(object):
             return result
 
         if self.process_waiting:
-            result = self.process_continued()  # pylint: disable=assignment-from-no-return
+            result = (  # pylint: disable=assignment-from-no-return
+                self.process_continued()
+            )
         else:
             # Below a StopIteration exception will just be passed upwards
-            result = self.process(next(self.input_iter))  # pylint: disable=assignment-from-no-return
+            result = self.process(  # pylint: disable=assignment-from-no-return
+                next(self.input_iter)
+            )
         block_number = self.process_next_vol_number
         self.offset += len(result.data)
         self.previous_index = result.index
@@ -570,7 +598,7 @@ class TarBlockIter(object):
         """
         blocks, remainder = divmod(self.offset, tarfile.RECORDSIZE)
         self.offset = 0
-        return b'\0' * (tarfile.RECORDSIZE - remainder)  # remainder can be 0
+        return b"\0" * (tarfile.RECORDSIZE - remainder)  # remainder can be 0
 
     def __iter__(self):  # pylint: disable=non-iterator-returned
         return self
@@ -612,8 +640,7 @@ class SigTarBlockIter(TarBlockIter):
         """
         ti = path.get_tarinfo()
         if path.isreg():
-            sfp = librsync.SigFile(path.open("rb"),
-                                   get_block_size(path.getsize()))
+            sfp = librsync.SigFile(path.open("rb"), get_block_size(path.getsize()))
             sigbuf = sfp.read()
             sfp.close()
             ti.name = b"signature/" + b"/".join(path.index)

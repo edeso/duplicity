@@ -29,7 +29,6 @@ from duplicity.errors import BackendException
 
 
 class RcloneBackend(duplicity.backend.Backend):
-
     def __init__(self, parsed_url):
         duplicity.backend.Backend.__init__(self, parsed_url)
         self.parsed_url = parsed_url
@@ -39,7 +38,9 @@ class RcloneBackend(duplicity.backend.Backend):
         try:
             rc, o, e = self._subprocess_safe_popen(f"{self.rclone_cmd} version")
         except Exception:
-            log.FatalError("rclone not found: please install rclone", log.ErrorCode.backend_error)
+            log.FatalError(
+                "rclone not found: please install rclone", log.ErrorCode.backend_error
+            )
 
         verb = log.getverbosity()
         if verb >= log.DEBUG:
@@ -84,7 +85,7 @@ class RcloneBackend(duplicity.backend.Backend):
             raise BackendException(f"rclone returned rc = {int(rc)}: {e}")
         if not o:
             return filelist
-        return [os.fsencode(x) for x in o.split('\n') if x]
+        return [os.fsencode(x) for x in o.split("\n") if x]
 
     def _delete(self, remote_filename):
         remote_filename = os.fsdecode(remote_filename)
@@ -99,10 +100,11 @@ class RcloneBackend(duplicity.backend.Backend):
             Popen,
             PIPE,
         )
+
         args = shlex.split(commandline)
         p = Popen(args, stdout=PIPE, stderr=PIPE, universal_newlines=True)
         stdout, stderr = p.communicate()
-        for l in stderr.split('\n'):
+        for l in stderr.split("\n"):
             if len(l) > 1:
                 print(l)
         return p.returncode, stdout, stderr

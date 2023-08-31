@@ -38,6 +38,7 @@ from . import UnitTestCase
 @unittest.skipIf(sys.version_info[:2] < (3, 6), "Skip on bad urllib.parse handling")
 class ParsedUrlTest(UnitTestCase):
     """Test the ParsedUrl class"""
+
     def test_basic(self):
         """Test various url strings"""
         pu = duplicity.backend.ParsedUrl("scp://ben@foo.bar:1234/a/b")
@@ -133,7 +134,9 @@ class ParsedUrlTest(UnitTestCase):
         assert pu.password is None, pu.password
         assert pu.port is None, pu.port
 
-        pu = duplicity.backend.ParsedUrl("scheme://username:passwor@127.0.0.1:22/path/path")
+        pu = duplicity.backend.ParsedUrl(
+            "scheme://username:passwor@127.0.0.1:22/path/path"
+        )
         assert pu.strip_auth() == "scheme://127.0.0.1:22/path/path"
 
         pu = duplicity.backend.ParsedUrl("xorriso:///dev/sr0")
@@ -146,24 +149,27 @@ class ParsedUrlTest(UnitTestCase):
 
     def test_errors(self):
         """Test various url errors"""
-        self.assertRaises(InvalidBackendURL, duplicity.backend.ParsedUrl,
-                          "file:path")  # no relative paths for non-netloc schemes
-        self.assertRaises(UnsupportedBackendScheme, duplicity.backend.get_backend,
-                          "ssh://foo@bar:pass@example.com/home")
+        self.assertRaises(
+            InvalidBackendURL, duplicity.backend.ParsedUrl, "file:path"
+        )  # no relative paths for non-netloc schemes
+        self.assertRaises(
+            UnsupportedBackendScheme,
+            duplicity.backend.get_backend,
+            "ssh://foo@bar:pass@example.com/home",
+        )
 
 
 class BackendWrapperTest(UnitTestCase):
-
     def setUp(self):
         super().setUp()
         self.mock = mock.MagicMock()
         self.backend = duplicity.backend.BackendWrapper(self.mock)
         self.local = mock.MagicMock()
-        self.remote = 'remote'
+        self.remote = "remote"
 
-    @mock.patch('sys.exit')
+    @mock.patch("sys.exit")
     def test_default_error_exit(self, exit_mock):
-        self.set_config('num_retries', 1)
+        self.set_config("num_retries", 1)
         try:
             del self.mock._error_code
         except Exception as e:
@@ -172,26 +178,26 @@ class BackendWrapperTest(UnitTestCase):
         self.backend.put(self.local, self.remote)
         exit_mock.assert_called_once_with(50)
 
-    @mock.patch('sys.exit')
+    @mock.patch("sys.exit")
     def test_translates_code(self, exit_mock):
-        self.set_config('num_retries', 1)
+        self.set_config("num_retries", 1)
         self.mock._error_code.return_value = 12345
         self.mock._put.side_effect = Exception
         self.backend.put(self.local, self.remote)
         exit_mock.assert_called_once_with(12345)
 
-    @mock.patch('sys.exit')
+    @mock.patch("sys.exit")
     def test_uses_exception_code(self, exit_mock):
-        self.set_config('num_retries', 1)
+        self.set_config("num_retries", 1)
         self.mock._error_code.return_value = 12345
-        self.mock._put.side_effect = BackendException('error', code=54321)
+        self.mock._put.side_effect = BackendException("error", code=54321)
         self.backend.put(self.local, self.remote)
         exit_mock.assert_called_once_with(54321)
 
-    @mock.patch('sys.exit')
-    @mock.patch('time.sleep')  # so no waiting
+    @mock.patch("sys.exit")
+    @mock.patch("time.sleep")  # so no waiting
     def test_cleans_up(self, exit_mock, time_mock):  # pylint: disable=unused-argument
-        self.set_config('num_retries', 2)
+        self.set_config("num_retries", 2)
         self.mock._retry_cleanup.return_value = None
         self.mock._put.side_effect = Exception
         self.backend.put(self.local, self.remote)
@@ -222,10 +228,10 @@ class BackendWrapperTest(UnitTestCase):
         self.backend.query_info([self.remote])
         self.assertEqual(self.mock._query.call_count, 1)
 
-    @mock.patch('sys.exit')
-    @mock.patch('time.sleep')  # so no waiting
+    @mock.patch("sys.exit")
+    @mock.patch("time.sleep")  # so no waiting
     def test_retries(self, exit_mock, time_mock):  # pylint: disable=unused-argument
-        self.set_config('num_retries', 2)
+        self.set_config("num_retries", 2)
 
         self.mock._get.side_effect = Exception
         self.backend.get(self.remote, self.local)

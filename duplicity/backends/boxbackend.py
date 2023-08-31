@@ -36,9 +36,7 @@ class BoxBackend(duplicity.backend.Backend):
 
         self._client = self.get_box_client(parsed_url)
         self._folder = (
-            parsed_url.path[1:]
-            if parsed_url.path[0] == '/'
-            else parsed_url.path
+            parsed_url.path[1:] if parsed_url.path[0] == "/" else parsed_url.path
         )
 
         self._file_to_metadata_map = {}
@@ -48,21 +46,17 @@ class BoxBackend(duplicity.backend.Backend):
 
     def get_box_client(self, parsed_url):
         try:
-            config_path = os.path.expanduser(
-                parsed_url.query_args['config'][0]
-            )
+            config_path = os.path.expanduser(parsed_url.query_args["config"][0])
             return Client(JWTAuth.from_settings_file(config_path))
         except Exception as e:
-            config_path = os.environ.get('BOX_CONFIG_PATH')
+            config_path = os.environ.get("BOX_CONFIG_PATH")
             if config_path is not None:
                 try:
                     return Client(JWTAuth.from_settings_file(config_path))
                 except Exception as e:
-                    raise BackendException('box config file is not found.')
+                    raise BackendException("box config file is not found.")
 
-            raise BackendException(
-                'box config file is not specified or not found.'
-            )
+            raise BackendException("box config file is not specified or not found.")
 
     def _put(self, source_path, remote_filename):
         """Uploads file to the specified remote folder
@@ -98,17 +92,13 @@ class BoxBackend(duplicity.backend.Backend):
     def _query_list(self, filename_list):
         """Query metadata for a list of file"""
         return {
-            filename: self._file_to_metadata_map.get(
-                filename.decode(), {'size': -1}
-            )
+            filename: self._file_to_metadata_map.get(filename.decode(), {"size": -1})
             for filename in filename_list
         }
 
-    def get_id_from_path(self, remote_path, parent_id='0'):
+    def get_id_from_path(self, remote_path, parent_id="0"):
         """Get the folder or file id from its path"""
-        path_items = [
-            x.strip() for x in remote_path.split('/') if x.strip() != ''
-        ]
+        path_items = [x.strip() for x in remote_path.split("/") if x.strip() != ""]
         head = path_items[0]
         tail = path_items[1:]
 
@@ -135,24 +125,20 @@ class BoxBackend(duplicity.backend.Backend):
         file = self._file_to_metadata_map.get(remote_filename)
 
         if file is not None:
-            return file['id']
+            return file["id"]
 
-        file_id = self.get_id_from_path(
-            remote_filename, parent_id=self._folder_id
-        )
+        file_id = self.get_id_from_path(remote_filename, parent_id=self._folder_id)
         file = self._client.file(file_id).get()
         self._file_to_metadata_map[file.name] = {
-            'id': file.id,
-            'size': file.size,
+            "id": file.id,
+            "size": file.size,
         }
         return file_id
 
     def makedirs(self, remote_path):
         """Create folder(s) in a path if necessary"""
-        path_items = [
-            x.strip() for x in remote_path.split('/') if x.strip() != ''
-        ]
-        parent_id = '0'
+        path_items = [x.strip() for x in remote_path.split("/") if x.strip() != ""]
+        parent_id = "0"
 
         start_folder_id = None
         while len(path_items) > 0:
@@ -172,9 +158,7 @@ class BoxBackend(duplicity.backend.Backend):
         if start_folder_id is not None:
             parent_id = start_folder_id
             for item in path_items:
-                subfolder = self._client.folder(parent_id).create_subfolder(
-                    item
-                )
+                subfolder = self._client.folder(parent_id).create_subfolder(item)
                 parent_id = subfolder.id
 
         return parent_id
@@ -185,13 +169,13 @@ class BoxBackend(duplicity.backend.Backend):
         items = [
             x
             for x in self._client.folder(folder_id=self._folder_id).get_items(
-                fields=['id', 'name', 'size']
+                fields=["id", "name", "size"]
             )
-            if x.type == 'file'
+            if x.type == "file"
         ]
 
         self._file_to_metadata_map.update(
-            {x.name: {'id': x.id, 'size': x.size} for x in items}
+            {x.name: {"id": x.id, "size": x.size} for x in items}
         )
 
         return [x.name for x in items]
@@ -203,14 +187,14 @@ class BoxBackend(duplicity.backend.Backend):
         )
 
         self._file_to_metadata_map[new_file.name] = {
-            'id': new_file.id,
-            'size': new_file.size,
+            "id": new_file.id,
+            "size": new_file.size,
         }
 
     def download(self, remote_file, local_file):
         """Download file in box folder"""
         file_id = self.get_file_id_from_filename(remote_file)
-        with open(local_file, 'wb') as fp:
+        with open(local_file, "wb") as fp:
             self._client.file(file_id).download_to(fp)
 
     def delete(self, remote_file):
@@ -219,4 +203,4 @@ class BoxBackend(duplicity.backend.Backend):
         self._client.file(file_id).delete()
 
 
-duplicity.backend.register_backend('box', BoxBackend)
+duplicity.backend.register_backend("box", BoxBackend)

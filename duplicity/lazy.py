@@ -147,7 +147,9 @@ class Iter(object):
             default = f(default, next_item)
 
     @staticmethod
-    def multiplex(iter, num_of_forks, final_func=None, closing_func=None):  # pylint: disable=redefined-builtin
+    def multiplex(
+        iter, num_of_forks, final_func=None, closing_func=None
+    ):  # pylint: disable=redefined-builtin
         """Split a single iterater into a number of streams
 
         The return val will be a list with length num_of_forks, each
@@ -182,8 +184,10 @@ class Iter(object):
                     buffer.insert(0, next(iter))
                 except StopIteration:
                     # call closing_func if necessary
-                    if (forkposition == starting_forkposition and
-                            not called_closing_func[0]):
+                    if (
+                        forkposition == starting_forkposition
+                        and not called_closing_func[0]
+                    ):
                         closing_func()
                         called_closing_func[0] = None
                     raise StopIteration
@@ -297,7 +301,7 @@ class IterTreeReducer(object):
         while True:
             to_be_finished = branches[-1]
             base_index = to_be_finished.base_index
-            if base_index != index[:len(base_index)]:
+            if base_index != index[: len(base_index)]:
                 # out of the tree, finish with to_be_finished
                 to_be_finished.call_end_proc()
                 del branches[-1]
@@ -315,8 +319,7 @@ class IterTreeReducer(object):
 
     def process_w_branch(self, index, branch, args):
         """Run start_process on latest branch"""
-        robust.check_common_error(branch.on_error,
-                                  branch.start_process, args)
+        robust.check_common_error(branch.on_error, branch.start_process, args)
         if not branch.caught_exception:
             branch.start_successful = 1
         branch.base_index = index
@@ -348,8 +351,10 @@ class IterTreeReducer(object):
             return 1
 
         if index <= self.index:
-            log.Warn(_("Warning: oldindex %s >= newindex %s") %
-                     (util.uindex(self.index), util.uindex(index)))
+            log.Warn(
+                _("Warning: oldindex %s >= newindex %s")
+                % (util.uindex(self.index), util.uindex(index))
+            )
             return 1
 
         if self.finish_branches(index) is None:
@@ -357,8 +362,9 @@ class IterTreeReducer(object):
         last_branch = self.branches[-1]
         if last_branch.start_successful:
             if last_branch.can_fast_process(*args):
-                robust.check_common_error(last_branch.on_error,
-                                          last_branch.fast_process, args)
+                robust.check_common_error(
+                    last_branch.on_error, last_branch.fast_process, args
+                )
             else:
                 branch = self.add_branch()
                 self.process_w_branch(index, branch, args)
@@ -378,6 +384,7 @@ class ITRBranch(object):
     more.
 
     """
+
     base_index = index = None
     finished = None
     caught_exception = start_successful = None
@@ -423,9 +430,11 @@ class ITRBranch(object):
             filename = os.path.join(*self.index)  # pylint: disable=not-an-iterable
         else:
             filename = "."
-        log.Warn(_("Error '%s' processing %s") % (exc, os.fsdecode(filename)),
-                 log.WarningCode.cannot_process,
-                 util.escape(filename))
+        log.Warn(
+            _("Error '%s' processing %s") % (exc, os.fsdecode(filename)),
+            log.WarningCode.cannot_process,
+            util.escape(filename),
+        )
 
     def log_prev_error(self, index):
         """Call function if no pending exception"""
@@ -433,6 +442,8 @@ class ITRBranch(object):
             index_str = "."
         else:
             index_str = os.path.join(*index)
-        log.Warn(_("Skipping %s because of previous error") % os.fsdecode(index_str),
-                 log.WarningCode.process_skipped,
-                 util.escape(index_str))
+        log.Warn(
+            _("Skipping %s because of previous error") % os.fsdecode(index_str),
+            log.WarningCode.process_skipped,
+            util.escape(index_str),
+        )

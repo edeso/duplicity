@@ -28,11 +28,13 @@ import re
 
 class GlobbingError(Exception):
     """Something has gone wrong when parsing a glob string"""
+
     pass
 
 
 class FilePrefixError(GlobbingError):
     """Signals that a specified file doesn't start with correct prefix"""
+
     pass
 
 
@@ -44,7 +46,7 @@ def _glob_get_prefix_regexs(glob_str):
         # "" OK if comes first or last, as in /foo/
         raise GlobbingError(f"Consecutive '/'s found in globbing string {glob_str}")
 
-    prefixes = ["/".join(glob_parts[:i + 1]) for i in range(len(glob_parts))]
+    prefixes = ["/".join(glob_parts[: i + 1]) for i in range(len(glob_parts))]
     # we must make exception for root "/", only dir to end in slash
     if prefixes[0] == "":
         prefixes[0] = "/"
@@ -113,7 +115,7 @@ def select_fn_from_glob(glob_str, include, ignore_case=False):
 
     if glob_str.find("**") != -1:
         # glob_str has a ** in it
-        glob_str = glob_str[:glob_str.find("**") + 2]  # truncate after **
+        glob_str = glob_str[: glob_str.find("**") + 2]  # truncate after **
 
     # Below regex is translates to:
     # ^ string must be at the beginning of path
@@ -122,10 +124,11 @@ def select_fn_from_glob(glob_str, include, ignore_case=False):
     scan_comp_re = re_comp(f"^({'|'.join(_glob_get_prefix_regexs(glob_str))})$")
 
     def test_fn(path):
-        assert not path.uc_name[-1] == "/" or path.uc_name == "/", \
-            "path.name should never end in '/' during normal operation for " \
-            "normal paths (except '/' alone)\n" \
+        assert not path.uc_name[-1] == "/" or path.uc_name == "/", (
+            "path.name should never end in '/' during normal operation for "
+            "normal paths (except '/' alone)\n"
             "path.name here is " + path.uc_name + " and glob is " + glob_str
+        )
 
         if glob_comp_re.match(path.uc_name):
             # Path matches glob, or is contained within a matching folder
@@ -169,32 +172,32 @@ def glob_to_regex(pat):
 
     assert isinstance(pat, str)
 
-    i, n, res = 0, len(pat), ''
+    i, n, res = 0, len(pat), ""
     while i < n:
-        c, s = pat[i], pat[i:i + 2]
+        c, s = pat[i], pat[i : i + 2]
         i = i + 1
-        if s == '**':
+        if s == "**":
             res = f"{res}.*"
             i = i + 1
-        elif c == '*':
+        elif c == "*":
             res = f"{res}[^/]*"
-        elif c == '?':
+        elif c == "?":
             res = f"{res}[^/]"
-        elif c == '[':
+        elif c == "[":
             j = i
-            if j < n and pat[j] in '!^':
+            if j < n and pat[j] in "!^":
                 j = j + 1
-            if j < n and pat[j] == ']':
+            if j < n and pat[j] == "]":
                 j = j + 1
-            while j < n and pat[j] != ']':
+            while j < n and pat[j] != "]":
                 j = j + 1
             if j >= n:
                 res = f"{res}\\["  # interpret the [ literally
             else:
                 # Deal with inside of [..]
-                stuff = pat[i:j].replace('\\', '\\\\')
+                stuff = pat[i:j].replace("\\", "\\\\")
                 i = j + 1
-                if stuff[0] in '!^':
+                if stuff[0] in "!^":
                     stuff = f"^{stuff[1:]}"
                 res = f"{res}[{stuff}]"
         else:

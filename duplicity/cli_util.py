@@ -51,8 +51,9 @@ def command_line_error(message):
     Indicate a command line error and exit
     """
     sys.tracebacklimit = 0
-    raise CommandLineError(f"{message}\n" +
-                           _("Enter 'duplicity --help' for help screen."))
+    raise CommandLineError(
+        f"{message}\n" + _("Enter 'duplicity --help' for help screen.")
+    )
 
 
 class DuplicityAction(argparse.Action):
@@ -118,8 +119,12 @@ class IgnoreErrorsAction(DuplicityAction):
         super().__init__(option_strings, dest, **kwargs)
 
     def __call__(self, parser, namespace, values, option_string=None):
-        log.Warn(_("Running in 'ignore errors' mode due to --ignore-errors.\n"
-                   "Please reconsider if this was not intended"))
+        log.Warn(
+            _(
+                "Running in 'ignore errors' mode due to --ignore-errors.\n"
+                "Please reconsider if this was not intended"
+            )
+        )
         config.ignore_errors = True
 
 
@@ -128,8 +133,9 @@ class DeprecationAction(DuplicityAction):
         super().__init__(option_strings, dest, **kwargs)
 
     def __call__(self, parser, namespace, values, option_string=None):
-        command_line_error(dedent(
-            f"""\
+        command_line_error(
+            dedent(
+                f"""\
             Option '{option_string} was removed in 2.0.0.
             These additional options were deprecated in 2.0.0
                 --exclude-filelist-stdin
@@ -143,7 +149,9 @@ class DeprecationAction(DuplicityAction):
                 --s3-use-multiprocessing
                 --short-filenames
                 --time-separator
-                """))
+                """
+            )
+        )
 
 
 class ChangedOptionAction(DuplicityAction):
@@ -151,19 +159,26 @@ class ChangedOptionAction(DuplicityAction):
         super().__init__(option_strings, dest, **kwargs)
 
     def __call__(self, parser, namespace, values, option_string=None):
-        command_line_error(dedent(
-            f"""\
+        command_line_error(
+            dedent(
+                f"""\
             Option '{option_string} was changed in 2.0.0.
                 --file-to-restore to --path-to-restore
-                --do-not-restore-ownership to --no-restore-ownership"""))
+                --do-not-restore-ownership to --no-restore-ownership"""
+            )
+        )
 
 
 class WarnAsyncStoreConstAction(argparse._StoreConstAction):
     def __call__(self, parser, namespace, values, option_string=None):
-        log.Warn(_("Use of the --asynchronous-upload option is experimental "
-                   "and not safe for production! There are reported cases of "
-                   "undetected data loss during upload. Be aware and "
-                   "periodically verify your backups to be safe."))
+        log.Warn(
+            _(
+                "Use of the --asynchronous-upload option is experimental "
+                "and not safe for production! There are reported cases of "
+                "undetected data loss during upload. Be aware and "
+                "periodically verify your backups to be safe."
+            )
+        )
         setattr(namespace, self.dest, self.const)
 
 
@@ -205,7 +220,9 @@ def check_remove_time(val):
 
 def check_source_path(val):
     if not is_path(val):
-        command_line_error(_(f"Source should be pathname, not url.  Got '{val}' instead."))
+        command_line_error(
+            _(f"Source should be pathname, not url.  Got '{val}' instead.")
+        )
     if not os.path.exists(val):
         command_line_error(_(f"Argument source_path '{val}' does not exist."))
     return val
@@ -213,13 +230,17 @@ def check_source_path(val):
 
 def check_source_url(val):
     if not is_url(val):
-        command_line_error(_(f"Source should be url, not directory.  Got '{val}' instead."))
+        command_line_error(
+            _(f"Source should be url, not directory.  Got '{val}' instead.")
+        )
     return val
 
 
 def check_target_dir(val):
     if not is_path(val):
-        command_line_error(_(f"Target should be directory, not url.  Got '{val}' instead."))
+        command_line_error(
+            _(f"Target should be directory, not url.  Got '{val}' instead.")
+        )
     if not os.path.exists(val):
         try:
             os.makedirs(val, exist_ok=True)
@@ -230,7 +251,9 @@ def check_target_dir(val):
 
 def check_target_url(val):
     if not is_url(val):
-        command_line_error(_(f"Source should be url, not directory.  Got '{val}' instead."))
+        command_line_error(
+            _(f"Source should be url, not directory.  Got '{val}' instead.")
+        )
     return val
 
 
@@ -251,15 +274,15 @@ def check_verbosity(val):
     fail = False
     verb = log.NOTICE
     val = val.lower()
-    if val in ['e', 'error']:
+    if val in ["e", "error"]:
         verb = log.ERROR
-    elif val in ['w', 'warning']:
+    elif val in ["w", "warning"]:
         verb = log.WARNING
-    elif val in ['n', 'notice']:
+    elif val in ["n", "notice"]:
         verb = log.NOTICE
-    elif val in ['i', 'info']:
+    elif val in ["i", "info"]:
         verb = log.INFO
-    elif val in ['d', 'debug']:
+    elif val in ["d", "debug"]:
         verb = log.DEBUG
     else:
         try:
@@ -273,11 +296,14 @@ def check_verbosity(val):
         # TRANSL: In this portion of the usage instructions, "[ewnid]" indicates which
         # characters are permitted (e, w, n, i, or d); the brackets imply their own
         # meaning in regex; i.e., only one of the characters is allowed in an instance.
-        command_line_error(_(
-            "Verbosity must be one of: digit [0-9], character [ewnid],\n"
-            "or word ['error', 'warning', 'notice', 'info', 'debug'].\n"
-            "The default is 4 (Notice).  It is strongly recommended\n"
-            "that verbosity level is set at 2 (Warning) or higher."))
+        command_line_error(
+            _(
+                "Verbosity must be one of: digit [0-9], character [ewnid],\n"
+                "or word ['error', 'warning', 'notice', 'info', 'debug'].\n"
+                "The default is 4 (Notice).  It is strongly recommended\n"
+                "that verbosity level is set at 2 (Warning) or higher."
+            )
+        )
 
     log.setverbosity(verb)
     return verb
@@ -298,8 +324,9 @@ def expand_archive_dir(archdir, backname):
     """
     Return expanded version of archdir joined with backname.
     """
-    assert config.backup_name is not False, \
-        "expand_archive_dir() called prior to config.backup_name being set"
+    assert (
+        config.backup_name is not False
+    ), "expand_archive_dir() called prior to config.backup_name being set"
 
     return expand_fn(os.path.join(archdir, os.fsencode(backname)))
 
@@ -341,7 +368,7 @@ def is_path(val):
 
 def make_bytes(value):
     if isinstance(value, str):
-        return bytes(value, 'utf-8')
+        return bytes(value, "utf-8")
 
 
 def var2cmd(s):
@@ -409,15 +436,23 @@ def set_archive_dir(dirstring):
             pass
     archive_dir_path = path.Path(dirstring)
     if not archive_dir_path.isdir():
-        command_line_error(_(f"Specified archive directory '{archive_dir_path.uc_name}' is not a directory"))
+        command_line_error(
+            _(
+                f"Specified archive directory '{archive_dir_path.uc_name}' is not a directory"
+            )
+        )
     config.archive_dir_path = archive_dir_path
 
 
 def set_encrypt_key(encrypt_key):
     """Set config.gpg_profile.encrypt_key assuming proper key given"""
     if not gpg_key_patt.match(encrypt_key):
-        command_line_error(_(f"Encrypt key should be an 8, 16, or 40 character hex string, like 'AA0E73D2'.\n"
-                             f"Received '{encrypt_key}' length={len(encrypt_key)} instead."))
+        command_line_error(
+            _(
+                f"Encrypt key should be an 8, 16, or 40 character hex string, like 'AA0E73D2'.\n"
+                f"Received '{encrypt_key}' length={len(encrypt_key)} instead."
+            )
+        )
     if config.gpg_profile.recipients is None:
         config.gpg_profile.recipients = []
     config.gpg_profile.recipients.append(encrypt_key)
@@ -432,8 +467,12 @@ def set_encrypt_sign_key(encrypt_sign_key):
 def set_hidden_encrypt_key(hidden_encrypt_key):
     """Set config.gpg_profile.hidden_encrypt_key assuming proper key given"""
     if not gpg_key_patt.match(hidden_encrypt_key):
-        command_line_error(_(f"Hidden dncrypt key should be an 8, 16, or 40 character hex string, like 'AA0E73D2'.\n"
-                             f"Received '{hidden_encrypt_key}' length={len(hidden_encrypt_key)} instead."))
+        command_line_error(
+            _(
+                f"Hidden dncrypt key should be an 8, 16, or 40 character hex string, like 'AA0E73D2'.\n"
+                f"Received '{hidden_encrypt_key}' length={len(hidden_encrypt_key)} instead."
+            )
+        )
     if config.gpg_profile.hidden_recipients is None:
         config.gpg_profile.hidden_recipients = []
     config.gpg_profile.hidden_recipients.append(hidden_encrypt_key)
@@ -442,8 +481,12 @@ def set_hidden_encrypt_key(hidden_encrypt_key):
 def set_sign_key(sign_key):
     """Set config.gpg_profile.sign_key assuming proper key given"""
     if not gpg_key_patt.match(sign_key):
-        command_line_error(_(f"Sign key should be an 8, 16, or 40 character hex string, like 'AA0E73D2'.\n"
-                             f"Received '{sign_key}' length={len(sign_key)} instead."))
+        command_line_error(
+            _(
+                f"Sign key should be an 8, 16, or 40 character hex string, like 'AA0E73D2'.\n"
+                f"Received '{sign_key}' length={len(sign_key)} instead."
+            )
+        )
     config.gpg_profile.sign_key = sign_key
 
 

@@ -53,31 +53,37 @@ class AzureBackend(duplicity.backend.Backend):
             import azure_storage_blob
             from azure.storage.blob import BlobServiceClient
         except ImportError as e:
-            raise BackendException(f"Azure backend requires Microsoft Azure Storage SDK for Python\n"
-                                   f"(https://pypi.org/project/azure-storage-blob/).\n"
-                                   f"Exception: {str(e)}")
+            raise BackendException(
+                f"Azure backend requires Microsoft Azure Storage SDK for Python\n"
+                f"(https://pypi.org/project/azure-storage-blob/).\n"
+                f"Exception: {str(e)}"
+            )
 
-        self.container_name = parsed_url.path.lstrip('/')
+        self.container_name = parsed_url.path.lstrip("/")
 
         if not _is_valid_container_name(self.container_name):
-            raise BackendException('Invalid Azure Storage Blob container name.')
+            raise BackendException("Invalid Azure Storage Blob container name.")
 
-        if 'AZURE_CONNECTION_STRING' not in os.environ:
-            raise BackendException('AZURE_CONNECTION_STRING environment variable not set.')
+        if "AZURE_CONNECTION_STRING" not in os.environ:
+            raise BackendException(
+                "AZURE_CONNECTION_STRING environment variable not set."
+            )
 
         kwargs = {}
 
         if config.timeout:
-            kwargs['timeout'] = config.timeout
+            kwargs["timeout"] = config.timeout
 
         if config.azure_max_single_put_size:
-            kwargs['max_single_put_size'] = config.azure_max_single_put_size
+            kwargs["max_single_put_size"] = config.azure_max_single_put_size
 
         if config.azure_max_block_size:
-            kwargs['max_block_size'] = config.azure_max_single_put_size
+            kwargs["max_block_size"] = config.azure_max_single_put_size
 
-        conn_str = os.environ['AZURE_CONNECTION_STRING']
-        self.blob_service = BlobServiceClient.from_connection_string(conn_str, None, **kwargs)
+        conn_str = os.environ["AZURE_CONNECTION_STRING"]
+        self.blob_service = BlobServiceClient.from_connection_string(
+            conn_str, None, **kwargs
+        )
         self._get_or_create_container()
 
     def _get_or_create_container(self):
@@ -90,16 +96,17 @@ class AzureBackend(duplicity.backend.Backend):
         except ResourceExistsError:
             pass
         except Exception as e:
-            log.FatalError("Could not create Azure container: %s"
-                           % str(e).split('\n', 1)[0],
-                           log.ErrorCode.connection_failed)
+            log.FatalError(
+                "Could not create Azure container: %s" % str(e).split("\n", 1)[0],
+                log.ErrorCode.connection_failed,
+            )
 
     def _put(self, source_path, remote_filename):
         remote_filename = os.fsdecode(remote_filename)
         kwargs = {}
 
         if config.azure_max_connections:
-            kwargs['max_concurrency'] = config.azure_max_connections
+            kwargs["max_concurrency"] = config.azure_max_connections
 
         with source_path.open("rb") as data:
             self.container.upload_blob(remote_filename, data, **kwargs)
@@ -108,7 +115,9 @@ class AzureBackend(duplicity.backend.Backend):
 
     def _set_tier(self, remote_filename):
         if config.azure_blob_tier is not None:
-            self.container.set_standard_blob_tier_blobs(config.azure_blob_tier, remote_filename)
+            self.container.set_standard_blob_tier_blobs(
+                config.azure_blob_tier, remote_filename
+            )
 
     def _get(self, remote_filename, local_path):
         # https://docs.microsoft.com/en-us/python/api/azure-storage-blob/azure.storage.blob.containerclient?view=azure-python#download-blob-blob--offset-none--length-none----kwargs-
@@ -132,10 +141,10 @@ class AzureBackend(duplicity.backend.Backend):
     def _query(self, filename):
         client = self.container.get_blob_client(os.fsdecode(filename))
         prop = client.get_blob_properties()
-        return {'size': int(prop.size)}
+        return {"size": int(prop.size)}
 
     def _error_code(self, operation, e):  # pylint: disable=unused-argument
         return log.ErrorCode.backend_not_found
 
 
-duplicity.backend.register_backend('azure', AzureBackend)
+duplicity.backend.register_backend("azure", AzureBackend)

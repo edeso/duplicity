@@ -55,8 +55,8 @@ def exception_traceback(limit=50):
 
 def escape(string):
     """Convert a (bytes) filename to a format suitable for logging (quoted utf8)"""
-    string = os.fsdecode(string).encode('unicode-escape', 'replace')
-    return "'%s'" % string.decode('utf8', 'replace').replace("'", '\\x27')
+    string = os.fsdecode(string).encode("unicode-escape", "replace")
+    return "'%s'" % string.decode("utf8", "replace").replace("'", "\\x27")
 
 
 def uindex(index):
@@ -64,7 +64,7 @@ def uindex(index):
     if index:
         return os.path.join(*list(map(os.fsdecode, index)))
     else:
-        return '.'
+        return "."
 
 
 def uexc(e):
@@ -86,7 +86,7 @@ def uexc(e):
         # succeed in finding a string; return the whole message.
         return str(e)
     else:
-        return ''
+        return ""
 
 
 def maybe_ignore_errors(fn):
@@ -102,15 +102,16 @@ def maybe_ignore_errors(fn):
         return fn()
     except Exception as e:
         if config.ignore_errors:
-            log.Warn(_("IGNORED_ERROR: Warning: ignoring error as requested: %s: %s")
-                     % (e.__class__.__name__, uexc(e)))
+            log.Warn(
+                _("IGNORED_ERROR: Warning: ignoring error as requested: %s: %s")
+                % (e.__class__.__name__, uexc(e))
+            )
             return None
         else:
             raise
 
 
 class BlackHoleList(list):
-
     def append(self, x):
         pass
 
@@ -216,7 +217,9 @@ def which(program):
     """
 
     def is_exe(fpath):
-        return os.path.isfile(fpath) and os.path.isabs(fpath) and os.access(fpath, os.X_OK)
+        return (
+            os.path.isfile(fpath) and os.path.isabs(fpath) and os.access(fpath, os.X_OK)
+        )
 
     fpath, fname = os.path.split(program)
     if fpath:
@@ -233,16 +236,18 @@ def which(program):
 
 
 def start_debugger():
-    if '--pydevd' in sys.argv or os.environ.get("PYDEVD", None):
+    if "--pydevd" in sys.argv or os.environ.get("PYDEVD", None):
         try:
             import pydevd_pycharm  # pylint: disable=import-error
         except ImportError:
-            log.FatalError("Module pydevd_pycharm must be available for debugging.\n"
-                           "Remove '--pydevd' from command line and unset 'PYDEVD'\n"
-                           "from the environment to avoid starting the debugger.")
+            log.FatalError(
+                "Module pydevd_pycharm must be available for debugging.\n"
+                "Remove '--pydevd' from command line and unset 'PYDEVD'\n"
+                "from the environment to avoid starting the debugger."
+            )
 
         # NOTE: this needs to be customized for your system
-        debug_host = 'dione.local'
+        debug_host = "dione.local"
         debug_port = 6700
 
         # get previous pid:port if any
@@ -260,16 +265,19 @@ def start_debugger():
 
         # ignition
         try:
-            pydevd_pycharm.settrace(debug_host,
-                                    port=debug_port,
-                                    suspend=False,
-                                    stdoutToServer=True,
-                                    stderrToServer=True,
-                                    # patch_multiprocessing=True,
-                                    )
+            pydevd_pycharm.settrace(
+                debug_host,
+                port=debug_port,
+                suspend=False,
+                stdoutToServer=True,
+                stderrToServer=True,
+                # patch_multiprocessing=True,
+            )
             log.Info(f"Connection {debug_host}:{debug_port} accepted for debug.")
         except ConnectionRefusedError as e:
-            log.Info(f"Connection {debug_host}:{debug_port} refused for debug: {str(e)}")
+            log.Info(
+                f"Connection {debug_host}:{debug_port} refused for debug: {str(e)}"
+            )
 
         # in a dev environment the path is screwed so fix it.
         base = sys.path.pop(0)
@@ -278,7 +286,7 @@ def start_debugger():
         sys.path.insert(0, base)
 
         # save last debug pid:port used
-        os.environ['DEBUG_RUNNING'] = f"{os.getpid()}:{debug_port}"
+        os.environ["DEBUG_RUNNING"] = f"{os.getpid()}:{debug_port}"
 
 
 def merge_dicts(*dict_args):
@@ -307,9 +315,10 @@ def csv_args_to_dict(arg):
 
 
 class BytesEncoder(json.JSONEncoder):
-    u"""
+    """
     JSON doesn't allow byte type values. Converting them to unicode strings
     """
+
     def default(self, obj):
         if isinstance(obj, bytes):
             return obj.decode()

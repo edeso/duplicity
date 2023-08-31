@@ -61,11 +61,17 @@ class AsyncScheduler(object):
         Create an asynchronous scheduler that executes jobs with the
         given level of concurrency.
         """
-        log.Info(f"{self.__class__.__name__}: {_('instantiating at concurrency %d') % concurrency}")
-        assert concurrency >= 0, f"{self.__class__.__name__} concurrency level must be >= 0"
+        log.Info(
+            f"{self.__class__.__name__}: {_('instantiating at concurrency %d') % concurrency}"
+        )
+        assert (
+            concurrency >= 0
+        ), f"{self.__class__.__name__} concurrency level must be >= 0"
 
         self.__failed = False  # has at least one task failed so far?
-        self.__failed_waiter = None  # when __failed, the waiter of the first task that failed
+        self.__failed_waiter = (
+            None  # when __failed, the waiter of the first task that failed
+        )
         self.__concurrency = concurrency
         self.__worker_count = 0  # number of active workers
         self.__waiter_count = 0  # number of threads waiting to submit work
@@ -90,6 +96,7 @@ class AsyncScheduler(object):
         # task scheduling we do not want to append to the queue (will never
         # be popped).
         if self.__concurrency > 0:
+
             def _insert_barrier():
                 self.__barrier = True
 
@@ -133,13 +140,17 @@ class AsyncScheduler(object):
         if self.__concurrency == 0:
             # special case this to not require any platform support for
             # threading at all
-            log.Info(f"{self.__class__.__name__}: {_('running task synchronously (asynchronicity disabled)')}",
-                     log.InfoCode.synchronous_upload_begin)
+            log.Info(
+                f"{self.__class__.__name__}: {_('running task synchronously (asynchronicity disabled)')}",
+                log.InfoCode.synchronous_upload_begin,
+            )
 
             return self.__run_synchronously(fn, params)
         else:
-            log.Info(f"{self.__class__.__name__}: {_('scheduling task for asynchronous execution')}",
-                     log.InfoCode.asynchronous_upload_begin)
+            log.Info(
+                f"{self.__class__.__name__}: {_('scheduling task for asynchronous execution')}",
+                log.InfoCode.asynchronous_upload_begin,
+            )
 
             return self.__run_asynchronously(fn, params)
 
@@ -154,12 +165,13 @@ class AsyncScheduler(object):
         """
 
         def _wait():
-            interruptably_wait(self.__cv, lambda: self.__worker_count == 0 and self.__waiter_count == 0)
+            interruptably_wait(
+                self.__cv, lambda: self.__worker_count == 0 and self.__waiter_count == 0
+            )
 
         with_lock(self.__cv, _wait)
 
     def __run_synchronously(self, fn, params):
-
         # When running synchronously, we immediately leak any exception raised
         # for immediate failure reporting to calling code.
         ret = fn(*params)
@@ -167,8 +179,10 @@ class AsyncScheduler(object):
         def _waiter():
             return ret
 
-        log.Info(f"{self.__class__.__name__}: {_('task completed successfully')}",
-                 log.InfoCode.synchronous_upload_done)
+        log.Info(
+            f"{self.__class__.__name__}: {_('task completed successfully')}",
+            log.InfoCode.synchronous_upload_done,
+        )
 
         return _waiter
 
@@ -177,12 +191,16 @@ class AsyncScheduler(object):
 
         def check_pending_failure():
             if self.__failed:
-                log.Info(f"{self.__class__.__name__}: "
-                         f"_('a previously scheduled task has failed; propagating the result immediately')",
-                         log.InfoCode.asynchronous_upload_done)
+                log.Info(
+                    f"{self.__class__.__name__}: "
+                    f"_('a previously scheduled task has failed; propagating the result immediately')",
+                    log.InfoCode.asynchronous_upload_done,
+                )
                 self.__failed_waiter()
-                raise AssertionError(f"{self.__class__.__name__}: "
-                                     f"waiter should have raised an exception; this is a bug")
+                raise AssertionError(
+                    f"{self.__class__.__name__}: "
+                    f"waiter should have raised an exception; this is a bug"
+                )
 
         def wait_for_and_register_launch():
             check_pending_failure()  # raise on fail
@@ -199,7 +217,9 @@ class AsyncScheduler(object):
                 check_pending_failure()  # raise on fail
 
             self.__worker_count += 1
-            log.Debug(f"{self.__class__.__name__}: {_('active workers = %d') % (self.__worker_count,)}")
+            log.Debug(
+                f"{self.__class__.__name__}: {_('active workers = %d') % (self.__worker_count,)}"
+            )
 
         # simply wait for an OK condition to start, then launch our worker. the worker
         # never waits on us, we just wait for them.
@@ -218,9 +238,12 @@ class AsyncScheduler(object):
             try:
                 self.__execute_caller(caller)
             finally:
+
                 def complete_worker():
                     self.__worker_count -= 1
-                    log.Debug(f"{self.__class__.__name__}: {_('active workers = %d') % (self.__worker_count,)}")
+                    log.Debug(
+                        f"{self.__class__.__name__}: {_('active workers = %d') % (self.__worker_count,)}"
+                    )
                     self.__cv.notify_all()
 
                 with_lock(self.__cv, complete_worker)
@@ -233,6 +256,7 @@ class AsyncScheduler(object):
         # "other half" of the async split.
         succeeded, waiter = caller()
         if not succeeded:
+
             def _signal_failed():
                 if not self.__failed:
                     self.__failed = True
@@ -241,6 +265,11 @@ class AsyncScheduler(object):
 
             with_lock(self.__cv, _signal_failed)
 
-        log.Info("%s: %s" % (self.__class__.__name__,
-                             _("task execution done (success: %s)") % succeeded),
-                 log.InfoCode.asynchronous_upload_done)
+        log.Info(
+            "%s: %s"
+            % (
+                self.__class__.__name__,
+                _("task execution done (success: %s)") % succeeded,
+            ),
+            log.InfoCode.asynchronous_upload_done,
+        )

@@ -26,6 +26,7 @@ import logging
 import posixpath
 
 import duplicity.backend
+
 # import duplicity stuff
 from duplicity import log
 from duplicity.errors import BackendException
@@ -34,35 +35,35 @@ from duplicity.errors import BackendException
 def get_jotta_device(jfs):
     jottadev = None
     for j in jfs.devices:  # find Jotta/Shared folder
-        if j.name == 'Jotta':
+        if j.name == "Jotta":
             jottadev = j
     return jottadev
 
 
 def get_root_dir(jfs):
     jottadev = get_jotta_device(jfs)
-    root_dir = jottadev.mountPoints['Archive']
+    root_dir = jottadev.mountPoints["Archive"]
     return root_dir
 
 
 def set_jottalib_logging_level(log_level):
-    logger = logging.getLogger('jottalib')
+    logger = logging.getLogger("jottalib")
     logger.setLevel(getattr(logging, log_level))
 
 
 def set_jottalib_log_handlers(handlers):
-    logger = logging.getLogger('jottalib')
+    logger = logging.getLogger("jottalib")
     for handler in handlers:
         logger.addHandler(handler)
 
 
 def get_duplicity_log_level():
-    """ Get the current duplicity log level as a stdlib-compatible logging level"""
+    """Get the current duplicity log level as a stdlib-compatible logging level"""
     duplicity_log_level = log.LevelName(log.getverbosity())
 
     # notice is a duplicity-specific logging level not supported by stdlib
-    if duplicity_log_level == 'NOTICE':
-        duplicity_log_level = 'INFO'
+    if duplicity_log_level == "NOTICE":
+        duplicity_log_level = "INFO"
 
     return duplicity_log_level
 
@@ -81,8 +82,10 @@ class JottaCloudBackend(duplicity.backend.Backend):
                 JFSIncompleteFile,
             )
         except ImportError:
-            raise BackendException('JottaCloud backend requires jottalib'
-                                   ' (see https://pypi.python.org/pypi/jottalib).')
+            raise BackendException(
+                "JottaCloud backend requires jottalib"
+                " (see https://pypi.python.org/pypi/jottalib)."
+            )
 
         # Set jottalib loggers to the same verbosity as duplicity
         duplicity_log_level = get_duplicity_log_level()
@@ -94,7 +97,7 @@ class JottaCloudBackend(duplicity.backend.Backend):
         # Will fetch jottacloud auth from environment or .netrc
         self.client = JFS.JFS()
 
-        self.folder = self.get_or_create_directory(parsed_url.path.lstrip('/'))
+        self.folder = self.get_or_create_directory(parsed_url.path.lstrip("/"))
         log.Debug(f"Jottacloud folder for duplicity: {self.folder.path!r}")
 
     def get_or_create_directory(self, directory_name):
@@ -109,14 +112,16 @@ class JottaCloudBackend(duplicity.backend.Backend):
         # - Upload one file
         # - Retried if an exception is thrown
         resp = self.folder.up(source_path.open(), remote_filename)
-        log.Debug(f'jottacloud.put({source_path.name},{remote_filename}): {resp}')
+        log.Debug(f"jottacloud.put({source_path.name},{remote_filename}): {resp}")
 
     def _get(self, remote_filename, local_path):
         # - Get one file
         # - Retried if an exception is thrown
-        remote_file = self.client.getObject(posixpath.join(self.folder.path, remote_filename))
-        log.Debug(f'jottacloud.get({remote_filename},{local_path.name}): {remote_file}')
-        with open(local_path.name, 'wb') as to_file:
+        remote_file = self.client.getObject(
+            posixpath.join(self.folder.path, remote_filename)
+        )
+        log.Debug(f"jottacloud.get({remote_filename},{local_path.name}): {remote_file}")
+        with open(local_path.name, "wb") as to_file:
             for chunk in remote_file.stream():
                 to_file.write(chunk)
 
@@ -124,15 +129,20 @@ class JottaCloudBackend(duplicity.backend.Backend):
         # - List all files in the backend
         # - Return a list of filenames
         # - Retried if an exception is thrown
-        return list([f.name for f in self.folder.files()  # pylint: disable=no-value-for-parameter
-                     if not f.is_deleted() and f.state != 'INCOMPLETE'])
+        return list(
+            [
+                f.name
+                for f in self.folder.files()  # pylint: disable=no-value-for-parameter
+                if not f.is_deleted() and f.state != "INCOMPLETE"
+            ]
+        )
 
     def _delete(self, filename):
         # - Delete one file
         # - Retried if an exception is thrown
         remote_path = posixpath.join(self.folder.path, filename)
         remote_file = self.client.getObject(remote_path)
-        log.Debug(f'jottacloud.delete deleting: {remote_file} ({type(remote_file)})')
+        log.Debug(f"jottacloud.delete deleting: {remote_file} ({type(remote_file)})")
         remote_file.delete()
 
     def _query(self, filename):
@@ -140,14 +150,14 @@ class JottaCloudBackend(duplicity.backend.Backend):
         #  - Query metadata of one file
         #  - Return a dict with a 'size' key, and a file size value (-1 for not found)
         #  - Retried if an exception is thrown
-        log.Info(f'Querying size of {filename}')
+        log.Info(f"Querying size of {filename}")
         remote_path = posixpath.join(self.folder.path, filename)
         try:
             remote_file = self.client.getObject(remote_path)
         except JFSNotFoundError:
-            return {'size': -1}
+            return {"size": -1}
         return {
-            'size': remote_file.size,
+            "size": remote_file.size,
         }
 
     def _close(self):

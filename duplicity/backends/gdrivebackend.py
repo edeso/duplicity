@@ -38,9 +38,11 @@ class GDriveBackend(duplicity.backend.Backend):
             from googleapiclient.discovery import build
             from google.oauth2.service_account import Credentials
         except ImportError as e:
-            raise BackendException(f"""GDrive backend requires Google API client installation.
+            raise BackendException(
+                f"""GDrive backend requires Google API client installation.
 Please read the manpage for setup details.
-Exception: {str(e)}""")
+Exception: {str(e)}"""
+            )
 
         # Note Google has 2 drive methods, `Shared(previously Team) Drives` and `My Drive`
         #   both can be shared but require different addressing
@@ -71,38 +73,45 @@ Exception: {str(e)}""")
         self.shared_drive_flags_include = {}
         self.shared_drive_flags_support = {}
         self.shared_root_folder_id = None
-        if 'driveID' in parsed_url.query_args:
-            self.shared_drive_corpora = {'corpora': 'drive'}
-            self.shared_drive_id = {'driveId': parsed_url.query_args['driveID'][0]}
-            self.shared_drive_flags_include = {'includeItemsFromAllDrives': True}
-            self.shared_drive_flags_support = {'supportsAllDrives': True}
-        elif 'myDriveFolderID' in parsed_url.query_args:
-            self.shared_drive_corpora = {'corpora': 'user'}
-            self.shared_drive_flags_include = {'includeItemsFromAllDrives': True}
-            self.shared_drive_flags_support = {'supportsAllDrives': True}
-            self.shared_root_folder_id = parsed_url.query_args['myDriveFolderID'][0]
+        if "driveID" in parsed_url.query_args:
+            self.shared_drive_corpora = {"corpora": "drive"}
+            self.shared_drive_id = {"driveId": parsed_url.query_args["driveID"][0]}
+            self.shared_drive_flags_include = {"includeItemsFromAllDrives": True}
+            self.shared_drive_flags_support = {"supportsAllDrives": True}
+        elif "myDriveFolderID" in parsed_url.query_args:
+            self.shared_drive_corpora = {"corpora": "user"}
+            self.shared_drive_flags_include = {"includeItemsFromAllDrives": True}
+            self.shared_drive_flags_support = {"supportsAllDrives": True}
+            self.shared_root_folder_id = parsed_url.query_args["myDriveFolderID"][0]
         else:
             raise BackendException(
-                "gdrive: backend requires a query paramater should either be driveID or myDriveFolderID")
+                "gdrive: backend requires a query paramater should either be driveID or myDriveFolderID"
+            )
         if parsed_url.username is not None:
             client_id = f"{parsed_url.username}@{parsed_url.hostname}"
         else:
             client_id = parsed_url.hostname
 
-        if 'GOOGLE_SERVICE_JSON_FILE' in os.environ:
-            credentials = Credentials.from_service_account_file(os.environ['GOOGLE_SERVICE_JSON_FILE'])
+        if "GOOGLE_SERVICE_JSON_FILE" in os.environ:
+            credentials = Credentials.from_service_account_file(
+                os.environ["GOOGLE_SERVICE_JSON_FILE"]
+            )
             if credentials.service_account_email != client_id:
                 raise BackendException(
-                    f'Service account email in the JSON file ({credentials.service_account_email}) '
-                    f'does not match the URL ({client_id})')
+                    f"Service account email in the JSON file ({credentials.service_account_email}) "
+                    f"does not match the URL ({client_id})"
+                )
 
-        elif 'GOOGLE_CLIENT_SECRET_JSON_FILE' in os.environ and 'GOOGLE_CREDENTIALS_FILE' in os.environ:
+        elif (
+            "GOOGLE_CLIENT_SECRET_JSON_FILE" in os.environ
+            and "GOOGLE_CREDENTIALS_FILE" in os.environ
+        ):
             from google_auth_oauthlib.flow import InstalledAppFlow
             from google.auth.transport.requests import Request
 
             credentials = None
-            if os.path.exists(os.environ['GOOGLE_CREDENTIALS_FILE']):
-                with open(os.environ['GOOGLE_CREDENTIALS_FILE'], 'rb') as token:
+            if os.path.exists(os.environ["GOOGLE_CREDENTIALS_FILE"]):
+                with open(os.environ["GOOGLE_CREDENTIALS_FILE"], "rb") as token:
                     credentials = pickle.load(token)
 
             # If there are no (valid) credentials available, let the user log in.
@@ -111,70 +120,94 @@ Exception: {str(e)}""")
                     credentials.refresh(Request())
                 else:
                     flow = InstalledAppFlow.from_client_secrets_file(
-                        os.environ['GOOGLE_CLIENT_SECRET_JSON_FILE'],
-                        ['https://www.googleapis.com/auth/drive.file'])
+                        os.environ["GOOGLE_CLIENT_SECRET_JSON_FILE"],
+                        ["https://www.googleapis.com/auth/drive.file"],
+                    )
 
-                    if flow.client_config['client_id'] != client_id:
+                    if flow.client_config["client_id"] != client_id:
                         raise BackendException(
                             f"Client ID in the JSON file ({flow.client_config['client_id']}) "
-                            f"does not match the URL ({client_id})")
+                            f"does not match the URL ({client_id})"
+                        )
 
                     flow_args = {}
-                    if 'GOOGLE_OAUTH_LOCAL_SERVER_PORT' in os.environ:
-                        flow_args['port'] = int(os.environ['GOOGLE_OAUTH_LOCAL_SERVER_PORT'])
-                    if 'GOOGLE_OAUTH_LOCAL_SERVER_HOST' in os.environ:
-                        flow_args['host'] = os.environ['GOOGLE_OAUTH_LOCAL_SERVER_HOST']
+                    if "GOOGLE_OAUTH_LOCAL_SERVER_PORT" in os.environ:
+                        flow_args["port"] = int(
+                            os.environ["GOOGLE_OAUTH_LOCAL_SERVER_PORT"]
+                        )
+                    if "GOOGLE_OAUTH_LOCAL_SERVER_HOST" in os.environ:
+                        flow_args["host"] = os.environ["GOOGLE_OAUTH_LOCAL_SERVER_HOST"]
                     credentials = flow.run_local_server(**flow_args)
                 # Save the credentials for the next run
-                with open(os.environ['GOOGLE_CREDENTIALS_FILE'], 'wb') as token:
+                with open(os.environ["GOOGLE_CREDENTIALS_FILE"], "wb") as token:
                     pickle.dump(credentials, token)
 
             if credentials.client_id != client_id:
                 raise BackendException(
-                    f'Client ID in the credentials file ({credentials.client_id}) does not match the URL ({client_id})')
+                    f"Client ID in the credentials file ({credentials.client_id}) does not match the URL ({client_id})"
+                )
 
         else:
             raise BackendException(
-                'GOOGLE_SERVICE_JSON_FILE or GOOGLE_CLIENT_SECRET_JSON_FILE environment '
-                'variable not set. Please read the manpage to fix.')
+                "GOOGLE_SERVICE_JSON_FILE or GOOGLE_CLIENT_SECRET_JSON_FILE environment "
+                "variable not set. Please read the manpage to fix."
+            )
 
-        self.drive = build('drive', 'v3', credentials=credentials)
+        self.drive = build("drive", "v3", credentials=credentials)
 
         if self.shared_drive_id:
-            parent_folder_id = self.shared_drive_id['driveId']
+            parent_folder_id = self.shared_drive_id["driveId"]
         elif self.shared_root_folder_id:
             parent_folder_id = self.shared_root_folder_id
         else:
-            parent_folder_id = 'root'
+            parent_folder_id = "root"
 
         # Fetch destination folder entry and create hierarchy if required.
-        folder_names = parsed_url.path.split('/')
+        folder_names = parsed_url.path.split("/")
         for folder_name in folder_names:
-
             if not folder_name:
                 continue
-            q = ("name = '" + folder_name + "' and '" + parent_folder_id +
-                 "' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed=false")
-            results = self.drive.files().list(q=q,
-                                              pageSize=1,
-                                              fields="files(name,id),nextPageToken",
-                                              **self.shared_drive_corpora,
-                                              **self.shared_drive_id,
-                                              **self.shared_drive_flags_include,
-                                              **self.shared_drive_flags_support).execute()
-            file_list = results.get('files', [])
+            q = (
+                "name = '"
+                + folder_name
+                + "' and '"
+                + parent_folder_id
+                + "' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed=false"
+            )
+            results = (
+                self.drive.files()
+                .list(
+                    q=q,
+                    pageSize=1,
+                    fields="files(name,id),nextPageToken",
+                    **self.shared_drive_corpora,
+                    **self.shared_drive_id,
+                    **self.shared_drive_flags_include,
+                    **self.shared_drive_flags_support,
+                )
+                .execute()
+            )
+            file_list = results.get("files", [])
             if len(file_list) == 0:
-                file_metadata = {'name': folder_name,
-                                 'mimeType': "application/vnd.google-apps.folder",
-                                 'parents': [parent_folder_id]}
+                file_metadata = {
+                    "name": folder_name,
+                    "mimeType": "application/vnd.google-apps.folder",
+                    "parents": [parent_folder_id],
+                }
                 file_metadata.update(self.shared_drive_id)
-                folder = self.drive.files().create(body=file_metadata,
-                                                   fields='id',
-                                                   **self.shared_drive_flags_support).execute()
+                folder = (
+                    self.drive.files()
+                    .create(
+                        body=file_metadata,
+                        fields="id",
+                        **self.shared_drive_flags_support,
+                    )
+                    .execute()
+                )
             else:
                 folder = file_list[0]
 
-            parent_folder_id = folder['id']
+            parent_folder_id = folder["id"]
 
         self.folder = parent_folder_id
         self.id_cache = {}
@@ -189,38 +222,57 @@ Exception: {str(e)}""")
             # need to validate the entry.
             file_id = self.id_cache[filename]
             try:
-                drive_file = self.drive.files().get(fileId=file_id,
-                                                    fields='id,size,name,parents,trashed',
-                                                    **self.shared_drive_flags_support).execute()
-                if drive_file['name'] == filename and not drive_file['trashed']:
-                    for parent in drive_file['parents']:
+                drive_file = (
+                    self.drive.files()
+                    .get(
+                        fileId=file_id,
+                        fields="id,size,name,parents,trashed",
+                        **self.shared_drive_flags_support,
+                    )
+                    .execute()
+                )
+                if drive_file["name"] == filename and not drive_file["trashed"]:
+                    for parent in drive_file["parents"]:
                         if parent == self.folder:
-                            log.Info(f"GDrive backend: found file '{filename}' with id {file_id} in ID cache")
+                            log.Info(
+                                f"GDrive backend: found file '{filename}' with id {file_id} in ID cache"
+                            )
                             return drive_file
             except HttpError as error:
                 # A 404 occurs if the ID is no longer valid
                 if error.resp.status != 404:
                     raise
             # If we get here, the cache entry is invalid
-            log.Info(f"GDrive backend: invalidating '{filename}' (previously ID {file_id}) from ID cache")
+            log.Info(
+                f"GDrive backend: invalidating '{filename}' (previously ID {file_id}) from ID cache"
+            )
             del self.id_cache[filename]
 
         # Not found in the cache, so use directory listing. This is less
         # reliable because there is no strong consistency.
         q = f"name = '{filename}' and '{self.folder}' in parents and trashed = false"
-        results = self.drive.files().list(q=q, fields='files(name,id,size),nextPageToken',
-                                          pageSize=2,
-                                          **self.shared_drive_corpora,
-                                          **self.shared_drive_id,
-                                          **self.shared_drive_flags_include,
-                                          **self.shared_drive_flags_support).execute()
-        file_list = results.get('files', [])
+        results = (
+            self.drive.files()
+            .list(
+                q=q,
+                fields="files(name,id,size),nextPageToken",
+                pageSize=2,
+                **self.shared_drive_corpora,
+                **self.shared_drive_id,
+                **self.shared_drive_flags_include,
+                **self.shared_drive_flags_support,
+            )
+            .execute()
+        )
+        file_list = results.get("files", [])
         if len(file_list) > 1:
             log.FatalError(f"GDrive backend: multiple files called '{filename}'.")
         elif len(file_list) > 0:
-            file_id = file_list[0]['id']
-            self.id_cache[filename] = file_list[0]['id']
-            log.Info(f"GDrive backend: found file '{filename}' with id {file_id} on server, adding to cache")
+            file_id = file_list[0]["id"]
+            self.id_cache[filename] = file_list[0]["id"]
+            log.Info(
+                f"GDrive backend: found file '{filename}' with id {file_id} on server, adding to cache"
+            )
             return file_list[0]
 
         log.Info(f"GDrive backend: file '{filename}' not found in cache or on server")
@@ -229,19 +281,19 @@ Exception: {str(e)}""")
     def id_by_name(self, filename):
         drive_file = self.file_by_name(filename)
         if drive_file is None:
-            return ''
+            return ""
         else:
-            return drive_file['id']
+            return drive_file["id"]
 
     def _put(self, source_path, remote_filename):
         from googleapiclient.http import MediaFileUpload
 
         remote_filename = os.fsdecode(remote_filename)
         drive_file = self.file_by_name(remote_filename)
-        if remote_filename.endswith('.gpg'):
-            mime_type = 'application/pgp-encrypted'
+        if remote_filename.endswith(".gpg"):
+            mime_type = "application/pgp-encrypted"
         else:
-            mime_type = 'text/plain'
+            mime_type = "text/plain"
 
         file_size = os.path.getsize(source_path.name)
         if file_size >= self.MIN_RESUMABLE_UPLOAD:
@@ -251,31 +303,46 @@ Exception: {str(e)}""")
             resumable = False
             num_retries = 0
 
-        media = MediaFileUpload(source_path.name, mimetype=mime_type, resumable=resumable)
+        media = MediaFileUpload(
+            source_path.name, mimetype=mime_type, resumable=resumable
+        )
         if drive_file is None:
             # No existing file, make a new one
-            file_metadata = {'name': remote_filename, 'parents': [self.folder]}
+            file_metadata = {"name": remote_filename, "parents": [self.folder]}
             file_metadata.update(self.shared_drive_id)
             log.Info(f"GDrive backend: creating new file '{remote_filename}'")
-            drive_file = self.drive.files().create(
-                body=file_metadata,
-                media_body=media,
-                **self.shared_drive_flags_support).execute(num_retries=num_retries)
+            drive_file = (
+                self.drive.files()
+                .create(
+                    body=file_metadata,
+                    media_body=media,
+                    **self.shared_drive_flags_support,
+                )
+                .execute(num_retries=num_retries)
+            )
         else:
-            log.Info(f"GDrive backend: replacing existing file '{remote_filename}' with id '{drive_file['id']}'")
-            drive_file = self.drive.files().update(
-                media_body=media,
-                fileId=drive_file['id'],
-                **self.shared_drive_flags_support).execute(num_retries=num_retries)
+            log.Info(
+                f"GDrive backend: replacing existing file '{remote_filename}' with id '{drive_file['id']}'"
+            )
+            drive_file = (
+                self.drive.files()
+                .update(
+                    media_body=media,
+                    fileId=drive_file["id"],
+                    **self.shared_drive_flags_support,
+                )
+                .execute(num_retries=num_retries)
+            )
 
-        self.id_cache[remote_filename] = drive_file['id']
+        self.id_cache[remote_filename] = drive_file["id"]
 
     def _get(self, remote_filename, local_path):
         from googleapiclient.http import MediaIoBaseDownload
 
         drive_file = self.file_by_name(remote_filename)
-        request = self.drive.files().get_media(fileId=drive_file['id'],
-                                               **self.shared_drive_flags_support)
+        request = self.drive.files().get_media(
+            fileId=drive_file["id"], **self.shared_drive_flags_support
+        )
         with open(os.fsdecode(local_path.name), "wb") as fh:
             done = False
             downloader = MediaIoBaseDownload(fh, request)
@@ -286,51 +353,62 @@ Exception: {str(e)}""")
         page_token = None
         drive_files = []
         while True:
-            response = self.drive.files().list(
-                q=f"'{self.folder}' in parents and trashed=false",
-                pageSize=self.PAGE_SIZE,
-                fields="files(name,id),nextPageToken",
-                pageToken=page_token,
-                **self.shared_drive_corpora,
-                **self.shared_drive_id,
-                **self.shared_drive_flags_include,
-                **self.shared_drive_flags_support).execute()
+            response = (
+                self.drive.files()
+                .list(
+                    q=f"'{self.folder}' in parents and trashed=false",
+                    pageSize=self.PAGE_SIZE,
+                    fields="files(name,id),nextPageToken",
+                    pageToken=page_token,
+                    **self.shared_drive_corpora,
+                    **self.shared_drive_id,
+                    **self.shared_drive_flags_include,
+                    **self.shared_drive_flags_support,
+                )
+                .execute()
+            )
 
-            drive_files += response.get('files', [])
+            drive_files += response.get("files", [])
 
-            page_token = response.get('nextPageToken', None)
+            page_token = response.get("nextPageToken", None)
             if page_token is None:
                 break
 
-        filenames = set(item['name'] for item in drive_files)
+        filenames = set(item["name"] for item in drive_files)
         # Check the cache as well. A file might have just been uploaded but
         # not yet appear in the listing.
         # Note: do not use iterkeys() here, because file_by_name will modify
         # the cache if it finds invalid entries.
         for filename in list(self.id_cache.keys()):
-            if (filename not in filenames) and (self.file_by_name(filename) is not None):
+            if (filename not in filenames) and (
+                self.file_by_name(filename) is not None
+            ):
                 filenames.add(filename)
         return list(filenames)
 
     def _delete(self, filename):
         file_id = self.id_by_name(filename)
-        if file_id == '':
-            log.Warn(f"File '{os.fsdecode(filename)}' does not exist while trying to delete it")
+        if file_id == "":
+            log.Warn(
+                f"File '{os.fsdecode(filename)}' does not exist while trying to delete it"
+            )
         else:
-            self.drive.files().delete(fileId=file_id,
-                                      **self.shared_drive_flags_support).execute()
+            self.drive.files().delete(
+                fileId=file_id, **self.shared_drive_flags_support
+            ).execute()
 
     def _query(self, filename):
         drive_file = self.file_by_name(filename)
         if drive_file is None:
             size = -1
         else:
-            size = int(drive_file['size'])
-        return {'size': size}
+            size = int(drive_file["size"])
+        return {"size": size}
 
     def _error_code(self, operation, error):  # pylint: disable=unused-argument
         from google.auth.exceptions import RefreshError
         from googleapiclient.errors import HttpError
+
         if isinstance(error, HttpError):
             return log.ErrorCode.backend_not_found
         elif isinstance(error, RefreshError):
@@ -338,6 +416,6 @@ Exception: {str(e)}""")
         return log.ErrorCode.backend_error
 
 
-duplicity.backend.register_backend('gdrive', GDriveBackend)
+duplicity.backend.register_backend("gdrive", GDriveBackend)
 
-duplicity.backend.uses_netloc.extend(['gdrive'])
+duplicity.backend.uses_netloc.extend(["gdrive"])

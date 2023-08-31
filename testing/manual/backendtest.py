@@ -24,7 +24,7 @@ import sys
 import traceback
 import unittest
 
-_top_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..')
+_top_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..")
 sys.path.insert(0, _top_dir)
 
 try:
@@ -39,22 +39,23 @@ from testing.unit.test_backend_instance import BackendInstanceBase
 import duplicity.backend
 
 # undo the overrides support that our testing framework adds
-sys.path = [x for x in sys.path if '/overrides' not in x]
-os.environ['PATH'] = ':'.join([x for x in os.environ['PATH'].split(':')
-                               if '/overrides' not in x])
-os.environ['PYTHONPATH'] = ':'.join([x for x in os.environ['PYTHONPATH'].split(':')
-                                     if '/overrides' not in x])
+sys.path = [x for x in sys.path if "/overrides" not in x]
+os.environ["PATH"] = ":".join(
+    [x for x in os.environ["PATH"].split(":") if "/overrides" not in x]
+)
+os.environ["PYTHONPATH"] = ":".join(
+    [x for x in os.environ["PYTHONPATH"].split(":") if "/overrides" not in x]
+)
 
 
 class ManualBackendBase(BackendInstanceBase):
-
     url_string = None
     password = None
 
     def setUp(self):
         super().setUp()
-        self.set_config('num_retries', 1)
-        self.set_config('ssl_no_check_certificate', True)
+        self.set_config("num_retries", 1)
+        self.set_config("ssl_no_check_certificate", True)
         self.setBackendInfo()
         if self.password is not None:
             self.set_environ("FTP_PASSWORD", self.password)
@@ -63,7 +64,7 @@ class ManualBackendBase(BackendInstanceBase):
 
         # Clear out backend first
         if self.backend is not None:
-            if hasattr(self.backend, '_delete_list'):
+            if hasattr(self.backend, "_delete_list"):
                 self.backend._delete_list(self.backend._list())
             else:
                 for x in self.backend._list():
@@ -76,7 +77,8 @@ class ManualBackendBase(BackendInstanceBase):
 class sshParamikoTest(ManualBackendBase):
     def setBackendInfo(self):
         from duplicity.backends import ssh_paramiko_backend
-        duplicity.backend._backends['ssh'] = ssh_paramiko_backend.SSHParamikoBackend
+
+        duplicity.backend._backends["ssh"] = ssh_paramiko_backend.SSHParamikoBackend
         self.url_string = test_config.ssh_url
         self.password = test_config.ssh_password
 
@@ -84,7 +86,8 @@ class sshParamikoTest(ManualBackendBase):
 class sshParamikoScpTest(ManualBackendBase):
     def setBackendInfo(self):
         from duplicity.backends import ssh_paramiko_backend
-        duplicity.backend._backends['scp'] = ssh_paramiko_backend.SSHParamikoBackend
+
+        duplicity.backend._backends["scp"] = ssh_paramiko_backend.SSHParamikoBackend
         self.url_string = test_config.ssh_url
         self.password = test_config.ssh_password
 
@@ -92,7 +95,8 @@ class sshParamikoScpTest(ManualBackendBase):
 class sshPexpectTest(ManualBackendBase):
     def setBackendInfo(self):
         from duplicity.backends import ssh_pexpect_backend
-        duplicity.backend._backends['ssh'] = ssh_pexpect_backend.SSHPExpectBackend
+
+        duplicity.backend._backends["ssh"] = ssh_pexpect_backend.SSHPExpectBackend
         self.url_string = test_config.ssh_url
         self.password = test_config.ssh_password
 
@@ -100,7 +104,8 @@ class sshPexpectTest(ManualBackendBase):
 class sshPexpectScpTest(ManualBackendBase):
     def setBackendInfo(self):
         from duplicity.backends import ssh_pexpect_backend
-        duplicity.backend._backends['scp'] = ssh_pexpect_backend.SSHPExpectBackend
+
+        duplicity.backend._backends["scp"] = ssh_pexpect_backend.SSHPExpectBackend
         self.url_string = test_config.ssh_url
         self.password = test_config.ssh_password
 
@@ -113,7 +118,11 @@ class ftpTest(ManualBackendBase):
 
 class ftpsTest(ManualBackendBase):
     def setBackendInfo(self):
-        self.url_string = test_config.ftp_url.replace('ftp://', 'ftps://') if test_config.ftp_url else None
+        self.url_string = (
+            test_config.ftp_url.replace("ftp://", "ftps://")
+            if test_config.ftp_url
+            else None
+        )
         self.password = test_config.ftp_password
 
 
@@ -147,7 +156,8 @@ class gsTest(ManualBackendBase):
 class cfCloudfilesTest(ManualBackendBase):
     def setBackendInfo(self):
         from duplicity.backends import _cf_cloudfiles
-        duplicity.backend._backends['cf+http'] = _cf_cloudfiles.CloudFilesBackend
+
+        duplicity.backend._backends["cf+http"] = _cf_cloudfiles.CloudFilesBackend
         self.set_environ("CLOUDFILES_USERNAME", test_config.cf_username)
         self.set_environ("CLOUDFILES_APIKEY", test_config.cf_api_key)
         self.url_string = test_config.cf_url
@@ -156,7 +166,8 @@ class cfCloudfilesTest(ManualBackendBase):
 class cfPyraxTest(ManualBackendBase):
     def setBackendInfo(self):
         from duplicity.backends import _cf_pyrax
-        duplicity.backend._backends['cf+http'] = _cf_pyrax.PyraxBackend
+
+        duplicity.backend._backends["cf+http"] = _cf_pyrax.PyraxBackend
         self.set_environ("CLOUDFILES_USERNAME", test_config.cf_username)
         self.set_environ("CLOUDFILES_APIKEY", test_config.cf_api_key)
         self.url_string = test_config.cf_url
@@ -169,8 +180,10 @@ class swiftTest(ManualBackendBase):
         self.set_environ("SWIFT_PASSWORD", test_config.swift_password)
         self.set_environ("SWIFT_TENANTNAME", test_config.swift_tenant)
         # Assumes you're just using the same storage as your cloudfiles config above
-        self.set_environ("SWIFT_AUTHURL", 'https://identity.api.rackspacecloud.com/v2.0/')
-        self.set_environ("SWIFT_AUTHVERSION", '2')
+        self.set_environ(
+            "SWIFT_AUTHURL", "https://identity.api.rackspacecloud.com/v2.0/"
+        )
+        self.set_environ("SWIFT_AUTHVERSION", "2")
 
 
 class megaTest(ManualBackendBase):
@@ -189,7 +202,7 @@ class webdavsTest(ManualBackendBase):
     def setBackendInfo(self):
         self.url_string = test_config.webdavs_url
         self.password = test_config.webdavs_password
-        self.set_config('ssl_no_check_certificate', True)
+        self.set_config("ssl_no_check_certificate", True)
 
 
 class gdocsTest(ManualBackendBase):
@@ -207,7 +220,7 @@ class imapTest(ManualBackendBase):
     def setBackendInfo(self):
         self.url_string = test_config.imap_url
         self.set_environ("IMAP_PASSWORD", test_config.imap_password)
-        self.set_config('imap_mailbox', 'deja-dup-testing')
+        self.set_config("imap_mailbox", "deja-dup-testing")
 
 
 class gioSSHTest(ManualBackendBase):
@@ -224,9 +237,11 @@ class gioFTPTest(ManualBackendBase):
 
 if __name__ == "__main__":
     defaultTest = None
-    if len(sys. argv) > 1:
+    if len(sys.argv) > 1:
+
         class manualTest(ManualBackendBase):
             def setBackendInfo(self):
                 self.url_string = sys.argv[1]
-        defaultTest = 'manualTest'
+
+        defaultTest = "manualTest"
     unittest.main(argv=[sys.argv[0]], defaultTest=defaultTest)

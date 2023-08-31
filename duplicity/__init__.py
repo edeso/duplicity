@@ -21,6 +21,6 @@
 
 import gettext
 
-__version__ = '$version'
+__version__ = "$version"
 
-gettext.install('duplicity', names=['ngettext'])
+gettext.install("duplicity", names=["ngettext"])

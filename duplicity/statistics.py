@@ -38,45 +38,48 @@ class StatsException(Exception):
 
 class StatsObj(object):
     """Contains various statistics, provide string conversion functions"""
+
     # used when quoting files in get_stats_line
     space_regex = re.compile(" ")
 
-    stat_file_attrs = ('SourceFiles',
-                       'SourceFileSize',
-                       'NewFiles',
-                       'NewFileSize',
-                       'DeletedFiles',
-                       'ChangedFiles',
-                       'ChangedFileSize',
-                       'ChangedDeltaSize',
-                       'DeltaEntries',
-                       'RawDeltaSize')
-    stat_misc_attrs = ('Errors',
-                       'TotalDestinationSizeChange')
-    stat_time_attrs = ('StartTime',
-                       'EndTime',
-                       'ElapsedTime')
-    stat_attrs = (('Filename',) + stat_time_attrs +
-                  stat_misc_attrs + stat_file_attrs)
+    stat_file_attrs = (
+        "SourceFiles",
+        "SourceFileSize",
+        "NewFiles",
+        "NewFileSize",
+        "DeletedFiles",
+        "ChangedFiles",
+        "ChangedFileSize",
+        "ChangedDeltaSize",
+        "DeltaEntries",
+        "RawDeltaSize",
+    )
+    stat_misc_attrs = ("Errors", "TotalDestinationSizeChange")
+    stat_time_attrs = ("StartTime", "EndTime", "ElapsedTime")
+    stat_attrs = ("Filename",) + stat_time_attrs + stat_misc_attrs + stat_file_attrs
 
     # Below, the second value in each pair is true iff the value
     # indicates a number of bytes
-    stat_file_pairs = (('SourceFiles', False),
-                       ('SourceFileSize', True),
-                       ('NewFiles', False),
-                       ('NewFileSize', True),
-                       ('DeletedFiles', False),
-                       ('ChangedFiles', False),
-                       ('ChangedFileSize', True),
-                       ('ChangedDeltaSize', True),
-                       ('DeltaEntries', False),
-                       ('RawDeltaSize', True))
+    stat_file_pairs = (
+        ("SourceFiles", False),
+        ("SourceFileSize", True),
+        ("NewFiles", False),
+        ("NewFileSize", True),
+        ("DeletedFiles", False),
+        ("ChangedFiles", False),
+        ("ChangedFileSize", True),
+        ("ChangedDeltaSize", True),
+        ("DeltaEntries", False),
+        ("RawDeltaSize", True),
+    )
 
     # This is used in get_byte_summary_string below
-    byte_abbrev_list = ((1024 * 1024 * 1024 * 1024, "TB"),
-                        (1024 * 1024 * 1024, "GB"),
-                        (1024 * 1024, "MB"),
-                        (1024, "KB"))
+    byte_abbrev_list = (
+        (1024 * 1024 * 1024 * 1024, "TB"),
+        (1024 * 1024 * 1024, "GB"),
+        (1024 * 1024, "MB"),
+        (1024, "KB"),
+    )
 
     def __init__(self):
         """Set attributes to None"""
@@ -107,10 +110,15 @@ class StatsObj(object):
                 # take of leading and trailing quote and quote spaces.
                 filename = self.space_regex.sub("\\\\x20", repr(filename))
                 n = 1
-                if filename[0] == 'u':
+                if filename[0] == "u":
                     n = 2
                 filename = filename[n:-1]
-        return " ".join([filename, ] + file_attrs)
+        return " ".join(
+            [
+                filename,
+            ]
+            + file_attrs
+        )
 
     def set_stats_from_line(self, line):
         """Set statistics from given line"""
@@ -123,8 +131,9 @@ class StatsObj(object):
         lineparts = line.split(" ")
         if len(lineparts) < len(self.stat_file_attrs):
             error()
-        for attr, val_string in zip(self.stat_file_attrs,
-                                    lineparts[-len(self.stat_file_attrs):]):
+        for attr, val_string in zip(
+            self.stat_file_attrs, lineparts[-len(self.stat_file_attrs) :]
+        ):
             try:
                 val = int(val_string)
             except ValueError:
@@ -143,16 +152,32 @@ class StatsObj(object):
         """Return portion of statistics string dealing with time"""
         timelist = []
         if self.StartTime is not None:
-            timelist.append("StartTime %.2f (%s)\n" %  # pylint: disable=bad-string-format-type
-                            (self.StartTime, dup_time.timetopretty(self.StartTime)))
+            timelist.append(
+                "StartTime %.2f (%s)\n"
+                % (  # pylint: disable=bad-string-format-type
+                    self.StartTime,
+                    dup_time.timetopretty(self.StartTime),
+                )
+            )
         if self.EndTime is not None:
-            timelist.append("EndTime %.2f (%s)\n" %  # pylint: disable=bad-string-format-type
-                            (self.EndTime, dup_time.timetopretty(self.EndTime)))
-        if self.ElapsedTime or (self.StartTime is not None and  # pylint:disable=access-member-before-definition
-                                self.EndTime is not None):
-            if self.ElapsedTime is None:  # pylint:disable=access-member-before-definition
+            timelist.append(
+                "EndTime %.2f (%s)\n"
+                % (  # pylint: disable=bad-string-format-type
+                    self.EndTime,
+                    dup_time.timetopretty(self.EndTime),
+                )
+            )
+        if self.ElapsedTime or (  # pylint:disable=access-member-before-definition
+            self.StartTime is not None and self.EndTime is not None
+        ):
+            if (
+                self.ElapsedTime  # pylint:disable=access-member-before-definition
+                is None
+            ):
                 self.ElapsedTime = self.EndTime - self.StartTime
-            timelist.append(f"ElapsedTime {self.ElapsedTime:.2f} ({dup_time.inttopretty(self.ElapsedTime)})\n")
+            timelist.append(
+                f"ElapsedTime {self.ElapsedTime:.2f} ({dup_time.inttopretty(self.ElapsedTime)})\n"
+            )
         return "".join(timelist)
 
     def get_filestats_string(self):
@@ -244,7 +269,7 @@ class StatsObj(object):
                 return default
 
         py_obj = {key: self.__dict__[key] for key in self.stat_attrs}
-        for t in ('StartTime', 'EndTime'):
+        for t in ("StartTime", "EndTime"):
             t_str = f"{t}_str"
             py_obj[t_str] = dup_time.timetostring(py_obj[t])
         if col_stat:
@@ -253,21 +278,30 @@ class StatsObj(object):
             backup_meta["action"] = col_stat.action
             backup_meta["skipped_inc"] = config.skipped_inc
             backup_meta["time_full_bkp"] = backup_chain.fullset.time
-            backup_meta["time_full_bkp_str"] = dup_time.timetostring(backup_meta["time_full_bkp"])
+            backup_meta["time_full_bkp_str"] = dup_time.timetostring(
+                backup_meta["time_full_bkp"]
+            )
             backup_meta["no_of_inc"] = len(backup_chain.incset_list)
             backup_meta["target"] = fail_save_read(config, "target_url")
             backup_meta["source"] = fail_save_read(config, "source_path")
-            backup_meta["local_json_stat"] = [fail_save_read(
-                backup_chain, "fullset", "local_jsonstat_path", "get_filename", is_function=True)]
+            backup_meta["local_json_stat"] = [
+                fail_save_read(
+                    backup_chain,
+                    "fullset",
+                    "local_jsonstat_path",
+                    "get_filename",
+                    is_function=True,
+                )
+            ]
             for inc in backup_chain.incset_list:
-                backup_meta["local_json_stat"].append(fail_save_read(
-                    inc, "local_jsonstat_path", "get_filename", is_function=True))
+                backup_meta["local_json_stat"].append(
+                    fail_save_read(
+                        inc, "local_jsonstat_path", "get_filename", is_function=True
+                    )
+                )
             py_obj["backup_meta"] = backup_meta
 
-        return json.dumps(
-            py_obj,
-            cls=util.BytesEncoder, indent=4
-        )
+        return json.dumps(py_obj, cls=util.BytesEncoder, indent=4)
 
     def get_stats_logstring(self, title):
         """Like get_stats_string, but add header and footer"""
@@ -334,8 +368,7 @@ class StatsObj(object):
                 if statobj.get_stat(attr) is None:
                     self.set_stat(attr, None)
                 elif self.get_stat(attr) is not None:
-                    self.set_stat(attr, statobj.get_stat(attr) +
-                                  self.get_stat(attr))
+                    self.set_stat(attr, statobj.get_stat(attr) + self.get_stat(attr))
 
         # Don't compute average starting/stopping time
         self.StartTime = None
@@ -343,8 +376,7 @@ class StatsObj(object):
 
         for attr in self.stat_attrs:
             if self.get_stat(attr) is not None:
-                self.set_stat(attr,
-                              self.get_stat(attr) / float(len(statobj_list)))
+                self.set_stat(attr, self.get_stat(attr) / float(len(statobj_list)))
         return self
 
     def get_statsobj_copy(self):
@@ -375,7 +407,7 @@ class StatsDeltaProcess(StatsObj):
         self.NewFiles += 1
         self.NewFileSize += filesize
         self.DeltaEntries += 1
-        self.add_delta_entries_file(path, b'new')
+        self.add_delta_entries_file(path, b"new")
 
     def add_changed_file(self, path):
         """Add stats of file that has changed since last backup"""
@@ -385,13 +417,13 @@ class StatsDeltaProcess(StatsObj):
         self.ChangedFiles += 1
         self.ChangedFileSize += filesize
         self.DeltaEntries += 1
-        self.add_delta_entries_file(path, b'changed')
+        self.add_delta_entries_file(path, b"changed")
 
     def add_deleted_file(self, path):
         """Add stats of file no longer in source directory"""
         self.DeletedFiles += 1  # can't add size since not available
         self.DeltaEntries += 1
-        self.add_delta_entries_file(path, b'deleted')
+        self.add_delta_entries_file(path, b"deleted")
 
     def add_unchanged_file(self, path):
         """Add stats of file that hasn't changed since last backup"""

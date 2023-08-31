@@ -31,7 +31,7 @@ import os
 
 from . import _librsync
 
-if os.environ.get('READTHEDOCS') == 'True':
+if os.environ.get("READTHEDOCS") == "True":
     import unittest.mock as mock
     import duplicity
 
@@ -49,11 +49,13 @@ class librsyncError(Exception):
     but this scheme was easier.
 
     """
+
     pass
 
 
 class LikeFile(object):
     """File-like object used by SigFile, DeltaFile, and PatchFile"""
+
     mode = "rb"
 
     # This will be replaced in subclasses by an object with
@@ -66,7 +68,7 @@ class LikeFile(object):
         self.infile = infile
         self.closed = self.infile_closed = None
         self.inbuf = b""
-        self.outbuf = array.array('b')
+        self.outbuf = array.array("b")
         self.eof = self.infile_eof = None
 
     def check_file(self, file, need_seek=None):
@@ -179,16 +181,20 @@ class PatchedFile(LikeFile):
         try:
             basis_file.fileno()
         except Exception as e:
-            """ tempfile.TemporaryFile() only guarantees a true file
+            """tempfile.TemporaryFile() only guarantees a true file
             object on posix platforms. on cygwin/windows a file-like
             object whose file attribute is the underlying true file
             object is returned.
             """
-            if hasattr(basis_file, 'file') and hasattr(basis_file.file, 'fileno'):
+            if hasattr(basis_file, "file") and hasattr(basis_file.file, "fileno"):
                 basis_file = basis_file.file
             else:
-                raise TypeError(_("basis_file must be a (true) file or an object whose "
-                                  "file attribute is the underlying true file object"))
+                raise TypeError(
+                    _(
+                        "basis_file must be a (true) file or an object whose "
+                        "file attribute is the underlying true file object"
+                    )
+                )
         try:
             self.maker = _librsync.new_patchmaker(basis_file)
         except _librsync.librsyncError as e:
@@ -236,4 +242,4 @@ class SigGenerator(object):
         """Return signature over given data"""
         while not self.process_buffer():
             pass  # keep running until eof
-        return b''.join(self.sigstring_list)
+        return b"".join(self.sigstring_list)

@@ -55,11 +55,11 @@ DPBX_UPLOAD_CHUNK_SIZE = 16 * 1024 * 1024
 # Download internal buffer size. Files are downloaded using one request.
 DPBX_DOWNLOAD_BUF_SIZE = 512 * 1024
 
-DPBX_AUTORENAMED_FILE_RE = re.compile(r' \([0-9]+\)\.[^\.]+$')
+DPBX_AUTORENAMED_FILE_RE = re.compile(r" \([0-9]+\)\.[^\.]+$")
 
 
 def log_exception(e):
-    log.Error(f'Exception [{e}]:')
+    log.Error(f"Exception [{e}]:")
     f = io.StringIO()
     traceback.print_exc(file=f)
     f.seek(0)
@@ -120,9 +120,11 @@ class DPBXBackend(duplicity.backend.Backend):
             )
             from dropbox.oauth import DropboxOAuth2FlowNoRedirect
         except ImportError as e:
-            raise BackendException(f"""This backend requires the dropbox package version 6.9.0
+            raise BackendException(
+                f"""This backend requires the dropbox package version 6.9.0
 To install use "sudo pip install dropbox==6.9.0"
-Exception: {str(e)}""")
+Exception: {str(e)}"""
+            )
 
         self.api_account = None
         self.api_client = None
@@ -136,43 +138,47 @@ Exception: {str(e)}""")
             log.Debug(f"User authenticated as ,{account}")
             return True
         except Exception as e:
-            log.Debug('User not authenticated')
+            log.Debug("User not authenticated")
             return False
 
     def load_access_token(self):
-        return os.environ.get('DPBX_ACCESS_TOKEN', None)
+        return os.environ.get("DPBX_ACCESS_TOKEN", None)
 
     def save_access_token(self, access_token):
-        raise BackendException(f'dpbx: Please set DPBX_ACCESS_TOKEN="{access_token}" environment variable')
+        raise BackendException(
+            f'dpbx: Please set DPBX_ACCESS_TOKEN="{access_token}" environment variable'
+        )
 
     def obtain_access_token(self):
         log.Info("dpbx: trying to obtain access token")
-        for env_var in ['DPBX_APP_KEY', 'DPBX_APP_SECRET']:
+        for env_var in ["DPBX_APP_KEY", "DPBX_APP_SECRET"]:
             if env_var not in os.environ:
-                raise BackendException(f'dpbx: {env_var} environment variable not set')
+                raise BackendException(f"dpbx: {env_var} environment variable not set")
 
-        app_key = os.environ['DPBX_APP_KEY']
-        app_secret = os.environ['DPBX_APP_SECRET']
+        app_key = os.environ["DPBX_APP_KEY"]
+        app_secret = os.environ["DPBX_APP_SECRET"]
 
         if not sys.stdout.isatty() or not sys.stdin.isatty():
-            log.FatalError('dpbx error: cannot interact, but need human attention',
-                           log.ErrorCode.backend_command_error)
+            log.FatalError(
+                "dpbx error: cannot interact, but need human attention",
+                log.ErrorCode.backend_command_error,
+            )
 
         auth_flow = DropboxOAuth2FlowNoRedirect(app_key, app_secret)
-        log.Debug('dpbx,auth_flow.start()')
+        log.Debug("dpbx,auth_flow.start()")
         authorize_url = auth_flow.start()
         print()
-        print('-' * 72)
+        print("-" * 72)
         print(f"1. Go to: {authorize_url}")
-        print("2. Click \"Allow\" (you might have to log in first).")
+        print('2. Click "Allow" (you might have to log in first).')
         print("3. Copy the authorization code.")
-        print('-' * 72)
+        print("-" * 72)
         auth_code = input("Enter the authorization code here: ").strip()
         try:
-            log.Debug(f'dpbx,auth_flow.finish({auth_code})')
+            log.Debug(f"dpbx,auth_flow.finish({auth_code})")
             authresult = auth_flow.finish(auth_code)
         except Exception as e:
-            raise BackendException(f'dpbx: Unable to obtain access token: {e}')
+            raise BackendException(f"dpbx: Unable to obtain access token: {e}")
         log.Info("dpbx: Authentication successfull")
         self.save_access_token(authresult.access_token)
 
@@ -183,21 +189,25 @@ Exception: {str(e)}""")
         self.api_client = Dropbox(self.load_access_token())
         self.api_account = None
         try:
-            log.Debug('dpbx,users_get_current_account([token])')
+            log.Debug("dpbx,users_get_current_account([token])")
             self.api_account = self.api_client.users_get_current_account()
             log.Debug(f"dpbx,{self.api_account}")
 
         except (BadInputError, AuthError) as e:
-            log.Debug(f'dpbx,exception: {e}')
+            log.Debug(f"dpbx,exception: {e}")
             log.Info("dpbx: Authentication failed. Trying to obtain new access token")
 
             self.obtain_access_token()
 
             # We're assuming obtain_access_token will throw exception.
             # So this line should not be reached
-            raise BackendException("dpbx: Please update DPBX_ACCESS_TOKEN and try again")
+            raise BackendException(
+                "dpbx: Please update DPBX_ACCESS_TOKEN and try again"
+            )
 
-        log.Info(f"dpbx: Successfully authenticated as {self.api_account.name.display_name}")
+        log.Info(
+            f"dpbx: Successfully authenticated as {self.api_account.name.display_name}"
+        )
 
     def _error_code(self, operation, e):  # pylint: disable=unused-argument
         if isinstance(e, ApiError):
@@ -213,7 +223,7 @@ Exception: {str(e)}""")
 
     @command()
     def _put(self, source_path, remote_filename):
-        remote_dir = urllib.parse.unquote(self.parsed_url.path.lstrip('/'))
+        remote_dir = urllib.parse.unquote(self.parsed_url.path.lstrip("/"))
         remote_path = f"/{os.path.join(remote_dir, remote_filename.decode()).rstrip()}"
 
         file_size = os.path.getsize(source_path.name)
@@ -227,25 +237,32 @@ Exception: {str(e)}""")
 
         # A few sanity checks
         if res_metadata.path_display != remote_path:
-            raise BackendException(f'dpbx: result path mismatch: {res_metadata.path_display} (expected: {remote_path})')
+            raise BackendException(
+                f"dpbx: result path mismatch: {res_metadata.path_display} (expected: {remote_path})"
+            )
         if res_metadata.size != file_size:
-            raise BackendException(f'dpbx: result size mismatch: {res_metadata.size} (expected: {file_size})')
+            raise BackendException(
+                f"dpbx: result size mismatch: {res_metadata.size} (expected: {file_size})"
+            )
 
     def put_file_small(self, source_path, remote_path):
         if not self.user_authenticated():
             self.login()
 
         file_size = os.path.getsize(source_path.name)
-        f = source_path.open('rb')
+        f = source_path.open("rb")
         try:
-            log.Debug(f'dpbx,files_upload({remote_path}, [{int(file_size)} bytes])')
+            log.Debug(f"dpbx,files_upload({remote_path}, [{int(file_size)} bytes])")
 
-            res_metadata = self.api_client.files_upload(f.read(), remote_path,
-                                                        mode=WriteMode.overwrite,
-                                                        autorename=False,
-                                                        client_modified=None,
-                                                        mute=True)
-            log.Debug(f'dpbx,files_upload(): {res_metadata}')
+            res_metadata = self.api_client.files_upload(
+                f.read(),
+                remote_path,
+                mode=WriteMode.overwrite,
+                autorename=False,
+                client_modified=None,
+                mute=True,
+            )
+            log.Debug(f"dpbx,files_upload(): {res_metadata}")
             progress.report_transfer(file_size, file_size)
             return res_metadata
         finally:
@@ -256,16 +273,22 @@ Exception: {str(e)}""")
             self.login()
 
         file_size = os.path.getsize(source_path.name)
-        f = source_path.open('rb')
+        f = source_path.open("rb")
         try:
             buf = f.read(DPBX_UPLOAD_CHUNK_SIZE)
-            log.Debug(f'dpbx,files_upload_session_start([{len(buf)} bytes]), total: {int(file_size)}')
+            log.Debug(
+                f"dpbx,files_upload_session_start([{len(buf)} bytes]), total: {int(file_size)}"
+            )
             upload_sid = self.api_client.files_upload_session_start(buf)
-            log.Debug(f'dpbx,files_upload_session_start(): {upload_sid}')
+            log.Debug(f"dpbx,files_upload_session_start(): {upload_sid}")
             upload_cursor = UploadSessionCursor(upload_sid.session_id, f.tell())
-            commit_info = CommitInfo(remote_path, mode=WriteMode.overwrite,
-                                     autorename=False, client_modified=None,
-                                     mute=True)
+            commit_info = CommitInfo(
+                remote_path,
+                mode=WriteMode.overwrite,
+                autorename=False,
+                client_modified=None,
+                mute=True,
+            )
             res_metadata = None
             progress.report_transfer(f.tell(), file_size)
 
@@ -297,32 +320,43 @@ Exception: {str(e)}""")
 
                     if not is_eof:
                         assert len(buf) != 0
-                        log.Debug(f'dpbx,files_upload_sesssion_append([{len(buf)} bytes], '
-                                  f'offset={int(upload_cursor.offset)})')
-                        self.api_client.files_upload_session_append(buf,
-                                                                    upload_cursor.session_id,
-                                                                    upload_cursor.offset)
+                        log.Debug(
+                            f"dpbx,files_upload_sesssion_append([{len(buf)} bytes], "
+                            f"offset={int(upload_cursor.offset)})"
+                        )
+                        self.api_client.files_upload_session_append(
+                            buf, upload_cursor.session_id, upload_cursor.offset
+                        )
                     else:
-                        log.Debug(f'dpbx,files_upload_sesssion_finish([{len(buf)} bytes], '
-                                  f'offset={int(upload_cursor.offset)})')
-                        res_metadata = self.api_client.files_upload_session_finish(buf,
-                                                                                   upload_cursor,
-                                                                                   commit_info)
+                        log.Debug(
+                            f"dpbx,files_upload_sesssion_finish([{len(buf)} bytes], "
+                            f"offset={int(upload_cursor.offset)})"
+                        )
+                        res_metadata = self.api_client.files_upload_session_finish(
+                            buf, upload_cursor, commit_info
+                        )
 
                     upload_cursor.offset = f.tell()
-                    log.Debug(f'progress: {int(upload_cursor.offset)} of {int(file_size)}')
+                    log.Debug(
+                        f"progress: {int(upload_cursor.offset)} of {int(file_size)}"
+                    )
                     progress.report_transfer(upload_cursor.offset, file_size)
                 except ApiError as e:
                     error = e.error
-                    if isinstance(error, UploadSessionLookupError) and error.is_incorrect_offset():
+                    if (
+                        isinstance(error, UploadSessionLookupError)
+                        and error.is_incorrect_offset()
+                    ):
                         # Server reports that we should send another chunk.
                         # Most likely this is caused by network error during
                         # previous upload attempt. In such case we'll get
                         # expected offset from server and it's enough to just
                         # seek() and retry again
                         new_offset = error.get_incorrect_offset().correct_offset
-                        log.Debug(f'dpbx,files_upload_session_append: incorrect offset: {int(upload_cursor.offset)} '
-                                  f'(expected: {new_offset})')
+                        log.Debug(
+                            f"dpbx,files_upload_session_append: incorrect offset: {int(upload_cursor.offset)} "
+                            f"(expected: {new_offset})"
+                        )
                         if requested_offset is not None:
                             # chunk failed even after seek attempt. Something
                             # strange and no safe way to recover
@@ -333,7 +367,7 @@ Exception: {str(e)}""")
                         continue
                     raise
                 except ConnectionError as e:
-                    log.Debug(f'dpbx,files_upload_session_append: {e}')
+                    log.Debug(f"dpbx,files_upload_session_append: {e}")
 
                     retry_number -= 1
 
@@ -346,16 +380,16 @@ Exception: {str(e)}""")
                     # We don't know for sure, was partial upload successful or
                     # not. So it's better to retry smaller amount to avoid extra
                     # reupload
-                    log.Info('dpbx: sleeping a bit before chunk retry')
+                    log.Info("dpbx: sleeping a bit before chunk retry")
                     time.sleep(30)
                     current_chunk_size = DPBX_UPLOAD_CHUNK_SIZE / 5
                     requested_offset = None
                     continue
 
             if f.tell() != file_size:
-                raise BackendException('dpbx: something wrong')
+                raise BackendException("dpbx: something wrong")
 
-            log.Debug(f'dpbx,files_upload_sesssion_finish(): {res_metadata}')
+            log.Debug(f"dpbx,files_upload_sesssion_finish(): {res_metadata}")
             progress.report_transfer(f.tell(), file_size)
 
             return res_metadata
@@ -368,17 +402,17 @@ Exception: {str(e)}""")
         if not self.user_authenticated():
             self.login()
 
-        remote_dir = urllib.parse.unquote(self.parsed_url.path.lstrip('/'))
+        remote_dir = urllib.parse.unquote(self.parsed_url.path.lstrip("/"))
         remote_path = f"/{os.path.join(remote_dir, remote_filename.decode()).rstrip()}"
 
-        log.Debug(f'dpbx,files_download({remote_path})')
+        log.Debug(f"dpbx,files_download({remote_path})")
         res_metadata, http_fd = self.api_client.files_download(remote_path)
-        log.Debug(f'dpbx,files_download({remote_path}): {res_metadata}, {http_fd}')
+        log.Debug(f"dpbx,files_download({remote_path}): {res_metadata}, {http_fd}")
         file_size = res_metadata.size
         to_fd = None
         progress.report_transfer(0, file_size)
         try:
-            to_fd = local_path.open('wb')
+            to_fd = local_path.open("wb")
             for c in http_fd.iter_content(DPBX_DOWNLOAD_BUF_SIZE):
                 to_fd.write(c)
                 progress.report_transfer(to_fd.tell(), file_size)
@@ -392,7 +426,9 @@ Exception: {str(e)}""")
         # again. Since this check is free, it's better to have it here
         local_size = os.path.getsize(local_path.name)
         if local_size != file_size:
-            raise BackendException(f"dpbx: wrong file size: {int(local_size)} (expected: {int(file_size)})")
+            raise BackendException(
+                f"dpbx: wrong file size: {int(local_size)} (expected: {int(file_size)})"
+            )
 
         local_path.setdata()
 
@@ -401,13 +437,15 @@ Exception: {str(e)}""")
         # Do a long listing to avoid connection reset
         if not self.user_authenticated():
             self.login()
-        remote_dir = f"/{urllib.parse.unquote(self.parsed_url.path.lstrip('/')).rstrip()}"
+        remote_dir = (
+            f"/{urllib.parse.unquote(self.parsed_url.path.lstrip('/')).rstrip()}"
+        )
 
-        log.Debug(f'dpbx.files_list_folder({remote_dir})')
+        log.Debug(f"dpbx.files_list_folder({remote_dir})")
         res = []
         try:
             resp = self.api_client.files_list_folder(remote_dir)
-            log.Debug(f'dpbx.list({remote_dir}): {resp}')
+            log.Debug(f"dpbx.list({remote_dir}): {resp}")
 
             while True:
                 res.extend([entry.name for entry in resp.entries])
@@ -415,9 +453,12 @@ Exception: {str(e)}""")
                     break
                 resp = self.api_client.files_list_folder_continue(resp.cursor)
         except ApiError as e:
-            if (isinstance(e.error, ListFolderError) and e.error.is_path() and
-                    e.error.get_path().is_not_found()):
-                log.Debug(f'dpbx.list({remote_dir}): ignore missing folder ({e})')
+            if (
+                isinstance(e.error, ListFolderError)
+                and e.error.is_path()
+                and e.error.get_path().is_not_found()
+            ):
+                log.Debug(f"dpbx.list({remote_dir}): ignore missing folder ({e})")
             else:
                 raise
 
@@ -431,10 +472,10 @@ Exception: {str(e)}""")
         if not self.user_authenticated():
             self.login()
 
-        remote_dir = urllib.parse.unquote(self.parsed_url.path.lstrip('/'))
+        remote_dir = urllib.parse.unquote(self.parsed_url.path.lstrip("/"))
         remote_path = f"/{os.path.join(remote_dir, filename.decode()).rstrip()}"
 
-        log.Debug(f'dpbx.files_delete({remote_path})')
+        log.Debug(f"dpbx.files_delete({remote_path})")
         self.api_client.files_delete(remote_path)
 
         # files_permanently_delete seems to be better for backup purpose
@@ -444,42 +485,50 @@ Exception: {str(e)}""")
     @command()
     def _close(self):
         """close backend session? no! just "flush" the data"""
-        log.Debug('dpbx.close():')
+        log.Debug("dpbx.close():")
 
     @command()
     def _query(self, filename):
         if not self.user_authenticated():
             self.login()
-        remote_dir = urllib.parse.unquote(self.parsed_url.path.lstrip('/'))
+        remote_dir = urllib.parse.unquote(self.parsed_url.path.lstrip("/"))
         remote_path = f"/{os.path.join(remote_dir, filename.decode()).rstrip()}"
 
-        log.Debug(f'dpbx.files_get_metadata({remote_path})')
+        log.Debug(f"dpbx.files_get_metadata({remote_path})")
         info = self.api_client.files_get_metadata(remote_path)
-        log.Debug(f'dpbx.files_get_metadata({remote_path}): {info}')
-        return {'size': info.size}
+        log.Debug(f"dpbx.files_get_metadata({remote_path}): {info}")
+        return {"size": info.size}
 
     def check_renamed_files(self, file_list):
         if not self.user_authenticated():
             self.login()
-        bad_list = [x for x in file_list if DPBX_AUTORENAMED_FILE_RE.search(x) is not None]
+        bad_list = [
+            x for x in file_list if DPBX_AUTORENAMED_FILE_RE.search(x) is not None
+        ]
         if len(bad_list) == 0:
             return
-        log.Warn('-' * 72)
-        log.Warn('Warning! It looks like there are automatically renamed files on backend')
-        log.Warn('They were probably created when using older version of duplicity.')
-        log.Warn('')
-        log.Warn('Please check your backup consistency. Most likely you will need to choose')
-        log.Warn('largest file from duplicity-* (number).gpg and remove brackets from its name.')
-        log.Warn('')
-        log.Warn('These files are not managed by duplicity at all and will not be')
-        log.Warn('removed/rotated automatically.')
-        log.Warn('')
-        log.Warn('Affected files:')
+        log.Warn("-" * 72)
+        log.Warn(
+            "Warning! It looks like there are automatically renamed files on backend"
+        )
+        log.Warn("They were probably created when using older version of duplicity.")
+        log.Warn("")
+        log.Warn(
+            "Please check your backup consistency. Most likely you will need to choose"
+        )
+        log.Warn(
+            "largest file from duplicity-* (number).gpg and remove brackets from its name."
+        )
+        log.Warn("")
+        log.Warn("These files are not managed by duplicity at all and will not be")
+        log.Warn("removed/rotated automatically.")
+        log.Warn("")
+        log.Warn("Affected files:")
         for x in bad_list:
-            log.Warn(f'\t{x}')
-        log.Warn('')
-        log.Warn('In any case it\'s better to create full backup.')
-        log.Warn('-' * 72)
+            log.Warn(f"\t{x}")
+        log.Warn("")
+        log.Warn("In any case it's better to create full backup.")
+        log.Warn("-" * 72)
 
 
 duplicity.backend.register_backend("dpbx", DPBXBackend)

@@ -46,20 +46,26 @@ class NCFTPBackend(duplicity.backend.Backend):
             pass
         # the expected error is 8 in the high-byte and some output
         if ret != 0x0800 or not fout:
-            log.FatalError("NcFTP not found:  Please install NcFTP version 3.1.9 or later",
-                           log.ErrorCode.ftp_ncftp_missing)
+            log.FatalError(
+                "NcFTP not found:  Please install NcFTP version 3.1.9 or later",
+                log.ErrorCode.ftp_ncftp_missing,
+            )
 
         # version is the second word of the first line
-        version = fout.split('\n')[0].split()[1]
+        version = fout.split("\n")[0].split()[1]
         if version < "3.1.9":
-            log.FatalError("NcFTP too old:  Duplicity requires NcFTP version 3.1.9,"
-                           "3.2.1 or later.  Version 3.2.0 will not work properly.",
-                           log.ErrorCode.ftp_ncftp_too_old)
+            log.FatalError(
+                "NcFTP too old:  Duplicity requires NcFTP version 3.1.9,"
+                "3.2.1 or later.  Version 3.2.0 will not work properly.",
+                log.ErrorCode.ftp_ncftp_too_old,
+            )
         elif version == "3.2.0":
-            log.Warn("NcFTP (ncftpput) version 3.2.0 may fail with duplicity.\n"
-                     "see: http://www.ncftpd.com/ncftp/doc/changelog.html\n"
-                     "If you have trouble, please upgrade to 3.2.1 or later",
-                     log.WarningCode.ftp_ncftp_v320)
+            log.Warn(
+                "NcFTP (ncftpput) version 3.2.0 may fail with duplicity.\n"
+                "see: http://www.ncftpd.com/ncftp/doc/changelog.html\n"
+                "If you have trouble, please upgrade to 3.2.1 or later",
+                log.WarningCode.ftp_ncftp_v320,
+            )
         log.Notice(f"NcFTP version is {version}")
 
         self.parsed_url = parsed_url
@@ -67,23 +73,23 @@ class NCFTPBackend(duplicity.backend.Backend):
         self.url_string = duplicity.backend.strip_auth_from_url(self.parsed_url)
 
         # strip ncftp+ prefix
-        self.url_string = duplicity.backend.strip_prefix(self.url_string, 'ncftp')
+        self.url_string = duplicity.backend.strip_prefix(self.url_string, "ncftp")
 
         # This squelches the "file not found" result from ncftpls when
         # the ftp backend looks for a collection that does not exist.
         # version 3.2.2 has error code 5, 1280 is some legacy value
-        self.popen_breaks['ncftpls'] = [5, 1280]
+        self.popen_breaks["ncftpls"] = [5, 1280]
 
         # Use an explicit directory name.
-        if self.url_string[-1] != '/':
-            self.url_string += '/'
+        if self.url_string[-1] != "/":
+            self.url_string += "/"
 
         self.password = self.get_password()
 
-        if config.ftp_connection == 'regular':
-            self.conn_opt = '-E'
+        if config.ftp_connection == "regular":
+            self.conn_opt = "-E"
         else:
-            self.conn_opt = '-F'
+            self.conn_opt = "-F"
 
         self.tempfd, self.tempname = tempdir.default().mkstemp()
         self.tempfile = os.fdopen(self.tempfd, "w")
@@ -97,17 +103,25 @@ class NCFTPBackend(duplicity.backend.Backend):
 
     def _put(self, source_path, remote_filename):
         remote_filename = os.fsdecode(remote_filename)
-        remote_path = os.path.join(urllib.parse.unquote(re.sub('^/', '', self.parsed_url.path)),
-                                   remote_filename).rstrip()
-        commandline = f"ncftpput {self.flags} -m -V -C '{source_path.uc_name}' '{remote_path}'"
+        remote_path = os.path.join(
+            urllib.parse.unquote(re.sub("^/", "", self.parsed_url.path)),
+            remote_filename,
+        ).rstrip()
+        commandline = (
+            f"ncftpput {self.flags} -m -V -C '{source_path.uc_name}' '{remote_path}'"
+        )
         self.subprocess_popen(commandline)
 
     def _get(self, remote_filename, local_path):
         remote_filename = os.fsdecode(remote_filename)
-        remote_path = os.path.join(urllib.parse.unquote(re.sub('^/', '', self.parsed_url.path)),
-                                   remote_filename).rstrip()
-        commandline = f"ncftpget {self.flags} -V -C '{self.parsed_url.hostname}' " \
-                      f"'{remote_path.lstrip('/')}' '{local_path.uc_name}'"
+        remote_path = os.path.join(
+            urllib.parse.unquote(re.sub("^/", "", self.parsed_url.path)),
+            remote_filename,
+        ).rstrip()
+        commandline = (
+            f"ncftpget {self.flags} -V -C '{self.parsed_url.hostname}' "
+            f"'{remote_path.lstrip('/')}' '{local_path.uc_name}'"
+        )
         self.subprocess_popen(commandline)
 
     def _list(self):
@@ -115,12 +129,18 @@ class NCFTPBackend(duplicity.backend.Backend):
         commandline = f"ncftpls {self.flags} -l '{self.url_string}'"
         _, l, _ = self.subprocess_popen(commandline)
         # Look for our files as the last element of a long list line
-        return [os.fsencode(x.split()[-1]) for x in l.split('\n') if x and not x.startswith("total ")]
+        return [
+            os.fsencode(x.split()[-1])
+            for x in l.split("\n")
+            if x and not x.startswith("total ")
+        ]
 
     def _delete(self, filename):
-        commandline = f"ncftpls {self.flags} -l -X 'DELE {filename}' '{self.url_string}'"
+        commandline = (
+            f"ncftpls {self.flags} -l -X 'DELE {filename}' '{self.url_string}'"
+        )
         self.subprocess_popen(commandline)
 
 
 duplicity.backend.register_backend("ncftp+ftp", NCFTPBackend)
-duplicity.backend.uses_netloc.extend(['ncftp+ftp'])
+duplicity.backend.uses_netloc.extend(["ncftp+ftp"])

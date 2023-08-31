@@ -37,6 +37,7 @@ class RestartTest(FunctionalTestCase):
     """
     Test checkpoint/restart using duplicity binary
     """
+
     def test_basic_checkpoint_restart(self):
         """
         Test basic Checkpoint/Restart
@@ -65,7 +66,9 @@ class RestartTest(FunctionalTestCase):
         """
         self.make_largefiles()
         self.backup("full", f"{_runtest_dir}/testfiles/largefiles", fail=1)
-        assert not os.system(f"rm {_runtest_dir}/testfiles/output/duplicity-full*difftar*")
+        assert not os.system(
+            f"rm {_runtest_dir}/testfiles/output/duplicity-full*difftar*"
+        )
         self.backup("full", f"{_runtest_dir}/testfiles/largefiles")
         self.verify(f"{_runtest_dir}/testfiles/largefiles")
 
@@ -77,7 +80,9 @@ class RestartTest(FunctionalTestCase):
         """
         self.make_largefiles()
         self.backup("full", f"{_runtest_dir}/testfiles/largefiles", fail=3)
-        assert not os.system(f"rm {_runtest_dir}/testfiles/output/duplicity-full*vol[23].difftar*")
+        assert not os.system(
+            f"rm {_runtest_dir}/testfiles/output/duplicity-full*vol[23].difftar*"
+        )
         self.backup("full", f"{_runtest_dir}/testfiles/largefiles")
         self.verify(f"{_runtest_dir}/testfiles/largefiles")
 
@@ -87,14 +92,16 @@ class RestartTest(FunctionalTestCase):
         providing a password for it. (Normally, we'd need to decrypt the first
         volume, but there is special code to skip that with an encrypt key.)
         """
-        self.set_environ('PASSPHRASE', None)
-        self.set_environ('SIGN_PASSPHRASE', None)
+        self.set_environ("PASSPHRASE", None)
+        self.set_environ("SIGN_PASSPHRASE", None)
         self.make_largefiles()
         enc_opts = ["--encrypt-key", self.encrypt_key1]
-        self.backup("full", f"{_runtest_dir}/testfiles/largefiles", options=enc_opts, fail=2)
+        self.backup(
+            "full", f"{_runtest_dir}/testfiles/largefiles", options=enc_opts, fail=2
+        )
         self.backup("full", f"{_runtest_dir}/testfiles/largefiles", options=enc_opts)
 
-        self.set_environ('PASSPHRASE', self.sign_passphrase)
+        self.set_environ("PASSPHRASE", self.sign_passphrase)
         self.verify(f"{_runtest_dir}/testfiles/largefiles")
 
     def test_restart_sign_and_encrypt(self):
@@ -104,7 +111,9 @@ class RestartTest(FunctionalTestCase):
         """
         self.make_largefiles()
         enc_opts = ["--sign-key", self.sign_key, "--encrypt-key", self.sign_key]
-        self.backup("full", f"{_runtest_dir}/testfiles/largefiles", options=enc_opts, fail=2)
+        self.backup(
+            "full", f"{_runtest_dir}/testfiles/largefiles", options=enc_opts, fail=2
+        )
         self.backup("full", f"{_runtest_dir}/testfiles/largefiles", options=enc_opts)
         self.verify(f"{_runtest_dir}/testfiles/largefiles")
 
@@ -115,7 +124,9 @@ class RestartTest(FunctionalTestCase):
         """
         self.make_largefiles()
         enc_opts = ["--sign-key", self.sign_key, "--hidden-encrypt-key", self.sign_key]
-        self.backup("full", f"{_runtest_dir}/testfiles/largefiles", options=enc_opts, fail=2)
+        self.backup(
+            "full", f"{_runtest_dir}/testfiles/largefiles", options=enc_opts, fail=2
+        )
         self.backup("full", f"{_runtest_dir}/testfiles/largefiles", options=enc_opts)
         self.verify(f"{_runtest_dir}/testfiles/largefiles")
 
@@ -131,7 +142,10 @@ class RestartTest(FunctionalTestCase):
         self.backup("full", f"{_runtest_dir}/testfiles/largefiles")
         self.verify(f"{_runtest_dir}/testfiles/largefiles")
 
-    @unittest.skipIf(platform.machine() in ["ppc64el", "ppc64le"], "Skip on ppc64el and ppc64le machines")
+    @unittest.skipIf(
+        platform.machine() in ["ppc64el", "ppc64le"],
+        "Skip on ppc64el and ppc64le machines",
+    )
     def test_last_file_missing_at_end(self):
         """
         Test restart when the last file being backed up is missing on restart.
@@ -150,12 +164,22 @@ class RestartTest(FunctionalTestCase):
         Test restarting an incremental backup
         """
         self.make_largefiles()
-        self.backup("full", f"{_runtest_dir}/testfiles/dir1",
-                    options=["--allow-source-mismatch"])
-        self.backup("inc", f"{_runtest_dir}/testfiles/largefiles", fail=2,
-                    options=["--allow-source-mismatch"])
-        self.backup("inc", f"{_runtest_dir}/testfiles/largefiles",
-                    options=["--allow-source-mismatch"])
+        self.backup(
+            "full",
+            f"{_runtest_dir}/testfiles/dir1",
+            options=["--allow-source-mismatch"],
+        )
+        self.backup(
+            "inc",
+            f"{_runtest_dir}/testfiles/largefiles",
+            fail=2,
+            options=["--allow-source-mismatch"],
+        )
+        self.backup(
+            "inc",
+            f"{_runtest_dir}/testfiles/largefiles",
+            options=["--allow-source-mismatch"],
+        )
         self.verify(f"{_runtest_dir}/testfiles/largefiles")
 
     def make_fake_second_volume(self, name):
@@ -166,39 +190,53 @@ class RestartTest(FunctionalTestCase):
         found because it may have not finished uploading.)
         """
         # First, confirm that we have signs of a successful backup
-        self.assertEqual(len(glob.glob(f"{_runtest_dir}/testfiles/output/*.manifest*")), 1)
-        self.assertEqual(len(glob.glob(f"{_runtest_dir}/testfiles/output/*.sigtar*")), 1)
+        self.assertEqual(
+            len(glob.glob(f"{_runtest_dir}/testfiles/output/*.manifest*")), 1
+        )
+        self.assertEqual(
+            len(glob.glob(f"{_runtest_dir}/testfiles/output/*.sigtar*")), 1
+        )
         self.assertEqual(len(glob.glob(f"{_runtest_dir}/testfiles/cache/{name}/*")), 2)
-        self.assertEqual(len(glob.glob(
-            f"{_runtest_dir}/testfiles/cache/{name}/*.manifest*")), 1)
-        self.assertEqual(len(glob.glob(
-            f"{_runtest_dir}/testfiles/cache/{name}/*.sigtar*")), 1)
+        self.assertEqual(
+            len(glob.glob(f"{_runtest_dir}/testfiles/cache/{name}/*.manifest*")), 1
+        )
+        self.assertEqual(
+            len(glob.glob(f"{_runtest_dir}/testfiles/cache/{name}/*.sigtar*")), 1
+        )
         # Alright, everything is in order; fake a second interrupted volume
         assert not os.system(f"rm {_runtest_dir}/testfiles/output/*.manifest*")
         assert not os.system(f"rm {_runtest_dir}/testfiles/output/*.sigtar*")
         assert not os.system(f"rm -f {_runtest_dir}/testfiles/output/*.vol[23456789].*")
         assert not os.system(f"rm -f {_runtest_dir}/testfiles/output/*.vol1[^.]+.*")
-        self.assertEqual(len(glob.glob(f"{_runtest_dir}/testfiles/output/*.difftar*")), 1)
+        self.assertEqual(
+            len(glob.glob(f"{_runtest_dir}/testfiles/output/*.difftar*")), 1
+        )
         assert not os.system(f"rm {_runtest_dir}/testfiles/cache/{name}/*.sigtar*")
-        assert not os.system(f"cp {_runtest_dir}/testfiles/output/*.difftar* " +
-                             f"`ls {_runtest_dir}/testfiles/output/*.difftar* | " +
-                             " sed 's|vol1|vol2|'`")
-        assert not os.system(f"head -n6 {_runtest_dir}/testfiles/cache/{name}/*.manifest > " +
-                             f"{_runtest_dir}/testfiles/cache/{name}/" +
-                             f"`basename {_runtest_dir}/testfiles/cache/{name}/*.manifest`" +
-                             ".part")
+        assert not os.system(
+            f"cp {_runtest_dir}/testfiles/output/*.difftar* "
+            + f"`ls {_runtest_dir}/testfiles/output/*.difftar* | "
+            + " sed 's|vol1|vol2|'`"
+        )
+        assert not os.system(
+            f"head -n6 {_runtest_dir}/testfiles/cache/{name}/*.manifest > "
+            + f"{_runtest_dir}/testfiles/cache/{name}/"
+            + f"`basename {_runtest_dir}/testfiles/cache/{name}/*.manifest`"
+            + ".part"
+        )
         assert not os.system(f"rm {_runtest_dir}/testfiles/cache/{name}/*.manifest")
-        assert not os.system(f"""echo 'Volume 2:
+        assert not os.system(
+            f"""echo 'Volume 2:
     StartingPath   foo
     EndingPath     bar
-    Hash SHA1 sha1' >> {_runtest_dir}/testfiles/cache/{name}/*.manifest.part""")
+    Hash SHA1 sha1' >> {_runtest_dir}/testfiles/cache/{name}/*.manifest.part"""
+        )
 
     def test_split_after_small(self):
         """
         If we restart right after a volume that ended with a small
         (one-block) file, make sure we restart in the right place.
         """
-        source = f'{_runtest_dir}/testfiles/largefiles'
+        source = f"{_runtest_dir}/testfiles/largefiles"
         assert not os.system(f"mkdir -p {source}")
         assert not os.system(f"echo hello > {source}/file1")
         self.backup("full", source, options=["--name=backup1"])
@@ -219,7 +257,7 @@ class RestartTest(FunctionalTestCase):
         If we restart right after a volume that ended with a large
         (multi-block) file, make sure we restart in the right place.
         """
-        source = f'{_runtest_dir}/testfiles/largefiles'
+        source = f"{_runtest_dir}/testfiles/largefiles"
         self.make_largefiles(count=1, size=1)
         self.backup("full", source, options=["--volsize=5", "--name=backup1"])
         # Fake an interruption
@@ -232,14 +270,16 @@ class RestartTest(FunctionalTestCase):
         self.assertEqual(len(os.listdir(f"{_runtest_dir}/testfiles/output")), 4)
         # Now make sure everything is byte-for-byte the same once restored
         self.restore()
-        assert not os.system(f"diff -r %s {_runtest_dir}/testfiles/restore_out" % source)
+        assert not os.system(
+            f"diff -r %s {_runtest_dir}/testfiles/restore_out" % source
+        )
 
     def test_split_inside_large(self):
         """
         If we restart right after a volume that ended inside of a large
         (multi-block) file, make sure we restart in the right place.
         """
-        source = f'{_runtest_dir}/testfiles/largefiles'
+        source = f"{_runtest_dir}/testfiles/largefiles"
         self.make_largefiles(count=1, size=3)
         self.backup("full", source, options=["--name=backup1"])
         # Fake an interruption
@@ -257,7 +297,7 @@ class RestartTest(FunctionalTestCase):
         (Expected result is to ignore new, ealier files, but pick up later
         ones.)
         """
-        source = f'{_runtest_dir}/testfiles/largefiles'
+        source = f"{_runtest_dir}/testfiles/largefiles"
         self.make_largefiles(count=1, size=1)
         self.backup("full", source, options=["--name=backup1"])
         # Fake an interruption
@@ -270,7 +310,9 @@ class RestartTest(FunctionalTestCase):
         # Now make sure everything is the same once restored, except 'a'
         self.restore()
         assert not os.system(f"test ! -e {_runtest_dir}/testfiles/restore_out/a")
-        assert not os.system(f"diff {source}/file1 {_runtest_dir}/testfiles/restore_out/file1")
+        assert not os.system(
+            f"diff {source}/file1 {_runtest_dir}/testfiles/restore_out/file1"
+        )
         assert not os.system(f"diff {source}/z {_runtest_dir}/testfiles/restore_out/z")
 
     def test_changed_source_dangling_manifest_volume(self):
@@ -281,11 +323,13 @@ class RestartTest(FunctionalTestCase):
         if the source data changes to be small enough to not create a vol3 on
         restart.
         """
-        source = f'{_runtest_dir}/testfiles/largefiles'
+        source = f"{_runtest_dir}/testfiles/largefiles"
         self.make_largefiles(count=5, size=1)
         self.backup("full", source, fail=3)
         # now delete the last volume on remote end and some source files
-        assert not os.system(f"rm {_runtest_dir}/testfiles/output/duplicity-full*vol3.difftar*")
+        assert not os.system(
+            f"rm {_runtest_dir}/testfiles/output/duplicity-full*vol3.difftar*"
+        )
         assert not os.system(f"rm {source}/file[2345]")
         assert not os.system(f"echo hello > {source}/z")
         # finish backup
@@ -300,7 +344,7 @@ class RestartTest(FunctionalTestCase):
         possible that the first chunk of the next file will be skipped unless
         we're careful.
         """
-        source = f'{_runtest_dir}/testfiles/largefiles'
+        source = f"{_runtest_dir}/testfiles/largefiles"
         self.make_largefiles(count=1)
         self.backup("full", source, fail=2)
         # now remove starting source data and make sure we add something after
@@ -315,7 +359,6 @@ class RestartTest(FunctionalTestCase):
 
 # Note that this class duplicates all the tests in RestartTest
 class RestartTestWithoutEncryption(RestartTest):
-
     def setUp(self):
         super().setUp()
         self.class_args.extend(["--no-encryption"])
@@ -331,10 +374,14 @@ class RestartTestWithoutEncryption(RestartTest):
         self.backup("full", f"{_runtest_dir}/testfiles/largefiles", fail=2)
         self.backup("full", f"{_runtest_dir}/testfiles/largefiles")
         # Now check sigtar
-        sigtars = glob.glob(f"{_runtest_dir}/testfiles/output/duplicity-full*.sigtar.gz")
+        sigtars = glob.glob(
+            f"{_runtest_dir}/testfiles/output/duplicity-full*.sigtar.gz"
+        )
         self.assertEqual(1, len(sigtars))
         sigtar = sigtars[0]
-        output = subprocess.Popen(["tar", "t", f"--file={sigtar}"], stdout=subprocess.PIPE).communicate()[0]
+        output = subprocess.Popen(
+            ["tar", "t", f"--file={sigtar}"], stdout=subprocess.PIPE
+        ).communicate()[0]
         self.assertEqual(1, output.split(b"\n").count(b"snapshot/"))
 
     def test_ignore_double_snapshot(self):
@@ -346,14 +393,16 @@ class RestartTestWithoutEncryption(RestartTest):
         https://launchpad.net/bugs/929067
         """
 
-        if platform.system().startswith('Linux'):
+        if platform.system().startswith("Linux"):
             tarcmd = "tar"
-        elif platform.system().startswith('Darwin'):
+        elif platform.system().startswith("Darwin"):
             tarcmd = "gtar"
-        elif platform.system().endswith('BSD'):
+        elif platform.system().endswith("BSD"):
             tarcmd = "gtar"
         else:
-            raise Exception(f"Platform {platform.platform()} not supported by tar/gtar.")
+            raise Exception(
+                f"Platform {platform.platform()} not supported by tar/gtar."
+            )
 
         # Intial normal backup
         self.backup("full", f"{_runtest_dir}/testfiles/blocktartest")
@@ -363,14 +412,28 @@ class RestartTestWithoutEncryption(RestartTest):
         os.utime(f"{_runtest_dir}/testfiles/snapshot", (1030384548, 1030384548))
         # Adjust the sigtar.gz file to have a bogus second snapshot/ entry
         # at the beginning.
-        sigtars = glob.glob(f"{_runtest_dir}/testfiles/output/duplicity-full*.sigtar.gz")
+        sigtars = glob.glob(
+            f"{_runtest_dir}/testfiles/output/duplicity-full*.sigtar.gz"
+        )
         self.assertEqual(1, len(sigtars))
         sigtar = sigtars[0]
-        self.assertEqual(0, os.system(f"{tarcmd} c --file={_runtest_dir}/testfiles/snapshot.sigtar "
-                                      f"-C {_runtest_dir}/testfiles snapshot"))
-        self.assertEqual(0, os.system(f"gunzip -c {sigtar} > {_runtest_dir}/testfiles/full.sigtar"))
-        self.assertEqual(0, os.system(f"{tarcmd} A --file={_runtest_dir}/testfiles/snapshot.sigtar "
-                                      f"{_runtest_dir}/testfiles/full.sigtar"))
+        self.assertEqual(
+            0,
+            os.system(
+                f"{tarcmd} c --file={_runtest_dir}/testfiles/snapshot.sigtar "
+                f"-C {_runtest_dir}/testfiles snapshot"
+            ),
+        )
+        self.assertEqual(
+            0, os.system(f"gunzip -c {sigtar} > {_runtest_dir}/testfiles/full.sigtar")
+        )
+        self.assertEqual(
+            0,
+            os.system(
+                f"{tarcmd} A --file={_runtest_dir}/testfiles/snapshot.sigtar "
+                f"{_runtest_dir}/testfiles/full.sigtar"
+            ),
+        )
         self.assertEqual(0, os.system(f"gzip {_runtest_dir}/testfiles/snapshot.sigtar"))
         os.remove(sigtar)
         os.rename(f"{_runtest_dir}/testfiles/snapshot.sigtar.gz", sigtar)
@@ -379,7 +442,10 @@ class RestartTestWithoutEncryption(RestartTest):
         # Try a follow on incremental (which in buggy versions, would create
         # a deleted entry for the base dir)
         self.backup("inc", f"{_runtest_dir}/testfiles/blocktartest")
-        self.assertEqual(1, len(glob.glob(f"{_runtest_dir}/testfiles/output/duplicity-new*.sigtar.gz")))
+        self.assertEqual(
+            1,
+            len(glob.glob(f"{_runtest_dir}/testfiles/output/duplicity-new*.sigtar.gz")),
+        )
         # Confirm we can restore it (which in buggy versions, would fail)
         self.restore()
 

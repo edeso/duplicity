@@ -42,17 +42,17 @@ class Megav3Backend(duplicity.backend.Backend):
         duplicity.backend.Backend.__init__(self, parsed_url)
 
         # Sanity check : ensure all the necessary "MEGAcmd" binaries exist
-        self._check_binary_exists('mega-cmd')
-        self._check_binary_exists('mega-exec')
-        self._check_binary_exists('mega-help')
-        self._check_binary_exists('mega-get')
-        self._check_binary_exists('mega-login')
-        self._check_binary_exists('mega-logout')
-        self._check_binary_exists('mega-ls')
-        self._check_binary_exists('mega-mkdir')
-        self._check_binary_exists('mega-put')
-        self._check_binary_exists('mega-rm')
-        self._check_binary_exists('mega-whoami')
+        self._check_binary_exists("mega-cmd")
+        self._check_binary_exists("mega-exec")
+        self._check_binary_exists("mega-help")
+        self._check_binary_exists("mega-get")
+        self._check_binary_exists("mega-login")
+        self._check_binary_exists("mega-logout")
+        self._check_binary_exists("mega-ls")
+        self._check_binary_exists("mega-mkdir")
+        self._check_binary_exists("mega-put")
+        self._check_binary_exists("mega-rm")
+        self._check_binary_exists("mega-whoami")
 
         # "MEGAcmd" does not use a config file, however it is handy to keep one (with the old ".megarc" format) to
         # securely store the username and password
@@ -79,9 +79,9 @@ class Megav3Backend(duplicity.backend.Backend):
             self._username = parsed_url.username
             self._password = parsed_url.password
 
-        no_logout_option = parsed_url.query_args.get('no_logout', [])
+        no_logout_option = parsed_url.query_args.get("no_logout", [])
         self._no_logout = (len(no_logout_option) > 0) and (
-            no_logout_option[0].lower() in ['1', 'yes', 'true']
+            no_logout_option[0].lower() in ["1", "yes", "true"]
         )
 
         self.ensure_mega_cmd_running()
@@ -91,7 +91,7 @@ class Megav3Backend(duplicity.backend.Backend):
 
         # Only create the remote folder if it doesn't exist yet
         self.mega_login()
-        cmd = ['mega-ls', self._folder]
+        cmd = ["mega-ls", self._folder]
         try:
             self.subprocess_popen(cmd)
         except Exception as e:
@@ -102,7 +102,7 @@ class Megav3Backend(duplicity.backend.Backend):
 
         try:
             # Ignore the output, as we only need the return code
-            subprocess.check_output(['which', cmd])
+            subprocess.check_output(["which", cmd])
         except Exception as e:
             raise BackendException(
                 f"Command '{cmd}' not found, make sure 'MEGAcmd' tools (https://mega.nz/cmd) is properly installed "
@@ -118,13 +118,13 @@ class Megav3Backend(duplicity.backend.Backend):
                 stderr=subprocess.DEVNULL,
             ).check_returncode()
         except Exception:
-            raise BackendException('Cannot execute mega command')
+            raise BackendException("Cannot execute mega command")
 
     def _makedir(self, path):
         """Creates a remote directory (recursively if necessary)"""
 
         self.mega_login()
-        cmd = ['mega-mkdir', '-p', path]
+        cmd = ["mega-mkdir", "-p", path]
         try:
             self.subprocess_popen(cmd)
         except Exception as e:
@@ -174,10 +174,10 @@ class Megav3Backend(duplicity.backend.Backend):
         """Function called when backend is done being used"""
 
         if not self._no_logout:
-            cmd = ['mega-logout']
+            cmd = ["mega-logout"]
             self.subprocess_popen(cmd)
 
-        cmd = ['mega-exec', 'exit']
+        cmd = ["mega-exec", "exit"]
         self.subprocess_popen(cmd)
 
     def mega_login(self):
@@ -187,12 +187,12 @@ class Megav3Backend(duplicity.backend.Backend):
         # doesn't return), and create session if one doesn't exist yet
         try:
             result = subprocess.run(
-                'mega-whoami',
+                "mega-whoami",
                 timeout=30,
                 capture_output=True,
             )
             result.check_returncode()
-            current_username = result.stdout.decode().split(':')[-1].strip()
+            current_username = result.stdout.decode().split(":")[-1].strip()
             if current_username != self._username:
                 raise Exception("Username is not match")
         except subprocess.TimeoutExpired:
@@ -204,7 +204,7 @@ class Megav3Backend(duplicity.backend.Backend):
             if self._password is None:
                 self._password = self.get_password()
 
-            cmd = ['mega-login', self._username, self._password]
+            cmd = ["mega-login", self._username, self._password]
             try:
                 subprocess.run(
                     cmd,
@@ -212,36 +212,34 @@ class Megav3Backend(duplicity.backend.Backend):
                 ).check_returncode()
             except Exception as e:
                 self._close()
-                raise BackendException(
-                    f"Could not log in to MEGA, error : '{e}'"
-                )
+                raise BackendException(f"Could not log in to MEGA, error : '{e}'")
 
     def folder_contents(self, files_only=False):
         """Lists contents of a remote MEGA path, optionally ignoring subdirectories"""
 
-        cmd = ['mega-ls', '-l', self._folder]
+        cmd = ["mega-ls", "-l", self._folder]
 
         self.mega_login()
         files = subprocess.check_output(cmd)
-        files = files.decode().split('\n')
+        files = files.decode().split("\n")
 
         # Optionally ignore directories
         if files_only:
-            files = [f.split()[5] for f in files if re.search('^-', f)]
+            files = [f.split()[5] for f in files if re.search("^-", f)]
 
         return files
 
     def download(self, remote_file, local_file):
         """Downloads a file from a remote MEGA path"""
 
-        cmd = ['mega-get', f"{self._folder}/{remote_file}", local_file]
+        cmd = ["mega-get", f"{self._folder}/{remote_file}", local_file]
         self.mega_login()
         self.subprocess_popen(cmd)
 
     def upload(self, local_file, remote_file):
         """Uploads a file to a remote MEGA path"""
 
-        cmd = ['mega-put', local_file, f"{self._folder}/{remote_file}"]
+        cmd = ["mega-put", local_file, f"{self._folder}/{remote_file}"]
         self.mega_login()
         try:
             self.subprocess_popen(cmd)
@@ -260,10 +258,10 @@ class Megav3Backend(duplicity.backend.Backend):
     def delete(self, remote_file):
         """Deletes a file from a remote MEGA path"""
 
-        cmd = ['mega-rm', '-f', f"{self._folder}/{remote_file}"]
+        cmd = ["mega-rm", "-f", f"{self._folder}/{remote_file}"]
         self.mega_login()
         self.subprocess_popen(cmd)
 
 
-duplicity.backend.register_backend('megav3', Megav3Backend)
-duplicity.backend.uses_netloc.extend(['megav3'])
+duplicity.backend.register_backend("megav3", Megav3Backend)
+duplicity.backend.uses_netloc.extend(["megav3"])
