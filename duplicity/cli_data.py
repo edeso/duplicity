@@ -810,6 +810,7 @@ class CommandOptions:
     """
     legal options by command
     """
+
     # fmt: off
     backup = list(
         all_options
