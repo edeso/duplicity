@@ -63,14 +63,10 @@ class TAHOEBackend(duplicity.backend.Backend):
         return output
 
     def _put(self, source_path, remote_filename):
-        self.run(
-            "tahoe", "cp", source_path.uc_name, self.get_remote_path(remote_filename)
-        )
+        self.run("tahoe", "cp", source_path.uc_name, self.get_remote_path(remote_filename))
 
     def _get(self, remote_filename, local_path):
-        self.run(
-            "tahoe", "cp", self.get_remote_path(remote_filename), local_path.uc_name
-        )
+        self.run("tahoe", "cp", self.get_remote_path(remote_filename), local_path.uc_name)
 
     def _list(self):
         output = self.run("tahoe", "ls", self.get_remote_path())

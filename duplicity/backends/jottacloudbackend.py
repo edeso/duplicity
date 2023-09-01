@@ -83,8 +83,7 @@ class JottaCloudBackend(duplicity.backend.Backend):
             )
         except ImportError:
             raise BackendException(
-                "JottaCloud backend requires jottalib"
-                " (see https://pypi.python.org/pypi/jottalib)."
+                "JottaCloud backend requires jottalib" " (see https://pypi.python.org/pypi/jottalib)."
             )
 
         # Set jottalib loggers to the same verbosity as duplicity
@@ -117,9 +116,7 @@ class JottaCloudBackend(duplicity.backend.Backend):
     def _get(self, remote_filename, local_path):
         # - Get one file
         # - Retried if an exception is thrown
-        remote_file = self.client.getObject(
-            posixpath.join(self.folder.path, remote_filename)
-        )
+        remote_file = self.client.getObject(posixpath.join(self.folder.path, remote_filename))
         log.Debug(f"jottacloud.get({remote_filename},{local_path.name}): {remote_file}")
         with open(local_path.name, "wb") as to_file:
             for chunk in remote_file.stream():

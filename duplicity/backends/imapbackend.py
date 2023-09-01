@@ -234,9 +234,7 @@ class ImapBackend(duplicity.backend.Backend):
             if len(msg) == 1:
                 continue
             headers = Parser(policy=default).parsestr(
-                msg[1].decode(  # noqa  # pylint: disable=unsubscriptable-object
-                    "unicode-escape"
-                )
+                msg[1].decode("unicode-escape")  # noqa  # pylint: disable=unsubscriptable-object
             )
             subj = headers["subject"]
             header_from = headers["from"]

@@ -124,8 +124,7 @@ class Select(object):
                     )
             except OSError:
                 log.Warn(
-                    _("Error accessing possibly locked file %s")
-                    % os.fsdecode(fullpath),
+                    _("Error accessing possibly locked file %s") % os.fsdecode(fullpath),
                     log.WarningCode.cannot_stat,
                     util.escape(fullpath),
                 )
@@ -156,20 +155,16 @@ class Select(object):
                 return
 
             for filename in files:
-                new_path = robust.check_common_error(
-                    error_handler, Path.append, (path, filename)
-                )
+                new_path = robust.check_common_error(error_handler, Path.append, (path, filename))
                 if new_path:
                     s = self.Select(new_path)
-                    if (
-                        new_path.type in ["reg", "dir"]
-                        and not os.access(new_path.name, os.R_OK)
-                    ) and (s == 1 or s == 2):
+                    if (new_path.type in ["reg", "dir"] and not os.access(new_path.name, os.R_OK)) and (
+                        s == 1 or s == 2
+                    ):
                         # Path is a file or folder that cannot be read, but
                         # should be included or scanned.
                         log.Warn(
-                            _("Error accessing possibly locked file %s")
-                            % new_path.uc_name,
+                            _("Error accessing possibly locked file %s") % new_path.uc_name,
                             log.WarningCode.cannot_read,
                             util.escape(new_path.name),
                         )
@@ -225,9 +220,7 @@ class Select(object):
         scan_pending = False
         for sf in self.selection_functions:
             result = sf(path)
-            log.Debug(
-                f"Selection:     result: {str(result):4} from function: {sf.name}"
-            )
+            log.Debug(f"Selection:     result: {str(result):4} from function: {sf.name}")
             if result == 2:
                 # Selection function says that the path should be scanned for matching files, but keep going
                 # through the selection functions looking for a real match (0 or 1).
@@ -300,19 +293,13 @@ class Select(object):
         try:
             for opt, arg in argtuples:
                 if opt == "--exclude":
-                    self.add_selection_func(
-                        self.general_get_sf(arg, 0, mode, ignore_case=no_case)
-                    )
+                    self.add_selection_func(self.general_get_sf(arg, 0, mode, ignore_case=no_case))
                 elif opt == "--exclude-if-present":
-                    self.add_selection_func(
-                        self.present_get_sf(arg, 0), add_to_start=True
-                    )
+                    self.add_selection_func(self.present_get_sf(arg, 0), add_to_start=True)
                 elif opt == "--exclude-device-files":
                     self.add_selection_func(self.devfiles_get_sf(), add_to_start=True)
                 elif opt == "--exclude-filelist":
-                    for sf in self.filelist_general_get_sfs(
-                        filelists[filelists_index], 0, arg, mode, no_case
-                    ):
+                    for sf in self.filelist_general_get_sfs(filelists[filelists_index], 0, arg, mode, no_case):
                         self.add_selection_func(sf)
                     filelists_index += 1
                 elif opt == "--exclude-other-filesystems":
@@ -337,9 +324,7 @@ class Select(object):
                 elif opt == "--include":
                     self.add_selection_func(self.general_get_sf(arg, 1, mode, no_case))
                 elif opt == "--include-filelist":
-                    for sf in self.filelist_general_get_sfs(
-                        filelists[filelists_index], 1, arg, mode, no_case
-                    ):
+                    for sf in self.filelist_general_get_sfs(filelists[filelists_index], 1, arg, mode, no_case):
                         self.add_selection_func(sf)
                     filelists_index += 1
                 elif opt == "--include-regexp":
@@ -494,16 +479,12 @@ class Select(object):
             include = 0
             line = line[2:]
 
-        if (line.startswith("'") and line.endswith("'")) or (
-            line.startswith('"') and line.endswith('"')
-        ):
+        if (line.startswith("'") and line.endswith("'")) or (line.startswith('"') and line.endswith('"')):
             line = line[1:-1]
 
         return line, include
 
-    def filelist_general_get_sfs(
-        self, filelist_fp, inc_default, list_name, mode="globbing", ignore_case=False
-    ):
+    def filelist_general_get_sfs(self, filelist_fp, inc_default, list_name, mode="globbing", ignore_case=False):
         """Return list of selection functions by reading fileobj
 
         filelist_fp should be an open file object
@@ -690,8 +671,7 @@ class Select(object):
         sel_func = self.select_fn_from_literal(lit_str, include, ignore_case)
         sel_func.exclude = not include
         sel_func.name = (
-            f"literal string {include and 'include' or 'exclude'} "
-            f"{ignore_case and 'no-' or ''}case: {lit_str}"
+            f"literal string {include and 'include' or 'exclude'} " f"{ignore_case and 'no-' or ''}case: {lit_str}"
         )
         return sel_func
 
@@ -741,11 +721,7 @@ class Select(object):
                 return include
             elif uc_name.startswith(lit_str) and uc_name[len(lit_str)] == "/":
                 return include
-            elif (
-                lit_str.startswith(uc_name)
-                and lit_str[len(uc_name)] == "/"
-                and include == 1
-            ):
+            elif lit_str.startswith(uc_name) and lit_str[len(uc_name)] == "/" and include == 1:
                 return 2
             else:
                 return None

@@ -134,9 +134,7 @@ def difftar2path_iter(diff_tarfile):
             ropath.type = None
         elif ropath.isreg():
             if multivol:
-                multivol_fileobj = Multivol_Filelike(
-                    diff_tarfile, tar_iter, tarinfo_list, index
-                )
+                multivol_fileobj = Multivol_Filelike(diff_tarfile, tar_iter, tarinfo_list, index)
                 ropath.setfileobj(multivol_fileobj)
                 yield ropath
                 continue  # Multivol_Filelike will reset tarinfo_list
@@ -167,9 +165,7 @@ def get_index_from_tarinfo(tarinfo):
                 else:
                     difftype = "snapshot"
                 multivol = 1
-                name, num_subs = re.subn(
-                    "(?s)^multivol_(diff|snapshot)/?(.*)/[0-9]+$", "\\2", tiname
-                )
+                name, num_subs = re.subn("(?s)^multivol_(diff|snapshot)/?(.*)/[0-9]+$", "\\2", tiname)
                 if num_subs != 1:
                     raise PatchDirException(f"Unrecognized diff entry {tiname}")
             else:
@@ -186,9 +182,7 @@ def get_index_from_tarinfo(tarinfo):
     else:
         index = tuple(os.fsencode(name).split(b"/"))
         if b".." in index:
-            raise PatchDirException(
-                f"Tar entry {os.fsdecode(tiname)} contains '..'.  Security violation"
-            )
+            raise PatchDirException(f"Tar entry {os.fsdecode(tiname)} contains '..'.  Security violation")
     return index, difftype, multivol
 
 
@@ -288,9 +282,7 @@ class PathPatcher(ITRBranch):
         if self.dir_diff_ropath:
             self.dir_diff_ropath.copy_attribs(self.dir_basis_path)
 
-    def can_fast_process(
-        self, index, basis_path, diff_ropath
-    ):  # pylint: disable=unused-argument
+    def can_fast_process(self, index, basis_path, diff_ropath):  # pylint: disable=unused-argument
         """No need to recurse if diff_ropath isn't a directory"""
         return not (diff_ropath and diff_ropath.isdir())
 
@@ -309,9 +301,7 @@ class PathPatcher(ITRBranch):
                 basis_path.deltree()
             else:
                 basis_path.delete()
-        elif not basis_path.isreg() or (
-            basis_path.isreg() and diff_ropath.difftype == "snapshot"
-        ):
+        elif not basis_path.isreg() or (basis_path.isreg() and diff_ropath.difftype == "snapshot"):
             if basis_path.isdir():
                 basis_path.deltree()
             else:
@@ -506,9 +496,7 @@ def patch_seq2ropath(patch_seq):
     assert first.difftype != "diff", f"First patch in sequence {patch_seq} was a diff"
     if not first.isreg():
         # No need to bother with data if not regular file
-        assert (
-            len(patch_seq) == 1
-        ), f"Patch sequence isn't regular, but has {len(patch_seq)} entries"
+        assert len(patch_seq) == 1, f"Patch sequence isn't regular, but has {len(patch_seq)} entries"
         return first.get_ropath()
 
     current_file = first.open("rb")
@@ -633,8 +621,7 @@ class ROPath_IterWriter(ITRBranch):
     def can_fast_process(self, index, ropath):  # pylint: disable=unused-argument
         """Can fast process (no recursion) if ropath isn't a directory"""
         log.Info(
-            _("Writing %s of type %s")
-            % (os.fsdecode(ropath.get_relative_path()), ropath.type),
+            _("Writing %s of type %s") % (os.fsdecode(ropath.get_relative_path()), ropath.type),
             log.InfoCode.patch_file_writing,
             f"{util.escape(ropath.get_relative_path())} {ropath.type}",
         )

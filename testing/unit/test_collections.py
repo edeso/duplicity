@@ -93,18 +93,10 @@ class CollectionTest(UnitTestCase):
         col_test_dir = path.Path(f"{_runtest_dir}/testfiles/collectionstest")
         archive_dir_path = col_test_dir.append("archive_dir")
         self.set_config("archive_dir_path", archive_dir_path)
-        self.archive_dir_backend = backend.get_backend(
-            f"file://{_runtest_dir}/testfiles/collectionstest/archive_dir"
-        )
-        self.real_backend = backend.get_backend(
-            f"file://{col_test_dir.uc_name}/remote_dir"
-        )
-        self.output_dir = path.Path(
-            f"{_runtest_dir}/testfiles/output"
-        )  # used as a temp directory
-        self.output_dir_backend = backend.get_backend(
-            f"file://{_runtest_dir}/testfiles/output"
-        )
+        self.archive_dir_backend = backend.get_backend(f"file://{_runtest_dir}/testfiles/collectionstest/archive_dir")
+        self.real_backend = backend.get_backend(f"file://{col_test_dir.uc_name}/remote_dir")
+        self.output_dir = path.Path(f"{_runtest_dir}/testfiles/output")  # used as a temp directory
+        self.output_dir_backend = backend.get_backend(f"file://{_runtest_dir}/testfiles/output")
 
     def set_gpg_profile(self):
         """Set gpg profile to standard "foobar" sym"""
@@ -135,9 +127,7 @@ class CollectionTest(UnitTestCase):
             assert cs.matched_chain_pair[0].end_time == 1029826800
             assert len(cs.all_backup_chains) == 1, cs.all_backup_chains
 
-        cs = dup_collections.CollectionsStatus(
-            self.real_backend, config.archive_dir_path, "full"
-        ).set_values()
+        cs = dup_collections.CollectionsStatus(self.real_backend, config.archive_dir_path, "full").set_values()
         check_cs(cs)
         assert cs.matched_chain_pair[0].islocal()
 
@@ -158,9 +148,7 @@ class CollectionTest(UnitTestCase):
 
     def test_sig_chains2(self):
         """Test making signature chains from filename list on backend"""
-        cs = dup_collections.CollectionsStatus(
-            self.archive_dir_backend, config.archive_dir_path, "full"
-        )
+        cs = dup_collections.CollectionsStatus(self.archive_dir_backend, config.archive_dir_path, "full")
         chains, orphaned_paths = cs.get_signature_chains(local=None)
         self.sig_chains_helper(chains, orphaned_paths)
 
@@ -218,9 +206,7 @@ class CollectionTest(UnitTestCase):
             p = self.output_dir.append(filename)
             p.touch()
 
-        cs = dup_collections.CollectionsStatus(
-            self.output_dir_backend, config.archive_dir_path, "full"
-        )
+        cs = dup_collections.CollectionsStatus(self.output_dir_backend, config.archive_dir_path, "full")
         cs.set_values()
         return cs
 
@@ -257,9 +243,7 @@ class CollectionTest(UnitTestCase):
         right_times = [dup_time.genstrtotime("2001-01-01T16:17:01-07:00")]
         assert oldset_times == right_times, [oldset_times, right_times]
 
-        oldsets_required = cs.get_older_than_required(
-            dup_time.genstrtotime("2002-08-17T20:00:00-07:00")
-        )
+        oldsets_required = cs.get_older_than_required(dup_time.genstrtotime("2002-08-17T20:00:00-07:00"))
         oldset_times = [s.get_time() for s in oldsets_required]
         right_times_required = [dup_time.genstrtotime("2002-08-17T16:17:01-07:00")]
         assert oldset_times == right_times_required, [

@@ -100,9 +100,7 @@ class Par2Backend(backend.Backend):
         returncode, out, err = self.subprocess_popen(par2create)
 
         if returncode:
-            log.Warn(
-                "Failed to create par2 file with requested options, retrying with -n1"
-            )
+            log.Warn("Failed to create par2 file with requested options, retrying with -n1")
             par2create = (
                 f"par2 c -r{int(self.redundancy)} -n1 {self.common_options} "
                 f'"{os.fsdecode(source_symlink.get_canonical())}"'
@@ -159,9 +157,7 @@ class Par2Backend(backend.Backend):
             if returncode:
                 log.Warn(f"File is corrupt. Try to repair {remote_filename}")
                 c = re.compile(f"{remote_filename.decode()}\\.vol[\\d+]*\\.par2")
-                par2volumes = [
-                    f for f in self.wrapped_backend._list() if c.match(os.fsdecode(f))
-                ]
+                par2volumes = [f for f in self.wrapped_backend._list() if c.match(os.fsdecode(f))]
 
                 for filename in par2volumes:
                     file = par2temp.append(filename)

@@ -114,9 +114,7 @@ class PatchingTest(UnitTestCase):
 
             # file object will be empty, and tarinfo will have path
             # "snapshot/../warning-security-error"
-            assert not os.system(
-                f"cat /dev/null > {_runtest_dir}/testfiles/output/file"
-            )
+            assert not os.system(f"cat /dev/null > {_runtest_dir}/testfiles/output/file")
             path = Path(f"{_runtest_dir}/testfiles/output/file")
             path.index = (b"diff", b"..", b"warning-security-error")
             ti = path.get_tarinfo()
@@ -134,9 +132,7 @@ class PatchingTest(UnitTestCase):
             Path(f"{_runtest_dir}/testfiles/output/temp"),
             open(f"{_runtest_dir}/testfiles/output/bad.tar", "rb"),
         )
-        assert not Path(
-            f"{_runtest_dir}/testfiles/output/warning-security-error"
-        ).exists()
+        assert not Path(f"{_runtest_dir}/testfiles/output/warning-security-error").exists()
 
 
 class index(object):
@@ -253,9 +249,7 @@ class TestInnerFuncs(UnitTestCase):
         """Make a delta ROPath, permissions 0o640"""
         delta1 = self.out.append("delta1")
         fout = delta1.open("wb")
-        fout.write(
-            self.get_delta(b"hello, world!", b"aonseuth aosetnuhaonsuhtansoetuhaoe")
-        )
+        fout.write(self.get_delta(b"hello, world!", b"aonseuth aosetnuhaonsuhtansoetuhaoe"))
         assert not fout.close()
         delta1.chmod(0o640)
         delta1.difftype = "diff"
@@ -316,9 +310,7 @@ class TestInnerFuncs(UnitTestCase):
     # E       assert '501:0 600' == '501:20 600'
     # E         - 501:0 600
     # E         + 501:20 600
-    @unittest.skipUnless(
-        platform.platform().startswith("Linux"), "Skip on non-Linux systems"
-    )
+    @unittest.skipUnless(platform.platform().startswith("Linux"), "Skip on non-Linux systems")
     def test_patch_seq2ropath(self):
         """Test patching sequence"""
 

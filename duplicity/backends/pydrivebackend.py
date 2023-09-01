@@ -86,30 +86,19 @@ Exception: {str(e)}"""
                     scopes="https://www.googleapis.com/auth/drive",
                 )
             else:
-                signer = (
-                    crypt.Signer.from_string(  # pylint: disable=used-before-assignment
-                        account_key
-                    )
-                )
-                credentials = (
-                    ServiceAccountCredentials(  # pylint: disable=used-before-assignment
-                        parsed_url.username + "@" + parsed_url.hostname,
-                        signer,
-                        scopes="https://www.googleapis.com/auth/drive",
-                    )
+                signer = crypt.Signer.from_string(account_key)  # pylint: disable=used-before-assignment
+                credentials = ServiceAccountCredentials(  # pylint: disable=used-before-assignment
+                    parsed_url.username + "@" + parsed_url.hostname,
+                    signer,
+                    scopes="https://www.googleapis.com/auth/drive",
                 )
             credentials.authorize(httplib2.Http())
             gauth = GoogleAuth(http_timeout=60)
             gauth.credentials = credentials
         elif "GOOGLE_DRIVE_SETTINGS" in os.environ:
-            gauth = GoogleAuth(
-                settings_file=os.environ["GOOGLE_DRIVE_SETTINGS"], http_timeout=60
-            )
+            gauth = GoogleAuth(settings_file=os.environ["GOOGLE_DRIVE_SETTINGS"], http_timeout=60)
             gauth.CommandLineAuth()
-        elif (
-            "GOOGLE_SECRETS_FILE" in os.environ
-            and "GOOGLE_CREDENTIALS_FILE" in os.environ
-        ):
+        elif "GOOGLE_SECRETS_FILE" in os.environ and "GOOGLE_CREDENTIALS_FILE" in os.environ:
             gauth = GoogleAuth(http_timeout=60)
             gauth.LoadClientConfigFile(os.environ["GOOGLE_SECRETS_FILE"])
             gauth.LoadCredentialsFile(os.environ["GOOGLE_CREDENTIALS_FILE"])
@@ -131,9 +120,7 @@ Exception: {str(e)}"""
             parent_folder_id = self.shared_drive_id
         else:
             # Dirty way to find root folder id
-            file_list = self.drive.ListFile(
-                {"q": "'Root' in parents and trashed=false"}
-            ).GetList()
+            file_list = self.drive.ListFile({"q": "'Root' in parents and trashed=false"}).GetList()
             if file_list:
                 parent_folder_id = file_list[0]["parents"][0]["id"]
             else:
@@ -154,8 +141,7 @@ Exception: {str(e)}"""
                 (
                     item
                     for item in file_list
-                    if item["title"] == folder_name
-                    and item["mimeType"] == "application/vnd.google-apps.folder"
+                    if item["title"] == folder_name and item["mimeType"] == "application/vnd.google-apps.folder"
                 ),
                 None,
             )
@@ -187,24 +173,17 @@ Exception: {str(e)}"""
             file_id = self.id_cache[filename]
             drive_file = self.drive.CreateFile({"id": file_id})
             try:
-                if (
-                    drive_file["title"] == filename
-                    and not drive_file["labels"]["trashed"]
-                ):
+                if drive_file["title"] == filename and not drive_file["labels"]["trashed"]:
                     for parent in drive_file["parents"]:
                         if parent["id"] == self.folder:
-                            log.Info(
-                                f"PyDrive backend: found file '{filename}' with id {file_id} in ID cache"
-                            )
+                            log.Info(f"PyDrive backend: found file '{filename}' with id {file_id} in ID cache")
                             return drive_file
             except ApiRequestError as error:
                 # A 404 occurs if the ID is no longer valid
                 if error.args[0].resp.status != 404:
                     raise
             # If we get here, the cache entry is invalid
-            log.Info(
-                f"PyDrive backend: invalidating '{filename}' (previously ID {file_id}) from ID cache"
-            )
+            log.Info(f"PyDrive backend: invalidating '{filename}' (previously ID {file_id}) from ID cache")
             del self.id_cache[filename]
 
         # Not found in the cache, so use directory listing. This is less
@@ -215,15 +194,11 @@ Exception: {str(e)}"""
         list_file_args.update(self.api_params)
         flist = self.drive.ListFile(list_file_args).GetList()
         if len(flist) > 1:
-            log.FatalError(
-                _("PyDrive backend: multiple files called '%s'.") % (filename,)
-            )
+            log.FatalError(_("PyDrive backend: multiple files called '%s'.") % (filename,))
         elif flist:
             file_id = flist[0]["id"]
             self.id_cache[filename] = flist[0]["id"]
-            log.Info(
-                f"PyDrive backend: found file '{filename}' with id {file_id} on server, adding to cache"
-            )
+            log.Info(f"PyDrive backend: found file '{filename}' with id {file_id} on server, adding to cache")
             return flist[0]
         log.Info(f"PyDrive backend: file '{filename}' not found in cache or on server")
         return None
@@ -248,9 +223,7 @@ Exception: {str(e)}"""
             drive_file = self.drive.CreateFile(create_file_args)
             log.Info(f"PyDrive backend: creating new file '{remote_filename}'")
         else:
-            log.Info(
-                f"PyDrive backend: replacing existing file '{remote_filename}' with id '{drive_file['id']}'"
-            )
+            log.Info(f"PyDrive backend: replacing existing file '{remote_filename}' with id '{drive_file['id']}'")
         drive_file.SetContentFile(os.fsdecode(source_path.name))
         if self.shared_drive_id:
             drive_file.Upload(param={"supportsTeamDrives": True})
@@ -275,22 +248,16 @@ Exception: {str(e)}"""
         # Note: do not use iterkeys() here, because file_by_name will modify
         # the cache if it finds invalid entries.
         for filename in list(self.id_cache.keys()):
-            if (filename not in filenames) and (
-                self.file_by_name(filename) is not None
-            ):
+            if (filename not in filenames) and (self.file_by_name(filename) is not None):
                 filenames.add(filename)
         return list(filenames)
 
     def _delete(self, filename):
         file_id = self.id_by_name(filename)
         if file_id == "":
-            log.Warn(
-                f"File '{os.fsdecode(filename)}' does not exist while trying to delete it"
-            )
+            log.Warn(f"File '{os.fsdecode(filename)}' does not exist while trying to delete it")
         elif self.shared_drive_id:
-            self.drive.auth.service.files().delete(
-                fileId=file_id, param={"supportsTeamDrives": True}
-            ).execute()
+            self.drive.auth.service.files().delete(fileId=file_id, param={"supportsTeamDrives": True}).execute()
         else:
             self.drive.auth.service.files().delete(fileId=file_id).execute()
 

@@ -41,9 +41,7 @@ skipCodeTest = pytest.mark.skipif(
 files_to_test = [
     os.path.join(_top_dir, "bin/duplicity"),
 ]
-files_to_test.extend(
-    glob.glob(os.path.join(_top_dir, "duplicity/**/*.py"), recursive=True)
-)
+files_to_test.extend(glob.glob(os.path.join(_top_dir, "duplicity/**/*.py"), recursive=True))
 files_to_test.extend(glob.glob(os.path.join(_top_dir, "testing/functional/*.py")))
 files_to_test.extend(glob.glob(os.path.join(_top_dir, "testing/unit/*.py")))
 files_to_test.extend(glob.glob(os.path.join(_top_dir, "testing/*.py")))
@@ -53,9 +51,7 @@ class CodeTest(DuplicityTestCase):
     def run_checker(self, cmd, returncodes=None):
         if returncodes is None:
             returncodes = [0]
-        process = subprocess.Popen(
-            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True
-        )
+        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
         output = process.communicate()[0]
         if len(output):
             for line in output.split("\n"):

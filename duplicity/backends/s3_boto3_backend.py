@@ -113,9 +113,7 @@ class S3Boto3Backend(duplicity.backend.Backend):
             else:
                 raise
 
-        self.bucket = self.s3.Bucket(
-            self.bucket_name
-        )  # only set if bucket is thought to exist.
+        self.bucket = self.s3.Bucket(self.bucket_name)  # only set if bucket is thought to exist.
 
     def _put(self, local_source_path, remote_filename):
         from boto3.s3.transfer import TransferConfig
@@ -155,8 +153,7 @@ class S3Boto3Backend(duplicity.backend.Backend):
         elif config.s3_use_sse_kms:
             if config.s3_kms_key_id is None:
                 raise FatalBackendException(
-                    "S3 USE SSE KMS was requested, but key id not provided "
-                    "require (--s3-kms-key-id)",
+                    "S3 USE SSE KMS was requested, but key id not provided " "require (--s3-kms-key-id)",
                     code=log.ErrorCode.s3_kms_no_id,
                 )
             extra_args["ServerSideEncryption"] = "aws:kms"
@@ -180,9 +177,7 @@ class S3Boto3Backend(duplicity.backend.Backend):
         remote_filename = os.fsdecode(remote_filename)
         key = self.key_prefix + remote_filename
 
-        log.Info(
-            f"Uploading {self.straight_url}/{remote_filename} to {storage_class} Storage"
-        )
+        log.Info(f"Uploading {self.straight_url}/{remote_filename} to {storage_class} Storage")
         self.s3.Object(self.bucket.name, key).upload_file(
             local_source_path.uc_name,
             Callback=tracker.progress_cb,

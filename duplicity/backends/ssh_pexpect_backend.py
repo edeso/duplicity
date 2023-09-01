@@ -88,9 +88,7 @@ class SSHPExpectBackend(duplicity.backend.Backend):
             config.ssh_options = f"{config.ssh_options} -oPort={parsed_url.port}"
         # set some defaults if user has not specified already.
         if "ServerAliveInterval" not in config.ssh_options:
-            config.ssh_options += (
-                f" -oServerAliveInterval={int(int(config.timeout / 2))}"
-            )
+            config.ssh_options += f" -oServerAliveInterval={int(int(config.timeout / 2))}"
         if "ServerAliveCountMax" not in config.ssh_options:
             config.ssh_options += " -oServerAliveCountMax=2"
 
@@ -131,9 +129,7 @@ class SSHPExpectBackend(duplicity.backend.Backend):
                     log.Warn("Invalid SSH password")
                     break
                 elif match == 4:
-                    log.Warn(
-                        "Remote host authentication failed (missing known_hosts entry?)"
-                    )
+                    log.Warn("Remote host authentication failed (missing known_hosts entry?)")
                     break
             elif state == "copying":
                 match = child.expect(
@@ -154,14 +150,10 @@ class SSHPExpectBackend(duplicity.backend.Backend):
                 elif match == 2:
                     state = "stalled"
                 elif match == 3:
-                    log.Warn(
-                        "Remote host authentication failed (missing known_hosts entry?)"
-                    )
+                    log.Warn("Remote host authentication failed (missing known_hosts entry?)")
                     break
             elif state == "stalled":
-                match = child.expect(
-                    [pexpect.EOF, "(?i)timeout, server not responding", "ETA"]
-                )
+                match = child.expect([pexpect.EOF, "(?i)timeout, server not responding", "ETA"])
                 log.Debug(f"State = {state}, Before = '{child.before.strip()}'")
                 if match == 0:
                     break
@@ -281,9 +273,7 @@ class SSHPExpectBackend(duplicity.backend.Backend):
             self.get_sftp(remote_filename, local_path)
 
     def get_sftp(self, remote_filename, local_path):
-        commands = [
-            f'get "{self.remote_prefix}{remote_filename}" "{local_path.uc_name}"'
-        ]
+        commands = [f'get "{self.remote_prefix}{remote_filename}" "{local_path.uc_name}"']
         commandline = f"{self.sftp_command} {config.ssh_options} {self.host_string}"
         self.run_sftp_command(commandline, commands)
 

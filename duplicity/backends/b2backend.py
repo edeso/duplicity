@@ -111,9 +111,7 @@ class B2Backend(duplicity.backend.Backend):
                         FileVersionInfoFactory,
                     )  # pylint: disable=import-error
                 except ImportError as e:
-                    raise BackendException(
-                        "B2 backend requires B2 Python SDK (pip install b2sdk)"
-                    )
+                    raise BackendException("B2 backend requires B2 Python SDK (pip install b2sdk)")
 
         self.service = B2Api(InMemoryAccountInfo())
         self.parsed_url.hostname = "B2"
@@ -121,9 +119,7 @@ class B2Backend(duplicity.backend.Backend):
         account_id = parsed_url.username
         account_key = self.get_password()
 
-        self.url_parts = [
-            x for x in parsed_url.path.replace("@", "/").split("/") if x != ""
-        ]
+        self.url_parts = [x for x in parsed_url.path.replace("@", "/").split("/") if x != ""]
         if self.url_parts:
             self.username = self.url_parts.pop(0)
             bucket_name = self.url_parts.pop(0)
@@ -169,9 +165,7 @@ class B2Backend(duplicity.backend.Backend):
                 DownloadDestLocalFile(local_path.name),
             )
         else:
-            df = self.bucket.download_file_by_name(
-                quote_plus(self.path + os.fsdecode(remote_filename), "/")
-            )
+            df = self.bucket.download_file_by_name(quote_plus(self.path + os.fsdecode(remote_filename), "/"))
             try:
                 # b2sdk >= 1.19.0
                 df.save_to(local_path.uc_name)
@@ -214,18 +208,14 @@ class B2Backend(duplicity.backend.Backend):
             self.bucket.hide_file(full_filename)
         else:
             file_version_info = self.file_info(quote_plus(full_filename, "/"))
-            self.bucket.delete_file_version(
-                file_version_info.id_, file_version_info.file_name
-            )
+            self.bucket.delete_file_version(file_version_info.id_, file_version_info.file_name)
 
     def _query(self, filename):
         """
         Get size info of filename
         """
         log.Log(f"Query: {self.path}{os.fsdecode(filename)}", log.INFO)
-        file_version_info = self.file_info(
-            quote_plus(self.path + os.fsdecode(filename), "/")
-        )
+        file_version_info = self.file_info(quote_plus(self.path + os.fsdecode(filename), "/"))
         return {
             "size": int(file_version_info.size)
             if file_version_info is not None and file_version_info.size is not None
@@ -236,9 +226,7 @@ class B2Backend(duplicity.backend.Backend):
         if self.v_num >= [1, 9, 0]:
             return self.bucket.get_file_info_by_name(filename)
         else:
-            response = self.bucket.api.session.list_file_names(
-                self.bucket.id_, filename, 1, self.path
-            )
+            response = self.bucket.api.session.list_file_names(self.bucket.id_, filename, 1, self.path)
             for entry in response["files"]:
                 file_version_info = FileVersionInfoFactory.from_api_response(entry)
                 if file_version_info.file_name == filename:

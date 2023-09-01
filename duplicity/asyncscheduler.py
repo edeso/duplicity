@@ -61,17 +61,11 @@ class AsyncScheduler(object):
         Create an asynchronous scheduler that executes jobs with the
         given level of concurrency.
         """
-        log.Info(
-            f"{self.__class__.__name__}: {_('instantiating at concurrency %d') % concurrency}"
-        )
-        assert (
-            concurrency >= 0
-        ), f"{self.__class__.__name__} concurrency level must be >= 0"
+        log.Info(f"{self.__class__.__name__}: {_('instantiating at concurrency %d') % concurrency}")
+        assert concurrency >= 0, f"{self.__class__.__name__} concurrency level must be >= 0"
 
         self.__failed = False  # has at least one task failed so far?
-        self.__failed_waiter = (
-            None  # when __failed, the waiter of the first task that failed
-        )
+        self.__failed_waiter = None  # when __failed, the waiter of the first task that failed
         self.__concurrency = concurrency
         self.__worker_count = 0  # number of active workers
         self.__waiter_count = 0  # number of threads waiting to submit work
@@ -165,9 +159,7 @@ class AsyncScheduler(object):
         """
 
         def _wait():
-            interruptably_wait(
-                self.__cv, lambda: self.__worker_count == 0 and self.__waiter_count == 0
-            )
+            interruptably_wait(self.__cv, lambda: self.__worker_count == 0 and self.__waiter_count == 0)
 
         with_lock(self.__cv, _wait)
 
@@ -198,8 +190,7 @@ class AsyncScheduler(object):
                 )
                 self.__failed_waiter()
                 raise AssertionError(
-                    f"{self.__class__.__name__}: "
-                    f"waiter should have raised an exception; this is a bug"
+                    f"{self.__class__.__name__}: " f"waiter should have raised an exception; this is a bug"
                 )
 
         def wait_for_and_register_launch():
@@ -217,9 +208,7 @@ class AsyncScheduler(object):
                 check_pending_failure()  # raise on fail
 
             self.__worker_count += 1
-            log.Debug(
-                f"{self.__class__.__name__}: {_('active workers = %d') % (self.__worker_count,)}"
-            )
+            log.Debug(f"{self.__class__.__name__}: {_('active workers = %d') % (self.__worker_count,)}")
 
         # simply wait for an OK condition to start, then launch our worker. the worker
         # never waits on us, we just wait for them.
@@ -241,9 +230,7 @@ class AsyncScheduler(object):
 
                 def complete_worker():
                     self.__worker_count -= 1
-                    log.Debug(
-                        f"{self.__class__.__name__}: {_('active workers = %d') % (self.__worker_count,)}"
-                    )
+                    log.Debug(f"{self.__class__.__name__}: {_('active workers = %d') % (self.__worker_count,)}")
                     self.__cv.notify_all()
 
                 with_lock(self.__cv, complete_worker)

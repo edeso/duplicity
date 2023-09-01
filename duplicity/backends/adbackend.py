@@ -53,9 +53,7 @@ class ADBackend(duplicity.backend.Backend):
     CLIENT_ID = "amzn1.application-oa2-client.791c9c2d78444e85a32eb66f92eb6bcc"
     CLIENT_SECRET = "5b322c6a37b25f16d848a6a556eddcc30314fc46ae65c87068ff1bc4588d715b"
 
-    MULTIPART_BOUNDARY = (
-        "DuplicityFormBoundaryd66364f7f8924f7e9d478e19cf4b871d114a1e00262542"
-    )
+    MULTIPART_BOUNDARY = "DuplicityFormBoundaryd66364f7f8924f7e9d478e19cf4b871d114a1e00262542"
 
     def __init__(self, parsed_url):
         duplicity.backend.Backend.__init__(self, parsed_url)
@@ -113,9 +111,7 @@ class ADBackend(duplicity.backend.Backend):
             with open(self.OAUTH_TOKEN_PATH) as f:
                 token = json.load(f)
         except IOError as err:
-            log.Notice(
-                f"Could not load OAuth2 token. Trying to create a new one. (original error: {err})"
-            )
+            log.Notice(f"Could not load OAuth2 token. Trying to create a new one. (original error: {err})")
 
         self.http_client = OAuth2Session(
             self.CLIENT_ID,
@@ -133,9 +129,7 @@ class ADBackend(duplicity.backend.Backend):
         if token is not None:
             self.http_client.refresh_token(self.OAUTH_TOKEN_URL)
 
-        endpoints_response = self.http_client.get(
-            self.metadata_url + "account/endpoint"
-        )
+        endpoints_response = self.http_client.get(self.metadata_url + "account/endpoint")
         if endpoints_response.status_code != requests.codes.ok:
             token = None
 
@@ -146,9 +140,7 @@ class ADBackend(duplicity.backend.Backend):
                     f"and you are not running duplicity interactively, so duplicity "
                     f"cannot possibly access Amazon Drive."
                 )
-            authorization_url, _ = self.http_client.authorization_url(
-                self.OAUTH_AUTHORIZE_URL
-            )
+            authorization_url, _ = self.http_client.authorization_url(self.OAUTH_AUTHORIZE_URL)
 
             print("")
             print(
@@ -159,9 +151,7 @@ class ADBackend(duplicity.backend.Backend):
             print(authorization_url)
             print("")
 
-            redirected_to = (
-                input("URL of the resulting page: ").replace("http://", "https://", 1)
-            ).strip()
+            redirected_to = (input("URL of the resulting page: ").replace("http://", "https://", 1)).strip()
 
             token = self.http_client.fetch_token(
                 self.OAUTH_TOKEN_URL,
@@ -169,9 +159,7 @@ class ADBackend(duplicity.backend.Backend):
                 authorization_response=redirected_to,
             )
 
-            endpoints_response = self.http_client.get(
-                self.metadata_url + "account/endpoint"
-            )
+            endpoints_response = self.http_client.get(self.metadata_url + "account/endpoint")
             endpoints_response.raise_for_status()
             token_updater(token)
 
@@ -184,9 +172,7 @@ class ADBackend(duplicity.backend.Backend):
     def resolve_backup_target(self):
         """Resolve node id for remote backup target folder"""
 
-        response = self.http_client.get(
-            self.metadata_url + "nodes?filters=kind:FOLDER AND isRoot:true"
-        )
+        response = self.http_client.get(self.metadata_url + "nodes?filters=kind:FOLDER AND isRoot:true")
         parent_node_id = response.json()["data"][0]["id"]
 
         for component in [x for x in self.backup_target.split("/") if x]:
@@ -197,8 +183,7 @@ class ADBackend(duplicity.backend.Backend):
                 query = query + "*"
 
             matches = self.read_all_pages(
-                self.metadata_url
-                + f"nodes?filters=kind:FOLDER AND name:{query} AND parents:{parent_node_id}"
+                self.metadata_url + f"nodes?filters=kind:FOLDER AND name:{query} AND parents:{parent_node_id}"
             )
             candidates = [f for f in matches if f.get("name") == component]
 
@@ -228,9 +213,7 @@ class ADBackend(duplicity.backend.Backend):
         """Create a new folder as a child of a parent node"""
 
         data = {"name": folder_name, "parents": [parent_node_id], "kind": "FOLDER"}
-        response = self.http_client.post(
-            self.metadata_url + "nodes", data=json.dumps(data)
-        )
+        response = self.http_client.post(self.metadata_url + "nodes", data=json.dumps(data))
         response.raise_for_status()
         return response.json()["id"]
 
@@ -255,9 +238,7 @@ class ADBackend(duplicity.backend.Backend):
                 else:
                     break
 
-        yield str.encode(
-            f"\r\n--{boundary}--\r\n" + f"multipart/form-data; boundary={boundary}"
-        )
+        yield str.encode(f"\r\n--{boundary}--\r\n" + f"multipart/form-data; boundary={boundary}")
 
     def read_all_pages(self, url):
         """Iterates over nodes API URL until all pages were read"""
@@ -270,9 +251,7 @@ class ADBackend(duplicity.backend.Backend):
             paginated_url = url + token_param + next_token
             response = self.http_client.get(paginated_url)
             if response.status_code != 200:
-                raise BackendException(
-                    f"Pagination failed with status={response.status_code} on URL={url}"
-                )
+                raise BackendException(f"Pagination failed with status={response.status_code} on URL={url}")
 
             parsed = response.json()
             if "data" in parsed and len(parsed["data"]) > 0:
@@ -329,9 +308,7 @@ class ADBackend(duplicity.backend.Backend):
             "kind": "FILE",
             "parents": [self.backup_target_id],
         }
-        headers = {
-            "Content-Type": f"multipart/form-data; boundary={self.MULTIPART_BOUNDARY}"
-        }
+        headers = {"Content-Type": f"multipart/form-data; boundary={self.MULTIPART_BOUNDARY}"}
         data = self.multipart_stream(metadata, source_path)
 
         response = self.http_client.post(
@@ -360,19 +337,13 @@ class ADBackend(duplicity.backend.Backend):
                     log.Debug("Upload turned out to be successful after all.")
                     return
                 elif remote_size == -1:
-                    log.Debug(
-                        f"Uploaded file is not yet there, {int(tries + 1)} tries left."
-                    )
+                    log.Debug(f"Uploaded file is not yet there, {int(tries + 1)} tries left.")
                     continue
                 else:
                     self.raise_for_existing_file(remote_filename)
-            raise BackendException(
-                f"{remote_filename} upload failed and file did not show up within time limit."
-            )
+            raise BackendException(f"{remote_filename} upload failed and file did not show up within time limit.")
         else:
-            log.Debug(
-                f"{remote_filename} upload returned an undesirable status code {response.status_code}"
-            )
+            log.Debug(f"{remote_filename} upload returned an undesirable status code {response.status_code}")
             response.raise_for_status()
 
         parsed = response.json()
@@ -393,13 +364,9 @@ class ADBackend(duplicity.backend.Backend):
         with local_path.open("wb") as local_file:
             file_id = self.get_file_id(remote_filename)
             if file_id is None:
-                raise BackendException(
-                    f'File "{remote_filename}" cannot be downloaded: it does not exist'
-                )
+                raise BackendException(f'File "{remote_filename}" cannot be downloaded: it does not exist')
 
-            response = self.http_client.get(
-                self.content_url + "/nodes/" + file_id + "/content", stream=True
-            )
+            response = self.http_client.get(self.content_url + "/nodes/" + file_id + "/content", stream=True)
             response.raise_for_status()
             for chunk in response.iter_content(chunk_size=DEFAULT_BUFFER_SIZE):
                 if chunk:
@@ -421,10 +388,7 @@ class ADBackend(duplicity.backend.Backend):
         """List files in Amazon Drive backup folder"""
 
         files = self.read_all_pages(
-            self.metadata_url
-            + "nodes/"
-            + self.backup_target_id
-            + "/children?filters=kind:FILE"
+            self.metadata_url + "nodes/" + self.backup_target_id + "/children?filters=kind:FILE"
         )
 
         self.names_to_ids = {f["name"]: f["id"] for f in files}
@@ -436,9 +400,7 @@ class ADBackend(duplicity.backend.Backend):
 
         file_id = self.get_file_id(remote_filename)
         if file_id is None:
-            raise BackendException(
-                f'File "{remote_filename}" cannot be deleted: it does not exist'
-            )
+            raise BackendException(f'File "{remote_filename}" cannot be deleted: it does not exist')
         response = self.http_client.put(self.metadata_url + "trash/" + file_id)
         response.raise_for_status()
         del self.names_to_ids[remote_filename]

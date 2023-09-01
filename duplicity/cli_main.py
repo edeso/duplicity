@@ -37,9 +37,7 @@ from duplicity.cli_data import *
 from duplicity.cli_util import *
 
 
-class DuplicityHelpFormatter(
-    argparse.ArgumentDefaultsHelpFormatter, argparse.RawDescriptionHelpFormatter
-):
+class DuplicityHelpFormatter(argparse.ArgumentDefaultsHelpFormatter, argparse.RawDescriptionHelpFormatter):
     """
     A working class to combine ArgumentDefaults, RawDescription.
     Use with make_wide() to insure we catch argparse API changes.
@@ -81,9 +79,7 @@ def parse_implied_command(arglist):
     - the order of positional arguments implies backup (2nd is url) or restore (first is url)
     Check if there is a valid action command or throw command line error
     """
-    parser = argparse.ArgumentParser(
-        prog="duplicity", add_help=False, argument_default=None
-    )
+    parser = argparse.ArgumentParser(prog="duplicity", add_help=False, argument_default=None)
 
     # add dummy -h and --help
     parser.add_argument("-h", "--help", action="store_true")
@@ -95,11 +91,7 @@ def parse_implied_command(arglist):
         # arparse store and friends define nargs, so we keep em
         # strip actually config retrieving action classes _and_ type functions checking validity
         selected_args_only = {
-            k: (
-                v
-                if not (inspect.isclass(v) and issubclass(v, argparse.Action))
-                else DoNothingAction
-            )
+            k: (v if not (inspect.isclass(v) and issubclass(v, argparse.Action)) else DoNothingAction)
             for k, v in OptionKwargs.__dict__[var].items()
             if k not in {"type"}
         }
@@ -136,9 +128,7 @@ def parse_implied_command(arglist):
                 if var.startswith("__") or len(var) <= 2:
                     continue
                 all_long_commands.add(var2cmd(var))
-            all_long_commands_string = ", ".join(
-                f"'{c}'" for c in sorted(all_long_commands)
-            )
+            all_long_commands_string = ", ".join(f"'{c}'" for c in sorted(all_long_commands))
             msg = _(
                 "Invalid or missing action command and cannot be implied from the "
                 f"given arguments. {remainder_string}\n"
@@ -153,9 +143,7 @@ def pre_parse_cmdline_options(arglist):
     Everthing else is passed on to the main parser.
     """
     # set up parent parser
-    parser = argparse.ArgumentParser(
-        prog="duplicity", add_help=False, argument_default=None
-    )
+    parser = argparse.ArgumentParser(prog="duplicity", add_help=False, argument_default=None)
 
     # add parent_only options to the parser
     for opt in sorted(parent_only_options):
@@ -197,15 +185,11 @@ def parse_cmdline_options(arglist):
 
     # add changed options to the parser
     for opt in sorted(changed_options):
-        parser.add_argument(
-            opt, nargs=0, action=ChangedOptionAction, help=argparse.SUPPRESS
-        )
+        parser.add_argument(opt, nargs=0, action=ChangedOptionAction, help=argparse.SUPPRESS)
 
     # add deprecated options to the parser
     for opt in sorted(deprecated_options):
-        parser.add_argument(
-            opt, nargs=0, action=DeprecationAction, help=argparse.SUPPRESS
-        )
+        parser.add_argument(opt, nargs=0, action=DeprecationAction, help=argparse.SUPPRESS)
 
     # set up command subparsers
     subparsers = parser.add_subparsers(title=_("Valid action commands"), required=False)

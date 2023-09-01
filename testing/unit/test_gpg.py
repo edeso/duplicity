@@ -83,9 +83,7 @@ class GPGTest(UnitTestCase):
         )
         self.gpg_cycle(b"aoensutha aonetuh saoe", profile)
 
-        profile2 = gpg.GPGProfile(
-            passphrase=self.sign_passphrase, recipients=[self.encrypt_key1]
-        )
+        profile2 = gpg.GPGProfile(passphrase=self.sign_passphrase, recipients=[self.encrypt_key1])
         self.gpg_cycle(b"aoeu" * 10000, profile2)
 
     def test_gpg_hidden_asym(self):
@@ -96,9 +94,7 @@ class GPGTest(UnitTestCase):
         )
         self.gpg_cycle(b"aoensutha aonetuh saoe", profile)
 
-        profile2 = gpg.GPGProfile(
-            passphrase=self.sign_passphrase, hidden_recipients=[self.encrypt_key1]
-        )
+        profile2 = gpg.GPGProfile(passphrase=self.sign_passphrase, hidden_recipients=[self.encrypt_key1])
         self.gpg_cycle(b"aoeu" * 10000, profile2)
 
     def test_gpg_signing(self):
@@ -161,14 +157,10 @@ class GPGTest(UnitTestCase):
             )
             # print os.stat("/tmp/testfiles/output/gpgwrite.gpg").st_size-size
             assert (
-                size - 64 * 1024
-                <= os.stat(f"{_runtest_dir}/testfiles/output/gpgwrite.gpg").st_size
-                <= size + 64 * 1024
+                size - 64 * 1024 <= os.stat(f"{_runtest_dir}/testfiles/output/gpgwrite.gpg").st_size <= size + 64 * 1024
             )  # noqa
         gwfh.set_at_end()
-        gpg.GPGWriteFile(
-            gwfh, f"{_runtest_dir}/testfiles/output/gpgwrite.gpg", profile, size=size
-        )
+        gpg.GPGWriteFile(gwfh, f"{_runtest_dir}/testfiles/output/gpgwrite.gpg", profile, size=size)
         # print os.stat("/tmp/testfiles/output/gpgwrite.gpg").st_size
 
     def test_GzipWriteFile(self):
@@ -176,19 +168,13 @@ class GPGTest(UnitTestCase):
         size = 400 * 1000
         gwfh = GPGWriteFile_Helper()
         for i in range(10):
-            gpg.GzipWriteFile(
-                gwfh, f"{_runtest_dir}/testfiles/output/gzwrite.gz", size=size
-            )
+            gpg.GzipWriteFile(gwfh, f"{_runtest_dir}/testfiles/output/gzwrite.gz", size=size)
             # print os.stat("/tmp/testfiles/output/gzwrite.gz").st_size-size
             assert (
-                size - 64 * 1024
-                <= os.stat(f"{_runtest_dir}/testfiles/output/gzwrite.gz").st_size
-                <= size + 64 * 1024
+                size - 64 * 1024 <= os.stat(f"{_runtest_dir}/testfiles/output/gzwrite.gz").st_size <= size + 64 * 1024
             )  # noqa
         gwfh.set_at_end()
-        gpg.GzipWriteFile(
-            gwfh, f"{_runtest_dir}/testfiles/output/gzwrite.gz", size=size
-        )
+        gpg.GzipWriteFile(gwfh, f"{_runtest_dir}/testfiles/output/gzwrite.gz", size=size)
         # print os.stat("/tmp/testfiles/output/gzwrite.gz").st_size
 
 

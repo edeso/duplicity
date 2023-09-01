@@ -47,14 +47,10 @@ class FinalTest(FunctionalTestCase):
 
         # Back up directories to local backend
         current_time = 100000
-        self.backup(
-            "full", dirlist[0], current_time=current_time, options=backup_options
-        )
+        self.backup("full", dirlist[0], current_time=current_time, options=backup_options)
         for new_dir in dirlist[1:]:
             current_time += 100000
-            self.backup(
-                "inc", new_dir, current_time=current_time, options=backup_options
-            )
+            self.backup("inc", new_dir, current_time=current_time, options=backup_options)
 
         # Restore each and compare them
         for i in range(len(dirlist)):
@@ -70,9 +66,7 @@ class FinalTest(FunctionalTestCase):
         assert path1.compare_recursive(path2, verbose=1)
 
     @pytest.mark.slow
-    def test_basic_cycle(
-        self, backup_options=None, restore_options=None, dirlist=None, testfiles=None
-    ):
+    def test_basic_cycle(self, backup_options=None, restore_options=None, dirlist=None, testfiles=None):
         """Run backup/restore test on basic directories"""
         if backup_options is None:
             backup_options = ["--no-encrypt", "--no-compress"]
@@ -84,9 +78,7 @@ class FinalTest(FunctionalTestCase):
                 f"{_runtest_dir}/testfiles/dir2",
                 f"{_runtest_dir}/testfiles/dir3",
             ]
-        self.runtest(
-            dirlist, backup_options=backup_options, restore_options=restore_options
-        )
+        self.runtest(dirlist, backup_options=backup_options, restore_options=restore_options)
 
         if testfiles is None:
             testfiles = [
@@ -124,9 +116,7 @@ class FinalTest(FunctionalTestCase):
             "--sign-key",
             self.sign_key,
         ]
-        self.test_basic_cycle(
-            backup_options=backup_options, restore_options=restore_options
-        )
+        self.test_basic_cycle(backup_options=backup_options, restore_options=restore_options)
 
     @pytest.mark.slow
     def test_asym_with_hidden_recipient_cycle(self):
@@ -143,9 +133,7 @@ class FinalTest(FunctionalTestCase):
             "--sign-key",
             self.sign_key,
         ]
-        self.test_basic_cycle(
-            backup_options=backup_options, restore_options=restore_options
-        )
+        self.test_basic_cycle(backup_options=backup_options, restore_options=restore_options)
 
     def test_single_regfile(self):
         """Test backing and restoring up a single regular file"""
@@ -252,15 +240,11 @@ class FinalTest(FunctionalTestCase):
 
         self.assertEqual(self.get_backend_files(), first_chain | second_chain)
 
-        self.run_duplicity(
-            options=["remove-older-than", "35000", "--force", self.backend_url]
-        )
+        self.run_duplicity(options=["remove-older-than", "35000", "--force", self.backend_url])
         self.assertEqual(self.get_backend_files(), second_chain)
 
         # Now check to make sure we can't delete only chain
-        self.run_duplicity(
-            options=["remove-older-than", "50000", "--force", self.backend_url]
-        )
+        self.run_duplicity(options=["remove-older-than", "50000", "--force", self.backend_url])
         self.assertEqual(self.get_backend_files(), second_chain)
 
     def test_piped_password(self):
@@ -278,9 +262,7 @@ class FinalTest(FunctionalTestCase):
         """Test cycle with json stats enabled"""
         backup_options = ["--jsonstat"]
         restore_options = ["--jsonstat"]
-        self.test_basic_cycle(
-            backup_options=backup_options, restore_options=restore_options
-        )
+        self.test_basic_cycle(backup_options=backup_options, restore_options=restore_options)
 
     def test_jsonstat_missing(self):
         """Make sure collection_status works if one set misses jsonstat"""
@@ -294,9 +276,7 @@ class FinalTest(FunctionalTestCase):
             f"{_runtest_dir}/testfiles/empty_dir",
             options=["--jsonstat", "--allow-source-mismatch"],
         )
-        self.backup(
-            "inc", f"{_runtest_dir}/testfiles/dir2", options=["--allow-source-mismatch"]
-        )
+        self.backup("inc", f"{_runtest_dir}/testfiles/dir2", options=["--allow-source-mismatch"])
         self.collection_status(options=["--show-changes-in-set", "-1", "--jsonstat"])
 
     @pytest.mark.slow

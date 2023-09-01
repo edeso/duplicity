@@ -56,9 +56,7 @@ class GPGProfile(object):
     Just hold some GPG settings, avoid passing tons of arguments
     """
 
-    def __init__(
-        self, passphrase=None, sign_key=None, recipients=None, hidden_recipients=None
-    ):
+    def __init__(self, passphrase=None, sign_key=None, recipients=None, hidden_recipients=None):
         """
         Set all data with initializer
 
@@ -88,9 +86,7 @@ class GPGProfile(object):
         self.gpg_version = self.get_gpg_version(config.gpg_binary)
 
     rc = re.compile
-    _version_re = rc(
-        b"^gpg.*\\(GnuPG(?:/MacGPG2)?\\) (?P<maj>[0-9]+)\\.(?P<min>[0-9]+)\\.(?P<bug>[0-9]+)(-.+)?$"
-    )
+    _version_re = rc(b"^gpg.*\\(GnuPG(?:/MacGPG2)?\\) (?P<maj>[0-9]+)\\.(?P<min>[0-9]+)\\.(?P<bug>[0-9]+)(-.+)?$")
 
     def get_gpg_version(self, binary):
         gnupg = gpginterface.GnuPG()
@@ -218,9 +214,7 @@ class GPGFile(object):
                 p1.handles["passphrase"].close()
             self.gpg_input = p1.handles["stdin"]
         else:
-            if (
-                profile.recipients or profile.hidden_recipients
-            ) and profile.encrypt_secring:
+            if (profile.recipients or profile.hidden_recipients) and profile.encrypt_secring:
                 cmdlist.append("--secret-keyring")
                 cmdlist.append(profile.encrypt_secring)
             gpg_attach = {"stdin": encrypt_path.open("rb"), "stderr": self.stderr_fp}
@@ -275,9 +269,7 @@ class GPGFile(object):
         self.stderr_fp.seek(0)
         for line in self.stderr_fp:
             try:
-                msg += (
-                    f"{str(line.strip(), locale.getpreferredencoding(), u'replace')}\n"
-                )
+                msg += f"{str(line.strip(), locale.getpreferredencoding(), u'replace')}\n"
             except Exception as e:
                 msg += f"{line.strip()}\n"
         msg += "===== End GnuPG log =====\n"
@@ -343,9 +335,7 @@ class GPGFile(object):
         return self.signature
 
 
-def GPGWriteFile(
-    block_iter, filename, profile, size=200 * 1024 * 1024, max_footer_size=16 * 1024
-):
+def GPGWriteFile(block_iter, filename, profile, size=200 * 1024 * 1024, max_footer_size=16 * 1024):
     """
     Write GPG compressed file of given size
 

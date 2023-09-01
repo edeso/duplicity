@@ -204,9 +204,7 @@ class TestTrailingSlash(UnitTestCase):
 
     def test_slash_matches_everything(self):
         """Test / matches everything"""
-        self.assertEqual(
-            inc_sel_dir("/", f"/tmp/{_runtest_dir}/testfiles/select/1/2"), 1
-        )
+        self.assertEqual(inc_sel_dir("/", f"/tmp/{_runtest_dir}/testfiles/select/1/2"), 1)
         self.assertEqual(inc_sel_dir("/", "/test/random/path"), 1)
         self.assertEqual(exc_sel_dir("/", "/test/random/path"), 0)
         self.assertEqual(inc_sel_dir("/", "/"), 1)
@@ -241,16 +239,12 @@ class TestTrailingSlash(UnitTestCase):
 
     def test_double_asterisk_string_slash(self):
         """Test string starting with ** and ending in /"""
-        self.assertEqual(
-            inc_sel_dir("**/1/2/", f"{_runtest_dir}/testfiles/select/1/2"), 1
-        )
+        self.assertEqual(inc_sel_dir("**/1/2/", f"{_runtest_dir}/testfiles/select/1/2"), 1)
 
     def test_string_double_asterisk_string_slash(self):
         """Test string ** string /"""
         self.assertEqual(
-            inc_sel_dir(
-                f"{_runtest_dir}/testfiles**/2/", f"{_runtest_dir}/testfiles/select/1/2"
-            ),
+            inc_sel_dir(f"{_runtest_dir}/testfiles**/2/", f"{_runtest_dir}/testfiles/select/1/2"),
             1,
         )
 
@@ -293,15 +287,9 @@ class TestSquareBrackets(UnitTestCase):
 
     def test_square_bracket_options(self):
         """Test file including options in []s"""
-        self.assertEqual(
-            inc_sel_file("/test/f[o,s,p]lder/foo.txt", "/test/folder/foo.txt"), 1
-        )
-        self.assertEqual(
-            inc_sel_file("/test/f[i,s,p]lder/foo.txt", "/test/folder/foo.txt"), None
-        )
-        self.assertEqual(
-            inc_sel_file("/test/f[s,o,p]lder/foo.txt", "/test/folder/foo.txt"), 1
-        )
+        self.assertEqual(inc_sel_file("/test/f[o,s,p]lder/foo.txt", "/test/folder/foo.txt"), 1)
+        self.assertEqual(inc_sel_file("/test/f[i,s,p]lder/foo.txt", "/test/folder/foo.txt"), None)
+        self.assertEqual(inc_sel_file("/test/f[s,o,p]lder/foo.txt", "/test/folder/foo.txt"), 1)
 
     def test_square_bracket_options_unicode(self):
         """Test file including options in []s"""
@@ -322,36 +310,18 @@ class TestSquareBrackets(UnitTestCase):
 
     def test_not_square_bracket_options(self):
         """Test file including options in [!]s"""
-        self.assertEqual(
-            inc_sel_file("/test/f[!o,s,p]lder/foo.txt", "/test/folder/foo.txt"), None
-        )
-        self.assertEqual(
-            inc_sel_file("/test/f[!i,s,p]lder/foo.txt", "/test/folder/foo.txt"), 1
-        )
-        self.assertEqual(
-            inc_sel_file("/test/f[!s,o,p]lder/foo.txt", "/test/folder/foo.txt"), None
-        )
+        self.assertEqual(inc_sel_file("/test/f[!o,s,p]lder/foo.txt", "/test/folder/foo.txt"), None)
+        self.assertEqual(inc_sel_file("/test/f[!i,s,p]lder/foo.txt", "/test/folder/foo.txt"), 1)
+        self.assertEqual(inc_sel_file("/test/f[!s,o,p]lder/foo.txt", "/test/folder/foo.txt"), None)
 
     def test_square_bracket_range(self):
         """Test file including range in []s"""
-        self.assertEqual(
-            inc_sel_file("/test/folder[1-5]/foo.txt", "/test/folder4/foo.txt"), 1
-        )
-        self.assertEqual(
-            inc_sel_file("/test/folder[5-9]/foo.txt", "/test/folder4/foo.txt"), None
-        )
-        self.assertEqual(
-            inc_sel_file("/test/folder[1-5]/foo.txt", "/test/folder6/foo.txt"), None
-        )
+        self.assertEqual(inc_sel_file("/test/folder[1-5]/foo.txt", "/test/folder4/foo.txt"), 1)
+        self.assertEqual(inc_sel_file("/test/folder[5-9]/foo.txt", "/test/folder4/foo.txt"), None)
+        self.assertEqual(inc_sel_file("/test/folder[1-5]/foo.txt", "/test/folder6/foo.txt"), None)
 
     def test_square_bracket_not_range(self):
         """Test file including range in [!]s"""
-        self.assertEqual(
-            inc_sel_file("/test/folder[!1-5]/foo.txt", "/test/folder4/foo.txt"), None
-        )
-        self.assertEqual(
-            inc_sel_file("/test/folder[!5-9]/foo.txt", "/test/folder4/foo.txt"), 1
-        )
-        self.assertEqual(
-            inc_sel_file("/test/folder[!1-5]/foo.txt", "/test/folder6/foo.txt"), 1
-        )
+        self.assertEqual(inc_sel_file("/test/folder[!1-5]/foo.txt", "/test/folder4/foo.txt"), None)
+        self.assertEqual(inc_sel_file("/test/folder[!5-9]/foo.txt", "/test/folder4/foo.txt"), 1)
+        self.assertEqual(inc_sel_file("/test/folder[!1-5]/foo.txt", "/test/folder6/foo.txt"), 1)

@@ -100,9 +100,7 @@ class SlateBackend(duplicity.backend.Backend):
         log.Debug("response handled")
 
         if not response.ok:
-            raise BackendException(
-                f"An error occurred whilst attempting to upload a file: {response}"
-            )
+            raise BackendException(f"An error occurred whilst attempting to upload a file: {response}")
         else:
             log.Debug(f"File successfully uploaded to slate with id:{self.slate_id}")
 
@@ -180,9 +178,7 @@ class SlateBackend(duplicity.backend.Backend):
             raise BackendException(f"A slate with id {self.slate_id} does not exist")
 
         try:
-            urllib.request.urlretrieve(
-                f"http://ipfs.io/ipfs/{cid}", os.fsdecode(local_path.name)
-            )
+            urllib.request.urlretrieve(f"http://ipfs.io/ipfs/{cid}", os.fsdecode(local_path.name))
             log.Debug(f"Downloaded file with cid: {cid}")
         except NameError as e:
             raise BackendException("Couldn't download file")

@@ -94,13 +94,10 @@ class MultiBackend(duplicity.backend.Backend):
         if len(reparsed_url.query) == 0:
             return dict()
         try:
-            queryMultiDict = urllib.parse.parse_qs(
-                reparsed_url.query, strict_parsing=True
-            )
+            queryMultiDict = urllib.parse.parse_qs(reparsed_url.query, strict_parsing=True)
         except ValueError as e:
             log.Log(
-                _("MultiBackend: Could not parse query string %s: %s ")
-                % (reparsed_url.query, e),
+                _("MultiBackend: Could not parse query string %s: %s ") % (reparsed_url.query, e),
                 log.ERROR,
             )
             raise BackendException("Could not parse query string")
@@ -110,17 +107,13 @@ class MultiBackend(duplicity.backend.Backend):
         for name, valueList in list(queryMultiDict.items()):
             if len(valueList) != 1:
                 log.Log(
-                    _(
-                        "MultiBackend: Invalid query string %s: more than one value for %s"
-                    )
-                    % (reparsed_url.query, name),
+                    _("MultiBackend: Invalid query string %s: more than one value for %s") % (reparsed_url.query, name),
                     log.ERROR,
                 )
                 raise BackendException("Invalid query string")
             if name not in MultiBackend.__knownQueryParameters:
                 log.Log(
-                    _("MultiBackend: Invalid query string %s: unknown parameter %s")
-                    % (reparsed_url.query, name),
+                    _("MultiBackend: Invalid query string %s: unknown parameter %s") % (reparsed_url.query, name),
                     log.ERROR,
                 )
                 raise BackendException("Invalid query string")
@@ -178,8 +171,7 @@ class MultiBackend(duplicity.backend.Backend):
 
         if self.__onfail_mode not in MultiBackend.__onfail_mode_allowedSet:
             log.Log(
-                _("MultiBackend: illegal value for %s: %s")
-                % ("onfail", self.__onfail_mode),
+                _("MultiBackend: illegal value for %s: %s") % ("onfail", self.__onfail_mode),
                 log.ERROR,
             )
             raise BackendException("MultiBackend: invalid onfail value")
@@ -194,8 +186,7 @@ class MultiBackend(duplicity.backend.Backend):
             log.Log(_("MultiBackend: Url %s") % (parsed_url.strip_auth()), log.ERROR)
 
             log.Log(
-                _("MultiBackend: Could not load config file %s: %s ")
-                % (parsed_url.path, e),
+                _("MultiBackend: Could not load config file %s: %s ") % (parsed_url.path, e),
                 log.ERROR,
             )
             raise BackendException("Could not load config file")
@@ -206,8 +197,7 @@ class MultiBackend(duplicity.backend.Backend):
             if "env" in config:
                 for env in config["env"]:
                     log.Log(
-                        _("MultiBackend: set env %s = %s")
-                        % (env["name"], env["value"]),
+                        _("MultiBackend: set env %s = %s") % (env["name"], env["value"]),
                         log.INFO,
                     )
                     os.environ[env["name"]] = env["value"]
@@ -218,9 +208,7 @@ class MultiBackend(duplicity.backend.Backend):
             # Prefix affinity
             if "prefixes" in config:
                 if self.__mode == "stripe":
-                    raise BackendException(
-                        "Multibackend: stripe mode not supported with prefix affinity."
-                    )
+                    raise BackendException("Multibackend: stripe mode not supported with prefix affinity.")
                 for prefix in config["prefixes"]:
                     log.Log(
                         _("Multibackend: register affinity for prefix %s") % prefix,
@@ -238,16 +226,8 @@ class MultiBackend(duplicity.backend.Backend):
 
     def _eligible_stores(self, filename):
         if self.__affinities:
-            matching_prefixes = [
-                k
-                for k in list(self.__affinities.keys())
-                if os.fsdecode(filename).startswith(k)
-            ]
-            matching_stores = {
-                store
-                for prefix in matching_prefixes
-                for store in self.__affinities[prefix]
-            }
+            matching_prefixes = [k for k in list(self.__affinities.keys()) if os.fsdecode(filename).startswith(k)]
+            matching_stores = {store for prefix in matching_prefixes for store in self.__affinities[prefix]}
             if matching_stores:
                 # Distinct stores with matching prefix
                 return list(matching_stores)
@@ -289,9 +269,7 @@ class MultiBackend(duplicity.backend.Backend):
                     break
             except Exception as e:
                 log.Log(
-                    _(
-                        "MultiBackend: failed to write to store #%s (%s), try #%s, Exception: %s"
-                    )
+                    _("MultiBackend: failed to write to store #%s (%s), try #%s, Exception: %s")
                     % (
                         self.__write_cursor,
                         store.backend.parsed_url.strip_auth(),
@@ -305,8 +283,7 @@ class MultiBackend(duplicity.backend.Backend):
                 # If we consider write failure as abort, abort
                 if self.__onfail_mode == "abort":
                     log.Log(
-                        _("MultiBackend: failed to write %s. Aborting process.")
-                        % source_path,
+                        _("MultiBackend: failed to write %s. Aborting process.") % source_path,
                         log.ERROR,
                     )
                     raise BackendException("failed to write")
@@ -314,9 +291,7 @@ class MultiBackend(duplicity.backend.Backend):
                 # If we've looped around, and none of them passed, fail
                 if (self.__write_cursor == first) and not passed:
                     log.Log(
-                        _(
-                            "MultiBackend: failed to write %s. Tried all backing stores and none succeeded"
-                        )
+                        _("MultiBackend: failed to write %s. Tried all backing stores and none succeeded")
                         % source_path,
                         log.ERROR,
                     )
@@ -342,10 +317,7 @@ class MultiBackend(duplicity.backend.Backend):
                 log.INFO,
             )
         log.Log(
-            _(
-                "MultiBackend: failed to get %s. Tried all backing stores and none succeeded"
-            )
-            % remote_filename,
+            _("MultiBackend: failed to get %s. Tried all backing stores and none succeeded") % remote_filename,
             log.ERROR,
         )
         raise BackendException("failed to get")
@@ -355,10 +327,7 @@ class MultiBackend(duplicity.backend.Backend):
         for s in self.__stores:
             config.are_errors_fatal["list"] = (False, [])
             l = s.list()
-            log.Notice(
-                _("MultiBackend: %s: %d files")
-                % (s.backend.parsed_url.strip_auth(), len(l))
-            )
+            log.Notice(_("MultiBackend: %s: %d files") % (s.backend.parsed_url.strip_auth(), len(l)))
             if len(l) == 0 and duplicity.backend._last_exception:
                 log.Warn(
                     _(
@@ -402,10 +371,7 @@ class MultiBackend(duplicity.backend.Backend):
                     return
         if not passed:
             log.Log(
-                _(
-                    "MultiBackend: failed to delete %s. Tried all backing stores and none succeeded"
-                )
-                % filename,
+                _("MultiBackend: failed to delete %s. Tried all backing stores and none succeeded") % filename,
                 log.ERROR,
             )
 
@@ -435,10 +401,7 @@ class MultiBackend(duplicity.backend.Backend):
                 return
         if not passed:
             log.Log(
-                _(
-                    "MultiBackend: failed to delete %s. Tried all backing stores and none succeeded"
-                )
-                % filenames,
+                _("MultiBackend: failed to delete %s. Tried all backing stores and none succeeded") % filenames,
                 log.ERROR,
             )
 

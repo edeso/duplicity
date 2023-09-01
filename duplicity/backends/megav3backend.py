@@ -80,9 +80,7 @@ class Megav3Backend(duplicity.backend.Backend):
             self._password = parsed_url.password
 
         no_logout_option = parsed_url.query_args.get("no_logout", [])
-        self._no_logout = (len(no_logout_option) > 0) and (
-            no_logout_option[0].lower() in ["1", "yes", "true"]
-        )
+        self._no_logout = (len(no_logout_option) > 0) and (no_logout_option[0].lower() in ["1", "yes", "true"])
 
         self.ensure_mega_cmd_running()
 
@@ -135,9 +133,7 @@ class Megav3Backend(duplicity.backend.Backend):
                     f"Use another path or remove the folder in MEGA manually"
                 )
             else:
-                raise BackendException(
-                    f"Folder '{path}' could not be created, reason : '{e}'"
-                )
+                raise BackendException(f"Folder '{path}' could not be created, reason : '{e}'")
 
     def _put(self, source_path, remote_filename):
         """Uploads file to the specified remote folder (tries to delete it first to make
@@ -197,9 +193,7 @@ class Megav3Backend(duplicity.backend.Backend):
                 raise Exception("Username is not match")
         except subprocess.TimeoutExpired:
             self._close()
-            raise BackendException(
-                "Timed out while trying to determine if a MEGA session exists"
-            )
+            raise BackendException("Timed out while trying to determine if a MEGA session exists")
         except Exception as e:
             if self._password is None:
                 self._password = self.get_password()
@@ -251,9 +245,7 @@ class Megav3Backend(duplicity.backend.Backend):
                     f"Upgrade your storage at https://mega.nz/pro or remove some data."
                 )
             else:
-                raise BackendException(
-                    f"Failed writing file '{remote_file}' to MEGA, reason : '{e}'"
-                )
+                raise BackendException(f"Failed writing file '{remote_file}' to MEGA, reason : '{e}'")
 
     def delete(self, remote_file):
         """Deletes a file from a remote MEGA path"""

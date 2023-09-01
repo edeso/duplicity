@@ -134,9 +134,7 @@ class ParsedUrlTest(UnitTestCase):
         assert pu.password is None, pu.password
         assert pu.port is None, pu.port
 
-        pu = duplicity.backend.ParsedUrl(
-            "scheme://username:passwor@127.0.0.1:22/path/path"
-        )
+        pu = duplicity.backend.ParsedUrl("scheme://username:passwor@127.0.0.1:22/path/path")
         assert pu.strip_auth() == "scheme://127.0.0.1:22/path/path"
 
         pu = duplicity.backend.ParsedUrl("xorriso:///dev/sr0")

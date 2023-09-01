@@ -54,16 +54,12 @@ class GnuPGTests(BasicTest):
         self.gnupg.options.meta_interactive = 0
         self.gnupg.options.extra_args.append("--no-secmem-warning")
 
-    def do_create_fh_operation(
-        self, args, input, passphrase=None
-    ):  # pylint: disable=redefined-builtin
+    def do_create_fh_operation(self, args, input, passphrase=None):  # pylint: disable=redefined-builtin
         creations = ["stdin", "stdout"]
 
         # Make sure we're getting the passphrase to GnuPG
         # somehow!
-        assert (
-            passphrase is not None or self.gnupg.passphrase is not None
-        ), "No way to send the passphrase to GnuPG!"
+        assert passphrase is not None or self.gnupg.passphrase is not None, "No way to send the passphrase to GnuPG!"
 
         # We'll handle the passphrase manually
         if passphrase is not None:
@@ -89,9 +85,7 @@ class GnuPGTests(BasicTest):
     def do_attach_fh_operation(self, args, stdin, stdout, passphrase=None):
         # Make sure we're getting the passphrase to GnuPG
         # somehow!
-        assert (
-            passphrase is not None or self.gnupg.passphrase is not None
-        ), "No way to send the passphrase to GnuPG!"
+        assert passphrase is not None or self.gnupg.passphrase is not None, "No way to send the passphrase to GnuPG!"
 
         creations = []
         attachments = {"stdin": stdin, "stdout": stdout}
@@ -115,12 +109,8 @@ class GnuPGTests(BasicTest):
 
         ciphertext = self.do_create_fh_operation(["--symmetric"], plaintext)
 
-        decryption = self.do_create_fh_operation(
-            ["--decrypt"], ciphertext, self.gnupg.passphrase
-        )
-        assert (
-            decryption == plaintext
-        ), "GnuPG decrypted output does not match original input"
+        decryption = self.do_create_fh_operation(["--decrypt"], ciphertext, self.gnupg.passphrase)
+        assert decryption == plaintext, "GnuPG decrypted output does not match original input"
 
     def test_attach_fhs(self):
         """Do GnuPG operations using the attach_fhs feature"""
@@ -139,9 +129,7 @@ class GnuPGTests(BasicTest):
         plainfile.seek(0)
         temp2.seek(0)
 
-        assert fh_cmp(
-            plainfile, temp2
-        ), "GnuPG decrypted output does not match original input"
+        assert fh_cmp(plainfile, temp2), "GnuPG decrypted output does not match original input"
 
 
 class OptionsTests(BasicTest):

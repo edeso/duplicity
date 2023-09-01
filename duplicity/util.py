@@ -102,10 +102,7 @@ def maybe_ignore_errors(fn):
         return fn()
     except Exception as e:
         if config.ignore_errors:
-            log.Warn(
-                _("IGNORED_ERROR: Warning: ignoring error as requested: %s: %s")
-                % (e.__class__.__name__, uexc(e))
-            )
+            log.Warn(_("IGNORED_ERROR: Warning: ignoring error as requested: %s: %s") % (e.__class__.__name__, uexc(e)))
             return None
         else:
             raise
@@ -217,9 +214,7 @@ def which(program):
     """
 
     def is_exe(fpath):
-        return (
-            os.path.isfile(fpath) and os.path.isabs(fpath) and os.access(fpath, os.X_OK)
-        )
+        return os.path.isfile(fpath) and os.path.isabs(fpath) and os.access(fpath, os.X_OK)
 
     fpath, fname = os.path.split(program)
     if fpath:
@@ -275,9 +270,7 @@ def start_debugger():
             )
             log.Info(f"Connection {debug_host}:{debug_port} accepted for debug.")
         except ConnectionRefusedError as e:
-            log.Info(
-                f"Connection {debug_host}:{debug_port} refused for debug: {str(e)}"
-            )
+            log.Info(f"Connection {debug_host}:{debug_port} refused for debug: {str(e)}")
 
         # in a dev environment the path is screwed so fix it.
         base = sys.path.pop(0)

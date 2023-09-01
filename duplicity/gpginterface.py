@@ -362,11 +362,7 @@ class GnuPG(object):
 
         handle_passphrase = 0
 
-        if (
-            self.passphrase is not None
-            and "passphrase" not in attach_fhs
-            and "passphrase" not in create_fhs
-        ):
+        if self.passphrase is not None and "passphrase" not in attach_fhs and "passphrase" not in create_fhs:
             handle_passphrase = 1
             create_fhs.append("passphrase")
 
@@ -388,18 +384,13 @@ class GnuPG(object):
 
         for fh_name in create_fhs + list(attach_fhs.keys()):
             if fh_name not in _fd_modes:
-                raise KeyError(
-                    f"unrecognized filehandle name '{fh_name}'; "
-                    f"must be one of {list(_fd_modes.keys())}"
-                )
+                raise KeyError(f"unrecognized filehandle name '{fh_name}'; " f"must be one of {list(_fd_modes.keys())}")
 
         for fh_name in create_fhs:
             # make sure the user doesn't specify a filehandle
             # to be created *and* attached
             if fh_name in attach_fhs:
-                raise ValueError(
-                    f"cannot have filehandle '{fh_name}' in both create_fhs and attach_fhs"
-                )
+                raise ValueError(f"cannot have filehandle '{fh_name}' in both create_fhs and attach_fhs")
 
             pipe = os.pipe()
             # fix by drt@un.bewaff.net noting
@@ -418,9 +409,7 @@ class GnuPG(object):
         process.pid = os.fork()
         if process.pid != 0:
             # start a threaded_waitpid on the child
-            process.thread = threading.Thread(
-                target=threaded_waitpid, name=f"wait{process.pid:d}", args=(process,)
-            )
+            process.thread = threading.Thread(target=threaded_waitpid, name=f"wait{process.pid:d}", args=(process,))
             process.thread.start()
 
         if process.pid == 0:
@@ -461,9 +450,7 @@ class GnuPG(object):
             if not p.direct:
                 os.close(p.parent)
 
-        command = (
-            [self.call] + fd_args + self.options.get_args() + gnupg_commands + args
-        )
+        command = [self.call] + fd_args + self.options.get_args() + gnupg_commands + args
 
         os.execvp(command[0], command)
 

@@ -132,10 +132,7 @@ def prepare_regex(force=False):
     )
 
     full_sig_re = re.compile(
-        b"^"
-        + config.file_prefix
-        + config.file_prefix_signature
-        + b"duplicity-full-signatures"
+        b"^" + config.file_prefix + config.file_prefix_signature + b"duplicity-full-signatures"
         b"\\.(?P<time>.*?)"
         b"\\.sigtar"
         b"(?P<partial>(\\.part))?"
@@ -151,10 +148,7 @@ def prepare_regex(force=False):
     )
 
     new_sig_re = re.compile(
-        b"^"
-        + config.file_prefix
-        + config.file_prefix_signature
-        + b"duplicity-new-signatures"
+        b"^" + config.file_prefix + config.file_prefix_signature + b"duplicity-new-signatures"
         b"\\.(?P<start_time>.*?)"
         b"\\.to"
         b"\\.(?P<end_time>.*?)"
@@ -172,10 +166,7 @@ def prepare_regex(force=False):
         b"(\\.|$)"
     )
     stat_re = re.compile(
-        b"^"
-        + config.file_prefix
-        + config.file_prefix_jsonstat
-        + b"duplicity-(?P<type>full|inc)"
+        b"^" + config.file_prefix + config.file_prefix_jsonstat + b"duplicity-(?P<type>full|inc)"
         b"\\.(?P<time>.*?)"
         b"(?:\\.to\\.(?P<end_time>.+?))?"
         b"\\.jsonstat"
@@ -271,8 +262,7 @@ def get(
             return (
                 config.file_prefix
                 + config.file_prefix_signature
-                + b"duplicity-full-signatures.%s.sigtar%s%s"
-                % (dup_time.curtimestr.encode(), part_string, suffix)
+                + b"duplicity-full-signatures.%s.sigtar%s%s" % (dup_time.curtimestr.encode(), part_string, suffix)
             )
         elif type == "new-sig":
             return (
@@ -445,9 +435,7 @@ def parse(filename):
         if m:
             t = str2time(m.group("time"), short)
             if t:
-                return ParseResults(
-                    "full-sig", time=t, partial=(m.group("partial") is not None)
-                )
+                return ParseResults("full-sig", time=t, partial=(m.group("partial") is not None))
             else:
                 return None
 

@@ -136,23 +136,13 @@ class IDriveBackend(duplicity.backend.Backend):
         path = os.environ.get("IDEVSPATH")
         if path is None:
             log.Warn("-" * 72)
-            log.Warn(
-                "WARNING: No path to 'idevsutil_dedup' has been set. Download module from"
-            )
-            log.Warn(
-                "   https://www.idrivedownloads.com/downloads/linux/download-options/IDrive_linux_64bit.zip"
-            )
+            log.Warn("WARNING: No path to 'idevsutil_dedup' has been set. Download module from")
+            log.Warn("   https://www.idrivedownloads.com/downloads/linux/download-options/IDrive_linux_64bit.zip")
             log.Warn("or")
-            log.Warn(
-                "   https://www.idrivedownloads.com/downloads/linux/download-options/IDrive_linux_32bit.zip"
-            )
-            log.Warn(
-                "and place anywhere with exe rights. Then creat env var 'IDEVSPATH' with path to file"
-            )
+            log.Warn("   https://www.idrivedownloads.com/downloads/linux/download-options/IDrive_linux_32bit.zip")
+            log.Warn("and place anywhere with exe rights. Then creat env var 'IDEVSPATH' with path to file")
             log.Warn("-" * 72)
-            raise BackendException(
-                "No IDEVSPATH env var set. Should contain folder to idevsutil_dedup"
-            )
+            raise BackendException("No IDEVSPATH env var set. Should contain folder to idevsutil_dedup")
         self.cmd = os.path.join(path, "idevsutil_dedup")
         log.Debug(f"IDrive command base: {self.cmd}")
 
@@ -161,9 +151,7 @@ class IDriveBackend(duplicity.backend.Backend):
         if self.idriveid is None:
             log.Warn("-" * 72)
             log.Warn("WARNING: IDrive logon ID missing")
-            log.Warn(
-                "Create an environment variable IDriveID with your IDrive logon ID"
-            )
+            log.Warn("Create an environment variable IDriveID with your IDrive logon ID")
             log.Warn("-" * 72)
             raise BackendException("No IDRIVEID env var set. Should contain IDrive id")
         log.Debug(f"IDrive id: {self.idriveid}")
@@ -174,13 +162,9 @@ class IDriveBackend(duplicity.backend.Backend):
             log.Warn("-" * 72)
             log.Warn("WARNING: IDrive password file missging")
             log.Warn("Please create a file with your IDrive logon password,")
-            log.Warn(
-                "Then create an environment variable IDPWDFILE with path/filename of said file"
-            )
+            log.Warn("Then create an environment variable IDPWDFILE with path/filename of said file")
             log.Warn("-" * 72)
-            raise BackendException(
-                "No IDPWDFILE env var set. Should contain file with password"
-            )
+            raise BackendException("No IDPWDFILE env var set. Should contain file with password")
         log.Debug(f"IDrive pwdpath: {filepath}")
         self.auth_switch = f" --password-file={filepath}"
 
@@ -205,13 +189,9 @@ class IDriveBackend(duplicity.backend.Backend):
                     )
                     log.Warn("This might interfere with incremental backups")
                     log.Warn("-" * 72)
-                    raise BackendException(
-                        f"Creation of the directory {self.fakeroot} failed"
-                    )
+                    raise BackendException(f"Creation of the directory {self.fakeroot} failed")
             else:
-                log.Debug(
-                    f"Directory {self.fakeroot} created as fake-root (Will clean-up afterwards!)"
-                )
+                log.Debug(f"Directory {self.fakeroot} created as fake-root (Will clean-up afterwards!)")
                 self.cleanup = True
 
         # get the bucket
@@ -219,19 +199,13 @@ class IDriveBackend(duplicity.backend.Backend):
         if self.bucket is None:
             log.Warn("-" * 72)
             log.Warn("WARNING: IDrive backup bucket missing")
-            log.Warn(
-                "Create an environment variable IDBUCKET specifying the target bucket"
-            )
+            log.Warn("Create an environment variable IDBUCKET specifying the target bucket")
             log.Warn("-" * 72)
-            raise BackendException(
-                "No IDBUCKET env var set. Should contain IDrive backup bucket"
-            )
+            raise BackendException("No IDBUCKET env var set. Should contain IDrive backup bucket")
         log.Debug(f"IDrive bucket: {self.bucket}")
 
         # check account / get config status and config type
-        el = self.request(
-            f"{self.cmd + self.auth_switch} --validate --user={self.idriveid}"
-        ).find("tree")
+        el = self.request(f"{self.cmd + self.auth_switch} --validate --user={self.idriveid}").find("tree")
 
         if el.attrib["message"] != "SUCCESS":
             raise BackendException(f"Protocol failure - {el.attrib['desc']}")
@@ -247,28 +221,18 @@ class IDriveBackend(duplicity.backend.Backend):
                 log.Warn("-" * 72)
                 log.Warn("WARNING: IDrive encryption key file missging")
                 log.Warn("Please create a file with your IDrive encryption key,")
-                log.Warn(
-                    "Then create an environment variable IDKEYFILE with path/filename of said file"
-                )
+                log.Warn("Then create an environment variable IDKEYFILE with path/filename of said file")
                 log.Warn("-" * 72)
-                raise BackendException(
-                    "No IDKEYFILE env var set. Should contain file with encription key"
-                )
+                raise BackendException("No IDKEYFILE env var set. Should contain file with encription key")
             log.Debug(f"IDrive keypath: {filepath}")
             self.auth_switch += f" --pvt-key={filepath}"
 
         # get the server address
-        el = self.request(
-            f"{self.cmd + self.auth_switch} --getServerAddress {self.idriveid}"
-        ).find("tree")
+        el = self.request(f"{self.cmd + self.auth_switch} --getServerAddress {self.idriveid}").find("tree")
         self.idriveserver = el.attrib["cmdUtilityServer"]
 
         # get the device list - primarely used to get device-id string
-        el = self.request(
-            self.cmd
-            + self.auth_switch
-            + f" --list-device {self.idriveid}@{self.idriveserver}::home"
-        )
+        el = self.request(self.cmd + self.auth_switch + f" --list-device {self.idriveid}@{self.idriveserver}::home")
         # scan all returned devices for requested device (== bucket)
         self.idrivedevid = None
         for item in el.findall("item"):
@@ -296,9 +260,7 @@ class IDriveBackend(duplicity.backend.Backend):
             self.fakeroot.lstrip("/"),
         ).rstrip()
         commandline = (
-            self.cmd
-            + self.auth_switch
-            + f" --auth-list --device-id={self.idrivedevid} "
+            self.cmd + self.auth_switch + f" --auth-list --device-id={self.idrivedevid} "
             f"{self.idriveid}@{self.idriveserver}::home/{remote_path}"
         )
         try:
@@ -318,13 +280,9 @@ class IDriveBackend(duplicity.backend.Backend):
             )
         )
         # remove whitespace from elements
-        filtered = list(
-            map((lambda line: list(map((lambda c: c.strip()), line))), filtered)
-        )
+        filtered = list(map((lambda line: list(map((lambda c: c.strip()), line))), filtered))
         # remove empty elements
-        filtered = list(
-            map((lambda cols: list(filter((lambda c: c != ""), cols))), filtered)
-        )
+        filtered = list(map((lambda cols: list(filter((lambda c: c != ""), cols))), filtered))
 
         return filtered
 
@@ -405,9 +363,7 @@ class IDriveBackend(duplicity.backend.Backend):
 
         # move to the final location
         downloadedSrcPath = os.path.join(tmpdir, remote_path.lstrip("/").rstrip("/"))
-        log.Debug(
-            f"_get moving file {downloadedSrcPath} to final location: {local_path.name}"
-        )
+        log.Debug(f"_get moving file {downloadedSrcPath} to final location: {local_path.name}")
 
         os.rename(downloadedSrcPath, local_path.name)
 

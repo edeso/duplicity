@@ -55,9 +55,7 @@ class RegressionTestCase(DuplicityTestCase):
 
             try:
                 with open("/dev/null", "w") as sink:
-                    subprocess.check_call(
-                        ["setsid", "-w", "ls"], stdout=sink, stderr=sink
-                    )
+                    subprocess.check_call(["setsid", "-w", "ls"], stdout=sink, stderr=sink)
             except subprocess.CalledProcessError:
                 cls._setsid_w = False
             else:
@@ -81,9 +79,7 @@ class RegressionTestCase(DuplicityTestCase):
         backend_inst.close()
         self._check_setsid()
 
-    def run_duplicity(
-        self, options=None, current_time=None, fail=None, passphrase_input=None
-    ):
+    def run_duplicity(self, options=None, current_time=None, fail=None, passphrase_input=None):
         """
         Run duplicity binary with given arguments and options
         """
@@ -98,9 +94,7 @@ class RegressionTestCase(DuplicityTestCase):
             passphrase_input = []
 
         for item in passphrase_input:
-            assert isinstance(
-                item, "".__class__
-            ), f"item {os.fsdecode(item)} in passphrase_input is not unicode"
+            assert isinstance(item, "".__class__), f"item {os.fsdecode(item)} in passphrase_input is not unicode"
 
         if platform.platform().startswith("Linux"):
             cmd_list = ["setsid"]
@@ -141,9 +135,7 @@ class RegressionTestCase(DuplicityTestCase):
             cmdline += " < /dev/null"
 
         # Set encoding to filesystem encoding and send to spawn
-        child = pexpect.spawn(
-            "/bin/sh", ["-c", cmdline], timeout=None, encoding=config.fsencoding
-        )
+        child = pexpect.spawn("/bin/sh", ["-c", cmdline], timeout=None, encoding=config.fsencoding)
 
         for passphrase in passphrase_input:
             child.expect("passphrase.*:")
@@ -170,9 +162,7 @@ class RegressionTestCase(DuplicityTestCase):
             print("...return_val:", return_val, file=sys.stderr)
             raise CmdError(return_val)
 
-    def backup(
-        self, type, input_dir, options=None, **kwargs
-    ):  # pylint: disable=redefined-builtin
+    def backup(self, type, input_dir, options=None, **kwargs):  # pylint: disable=redefined-builtin
         """Run duplicity backup to default directory"""
         if options is None:
             options = []

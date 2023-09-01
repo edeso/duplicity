@@ -19,14 +19,7 @@ class FileChunkIO(io.FileIO):
     """
 
     def __init__(
-        self,
-        name,
-        mode="r",
-        closefd=True,
-        offset=0,
-        bytes=None,  # pylint: disable=redefined-builtin
-        *args,
-        **kwargs
+        self, name, mode="r", closefd=True, offset=0, bytes=None, *args, **kwargs  # pylint: disable=redefined-builtin
     ):  # pylint: disable=redefined-builtin
         """
         Open a file chunk. The mode can only be 'r' for reading. Offset

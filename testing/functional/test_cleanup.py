@@ -61,9 +61,7 @@ class CleanupTest(FunctionalTestCase):
         """
         full1_files = self.backup("full", f"{_runtest_dir}/testfiles/empty_dir")
         full2_files = self.backup("full", f"{_runtest_dir}/testfiles/empty_dir")
-        self.run_duplicity(
-            options=["remove-all-but-n-full", "1", self.backend_url, "--force"]
-        )
+        self.run_duplicity(options=["remove-all-but-n-full", "1", self.backend_url, "--force"])
         leftovers = self.get_backend_files()
         self.assertEqual(full2_files, leftovers)
 
@@ -71,15 +69,9 @@ class CleanupTest(FunctionalTestCase):
         """
         Test that remove-all-but-n works in the simple case.
         """
-        full1_files = self.backup(
-            "full", f"{_runtest_dir}/testfiles/empty_dir", options=["--jsonstat"]
-        )
-        full2_files = self.backup(
-            "full", f"{_runtest_dir}/testfiles/empty_dir", options=["--jsonstat"]
-        )
-        self.run_duplicity(
-            options=["remove-all-but-n-full", "1", self.backend_url, "--force"]
-        )
+        full1_files = self.backup("full", f"{_runtest_dir}/testfiles/empty_dir", options=["--jsonstat"])
+        full2_files = self.backup("full", f"{_runtest_dir}/testfiles/empty_dir", options=["--jsonstat"])
+        self.run_duplicity(options=["remove-all-but-n-full", "1", self.backend_url, "--force"])
         leftovers = self.get_backend_files()
         self.assertEqual(full2_files, leftovers)
 
@@ -90,9 +82,7 @@ class CleanupTest(FunctionalTestCase):
         full1_files = self.backup("full", f"{_runtest_dir}/testfiles/empty_dir")
         inc1_files = self.backup("inc", f"{_runtest_dir}/testfiles/empty_dir")
         full2_files = self.backup("full", f"{_runtest_dir}/testfiles/empty_dir")
-        self.run_duplicity(
-            options=["remove-all-inc-of-but-n-full", "1", self.backend_url, "--force"]
-        )
+        self.run_duplicity(options=["remove-all-inc-of-but-n-full", "1", self.backend_url, "--force"])
         leftovers = self.get_backend_files()
         self.assertEqual(full1_files | full2_files, leftovers)
 

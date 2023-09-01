@@ -33,9 +33,7 @@ def ensure_dbus():
     # when required.  So we make sure that such a bus exists and that our
     # environment points to it.
     if "DBUS_SESSION_BUS_ADDRESS" not in os.environ:
-        p = subprocess.Popen(
-            ["dbus-launch"], stdout=subprocess.PIPE, universal_newlines=True
-        )
+        p = subprocess.Popen(["dbus-launch"], stdout=subprocess.PIPE, universal_newlines=True)
         output = p.communicate()[0]
         lines = output.split("\n")
         for line in lines:
@@ -90,9 +88,7 @@ class GIOBackend(duplicity.backend.Backend):
         # Now we make sure the location is mounted
         op = DupMountOperation(self)
         loop = GLib.MainLoop()
-        self.remote_file.mount_enclosing_volume(
-            Gio.MountMountFlags.NONE, op, None, self.__done_with_mount, loop
-        )
+        self.remote_file.mount_enclosing_volume(Gio.MountMountFlags.NONE, op, None, self.__done_with_mount, loop)
         loop.run()  # halt program until we're done mounting
 
         # Now make the directory if it doesn't exist
@@ -107,13 +103,9 @@ class GIOBackend(duplicity.backend.Backend):
             fileobj.mount_enclosing_volume_finish(result)
         except GLib.GError as e:
             # check for NOT_SUPPORTED because some schemas (e.g. file://) validly don't
-            if (
-                e.code != Gio.IOErrorEnum.ALREADY_MOUNTED
-                and e.code != Gio.IOErrorEnum.NOT_SUPPORTED
-            ):
+            if e.code != Gio.IOErrorEnum.ALREADY_MOUNTED and e.code != Gio.IOErrorEnum.NOT_SUPPORTED:
                 log.FatalError(
-                    _("Connection failed, please check your password: %s")
-                    % util.uexc(e),
+                    _("Connection failed, please check your password: %s") % util.uexc(e),
                     log.ErrorCode.connection_failed,
                 )
         loop.quit()
@@ -127,9 +119,7 @@ class GIOBackend(duplicity.backend.Backend):
         # Don't pass NOFOLLOW_SYMLINKS here. Some backends (e.g. google-drive:)
         # use symlinks internally for all files. In the normal course of
         # events, we never deal with symlinks anyway, just tarballs.
-        source.copy(
-            target, Gio.FileCopyFlags.OVERWRITE, None, self.__copy_progress, None
-        )
+        source.copy(target, Gio.FileCopyFlags.OVERWRITE, None, self.__copy_progress, None)
 
     def _error_code(self, operation, e):
         from gi.repository import Gio  # pylint: disable=import-error
@@ -151,9 +141,7 @@ class GIOBackend(duplicity.backend.Backend):
         from gi.repository import Gio  # pylint: disable=import-error
 
         source_file = Gio.File.new_for_path(source_path.name)
-        target_file = self.remote_file.get_child_for_display_name(
-            os.fsdecode(remote_filename)
-        )
+        target_file = self.remote_file.get_child_for_display_name(os.fsdecode(remote_filename))
         self.__copy_file(source_file, target_file)
 
     def _get(self, filename, local_path):
@@ -188,9 +176,7 @@ class GIOBackend(duplicity.backend.Backend):
         from gi.repository import Gio  # pylint: disable=import-error
 
         target_file = self.remote_file.get_child_for_display_name(os.fsdecode(filename))
-        info = target_file.query_info(
-            Gio.FILE_ATTRIBUTE_STANDARD_SIZE, Gio.FileQueryInfoFlags.NONE, None
-        )
+        info = target_file.query_info(Gio.FILE_ATTRIBUTE_STANDARD_SIZE, Gio.FileQueryInfoFlags.NONE, None)
         return {"size": info.get_size()}
 
 

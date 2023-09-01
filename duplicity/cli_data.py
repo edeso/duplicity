@@ -746,9 +746,7 @@ class OptionAliases:
     version = ["-V"]
 
 
-all_options = {
-    var2opt(var) for var in OptionKwargs.__dict__.keys() if not var.startswith("__")
-}
+all_options = {var2opt(var) for var in OptionKwargs.__dict__.keys() if not var.startswith("__")}
 
 parent_only_options = {
     "--log-fd",

@@ -44,9 +44,7 @@ _bin_dir = os.path.join(_testing_dir, "overrides", "bin")
 
 if platform.system().startswith("Darwin"):
     # Use temp space TMPDIR or from getconf, never /tmp
-    _runtest_dir = os.environ.get("TMPDIR", None) or subprocess.check_output(
-        ["getconf", "DARWIN_USER_TEMP_DIR"]
-    )
+    _runtest_dir = os.environ.get("TMPDIR", None) or subprocess.check_output(["getconf", "DARWIN_USER_TEMP_DIR"])
     _runtest_dir = os.fsdecode(_runtest_dir).rstrip().rstrip("/")
     if not os.path.exists(_runtest_dir):
         os.makedirs(_runtest_dir)
@@ -61,9 +59,7 @@ if not os.path.exists(_runtest_dir):
 sys.path = [_overrides_dir, _top_dir, _bin_dir] + sys.path
 
 # Also set PYTHONPATH for any subprocesses
-os.environ[
-    "PYTHONPATH"
-] = f"{_overrides_dir}:{_top_dir}:{os.environ.get('PYTHONPATH', '')}"
+os.environ["PYTHONPATH"] = f"{_overrides_dir}:{_top_dir}:{os.environ.get('PYTHONPATH', '')}"
 
 # And PATH for any subprocesses
 os.environ["PATH"] = f"{_bin_dir}:{os.environ.get('PATH', '')}"
@@ -122,12 +118,8 @@ class DuplicityTestCase(unittest.TestCase):
 
     def unpack_testfiles(self):
         assert not os.system(f"rm -rf {_runtest_dir}/testfiles")
-        assert not os.system(
-            f"tar xzf {_testing_dir}/testfiles.tar.gz -C {_runtest_dir} > /dev/null 2>&1"
-        )
-        assert not os.system(
-            f"mkdir {_runtest_dir}/testfiles/output {_runtest_dir}/testfiles/cache"
-        )
+        assert not os.system(f"tar xzf {_testing_dir}/testfiles.tar.gz -C {_runtest_dir} > /dev/null 2>&1")
+        assert not os.system(f"mkdir {_runtest_dir}/testfiles/output {_runtest_dir}/testfiles/cache")
 
     def remove_testfiles(self):
         assert not os.system(f"rm -rf {_runtest_dir}/testfiles")

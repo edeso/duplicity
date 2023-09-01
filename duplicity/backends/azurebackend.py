@@ -65,9 +65,7 @@ class AzureBackend(duplicity.backend.Backend):
             raise BackendException("Invalid Azure Storage Blob container name.")
 
         if "AZURE_CONNECTION_STRING" not in os.environ:
-            raise BackendException(
-                "AZURE_CONNECTION_STRING environment variable not set."
-            )
+            raise BackendException("AZURE_CONNECTION_STRING environment variable not set.")
 
         kwargs = {}
 
@@ -81,9 +79,7 @@ class AzureBackend(duplicity.backend.Backend):
             kwargs["max_block_size"] = config.azure_max_single_put_size
 
         conn_str = os.environ["AZURE_CONNECTION_STRING"]
-        self.blob_service = BlobServiceClient.from_connection_string(
-            conn_str, None, **kwargs
-        )
+        self.blob_service = BlobServiceClient.from_connection_string(conn_str, None, **kwargs)
         self._get_or_create_container()
 
     def _get_or_create_container(self):
@@ -115,9 +111,7 @@ class AzureBackend(duplicity.backend.Backend):
 
     def _set_tier(self, remote_filename):
         if config.azure_blob_tier is not None:
-            self.container.set_standard_blob_tier_blobs(
-                config.azure_blob_tier, remote_filename
-            )
+            self.container.set_standard_blob_tier_blobs(config.azure_blob_tier, remote_filename)
 
     def _get(self, remote_filename, local_path):
         # https://docs.microsoft.com/en-us/python/api/azure-storage-blob/azure.storage.blob.containerclient?view=azure-python#download-blob-blob--offset-none--length-none----kwargs-

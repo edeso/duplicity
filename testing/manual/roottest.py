@@ -76,9 +76,7 @@ class RootTest(unittest.TestCase):
         diff = Path("/tmp/testfiles/output/diff.tar")
         for dirname in filelist[1:]:
             new_path = Path(dirname)
-            diffdir.write_block_iter(
-                diffdir.DirSig(selection.Select(seq_path).set_iter()), sig
-            )
+            diffdir.write_block_iter(diffdir.DirSig(selection.Select(seq_path).set_iter()), sig)
 
             diffdir.write_block_iter(
                 diffdir.DirDelta(selection.Select(new_path).set_iter(), sig.open("rb")),
@@ -122,9 +120,7 @@ class RootTest(unittest.TestCase):
         tar_path = Path("/tmp/testfiles/output/tar.tar")
         basis_path = Path("/tmp/testfiles/root1")
 
-        deltablock = diffdir.DirFull_WriteSig(
-            self.get_sel(basis_path), sig_path.open("wb")
-        )
+        deltablock = diffdir.DirFull_WriteSig(self.get_sel(basis_path), sig_path.open("wb"))
         diffdir.write_block_iter(deltablock, tar_path)
 
 

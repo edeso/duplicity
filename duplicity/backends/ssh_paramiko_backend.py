@@ -98,9 +98,7 @@ class SSHParamikoBackend(duplicity.backend.Backend):
 
             def missing_host_key(self, client, hostname, key):
                 fp = hexlify(key.get_fingerprint())
-                fingerprint = ":".join(
-                    str(a + b) for a, b in list(zip(fp[::2], fp[1::2]))
-                )
+                fingerprint = ":".join(str(a + b) for a, b in list(zip(fp[::2], fp[1::2])))
                 question = f"""The authenticity of host '{hostname}' can't be established.
 {key.get_name().upper()} key fingerprint is {fingerprint}.
 Are you sure you want to continue connecting (yes/no)? """
@@ -108,9 +106,7 @@ Are you sure you want to continue connecting (yes/no)? """
                     sys.stdout.write(question)
                     choice = input().lower()
                     if choice in ["yes", "y"]:
-                        paramiko.AutoAddPolicy.missing_host_key(
-                            self, client, hostname, key
-                        )
+                        paramiko.AutoAddPolicy.missing_host_key(self, client, hostname, key)
                         return
                     elif choice in ["no", "n"]:
                         raise AuthenticityException(hostname)
@@ -119,9 +115,7 @@ Are you sure you want to continue connecting (yes/no)? """
 
         class AuthenticityException(paramiko.SSHException):
             def __init__(self, hostname):
-                paramiko.SSHException.__init__(
-                    self, f"Host key verification for server {hostname} failed."
-                )
+                paramiko.SSHException.__init__(self, f"Host key verification for server {hostname} failed.")
 
         self.client = paramiko.SSHClient()
         self.client.set_missing_host_key_policy(AgreedAddPolicy())
@@ -174,9 +168,7 @@ Are you sure you want to continue connecting (yes/no)? """
             if os.path.isfile(global_known_hosts):
                 self.client.load_system_host_keys(global_known_hosts)
         except Exception as e:
-            raise BackendException(
-                f"could not load {global_known_hosts}, maybe corrupt?"
-            )
+            raise BackendException(f"could not load {global_known_hosts}, maybe corrupt?")
 
         user_known_hosts = os.path.expanduser("~/.ssh/known_hosts")
         m = re.search(
@@ -214,9 +206,7 @@ Are you sure you want to continue connecting (yes/no)? """
         """
         self.config = {"hostname": parsed_url.hostname}
         # get system host config entries
-        self.config.update(
-            self.gethostconfig("/etc/ssh/ssh_config", parsed_url.hostname)
-        )
+        self.config.update(self.gethostconfig("/etc/ssh/ssh_config", parsed_url.hostname))
         # update with user's config file
         self.config.update(self.gethostconfig("~/.ssh/config", parsed_url.hostname))
         # update with url values
@@ -265,9 +255,7 @@ Are you sure you want to continue connecting (yes/no)? """
                 # simply always use a list.
                 self.config["identityfile"] = [self.config["identityfile"]]
 
-            self.config["identityfile"] = [
-                os.path.expanduser(i) for i in self.config["identityfile"]
-            ]
+            self.config["identityfile"] = [os.path.expanduser(i) for i in self.config["identityfile"]]
         else:
             self.config["identityfile"] = None
 
@@ -303,9 +291,7 @@ Are you sure you want to continue connecting (yes/no)? """
         if self.use_scp:
             # sanity-check the directory name
             if re.search("'", self.remote_dir):
-                raise BackendException(
-                    "cannot handle directory names with single quotes with scp"
-                )
+                raise BackendException("cannot handle directory names with single quotes with scp")
 
             # make directory if needed
             self.runremote(f"mkdir -p '{self.remote_dir}'", False, "scp mkdir ")
@@ -330,19 +316,13 @@ Are you sure you want to continue connecting (yes/no)? """
                             try:
                                 self.sftp.mkdir(d)
                             except Exception as e:
-                                raise BackendException(
-                                    f"sftp mkdir {self.sftp.normalize('.')}/{d} failed: {e}"
-                                )
+                                raise BackendException(f"sftp mkdir {self.sftp.normalize('.')}/{d} failed: {e}")
                         else:
-                            raise BackendException(
-                                f"sftp stat {self.sftp.normalize('.')}/{d} failed: {e}"
-                            )
+                            raise BackendException(f"sftp stat {self.sftp.normalize('.')}/{d} failed: {e}")
                     try:
                         self.sftp.chdir(d)
                     except Exception as e:
-                        raise BackendException(
-                            f"sftp chdir to {self.sftp.normalize('.')}/{d} failed: {e}"
-                        )
+                        raise BackendException(f"sftp chdir to {self.sftp.normalize('.')}/{d} failed: {e}")
 
     def _put(self, source_path, remote_filename):
         # remote_filename is a byte object, not str or unicode
@@ -363,9 +343,7 @@ Are you sure you want to continue connecting (yes/no)? """
             if response != b"\0":
                 raise BackendException(b"scp remote error: %b" % chan.recv(-1))
             fstat = os.stat(source_path.name)
-            chan.send(
-                f"C{oct(fstat.st_mode)[-4:]} {int(fstat.st_size)} {remote_filename}\n"
-            )
+            chan.send(f"C{oct(fstat.st_mode)[-4:]} {int(fstat.st_size)} {remote_filename}\n")
             response = chan.recv(1)
             if response != b"\0":
                 raise BackendException(b"scp remote error: %b" % chan.recv(-1))
@@ -382,9 +360,7 @@ Are you sure you want to continue connecting (yes/no)? """
                 raise BackendException(f"scp remote error: {chan.recv(-1)}")
             chan.close()
         else:
-            self.sftp.put(
-                source_path.name, remote_filename, callback=progress.report_transfer
-            )
+            self.sftp.put(source_path.name, remote_filename, callback=progress.report_transfer)
 
     def _get(self, remote_filename, local_path):
         # remote_filename is a byte object, not str or unicode
@@ -403,9 +379,7 @@ Are you sure you want to continue connecting (yes/no)? """
                 msg = msg.decode()
             m = re.match(r"C([0-7]{4})\s+(\d+)\s+(\S.*)$", msg)
             if m is None or m.group(3) != remote_filename:
-                raise BackendException(
-                    f"scp get {remote_filename} failed: incorrect response '{msg}'"
-                )
+                raise BackendException(f"scp get {remote_filename} failed: incorrect response '{msg}'")
             chan.recv(1)  # dispose of the newline trailing the C message
 
             size = int(m.group(2))
@@ -426,9 +400,7 @@ Are you sure you want to continue connecting (yes/no)? """
 
             msg = chan.recv(1)  # check the final status
             if msg != b"\0":
-                raise BackendException(
-                    f"scp get {remote_filename} failed: {chan.recv(-1)}"
-                )
+                raise BackendException(f"scp get {remote_filename} failed: {chan.recv(-1)}")
             f.close()
             chan.send("\0")  # send final done indicator
             chan.close()
@@ -439,9 +411,7 @@ Are you sure you want to continue connecting (yes/no)? """
         # In scp mode unavoidable quoting issues will make this fail if the
         # directory name contains single quotes.
         if self.use_scp:
-            output = self.runremote(
-                f"ls -1 '{self.remote_dir}'", False, "scp dir listing "
-            )
+            output = self.runremote(f"ls -1 '{self.remote_dir}'", False, "scp dir listing ")
             return output.splitlines()
         else:
             return self.sftp.listdir()

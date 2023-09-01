@@ -35,9 +35,7 @@ class BoxBackend(duplicity.backend.Backend):
         )
 
         self._client = self.get_box_client(parsed_url)
-        self._folder = (
-            parsed_url.path[1:] if parsed_url.path[0] == "/" else parsed_url.path
-        )
+        self._folder = parsed_url.path[1:] if parsed_url.path[0] == "/" else parsed_url.path
 
         self._file_to_metadata_map = {}
         self._folder_id = self.get_id_from_path(self._folder)
@@ -91,10 +89,7 @@ class BoxBackend(duplicity.backend.Backend):
 
     def _query_list(self, filename_list):
         """Query metadata for a list of file"""
-        return {
-            filename: self._file_to_metadata_map.get(filename.decode(), {"size": -1})
-            for filename in filename_list
-        }
+        return {filename: self._file_to_metadata_map.get(filename.decode(), {"size": -1}) for filename in filename_list}
 
     def get_id_from_path(self, remote_path, parent_id="0"):
         """Get the folder or file id from its path"""
@@ -168,23 +163,17 @@ class BoxBackend(duplicity.backend.Backend):
 
         items = [
             x
-            for x in self._client.folder(folder_id=self._folder_id).get_items(
-                fields=["id", "name", "size"]
-            )
+            for x in self._client.folder(folder_id=self._folder_id).get_items(fields=["id", "name", "size"])
             if x.type == "file"
         ]
 
-        self._file_to_metadata_map.update(
-            {x.name: {"id": x.id, "size": x.size} for x in items}
-        )
+        self._file_to_metadata_map.update({x.name: {"id": x.id, "size": x.size} for x in items})
 
         return [x.name for x in items]
 
     def upload(self, remote_file, local_file):
         """Upload local file to the box folder"""
-        new_file = self._client.folder(self._folder_id).upload(
-            file_path=local_file, file_name=remote_file
-        )
+        new_file = self._client.folder(self._folder_id).upload(file_path=local_file, file_name=remote_file)
 
         self._file_to_metadata_map[new_file.name] = {
             "id": new_file.id,

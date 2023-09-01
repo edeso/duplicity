@@ -51,9 +51,7 @@ def command_line_error(message):
     Indicate a command line error and exit
     """
     sys.tracebacklimit = 0
-    raise CommandLineError(
-        f"{message}\n" + _("Enter 'duplicity --help' for help screen.")
-    )
+    raise CommandLineError(f"{message}\n" + _("Enter 'duplicity --help' for help screen."))
 
 
 class DuplicityAction(argparse.Action):
@@ -120,10 +118,7 @@ class IgnoreErrorsAction(DuplicityAction):
 
     def __call__(self, parser, namespace, values, option_string=None):
         log.Warn(
-            _(
-                "Running in 'ignore errors' mode due to --ignore-errors.\n"
-                "Please reconsider if this was not intended"
-            )
+            _("Running in 'ignore errors' mode due to --ignore-errors.\n" "Please reconsider if this was not intended")
         )
         config.ignore_errors = True
 
@@ -220,9 +215,7 @@ def check_remove_time(val):
 
 def check_source_path(val):
     if not is_path(val):
-        command_line_error(
-            _(f"Source should be pathname, not url.  Got '{val}' instead.")
-        )
+        command_line_error(_(f"Source should be pathname, not url.  Got '{val}' instead."))
     if not os.path.exists(val):
         command_line_error(_(f"Argument source_path '{val}' does not exist."))
     return val
@@ -230,17 +223,13 @@ def check_source_path(val):
 
 def check_source_url(val):
     if not is_url(val):
-        command_line_error(
-            _(f"Source should be url, not directory.  Got '{val}' instead.")
-        )
+        command_line_error(_(f"Source should be url, not directory.  Got '{val}' instead."))
     return val
 
 
 def check_target_dir(val):
     if not is_path(val):
-        command_line_error(
-            _(f"Target should be directory, not url.  Got '{val}' instead.")
-        )
+        command_line_error(_(f"Target should be directory, not url.  Got '{val}' instead."))
     if not os.path.exists(val):
         try:
             os.makedirs(val, exist_ok=True)
@@ -251,9 +240,7 @@ def check_target_dir(val):
 
 def check_target_url(val):
     if not is_url(val):
-        command_line_error(
-            _(f"Source should be url, not directory.  Got '{val}' instead.")
-        )
+        command_line_error(_(f"Source should be url, not directory.  Got '{val}' instead."))
     return val
 
 
@@ -324,9 +311,7 @@ def expand_archive_dir(archdir, backname):
     """
     Return expanded version of archdir joined with backname.
     """
-    assert (
-        config.backup_name is not False
-    ), "expand_archive_dir() called prior to config.backup_name being set"
+    assert config.backup_name is not False, "expand_archive_dir() called prior to config.backup_name being set"
 
     return expand_fn(os.path.join(archdir, os.fsencode(backname)))
 
@@ -436,11 +421,7 @@ def set_archive_dir(dirstring):
             pass
     archive_dir_path = path.Path(dirstring)
     if not archive_dir_path.isdir():
-        command_line_error(
-            _(
-                f"Specified archive directory '{archive_dir_path.uc_name}' is not a directory"
-            )
-        )
+        command_line_error(_(f"Specified archive directory '{archive_dir_path.uc_name}' is not a directory"))
     config.archive_dir_path = archive_dir_path
 
 

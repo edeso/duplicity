@@ -112,11 +112,7 @@ class FileNamingBase(object):
     def test_more(self):
         """More file_parsing tests"""
         file_naming.prepare_regex(force=True)
-        pr = file_naming.parse(
-            config.file_prefix
-            + config.file_prefix_signature
-            + b"dns.h112bi.h14rg0.st.g"
-        )
+        pr = file_naming.parse(config.file_prefix + config.file_prefix_signature + b"dns.h112bi.h14rg0.st.g")
         assert pr, pr
         assert pr.type == "new-sig"
         assert pr.end_time == 1029826800
@@ -130,9 +126,7 @@ class FileNamingBase(object):
         assert pr.type == "new-sig"
         assert pr.end_time == 1029826800
 
-        pr = file_naming.parse(
-            config.file_prefix + config.file_prefix_signature + b"dfs.h5dixs.st.g"
-        )
+        pr = file_naming.parse(config.file_prefix + config.file_prefix_signature + b"dfs.h5dixs.st.g")
         assert pr, pr
         assert pr.type == "full-sig"
         assert pr.time == 1036954144, repr(pr.time)
@@ -140,11 +134,7 @@ class FileNamingBase(object):
     def test_partial(self):
         """Test addition of partial flag"""
         file_naming.prepare_regex(force=True)
-        pr = file_naming.parse(
-            config.file_prefix
-            + config.file_prefix_signature
-            + b"dns.h112bi.h14rg0.st.p.g"
-        )
+        pr = file_naming.parse(config.file_prefix + config.file_prefix_signature + b"dns.h112bi.h14rg0.st.p.g")
         assert pr, pr
         assert pr.partial
         assert pr.type == "new-sig"
@@ -160,9 +150,7 @@ class FileNamingBase(object):
         assert pr.type == "new-sig"
         assert pr.end_time == 1029826800
 
-        pr = file_naming.parse(
-            config.file_prefix + config.file_prefix_signature + b"dfs.h5dixs.st.p.g"
-        )
+        pr = file_naming.parse(config.file_prefix + config.file_prefix_signature + b"dfs.h5dixs.st.p.g")
         assert pr, pr
         assert pr.partial
         assert pr.type == "full-sig"

@@ -115,9 +115,7 @@ class Megav2Backend(duplicity.backend.Backend):
                     f"Use another path or remove the folder in MEGA manually"
                 )
             else:
-                raise BackendException(
-                    f"Folder '{path}' could not be created, reason : '{e}'"
-                )
+                raise BackendException(f"Folder '{path}' could not be created, reason : '{e}'")
 
     def _put(self, source_path, remote_filename):
         """Uploads file to the specified remote folder (tries to delete it first to make
@@ -135,9 +133,7 @@ class Megav2Backend(duplicity.backend.Backend):
     def _get(self, remote_filename, local_path):
         """Downloads file from the specified remote path"""
 
-        self.download(
-            remote_file=remote_filename.decode(), local_file=local_path.name.decode()
-        )
+        self.download(remote_file=remote_filename.decode(), local_file=local_path.name.decode())
 
     def _list(self):
         """Lists files in the specified remote path"""
@@ -164,9 +160,7 @@ class Megav2Backend(duplicity.backend.Backend):
         try:
             subprocess.check_output("mega-session", timeout=30)
         except subprocess.TimeoutExpired:
-            raise BackendException(
-                "Timed out while trying to determine if a MEGA session exists"
-            )
+            raise BackendException("Timed out while trying to determine if a MEGA session exists")
         except Exception as e:
             cmd = ["mega-login", self._username, self._password]
             try:
@@ -211,9 +205,7 @@ class Megav2Backend(duplicity.backend.Backend):
                     f"Upgrade your storage at https://mega.nz/pro or remove some data."
                 )
             else:
-                raise BackendException(
-                    f"Failed writing file '{remote_file}' to MEGA, reason : '{e}'"
-                )
+                raise BackendException(f"Failed writing file '{remote_file}' to MEGA, reason : '{e}'")
 
     def delete(self, remote_file):
         """Deletes a file from a remote MEGA path"""

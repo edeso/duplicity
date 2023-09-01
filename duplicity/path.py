@@ -88,10 +88,7 @@ class ROPath(object):
         elif stat.S_ISFIFO(st_mode):
             self.type = "fifo"
         elif stat.S_ISSOCK(st_mode):
-            raise PathException(
-                os.fsdecode(self.get_relative_path())
-                + "is a socket, unsupported by tar"
-            )
+            raise PathException(os.fsdecode(self.get_relative_path()) + "is a socket, unsupported by tar")
             self.type = "sock"  # pylint: disable=unreachable
         elif stat.S_ISCHR(st_mode):
             self.type = "chr"
@@ -172,9 +169,7 @@ class ROPath(object):
 
     def open(self, mode):
         """Return fileobj associated with self"""
-        assert (
-            mode == "rb" and self.fileobj and not self.opened
-        ), f"{mode} {self.fileobj} {self.opened}"
+        assert mode == "rb" and self.fileobj and not self.opened, f"{mode} {self.fileobj} {self.opened}"
         self.opened = 1
         return self.fileobj
 
@@ -241,9 +236,7 @@ class ROPath(object):
 
         self.stat.st_mtime = int(tarinfo.mtime)
         if self.stat.st_mtime < 0:
-            log.Warn(
-                _("Warning: %s has negative mtime, treating as 0.") % tarinfo.uc_name
-            )
+            log.Warn(_("Warning: %s has negative mtime, treating as 0.") % tarinfo.uc_name)
             self.stat.st_mtime = 0
         self.stat.st_size = tarinfo.size
 
@@ -303,10 +296,7 @@ class ROPath(object):
             ti.mode = self.mode
             ti.uid, ti.gid = self.stat.st_uid, self.stat.st_gid
             if self.stat.st_mtime < 0:
-                log.Warn(
-                    _("Warning: %s has negative mtime, treating as 0.")
-                    % (os.fsdecode(self.get_relative_path()))
-                )
+                log.Warn(_("Warning: %s has negative mtime, treating as 0.") % (os.fsdecode(self.get_relative_path())))
                 ti.mtime = 0
             else:
                 ti.mtime = int(self.stat.st_mtime)
@@ -390,10 +380,7 @@ class ROPath(object):
 
         if self.isreg() or self.isdir() or self.isfifo():
             if not self.perms_equal(other):
-                log_diff(
-                    _("File %%s has permissions %s, expected %s")
-                    % (other.getperms(), self.getperms())
-                )
+                log_diff(_("File %%s has permissions %s, expected %s") % (other.getperms(), self.getperms()))
                 return 0
             if (int(self.stat.st_mtime) != int(other.stat.st_mtime)) and (
                 self.stat.st_mtime > 0 or other.stat.st_mtime > 0
@@ -415,29 +402,17 @@ class ROPath(object):
             else:
                 return 1
         elif self.issym():
-            if (
-                self.symtext == other.symtext
-                or self.symtext + os.fsencode(os.sep) == other.symtext
-            ):
+            if self.symtext == other.symtext or self.symtext + os.fsencode(os.sep) == other.symtext:
                 return 1
             else:
-                log_diff(
-                    _("Symlink %%s points to %s, expected %s")
-                    % (other.symtext, self.symtext)
-                )
+                log_diff(_("Symlink %%s points to %s, expected %s") % (other.symtext, self.symtext))
                 return 0
         elif self.isdev():
             if not self.perms_equal(other):
-                log_diff(
-                    _("File %%s has permissions %s, expected %s")
-                    % (other.getperms(), self.getperms())
-                )
+                log_diff(_("File %%s has permissions %s, expected %s") % (other.getperms(), self.getperms()))
                 return 0
             if self.devnums != other.devnums:
-                log_diff(
-                    _("Device file %%s has numbers %s, expected %s")
-                    % (other.devnums, self.devnums)
-                )
+                log_diff(_("Device file %%s has numbers %s, expected %s") % (other.devnums, self.devnums))
                 return 0
             return 1
         assert 0
@@ -464,11 +439,7 @@ class ROPath(object):
     def perms_equal(self, other):
         """True if self and other have same permissions and ownership"""
         s1, s2 = self.stat, other.stat
-        return (
-            self.mode == other.mode
-            and s1.st_gid == s2.st_gid
-            and s1.st_uid == s2.st_uid
-        )
+        return self.mode == other.mode and s1.st_gid == s2.st_gid and s1.st_uid == s2.st_uid
 
     def copy(self, other):
         """Copy self to other.  Also copies data.  Other must be Path"""
@@ -499,13 +470,9 @@ class ROPath(object):
         if isinstance(other, Path):
             if not self.issym():
                 if self.stat and config.restore_ownership:
-                    util.maybe_ignore_errors(
-                        lambda: os.chown(other.name, self.stat.st_uid, self.stat.st_gid)
-                    )
+                    util.maybe_ignore_errors(lambda: os.chown(other.name, self.stat.st_uid, self.stat.st_gid))
                 util.maybe_ignore_errors(lambda: os.chmod(other.name, self.mode))
-                util.maybe_ignore_errors(
-                    lambda: os.utime(other.name, (time.time(), self.stat.st_mtime))
-                )
+                util.maybe_ignore_errors(lambda: os.utime(other.name, (time.time(), self.stat.st_mtime)))
             other.setdata()
         else:
             # write results to fake stat object
@@ -730,9 +697,7 @@ class Path(ROPath):
             if not temp_path.type:
                 return temp_path
             _tmp_path_counter += 1
-            assert (
-                _tmp_path_counter < 10000
-            ), f"Warning too many temp files created for {self.uc_name}"
+            assert _tmp_path_counter < 10000, f"Warning too many temp files created for {self.uc_name}"
 
     def compare_recursive(self, other, verbose=None):
         """Compare self to other Path, descending down directories"""

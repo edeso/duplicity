@@ -107,9 +107,7 @@ class NCFTPBackend(duplicity.backend.Backend):
             urllib.parse.unquote(re.sub("^/", "", self.parsed_url.path)),
             remote_filename,
         ).rstrip()
-        commandline = (
-            f"ncftpput {self.flags} -m -V -C '{source_path.uc_name}' '{remote_path}'"
-        )
+        commandline = f"ncftpput {self.flags} -m -V -C '{source_path.uc_name}' '{remote_path}'"
         self.subprocess_popen(commandline)
 
     def _get(self, remote_filename, local_path):
@@ -129,16 +127,10 @@ class NCFTPBackend(duplicity.backend.Backend):
         commandline = f"ncftpls {self.flags} -l '{self.url_string}'"
         _, l, _ = self.subprocess_popen(commandline)
         # Look for our files as the last element of a long list line
-        return [
-            os.fsencode(x.split()[-1])
-            for x in l.split("\n")
-            if x and not x.startswith("total ")
-        ]
+        return [os.fsencode(x.split()[-1]) for x in l.split("\n") if x and not x.startswith("total ")]
 
     def _delete(self, filename):
-        commandline = (
-            f"ncftpls {self.flags} -l -X 'DELE {filename}' '{self.url_string}'"
-        )
+        commandline = f"ncftpls {self.flags} -l -X 'DELE {filename}' '{self.url_string}'"
         self.subprocess_popen(commandline)
 
 

@@ -90,15 +90,9 @@ class Manifest(object):
 
         # Check both hostname and fqdn (we used to write the fqdn into the
         # manifest, so we want to keep comparing against that)
-        if (
-            self.hostname
-            and self.hostname != config.hostname
-            and self.hostname != config.fqdn
-        ):
+        if self.hostname and self.hostname != config.hostname and self.hostname != config.fqdn:
             errmsg = _(
-                "Fatal Error: Backup source host has changed.\n"
-                "Current hostname: %s\n"
-                "Previous hostname: %s"
+                "Fatal Error: Backup source host has changed.\n" "Current hostname: %s\n" "Previous hostname: %s"
             ) % (config.hostname, self.hostname)
             code = log.ErrorCode.hostname_mismatch
             code_extra = f"{util.escape(config.hostname)} {util.escape(self.hostname)}"
@@ -217,9 +211,7 @@ class Manifest(object):
 
         highest_vol = 0
         latest_vol = 0
-        vi_regexp = re.compile(
-            b"(?:^|\\n)(volume\\s.*(?:\\n.*)*?)(?=\\nvolume\\s|$)", re.I
-        )
+        vi_regexp = re.compile(b"(?:^|\\n)(volume\\s.*(?:\\n.*)*?)(?=\\nvolume\\s|$)", re.I)
         vi_iterator = vi_regexp.finditer(s)
         for match in vi_iterator:
             vi = VolumeInfo().from_string(match.group(1))
@@ -239,9 +231,7 @@ class Manifest(object):
         # --show-changes-in-set are not present
         filecount = 0
         if config.file_changed is not None or config.show_changes_in_set is not None:
-            filelist_regexp = re.compile(
-                b"(^|\\n)filelist\\s([0-9]+)\\n(.*?)(\\nvolume\\s|$)", re.I | re.S
-            )
+            filelist_regexp = re.compile(b"(^|\\n)filelist\\s([0-9]+)\\n(.*?)(\\nvolume\\s|$)", re.I | re.S)
             match = filelist_regexp.search(s)
             if match:
                 filecount = int(match.group(2))
@@ -251,9 +241,7 @@ class Manifest(object):
                     fileinfo = line.strip().split()
                     return fileinfo[0], b"".join(fileinfo[1:])
 
-                self.files_changed = list(
-                    map(parse_fileinfo, match.group(3).split(b"\n"))
-                )
+                self.files_changed = list(map(parse_fileinfo, match.group(3).split(b"\n")))
 
             if filecount != len(self.files_changed):
                 log.Error(
@@ -408,17 +396,11 @@ class VolumeInfo(object):
         slist = [b"Volume %d:" % self.volume_number]
         whitespace = b"    "
         slist.append(
-            b"%sStartingPath   %s %s"
-            % (whitespace, index_to_string(self.start_index), bfmt(self.start_block))
+            b"%sStartingPath   %s %s" % (whitespace, index_to_string(self.start_index), bfmt(self.start_block))
         )
-        slist.append(
-            b"%sEndingPath     %s %s"
-            % (whitespace, index_to_string(self.end_index), bfmt(self.end_block))
-        )
+        slist.append(b"%sEndingPath     %s %s" % (whitespace, index_to_string(self.end_index), bfmt(self.end_block)))
         for key in self.hashes:
-            slist.append(
-                b"%sHash %s %s" % (whitespace, key.encode(), self.hashes[key].encode())
-            )
+            slist.append(b"%sHash %s %s" % (whitespace, key.encode(), self.hashes[key].encode()))
         return b"\n".join(slist)
 
     __str__ = to_string
@@ -513,9 +495,7 @@ class VolumeInfo(object):
         indicies.
         """
         if recursive:
-            return (
-                self.start_index[: len(index_prefix)] <= index_prefix <= self.end_index
-            )
+            return self.start_index[: len(index_prefix)] <= index_prefix <= self.end_index
         else:
             return self.start_index <= index_prefix <= self.end_index
 
@@ -557,11 +537,7 @@ def Unquote(quoted_string):
         if char == b"\\":
             # quoted section
             assert maybe_chr(quoted_string[i + 1]) == "x"
-            return_list.append(
-                int(quoted_string[i + 2 : i + 4].decode(), 16).to_bytes(
-                    1, byteorder="big"
-                )
-            )
+            return_list.append(int(quoted_string[i + 2 : i + 4].decode(), 16).to_bytes(1, byteorder="big"))
             i += 4
         else:
             return_list.append(char)

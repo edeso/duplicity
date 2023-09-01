@@ -58,9 +58,7 @@ class LFTPBackend(duplicity.backend.Backend):
             pass
         # there is no output if lftp not found
         if not fout:
-            log.FatalError(
-                "LFTP not found:  Please install LFTP.", log.ErrorCode.ftps_lftp_missing
-            )
+            log.FatalError("LFTP not found:  Please install LFTP.", log.ErrorCode.ftps_lftp_missing)
 
         # version is the second word of the second part of the first line
         version = fout.split("\n")[0].split(" | ")[1].split()[1]
@@ -115,16 +113,12 @@ class LFTPBackend(duplicity.backend.Backend):
         self.tempfd, self.tempname = tempdir.default().mkstemp()
         self.tempfile = os.fdopen(self.tempfd, "w")
         self.tempfile.write(
-            "set ssl:verify-certificate "
-            + ("false" if config.ssl_no_check_certificate else "true")
-            + "\n"
+            "set ssl:verify-certificate " + ("false" if config.ssl_no_check_certificate else "true") + "\n"
         )
         if self.cacert_file:
             self.tempfile.write(f"set ssl:ca-file {cmd_quote(self.cacert_file)}\n")
         if config.ssl_cacert_path:
-            self.tempfile.write(
-                f"set ssl:ca-path {cmd_quote(config.ssl_cacert_path)}\n"
-            )
+            self.tempfile.write(f"set ssl:ca-path {cmd_quote(config.ssl_cacert_path)}\n")
         if self.parsed_url.scheme == "ftps":
             self.tempfile.write("set ftp:ssl-allow true\n")
             self.tempfile.write("set ftp:ssl-protect-data true\n")
@@ -142,9 +136,7 @@ class LFTPBackend(duplicity.backend.Backend):
         if log.getverbosity() >= log.DEBUG:
             self.tempfile.write("debug\n")
         if self.parsed_url.scheme == "ftpes":
-            self.tempfile.write(
-                f"open {self.authflag} {self.url_string.replace('ftpes', 'ftp')}\n"
-            )
+            self.tempfile.write(f"open {self.authflag} {self.url_string.replace('ftpes', 'ftp')}\n")
         else:
             self.tempfile.write(f"open {self.authflag} {self.url_string}\n")
         self.tempfile.close()

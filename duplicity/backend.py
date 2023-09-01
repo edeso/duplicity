@@ -113,9 +113,7 @@ def register_backend(scheme, backend_factory):
     assert callable(backend_factory), "backend factory must be callable"
 
     if scheme in _backends:
-        raise ConflictingScheme(
-            f"the scheme {scheme} already has a backend associated with it"
-        )
+        raise ConflictingScheme(f"the scheme {scheme} already has a backend associated with it")
 
     _backends[scheme] = backend_factory
 
@@ -139,9 +137,7 @@ def register_backend_prefix(scheme, backend_factory):
     assert callable(backend_factory), "backend factory must be callable"
 
     if scheme in _backend_prefixes:
-        raise ConflictingScheme(
-            f"the prefix {scheme} already has a backend associated with it"
-        )
+        raise ConflictingScheme(f"the prefix {scheme} already has a backend associated with it")
 
     _backend_prefixes[scheme] = backend_factory
 
@@ -198,9 +194,7 @@ def get_backend_object(url_string):
     try:
         return factory(pu)
     except ImportError:
-        raise BackendException(
-            _("Could not initialize backend: %s") % str(sys.exc_info()[1])
-        )
+        raise BackendException(_("Could not initialize backend: %s") % str(sys.exc_info()[1]))
 
 
 def get_backend(url_string):
@@ -303,9 +297,7 @@ class ParsedUrl(object):
             if self.scheme in ["rclone"]:
                 pass
             # old style rsync://host::[/]dest, are still valid, though they contain no port
-            elif not (
-                "rsync" in self.scheme and re.search("::[^:]*$", self.url_string)
-            ):
+            elif not ("rsync" in self.scheme and re.search("::[^:]*$", self.url_string)):
                 raise InvalidBackendURL(
                     f"Syntax error (port) in: {url_string} A{'rsync' in self.scheme} "
                     f"B{re.search('::[^:]+$', self.netloc)} C{self.netloc}"
@@ -329,15 +321,13 @@ class ParsedUrl(object):
         # Our backends do not handle implicit hosts.
         if self.scheme in uses_netloc and not self.hostname:
             raise InvalidBackendURL(
-                f"Missing hostname in a backend URL which requires an "
-                f"explicit hostname: {url_string}"
+                f"Missing hostname in a backend URL which requires an " f"explicit hostname: {url_string}"
             )
 
         # Our backends do not handle implicit relative paths.
         if self.scheme not in uses_netloc and not self.path.startswith("//"):
             raise InvalidBackendURL(
-                f"missing // - relative paths not supported for "
-                f"scheme {self.scheme}: {url_string}"
+                f"missing // - relative paths not supported for " f"scheme {self.scheme}: {url_string}"
             )
 
     def geturl(self):
@@ -376,9 +366,7 @@ def retry(operation, fatal=True):
     def outer_retry(fn):
         def inner_retry(self, *args):
             global _last_exception
-            errors_fatal, errors_default = config.are_errors_fatal.get(
-                operation, (True, None)
-            )
+            errors_fatal, errors_default = config.are_errors_fatal.get(operation, (True, None))
             for n in range(1, config.num_retries + 1):
                 try:
                     return fn(self, *args)
@@ -397,9 +385,7 @@ def retry(operation, fatal=True):
                         return errors_default
                     else:
                         # retry on anything else
-                        log.Debug(
-                            _("Backtrace of previous error: %s") % exception_traceback()
-                        )
+                        log.Debug(_("Backtrace of previous error: %s") % exception_traceback())
                         at_end = n == config.num_retries
                         code = _get_code_from_exception(self.backend, operation, e)
                         if code == log.ErrorCode.backend_not_found:
@@ -415,16 +401,10 @@ def retry(operation, fatal=True):
                                     return util.escape(f)
 
                             extra = " ".join(
-                                [operation]
-                                + [
-                                    make_filename(x)
-                                    for x in args
-                                    if (x and isinstance(x, str))
-                                ]
+                                [operation] + [make_filename(x) for x in args if (x and isinstance(x, str))]
                             )
                             log.FatalError(
-                                _("Giving up after %s attempts. %s: %s")
-                                % (n, e.__class__.__name__, util.uexc(e)),
+                                _("Giving up after %s attempts. %s: %s") % (n, e.__class__.__name__, util.uexc(e)),
                                 code=code,
                                 extra=extra,
                             )
@@ -435,13 +415,9 @@ def retry(operation, fatal=True):
                             )
                         if not at_end:
                             if isinstance(e, TemporaryLoadException):
-                                time.sleep(
-                                    3 * config.backend_retry_delay
-                                )  # wait longer before trying again
+                                time.sleep(3 * config.backend_retry_delay)  # wait longer before trying again
                             else:
-                                time.sleep(
-                                    config.backend_retry_delay
-                                )  # wait a bit before trying again
+                                time.sleep(config.backend_retry_delay)  # wait a bit before trying again
                             if hasattr(self.backend, "_retry_cleanup"):
                                 self.backend._retry_cleanup()
 
@@ -475,9 +451,7 @@ class Backend(object):
             password = os.environ["FTP_PASSWORD"]
         except KeyError:
             if self.use_getpass:
-                password = getpass.getpass(
-                    f"Password for '{self.parsed_url.username}@{self.parsed_url.hostname}': "
-                )
+                password = getpass.getpass(f"Password for '{self.parsed_url.username}@{self.parsed_url.hostname}': ")
                 os.environ["FTP_PASSWORD"] = password
             else:
                 password = None
@@ -546,8 +520,7 @@ class Backend(object):
                 return 0, "", ""
             except (KeyError, ValueError):
                 raise BackendException(
-                    "Error running '%s': returned %d, with output:\n%s"
-                    % (logstr, result, f"{stdout}\n{stderr}\n")
+                    "Error running '%s': returned %d, with output:\n%s" % (logstr, result, f"{stdout}\n{stderr}\n")
                 )
         return result, stdout, stderr
 
@@ -604,10 +577,7 @@ class BackendWrapper(object):
             self.backend._get(remote_filename, local_path)
             local_path.setdata()
             if not local_path.exists():
-                raise BackendException(
-                    _("File %s not found locally after get " "from backend")
-                    % local_path.uc_name
-                )
+                raise BackendException(_("File %s not found locally after get " "from backend") % local_path.uc_name)
         else:
             raise NotImplementedError()
 

@@ -58,9 +58,7 @@ class GDocsBackend(duplicity.backend.Backend):
         self.client = gdata.docs.client.DocsClient(source=f"duplicity {__version__}")
         self.client.ssl = True
         self.client.http_client.debug = False
-        self._authorize(
-            f"{parsed_url.username}@{parsed_url.hostname}", self.get_password()
-        )
+        self._authorize(f"{parsed_url.username}@{parsed_url.hostname}", self.get_password())
 
         # Fetch destination folder entry (and crete hierarchy if required).
         folder_names = string.split(parsed_url.path[1:], "/")
@@ -73,21 +71,15 @@ class GDocsBackend(duplicity.backend.Backend):
                     parent_folder = entries[0]
                 elif len(entries) == 0:
                     folder = gdata.docs.data.Resource(type="folder", title=folder_name)
-                    parent_folder = self.client.create_resource(
-                        folder, collection=parent_folder
-                    )
+                    parent_folder = self.client.create_resource(folder, collection=parent_folder)
                 else:
                     parent_folder = None
                 if parent_folder:
                     parent_folder_id = parent_folder.resource_id.text
                 else:
-                    raise BackendException(
-                        f"Error while creating destination folder '{folder_name}'."
-                    )
+                    raise BackendException(f"Error while creating destination folder '{folder_name}'.")
             else:
-                raise BackendException(
-                    f"Error while fetching destination folder '{folder_name}'."
-                )
+                raise BackendException(f"Error while fetching destination folder '{folder_name}'.")
         self.folder = parent_folder
 
     def _put(self, source_path, remote_filename):
@@ -107,9 +99,7 @@ class GDocsBackend(duplicity.backend.Backend):
         )
         if uploader:
             # Chunked upload.
-            entry = gdata.docs.data.Resource(
-                title=atom.data.Title(text=remote_filename)
-            )
+            entry = gdata.docs.data.Resource(title=atom.data.Title(text=remote_filename))
             uri = f"{self.folder.get_resumable_create_media_link().href}?convert=false"
             entry = uploader.UploadFile(uri, entry=entry)
             if not entry:
@@ -135,20 +125,15 @@ class GDocsBackend(duplicity.backend.Backend):
             self.client.DownloadResource(entry, local_path.name)
         else:
             raise BackendException(
-                f"Failed to find file '{remote_filename}' "
-                f"in remote folder '{self.folder.title.text}'"
+                f"Failed to find file '{remote_filename}' " f"in remote folder '{self.folder.title.text}'"
             )
 
     def _list(self):
-        entries = self._fetch_entries(
-            self.folder.resource_id.text, GDocsBackend.BACKUP_DOCUMENT_TYPE
-        )
+        entries = self._fetch_entries(self.folder.resource_id.text, GDocsBackend.BACKUP_DOCUMENT_TYPE)
         return [entry.title.text for entry in entries]
 
     def _delete(self, filename):
-        entries = self._fetch_entries(
-            self.folder.resource_id.text, GDocsBackend.BACKUP_DOCUMENT_TYPE, filename
-        )
+        entries = self._fetch_entries(self.folder.resource_id.text, GDocsBackend.BACKUP_DOCUMENT_TYPE, filename)
         for entry in entries:
             self.client.delete(f"{entry.get_edit_link().href}?delete=true", force=True)
 
@@ -163,9 +148,7 @@ class GDocsBackend(duplicity.backend.Backend):
                 captcha_response=captcha_response,
             )
         except gdata.client.CaptchaChallenge as challenge:
-            print(
-                f"A captcha challenge in required. Please visit {challenge.captcha_url}"
-            )
+            print(f"A captcha challenge in required. Please visit {challenge.captcha_url}")
             answer = None
             while not answer:
                 answer = eval(input("Answer to the challenge? "))
@@ -179,9 +162,7 @@ class GDocsBackend(duplicity.backend.Backend):
                 "and create your application-specific password to run duplicity backups."
             )
 
-    def _fetch_entries(
-        self, folder_id, type, title=None
-    ):  # pylint: disable=redefined-builtin
+    def _fetch_entries(self, folder_id, type, title=None):  # pylint: disable=redefined-builtin
         # Build URI.
         uri = f"/feeds/default/private/full/{folder_id}/contents"
         if type == "folder":
@@ -205,10 +186,7 @@ class GDocsBackend(duplicity.backend.Backend):
                 if (
                     (not type)
                     or (type == "folder" and resource_type == "folder")
-                    or (
-                        type == GDocsBackend.BACKUP_DOCUMENT_TYPE
-                        and resource_type != "folder"
-                    )
+                    or (type == GDocsBackend.BACKUP_DOCUMENT_TYPE and resource_type != "folder")
                 ):
                     if folder_id != GDocsBackend.ROOT_FOLDER_ID:
                         for link in entry.in_collections():
@@ -218,9 +196,7 @@ class GDocsBackend(duplicity.backend.Backend):
                                 None,
                                 desired_class=gdata.docs.data.Resource,
                             )
-                            if folder_entry and (
-                                folder_entry.resource_id.text == folder_id
-                            ):
+                            if folder_entry and (folder_entry.resource_id.text == folder_id):
                                 result.append(entry)
                     elif len(entry.in_collections()) == 0:
                         result.append(entry)

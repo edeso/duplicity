@@ -108,9 +108,7 @@ class RsyncBackend(duplicity.backend.Backend):
         m = re.search(r"(:\d+|)?::([^:]*)$", url)
         if m:
             return m.group(2), m.group(1).lstrip(":")
-        raise InvalidBackendURL(
-            f"Could not determine rsync path: {self.munge_password(url)}"
-        )
+        raise InvalidBackendURL(f"Could not determine rsync path: {self.munge_password(url)}")
 
     def _put(self, source_path, remote_filename):
         remote_filename = os.fsdecode(remote_filename)

@@ -79,23 +79,17 @@ def DirDelta(path_iter, dirsig_fileobj_list):
     global stats
     stats = statistics.StatsDeltaProcess()
     if isinstance(dirsig_fileobj_list, list):
-        sig_iter = combine_path_iters(
-            [sigtar2path_iter(x) for x in dirsig_fileobj_list]
-        )
+        sig_iter = combine_path_iters([sigtar2path_iter(x) for x in dirsig_fileobj_list])
     else:
         sig_iter = sigtar2path_iter(dirsig_fileobj_list)
     delta_iter = get_delta_iter(path_iter, sig_iter)
-    if config.dry_run or (
-        config.progress and not progress.tracker.has_collected_evidence()
-    ):
+    if config.dry_run or (config.progress and not progress.tracker.has_collected_evidence()):
         return DummyBlockIter(delta_iter)
     else:
         return DeltaTarBlockIter(delta_iter)
 
 
-def delta_iter_error_handler(
-    exc, new_path, sig_path, sig_tar=None
-):  # pylint: disable=unused-argument
+def delta_iter_error_handler(exc, new_path, sig_path, sig_tar=None):  # pylint: disable=unused-argument
     """
     Called by get_delta_iter, report error in getting delta
     """
@@ -105,9 +99,7 @@ def delta_iter_error_handler(
         index_string = sig_path.get_relative_path()
     else:
         assert 0, "Both new and sig are None for some reason"
-    log.Warn(
-        _("Error %s getting delta for %s") % (util.uexc(exc), os.fsdecode(index_string))
-    )
+    log.Warn(_("Error %s getting delta for %s") % (util.uexc(exc), os.fsdecode(index_string)))
     return None
 
 
@@ -131,12 +123,7 @@ def get_delta_path(new_path, sig_path, sigTarFile=None):
         ti.name = f"signature/{os.fsdecode(b'/'.join(index))}"
         sigTarFile.addfile(ti, io.BytesIO(sig_string))
 
-    if (
-        new_path.isreg()
-        and sig_path
-        and sig_path.isreg()
-        and sig_path.difftype == "signature"
-    ):
+    if new_path.isreg() and sig_path and sig_path.isreg() and sig_path.difftype == "signature":
         delta_path.difftype = "diff"
         old_sigfp = sig_path.open("rb")
         newfp = FileWithReadCounter(new_path.open("rb"))
@@ -384,9 +371,7 @@ def DirDelta_WriteSig(path_iter, sig_infp_list, newsig_outfp):
     else:
         sig_path_iter = sigtar2path_iter(sig_infp_list)
     delta_iter = get_delta_iter(path_iter, sig_path_iter, newsig_outfp)
-    if config.dry_run or (
-        config.progress and not progress.tracker.has_collected_evidence()
-    ):
+    if config.dry_run or (config.progress and not progress.tracker.has_collected_evidence()):
         return DummyBlockIter(delta_iter)
     else:
         return DeltaTarBlockIter(delta_iter)
@@ -413,10 +398,7 @@ class FileWithReadCounter(object):
             buf = self.infile.read(length)
         except IOError as ex:
             buf = b""
-            log.Warn(
-                _("Error %s getting delta for %s")
-                % (util.uexc(ex), os.fsdecode(self.infile.name))
-            )
+            log.Warn(_("Error %s getting delta for %s") % (util.uexc(ex), os.fsdecode(self.infile.name)))
         if stats:
             stats.SourceFileSize += len(buf)
         return buf
@@ -541,14 +523,10 @@ class TarBlockIter(object):
             return result
 
         if self.process_waiting:
-            result = (  # pylint: disable=assignment-from-no-return
-                self.process_continued()
-            )
+            result = self.process_continued()  # pylint: disable=assignment-from-no-return
         else:
             # Below a StopIteration exception will just be passed upwards
-            result = self.process(  # pylint: disable=assignment-from-no-return
-                next(self.input_iter)
-            )
+            result = self.process(next(self.input_iter))  # pylint: disable=assignment-from-no-return
         block_number = self.process_next_vol_number
         self.offset += len(result.data)
         self.previous_index = result.index

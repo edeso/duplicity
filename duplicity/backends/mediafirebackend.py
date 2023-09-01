@@ -54,9 +54,7 @@ Exception: {str(e)}"""
         self._notfound_exc = mediafire.client.ResourceNotFoundError
 
         self.client = mediafire.client.MediaFireClient()
-        self.client.login(
-            app_id=DUPLICITY_APP_ID, email=mediafire_email, password=mediafire_password
-        )
+        self.client.login(app_id=DUPLICITY_APP_ID, email=mediafire_email, password=mediafire_password)
 
         # //username:password@host/path/to/folder -> path/to/folder
         uri = f"mf:///{parsed_url.path.split('/', 3)[3]}"
@@ -67,9 +65,7 @@ Exception: {str(e)}"""
         try:
             folder = self.client.get_resource_by_uri(uri)
             if not isinstance(folder, self._folder_res):
-                raise BackendException(
-                    "target_url already exists " "and is not a folder"
-                )
+                raise BackendException("target_url already exists " "and is not a folder")
         except mediafire.client.ResourceNotFoundError:
             # force folder to be private
             folder = self.client.create_folder(uri, recursive=True)

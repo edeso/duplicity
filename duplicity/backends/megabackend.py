@@ -64,9 +64,7 @@ class MegaBackend(duplicity.backend.Backend):
             # ignore the output, we only need the return code
             subprocess.check_output(["which", cmd])
         except Exception as e:
-            raise BackendException(
-                f"command '{cmd}' not found, make sure megatools are installed"
-            )
+            raise BackendException(f"command '{cmd}' not found, make sure megatools are installed")
 
     def _makedir(self, path):
         """creates a remote directory"""
@@ -209,9 +207,7 @@ class MegaBackend(duplicity.backend.Backend):
                     f"Upgrade your storage at https://mega.nz/pro or remove some data."
                 )
             else:
-                raise BackendException(
-                    f"Failed writing file '{remote_file}' to MEGA , reason : '{e}'"
-                )
+                raise BackendException(f"Failed writing file '{remote_file}' to MEGA , reason : '{e}'")
 
     def delete(self, remote_file):
         print(f"megarm: {remote_file}")

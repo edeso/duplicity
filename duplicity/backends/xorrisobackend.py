@@ -123,9 +123,7 @@ class Xorriso:
             self.proc.stdin.write(b"\n")
             self.proc.stdin.flush()
         except BrokenPipeError as e:
-            raise FatalBackendException(
-                "BrokenPipe: lost connection to xorriso subprocess"
-            )
+            raise FatalBackendException("BrokenPipe: lost connection to xorriso subprocess")
 
         stdout, stderr = self.__recv_stdout_stderr()
 
@@ -361,14 +359,10 @@ class XorrisoBackend(duplicity.backend.Backend):
             self.iso_path += "/"
 
         if not os.path.exists(self.device):
-            raise InvalidBackendURL(
-                f"Optical disc device does not exist: {self.device}"
-            )
+            raise InvalidBackendURL(f"Optical disc device does not exist: {self.device}")
 
         # Start xorriso subprocess.
-        self.xorriso = Xorriso(
-            device=self.device, xorriso_path=xorriso_cmd, xorriso_args=self.xorriso_args
-        )
+        self.xorriso = Xorriso(device=self.device, xorriso_path=xorriso_cmd, xorriso_args=self.xorriso_args)
 
     def _put(self, source_path, remote_filename):
         assert not os.path.isdir(source_path.name.decode("utf8"))
@@ -385,9 +379,7 @@ class XorrisoBackend(duplicity.backend.Backend):
         progress.report_transfer(source_size, source_size)
 
     def _get(self, filename, local_path):
-        self.xorriso.extract(
-            [self.iso_path + filename.decode("utf8")], local_path.name.decode("utf8")
-        )
+        self.xorriso.extract([self.iso_path + filename.decode("utf8")], local_path.name.decode("utf8"))
 
     def _list(self):
         files = self.xorriso.ls(pattern=self.iso_path)

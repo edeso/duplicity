@@ -117,9 +117,7 @@ class DDTest(UnitTestCase):
         sigtar_fp = open(f"{_runtest_dir}/testfiles/output/dir1.sigtar", "rb")
         sel2 = selection.Select(Path(f"{_runtest_dir}/testfiles/dir2"))
         delta_tar = diffdir.DirDelta(sel2.set_iter(), sigtar_fp)
-        diffdir.write_block_iter(
-            delta_tar, f"{_runtest_dir}/testfiles/output/dir1dir2.difftar"
-        )
+        diffdir.write_block_iter(delta_tar, f"{_runtest_dir}/testfiles/output/dir1dir2.difftar")
 
         changed_files = [
             "diff/changeable_permission",
@@ -129,15 +127,11 @@ class DDTest(UnitTestCase):
             "snapshot/directory_to_file",
             "snapshot/file_to_directory/",
         ]
-        for tarinfo in tarfile.TarFile(
-            f"{_runtest_dir}/testfiles/output/dir1dir2.difftar", "r"
-        ):
+        for tarinfo in tarfile.TarFile(f"{_runtest_dir}/testfiles/output/dir1dir2.difftar", "r"):
             tiname = util.get_tarinfo_name(tarinfo)
             if tiname in changed_files:
                 changed_files.remove(tiname)
-        assert not changed_files, "Following files not found:\n" + "\n".join(
-            changed_files
-        )
+        assert not changed_files, "Following files not found:\n" + "\n".join(changed_files)
 
     def test_diff2(self):
         """Another diff test - this one involves multivol support
@@ -151,9 +145,7 @@ class DDTest(UnitTestCase):
         sigtar_fp = open(f"{_runtest_dir}/testfiles/output/dir2.sigtar", "rb")
         sel2 = selection.Select(Path(f"{_runtest_dir}/testfiles/dir3"))
         delta_tar = diffdir.DirDelta(sel2.set_iter(), sigtar_fp)
-        diffdir.write_block_iter(
-            delta_tar, f"{_runtest_dir}/testfiles/output/dir2dir3.difftar"
-        )
+        diffdir.write_block_iter(delta_tar, f"{_runtest_dir}/testfiles/output/dir2dir3.difftar")
 
         buffer = b""
         tf = tarfile.TarFile(f"{_runtest_dir}/testfiles/output/dir2dir3.difftar", "r")
@@ -170,9 +162,7 @@ class DDTest(UnitTestCase):
             + f"{_runtest_dir}/testfiles/output/largefile.patched"
         )
         dir3large = open(f"{_runtest_dir}/testfiles/dir3/largefile", "rb").read()
-        patchedlarge = open(
-            f"{_runtest_dir}/testfiles/output/largefile.patched", "rb"
-        ).read()
+        patchedlarge = open(f"{_runtest_dir}/testfiles/output/largefile.patched", "rb").read()
         assert dir3large == patchedlarge
 
     def test_dirdelta_write_sig(self):
@@ -188,9 +178,7 @@ class DDTest(UnitTestCase):
 
         cur_dir = Path(f"{_runtest_dir}/testfiles/dir1")
         get_sel = lambda cur_dir: selection.Select(cur_dir).set_iter()
-        diffdir.write_block_iter(
-            diffdir.SigTarBlockIter(get_sel(cur_dir)), cur_full_sigs
-        )
+        diffdir.write_block_iter(diffdir.SigTarBlockIter(get_sel(cur_dir)), cur_full_sigs)
 
         sigstack = [cur_full_sigs]
         for dirname in ["dir2", "dir3", "dir4"]:
@@ -206,9 +194,7 @@ class DDTest(UnitTestCase):
             incsig = Path(f"{_runtest_dir}/testfiles/output/incsig." + dirname)
 
             # Write old-style delta to deltadir1
-            diffdir.write_block_iter(
-                diffdir.DirDelta(get_sel(cur_dir), old_full_sigs.open("rb")), delta1
-            )
+            diffdir.write_block_iter(diffdir.DirDelta(get_sel(cur_dir), old_full_sigs.open("rb")), delta1)
 
             # Write new signature and delta to deltadir2 and sigdir2, compare
             block_iter = diffdir.DirDelta_WriteSig(
@@ -222,9 +208,7 @@ class DDTest(UnitTestCase):
             assert not os.system(f"cmp {delta1.uc_name} {delta2.uc_name}")
 
             # Write old-style signature to cur_full_sigs
-            diffdir.write_block_iter(
-                diffdir.SigTarBlockIter(get_sel(cur_dir)), cur_full_sigs
-            )
+            diffdir.write_block_iter(diffdir.SigTarBlockIter(get_sel(cur_dir)), cur_full_sigs)
 
     def test_combine_path_iters(self):
         """Test diffdir.combine_path_iters"""

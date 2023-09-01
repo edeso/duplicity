@@ -214,9 +214,7 @@ class TestSkipSocket(IncludeExcludeFunctionalTest):
                 "various_file_types/two_hardlinked_files1\n"
                 "various_file_types/twp_hardlinked_files2"
             )
-        self.backup(
-            "full", "testfiles", options=["--files-from", "testfiles/files_from.txt"]
-        )
+        self.backup("full", "testfiles", options=["--files-from", "testfiles/files_from.txt"])
         self.restore()
         restore_dir = "testfiles/restore_out"
         restored = self.directory_tree_to_list_of_lists(restore_dir)
@@ -321,9 +319,7 @@ class TestFilesFrom(IncludeExcludeFunctionalTest):
                 "testfiles/select2",
                 options=["--files-from", "testfiles/files_from.txt"],
             )
-        self.assertEqual(
-            context.exception.exit_status, log.ErrorCode.absolute_files_from
-        )
+        self.assertEqual(context.exception.exit_status, log.ErrorCode.absolute_files_from)
 
     def test_error_on_files_from_empty(self):
         """Check expected failure if file list is empty"""
@@ -654,8 +650,7 @@ class TestIncludeExcludeOptions(IncludeExcludeFunctionalTest):
             "testfiles/select2",
             options=[
                 "--include",
-                "testfiles/select2/trailing_space /trailing_space "
-                "sub2/trailing_space sub2_file.txt",
+                "testfiles/select2/trailing_space /trailing_space " "sub2/trailing_space sub2_file.txt",
                 "--exclude",
                 "testfiles/select2/trailing_space /trailing_space sub2",
                 "--include",
@@ -827,8 +822,7 @@ class TestIncludeExcludeFilterModes(IncludeExcludeFunctionalTest):
             options=[
                 "--filter-literal",
                 "--include",
-                "testfiles/select2/trailing_space /trailing_space sub2/trailing_space "
-                "sub2_file.txt",
+                "testfiles/select2/trailing_space /trailing_space sub2/trailing_space " "sub2_file.txt",
                 "--exclude",
                 "testfiles/select2/trailing_space /trailing_space sub2",
                 "--include",
@@ -906,8 +900,7 @@ class TestIncludeExcludeFilterModes(IncludeExcludeFunctionalTest):
                 "testfiles/select2/2/2sub1/2sub1sub[12]",
                 "--filter-literal",
                 "--include",
-                "testfiles/select2/trailing_space /trailing_space sub2/trailing_space "
-                "sub2_file.txt",
+                "testfiles/select2/trailing_space /trailing_space sub2/trailing_space " "sub2_file.txt",
                 "--include",
                 "testfiles/select2/3/3sub3/3sub3sub2/3sub3sub2_file.txt",
                 "--filter-globbing",
@@ -960,8 +953,7 @@ class TestIncludeExcludeFilterModes(IncludeExcludeFunctionalTest):
                 "testfiles/select2/2/2sub1/2sub1sub[12]",
                 "--filter-literal",
                 "--include",
-                "testfiles/select2/trailing_space /trailing_space "
-                "sub2/trailing_space sub2_file.txt",
+                "testfiles/select2/trailing_space /trailing_space " "sub2/trailing_space sub2_file.txt",
                 "--include",
                 "testfiles/select2/3/3sub3/3sub3sub2/3sub3sub2_file.txt",
                 "--filter-globbing",
@@ -1014,8 +1006,7 @@ class TestIncludeExcludeFilterModes(IncludeExcludeFunctionalTest):
                 "testfiles/select2/2/2sub1/2SUB1SUB[12]",
                 "--filter-literal",
                 "--include",
-                "TESTFILES/select2/trailing_space /trailing_space sub2/trailing_space "
-                "sub2_file.txt",
+                "TESTFILES/select2/trailing_space /trailing_space sub2/trailing_space " "sub2_file.txt",
                 "--include",
                 "TestFiles/select2/3/3sub3/3sub3sub2/3sub3sub2_file.txt",
                 "--filter-globbing",
@@ -1592,12 +1583,7 @@ class TestAsterisks(IncludeExcludeFunctionalTest):
         """Exclude filelist with asterisks replacing folders."""
         # Regression test for Bug #884371 (https://bugs.launchpad.net/duplicity/+bug/884371)
         with io.open("testfiles/filelist.txt", "w") as f:
-            f.write(
-                "+ */select/1/2/1\n"
-                "- */select/1/2\n"
-                "- testfiles/*/1/1\n"
-                "- */*/1/3"
-            )
+            f.write("+ */select/1/2/1\n" "- */select/1/2\n" "- testfiles/*/1/1\n" "- */*/1/3")
         self.backup(
             "full",
             "testfiles/select/1",
@@ -1609,9 +1595,7 @@ class TestAsterisks(IncludeExcludeFunctionalTest):
         """Exclude filelist with double asterisks replacing folders."""
         # Regression test for Bug #884371 (https://bugs.launchpad.net/duplicity/+bug/884371)
         with io.open("testfiles/filelist.txt", "w") as f:
-            f.write(
-                "+ **/1/2/1\n" "- **/1/2\n" "- **/select/1/1\n" "- testfiles/select/1/3"
-            )
+            f.write("+ **/1/2/1\n" "- **/1/2\n" "- **/select/1/1\n" "- testfiles/select/1/3")
         self.backup(
             "full",
             "testfiles/select/1",
@@ -1756,12 +1740,7 @@ class TestTrailingSlash(IncludeExcludeFunctionalTest):
         """test_exclude_filelist_trailing_slashes with single wildcards in excludes."""
         # Regression test for Bug #932482 (https://bugs.launchpad.net/duplicity/+bug/932482)
         with io.open("testfiles/filelist.txt", "w") as f:
-            f.write(
-                "+ testfiles/select/1/2/1/\n"
-                "- */select/1/2/\n"
-                "- testfiles/*/1/1/\n"
-                "- */*/1/3/"
-            )
+            f.write("+ testfiles/select/1/2/1/\n" "- */select/1/2/\n" "- testfiles/*/1/1/\n" "- */*/1/3/")
         self.backup(
             "full",
             "testfiles/select/1",
@@ -1773,9 +1752,7 @@ class TestTrailingSlash(IncludeExcludeFunctionalTest):
         """test_exclude_filelist_trailing_slashes with double wildcards in excludes."""
         # Regression test for Bug #932482 (https://bugs.launchpad.net/duplicity/+bug/932482)
         with io.open("testfiles/filelist.txt", "w") as f:
-            f.write(
-                "+ testfiles/select/1/2/1/\n" "- **/1/2/\n" "- **/1/1/\n" "- **/1/3/"
-            )
+            f.write("+ testfiles/select/1/2/1/\n" "- **/1/2/\n" "- **/1/1/\n" "- **/1/3/")
         self.backup(
             "full",
             "testfiles/select/1",
@@ -1884,9 +1861,7 @@ class TestTrailingSlash2(IncludeExcludeFunctionalTest):
         self.restore()
         restore_path = "testfiles/restore_out"
         restored = self.directory_tree_to_list_of_lists(restore_path)
-        self.assertEqual(
-            restored, [["1"], ["1sub1"], ["1sub1sub1", "1sub1sub2", "1sub1sub3"]]
-        )
+        self.assertEqual(restored, [["1"], ["1sub1"], ["1sub1sub1", "1sub1sub2", "1sub1sub3"]])
 
 
 class TestGlobbingReplacement(IncludeExcludeFunctionalTest):
@@ -2067,9 +2042,7 @@ class TestExcludeIfPresent(IncludeExcludeFunctionalTest):
 class TestLockedFoldersNoError(IncludeExcludeFunctionalTest):
     """This tests that inaccessible folders do not cause an error"""
 
-    @unittest.skipUnless(
-        platform.platform().startswith("Linux"), "Skip on non-Linux systems"
-    )
+    @unittest.skipUnless(platform.platform().startswith("Linux"), "Skip on non-Linux systems")
     def test_locked_baseline(self):
         """Test no error if locked in path but excluded"""
         folder_to_lock = "testfiles/select2/1/1sub1/1sub1sub3"
@@ -2091,9 +2064,7 @@ class TestLockedFoldersNoError(IncludeExcludeFunctionalTest):
         restored = self.directory_tree_to_list_of_lists(restore_path)
         self.assertEqual(restored, [["1sub1sub1"], ["1sub1sub1_file.txt"]])
 
-    @unittest.skipUnless(
-        platform.platform().startswith("Linux"), "Skip on non-Linux systems"
-    )
+    @unittest.skipUnless(platform.platform().startswith("Linux"), "Skip on non-Linux systems")
     def test_locked_excl_if_present(self):
         """Test no error if excluded locked with --exclude-if-present"""
         # Regression test for Bug #1620085
@@ -2256,9 +2227,7 @@ class TestAbsolutePaths(IncludeExcludeFunctionalTest):
             os.path.abspath("testfiles/select2"),
             options=[
                 "--include",
-                os.path.abspath(
-                    "testfiles/select2/3/3sub3/3sub3sub2/3sub3sub2_file.txt"
-                ),
+                os.path.abspath("testfiles/select2/3/3sub3/3sub3sub2/3sub3sub2_file.txt"),
                 "--exclude",
                 os.path.abspath("testfiles/select2/3/3sub3/3sub3sub2"),
                 "--include",
@@ -2282,9 +2251,7 @@ class TestAbsolutePaths(IncludeExcludeFunctionalTest):
                 "--include",
                 os.path.abspath("testfiles/select2/1/1sub2/1sub2sub1"),
                 "--exclude",
-                os.path.abspath(
-                    "testfiles/select2/1/1sub1/1sub1sub3/1sub1sub3_file.txt"
-                ),
+                os.path.abspath("testfiles/select2/1/1sub1/1sub1sub3/1sub1sub3_file.txt"),
                 "--exclude",
                 os.path.abspath("testfiles/select2/1/1sub1/1sub1sub2"),
                 "--exclude",
@@ -2305,12 +2272,8 @@ class TestAbsolutePaths(IncludeExcludeFunctionalTest):
         self.assertEqual(restored, self.expected_restored_tree)
 
 
-@unittest.skipUnless(
-    platform.platform().startswith("Linux"), "Skip on non-Linux systems"
-)
-@unittest.skipUnless(
-    sys.getfilesystemencoding().upper() == "UTF-8", "Skip on non-UTF-8 systems"
-)
+@unittest.skipUnless(platform.platform().startswith("Linux"), "Skip on non-Linux systems")
+@unittest.skipUnless(sys.getfilesystemencoding().upper() == "UTF-8", "Skip on non-UTF-8 systems")
 @unittest.skipIf(sys.version_info[:2] < (3, 7), "Skip on bad unicode handling")
 class TestUnicode(IncludeExcludeFunctionalTest):
     """Tests include/exclude options with unicode paths"""

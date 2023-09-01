@@ -163,9 +163,7 @@ class TemporaryDirectory(object):
         # sets are O(1), while dictionaries are.
         self.__pending = {}
 
-        self.__lock = (
-            threading.Lock()
-        )  # protect private resources *AND* mktemp/mkstemp calls
+        self.__lock = threading.Lock()  # protect private resources *AND* mktemp/mkstemp calls
 
     def dir(self):
         """
@@ -200,9 +198,7 @@ class TemporaryDirectory(object):
             suffix = f"-{int(self.__tempcount)}"
             filename = os.fsencode(tempfile.mktemp(suffix, "mktemp-", self.__dir))
 
-            log.Debug(
-                _("Registering (mktemp) temporary file %s") % os.fsdecode(filename)
-            )
+            log.Debug(_("Registering (mktemp) temporary file %s") % os.fsdecode(filename))
             self.__pending[filename] = None
         finally:
             self.__lock.release()
@@ -263,10 +259,7 @@ class TemporaryDirectory(object):
                 log.Debug(_("Forgetting temporary file %s") % os.fsdecode(fname))
                 del self.__pending[fname]
             else:
-                log.Warn(
-                    _("Attempt to forget unknown tempfile %s - this is probably a bug.")
-                    % os.fsdecode(fname)
-                )
+                log.Warn(_("Attempt to forget unknown tempfile %s - this is probably a bug.") % os.fsdecode(fname))
                 pass
         finally:
             self.__lock.release()
@@ -285,24 +278,16 @@ class TemporaryDirectory(object):
             if self.__dir is not None:
                 for file in list(self.__pending.keys()):
                     try:
-                        log.Debug(
-                            _("Removing still remembered temporary file %s")
-                            % os.fsdecode(file)
-                        )
+                        log.Debug(_("Removing still remembered temporary file %s") % os.fsdecode(file))
                         util.ignore_missing(os.unlink, file)
                     except Exception:
-                        log.Info(
-                            _("Cleanup of temporary file %s failed") % os.fsdecode(file)
-                        )
+                        log.Info(_("Cleanup of temporary file %s failed") % os.fsdecode(file))
                         pass
                 try:
                     os.rmdir(self.__dir)
                 except Exception:
                     log.Warn(
-                        _(
-                            "Cleanup of temporary directory %s failed - "
-                            "this is probably a bug."
-                        )
+                        _("Cleanup of temporary directory %s failed - " "this is probably a bug.")
                         % os.fsdecode(self.__dir)
                     )
                     pass

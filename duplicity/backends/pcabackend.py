@@ -73,27 +73,17 @@ Exception: {str(e)}"""
             conn_kwargs["auth_version"] = os.environ["PCA_AUTHVERSION"]
             if os.environ["PCA_AUTHVERSION"] == "3":
                 if "PCA_USER_DOMAIN_NAME" in os.environ:
-                    os_options.update(
-                        {"user_domain_name": os.environ["PCA_USER_DOMAIN_NAME"]}
-                    )
+                    os_options.update({"user_domain_name": os.environ["PCA_USER_DOMAIN_NAME"]})
                 if "PCA_USER_DOMAIN_ID" in os.environ:
-                    os_options.update(
-                        {"user_domain_id": os.environ["PCA_USER_DOMAIN_ID"]}
-                    )
+                    os_options.update({"user_domain_id": os.environ["PCA_USER_DOMAIN_ID"]})
                 if "PCA_PROJECT_DOMAIN_NAME" in os.environ:
-                    os_options.update(
-                        {"project_domain_name": os.environ["PCA_PROJECT_DOMAIN_NAME"]}
-                    )
+                    os_options.update({"project_domain_name": os.environ["PCA_PROJECT_DOMAIN_NAME"]})
                 if "PCA_PROJECT_DOMAIN_ID" in os.environ:
-                    os_options.update(
-                        {"project_domain_id": os.environ["PCA_PROJECT_DOMAIN_ID"]}
-                    )
+                    os_options.update({"project_domain_id": os.environ["PCA_PROJECT_DOMAIN_ID"]})
                 if "PCA_TENANTNAME" in os.environ:
                     os_options.update({"tenant_name": os.environ["PCA_TENANTNAME"]})
                 if "PCA_ENDPOINT_TYPE" in os.environ:
-                    os_options.update(
-                        {"endpoint_type": os.environ["PCA_ENDPOINT_TYPE"]}
-                    )
+                    os_options.update({"endpoint_type": os.environ["PCA_ENDPOINT_TYPE"]})
                 if "PCA_USERID" in os.environ:
                     os_options.update({"user_id": os.environ["PCA_USERID"]})
                 if "PCA_TENANTID" in os.environ:
@@ -209,16 +199,12 @@ Exception: {str(e)}"""
         self.conn.delete_object(self.container, self.prefix + os.fsdecode(filename))
 
     def _query(self, filename):
-        sobject = self.conn.head_object(
-            self.container, self.prefix + os.fsdecode(filename)
-        )
+        sobject = self.conn.head_object(self.container, self.prefix + os.fsdecode(filename))
         return {"size": int(sobject["content-length"])}
 
     def unseal(self, remote_filename):
         try:
-            _, body = self.conn.get_object(
-                self.container, remote_filename, resp_chunk_size=1024
-            )
+            _, body = self.conn.get_object(self.container, remote_filename, resp_chunk_size=1024)
             log.Info(f"File {remote_filename} was successfully unsealed.")
             return body
         except self.resp_exc as e:
@@ -230,9 +216,7 @@ Exception: {str(e)}"""
                 m, s = divmod(duration, 60)
                 h, m = divmod(m, 60)
                 eta = f"{int(h)}h{int(m):02}m{int(s):02}s"
-                log.Info(
-                    f"File {remote_filename} is being unsealed, operation ETA is {eta}."
-                )
+                log.Info(f"File {remote_filename} is being unsealed, operation ETA is {eta}.")
             else:
                 log.FatalError(
                     f"Connection failed: {e.__class__.__name__} {str(e)}",
@@ -250,8 +234,7 @@ Exception: {str(e)}"""
         # remote_filenames are bytes string
         u_remote_filenames = list(map(os.fsdecode, remote_filenames))
         objs = self.__list_objs(
-            ffilter=lambda x: os.fsdecode(x["name"])
-            in [self.prefix + s for s in u_remote_filenames]
+            ffilter=lambda x: os.fsdecode(x["name"]) in [self.prefix + s for s in u_remote_filenames]
         )
         # first step: retrieve pca seal status for all required volumes
         # and launch unseal for all sealed files
@@ -282,8 +265,7 @@ Exception: {str(e)}"""
         """
         one_object_not_unsealed = False
         objs = self.__list_objs(
-            ffilter=lambda x: os.fsdecode(x["name"])
-            in [self.prefix + s for s in u_remote_filenames]
+            ffilter=lambda x: os.fsdecode(x["name"]) in [self.prefix + s for s in u_remote_filenames]
         )
         max_duration = 0
         for o in objs:

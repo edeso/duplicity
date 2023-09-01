@@ -147,9 +147,7 @@ class Iter(object):
             default = f(default, next_item)
 
     @staticmethod
-    def multiplex(
-        iter, num_of_forks, final_func=None, closing_func=None
-    ):  # pylint: disable=redefined-builtin
+    def multiplex(iter, num_of_forks, final_func=None, closing_func=None):  # pylint: disable=redefined-builtin
         """Split a single iterater into a number of streams
 
         The return val will be a list with length num_of_forks, each
@@ -184,10 +182,7 @@ class Iter(object):
                     buffer.insert(0, next(iter))
                 except StopIteration:
                     # call closing_func if necessary
-                    if (
-                        forkposition == starting_forkposition
-                        and not called_closing_func[0]
-                    ):
+                    if forkposition == starting_forkposition and not called_closing_func[0]:
                         closing_func()
                         called_closing_func[0] = None
                     raise StopIteration
@@ -351,10 +346,7 @@ class IterTreeReducer(object):
             return 1
 
         if index <= self.index:
-            log.Warn(
-                _("Warning: oldindex %s >= newindex %s")
-                % (util.uindex(self.index), util.uindex(index))
-            )
+            log.Warn(_("Warning: oldindex %s >= newindex %s") % (util.uindex(self.index), util.uindex(index)))
             return 1
 
         if self.finish_branches(index) is None:
@@ -362,9 +354,7 @@ class IterTreeReducer(object):
         last_branch = self.branches[-1]
         if last_branch.start_successful:
             if last_branch.can_fast_process(*args):
-                robust.check_common_error(
-                    last_branch.on_error, last_branch.fast_process, args
-                )
+                robust.check_common_error(last_branch.on_error, last_branch.fast_process, args)
             else:
                 branch = self.add_branch()
                 self.process_w_branch(index, branch, args)

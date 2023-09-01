@@ -93,19 +93,14 @@ Exception: {str(e)}"""
             client_id = parsed_url.hostname
 
         if "GOOGLE_SERVICE_JSON_FILE" in os.environ:
-            credentials = Credentials.from_service_account_file(
-                os.environ["GOOGLE_SERVICE_JSON_FILE"]
-            )
+            credentials = Credentials.from_service_account_file(os.environ["GOOGLE_SERVICE_JSON_FILE"])
             if credentials.service_account_email != client_id:
                 raise BackendException(
                     f"Service account email in the JSON file ({credentials.service_account_email}) "
                     f"does not match the URL ({client_id})"
                 )
 
-        elif (
-            "GOOGLE_CLIENT_SECRET_JSON_FILE" in os.environ
-            and "GOOGLE_CREDENTIALS_FILE" in os.environ
-        ):
+        elif "GOOGLE_CLIENT_SECRET_JSON_FILE" in os.environ and "GOOGLE_CREDENTIALS_FILE" in os.environ:
             from google_auth_oauthlib.flow import InstalledAppFlow
             from google.auth.transport.requests import Request
 
@@ -132,9 +127,7 @@ Exception: {str(e)}"""
 
                     flow_args = {}
                     if "GOOGLE_OAUTH_LOCAL_SERVER_PORT" in os.environ:
-                        flow_args["port"] = int(
-                            os.environ["GOOGLE_OAUTH_LOCAL_SERVER_PORT"]
-                        )
+                        flow_args["port"] = int(os.environ["GOOGLE_OAUTH_LOCAL_SERVER_PORT"])
                     if "GOOGLE_OAUTH_LOCAL_SERVER_HOST" in os.environ:
                         flow_args["host"] = os.environ["GOOGLE_OAUTH_LOCAL_SERVER_HOST"]
                     credentials = flow.run_local_server(**flow_args)
@@ -234,18 +227,14 @@ Exception: {str(e)}"""
                 if drive_file["name"] == filename and not drive_file["trashed"]:
                     for parent in drive_file["parents"]:
                         if parent == self.folder:
-                            log.Info(
-                                f"GDrive backend: found file '{filename}' with id {file_id} in ID cache"
-                            )
+                            log.Info(f"GDrive backend: found file '{filename}' with id {file_id} in ID cache")
                             return drive_file
             except HttpError as error:
                 # A 404 occurs if the ID is no longer valid
                 if error.resp.status != 404:
                     raise
             # If we get here, the cache entry is invalid
-            log.Info(
-                f"GDrive backend: invalidating '{filename}' (previously ID {file_id}) from ID cache"
-            )
+            log.Info(f"GDrive backend: invalidating '{filename}' (previously ID {file_id}) from ID cache")
             del self.id_cache[filename]
 
         # Not found in the cache, so use directory listing. This is less
@@ -270,9 +259,7 @@ Exception: {str(e)}"""
         elif len(file_list) > 0:
             file_id = file_list[0]["id"]
             self.id_cache[filename] = file_list[0]["id"]
-            log.Info(
-                f"GDrive backend: found file '{filename}' with id {file_id} on server, adding to cache"
-            )
+            log.Info(f"GDrive backend: found file '{filename}' with id {file_id} on server, adding to cache")
             return file_list[0]
 
         log.Info(f"GDrive backend: file '{filename}' not found in cache or on server")
@@ -303,9 +290,7 @@ Exception: {str(e)}"""
             resumable = False
             num_retries = 0
 
-        media = MediaFileUpload(
-            source_path.name, mimetype=mime_type, resumable=resumable
-        )
+        media = MediaFileUpload(source_path.name, mimetype=mime_type, resumable=resumable)
         if drive_file is None:
             # No existing file, make a new one
             file_metadata = {"name": remote_filename, "parents": [self.folder]}
@@ -321,9 +306,7 @@ Exception: {str(e)}"""
                 .execute(num_retries=num_retries)
             )
         else:
-            log.Info(
-                f"GDrive backend: replacing existing file '{remote_filename}' with id '{drive_file['id']}'"
-            )
+            log.Info(f"GDrive backend: replacing existing file '{remote_filename}' with id '{drive_file['id']}'")
             drive_file = (
                 self.drive.files()
                 .update(
@@ -340,9 +323,7 @@ Exception: {str(e)}"""
         from googleapiclient.http import MediaIoBaseDownload
 
         drive_file = self.file_by_name(remote_filename)
-        request = self.drive.files().get_media(
-            fileId=drive_file["id"], **self.shared_drive_flags_support
-        )
+        request = self.drive.files().get_media(fileId=drive_file["id"], **self.shared_drive_flags_support)
         with open(os.fsdecode(local_path.name), "wb") as fh:
             done = False
             downloader = MediaIoBaseDownload(fh, request)
@@ -380,22 +361,16 @@ Exception: {str(e)}"""
         # Note: do not use iterkeys() here, because file_by_name will modify
         # the cache if it finds invalid entries.
         for filename in list(self.id_cache.keys()):
-            if (filename not in filenames) and (
-                self.file_by_name(filename) is not None
-            ):
+            if (filename not in filenames) and (self.file_by_name(filename) is not None):
                 filenames.add(filename)
         return list(filenames)
 
     def _delete(self, filename):
         file_id = self.id_by_name(filename)
         if file_id == "":
-            log.Warn(
-                f"File '{os.fsdecode(filename)}' does not exist while trying to delete it"
-            )
+            log.Warn(f"File '{os.fsdecode(filename)}' does not exist while trying to delete it")
         else:
-            self.drive.files().delete(
-                fileId=file_id, **self.shared_drive_flags_support
-            ).execute()
+            self.drive.files().delete(fileId=file_id, **self.shared_drive_flags_support).execute()
 
     def _query(self, filename):
         drive_file = self.file_by_name(filename)

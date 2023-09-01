@@ -145,9 +145,7 @@ Exception: {str(e)}"""
         return os.environ.get("DPBX_ACCESS_TOKEN", None)
 
     def save_access_token(self, access_token):
-        raise BackendException(
-            f'dpbx: Please set DPBX_ACCESS_TOKEN="{access_token}" environment variable'
-        )
+        raise BackendException(f'dpbx: Please set DPBX_ACCESS_TOKEN="{access_token}" environment variable')
 
     def obtain_access_token(self):
         log.Info("dpbx: trying to obtain access token")
@@ -201,13 +199,9 @@ Exception: {str(e)}"""
 
             # We're assuming obtain_access_token will throw exception.
             # So this line should not be reached
-            raise BackendException(
-                "dpbx: Please update DPBX_ACCESS_TOKEN and try again"
-            )
+            raise BackendException("dpbx: Please update DPBX_ACCESS_TOKEN and try again")
 
-        log.Info(
-            f"dpbx: Successfully authenticated as {self.api_account.name.display_name}"
-        )
+        log.Info(f"dpbx: Successfully authenticated as {self.api_account.name.display_name}")
 
     def _error_code(self, operation, e):  # pylint: disable=unused-argument
         if isinstance(e, ApiError):
@@ -237,13 +231,9 @@ Exception: {str(e)}"""
 
         # A few sanity checks
         if res_metadata.path_display != remote_path:
-            raise BackendException(
-                f"dpbx: result path mismatch: {res_metadata.path_display} (expected: {remote_path})"
-            )
+            raise BackendException(f"dpbx: result path mismatch: {res_metadata.path_display} (expected: {remote_path})")
         if res_metadata.size != file_size:
-            raise BackendException(
-                f"dpbx: result size mismatch: {res_metadata.size} (expected: {file_size})"
-            )
+            raise BackendException(f"dpbx: result size mismatch: {res_metadata.size} (expected: {file_size})")
 
     def put_file_small(self, source_path, remote_path):
         if not self.user_authenticated():
@@ -276,9 +266,7 @@ Exception: {str(e)}"""
         f = source_path.open("rb")
         try:
             buf = f.read(DPBX_UPLOAD_CHUNK_SIZE)
-            log.Debug(
-                f"dpbx,files_upload_session_start([{len(buf)} bytes]), total: {int(file_size)}"
-            )
+            log.Debug(f"dpbx,files_upload_session_start([{len(buf)} bytes]), total: {int(file_size)}")
             upload_sid = self.api_client.files_upload_session_start(buf)
             log.Debug(f"dpbx,files_upload_session_start(): {upload_sid}")
             upload_cursor = UploadSessionCursor(upload_sid.session_id, f.tell())
@@ -324,29 +312,20 @@ Exception: {str(e)}"""
                             f"dpbx,files_upload_sesssion_append([{len(buf)} bytes], "
                             f"offset={int(upload_cursor.offset)})"
                         )
-                        self.api_client.files_upload_session_append(
-                            buf, upload_cursor.session_id, upload_cursor.offset
-                        )
+                        self.api_client.files_upload_session_append(buf, upload_cursor.session_id, upload_cursor.offset)
                     else:
                         log.Debug(
                             f"dpbx,files_upload_sesssion_finish([{len(buf)} bytes], "
                             f"offset={int(upload_cursor.offset)})"
                         )
-                        res_metadata = self.api_client.files_upload_session_finish(
-                            buf, upload_cursor, commit_info
-                        )
+                        res_metadata = self.api_client.files_upload_session_finish(buf, upload_cursor, commit_info)
 
                     upload_cursor.offset = f.tell()
-                    log.Debug(
-                        f"progress: {int(upload_cursor.offset)} of {int(file_size)}"
-                    )
+                    log.Debug(f"progress: {int(upload_cursor.offset)} of {int(file_size)}")
                     progress.report_transfer(upload_cursor.offset, file_size)
                 except ApiError as e:
                     error = e.error
-                    if (
-                        isinstance(error, UploadSessionLookupError)
-                        and error.is_incorrect_offset()
-                    ):
+                    if isinstance(error, UploadSessionLookupError) and error.is_incorrect_offset():
                         # Server reports that we should send another chunk.
                         # Most likely this is caused by network error during
                         # previous upload attempt. In such case we'll get
@@ -426,9 +405,7 @@ Exception: {str(e)}"""
         # again. Since this check is free, it's better to have it here
         local_size = os.path.getsize(local_path.name)
         if local_size != file_size:
-            raise BackendException(
-                f"dpbx: wrong file size: {int(local_size)} (expected: {int(file_size)})"
-            )
+            raise BackendException(f"dpbx: wrong file size: {int(local_size)} (expected: {int(file_size)})")
 
         local_path.setdata()
 
@@ -437,9 +414,7 @@ Exception: {str(e)}"""
         # Do a long listing to avoid connection reset
         if not self.user_authenticated():
             self.login()
-        remote_dir = (
-            f"/{urllib.parse.unquote(self.parsed_url.path.lstrip('/')).rstrip()}"
-        )
+        remote_dir = f"/{urllib.parse.unquote(self.parsed_url.path.lstrip('/')).rstrip()}"
 
         log.Debug(f"dpbx.files_list_folder({remote_dir})")
         res = []
@@ -453,11 +428,7 @@ Exception: {str(e)}"""
                     break
                 resp = self.api_client.files_list_folder_continue(resp.cursor)
         except ApiError as e:
-            if (
-                isinstance(e.error, ListFolderError)
-                and e.error.is_path()
-                and e.error.get_path().is_not_found()
-            ):
+            if isinstance(e.error, ListFolderError) and e.error.is_path() and e.error.get_path().is_not_found():
                 log.Debug(f"dpbx.list({remote_dir}): ignore missing folder ({e})")
             else:
                 raise
@@ -502,23 +473,15 @@ Exception: {str(e)}"""
     def check_renamed_files(self, file_list):
         if not self.user_authenticated():
             self.login()
-        bad_list = [
-            x for x in file_list if DPBX_AUTORENAMED_FILE_RE.search(x) is not None
-        ]
+        bad_list = [x for x in file_list if DPBX_AUTORENAMED_FILE_RE.search(x) is not None]
         if len(bad_list) == 0:
             return
         log.Warn("-" * 72)
-        log.Warn(
-            "Warning! It looks like there are automatically renamed files on backend"
-        )
+        log.Warn("Warning! It looks like there are automatically renamed files on backend")
         log.Warn("They were probably created when using older version of duplicity.")
         log.Warn("")
-        log.Warn(
-            "Please check your backup consistency. Most likely you will need to choose"
-        )
-        log.Warn(
-            "largest file from duplicity-* (number).gpg and remove brackets from its name."
-        )
+        log.Warn("Please check your backup consistency. Most likely you will need to choose")
+        log.Warn("largest file from duplicity-* (number).gpg and remove brackets from its name.")
         log.Warn("")
         log.Warn("These files are not managed by duplicity at all and will not be")
         log.Warn("removed/rotated automatically.")

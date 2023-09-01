@@ -122,9 +122,7 @@ class FilterTestCase(Iterators):
 
     def testNum1(self):
         """Test numbers 1 - 100 #1"""
-        assert Iter.equal(
-            Iter.filter(lambda x: x % 2 == 0, self.one_to_100()), self.evens()
-        )
+        assert Iter.equal(Iter.filter(lambda x: x % 2 == 0, self.one_to_100()), self.evens())
         assert Iter.equal(Iter.filter(lambda x: x % 2, self.one_to_100()), self.odds())
 
     def testError(self):
@@ -138,9 +136,7 @@ class MapTestCase(Iterators):
 
     def testNumbers(self):
         """1 to 100 * 2 = 2 to 200"""
-        assert Iter.equal(
-            Iter.map(lambda x: 2 * x, self.one_to_100()), iter(list(range(2, 201, 2)))
-        )
+        assert Iter.equal(Iter.map(lambda x: 2 * x, self.one_to_100()), iter(list(range(2, 201, 2))))
 
     def testShortcut(self):
         """Map should go in order"""
@@ -226,9 +222,7 @@ class FoldingTest(Iterators):
     def testLargeAddition(self):
         """Folds on 10000 element iterators"""
         assert Iter.foldl(self.f, 0, iter(list(range(1, 10001)))) == 50005000
-        self.assertRaises(
-            RuntimeError, Iter.foldr, self.f, 0, iter(list(range(1, 10001)))
-        )
+        self.assertRaises(RuntimeError, Iter.foldr, self.f, 0, iter(list(range(1, 10001))))
 
     def testLen(self):
         """Use folds to calculate length of lists"""

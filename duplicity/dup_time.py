@@ -44,15 +44,9 @@ _interval_conv_dict = {
 }
 _integer_regexp = re.compile("^[0-9]+$")
 _interval_regexp = re.compile("^([0-9]+)([smhDWMY])")
-_genstr_date_regexp1 = re.compile(
-    "^(?P<year>[0-9]{4})[-/]" "(?P<month>[0-9]{1,2})[-/]" "(?P<day>[0-9]{1,2})$"
-)
-_genstr_date_regexp2 = re.compile(
-    "^(?P<month>[0-9]{1,2})[-/]" "(?P<day>[0-9]{1,2})[-/]" "(?P<year>[0-9]{4})$"
-)
-_genstr_date_regexp3 = re.compile(
-    "^(?P<year>[0-9]{4})" "(?P<month>[0-9]{2})" "(?P<day>[0-9]{2})Z$"
-)
+_genstr_date_regexp1 = re.compile("^(?P<year>[0-9]{4})[-/]" "(?P<month>[0-9]{1,2})[-/]" "(?P<day>[0-9]{1,2})$")
+_genstr_date_regexp2 = re.compile("^(?P<month>[0-9]{1,2})[-/]" "(?P<day>[0-9]{1,2})[-/]" "(?P<year>[0-9]{4})$")
+_genstr_date_regexp3 = re.compile("^(?P<year>[0-9]{4})" "(?P<month>[0-9]{2})" "(?P<day>[0-9]{2})Z$")
 curtime = curtimestr = None
 prevtime = prevtimestr = None
 
@@ -112,9 +106,7 @@ def stringtotime(timestring):
         if len(timestring) == 16:
             # new format for filename time
             year, month, day = list(map(int, [date[0:4], date[4:6], date[6:8]]))
-            hour, minute, second = list(
-                map(int, [daytime[0:2], daytime[2:4], daytime[4:6]])
-            )
+            hour, minute, second = list(map(int, [daytime[0:2], daytime[2:4], daytime[4:6]]))
         else:
             # old format for filename time
             year, month, day = list(map(int, date.split("-")))

@@ -55,9 +55,7 @@ try:
     Version = get_version(**scm_version_args)
 except Exception as e:
     pass
-Reldate = time.strftime(
-    "%B %d, %Y", time.gmtime(int(os.environ.get("SOURCE_DATE_EPOCH", time.time())))
-)
+Reldate = time.strftime("%B %d, %Y", time.gmtime(int(os.environ.get("SOURCE_DATE_EPOCH", time.time()))))
 
 
 # READTHEDOCS uses setup.py sdist but can't handle extensions
@@ -136,9 +134,7 @@ def get_data_files():
             path = os.path.join(root, file)
             if path.endswith("duplicity.mo"):
                 lang = os.path.split(root)[-1]
-                data_files.append(
-                    (f"share/locale/{lang}/LC_MESSAGES", [f"po/{lang}/duplicity.mo"])
-                )
+                data_files.append((f"share/locale/{lang}/LC_MESSAGES", [f"po/{lang}/duplicity.mo"]))
 
     return data_files
 
@@ -238,9 +234,7 @@ class TestCommand(test):
                 except Exception:
                     pass
 
-        os.environ[
-            "PATH"
-        ] = f"{os.path.abspath(build_scripts_cmd.build_dir)}:{os.environ.get('PATH')}"
+        os.environ["PATH"] = f"{os.path.abspath(build_scripts_cmd.build_dir)}:{os.environ.get('PATH')}"
 
         test.run(self)
 

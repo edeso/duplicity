@@ -56,61 +56,37 @@ Exception: {str(e)}"""
 
         else:
             if "SWIFT_USERNAME" not in os.environ:
-                raise BackendException(
-                    "SWIFT_USERNAME environment variable " "not set."
-                )
+                raise BackendException("SWIFT_USERNAME environment variable " "not set.")
 
             if "SWIFT_PASSWORD" not in os.environ:
-                raise BackendException(
-                    "SWIFT_PASSWORD environment variable " "not set."
-                )
+                raise BackendException("SWIFT_PASSWORD environment variable " "not set.")
 
             if "SWIFT_AUTHURL" not in os.environ:
                 raise BackendException("SWIFT_AUTHURL environment variable " "not set.")
 
-            svc_options["os_username"] = conn_kwargs["user"] = os.environ[
-                "SWIFT_USERNAME"
-            ]
-            svc_options["os_password"] = conn_kwargs["key"] = os.environ[
-                "SWIFT_PASSWORD"
-            ]
-            svc_options["os_auth_url"] = conn_kwargs["authurl"] = os.environ[
-                "SWIFT_AUTHURL"
-            ]
+            svc_options["os_username"] = conn_kwargs["user"] = os.environ["SWIFT_USERNAME"]
+            svc_options["os_password"] = conn_kwargs["key"] = os.environ["SWIFT_PASSWORD"]
+            svc_options["os_auth_url"] = conn_kwargs["authurl"] = os.environ["SWIFT_AUTHURL"]
 
         if "SWIFT_AUTHVERSION" in os.environ:
-            svc_options["auth_version"] = conn_kwargs["auth_version"] = os.environ[
-                "SWIFT_AUTHVERSION"
-            ]
+            svc_options["auth_version"] = conn_kwargs["auth_version"] = os.environ["SWIFT_AUTHVERSION"]
             if os.environ["SWIFT_AUTHVERSION"] == "3":
                 if "SWIFT_USER_DOMAIN_NAME" in os.environ:
-                    os_options.update(
-                        {"user_domain_name": os.environ["SWIFT_USER_DOMAIN_NAME"]}
-                    )
+                    os_options.update({"user_domain_name": os.environ["SWIFT_USER_DOMAIN_NAME"]})
                 if "SWIFT_USER_DOMAIN_ID" in os.environ:
-                    os_options.update(
-                        {"user_domain_id": os.environ["SWIFT_USER_DOMAIN_ID"]}
-                    )
+                    os_options.update({"user_domain_id": os.environ["SWIFT_USER_DOMAIN_ID"]})
                 if "SWIFT_PROJECT_DOMAIN_NAME" in os.environ:
-                    os_options.update(
-                        {"project_domain_name": os.environ["SWIFT_PROJECT_DOMAIN_NAME"]}
-                    )
+                    os_options.update({"project_domain_name": os.environ["SWIFT_PROJECT_DOMAIN_NAME"]})
                 if "SWIFT_PROJECT_DOMAIN_ID" in os.environ:
-                    os_options.update(
-                        {"project_domain_id": os.environ["SWIFT_PROJECT_DOMAIN_ID"]}
-                    )
+                    os_options.update({"project_domain_id": os.environ["SWIFT_PROJECT_DOMAIN_ID"]})
                 if "SWIFT_PROJECT_ID" in os.environ:
                     os_options.update({"project_id": os.environ["SWIFT_PROJECT_ID"]})
                 if "SWIFT_PROJECT_NAME" in os.environ:
-                    os_options.update(
-                        {"project_name": os.environ["SWIFT_PROJECT_NAME"]}
-                    )
+                    os_options.update({"project_name": os.environ["SWIFT_PROJECT_NAME"]})
                 if "SWIFT_TENANTNAME" in os.environ:
                     os_options.update({"tenant_name": os.environ["SWIFT_TENANTNAME"]})
                 if "SWIFT_ENDPOINT_TYPE" in os.environ:
-                    os_options.update(
-                        {"endpoint_type": os.environ["SWIFT_ENDPOINT_TYPE"]}
-                    )
+                    os_options.update({"endpoint_type": os.environ["SWIFT_ENDPOINT_TYPE"]})
                 if "SWIFT_USERID" in os.environ:
                     os_options.update({"user_id": os.environ["SWIFT_USERID"]})
                 if "SWIFT_TENANTID" in os.environ:
@@ -205,11 +181,7 @@ Exception: {str(e)}"""
                 log.Debug("Uploading Dynamic Large Object")
                 mp = self.svc.upload(
                     self.container,
-                    [
-                        SwiftUploadObject(
-                            lp, object_name=self.prefix + os.fsdecode(remote_filename)
-                        )
-                    ],
+                    [SwiftUploadObject(lp, object_name=self.prefix + os.fsdecode(remote_filename))],
                     options={"segment_size": config.mp_segment_size},
                 )
                 uploads = [a for a in mp if "container" not in a["action"]]
@@ -236,29 +208,17 @@ Exception: {str(e)}"""
                 f.write(chunk)
 
     def _list(self):
-        headers, objs = self.conn.get_container(
-            self.container, full_listing=True, path=self.prefix
-        )
+        headers, objs = self.conn.get_container(self.container, full_listing=True, path=self.prefix)
         # removes prefix from return values. should check for the prefix ?
         return [o["name"][len(self.prefix) :] for o in objs]
 
     def _delete(self, filename):
         # use swiftservice to correctly delete all segments in case of multipart uploads
-        deleted = [
-            a
-            for a in self.svc.delete(
-                self.container, [self.prefix + os.fsdecode(filename)]
-            )
-        ]
+        deleted = [a for a in self.svc.delete(self.container, [self.prefix + os.fsdecode(filename)])]
 
     def _query(self, filename):
         # use swiftservice to correctly report filesize in case of multipart uploads
-        sobject = [
-            a
-            for a in self.svc.stat(
-                self.container, [self.prefix + os.fsdecode(filename)]
-            )
-        ][0]
+        sobject = [a for a in self.svc.stat(self.container, [self.prefix + os.fsdecode(filename)])][0]
         sobj = {"size": int(sobject["headers"]["content-length"])}
         log.Debug(f"Objectquery: '{os.fsdecode(filename)}' has size {sobj['size']}.")
         return sobj

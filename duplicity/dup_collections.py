@@ -85,12 +85,7 @@ class BackupSet(object):
         """
         if not pr:
             pr = file_naming.parse(filename)
-        if not pr or not (
-            pr.type == "full"
-            or pr.type == "inc"
-            or pr.type == "full-stat"
-            or pr.type == "inc-stat"
-        ):
+        if not pr or not (pr.type == "full" or pr.type == "inc" or pr.type == "full-stat" or pr.type == "inc-stat"):
             return False
 
         if not self.info_set:
@@ -163,9 +158,7 @@ class BackupSet(object):
                 and pr.start_time == self.start_time
                 and pr.end_time == self.end_time
             ):
-                self.local_jsonstat_path = config.archive_dir_path.append(
-                    local_filename
-                )
+                self.local_jsonstat_path = config.archive_dir_path.append(local_filename)
 
                 break
 
@@ -193,9 +186,7 @@ class BackupSet(object):
                 and pr.start_time == self.start_time
                 and pr.end_time == self.end_time
             ):
-                self.local_manifest_path = config.archive_dir_path.append(
-                    local_filename
-                )
+                self.local_manifest_path = config.archive_dir_path.append(local_filename)
 
                 self.set_files_changed()
                 break
@@ -214,19 +205,11 @@ class BackupSet(object):
         local_filename_list = config.archive_dir_path.listdir()
         for lfn in local_filename_list:
             pr = file_naming.parse(lfn)
-            if (
-                pr
-                and pr.time == self.time
-                and pr.start_time == self.start_time
-                and pr.end_time == self.end_time
-            ):
+            if pr and pr.time == self.time and pr.start_time == self.start_time and pr.end_time == self.end_time:
                 try:
                     config.archive_dir_path.append(lfn).delete()
                 except Exception:
-                    log.Debug(
-                        _("BackupSet.delete: missing %s")
-                        % [os.fsdecode(f) for f in lfn]
-                    )
+                    log.Debug(_("BackupSet.delete: missing %s") % [os.fsdecode(f) for f in lfn])
                     pass
         util.release_lockfile()
 
@@ -293,10 +276,7 @@ class BackupSet(object):
         """
         assert self.local_manifest_path
         manifest_buffer = self.local_manifest_path.get_data()
-        log.Info(
-            _("Processing local manifest %s (%s)")
-            % (self.local_manifest_path.uc_name, len(manifest_buffer))
-        )
+        log.Info(_("Processing local manifest %s (%s)") % (self.local_manifest_path.uc_name, len(manifest_buffer)))
         return manifest.Manifest().from_string(manifest_buffer)
 
     def get_remote_manifest(self):
@@ -311,17 +291,9 @@ class BackupSet(object):
         try:
             remote_file_buffer = self.backend.get_data(remote_file)
         except GPGError as message:
-            log.FatalError(
-                _(
-                    f"Error processing remote file ({os.fsdecode(remote_file)}): {util.uexc(message)}"
-                )
-            )
+            log.FatalError(_(f"Error processing remote file ({os.fsdecode(remote_file)}): {util.uexc(message)}"))
             return b""
-        log.Info(
-            _(
-                f"Processing remote file {os.fsdecode(remote_file)} ({len(remote_file_buffer)})"
-            )
-        )
+        log.Info(_(f"Processing remote file {os.fsdecode(remote_file)} ({len(remote_file_buffer)})"))
         return remote_file_buffer
 
     def get_manifest(self):
@@ -757,44 +729,26 @@ class CollectionsStatus(object):
             _("Collection Status"),
             "-----------------",
             _("Connecting with backend: %s") % (self.backend.__class__.__name__,),
-            _("Archive dir: %s")
-            % (self.archive_dir_path.uc_name if self.archive_dir_path else "None",),
+            _("Archive dir: %s") % (self.archive_dir_path.uc_name if self.archive_dir_path else "None",),
         ]
 
-        l.append(
-            "\n"
-            + _("Found %d secondary backup chain(s).") % len(self.other_backup_chains)
-        )
+        l.append("\n" + _("Found %d secondary backup chain(s).") % len(self.other_backup_chains))
         for i in range(len(self.other_backup_chains)):
-            l.append(
-                _("Secondary chain %d of %d:") % (i + 1, len(self.other_backup_chains))
-            )
+            l.append(_("Secondary chain %d of %d:") % (i + 1, len(self.other_backup_chains)))
             l.append(str(self.other_backup_chains[i]))
             l.append("")
 
         if self.matched_chain_pair:
-            l.append(
-                "\n" + _("Found primary backup chain with matching " "signature chain:")
-            )
+            l.append("\n" + _("Found primary backup chain with matching " "signature chain:"))
             l.append(str(self.matched_chain_pair[1]))
         else:
             l.append(_("No backup chains with active signatures found"))
 
         if self.orphaned_backup_sets or self.incomplete_backup_sets:
-            l.append(
-                _("Also found %d backup set(s) not part of any chain,")
-                % len(self.orphaned_backup_sets)
-            )
-            l.append(
-                _("and %d incomplete backup set(s).") % len(self.incomplete_backup_sets)
-            )
+            l.append(_("Also found %d backup set(s) not part of any chain,") % len(self.orphaned_backup_sets))
+            l.append(_("and %d incomplete backup set(s).") % len(self.incomplete_backup_sets))
             # TRANSL: "cleanup" is a hard-coded command, so do not translate it
-            l.append(
-                _(
-                    "These may be deleted by running duplicity with the "
-                    '"cleanup" command.'
-                )
-            )
+            l.append(_("These may be deleted by running duplicity with the " '"cleanup" command.'))
         else:
             l.append(_("No orphaned or incomplete backup sets found."))
 
@@ -845,9 +799,7 @@ class CollectionsStatus(object):
             self.all_backup_chains
         ), "get_sorted_chains() did something more than re-ordering"
 
-        local_sig_chains, self.local_orphaned_sig_names = self.get_signature_chains(
-            True
-        )
+        local_sig_chains, self.local_orphaned_sig_names = self.get_signature_chains(True)
         remote_sig_chains, self.remote_orphaned_sig_names = self.get_signature_chains(
             False, filelist=backend_filename_list
         )
@@ -876,22 +828,12 @@ class CollectionsStatus(object):
                 # See if the set before last matches:
                 elif (
                     len(latest_backup_chain.get_all_sets()) >= 2
-                    and sig_chains[i].end_time
-                    == latest_backup_chain.get_all_sets()[-2].end_time
+                    and sig_chains[i].end_time == latest_backup_chain.get_all_sets()[-2].end_time
                 ):
                     # It matches, remove the last backup set:
-                    log.Warn(
-                        _(
-                            "Warning, discarding last backup set, because "
-                            "of missing signature file."
-                        )
-                    )
-                    self.incomplete_backup_sets.append(
-                        latest_backup_chain.incset_list[-1]
-                    )
-                    latest_backup_chain.incset_list = latest_backup_chain.incset_list[
-                        :-1
-                    ]
+                    log.Warn(_("Warning, discarding last backup set, because " "of missing signature file."))
+                    self.incomplete_backup_sets.append(latest_backup_chain.incset_list[-1])
+                    latest_backup_chain.incset_list = latest_backup_chain.incset_list[:-1]
                 else:
                     continue
 
@@ -934,10 +876,7 @@ class CollectionsStatus(object):
 
         if self.incomplete_backup_sets:
             log.Warn(
-                _(
-                    "Warning, found incomplete backup sets, probably left "
-                    "from aborted session"
-                ),
+                _("Warning, found incomplete backup sets, probably left " "from aborted session"),
                 log.WarningCode.incomplete_backup,
             )
 
@@ -958,10 +897,7 @@ class CollectionsStatus(object):
         not fitting into any chain, and the incomplete sets are sets
         missing files.
         """
-        log.Debug(
-            _("Extracting backup chains from list of files: %s")
-            % [os.fsdecode(f) for f in filename_list]
-        )
+        log.Debug(_("Extracting backup chains from list of files: %s") % [os.fsdecode(f) for f in filename_list])
         # First put filenames in set form
         sets = []
 
@@ -972,23 +908,15 @@ class CollectionsStatus(object):
             pr = file_naming.parse(filename)
             for set in sets:  # pylint: disable=redefined-builtin
                 if set.add_filename(filename, pr):
-                    log.Debug(
-                        _("File %s is part of known set") % (os.fsdecode(filename),)
-                    )
+                    log.Debug(_("File %s is part of known set") % (os.fsdecode(filename),))
                     break
             else:
-                log.Debug(
-                    _("File %s is not part of a known set; creating new set")
-                    % (os.fsdecode(filename),)
-                )
+                log.Debug(_("File %s is not part of a known set; creating new set") % (os.fsdecode(filename),))
                 new_set = BackupSet(self.backend, self.action)
                 if new_set.add_filename(filename, pr):
                     sets.append(new_set)
                 else:
-                    log.Debug(
-                        _("Ignoring file (rejected by backup set) '%s'")
-                        % os.fsdecode(filename)
-                    )
+                    log.Debug(_("Ignoring file (rejected by backup set) '%s'") % os.fsdecode(filename))
 
         for f in filename_list:
             add_to_sets(f)
@@ -1009,10 +937,7 @@ class CollectionsStatus(object):
                 assert set.type == "inc"
                 for chain in chains:
                     if chain.add_inc(set):
-                        log.Debug(
-                            _("Added set %s to pre-existing chain %s")
-                            % (set.get_timestr(), chain.short_desc())
-                        )
+                        log.Debug(_("Added set %s to pre-existing chain %s") % (set.get_timestr(), chain.short_desc()))
                         break
                 else:
                     log.Debug(_("Found orphaned set %s") % (set.get_timestr(),))
@@ -1127,9 +1052,7 @@ class CollectionsStatus(object):
         if not self.all_backup_chains:
             raise CollectionsError("No backup chains found")
 
-        covering_chains = [
-            c for c in self.all_backup_chains if c.start_time <= time <= c.end_time
-        ]
+        covering_chains = [c for c in self.all_backup_chains if c.start_time <= time <= c.end_time]
         if len(covering_chains) > 1:
             raise CollectionsError("Two chains cover the given time")
         elif len(covering_chains) == 1:
@@ -1152,9 +1075,7 @@ class CollectionsStatus(object):
         if not self.all_sig_chains:
             raise CollectionsError("No signature chains found")
 
-        covering_chains = [
-            c for c in self.all_sig_chains if c.start_time <= time <= c.end_time
-        ]
+        covering_chains = [c for c in self.all_sig_chains if c.start_time <= time <= c.end_time]
         if covering_chains:
             return covering_chains[-1]  # prefer local if multiple sig chains
 
@@ -1215,9 +1136,7 @@ class CollectionsStatus(object):
         assert self.values_set
         old_chains = []
         for chain in self.all_backup_chains:
-            if chain.end_time < t and (
-                not self.matched_chain_pair or chain is not self.matched_chain_pair[1]
-            ):
+            if chain.end_time < t and (not self.matched_chain_pair or chain is not self.matched_chain_pair[1]):
                 # don't delete the active (matched) chain
                 old_chains.append(chain)
         return old_chains
@@ -1235,9 +1154,7 @@ class CollectionsStatus(object):
         assert self.values_set
         old_chains = []
         for chain in self.all_sig_chains:
-            if chain.end_time < t and (
-                not self.matched_chain_pair or chain is not self.matched_chain_pair[0]
-            ):
+            if chain.end_time < t and (not self.matched_chain_pair or chain is not self.matched_chain_pair[0]):
                 # don't delete the active (matched) chain
                 old_chains.append(chain)
         return old_chains
@@ -1343,9 +1260,7 @@ class CollectionsStatus(object):
                 index = filelist.index(modified_filepath)
                 specified_file_backup_type.append(bs.get_files_changed()[index][0])
 
-        return FileChangedStatus(
-            filepath, list(zip(specified_file_backup_type, specified_file_backup_set))
-        )
+        return FileChangedStatus(filepath, list(zip(specified_file_backup_type, specified_file_backup_set)))
 
     def get_all_file_changed_records(self, set_index):
         """
@@ -1393,8 +1308,7 @@ class FileChangedStatus(object):
             "-------------------------",
             _("File: %s") % self.filepath,
             _("Total number of backup: %d") % len(self.fileinfo_list),
-            set_schema
-            % (_("Type of backup set:"), _("Time:"), _("Type of file change:")),
+            set_schema % (_("Type of backup set:"), _("Time:"), _("Type of file change:")),
         ]
 
         for s in self.fileinfo_list:
@@ -1432,10 +1346,7 @@ class BackupSetChangesStatus(object):
                 _("Total number of changes: %d") % len(changed_files),
                 set_schema % (_("File:"), _("Type of file change:")),
             ]
-            + [
-                set_schema % (c[1].decode("utf-8"), c[0].decode("utf-8"))
-                for c in changed_files
-            ]
+            + [set_schema % (c[1].decode("utf-8"), c[0].decode("utf-8")) for c in changed_files]
             + ["-------------------------"]
         )
         return "\n".join(l)

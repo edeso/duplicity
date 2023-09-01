@@ -131,9 +131,7 @@ class StatsObj(object):
         lineparts = line.split(" ")
         if len(lineparts) < len(self.stat_file_attrs):
             error()
-        for attr, val_string in zip(
-            self.stat_file_attrs, lineparts[-len(self.stat_file_attrs) :]
-        ):
+        for attr, val_string in zip(self.stat_file_attrs, lineparts[-len(self.stat_file_attrs) :]):
             try:
                 val = int(val_string)
             except ValueError:
@@ -170,14 +168,9 @@ class StatsObj(object):
         if self.ElapsedTime or (  # pylint:disable=access-member-before-definition
             self.StartTime is not None and self.EndTime is not None
         ):
-            if (
-                self.ElapsedTime  # pylint:disable=access-member-before-definition
-                is None
-            ):
+            if self.ElapsedTime is None:  # pylint:disable=access-member-before-definition
                 self.ElapsedTime = self.EndTime - self.StartTime
-            timelist.append(
-                f"ElapsedTime {self.ElapsedTime:.2f} ({dup_time.inttopretty(self.ElapsedTime)})\n"
-            )
+            timelist.append(f"ElapsedTime {self.ElapsedTime:.2f} ({dup_time.inttopretty(self.ElapsedTime)})\n")
         return "".join(timelist)
 
     def get_filestats_string(self):
@@ -278,9 +271,7 @@ class StatsObj(object):
             backup_meta["action"] = col_stat.action
             backup_meta["skipped_inc"] = config.skipped_inc
             backup_meta["time_full_bkp"] = backup_chain.fullset.time
-            backup_meta["time_full_bkp_str"] = dup_time.timetostring(
-                backup_meta["time_full_bkp"]
-            )
+            backup_meta["time_full_bkp_str"] = dup_time.timetostring(backup_meta["time_full_bkp"])
             backup_meta["no_of_inc"] = len(backup_chain.incset_list)
             backup_meta["target"] = fail_save_read(config, "target_url")
             backup_meta["source"] = fail_save_read(config, "source_path")
@@ -295,9 +286,7 @@ class StatsObj(object):
             ]
             for inc in backup_chain.incset_list:
                 backup_meta["local_json_stat"].append(
-                    fail_save_read(
-                        inc, "local_jsonstat_path", "get_filename", is_function=True
-                    )
+                    fail_save_read(inc, "local_jsonstat_path", "get_filename", is_function=True)
                 )
             py_obj["backup_meta"] = backup_meta
 

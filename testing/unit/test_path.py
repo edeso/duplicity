@@ -36,9 +36,7 @@ class PathTest(UnitTestCase):
 
     def test_deltree(self):
         """Test deleting a tree"""
-        assert not os.system(
-            f"cp -pR {_runtest_dir}/testfiles/deltree {_runtest_dir}/testfiles/output"
-        )
+        assert not os.system(f"cp -pR {_runtest_dir}/testfiles/deltree {_runtest_dir}/testfiles/output")
         p = Path(f"{_runtest_dir}/testfiles/output")
         assert p.isdir()
         p.deltree()

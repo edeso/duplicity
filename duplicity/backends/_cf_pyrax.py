@@ -49,9 +49,7 @@ Exception: {str(e)}"""
         conn_kwargs = {}
 
         if "CLOUDFILES_USERNAME" not in os.environ:
-            raise BackendException(
-                "CLOUDFILES_USERNAME environment variable" "not set."
-            )
+            raise BackendException("CLOUDFILES_USERNAME environment variable" "not set.")
 
         if "CLOUDFILES_APIKEY" not in os.environ:
             raise BackendException("CLOUDFILES_APIKEY environment variable not set.")

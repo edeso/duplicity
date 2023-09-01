@@ -102,8 +102,7 @@ class HubicIdentity(BaseIdentity):
                 err = {}
 
             raise exc.AuthenticationFailed(
-                f"Unable to get oauth access token, wrong client_id or client_secret ? "
-                f"({str(err)})"
+                f"Unable to get oauth access token, wrong client_id or client_secret ? " f"({str(err)})"
             )
 
         oauth_token = r.json()
@@ -135,16 +134,12 @@ class HubicIdentity(BaseIdentity):
             config.remove_option("hubic", "email")
             with open(TOKENS_FILE, "wb") as configfile:
                 config.write(configfile)
-            print(
-                "username has been removed from the .hubic_tokens file sent to the CE."
-            )
+            print("username has been removed from the .hubic_tokens file sent to the CE.")
         if config.has_option("hubic", "password"):
             config.remove_option("hubic", "password")
             with open(TOKENS_FILE, "wb") as configfile:
                 config.write(configfile)
-            print(
-                "password has been removed from the .hubic_tokens file sent to the CE."
-            )
+            print("password has been removed from the .hubic_tokens file sent to the CE.")
 
         return oauth_token
 
@@ -154,9 +149,7 @@ class HubicIdentity(BaseIdentity):
         refresh_token = config.get("hubic", "refresh_token")
 
         if refresh_token is None:
-            raise exc.AuthenticationFailed(
-                "refresh_token is null. Not acquiered before ?"
-            )
+            raise exc.AuthenticationFailed("refresh_token is null. Not acquiered before ?")
 
         success = False
         max_retries = 20
@@ -196,8 +189,7 @@ class HubicIdentity(BaseIdentity):
 
         if not success:
             raise exc.AuthenticationFailed(
-                "All the attempts failed to get the refresh token: "
-                "status_code = 509: Bandwidth Limit Exceeded"
+                "All the attempts failed to get the refresh token: " "status_code = 509: Bandwidth Limit Exceeded"
             )
 
         oauth_token = r.json()
@@ -221,9 +213,7 @@ class HubicIdentity(BaseIdentity):
                 allow_redirects=False,
             )
             if r.status_code != 200:
-                raise exc.AuthenticationFailed(
-                    f"Incorrect/unauthorized client_id ({str(self._parse_error(r))})"
-                )
+                raise exc.AuthenticationFailed(f"Incorrect/unauthorized client_id ({str(self._parse_error(r))})")
 
             try:
                 from lxml import html as lxml_html
@@ -231,9 +221,7 @@ class HubicIdentity(BaseIdentity):
                 lxml_html = None
 
             if lxml_html:
-                oauth = lxml_html.document_fromstring(r.content).xpath(
-                    '//input[@name="oauth"]'
-                )
+                oauth = lxml_html.document_fromstring(r.content).xpath('//input[@name="oauth"]')
                 oauth = oauth[0].value if oauth else None
             else:
                 oauth = re.search(
@@ -243,14 +231,11 @@ class HubicIdentity(BaseIdentity):
                 oauth = oauth.group(1) if oauth else None
 
             if not oauth:
-                raise exc.AuthenticationFailed(
-                    "Unable to get oauth_id from authorization page"
-                )
+                raise exc.AuthenticationFailed("Unable to get oauth_id from authorization page")
 
             if self._email is None or self._password is None:
                 raise exc.AuthenticationFailed(
-                    "Cannot retrieve email and/or password. "
-                    "Please run expresslane-hubic-setup.sh"
+                    "Cannot retrieve email and/or password. " "Please run expresslane-hubic-setup.sh"
                 )
 
             r = requests.post(
@@ -270,9 +255,7 @@ class HubicIdentity(BaseIdentity):
                 query = urllib.parse.urlsplit(r.headers["location"]).query
                 code = dict(urllib.parse.parse_qsl(query))["code"]
             except Exception as e:
-                raise exc.AuthenticationFailed(
-                    "Unable to authorize client_id, " "invalid login/password ?"
-                )
+                raise exc.AuthenticationFailed("Unable to authorize client_id, " "invalid login/password ?")
 
             oauth_token = self._get_access_token(code)
 

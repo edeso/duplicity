@@ -40,12 +40,8 @@ import duplicity.backend
 
 # undo the overrides support that our testing framework adds
 sys.path = [x for x in sys.path if "/overrides" not in x]
-os.environ["PATH"] = ":".join(
-    [x for x in os.environ["PATH"].split(":") if "/overrides" not in x]
-)
-os.environ["PYTHONPATH"] = ":".join(
-    [x for x in os.environ["PYTHONPATH"].split(":") if "/overrides" not in x]
-)
+os.environ["PATH"] = ":".join([x for x in os.environ["PATH"].split(":") if "/overrides" not in x])
+os.environ["PYTHONPATH"] = ":".join([x for x in os.environ["PYTHONPATH"].split(":") if "/overrides" not in x])
 
 
 class ManualBackendBase(BackendInstanceBase):
@@ -118,11 +114,7 @@ class ftpTest(ManualBackendBase):
 
 class ftpsTest(ManualBackendBase):
     def setBackendInfo(self):
-        self.url_string = (
-            test_config.ftp_url.replace("ftp://", "ftps://")
-            if test_config.ftp_url
-            else None
-        )
+        self.url_string = test_config.ftp_url.replace("ftp://", "ftps://") if test_config.ftp_url else None
         self.password = test_config.ftp_password
 
 
@@ -180,9 +172,7 @@ class swiftTest(ManualBackendBase):
         self.set_environ("SWIFT_PASSWORD", test_config.swift_password)
         self.set_environ("SWIFT_TENANTNAME", test_config.swift_tenant)
         # Assumes you're just using the same storage as your cloudfiles config above
-        self.set_environ(
-            "SWIFT_AUTHURL", "https://identity.api.rackspacecloud.com/v2.0/"
-        )
+        self.set_environ("SWIFT_AUTHURL", "https://identity.api.rackspacecloud.com/v2.0/")
         self.set_environ("SWIFT_AUTHVERSION", "2")
 
 
