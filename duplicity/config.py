@@ -104,12 +104,12 @@ backend = None
 # See example of use in multibackend.py _list()
 # Do not use in normal cases!
 are_errors_fatal = {
-    'delete': (True, None),
-    'get': (True, None),
-    'list': (True, None),
-    'move': (True, None),
-    'put': (True, None),
-    'query': (True, None),
+    "delete": (True, None),
+    "get": (True, None),
+    "list": (True, None),
+    "move": (True, None),
+    "put": (True, None),
+    "query": (True, None),
 }
 
 # Select object which iterates paths in the local source dir.
@@ -201,7 +201,7 @@ temproot = None
 timeout = 30
 
 # FTP data connection type
-ftp_connection = 'passive'
+ftp_connection = "passive"
 
 # Header options for Webdav
 webdav_headers = ""
@@ -387,4 +387,4 @@ check_remote = True
 # 'utf-8' or some other sane encoding, but will sometimes fail and returns
 # either 'ascii' or None.  Both are bogus, so default to 'utf-8' if it does.
 fsencoding = sys.getfilesystemencoding()
-fsencoding = fsencoding if fsencoding not in ['ascii', 'ANSI_X3.4-1968', None] else 'utf-8'
+fsencoding = fsencoding if fsencoding not in ["ascii", "ANSI_X3.4-1968", None] else "utf-8"

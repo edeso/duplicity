@@ -21,10 +21,10 @@
 
 import glob
 import os
-import subprocess
+import pytest
 import sys
 
-import pytest
+from subprocess import Popen, PIPE, STDOUT
 
 if os.getenv("RUN_CODE_TESTS", None) == "1":
     # Make conditional so that we do not have to import in environments that
@@ -38,9 +38,7 @@ skipCodeTest = pytest.mark.skipif(
     reason="Must set environment var RUN_CODE_TESTS=1",
 )
 
-files_to_test = [
-    os.path.join(_top_dir, "bin/duplicity"),
-]
+files_to_test = [os.path.join(_top_dir, "bin/duplicity")]
 files_to_test.extend(glob.glob(os.path.join(_top_dir, "duplicity/**/*.py"), recursive=True))
 files_to_test.extend(glob.glob(os.path.join(_top_dir, "testing/functional/*.py")))
 files_to_test.extend(glob.glob(os.path.join(_top_dir, "testing/unit/*.py")))
@@ -51,7 +49,7 @@ class CodeTest(DuplicityTestCase):
     def run_checker(self, cmd, returncodes=None):
         if returncodes is None:
             returncodes = [0]
-        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+        process = Popen(cmd, stdout=PIPE, stderr=STDOUT, universal_newlines=True)
         output = process.communicate()[0]
         if len(output):
             for line in output.split("\n"):
@@ -60,6 +58,19 @@ class CodeTest(DuplicityTestCase):
         self.assertTrue(
             process.returncode in returncodes,
             f"Test failed: returncode = {process.returncode}",
+        )
+
+    @skipCodeTest
+    def test_black(self):
+        """Black check for out of format files"""
+        print()
+        self.run_checker(
+            [
+                "black",
+                "--check",
+            ]
+            + files_to_test,
+            returncodes=[0],
         )
 
     @skipCodeTest
