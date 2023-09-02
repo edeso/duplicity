@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: duplicity\n"
 "Report-Msgid-Bugs-To: Kenneth Loafman <kenneth@loafman.com>\n"
-"POT-Creation-Date: 2023-08-26 09:59-0500\n"
-"PO-Revision-Date: 2023-08-26 15:26\n"
+"POT-Creation-Date: 2023-09-02 10:30-0500\n"
+"PO-Revision-Date: 2023-09-02 15:46\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Language: ko_KR\n"
@@ -749,34 +749,33 @@ msgid "Bad time string \"%s\"\n\n"
 "the day)."
 msgstr ""
 
-#: ../duplicity/cli_main.py:108
+#: ../duplicity/cli_main.py:116
 msgid "No valid action command found. Will imply 'backup' because a path source was given and target is a url location."
 msgstr ""
 
-#: ../duplicity/cli_main.py:113
+#: ../duplicity/cli_main.py:121
 msgid "No valid action command found. Will imply 'restore' because url source was given and target is a local path."
 msgstr ""
 
-#: ../duplicity/cli_main.py:118
-#, python-brace-format
-msgid "Invalid or missing action command and cannot be implied from the given arguments. {remainder}"
+#: ../duplicity/cli_main.py:132
+msgid "Invalid or missing action command and cannot be implied from the "
 msgstr ""
 
-#: ../duplicity/cli_main.py:185
+#: ../duplicity/cli_main.py:202
 msgid "Valid action commands"
 msgstr ""
 
-#: ../duplicity/cli_main.py:250
+#: ../duplicity/cli_main.py:267
 #, python-brace-format
 msgid "GPG binary is {config.gpg_binary}, version {gpg_version}"
 msgstr ""
 
-#: ../duplicity/cli_main.py:284
+#: ../duplicity/cli_main.py:301
 #, python-brace-format
 msgid "Using archive dir: {config.archive_dir_path.uc_name}"
 msgstr ""
 
-#: ../duplicity/cli_main.py:285
+#: ../duplicity/cli_main.py:302
 #, python-brace-format
 msgid "Using backup name: {config.backup_name}"
 msgstr ""
