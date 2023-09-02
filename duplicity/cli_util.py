@@ -230,7 +230,7 @@ def check_target_dir(val):
 
 def check_target_url(val):
     if not is_url(val):
-        command_line_error(_(f"Source should be url, not directory.  Got '{val}' instead."))
+        command_line_error(_(f"Target should be url, not directory.  Got '{val}' instead."))
     return val
 
 
