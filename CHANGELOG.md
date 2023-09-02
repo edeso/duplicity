@@ -1,3 +1,24 @@
+## rel.2.1.1 (2023-09-02)
+
+### Changes
+
+* Run po/update-pot. [Kenneth Loafman]
+
+* Make action command missing error message more helpful. [ede]
+
+* Allow duplicity --help and -h.  Fixes #749. [Kenneth Loafman]
+
+* Do not wrap body of git commit. [Kenneth Loafman]
+
+* Change backup abbrev 'b' to 'bu'. [Kenneth Loafman]
+
+* Skip some tests on Launchpad. [Kenneth Loafman]
+
+### Fix
+
+* Pexpect backend fix. [DiegoRenner]
+
+
 ## rel.2.1.0 (2023-08-26)
 
 ### New
@@ -16,10 +37,12 @@
 
 * Implement implied commands via pre parsing. Fixes #733. [Kenneth Loafman]
 
-  - detect 'backup' or 'restore' by parsing the arguments   - new action
-  command 'backup'   - document 'backup' in man page   - document new
-  action command short aliases in man page   - streamline url parameter
-  checking   - add more tests for implied commands
+    - detect 'backup' or 'restore' by parsing the arguments
+    - new action command 'backup'
+    - document 'backup' in man page
+    - document new action command short aliases in man page
+    - streamline url parameter checking
+    - add more tests for implied commands
 
 * Replace util.fsdecode with os.fsdecode.  Fixes #748. [Kenneth Loafman]
 
@@ -51,8 +74,9 @@
 
 * Restore pre-parser. Fixes #727. [Kenneth Loafman]
 
-  Revert "chg:usr: Remove implied command support for now."
-  This reverts commit afbeb4082a87e2073b5ccdcd624cf5e6f4465608.
+    Revert "chg:usr: Remove implied command support for now."
+
+    This reverts commit afbeb4082a87e2073b5ccdcd624cf5e6f4465608.
 
 * Add missing import to cli\_util.py. Fixes #730. [Kenneth Loafman]
 
@@ -62,7 +86,7 @@
 
 * Adjust to build under LP Mantic. [Kenneth Loafman]
 
-  fix:pkg: Adjust to build under LP Mantic.
+    fix:pkg: Adjust to build under LP Mantic.
 
 * Fix PEP8 issue. [Kenneth Loafman]
 
@@ -108,12 +132,12 @@
 
 * Remove kerberos from snap builds. [Kenneth Loafman]
 
-  kerberos will not build in snapcraft.
+    kerberos will not build in snapcraft.
 
 * Changes to allow building snaps. [Kenneth Loafman]
 
-  Found another bug in snapcraft, see:
-  https://bugs.launchpad.net/snapcraft/+bug/2028303
+    Found another bug in snapcraft, see:
+    https://bugs.launchpad.net/snapcraft/+bug/2028303
 
 
 ## rel.2.0.0rc1 (2023-07-17)
@@ -137,7 +161,7 @@
 
 * Finish conversions to f-strings. [Kenneth Loafman]
 
-  See https://github.com/ikamensh/flynt/issues/185
+    See https://github.com/ikamensh/flynt/issues/185
 
 * Convert to f-strings via 'flynt -tc -tj'. [Kenneth Loafman]
 
@@ -178,29 +202,30 @@
 
 * Fixes for handling snaps again. [Kenneth Loafman]
 
-  Use requirements.txt instead of internal list.
+    Use requirements.txt instead of internal list.
 
 * Fix #707 for test\_get\_stats\_string. [Kenneth Loafman]
 
-  Move UTC set/unset to testing.__init__.
+    Move UTC set/unset to testing.__init__.
 
 * Fix #707 for test\_get\_stats\_string. [Kenneth Loafman]
 
-  Base time on UTC rather than where the test is run.
+    Base time on UTC rather than where the test is run.
 
 * Fix #707 for test\_get\_stats\_string. [Kenneth Loafman]
 
-  Base time on UTC rather than where the test is run.
+    Base time on UTC rather than where the test is run.
 
 * Fix #707 for rclone backend testing. [Kenneth Loafman]
 
-  Create 'duptest' config if needed, then remove after   tests are
-  complete.
-  Add some more pytest options to tox.ini.
+    Create 'duptest' config if needed, then remove after
+    tests are complete.
+
+    Add some more pytest options to tox.ini.
 
 * Comment out test\_path:test\_compare, flaky. [Kenneth Loafman]
 
-  Fixes #707 - 1.2.3 test failure
+    Fixes #707 - 1.2.3 test failure
 
 * Force cryptography<3.4 for py2 support. [Kenneth Loafman]
 
@@ -244,7 +269,7 @@
 
 * Fix run website ci call after pushes/releases. [ede]
 
-  [skip_tests]
+    [skip_tests]
 
 * Update version for Launchpad. [Kenneth Loafman]
 
@@ -298,11 +323,11 @@
 
 * Fix version, oversight in previious commit. [ede]
 
-  [ci_skip]
+    [ci_skip]
 
 * Fix snap build for non-amd64 archs. [ede]
 
-  [ci_skip]
+    [ci_skip]
 
 * Add filter mode to log line.  #138. [Kenneth Loafman]
 
@@ -328,73 +353,73 @@
 
 * Fix #712 "if cache lost. `*.sigtar.gpg` files not accessible" [Thomas Laubrock]
 
-  solution, do not add signature files to glacier
+    solution, do not add signature files to glacier
 
 * Handle read-only remote parent folder better in gio backend. [Michael Terry]
 
 * Use cryptography == 3.4.8. [Kenneth Loafman]
 
-  Fixes #703 - use same version as python3-cryptography in apt.
+    Fixes #703 - use same version as python3-cryptography in apt.
 
 * Warn rather than fail on op-not-supported restore errors. [Michael Terry]
 
 * Fixes #701 - unable to resume full backup to B2. [Kenneth Loafman]
 
-  Now tries .name and .uc_name before failing.
+    Now tries .name and .uc_name before failing.
 
 * Fixes #698 - backups without GPG decryption key. [Kenneth Loafman]
 
-  Added option --no-check-remote to skip checking the   remote manifest.
-  The default is to check.
+    Added option --no-check-remote to skip checking the
+    remote manifest.  The default is to check.
 
 * Fixes #698 - backups without GPG decryption key. [Kenneth Loafman]
 
-  Added option --no-check-remote to skip checking the   remote manifest.
-  The default is to check.
+    Added option --no-check-remote to skip checking the
+    remote manifest.  The default is to check.
 
 * Fixes #686 - PCA backend does not unseal volumes. [Kenneth Loafman]
 
-  Patch supplied by Bertrand Marc, user @bmarc.
+    Patch supplied by Bertrand Marc, user @bmarc.
 
 * Skip test\_path::test\_compare on non-native. [Kenneth Loafman]
 
-  Skip on GitLab and Launchpad build systems.   Works fine on Linux and
-  macOS.
+    Skip on GitLab and Launchpad build systems.
+    Works fine on Linux and macOS.
 
 * Skip test\_path::test\_compare on non-native. [Kenneth Loafman]
 
-  Skip on GitLab and Launchpad build systems.   Works fine on Linux and
-  macOS.
+    Skip on GitLab and Launchpad build systems.
+    Works fine on Linux and macOS.
 
 * Skip test\_path::test\_compare on non-native. [Kenneth Loafman]
 
-  Skip on GitLab and Launchpad build systems.   Works fine on Linux and
-  macOS.
+    Skip on GitLab and Launchpad build systems.
+    Works fine on Linux and macOS.
 
 * Skip test\_path::test\_compare on non-native. [Kenneth Loafman]
 
-  Skip on GitLab and Launchpad build systems.   Works fine on Linux and
-  macOS.
+    Skip on GitLab and Launchpad build systems.
+    Works fine on Linux and macOS.
 
 * Skip test\_path::test\_compare on non-native. [Kenneth Loafman]
 
-  Skip on GitLab and Launchpad build systems.   Works fine on Linux and
-  macOS.
+    Skip on GitLab and Launchpad build systems.
+    Works fine on Linux and macOS.
 
 * Skip test\_path::test\_compare on non-native. [Kenneth Loafman]
 
-  Skip on GitLab and Launchpad build systems.   Works fine on Linux and
-  macOS.
+    Skip on GitLab and Launchpad build systems.
+    Works fine on Linux and macOS.
 
 * Skip test\_path::test\_compare on non-native. [Kenneth Loafman]
 
-  Skip on GitLab and Launchpad build systems.   Works fine on Linux and
-  macOS.
+    Skip on GitLab and Launchpad build systems.
+    Works fine on Linux and macOS.
 
 * Skip test\_path::test\_compare on non-native. [Kenneth Loafman]
 
-  Skip on GitLab and Launchpad build systems.   Works fine on Linux and
-  macOS.
+    Skip on GitLab and Launchpad build systems.
+    Works fine on Linux and macOS.
 
 * Revert to medieval string formatting. [Kenneth Loafman]
 
@@ -410,12 +435,12 @@
 
 * Misc fixes to testing/build environ. [Kenneth Loafman]
 
-  start_debugger now supports multiprocess debug.   restore
-  testing.unit.test_path.test_compare
+    start_debugger now supports multiprocess debug.
+    restore testing.unit.test_path.test_compare
 
 * Encoding errors when logging.  Fixes #693. [Kenneth Loafman]
 
-  Use os.fsdecode/os.fsencode when in py3.
+    Use os.fsdecode/os.fsencode when in py3.
 
 * Onedrive may hang indefinitely.  Fixes #695. [Kenneth Loafman]
 
@@ -423,25 +448,26 @@
 
 * Fix #692.  Redundant --encrypt option added in gpg.py. [Kenneth Loafman]
 
-  Been around forever.  GPG 2.2.x is the first to detect.  Added   only
-  when both recipients and hidden_recipients present.
+    Been around forever.  GPG 2.2.x is the first to detect.  Added
+    only when both recipients and hidden_recipients present.
 
 * Fix super() call in test\_selection.py. [Kenneth Loafman]
 
 * Regression on issue #147, change password for incremental. [Kenneth Loafman]
 
-  Changed testcase issue147.sh to need incremental.
-  Fixed dup_collections.py to bail with fatal error.
+    Changed testcase issue147.sh to need incremental.
+
+    Fixed dup_collections.py to bail with fatal error.
 
 * Crash if a socket is listed with --files-from.  Fixes #689. [Kenneth Loafman]
 
-  Patch supplied by Jethro Donaldson (@jeth-ro).
+    Patch supplied by Jethro Donaldson (@jeth-ro).
 
 * Fix for issue #683. [Kenneth Loafman]
 
-  - ngettext() is returning empty string on plural and zero counts.   -
-  go back to plain gettext() and use just a single translation.   -
-  modify test to run backup using all translations we have.
+    - ngettext() is returning empty string on plural and zero counts.
+    - go back to plain gettext() and use just a single translation.
+    - modify test to run backup using all translations we have.
 
 * Azure Blob Storage backend fails to resume.  Fixes #149. [Kenneth Loafman]
 
@@ -457,9 +483,9 @@
 
 * Revert changes to gpg\_failed(). [Kenneth Loafman]
 
-  - fixes #147 - Regression: change of encryption password.   - note -
-  GPG only returns 0,1,2.  Not sufficient for errors.   - also added
-  testing/manual/issue147.sh.
+    - fixes #147 - Regression: change of encryption password.
+    - note - GPG only returns 0,1,2.  Not sufficient for errors.
+    - also added testing/manual/issue147.sh.
 
 ### Other
 
@@ -467,11 +493,10 @@
 
 * Try to fix. [ede]
 
-  Executing "step_script" stage of the job script   00:00   Using docker
-  image sha256:3148ec916ea71d90f1beae623b3c5eb4a2db5a585db3178d9619bc2fe
-  b8f5f49 for curlimages/curl:latest with digest curlimages/curl@sha256:
-  f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd ...
-  /bin/sh: eval: line 136: apt-get: not found
+    Executing "step_script" stage of the job script
+    00:00
+    Using docker image sha256:3148ec916ea71d90f1beae623b3c5eb4a2db5a585db3178d9619bc2feb8f5f49 for curlimages/curl:latest with digest curlimages/curl@sha256:f7f265d5c64eb4463a43a99b6bf773f9e61a50aaa7cefaf564f43e42549a01dd ...
+    /bin/sh: eval: line 136: apt-get: not found
 
 * Add detailed step-by-step instructions. [ede]
 
@@ -483,8 +508,9 @@
 
 * Update Crowdin configuration file. [Kenneth Loafman]
 
-  Update Crowdin configuration file
-  Update Crowdin configuration file
+    Update Crowdin configuration file
+
+    Update Crowdin configuration file
 
 
 ## rel.2.0.0b1 (2023-06-30)
@@ -508,8 +534,8 @@
 
 * Fix #24.  Allow users to tune copy block size. [Kenneth Loafman]
 
-  - Added --copy-blocksize, default 128k to options.   - Added tests for
-  same and improved other testss.
+    - Added --copy-blocksize, default 128k to options.
+    - Added tests for same and improved other testss.
 
 * Fix .gitlab-ci.yml to skip website step if no token. [Kenneth Loafman]
 
@@ -527,14 +553,16 @@
 
 * More CLI improvements. [Kenneth Loafman]
 
-  - Improve error message for implied commands.   - Code and testing
-  clean up.   - Remove deprecated option handling.
+    - Improve error message for implied commands.
+    - Code and testing clean up.
+    - Remove deprecated option handling.
 
 * Add implied backup/restore back. [Kenneth Loafman]
 
 * CLI improvements and cleanup. [Kenneth Loafman]
 
-  - Remove 'backup' command.   - Preparse options for config.
+    - Remove 'backup' command.
+    - Preparse options for config.
 
 * Minor cleanup, rm dead code. [Kenneth Loafman]
 
@@ -561,47 +589,61 @@
 
 * Add changelog to deploy stage to build CHANGELOG.md. [Kenneth Loafman]
 
-  - make job changelog to run tools/makechangelog in CI/CD.   - make
-  jobs build_pip and build_snap require changelog.
+    - make job changelog to run tools/makechangelog in CI/CD.
+    - make jobs build_pip and build_snap require changelog.
+
+
 
 * Document rclone option setting via env vars. [edeso]
 
 * Enable CI snapcraft amd64 builds with docker. [edeso]
 
-  .gitlab-ci.yml   job build_snap based on a working docker image
-  commented 'only:' limitiation, it's manual anyway   used split out
-  tools/installsnap step   upload artifact (duplicity-*.snap) regardless
-  - so it can be downloaded and debugged   - keep it for 30 deays by
-  default
-  snap/snapcraft.yaml   - fixup PYTHONPATH
-  new 'tools/installsnap' that detects and works with docker
-  tools/testsnap   remove installation step   remove double test entries
-  change testing to use gpg and compression
+    .gitlab-ci.yml
+    job build_snap based on a working docker image
+    commented 'only:' limitiation, it's manual anyway
+    used split out tools/installsnap step
+    upload artifact (duplicity-*.snap) regardless
+    - so it can be downloaded and debugged
+    - keep it for 30 deays by default
+
+    snap/snapcraft.yaml
+    - fixup PYTHONPATH
+
+    new 'tools/installsnap' that detects and works with docker
+
+    tools/testsnap
+    remove installation step
+    remove double test entries
+    change testing to use gpg and compression
 
 * Document rclone option setting via env vars. [edeso]
 
 * Fix other archs, expose rdiffdir. [edeso]
 
-  fix remote build of armhf, arm64, ppc64el   arm64 was tested on Debian
-  11 arm64   rdiffdir now avail as /snap/bin/duplicity.rdiffdir   remove
-  obsolete folder /usr/lib/python3.9/ in snap
+    fix remote build of armhf, arm64, ppc64el
+    arm64 was tested on Debian 11 arm64
+    rdiffdir now avail as /snap/bin/duplicity.rdiffdir
+    remove obsolete folder /usr/lib/python3.9/ in snap
 
 * Demote boto backend to legacy ... [ede]
 
-  usable via boto+s3:// or boto+gs:// now only   removed s3+http://
-  scheme   added --s3-endpoint-url option as replacement   added
-  --s3-use-deep-archive option   changes are document in man page commit
-  of the same patch set
+    usable via boto+s3:// or boto+gs:// now only
+    removed s3+http:// scheme
+    added --s3-endpoint-url option as replacement
+    added --s3-use-deep-archive option
+    changes are document in man page commit of the same patch set
 
 * Promote boto3 backend to default s3:// backend ... [ede]
 
-  add --s3-unencrypted-connection support
+    add --s3-unencrypted-connection support
 
 * Man page, major sorting, reformatting, S3/GCS documentation update. [ede]
 
-  some updates, added s3 options, clarifications   updated Notes on S3
-  and Google Cloud Storage usage   sort Options, Url Formats, Notes on
-  alphabetically   consistently use "NOTE:"   indent properly all over
+    some updates, added s3 options, clarifications
+    updated Notes on S3 and Google Cloud Storage usage
+    sort Options, Url Formats, Notes on alphabetically
+    consistently use "NOTE:"
+    indent properly all over
 
 * Minimize testing/manual/issue98.sh for issue #98. [Kenneth Loafman]
 
@@ -609,7 +651,7 @@
 
 * Add Getting Versioned Source to README-REPO.md. [Kenneth Loafman]
 
-  [no ci]
+    [no ci]
 
 * Test case for issue 103 multi-backend prefix affinity. [Kenneth Loafman]
 
@@ -621,7 +663,7 @@
 
 * Add option --show-changes-in-set <index> to collection-status. [Kenneth Loafman]
 
-  Patches provided by Peter Canning (@pcanning).  Closes #99.
+    Patches provided by Peter Canning (@pcanning).  Closes #99.
 
 * Add release-prep.sh for release preparation. [Kenneth Loafman]
 
@@ -633,7 +675,7 @@
 
 * Repeating test for LP bug 487720. [Kenneth Loafman]
 
-  Restore fails with "Invalid data - SHA1 hash mismatch"
+    Restore fails with "Invalid data - SHA1 hash mismatch"
 
 * Add --webdav-headers to webdavbackend.  Fixes #94. [Kenneth Loafman]
 
@@ -643,47 +685,61 @@
 
 * Add changelog to deploy stage to build CHANGELOG.md. [Kenneth Loafman]
 
-  - make job changelog to run tools/makechangelog in CI/CD.   - make
-  jobs build_pip and build_snap require changelog.
+    - make job changelog to run tools/makechangelog in CI/CD.
+    - make jobs build_pip and build_snap require changelog.
+
+
 
 * Document rclone option setting via env vars. [edeso]
 
 * Enable CI snapcraft amd64 builds with docker. [edeso]
 
-  .gitlab-ci.yml   job build_snap based on a working docker image
-  commented 'only:' limitiation, it's manual anyway   used split out
-  tools/installsnap step   upload artifact (duplicity-*.snap) regardless
-  - so it can be downloaded and debugged   - keep it for 30 deays by
-  default
-  snap/snapcraft.yaml   - fixup PYTHONPATH
-  new 'tools/installsnap' that detects and works with docker
-  tools/testsnap   remove installation step   remove double test entries
-  change testing to use gpg and compression
+    .gitlab-ci.yml
+    job build_snap based on a working docker image
+    commented 'only:' limitiation, it's manual anyway
+    used split out tools/installsnap step
+    upload artifact (duplicity-*.snap) regardless
+    - so it can be downloaded and debugged
+    - keep it for 30 deays by default
+
+    snap/snapcraft.yaml
+    - fixup PYTHONPATH
+
+    new 'tools/installsnap' that detects and works with docker
+
+    tools/testsnap
+    remove installation step
+    remove double test entries
+    change testing to use gpg and compression
 
 * Document rclone option setting via env vars. [edeso]
 
 * Fix other archs, expose rdiffdir. [edeso]
 
-  fix remote build of armhf, arm64, ppc64el   arm64 was tested on Debian
-  11 arm64   rdiffdir now avail as /snap/bin/duplicity.rdiffdir   remove
-  obsolete folder /usr/lib/python3.9/ in snap
+    fix remote build of armhf, arm64, ppc64el
+    arm64 was tested on Debian 11 arm64
+    rdiffdir now avail as /snap/bin/duplicity.rdiffdir
+    remove obsolete folder /usr/lib/python3.9/ in snap
 
 * Demote boto backend to legacy ... [ede]
 
-  usable via boto+s3:// or boto+gs:// now only   removed s3+http://
-  scheme   added --s3-endpoint-url option as replacement   added
-  --s3-use-deep-archive option   changes are document in man page commit
-  of the same patch set
+    usable via boto+s3:// or boto+gs:// now only
+    removed s3+http:// scheme
+    added --s3-endpoint-url option as replacement
+    added --s3-use-deep-archive option
+    changes are document in man page commit of the same patch set
 
 * Promote boto3 backend to default s3:// backend ... [ede]
 
-  add --s3-unencrypted-connection support
+    add --s3-unencrypted-connection support
 
 * Man page, major sorting, reformatting, S3/GCS documentation update. [ede]
 
-  some updates, added s3 options, clarifications   updated Notes on S3
-  and Google Cloud Storage usage   sort Options, Url Formats, Notes on
-  alphabetically   consistently use "NOTE:"   indent properly all over
+    some updates, added s3 options, clarifications
+    updated Notes on S3 and Google Cloud Storage usage
+    sort Options, Url Formats, Notes on alphabetically
+    consistently use "NOTE:"
+    indent properly all over
 
 * Minimize testing/manual/issue98.sh for issue #98. [Kenneth Loafman]
 
@@ -691,7 +747,7 @@
 
 * Add Getting Versioned Source to README-REPO.md. [Kenneth Loafman]
 
-  [no ci]
+    [no ci]
 
 * Test case for issue 103 multi-backend prefix affinity. [Kenneth Loafman]
 
@@ -703,7 +759,7 @@
 
 * Add option --show-changes-in-set <index> to collection-status. [Kenneth Loafman]
 
-  Patches provided by Peter Canning (@pcanning).  Closes #99.
+    Patches provided by Peter Canning (@pcanning).  Closes #99.
 
 * Add release-prep.sh for release preparation. [Kenneth Loafman]
 
@@ -715,7 +771,7 @@
 
 * Repeating test for LP bug 487720. [Kenneth Loafman]
 
-  Restore fails with "Invalid data - SHA1 hash mismatch"
+    Restore fails with "Invalid data - SHA1 hash mismatch"
 
 ### Changes
 
@@ -743,11 +799,16 @@
 
 * Remove old s3\_boto\_backend.py. [Kenneth Loafman]
 
-  Deprecated options:   --s3-multipart-max-timeout   --s3-use-
-  multiprocessing   --s3-use-server-side-encryption   --s3-use-server-
-  side-kms-encryption
-  Retired error codes:   boto_old_style = 24   boto_lib_too_old = 25
-  boto_calling_format = 26
+    Deprecated options:
+    --s3-multipart-max-timeout
+    --s3-use-multiprocessing
+    --s3-use-server-side-encryption
+    --s3-use-server-side-kms-encryption
+
+    Retired error codes:
+    boto_old_style = 24
+    boto_lib_too_old = 25
+    boto_calling_format = 26
 
 * Remove spaces in version specs. [Kenneth Loafman]
 
@@ -775,7 +836,9 @@
 
 * Some small command line fixes. [Michael Terry]
 
-  - Fix --verbosity   - Fix --log-fd   - Fix list-current-files
+    - Fix --verbosity
+    - Fix --log-fd
+    - Fix list-current-files
 
 * Clean out the last py2 cruft, I hope. [Kenneth Loafman]
 
@@ -793,9 +856,11 @@
 
 * Some py2 to py3 cleanup. [Kenneth Loafman]
 
-  Ran '2to3 -f filter -f map -f xrange -f zip -f idioms'.  It put some
-  list calls around some of the stuff that returns iterators (redundant
-  in most cases I think).  Mainly it converted code to idiomatic python.
+    Ran '2to3 -f filter -f map -f xrange -f zip -f idioms'.  It put some
+    list calls around some of the stuff that returns iterators (redundant
+    in most cases I think).  Mainly it converted code to idiomatic python.
+
+
 
 * Update a couple of lists in conf.py. [Kenneth Loafman]
 
@@ -871,10 +936,13 @@
 
 * Change optparse to argparse.  Checkpoint. [Kenneth Loafman]
 
-  chg:usr: Change optparse to argparse.  Checkpoint.
-  chg:usr: Change optparse to argparse.  Checkpoint.
-  chg:usr: Change optparse to argparse.  Checkpoint.
-  chg:usr: Change optparse to argparse.  Checkpoint.
+    chg:usr: Change optparse to argparse.  Checkpoint.
+
+    chg:usr: Change optparse to argparse.  Checkpoint.
+
+    chg:usr: Change optparse to argparse.  Checkpoint.
+
+    chg:usr: Change optparse to argparse.  Checkpoint.
 
 * Add Note on --time-separator in manpage. [Kenneth Loafman]
 
@@ -910,27 +978,31 @@
 
 * Add missing license metadata. [ede]
 
-  [ci_skip]
+    [ci_skip]
 
 * More docker cleanup. [Kenneth Loafman]
 
-  - Add rclone to package installs.
+    - Add rclone to package installs.
+
+
 
 * Trigger website rebuild on pushes/tags. [ede]
 
 * More docker cleanup. [Kenneth Loafman]
 
-  - remove copy of setup.py, not used   - add testit.py for basic
-  testing
+    - remove copy of setup.py, not used
+    - add testit.py for basic testing
 
 * More docker cleanup. [Kenneth Loafman]
 
-  - use 'docker compose' not docker-compose   - remove more unused items
+    - use 'docker compose' not docker-compose
+    - remove more unused items
 
 * Optimize build of duplicity\_test image. [Kenneth Loafman]
 
-  - use buildkit to speed up build,   - split huge layers into smaller
-  ones   - changes in testing dir trigger pipeline
+    - use buildkit to speed up build,
+    - split huge layers into smaller ones
+    - changes in testing dir trigger pipeline
 
 * Fold requirements.dev into requirements.txt.  Del requirements.dev. [Kenneth Loafman]
 
@@ -940,7 +1012,8 @@
 
 * Extend code\_test to testing directory. [Kenneth Loafman]
 
-  - Fix or mark issues found.   - Will not run under py27.
+    - Fix or mark issues found.
+    - Will not run under py27.
 
 * Fix .md formatting. [Kenneth Loafman]
 
@@ -980,7 +1053,7 @@
 
 * Snap use core20 coreutils if none in PATH env var. [ede]
 
-  add "/snap/core20/current/usr/bin" to PATH
+    add "/snap/core20/current/usr/bin" to PATH
 
 * Need to install python3 for pages. [Kenneth Loafman]
 
@@ -1044,7 +1117,8 @@
 
 * Split requirements into .txt and .dev. [Kenneth Loafman]
 
-  .txt - normal user   .dev - developer
+    .txt - normal user
+    .dev - developer
 
 * Standardize startup sequence. [Kenneth Loafman]
 
@@ -1088,7 +1162,9 @@
 
 * Allow GitLab CI to upload snaps to the store. [Kenneth Loafman]
 
-  still have not figured out how to store sign key on GitLab
+    still have not figured out how to store sign key on GitLab
+
+
 
 * Update or add copyright and some cosmetic changes. [Kenneth Loafman]
 
@@ -1096,11 +1172,13 @@
 
 * Add grpcio-tools to top to get latest version. [Kenneth Loafman]
 
-  This leaves two unresolvable problems (upper version conflicts):
-  ERROR: mediafire 0.6.0 has requirement requests<=2.11.1,>=2.4.1, but
-  you'll have requests 2.27.1 which is incompatible.   ERROR: python-
-  novaclient 2.27.0 has requirement pbr<2.0,>=1.6, but   you'll have pbr
-  5.8.1 which is incompatible.
+    This leaves two unresolvable problems (upper version conflicts):
+    ERROR: mediafire 0.6.0 has requirement requests<=2.11.1,>=2.4.1, but
+    you'll have requests 2.27.1 which is incompatible.
+    ERROR: python-novaclient 2.27.0 has requirement pbr<2.0,>=1.6, but
+    you'll have pbr 5.8.1 which is incompatible.
+
+
 
 * Remove conflicting build env variable.  Nuke evil tabs. [Kenneth Loafman]
 
@@ -1114,14 +1192,14 @@
 
 * More tests for tools/testsnap. [Kenneth Loafman]
 
-  add backup/verify runs to check major pathways   add multi-lib check
-  to avoid SnapCraft bug 1965814
+    add backup/verify runs to check major pathways
+    add multi-lib check to avoid SnapCraft bug 1965814
 
 * More snapcraft.yaml fixups. [Kenneth Loafman]
 
-  break up long strings for better readability   preload pbr and
-  requests to avoid most version warnings   pbr and requests are now at
-  latest version, not ancient
+    break up long strings for better readability
+    preload pbr and requests to avoid most version warnings
+    pbr and requests are now at latest version, not ancient
 
 * Add further checks to testing for backup and multi-lib. [Kenneth Loafman]
 
@@ -1209,15 +1287,15 @@
 
 * Back off to default image. [Kenneth Loafman]
 
-  [skip-tests]
+    [skip-tests]
 
 * Try adding apt-get upgrade. [Kenneth Loafman]
 
-  [skip-tests]
+    [skip-tests]
 
 * Add .test-template to allow skipping qual and tests. [Kenneth Loafman]
 
-  [skip-tests]
+    [skip-tests]
 
 * Try build with apt-get update. [Kenneth Loafman]
 
@@ -1275,7 +1353,7 @@
 
 * Fix mismatch between pre\_process\_download[\_batch] calls. [Kenneth Loafman]
 
-  Implement both in backend and multibackend if hasattr True.
+    Implement both in backend and multibackend if hasattr True.
 
 * Build\_ext now builds inplace for development ease. [Kenneth Loafman]
 
@@ -1287,11 +1365,12 @@
 
 * Fix Support DynamicLargeObjects inside swift backend. [Mathieu Le Marec - Pasquet]
 
-  Use high levels APIS to both:
-  - correctly delete multipart uploads   - correctly handle multipart
-  uploads
-  This fixes [launchpad
-  #557374](https://answers.launchpad.net/duplicity/+question/557374)
+    Use high levels APIS to both:
+
+    - correctly delete multipart uploads
+    - correctly handle multipart uploads
+
+    This fixes [launchpad #557374](https://answers.launchpad.net/duplicity/+question/557374)
 
 * Fix makechangelog to output actual problems. [Kenneth Loafman]
 
@@ -1303,7 +1382,7 @@
 
 * Add support for --s3-multipart-chunk-size, default 25MB. [Kenneth Loafman]
 
-  Fixes issue #61
+    Fixes issue #61
 
 * Add interruptable:true as default. [Kenneth Loafman]
 
@@ -1415,10 +1494,13 @@
 
 * Change optparse to argparse.  Checkpoint. [Kenneth Loafman]
 
-  chg:usr: Change optparse to argparse.  Checkpoint.
-  chg:usr: Change optparse to argparse.  Checkpoint.
-  chg:usr: Change optparse to argparse.  Checkpoint.
-  chg:usr: Change optparse to argparse.  Checkpoint.
+    chg:usr: Change optparse to argparse.  Checkpoint.
+
+    chg:usr: Change optparse to argparse.  Checkpoint.
+
+    chg:usr: Change optparse to argparse.  Checkpoint.
+
+    chg:usr: Change optparse to argparse.  Checkpoint.
 
 * Add Note on --time-separator in manpage. [Kenneth Loafman]
 
@@ -1454,27 +1536,31 @@
 
 * Add missing license metadata. [ede]
 
-  [ci_skip]
+    [ci_skip]
 
 * More docker cleanup. [Kenneth Loafman]
 
-  - Add rclone to package installs.
+    - Add rclone to package installs.
+
+
 
 * Trigger website rebuild on pushes/tags. [ede]
 
 * More docker cleanup. [Kenneth Loafman]
 
-  - remove copy of setup.py, not used   - add testit.py for basic
-  testing
+    - remove copy of setup.py, not used
+    - add testit.py for basic testing
 
 * More docker cleanup. [Kenneth Loafman]
 
-  - use 'docker compose' not docker-compose   - remove more unused items
+    - use 'docker compose' not docker-compose
+    - remove more unused items
 
 * Optimize build of duplicity\_test image. [Kenneth Loafman]
 
-  - use buildkit to speed up build,   - split huge layers into smaller
-  ones   - changes in testing dir trigger pipeline
+    - use buildkit to speed up build,
+    - split huge layers into smaller ones
+    - changes in testing dir trigger pipeline
 
 * Fold requirements.dev into requirements.txt.  Del requirements.dev. [Kenneth Loafman]
 
@@ -1484,7 +1570,8 @@
 
 * Extend code\_test to testing directory. [Kenneth Loafman]
 
-  - Fix or mark issues found.   - Will not run under py27.
+    - Fix or mark issues found.
+    - Will not run under py27.
 
 * Fix .md formatting. [Kenneth Loafman]
 
@@ -1524,7 +1611,7 @@
 
 * Snap use core20 coreutils if none in PATH env var. [ede]
 
-  add "/snap/core20/current/usr/bin" to PATH
+    add "/snap/core20/current/usr/bin" to PATH
 
 * Need to install python3 for pages. [Kenneth Loafman]
 
@@ -1588,7 +1675,8 @@
 
 * Split requirements into .txt and .dev. [Kenneth Loafman]
 
-  .txt - normal user   .dev - developer
+    .txt - normal user
+    .dev - developer
 
 * Standardize startup sequence. [Kenneth Loafman]
 
@@ -1632,7 +1720,9 @@
 
 * Allow GitLab CI to upload snaps to the store. [Kenneth Loafman]
 
-  still have not figured out how to store sign key on GitLab
+    still have not figured out how to store sign key on GitLab
+
+
 
 * Update or add copyright and some cosmetic changes. [Kenneth Loafman]
 
@@ -1640,11 +1730,13 @@
 
 * Add grpcio-tools to top to get latest version. [Kenneth Loafman]
 
-  This leaves two unresolvable problems (upper version conflicts):
-  ERROR: mediafire 0.6.0 has requirement requests<=2.11.1,>=2.4.1, but
-  you'll have requests 2.27.1 which is incompatible.   ERROR: python-
-  novaclient 2.27.0 has requirement pbr<2.0,>=1.6, but   you'll have pbr
-  5.8.1 which is incompatible.
+    This leaves two unresolvable problems (upper version conflicts):
+    ERROR: mediafire 0.6.0 has requirement requests<=2.11.1,>=2.4.1, but
+    you'll have requests 2.27.1 which is incompatible.
+    ERROR: python-novaclient 2.27.0 has requirement pbr<2.0,>=1.6, but
+    you'll have pbr 5.8.1 which is incompatible.
+
+
 
 * Remove conflicting build env variable.  Nuke evil tabs. [Kenneth Loafman]
 
@@ -1658,14 +1750,14 @@
 
 * More tests for tools/testsnap. [Kenneth Loafman]
 
-  add backup/verify runs to check major pathways   add multi-lib check
-  to avoid SnapCraft bug 1965814
+    add backup/verify runs to check major pathways
+    add multi-lib check to avoid SnapCraft bug 1965814
 
 * More snapcraft.yaml fixups. [Kenneth Loafman]
 
-  break up long strings for better readability   preload pbr and
-  requests to avoid most version warnings   pbr and requests are now at
-  latest version, not ancient
+    break up long strings for better readability
+    preload pbr and requests to avoid most version warnings
+    pbr and requests are now at latest version, not ancient
 
 * Add further checks to testing for backup and multi-lib. [Kenneth Loafman]
 
@@ -1753,15 +1845,15 @@
 
 * Back off to default image. [Kenneth Loafman]
 
-  [skip-tests]
+    [skip-tests]
 
 * Try adding apt-get upgrade. [Kenneth Loafman]
 
-  [skip-tests]
+    [skip-tests]
 
 * Add .test-template to allow skipping qual and tests. [Kenneth Loafman]
 
-  [skip-tests]
+    [skip-tests]
 
 * Try build with apt-get update. [Kenneth Loafman]
 
@@ -1819,7 +1911,7 @@
 
 * Fix mismatch between pre\_process\_download[\_batch] calls. [Kenneth Loafman]
 
-  Implement both in backend and multibackend if hasattr True.
+    Implement both in backend and multibackend if hasattr True.
 
 * Build\_ext now builds inplace for development ease. [Kenneth Loafman]
 
@@ -1831,11 +1923,12 @@
 
 * Fix Support DynamicLargeObjects inside swift backend. [Mathieu Le Marec - Pasquet]
 
-  Use high levels APIS to both:
-  - correctly delete multipart uploads   - correctly handle multipart
-  uploads
-  This fixes [launchpad
-  #557374](https://answers.launchpad.net/duplicity/+question/557374)
+    Use high levels APIS to both:
+
+    - correctly delete multipart uploads
+    - correctly handle multipart uploads
+
+    This fixes [launchpad #557374](https://answers.launchpad.net/duplicity/+question/557374)
 
 * Fix makechangelog to output actual problems. [Kenneth Loafman]
 
@@ -1847,7 +1940,7 @@
 
 * Add support for --s3-multipart-chunk-size, default 25MB. [Kenneth Loafman]
 
-  Fixes issue #61
+    Fixes issue #61
 
 * Add interruptable:true as default. [Kenneth Loafman]
 
@@ -1915,17 +2008,18 @@
 
 * Remove requirement for kerberos. [Kenneth Loafman]
 
-  - it's an optional package in webdavbackend.py   - it does not install
-  properly under Docker
+    - it's an optional package in webdavbackend.py
+    - it does not install properly under Docker
 
 * Remove most 'pylint: disable=import-error'. [Kenneth Loafman]
 
-  - add packages to requirements   - 'gi' is not available on PyPi
+    - add packages to requirements
+    - 'gi' is not available on PyPi
 
 * Fix more py3 problems. [Kenneth Loafman]
 
-  - remove import future in some places,   - fix azurebackend.py to use
-  new azure.
+    - remove import future in some places,
+    - fix azurebackend.py to use new azure.
 
 * Recurse glob to include duplicity/backends. [Kenneth Loafman]
 
@@ -1949,8 +2043,8 @@
 
 * Fix handling of gpg\_error\_codes. [Kenneth Loafman]
 
-  - return an 'unknown error code' message if not found   - ignore error
-  2 GPG_ERR_UNKNOWN_PACKET, was "invalid packet (ctb=14)"
+    - return an 'unknown error code' message if not found
+    - ignore error 2 GPG_ERR_UNKNOWN_PACKET, was "invalid packet (ctb=14)"
 
 * Add \_() for translations of msgs in gpg\_error\_codes.py. [Kenneth Loafman]
 
@@ -1958,13 +2052,13 @@
 
 * Remove stderr\_fp and use process return code to report errors. [Kenneth Loafman]
 
-  - Added file make_gpg_error_codes.py which creates gpg_error_codes.py.
-  - Modded gpg.py to remove use of stderr_fp, thus reducing FDs used.
+    - Added file make_gpg_error_codes.py which creates gpg_error_codes.py.
+    - Modded gpg.py to remove use of stderr_fp, thus reducing FDs used.
 
 * Remove status\_fd if no sign\_key in gpg.py. [Kenneth Loafman]
 
-  - updated issue125.sh to use testing/gnupg keys   - issue125.sh passes
-  with `ulimit 1024`
+    - updated issue125.sh to use testing/gnupg keys
+    - issue125.sh passes with `ulimit 1024`
 
 * Cleanup, remove all uses of logger\_fd. [Kenneth Loafman]
 
@@ -1972,8 +2066,8 @@
 
 * Remove unused GPG file handles. [Kenneth Loafman]
 
-  - removed status and logger filehandles for decrypt   -
-  testing/manual/issue125 now runs with 'ulimit -n 1536'
+    - removed status and logger filehandles for decrypt
+    - testing/manual/issue125 now runs with 'ulimit -n 1536'
 
 * Fix indentation cause by adorning. [Kenneth Loafman]
 
@@ -1993,8 +2087,9 @@
 
 * Optimize imports. [Kenneth Loafman]
 
-  - Remove 'from __future__ import .*'   - Remove 'from past.utils
-  import old_div'   - Replace old_div with / or // as needed.
+    - Remove 'from __future__ import .*'
+    - Remove 'from past.utils import old_div'
+    - Replace old_div with / or // as needed.
 
 * Optimize imports. [Kenneth Loafman]
 
@@ -2004,14 +2099,16 @@
 
 * Remove support for Python 2.7.  Second pass. [Kenneth Loafman]
 
-  - remove test_unadorned_string_literals   - remove
-  find/fix_unadorned_strings.py   - fix u'string' to be just 'string'
+    - remove test_unadorned_string_literals
+    - remove find/fix_unadorned_strings.py
+    - fix u'string' to be just 'string'
 
 * Remove support for Python 2.7.  First pass. [Kenneth Loafman]
 
-  - remove 'import future' and its call   - remove 'import builtin *'
-  - remove conditionals based on sys.version_info   - remove mentions in
-  readme and other docs
+    - remove 'import future' and its call
+    - remove 'import builtin *'
+    - remove conditionals based on sys.version_info
+    - remove mentions in readme and other docs
 
 * Replace pydrive with pydrive2. Fixes #62. [Kenneth Loafman]
 
@@ -2035,13 +2132,13 @@
 
 * Additional fixes/checks for pexpect version.  Fixes #125. [Kenneth Loafman]
 
-  - Add check to ssh_pexpect_backend, par2backend, for version < 4.5.0
-  - Skip test for par2backend instance if version < 4.5.0
+    - Add check to ssh_pexpect_backend, par2backend, for version < 4.5.0
+    - Skip test for par2backend instance if version < 4.5.0
 
 * Fixes #125.  Add use\_poll=True to pexpect.run in par2backend. [Kenneth Loafman]
 
-  - allows way too many incrementals to operate.   - regression test,
-  issue125.sh, added to manual.
+    - allows way too many incrementals to operate.
+    - regression test, issue125.sh, added to manual.
 
 * Fix issue #78 - Retry on SHA1 mismatch. [Kenneth Loafman]
 
@@ -2051,7 +2148,7 @@
 
 * Fix LP bug #1970124 - obscure error message. [Kenneth Loafman]
 
-  Fixes handling of error message with real path, not temp path.
+    Fixes handling of error message with real path, not temp path.
 
 * Nuke a couple of false pylint errors, use inline disable. [Kenneth Loafman]
 
@@ -2061,16 +2158,13 @@
 
 * Minor formatting fix. [ede]
 
-  /builds/duplicity/duplicity/duplicity/backends/s3_boto3_backend.py:93:
-  81: W291 trailing whitespace
+    /builds/duplicity/duplicity/duplicity/backends/s3_boto3_backend.py:93:81: W291 trailing whitespace
 
 * Fixup some minor formatting issues. [ede]
 
-  /builds/duplicity/duplicity/duplicity/backends/s3_boto3_backend.py:92:
-  121: E501 line too long (159 > 120 characters)   /builds/duplicity/dup
-  licity/duplicity/backends/s3_boto3_backend.py:227:58: W292 no newline
-  at end of file   /builds/duplicity/duplicity/duplicity/backends/s3_bot
-  o_backend.py:34:1: W391 blank line at end of file
+    /builds/duplicity/duplicity/duplicity/backends/s3_boto3_backend.py:92:121: E501 line too long (159 > 120 characters)
+    /builds/duplicity/duplicity/duplicity/backends/s3_boto3_backend.py:227:58: W292 no newline at end of file
+    /builds/duplicity/duplicity/duplicity/backends/s3_boto_backend.py:34:1: W391 blank line at end of file
 
 * Add --no-files-changed option.  Fixes issue #110. [Kenneth Loafman]
 
@@ -2120,8 +2214,8 @@
 
 * Fixed Catch-22 in pyrax\_identity.hubic.  Debian bug #996577. [Kenneth Loafman]
 
-  Name error on backend HubiC (Baseidentity).  Cannot avoid importing
-  pyrax since HubicIdentity requires pyrax.base_identity.BaseIdentity.
+    Name error on backend HubiC (Baseidentity).  Cannot avoid importing
+    pyrax since HubicIdentity requires pyrax.base_identity.BaseIdentity.
 
 * Fix PEP8 style errors. [Kenneth Loafman]
 
@@ -2141,12 +2235,12 @@
 
 * Support -o{Global,User}KnownHostsFile in --ssh-options. [Kenneth Loafman]
 
-  Fixes issue #60
+    Fixes issue #60
 
 * Add pydrive2 to requirements.txt. [Kenneth Loafman]
 
-  Fixes #62.  pydrivebackend was updated to pydrive 2 over a year ago,
-  but   the requirements.txt file was not updated to reflect this.
+    Fixes #62.  pydrivebackend was updated to pydrive 2 over a year ago, but
+    the requirements.txt file was not updated to reflect this.
 
 * Fix error message on gdrivebackend. [Kenneth Loafman]
 
@@ -2180,7 +2274,7 @@
 
 * Fixes bug 1918981 - option to skip trash on delete on mediafire. [Kenneth Loafman]
 
-  Added --mf-purge option to bypass trash
+    Added --mf-purge option to bypass trash
 
 * Fix bug 1919017 - MultiBackend reports failure on file deletion. [Kenneth Loafman]
 
@@ -2202,17 +2296,18 @@
 
 * Remove requirement for kerberos. [Kenneth Loafman]
 
-  - it's an optional package in webdavbackend.py   - it does not install
-  properly under Docker
+    - it's an optional package in webdavbackend.py
+    - it does not install properly under Docker
 
 * Remove most 'pylint: disable=import-error'. [Kenneth Loafman]
 
-  - add packages to requirements   - 'gi' is not available on PyPi
+    - add packages to requirements
+    - 'gi' is not available on PyPi
 
 * Fix more py3 problems. [Kenneth Loafman]
 
-  - remove import future in some places,   - fix azurebackend.py to use
-  new azure.
+    - remove import future in some places,
+    - fix azurebackend.py to use new azure.
 
 * Recurse glob to include duplicity/backends. [Kenneth Loafman]
 
@@ -2236,8 +2331,8 @@
 
 * Fix handling of gpg\_error\_codes. [Kenneth Loafman]
 
-  - return an 'unknown error code' message if not found   - ignore error
-  2 GPG_ERR_UNKNOWN_PACKET, was "invalid packet (ctb=14)"
+    - return an 'unknown error code' message if not found
+    - ignore error 2 GPG_ERR_UNKNOWN_PACKET, was "invalid packet (ctb=14)"
 
 * Add \_() for translations of msgs in gpg\_error\_codes.py. [Kenneth Loafman]
 
@@ -2245,13 +2340,13 @@
 
 * Remove stderr\_fp and use process return code to report errors. [Kenneth Loafman]
 
-  - Added file make_gpg_error_codes.py which creates gpg_error_codes.py.
-  - Modded gpg.py to remove use of stderr_fp, thus reducing FDs used.
+    - Added file make_gpg_error_codes.py which creates gpg_error_codes.py.
+    - Modded gpg.py to remove use of stderr_fp, thus reducing FDs used.
 
 * Remove status\_fd if no sign\_key in gpg.py. [Kenneth Loafman]
 
-  - updated issue125.sh to use testing/gnupg keys   - issue125.sh passes
-  with `ulimit 1024`
+    - updated issue125.sh to use testing/gnupg keys
+    - issue125.sh passes with `ulimit 1024`
 
 * Cleanup, remove all uses of logger\_fd. [Kenneth Loafman]
 
@@ -2259,8 +2354,8 @@
 
 * Remove unused GPG file handles. [Kenneth Loafman]
 
-  - removed status and logger filehandles for decrypt   -
-  testing/manual/issue125 now runs with 'ulimit -n 1536'
+    - removed status and logger filehandles for decrypt
+    - testing/manual/issue125 now runs with 'ulimit -n 1536'
 
 * Fix indentation cause by adorning. [Kenneth Loafman]
 
@@ -2280,8 +2375,9 @@
 
 * Optimize imports. [Kenneth Loafman]
 
-  - Remove 'from __future__ import .*'   - Remove 'from past.utils
-  import old_div'   - Replace old_div with / or // as needed.
+    - Remove 'from __future__ import .*'
+    - Remove 'from past.utils import old_div'
+    - Replace old_div with / or // as needed.
 
 * Optimize imports. [Kenneth Loafman]
 
@@ -2291,14 +2387,16 @@
 
 * Remove support for Python 2.7.  Second pass. [Kenneth Loafman]
 
-  - remove test_unadorned_string_literals   - remove
-  find/fix_unadorned_strings.py   - fix u'string' to be just 'string'
+    - remove test_unadorned_string_literals
+    - remove find/fix_unadorned_strings.py
+    - fix u'string' to be just 'string'
 
 * Remove support for Python 2.7.  First pass. [Kenneth Loafman]
 
-  - remove 'import future' and its call   - remove 'import builtin *'
-  - remove conditionals based on sys.version_info   - remove mentions in
-  readme and other docs
+    - remove 'import future' and its call
+    - remove 'import builtin *'
+    - remove conditionals based on sys.version_info
+    - remove mentions in readme and other docs
 
 * Replace pydrive with pydrive2. Fixes #62. [Kenneth Loafman]
 
@@ -2322,13 +2420,13 @@
 
 * Additional fixes/checks for pexpect version.  Fixes #125. [Kenneth Loafman]
 
-  - Add check to ssh_pexpect_backend, par2backend, for version < 4.5.0
-  - Skip test for par2backend instance if version < 4.5.0
+    - Add check to ssh_pexpect_backend, par2backend, for version < 4.5.0
+    - Skip test for par2backend instance if version < 4.5.0
 
 * Fixes #125.  Add use\_poll=True to pexpect.run in par2backend. [Kenneth Loafman]
 
-  - allows way too many incrementals to operate.   - regression test,
-  issue125.sh, added to manual.
+    - allows way too many incrementals to operate.
+    - regression test, issue125.sh, added to manual.
 
 * Fix issue #78 - Retry on SHA1 mismatch. [Kenneth Loafman]
 
@@ -2338,7 +2436,7 @@
 
 * Fix LP bug #1970124 - obscure error message. [Kenneth Loafman]
 
-  Fixes handling of error message with real path, not temp path.
+    Fixes handling of error message with real path, not temp path.
 
 * Nuke a couple of false pylint errors, use inline disable. [Kenneth Loafman]
 
@@ -2348,16 +2446,13 @@
 
 * Minor formatting fix. [ede]
 
-  /builds/duplicity/duplicity/duplicity/backends/s3_boto3_backend.py:93:
-  81: W291 trailing whitespace
+    /builds/duplicity/duplicity/duplicity/backends/s3_boto3_backend.py:93:81: W291 trailing whitespace
 
 * Fixup some minor formatting issues. [ede]
 
-  /builds/duplicity/duplicity/duplicity/backends/s3_boto3_backend.py:92:
-  121: E501 line too long (159 > 120 characters)   /builds/duplicity/dup
-  licity/duplicity/backends/s3_boto3_backend.py:227:58: W292 no newline
-  at end of file   /builds/duplicity/duplicity/duplicity/backends/s3_bot
-  o_backend.py:34:1: W391 blank line at end of file
+    /builds/duplicity/duplicity/duplicity/backends/s3_boto3_backend.py:92:121: E501 line too long (159 > 120 characters)
+    /builds/duplicity/duplicity/duplicity/backends/s3_boto3_backend.py:227:58: W292 no newline at end of file
+    /builds/duplicity/duplicity/duplicity/backends/s3_boto_backend.py:34:1: W391 blank line at end of file
 
 * Add --no-files-changed option.  Fixes issue #110. [Kenneth Loafman]
 
@@ -2407,8 +2502,8 @@
 
 * Fixed Catch-22 in pyrax\_identity.hubic.  Debian bug #996577. [Kenneth Loafman]
 
-  Name error on backend HubiC (Baseidentity).  Cannot avoid importing
-  pyrax since HubicIdentity requires pyrax.base_identity.BaseIdentity.
+    Name error on backend HubiC (Baseidentity).  Cannot avoid importing
+    pyrax since HubicIdentity requires pyrax.base_identity.BaseIdentity.
 
 * Fix PEP8 style errors. [Kenneth Loafman]
 
@@ -2428,12 +2523,12 @@
 
 * Support -o{Global,User}KnownHostsFile in --ssh-options. [Kenneth Loafman]
 
-  Fixes issue #60
+    Fixes issue #60
 
 * Add pydrive2 to requirements.txt. [Kenneth Loafman]
 
-  Fixes #62.  pydrivebackend was updated to pydrive 2 over a year ago,
-  but   the requirements.txt file was not updated to reflect this.
+    Fixes #62.  pydrivebackend was updated to pydrive 2 over a year ago, but
+    the requirements.txt file was not updated to reflect this.
 
 * Fix error message on gdrivebackend. [Kenneth Loafman]
 
@@ -2467,7 +2562,7 @@
 
 * Fixes bug 1918981 - option to skip trash on delete on mediafire. [Kenneth Loafman]
 
-  Added --mf-purge option to bypass trash
+    Added --mf-purge option to bypass trash
 
 * Fix bug 1919017 - MultiBackend reports failure on file deletion. [Kenneth Loafman]
 
@@ -2505,9 +2600,10 @@
 
 * Pkg:fix: make extra sure correct python binary is used. [edeso]
 
-  remove unmaintained changelog   add shell wrapper(launcher.sh)   add
-  debug script   use shell wrapper as snap binary ignores PATH for
-  python binary on debian
+    remove unmaintained changelog
+    add shell wrapper(launcher.sh)
+    add debug script
+    use shell wrapper as snap binary ignores PATH for python binary on debian
 
 * Optimize CI/CD to only run when needed. [Kenneth Loafman]
 
@@ -2519,7 +2615,7 @@
 
 * Revert "chg:dev:core20 usess py38, not py36." [Kenneth Loafman]
 
-  This reverts commit 05eda5828c7bdde1003357439cfcb4d93124a377.
+    This reverts commit 05eda5828c7bdde1003357439cfcb4d93124a377.
 
 * Slate Backend. [Shr1ftyy]
 
@@ -2549,11 +2645,12 @@
 
 * Allow to override manpage date with SOURCE\_DATE\_EPOCH. [Bernhard M. Wiedemann]
 
-  in order to make builds reproducible.   See https://reproducible-
-  builds.org/ for why this is good   and https://reproducible-
-  builds.org/specs/source-date-epoch/   for the definition of this
-  variable.
-  Also use UTC/gmtime to be independent of timezone.
+    in order to make builds reproducible.
+    See https://reproducible-builds.org/ for why this is good
+    and https://reproducible-builds.org/specs/source-date-epoch/
+    for the definition of this variable.
+
+    Also use UTC/gmtime to be independent of timezone.
 
 * Improved management of volumes unsealing for PCA backend For PCA
 backend, unseal all volumes at once when restoring them instead of
@@ -2577,9 +2674,9 @@ correct size. [Doug Thompson]
 * B2sdk 1.8.0 refactored minimum\_part\_size to recommended\_part\_size
 (the value used stays the same) [Adam Jacobs]
 
-  It's a breaking change that makes duplicity fail with the new SDK.
-  This fix makes duplicity compatible with both pre- and post- 1.8.0
-  SDKs.
+    It's a breaking change that makes duplicity fail with the new SDK.
+
+    This fix makes duplicity compatible with both pre- and post- 1.8.0 SDKs.
 
 * Added Google MyDrive support updated man pages and --help text. [Anthony Uphof]
 
@@ -2606,10 +2703,12 @@ out" [Christian Perreault]
 
 * Add a new Google Drive backend (gdrive:) [Jindřich Makovička]
 
-  - Removes the PyDrive/PyDrive2 dependencies, and depends only on the
-  Google API client libraries commonly available in distributions.
-  - Uses unchanged JSON secret files as downloaded from GCP
-  - Updates the Google Drive API to V3
+    - Removes the PyDrive/PyDrive2 dependencies, and depends only on the
+      Google API client libraries commonly available in distributions.
+
+    - Uses unchanged JSON secret files as downloaded from GCP
+
+    - Updates the Google Drive API to V3
 
 * Replaced original azure implementation. [Erwin Bovendeur]
 
@@ -2620,24 +2719,24 @@ out" [Christian Perreault]
 * Revert "fix:pkg:Remove requirement for python3-pytest-runner.  Not
 used." [Kenneth Loafman]
 
-  This reverts commit 90e7e2acb6d158437cab3210114da46df72a7c85.
+    This reverts commit 90e7e2acb6d158437cab3210114da46df72a7c85.
 
 * List required volumes when called with 'restore --dry-run' [Matthias Blankertz]
 
-  When restoring in dry-run mode, and with the manifest available, list
-  the volumes that would be gotten from the backend when actually
-  performing the operation.   This is intended to aid users of e.g. the
-  S3 backend with (deep) glacier   storage, allowing the following
-  workflow to recover files, optionally at   a certain time, from a
-  long-term archive:   1. duplicity restore --dry-run [--file-to-restore
-  <file/dir>] [--time <time>] boto3+s3://...   2. Start a Glacier
-  restore process for all the listed volumes   3. duplicity restore
-  [--file-to-restore <file/dir>] [--time <time>] boto3+s3://...
+    When restoring in dry-run mode, and with the manifest available, list
+    the volumes that would be gotten from the backend when actually
+    performing the operation.
+    This is intended to aid users of e.g. the S3 backend with (deep) glacier
+    storage, allowing the following workflow to recover files, optionally at
+    a certain time, from a long-term archive:
+    1. duplicity restore --dry-run [--file-to-restore <file/dir>] [--time <time>] boto3+s3://...
+    2. Start a Glacier restore process for all the listed volumes
+    3. duplicity restore [--file-to-restore <file/dir>] [--time <time>] boto3+s3://...
 
 * Fix sorting of BackupSets by avoiding direct comparison. [Stefan Wehrmeyer]
 
-  Sorting should only compare their time/end_time, not BackupSets
-  directly   Closes #42
+    Sorting should only compare their time/end_time, not BackupSets directly
+    Closes #42
 
 * Update mailing list link. [Chris Coutinho]
 
@@ -2659,9 +2758,11 @@ used." [Kenneth Loafman]
 
 * Move py27 tests to ub16 and py35 tests to ub18. [Kenneth Loafman]
 
-  Move py35 back to ub16.
-  Move py35 back to ub16, try 2.
-  Remove 2to3 from ub16 builds.
+    Move py35 back to ub16.
+
+    Move py35 back to ub16, try 2.
+
+    Remove 2to3 from ub16 builds.
 
 * Fixes #33, remove quotes from identity filename option. [Kenneth Loafman]
 
@@ -2676,10 +2777,10 @@ registering more than one affinity prefix per backend. [KheOps]
 
 * Move testfiles dir to a temp location. [Kenneth Loafman]
 
-  - was crashing LiClipse/Eclipse when present in project.   - so far
-  only Darwin and Linux are supported, default Linux.   - Darwin uses
-  'getconf DARWIN_USER_TEMP_DIR' for temp dir.   - Linux uses TMPDIR,
-  TEMP, or defaults to /tmp.
+    - was crashing LiClipse/Eclipse when present in project.
+    - so far only Darwin and Linux are supported, default Linux.
+    - Darwin uses 'getconf DARWIN_USER_TEMP_DIR' for temp dir.
+    - Linux uses TMPDIR, TEMP, or defaults to /tmp.
 
 * Update .gitlab-ci.yml to need code test to pass. [Kenneth Loafman]
 
@@ -2703,13 +2804,14 @@ registering more than one affinity prefix per backend. [KheOps]
 
 * Report errors if B2 backend does exist but otherwise fails to import. [Phil Ruffwind]
 
-  Sometimes import can fail because one of B2's dependencies is broken.
-  The trick here is to query the "name" attribute of ModuleNotFoundError
-  to see if B2 is the module that failed. Unfortunately this only works
-  on   Python 3.6+. In older versions, the original behavior is
-  retained.
-  This partially mitigates the issue described in
-  https://github.com/henrysher/duplicity/issues/14.
+    Sometimes import can fail because one of B2's dependencies is broken.
+
+    The trick here is to query the "name" attribute of ModuleNotFoundError
+    to see if B2 is the module that failed. Unfortunately this only works on
+    Python 3.6+. In older versions, the original behavior is retained.
+
+    This partially mitigates the issue described in
+    https://github.com/henrysher/duplicity/issues/14.
 
 * Add report.xml. [Kenneth Loafman]
 
@@ -2719,10 +2821,10 @@ registering more than one affinity prefix per backend. [KheOps]
 
 * Added option --log-timestamp to prepend timestamp to log entry. [Kenneth Loafman]
 
-  The default is off so not to break anything, and is set to on when the
-  option is present.  A Catch-22 hack was made since we had to get
-  options   for the log before adding a formatter, yet the commandline
-  parser needs   the logger.  Went old school on it.
+    The default is off so not to break anything, and is set to on when the
+    option is present.  A Catch-22 hack was made since we had to get options
+    for the log before adding a formatter, yet the commandline parser needs
+    the logger.  Went old school on it.
 
 * Improve. [Gwyn Ciesla]
 
@@ -2746,23 +2848,25 @@ registering more than one affinity prefix per backend. [KheOps]
 
 * Tools to make a CHANGELOG.md from git commits. [Kenneth Loafman]
 
-  $ [sudo] pip install gitchangelog
+    $ [sudo] pip install gitchangelog
 
 * Make exclude-if-present more robust. [Michael Terry]
 
-  Specifically, handle all the "common errors" when listing a directory
-  to see if the mentioned file is in it. Previously, we had done a
-  check for read access before listing. But it's safe to try to list
-  and just catch the errors that happen.
+    Specifically, handle all the "common errors" when listing a directory
+    to see if the mentioned file is in it. Previously, we had done a
+    check for read access before listing. But it's safe to try to list
+    and just catch the errors that happen.
 
 * Drop default umask of 0077. [Michael Terry]
 
-  For most backends, it doesn't actually take effect. And it can be
-  confusing for people that back up to a drive that is ext4-formatted
-  but then try to restore on a new system.
-  If folks are worried about others accessing the backup files,
-  encryption is the recommended path for that.
-  https://gitlab.com/duplicity/duplicity/-/issues/24
+    For most backends, it doesn't actually take effect. And it can be
+    confusing for people that back up to a drive that is ext4-formatted
+    but then try to restore on a new system.
+
+    If folks are worried about others accessing the backup files,
+    encryption is the recommended path for that.
+
+    https://gitlab.com/duplicity/duplicity/-/issues/24
 
 * Comment out RsyncBackendTest, again. [Kenneth Loafman]
 
@@ -2772,8 +2876,7 @@ registering more than one affinity prefix per backend. [KheOps]
 
 * Fix issue #23. [Yump]
 
-  Fix unicode crash on verify under python3, when symlinks have changed
-  targets since the backup was taken.
+    Fix unicode crash on verify under python3, when symlinks have changed targets since the backup was taken.
 
 * Rclonebackend now logs at the same logging level as duplicity. [Kenneth Loafman]
 
@@ -2785,7 +2888,7 @@ registering more than one affinity prefix per backend. [KheOps]
 
 * Escape single quotes in machine-readable log messages. [Michael Terry]
 
-  https://gitlab.com/duplicity/duplicity/-/issues/21
+    https://gitlab.com/duplicity/duplicity/-/issues/21
 
 * Uncomment review-tools for snap. [Kenneth Loafman]
 
@@ -2811,30 +2914,33 @@ registering more than one affinity prefix per backend. [KheOps]
 
 * Fix bug #1893481 Error when logging improperly encoded filenames. [Kenneth Loafman]
 
-  - Reconfigure stdout/stderr to use errors='surrogateescape' in Python3
-  and errors='replace' in Python2.     - Add a manual test case to check
-  for regression.
+    - Reconfigure stdout/stderr to use errors='surrogateescape' in Python3
+    	and errors='replace' in Python2.
+      - Add a manual test case to check for regression.
 
 * Merged in s3-unfreeze-all. [Kenneth Loafman]
 
 * Wait for Glacier batch unfreeze to finish. [Marco Herrn]
 
-  The ThreadPoolExecutor starts the unfreezing of volumes in parallel.
-  However we can wait until it finishes its work for all volumes.
-  This currently does _not_ wait until the unfreezing process has
-  finished, but only until the S3 'restore()' operations have finished
-  (which can take a bit time).
-  The actual (sequential) pre_processing of the volumes to restore then
-  waits for the actual unfreezing to finish by regularly checking the
-  state of the unfreezing.
+    The ThreadPoolExecutor starts the unfreezing of volumes in parallel.
+    However we can wait until it finishes its work for all volumes.
+
+    This currently does _not_ wait until the unfreezing process has
+    finished, but only until the S3 'restore()' operations have finished
+    (which can take a bit time).
+
+    The actual (sequential) pre_processing of the volumes to restore then
+    waits for the actual unfreezing to finish by regularly checking the
+    state of the unfreezing.
 
 * Adorn string as unicode. [Marco Herrn]
 
 * Utilize ThreadPoolExecutor for S3 glacier unfreeze. [Marco Herrn]
 
-  Starting one thread per file to unfreeze from Glacier can start a huge
-  amounts of threads in large backups.   Using a thread pool should cut
-  this down to a more appropriate number of   threads.
+    Starting one thread per file to unfreeze from Glacier can start a huge
+    amounts of threads in large backups.
+    Using a thread pool should cut this down to a more appropriate number of
+    threads.
 
 * Refine codestyle according to PEP-8. [Marco Herrn]
 
@@ -2842,11 +2948,11 @@ registering more than one affinity prefix per backend. [KheOps]
 
 * S3 unfreeze all files at once. [Marco Herrn]
 
-  When starting a restore from S3 Glacier, start the unfreezing of all
-  volumes at once by calling botos 'restore()' method for each volume in
-  a   separate thread.
-  This is only implemented in the boto backend, not in the boto3
-  backend.
+    When starting a restore from S3 Glacier, start the unfreezing of all
+    volumes at once by calling botos 'restore()' method for each volume in a
+    separate thread.
+
+    This is only implemented in the boto backend, not in the boto3 backend.
 
 * Add boto3 to list of requirements. [Kenneth Loafman]
 
@@ -2862,18 +2968,20 @@ registering more than one affinity prefix per backend. [KheOps]
 
 * Record the hostname, not the fqdn, in manifest files. [Michael Terry]
 
-  We continue to check the fqdn as well, to keep backward
-  compatibility.
-  https://bugs.launchpad.net/duplicity/+bug/667885
+    We continue to check the fqdn as well, to keep backward
+    compatibility.
+
+    https://bugs.launchpad.net/duplicity/+bug/667885
 
 * Avoid calling stat when checking for exclude-if-present files. [Michael Terry]
 
-  If a folder with rw- permissions (i.e. read and write, but no exec)
-  is examined for the presence of an exclude-if-present file, we would
-  previously throw an exception when trying to stat the file during
-  Path object construction.
-  But we don't need to stat in this case. This patch just calls
-  listdir() and checks if the file is in that result.
+    If a folder with rw- permissions (i.e. read and write, but no exec)
+    is examined for the presence of an exclude-if-present file, we would
+    previously throw an exception when trying to stat the file during
+    Path object construction.
+
+    But we don't need to stat in this case. This patch just calls
+    listdir() and checks if the file is in that result.
 
 * Fix build control files after markdown conversion. [Kenneth Loafman]
 
@@ -2883,15 +2991,18 @@ registering more than one affinity prefix per backend. [KheOps]
 
 * Set default values for s3\_region\_name and s3\_endpoint\_url. [Marco Herrn]
 
-  Fixes #12
+    Fixes #12
 
 * Allow setting s3 region and endpoint. [Marco Herrn]
 
-  This commit introduces the new commandline options     --s3-region-
-  name     --s3-endpoint-url   to specify these parameters. This allows
-  using s3 compatible providers   like Scaleway or OVH.
-  It is probably useful for Amazon accounts, too, to have more fine
-  grained influence on the region to use.
+    This commit introduces the new commandline options
+      --s3-region-name
+      --s3-endpoint-url
+    to specify these parameters. This allows using s3 compatible providers
+    like Scaleway or OVH.
+
+    It is probably useful for Amazon accounts, too, to have more fine
+    grained influence on the region to use.
 
 * Update README-REPO.md. [Kenneth Loafman]
 
@@ -2905,8 +3016,8 @@ registering more than one affinity prefix per backend. [KheOps]
 
 * Revert "Merge branch 's3-boto3-region-and-endpoint' into 'master'" [Kenneth Loafman]
 
-  This reverts commit f25e9740e17d24cf309aee136953d8fd51a7bf9b,
-  reversing   changes made to 2890326dfd7a5bf9ea340aca76d96ebcd25aa8b6.
+    This reverts commit f25e9740e17d24cf309aee136953d8fd51a7bf9b, reversing
+    changes made to 2890326dfd7a5bf9ea340aca76d96ebcd25aa8b6.
 
 * Bump version for LP dev build. [Kenneth Loafman]
 
@@ -2914,17 +3025,20 @@ registering more than one affinity prefix per backend. [KheOps]
 
 * Allow setting s3 region and endpoint. [Marco Herrn]
 
-  This commit introduces the new commandline options     --s3-region-
-  name     --s3-endpoint-url   to specify these parameters. This allows
-  using s3 compatible providers   like Scaleway or OVH.
-  It is probably useful for Amazon accounts, too, to have more fine
-  grained influence on the region to use.
+    This commit introduces the new commandline options
+      --s3-region-name
+      --s3-endpoint-url
+    to specify these parameters. This allows using s3 compatible providers
+    like Scaleway or OVH.
+
+    It is probably useful for Amazon accounts, too, to have more fine
+    grained influence on the region to use.
 
 * Fix missing FileNotUploadedError in pydrive backend. [Martin Sucha]
 
-  Since dadbe2d2c22751f68f179833d36c94f2777ba425, FileNotUploadedError
-  is not imported anymore, resulting in an exception in case   some of
-  the files failed to upload. Adding the import back.
+    Since dadbe2d2c22751f68f179833d36c94f2777ba425, FileNotUploadedError
+    is not imported anymore, resulting in an exception in case
+    some of the files failed to upload. Adding the import back.
 
 * Fixed indentation. [Joshua Chan]
 
@@ -2941,104 +3055,99 @@ use it to pass supplementary info to the backend. [Joshua Chan]
 
 * Fix issue #10 - ppa:duplicity-*-git fails to install on Focal Fossa. [Kenneth Loafman]
 
-  - Set correct version requirements in debian/control.
+    - Set correct version requirements in debian/control.
 
 * Remove python-cloudfiles from suggestions. [Jairo Llopis]
 
-  This dependency cannot be installed on Python 3:
-  ```   #12 19.82   Downloading python-cloudfiles-1.7.11.tar.gz (330 kB)
-  #12 20.00     ERROR: Command errored out with exit status 1:   #12
-  20.00      command: /usr/local/bin/python -c 'import sys, setuptools,
-  tokenize; sys.argv[0] = '"'"'/tmp/pip-install-2iwvh4bp/python-
-  cloudfiles/setup.py'"'"'; __file__='"'"'/tmp/pip-
-  install-2iwvh4bp/python-cloudfiles/setup.py'"'"';f=getattr(tokenize,
-  '"'"'open'"'"', open)(__file__);code=f.read().replace('"'"'\r\n'"'"',
-  '"'"'\n'"'"');f.close();exec(compile(code, __file__, '"'"'exec'"'"'))'
-  egg_info --egg-base /tmp/pip-pip-egg-info-b1gvstfs   #12 20.00
-  cwd: /tmp/pip-install-2iwvh4bp/python-cloudfiles/   #12 20.00
-  Complete output (9 lines):   #12 20.00     Traceback (most recent call
-  last):   #12 20.00       File "<string>", line 1, in <module>   #12
-  20.00       File "/tmp/pip-install-2iwvh4bp/python-
-  cloudfiles/setup.py", line 6, in <module>   #12 20.00         from
-  cloudfiles.consts import __version__   #12 20.00       File "/tmp/pip-
-  install-2iwvh4bp/python-cloudfiles/cloudfiles/__init__.py", line 82,
-  in <module>   #12 20.00         from cloudfiles.connection     import
-  Connection, ConnectionPool   #12 20.00       File "/tmp/pip-
-  install-2iwvh4bp/python-cloudfiles/cloudfiles/connection.py", line 13,
-  in <module>   #12 20.00         from    urllib    import urlencode
-  #12 20.00     ImportError: cannot import name 'urlencode' from
-  'urllib' (/usr/local/lib/python3.8/urllib/__init__.py)   #12 20.00
-  ----------------------------------------   #12 20.00 ERROR: Command
-  errored out with exit status 1: python setup.py egg_info Check the
-  logs for full command output.   ```
-  Also, it is no longer supported. Rackspace uses `pyrax` nowadays.
-  Removing to avoid confusions.
+    This dependency cannot be installed on Python 3:
+
+    ```
+    #12 19.82   Downloading python-cloudfiles-1.7.11.tar.gz (330 kB)
+    #12 20.00     ERROR: Command errored out with exit status 1:
+    #12 20.00      command: /usr/local/bin/python -c 'import sys, setuptools, tokenize; sys.argv[0] = '"'"'/tmp/pip-install-2iwvh4bp/python-cloudfiles/setup.py'"'"'; __file__='"'"'/tmp/pip-install-2iwvh4bp/python-cloudfiles/setup.py'"'"';f=getattr(tokenize, '"'"'open'"'"', open)(__file__);code=f.read().replace('"'"'\r\n'"'"', '"'"'\n'"'"');f.close();exec(compile(code, __file__, '"'"'exec'"'"'))' egg_info --egg-base /tmp/pip-pip-egg-info-b1gvstfs
+    #12 20.00          cwd: /tmp/pip-install-2iwvh4bp/python-cloudfiles/
+    #12 20.00     Complete output (9 lines):
+    #12 20.00     Traceback (most recent call last):
+    #12 20.00       File "<string>", line 1, in <module>
+    #12 20.00       File "/tmp/pip-install-2iwvh4bp/python-cloudfiles/setup.py", line 6, in <module>
+    #12 20.00         from cloudfiles.consts import __version__
+    #12 20.00       File "/tmp/pip-install-2iwvh4bp/python-cloudfiles/cloudfiles/__init__.py", line 82, in <module>
+    #12 20.00         from cloudfiles.connection     import Connection, ConnectionPool
+    #12 20.00       File "/tmp/pip-install-2iwvh4bp/python-cloudfiles/cloudfiles/connection.py", line 13, in <module>
+    #12 20.00         from    urllib    import urlencode
+    #12 20.00     ImportError: cannot import name 'urlencode' from 'urllib' (/usr/local/lib/python3.8/urllib/__init__.py)
+    #12 20.00     ----------------------------------------
+    #12 20.00 ERROR: Command errored out with exit status 1: python setup.py egg_info Check the logs for full command output.
+    ```
+
+    Also, it is no longer supported. Rackspace uses `pyrax` nowadays. Removing to avoid confusions.
 
 * Update azure requirement. [Jairo Llopis]
 
-  Trying to install `azure` today prints this error:
-  ```   Collecting azure     Downloading azure-5.0.0.zip (4.6 kB)
-  ERROR: Command errored out with exit status 1:        command:
-  /usr/local/bin/python -c 'import sys, setuptools, tokenize;
-  sys.argv[0] = '"'"'/tmp/pip-install-gzzfb6dp/azure/setup.py'"'"';
-  __file__='"'"'/tmp/pip-install-
-  gzzfb6dp/azure/setup.py'"'"';f=getattr(tokenize, '"'"'open'"'"',
-  open)(__file__);code=f.read().replace('"'"'\r\n'"'"',
-  '"'"'\n'"'"');f.close();exec(compile(code, __file__, '"'"'exec'"'"'))'
-  egg_info --egg-base /tmp/pip-pip-egg-info-1xop0k3_            cwd:
-  /tmp/pip-install-gzzfb6dp/azure/       Complete output (24 lines):
-  Traceback (most recent call last):         File "<string>", line 1, in
-  <module>         File "/tmp/pip-install-gzzfb6dp/azure/setup.py", line
-  60, in <module>           raise RuntimeError(message)
-  RuntimeError:
-  Starting with v5.0.0, the 'azure' meta-package is deprecated and
-  cannot be installed anymore.       Please install the service specific
-  packages prefixed by `azure` needed for your application.
-  The complete list of available packages can be found at:
-  https://aka.ms/azsdk/python/all
-  Here's a non-exhaustive list of common packages:
-  -  azure-mgmt-compute (https://pypi.python.org/pypi/azure-mgmt-
-  compute) : Management of Virtual Machines, etc.       -  azure-mgmt-
-  storage (https://pypi.python.org/pypi/azure-mgmt-storage) : Management
-  of storage accounts.       -  azure-mgmt-resource
-  (https://pypi.python.org/pypi/azure-mgmt-resource) : Generic package
-  about Azure Resource Management (ARM)       -  azure-keyvault-secrets
-  (https://pypi.python.org/pypi/azure-keyvault-secrets) : Access to
-  secrets in Key Vault       -  azure-storage-blob
-  (https://pypi.python.org/pypi/azure-storage-blob) : Access to blobs in
-  storage accounts
-  A more comprehensive discussion of the rationale for this decision can
-  be found in the following issue:       https://github.com/Azure/azure-
-  sdk-for-python/issues/10646
-  ----------------------------------------   ```
-  So it's better to update this suggestion to `azure-mgmt-storage`
-  instead.
+    Trying to install `azure` today prints this error:
+
+    ```
+    Collecting azure
+      Downloading azure-5.0.0.zip (4.6 kB)
+        ERROR: Command errored out with exit status 1:
+         command: /usr/local/bin/python -c 'import sys, setuptools, tokenize; sys.argv[0] = '"'"'/tmp/pip-install-gzzfb6dp/azure/setup.py'"'"'; __file__='"'"'/tmp/pip-install-gzzfb6dp/azure/setup.py'"'"';f=getattr(tokenize, '"'"'open'"'"', open)(__file__);code=f.read().replace('"'"'\r\n'"'"', '"'"'\n'"'"');f.close();exec(compile(code, __file__, '"'"'exec'"'"'))' egg_info --egg-base /tmp/pip-pip-egg-info-1xop0k3_
+             cwd: /tmp/pip-install-gzzfb6dp/azure/
+        Complete output (24 lines):
+        Traceback (most recent call last):
+          File "<string>", line 1, in <module>
+          File "/tmp/pip-install-gzzfb6dp/azure/setup.py", line 60, in <module>
+            raise RuntimeError(message)
+        RuntimeError:
+
+        Starting with v5.0.0, the 'azure' meta-package is deprecated and cannot be installed anymore.
+        Please install the service specific packages prefixed by `azure` needed for your application.
+
+        The complete list of available packages can be found at:
+        https://aka.ms/azsdk/python/all
+
+        Here's a non-exhaustive list of common packages:
+
+        -  azure-mgmt-compute (https://pypi.python.org/pypi/azure-mgmt-compute) : Management of Virtual Machines, etc.
+        -  azure-mgmt-storage (https://pypi.python.org/pypi/azure-mgmt-storage) : Management of storage accounts.
+        -  azure-mgmt-resource (https://pypi.python.org/pypi/azure-mgmt-resource) : Generic package about Azure Resource Management (ARM)
+        -  azure-keyvault-secrets (https://pypi.python.org/pypi/azure-keyvault-secrets) : Access to secrets in Key Vault
+        -  azure-storage-blob (https://pypi.python.org/pypi/azure-storage-blob) : Access to blobs in storage accounts
+
+        A more comprehensive discussion of the rationale for this decision can be found in the following issue:
+        https://github.com/Azure/azure-sdk-for-python/issues/10646
+
+
+        ----------------------------------------
+    ```
+
+    So it's better to update this suggestion to `azure-mgmt-storage` instead.
 
 * Fix bug #1211481 with merge from Raffaele Di Campli. [Kenneth Loafman]
 
-  - Ignores the uid/gid from the archive and keeps the current user's
-  one.     - Recommended for restoring data to mounted filesystem which
-  do not       support Unix ownership or when root privileges are not
-  available.
+    - Ignores the uid/gid from the archive and keeps the current user's
+    one.
+      - Recommended for restoring data to mounted filesystem which do not
+        support Unix ownership or when root privileges are not available.
 
 * Added `--do-not-restore-ownership` option. [Jacotsu]
 
-  Ignores the uid/gid from the archive and keeps the current user's one.
-  Recommended for restoring data to mounted filesystem which do not
-  support Unix ownership or when root privileges are not available.
-  Solves launchpad bug #1211481
+    Ignores the uid/gid from the archive and keeps the current user's one.
+    Recommended for restoring data to mounted filesystem which do not
+    support Unix ownership or when root privileges are not available.
+
+    Solves launchpad bug #1211481
 
 * Fix bug #1887689 with patch from Matthew Barry. [Kenneth Loafman]
 
-  - Cleanup with Paramiko backend does not remove files due to missing
-  filename byte decoding
+    - Cleanup with Paramiko backend does not remove files due to missing
+        filename byte decoding
 
 * Bump version for LP build. [Kenneth Loafman]
 
 * Fix check for s3 glacier/deep. [Michael Terry]
 
-  This allows encryption validation to continue to work outside of
-  those s3 glacier/deep scenarios.
+    This allows encryption validation to continue to work outside of
+    those s3 glacier/deep scenarios.
 
 * Change from push to upload. [Kenneth Loafman]
 
@@ -3080,7 +3189,7 @@ use it to pass supplementary info to the backend. [Joshua Chan]
 
 * Support PyDrive2 library in the pydrive backend. [Jindrich Makovicka]
 
-  Unlike PyDrive, the PyDrive2 fork is actively maintained.
+    Unlike PyDrive, the PyDrive2 fork is actively maintained.
 
 * Tidy .gitlab-ci.yml, fix py3.5 test, add py2.7 test (allowed to fail) [Aaron Whitehouse]
 
@@ -3138,44 +3247,51 @@ more-itertools are incompatible with python 2. [Aaron Whitehouse]
 
 * Patched in a megav2backend.py to update to MEGAcmd tools. [Kenneth Loafman]
 
-  - Author: Jose L. Domingo Lopez <github@24x7linux.com>     - Man
-  pages, docs, etc. were included.
+    - Author: Jose L. Domingo Lopez <github@24x7linux.com>
+      - Man pages, docs, etc. were included.
 
 * Change log.Warning to log.Warn.  Whoops! [Kenneth Loafman]
 
 * Fixed bug #1875937 - validate\_encryption\_settings() fails w/S3
 glacier. [Kenneth Loafman]
 
-  - Skip validation with a warning if S3 glacier or deep storage
-  specified
+    - Skip validation with a warning if S3 glacier or deep storage
+    specified
 
 * Restore commented our backend requirements. [Kenneth Loafman]
 
 * Fixes for rclonebackend from Francesco Magno (original author) [Kenneth Loafman]
 
-  - copy command has been replaced with copyto, that is a specialized
-  version for single file operation. Performance-wise, we don't have
-  to include a single file in the local side directory, and we don't
-  have to list all the files in the remote to check what to
-  syncronize.       Additionally, we don't have to mess up with renaming
-  because the       copy command didn't support changing filename during
-  transfer       (because was oriented to transfer whole directories).
-  - delete command has been replaced with deletefile. Same here, we
-  have a specialized command for single file operation. Much more
-  efficient.     - ls command has been replaced with lsf, that is a
-  specialized version       that returns only filenames. Since duplicity
-  needs only those, less       bytes to transfer, and less parsing to
-  do.     - lastly, I have reintroduced a custom subprocess function
-  because the   one       inherithed from base class is checked, and
-  throws an exception in   case of       non zero return code. The ls
-  command family returns a non zero value   if       the directory does
-  not exist in the remote, so starting a new backup       in a non
-  existent directory is impossible at the moment because ls   fails
-  repeatedly until duplicity gives up. This is a bug in the current
-  implementation.       There is the same problem (but less severe) in
-  _get method, using   the default       self.subprocess_popen a non
-  zero return code will throw an exception   before we       can cleanup
-  the partially downloaded file, if any.
+    - copy command has been replaced with copyto, that is a specialized
+        version for single file operation. Performance-wise, we don't have
+        to include a single file in the local side directory, and we don't
+        have to list all the files in the remote to check what to
+    syncronize.
+        Additionally, we don't have to mess up with renaming because the
+        copy command didn't support changing filename during transfer
+        (because was oriented to transfer whole directories).
+      - delete command has been replaced with deletefile. Same here, we
+        have a specialized command for single file operation. Much more
+    efficient.
+      - ls command has been replaced with lsf, that is a specialized version
+        that returns only filenames. Since duplicity needs only those, less
+        bytes to transfer, and less parsing to do.
+      - lastly, I have reintroduced a custom subprocess function because the
+    one
+        inherithed from base class is checked, and throws an exception in
+    case of
+        non zero return code. The ls command family returns a non zero value
+    if
+        the directory does not exist in the remote, so starting a new backup
+        in a non existent directory is impossible at the moment because ls
+    fails
+        repeatedly until duplicity gives up. This is a bug in the current
+    implementation.
+        There is the same problem (but less severe) in _get method, using
+    the default
+        self.subprocess_popen a non zero return code will throw an exception
+    before we
+        can cleanup the partially downloaded file, if any.
 
 * Version man pages during setup.py install. [Kenneth Loafman]
 
@@ -3653,8 +3769,7 @@ integer division. [kenneth@loafman.com]
 * In version 1 of the B2sdk, the list\_file\_names method is removed
 from the B2Bucket class. [Adam Jacobs]
 
-  This change makes the b2 backend backwards-compatible with the old
-  version 0 AND forward-compatible with the new version 1.
+    This change makes the b2 backend backwards-compatible with the old version 0 AND forward-compatible with the new version 1.
 
 * Complete fix for string concatenation in b2 backend. [Adam Jacobs]
 
@@ -3870,25 +3985,31 @@ failing on Docker and Launchpad testing. [kenneth@loafman.com]
 
 * Optimize loading backup chains; reduce file\_naming.parse calls. [Matthew Glazar]
 
-  For each filename in filename_list,
-  CollectionsStatus.get_backup_chains calls file_naming.parse   (through
-  BackupSet.add_filename) between 0 and len(sets)*2   times. In the
-  worst case, this leads to a *ton* of redundant   calls to
-  file_naming.parse.
-  For example, when running 'duplicity collection-status' on   one of my
-  backup directories:
-  * filename_list contains 7545 files   * get_backup_chains creates 2515
-  BackupSet-s   * get_backup_chains calls file_naming.parse 12650450
-  times!
-  This command took 9 minutes and 32 seconds. Similar   commands, like
-  no-op incremental backups, also take a long   time. (The directory
-  being backed up contains only 9 MiB   across 30 files.)
-  Avoid many redundant calls to file_naming.parse by hoisting   the call
-  outside the loop over BackupSet-s. This   optimization makes
-  'duplicity collection-status' *20 times   faster* for me (572 seconds
-  -> 29 seconds).
-  Aside from improving performance, this commit should not   change
-  behavior.
+    For each filename in filename_list,
+    CollectionsStatus.get_backup_chains calls file_naming.parse
+    (through BackupSet.add_filename) between 0 and len(sets)*2
+    times. In the worst case, this leads to a *ton* of redundant
+    calls to file_naming.parse.
+
+    For example, when running 'duplicity collection-status' on
+    one of my backup directories:
+
+    * filename_list contains 7545 files
+    * get_backup_chains creates 2515 BackupSet-s
+    * get_backup_chains calls file_naming.parse 12650450 times!
+
+    This command took 9 minutes and 32 seconds. Similar
+    commands, like no-op incremental backups, also take a long
+    time. (The directory being backed up contains only 9 MiB
+    across 30 files.)
+
+    Avoid many redundant calls to file_naming.parse by hoisting
+    the call outside the loop over BackupSet-s. This
+    optimization makes 'duplicity collection-status' *20 times
+    faster* for me (572 seconds -> 29 seconds).
+
+    Aside from improving performance, this commit should not
+    change behavior.
 
 * Correct types for os.join in Dropbox backend. [Gwyn Ciesla]
 
@@ -3978,8 +4099,8 @@ to use /usr/bin/python instead of python2. [kenneth@loafman.com]
 
 * Fix Azure backend for python 3. [Frank Fischer]
 
-  By definition, the list of keys from "list" is byte-formatted.   As
-  such we have to decode the parameter offered to "get"
+    By definition, the list of keys from "list" is byte-formatted.
+    As such we have to decode the parameter offered to "get"
 
 * Fixed bug #1831178 sequence item 0: expected str instance, int found
 - Simply converted int to str when making list. [kenneth@loafman.com]
@@ -3996,7 +4117,7 @@ The new     import fail is "from future import standard\_library" [kenneth@loafm
 
 * Have uexc to always return a string. [Michael Terry]
 
-  This fixes unhandled exception reporting
+    This fixes unhandled exception reporting
 
 * Add requirements for python-gettext. [kenneth@loafman.com]
 
@@ -4004,40 +4125,44 @@ The new     import fail is "from future import standard\_library" [kenneth@loafm
 
 * Remove unnecessary sleeping after running backups in tests. [Matthew Glazar]
 
-  ptyprocess' 'PtyProcess.close' function [1] closes the   terminal,
-  then terminates the process if it's still alive.   Before checking if
-  the process is alive, ptyprocess   unconditionally sleeps for 100
-  milliseconds [2][3].
-  In 'run_duplicity', after we call 'child.wait()', we know   that the
-  process is no longer alive. ptyprocess' 100 ms   sleep just slows down
-  tests. Tell ptyprocess to not sleep.
-  [1] pexpect uses ptyprocess. 'PtyProcess.close' is called by
-  'PtyProcess.__del__', so 'PtyProcess.close' is called       when
-  'run_duplicity' returns.   [1] https://github.com/pexpect/ptyprocess/b
-  lob/3931cd45db50ee8533b8b0fef424b8d75f7ba1c2/ptyprocess/ptyprocess.py#
-  L403   [2] https://github.com/pexpect/ptyprocess/blob/3931cd45db50ee85
-  33b8b0fef424b8d75f7ba1c2/ptyprocess/ptyprocess.py#L173
+    ptyprocess' 'PtyProcess.close' function [1] closes the
+    terminal, then terminates the process if it's still alive.
+    Before checking if the process is alive, ptyprocess
+    unconditionally sleeps for 100 milliseconds [2][3].
+
+    In 'run_duplicity', after we call 'child.wait()', we know
+    that the process is no longer alive. ptyprocess' 100 ms
+    sleep just slows down tests. Tell ptyprocess to not sleep.
+
+    [1] pexpect uses ptyprocess. 'PtyProcess.close' is called by
+        'PtyProcess.__del__', so 'PtyProcess.close' is called
+        when 'run_duplicity' returns.
+    [1] https://github.com/pexpect/ptyprocess/blob/3931cd45db50ee8533b8b0fef424b8d75f7ba1c2/ptyprocess/ptyprocess.py#L403
+    [2] https://github.com/pexpect/ptyprocess/blob/3931cd45db50ee8533b8b0fef424b8d75f7ba1c2/ptyprocess/ptyprocess.py#L173
 
 * Minimize time spent sleeping between backups. [Matthew Glazar]
 
-  During testing, if a backup completes at time 10:49:30.621,   the next
-  call to 'backup' sleeps to ensure the new backup   has a different
-  integer time stamp (10:49:31). Currently,   'backup' sleeps for an
-  entire second, even though the next   integer time stamp is less than
-  half a second away (0.379   seconds). This extra sleeping causes tests
-  to take longer   than they need to.
-  Make tests run faster by sleeping only enough to reach the   next
-  integer time stamp.
+    During testing, if a backup completes at time 10:49:30.621,
+    the next call to 'backup' sleeps to ensure the new backup
+    has a different integer time stamp (10:49:31). Currently,
+    'backup' sleeps for an entire second, even though the next
+    integer time stamp is less than half a second away (0.379
+    seconds). This extra sleeping causes tests to take longer
+    than they need to.
+
+    Make tests run faster by sleeping only enough to reach the
+    next integer time stamp.
 
 * Ensure all duplicity output is captured in tests. [Matthew Glazar]
 
-  The loop in 'run_duplicity' which captures output has a race
-  condition. If duplicity writes output then exits before
-  'child.isalive()' is called, then 'run_duplicity' exits the   loop
-  before calling 'child.readline()'. This means that some   output is
-  not read into the 'lines' list.
-  Fix this race condition by reading all output until EOF,   then
-  waiting for the child to exit.
+    The loop in 'run_duplicity' which captures output has a race
+    condition. If duplicity writes output then exits before
+    'child.isalive()' is called, then 'run_duplicity' exits the
+    loop before calling 'child.readline()'. This means that some
+    output is not read into the 'lines' list.
+
+    Fix this race condition by reading all output until EOF,
+    then waiting for the child to exit.
 
 * Fix TestGlobToRegex.test\_glob\_to\_regex for py3.6 and above   - see
 https://bugs.python.org/issue29995 for details. [kenneth@loafman.com]
@@ -4058,8 +4183,8 @@ been deprecated in 2, removed in 3.7. [kenneth@loafman.com]
 
 * Sync: handle parsed filenames without start/end times. [Mike Gorse]
 
-  Signatures set time, rather than start_time and end_time, so
-  comparisons   against the latter generate an exception on Python 3.
+    Signatures set time, rather than start_time and end_time, so comparisons
+    against the latter generate an exception on Python 3.
 
 * More PEP 479 fixes. [Mike Gorse]
 
@@ -4108,7 +4233,7 @@ was throwing an error and does not seem to be needed. [Aaron A Whitehouse]
 
 * Attempt to port sx backend to python 3. [Mike Gorse]
 
-  Untested, but likely needed changes similar to some other backends.
+    Untested, but likely needed changes similar to some other backends.
 
 * Rsync: py3 fixes. [Mike Gorse]
 
@@ -4118,9 +4243,9 @@ was throwing an error and does not seem to be needed. [Aaron A Whitehouse]
 
 * Fix sync\_archive on python 3. [Mike Gorse]
 
-  The recognized suffixes were being stored as unicode, but they were
-  being   compared against filenames that are stored as bytes, so the
-  comparisons   were failing.
+    The recognized suffixes were being stored as unicode, but they were being
+    compared against filenames that are stored as bytes, so the comparisons
+    were failing.
 
 * Ssh\_pexpect: py3 fixes. [Mike Gorse]
 
@@ -4145,9 +4270,10 @@ end of imports. [kenneth@loafman.com]
 
 * Pkg:fix: make extra sure correct python binary is used. [edeso]
 
-  remove unmaintained changelog   add shell wrapper(launcher.sh)   add
-  debug script   use shell wrapper as snap binary ignores PATH for
-  python binary on debian
+    remove unmaintained changelog
+    add shell wrapper(launcher.sh)
+    add debug script
+    use shell wrapper as snap binary ignores PATH for python binary on debian
 
 * Optimize CI/CD to only run when needed. [Kenneth Loafman]
 
@@ -4159,7 +4285,7 @@ end of imports. [kenneth@loafman.com]
 
 * Revert "chg:dev:core20 usess py38, not py36." [Kenneth Loafman]
 
-  This reverts commit c074a356d60336b611d096cbdfc98e7ae568475c.
+    This reverts commit c074a356d60336b611d096cbdfc98e7ae568475c.
 
 * Slate Backend. [Shr1ftyy]
 
@@ -4189,11 +4315,12 @@ end of imports. [kenneth@loafman.com]
 
 * Allow to override manpage date with SOURCE\_DATE\_EPOCH. [Bernhard M. Wiedemann]
 
-  in order to make builds reproducible.   See https://reproducible-
-  builds.org/ for why this is good   and https://reproducible-
-  builds.org/specs/source-date-epoch/   for the definition of this
-  variable.
-  Also use UTC/gmtime to be independent of timezone.
+    in order to make builds reproducible.
+    See https://reproducible-builds.org/ for why this is good
+    and https://reproducible-builds.org/specs/source-date-epoch/
+    for the definition of this variable.
+
+    Also use UTC/gmtime to be independent of timezone.
 
 * Improved management of volumes unsealing for PCA backend For PCA
 backend, unseal all volumes at once when restoring them instead of
@@ -4217,9 +4344,9 @@ correct size. [Doug Thompson]
 * B2sdk 1.8.0 refactored minimum\_part\_size to recommended\_part\_size
 (the value used stays the same) [Adam Jacobs]
 
-  It's a breaking change that makes duplicity fail with the new SDK.
-  This fix makes duplicity compatible with both pre- and post- 1.8.0
-  SDKs.
+    It's a breaking change that makes duplicity fail with the new SDK.
+
+    This fix makes duplicity compatible with both pre- and post- 1.8.0 SDKs.
 
 * Added Google MyDrive support updated man pages and --help text. [Anthony Uphof]
 
@@ -4246,10 +4373,12 @@ out" [Christian Perreault]
 
 * Add a new Google Drive backend (gdrive:) [Jindřich Makovička]
 
-  - Removes the PyDrive/PyDrive2 dependencies, and depends only on the
-  Google API client libraries commonly available in distributions.
-  - Uses unchanged JSON secret files as downloaded from GCP
-  - Updates the Google Drive API to V3
+    - Removes the PyDrive/PyDrive2 dependencies, and depends only on the
+      Google API client libraries commonly available in distributions.
+
+    - Uses unchanged JSON secret files as downloaded from GCP
+
+    - Updates the Google Drive API to V3
 
 * Replaced original azure implementation. [Erwin Bovendeur]
 
@@ -4260,24 +4389,24 @@ out" [Christian Perreault]
 * Revert "fix:pkg:Remove requirement for python3-pytest-runner.  Not
 used." [Kenneth Loafman]
 
-  This reverts commit 2f18eeed907e0b674d1dad9177ce4db0ce1155e7.
+    This reverts commit 2f18eeed907e0b674d1dad9177ce4db0ce1155e7.
 
 * List required volumes when called with 'restore --dry-run' [Matthias Blankertz]
 
-  When restoring in dry-run mode, and with the manifest available, list
-  the volumes that would be gotten from the backend when actually
-  performing the operation.   This is intended to aid users of e.g. the
-  S3 backend with (deep) glacier   storage, allowing the following
-  workflow to recover files, optionally at   a certain time, from a
-  long-term archive:   1. duplicity restore --dry-run [--file-to-restore
-  <file/dir>] [--time <time>] boto3+s3://...   2. Start a Glacier
-  restore process for all the listed volumes   3. duplicity restore
-  [--file-to-restore <file/dir>] [--time <time>] boto3+s3://...
+    When restoring in dry-run mode, and with the manifest available, list
+    the volumes that would be gotten from the backend when actually
+    performing the operation.
+    This is intended to aid users of e.g. the S3 backend with (deep) glacier
+    storage, allowing the following workflow to recover files, optionally at
+    a certain time, from a long-term archive:
+    1. duplicity restore --dry-run [--file-to-restore <file/dir>] [--time <time>] boto3+s3://...
+    2. Start a Glacier restore process for all the listed volumes
+    3. duplicity restore [--file-to-restore <file/dir>] [--time <time>] boto3+s3://...
 
 * Fix sorting of BackupSets by avoiding direct comparison. [Stefan Wehrmeyer]
 
-  Sorting should only compare their time/end_time, not BackupSets
-  directly   Closes #42
+    Sorting should only compare their time/end_time, not BackupSets directly
+    Closes #42
 
 * Update mailing list link. [Chris Coutinho]
 
@@ -4299,9 +4428,11 @@ used." [Kenneth Loafman]
 
 * Move py27 tests to ub16 and py35 tests to ub18. [Kenneth Loafman]
 
-  Move py35 back to ub16.
-  Move py35 back to ub16, try 2.
-  Remove 2to3 from ub16 builds.
+    Move py35 back to ub16.
+
+    Move py35 back to ub16, try 2.
+
+    Remove 2to3 from ub16 builds.
 
 * Fixes #33, remove quotes from identity filename option. [Kenneth Loafman]
 
@@ -4316,10 +4447,10 @@ registering more than one affinity prefix per backend. [KheOps]
 
 * Move testfiles dir to a temp location. [Kenneth Loafman]
 
-  - was crashing LiClipse/Eclipse when present in project.   - so far
-  only Darwin and Linux are supported, default Linux.   - Darwin uses
-  'getconf DARWIN_USER_TEMP_DIR' for temp dir.   - Linux uses TMPDIR,
-  TEMP, or defaults to /tmp.
+    - was crashing LiClipse/Eclipse when present in project.
+    - so far only Darwin and Linux are supported, default Linux.
+    - Darwin uses 'getconf DARWIN_USER_TEMP_DIR' for temp dir.
+    - Linux uses TMPDIR, TEMP, or defaults to /tmp.
 
 * Update .gitlab-ci.yml to need code test to pass. [Kenneth Loafman]
 
@@ -4343,13 +4474,14 @@ registering more than one affinity prefix per backend. [KheOps]
 
 * Report errors if B2 backend does exist but otherwise fails to import. [Phil Ruffwind]
 
-  Sometimes import can fail because one of B2's dependencies is broken.
-  The trick here is to query the "name" attribute of ModuleNotFoundError
-  to see if B2 is the module that failed. Unfortunately this only works
-  on   Python 3.6+. In older versions, the original behavior is
-  retained.
-  This partially mitigates the issue described in
-  https://github.com/henrysher/duplicity/issues/14.
+    Sometimes import can fail because one of B2's dependencies is broken.
+
+    The trick here is to query the "name" attribute of ModuleNotFoundError
+    to see if B2 is the module that failed. Unfortunately this only works on
+    Python 3.6+. In older versions, the original behavior is retained.
+
+    This partially mitigates the issue described in
+    https://github.com/henrysher/duplicity/issues/14.
 
 * Add report.xml. [Kenneth Loafman]
 
@@ -4359,10 +4491,10 @@ registering more than one affinity prefix per backend. [KheOps]
 
 * Added option --log-timestamp to prepend timestamp to log entry. [Kenneth Loafman]
 
-  The default is off so not to break anything, and is set to on when the
-  option is present.  A Catch-22 hack was made since we had to get
-  options   for the log before adding a formatter, yet the commandline
-  parser needs   the logger.  Went old school on it.
+    The default is off so not to break anything, and is set to on when the
+    option is present.  A Catch-22 hack was made since we had to get options
+    for the log before adding a formatter, yet the commandline parser needs
+    the logger.  Went old school on it.
 
 * Improve. [Gwyn Ciesla]
 
@@ -4386,23 +4518,25 @@ registering more than one affinity prefix per backend. [KheOps]
 
 * Tools to make a CHANGELOG.md from git commits. [Kenneth Loafman]
 
-  $ [sudo] pip install gitchangelog
+    $ [sudo] pip install gitchangelog
 
 * Make exclude-if-present more robust. [Michael Terry]
 
-  Specifically, handle all the "common errors" when listing a directory
-  to see if the mentioned file is in it. Previously, we had done a
-  check for read access before listing. But it's safe to try to list
-  and just catch the errors that happen.
+    Specifically, handle all the "common errors" when listing a directory
+    to see if the mentioned file is in it. Previously, we had done a
+    check for read access before listing. But it's safe to try to list
+    and just catch the errors that happen.
 
 * Drop default umask of 0077. [Michael Terry]
 
-  For most backends, it doesn't actually take effect. And it can be
-  confusing for people that back up to a drive that is ext4-formatted
-  but then try to restore on a new system.
-  If folks are worried about others accessing the backup files,
-  encryption is the recommended path for that.
-  https://gitlab.com/duplicity/duplicity/-/issues/24
+    For most backends, it doesn't actually take effect. And it can be
+    confusing for people that back up to a drive that is ext4-formatted
+    but then try to restore on a new system.
+
+    If folks are worried about others accessing the backup files,
+    encryption is the recommended path for that.
+
+    https://gitlab.com/duplicity/duplicity/-/issues/24
 
 * Comment out RsyncBackendTest, again. [Kenneth Loafman]
 
@@ -4412,8 +4546,7 @@ registering more than one affinity prefix per backend. [KheOps]
 
 * Fix issue #23. [Yump]
 
-  Fix unicode crash on verify under python3, when symlinks have changed
-  targets since the backup was taken.
+    Fix unicode crash on verify under python3, when symlinks have changed targets since the backup was taken.
 
 * Rclonebackend now logs at the same logging level as duplicity. [Kenneth Loafman]
 
@@ -4425,7 +4558,7 @@ registering more than one affinity prefix per backend. [KheOps]
 
 * Escape single quotes in machine-readable log messages. [Michael Terry]
 
-  https://gitlab.com/duplicity/duplicity/-/issues/21
+    https://gitlab.com/duplicity/duplicity/-/issues/21
 
 * Uncomment review-tools for snap. [Kenneth Loafman]
 
@@ -4451,30 +4584,33 @@ registering more than one affinity prefix per backend. [KheOps]
 
 * Fix bug #1893481 Error when logging improperly encoded filenames. [Kenneth Loafman]
 
-  - Reconfigure stdout/stderr to use errors='surrogateescape' in Python3
-  and errors='replace' in Python2.     - Add a manual test case to check
-  for regression.
+    - Reconfigure stdout/stderr to use errors='surrogateescape' in Python3
+    	and errors='replace' in Python2.
+      - Add a manual test case to check for regression.
 
 * Merged in s3-unfreeze-all. [Kenneth Loafman]
 
 * Wait for Glacier batch unfreeze to finish. [Marco Herrn]
 
-  The ThreadPoolExecutor starts the unfreezing of volumes in parallel.
-  However we can wait until it finishes its work for all volumes.
-  This currently does _not_ wait until the unfreezing process has
-  finished, but only until the S3 'restore()' operations have finished
-  (which can take a bit time).
-  The actual (sequential) pre_processing of the volumes to restore then
-  waits for the actual unfreezing to finish by regularly checking the
-  state of the unfreezing.
+    The ThreadPoolExecutor starts the unfreezing of volumes in parallel.
+    However we can wait until it finishes its work for all volumes.
+
+    This currently does _not_ wait until the unfreezing process has
+    finished, but only until the S3 'restore()' operations have finished
+    (which can take a bit time).
+
+    The actual (sequential) pre_processing of the volumes to restore then
+    waits for the actual unfreezing to finish by regularly checking the
+    state of the unfreezing.
 
 * Adorn string as unicode. [Marco Herrn]
 
 * Utilize ThreadPoolExecutor for S3 glacier unfreeze. [Marco Herrn]
 
-  Starting one thread per file to unfreeze from Glacier can start a huge
-  amounts of threads in large backups.   Using a thread pool should cut
-  this down to a more appropriate number of   threads.
+    Starting one thread per file to unfreeze from Glacier can start a huge
+    amounts of threads in large backups.
+    Using a thread pool should cut this down to a more appropriate number of
+    threads.
 
 * Refine codestyle according to PEP-8. [Marco Herrn]
 
@@ -4482,11 +4618,11 @@ registering more than one affinity prefix per backend. [KheOps]
 
 * S3 unfreeze all files at once. [Marco Herrn]
 
-  When starting a restore from S3 Glacier, start the unfreezing of all
-  volumes at once by calling botos 'restore()' method for each volume in
-  a   separate thread.
-  This is only implemented in the boto backend, not in the boto3
-  backend.
+    When starting a restore from S3 Glacier, start the unfreezing of all
+    volumes at once by calling botos 'restore()' method for each volume in a
+    separate thread.
+
+    This is only implemented in the boto backend, not in the boto3 backend.
 
 * Add boto3 to list of requirements. [Kenneth Loafman]
 
@@ -4502,18 +4638,20 @@ registering more than one affinity prefix per backend. [KheOps]
 
 * Record the hostname, not the fqdn, in manifest files. [Michael Terry]
 
-  We continue to check the fqdn as well, to keep backward
-  compatibility.
-  https://bugs.launchpad.net/duplicity/+bug/667885
+    We continue to check the fqdn as well, to keep backward
+    compatibility.
+
+    https://bugs.launchpad.net/duplicity/+bug/667885
 
 * Avoid calling stat when checking for exclude-if-present files. [Michael Terry]
 
-  If a folder with rw- permissions (i.e. read and write, but no exec)
-  is examined for the presence of an exclude-if-present file, we would
-  previously throw an exception when trying to stat the file during
-  Path object construction.
-  But we don't need to stat in this case. This patch just calls
-  listdir() and checks if the file is in that result.
+    If a folder with rw- permissions (i.e. read and write, but no exec)
+    is examined for the presence of an exclude-if-present file, we would
+    previously throw an exception when trying to stat the file during
+    Path object construction.
+
+    But we don't need to stat in this case. This patch just calls
+    listdir() and checks if the file is in that result.
 
 * Fix build control files after markdown conversion. [Kenneth Loafman]
 
@@ -4523,15 +4661,18 @@ registering more than one affinity prefix per backend. [KheOps]
 
 * Set default values for s3\_region\_name and s3\_endpoint\_url. [Marco Herrn]
 
-  Fixes #12
+    Fixes #12
 
 * Allow setting s3 region and endpoint. [Marco Herrn]
 
-  This commit introduces the new commandline options     --s3-region-
-  name     --s3-endpoint-url   to specify these parameters. This allows
-  using s3 compatible providers   like Scaleway or OVH.
-  It is probably useful for Amazon accounts, too, to have more fine
-  grained influence on the region to use.
+    This commit introduces the new commandline options
+      --s3-region-name
+      --s3-endpoint-url
+    to specify these parameters. This allows using s3 compatible providers
+    like Scaleway or OVH.
+
+    It is probably useful for Amazon accounts, too, to have more fine
+    grained influence on the region to use.
 
 * Update README-REPO.md. [Kenneth Loafman]
 
@@ -4545,8 +4686,8 @@ registering more than one affinity prefix per backend. [KheOps]
 
 * Revert "Merge branch 's3-boto3-region-and-endpoint' into 'master'" [Kenneth Loafman]
 
-  This reverts commit 6dac477cb3ddfb5f7a8f05162d1658725f4f379a,
-  reversing   changes made to cdfbaf8cfd4fcf2fbbecc3c2adc9fe1753ee6c30.
+    This reverts commit 6dac477cb3ddfb5f7a8f05162d1658725f4f379a, reversing
+    changes made to cdfbaf8cfd4fcf2fbbecc3c2adc9fe1753ee6c30.
 
 * Bump version for LP dev build. [Kenneth Loafman]
 
@@ -4554,17 +4695,20 @@ registering more than one affinity prefix per backend. [KheOps]
 
 * Allow setting s3 region and endpoint. [Marco Herrn]
 
-  This commit introduces the new commandline options     --s3-region-
-  name     --s3-endpoint-url   to specify these parameters. This allows
-  using s3 compatible providers   like Scaleway or OVH.
-  It is probably useful for Amazon accounts, too, to have more fine
-  grained influence on the region to use.
+    This commit introduces the new commandline options
+      --s3-region-name
+      --s3-endpoint-url
+    to specify these parameters. This allows using s3 compatible providers
+    like Scaleway or OVH.
+
+    It is probably useful for Amazon accounts, too, to have more fine
+    grained influence on the region to use.
 
 * Fix missing FileNotUploadedError in pydrive backend. [Martin Sucha]
 
-  Since 5bba3ba98ed3560329a80b829154d24f5d881ad9, FileNotUploadedError
-  is not imported anymore, resulting in an exception in case   some of
-  the files failed to upload. Adding the import back.
+    Since 5bba3ba98ed3560329a80b829154d24f5d881ad9, FileNotUploadedError
+    is not imported anymore, resulting in an exception in case
+    some of the files failed to upload. Adding the import back.
 
 * Fixed indentation. [Joshua Chan]
 
@@ -4581,104 +4725,99 @@ use it to pass supplementary info to the backend. [Joshua Chan]
 
 * Fix issue #10 - ppa:duplicity-*-git fails to install on Focal Fossa. [Kenneth Loafman]
 
-  - Set correct version requirements in debian/control.
+    - Set correct version requirements in debian/control.
 
 * Remove python-cloudfiles from suggestions. [Jairo Llopis]
 
-  This dependency cannot be installed on Python 3:
-  ```   #12 19.82   Downloading python-cloudfiles-1.7.11.tar.gz (330 kB)
-  #12 20.00     ERROR: Command errored out with exit status 1:   #12
-  20.00      command: /usr/local/bin/python -c 'import sys, setuptools,
-  tokenize; sys.argv[0] = '"'"'/tmp/pip-install-2iwvh4bp/python-
-  cloudfiles/setup.py'"'"'; __file__='"'"'/tmp/pip-
-  install-2iwvh4bp/python-cloudfiles/setup.py'"'"';f=getattr(tokenize,
-  '"'"'open'"'"', open)(__file__);code=f.read().replace('"'"'\r\n'"'"',
-  '"'"'\n'"'"');f.close();exec(compile(code, __file__, '"'"'exec'"'"'))'
-  egg_info --egg-base /tmp/pip-pip-egg-info-b1gvstfs   #12 20.00
-  cwd: /tmp/pip-install-2iwvh4bp/python-cloudfiles/   #12 20.00
-  Complete output (9 lines):   #12 20.00     Traceback (most recent call
-  last):   #12 20.00       File "<string>", line 1, in <module>   #12
-  20.00       File "/tmp/pip-install-2iwvh4bp/python-
-  cloudfiles/setup.py", line 6, in <module>   #12 20.00         from
-  cloudfiles.consts import __version__   #12 20.00       File "/tmp/pip-
-  install-2iwvh4bp/python-cloudfiles/cloudfiles/__init__.py", line 82,
-  in <module>   #12 20.00         from cloudfiles.connection     import
-  Connection, ConnectionPool   #12 20.00       File "/tmp/pip-
-  install-2iwvh4bp/python-cloudfiles/cloudfiles/connection.py", line 13,
-  in <module>   #12 20.00         from    urllib    import urlencode
-  #12 20.00     ImportError: cannot import name 'urlencode' from
-  'urllib' (/usr/local/lib/python3.8/urllib/__init__.py)   #12 20.00
-  ----------------------------------------   #12 20.00 ERROR: Command
-  errored out with exit status 1: python setup.py egg_info Check the
-  logs for full command output.   ```
-  Also, it is no longer supported. Rackspace uses `pyrax` nowadays.
-  Removing to avoid confusions.
+    This dependency cannot be installed on Python 3:
+
+    ```
+    #12 19.82   Downloading python-cloudfiles-1.7.11.tar.gz (330 kB)
+    #12 20.00     ERROR: Command errored out with exit status 1:
+    #12 20.00      command: /usr/local/bin/python -c 'import sys, setuptools, tokenize; sys.argv[0] = '"'"'/tmp/pip-install-2iwvh4bp/python-cloudfiles/setup.py'"'"'; __file__='"'"'/tmp/pip-install-2iwvh4bp/python-cloudfiles/setup.py'"'"';f=getattr(tokenize, '"'"'open'"'"', open)(__file__);code=f.read().replace('"'"'\r\n'"'"', '"'"'\n'"'"');f.close();exec(compile(code, __file__, '"'"'exec'"'"'))' egg_info --egg-base /tmp/pip-pip-egg-info-b1gvstfs
+    #12 20.00          cwd: /tmp/pip-install-2iwvh4bp/python-cloudfiles/
+    #12 20.00     Complete output (9 lines):
+    #12 20.00     Traceback (most recent call last):
+    #12 20.00       File "<string>", line 1, in <module>
+    #12 20.00       File "/tmp/pip-install-2iwvh4bp/python-cloudfiles/setup.py", line 6, in <module>
+    #12 20.00         from cloudfiles.consts import __version__
+    #12 20.00       File "/tmp/pip-install-2iwvh4bp/python-cloudfiles/cloudfiles/__init__.py", line 82, in <module>
+    #12 20.00         from cloudfiles.connection     import Connection, ConnectionPool
+    #12 20.00       File "/tmp/pip-install-2iwvh4bp/python-cloudfiles/cloudfiles/connection.py", line 13, in <module>
+    #12 20.00         from    urllib    import urlencode
+    #12 20.00     ImportError: cannot import name 'urlencode' from 'urllib' (/usr/local/lib/python3.8/urllib/__init__.py)
+    #12 20.00     ----------------------------------------
+    #12 20.00 ERROR: Command errored out with exit status 1: python setup.py egg_info Check the logs for full command output.
+    ```
+
+    Also, it is no longer supported. Rackspace uses `pyrax` nowadays. Removing to avoid confusions.
 
 * Update azure requirement. [Jairo Llopis]
 
-  Trying to install `azure` today prints this error:
-  ```   Collecting azure     Downloading azure-5.0.0.zip (4.6 kB)
-  ERROR: Command errored out with exit status 1:        command:
-  /usr/local/bin/python -c 'import sys, setuptools, tokenize;
-  sys.argv[0] = '"'"'/tmp/pip-install-gzzfb6dp/azure/setup.py'"'"';
-  __file__='"'"'/tmp/pip-install-
-  gzzfb6dp/azure/setup.py'"'"';f=getattr(tokenize, '"'"'open'"'"',
-  open)(__file__);code=f.read().replace('"'"'\r\n'"'"',
-  '"'"'\n'"'"');f.close();exec(compile(code, __file__, '"'"'exec'"'"'))'
-  egg_info --egg-base /tmp/pip-pip-egg-info-1xop0k3_            cwd:
-  /tmp/pip-install-gzzfb6dp/azure/       Complete output (24 lines):
-  Traceback (most recent call last):         File "<string>", line 1, in
-  <module>         File "/tmp/pip-install-gzzfb6dp/azure/setup.py", line
-  60, in <module>           raise RuntimeError(message)
-  RuntimeError:
-  Starting with v5.0.0, the 'azure' meta-package is deprecated and
-  cannot be installed anymore.       Please install the service specific
-  packages prefixed by `azure` needed for your application.
-  The complete list of available packages can be found at:
-  https://aka.ms/azsdk/python/all
-  Here's a non-exhaustive list of common packages:
-  -  azure-mgmt-compute (https://pypi.python.org/pypi/azure-mgmt-
-  compute) : Management of Virtual Machines, etc.       -  azure-mgmt-
-  storage (https://pypi.python.org/pypi/azure-mgmt-storage) : Management
-  of storage accounts.       -  azure-mgmt-resource
-  (https://pypi.python.org/pypi/azure-mgmt-resource) : Generic package
-  about Azure Resource Management (ARM)       -  azure-keyvault-secrets
-  (https://pypi.python.org/pypi/azure-keyvault-secrets) : Access to
-  secrets in Key Vault       -  azure-storage-blob
-  (https://pypi.python.org/pypi/azure-storage-blob) : Access to blobs in
-  storage accounts
-  A more comprehensive discussion of the rationale for this decision can
-  be found in the following issue:       https://github.com/Azure/azure-
-  sdk-for-python/issues/10646
-  ----------------------------------------   ```
-  So it's better to update this suggestion to `azure-mgmt-storage`
-  instead.
+    Trying to install `azure` today prints this error:
+
+    ```
+    Collecting azure
+      Downloading azure-5.0.0.zip (4.6 kB)
+        ERROR: Command errored out with exit status 1:
+         command: /usr/local/bin/python -c 'import sys, setuptools, tokenize; sys.argv[0] = '"'"'/tmp/pip-install-gzzfb6dp/azure/setup.py'"'"'; __file__='"'"'/tmp/pip-install-gzzfb6dp/azure/setup.py'"'"';f=getattr(tokenize, '"'"'open'"'"', open)(__file__);code=f.read().replace('"'"'\r\n'"'"', '"'"'\n'"'"');f.close();exec(compile(code, __file__, '"'"'exec'"'"'))' egg_info --egg-base /tmp/pip-pip-egg-info-1xop0k3_
+             cwd: /tmp/pip-install-gzzfb6dp/azure/
+        Complete output (24 lines):
+        Traceback (most recent call last):
+          File "<string>", line 1, in <module>
+          File "/tmp/pip-install-gzzfb6dp/azure/setup.py", line 60, in <module>
+            raise RuntimeError(message)
+        RuntimeError:
+
+        Starting with v5.0.0, the 'azure' meta-package is deprecated and cannot be installed anymore.
+        Please install the service specific packages prefixed by `azure` needed for your application.
+
+        The complete list of available packages can be found at:
+        https://aka.ms/azsdk/python/all
+
+        Here's a non-exhaustive list of common packages:
+
+        -  azure-mgmt-compute (https://pypi.python.org/pypi/azure-mgmt-compute) : Management of Virtual Machines, etc.
+        -  azure-mgmt-storage (https://pypi.python.org/pypi/azure-mgmt-storage) : Management of storage accounts.
+        -  azure-mgmt-resource (https://pypi.python.org/pypi/azure-mgmt-resource) : Generic package about Azure Resource Management (ARM)
+        -  azure-keyvault-secrets (https://pypi.python.org/pypi/azure-keyvault-secrets) : Access to secrets in Key Vault
+        -  azure-storage-blob (https://pypi.python.org/pypi/azure-storage-blob) : Access to blobs in storage accounts
+
+        A more comprehensive discussion of the rationale for this decision can be found in the following issue:
+        https://github.com/Azure/azure-sdk-for-python/issues/10646
+
+
+        ----------------------------------------
+    ```
+
+    So it's better to update this suggestion to `azure-mgmt-storage` instead.
 
 * Fix bug #1211481 with merge from Raffaele Di Campli. [Kenneth Loafman]
 
-  - Ignores the uid/gid from the archive and keeps the current user's
-  one.     - Recommended for restoring data to mounted filesystem which
-  do not       support Unix ownership or when root privileges are not
-  available.
+    - Ignores the uid/gid from the archive and keeps the current user's
+    one.
+      - Recommended for restoring data to mounted filesystem which do not
+        support Unix ownership or when root privileges are not available.
 
 * Added `--do-not-restore-ownership` option. [Jacotsu]
 
-  Ignores the uid/gid from the archive and keeps the current user's one.
-  Recommended for restoring data to mounted filesystem which do not
-  support Unix ownership or when root privileges are not available.
-  Solves launchpad bug #1211481
+    Ignores the uid/gid from the archive and keeps the current user's one.
+    Recommended for restoring data to mounted filesystem which do not
+    support Unix ownership or when root privileges are not available.
+
+    Solves launchpad bug #1211481
 
 * Fix bug #1887689 with patch from Matthew Barry. [Kenneth Loafman]
 
-  - Cleanup with Paramiko backend does not remove files due to missing
-  filename byte decoding
+    - Cleanup with Paramiko backend does not remove files due to missing
+        filename byte decoding
 
 * Bump version for LP build. [Kenneth Loafman]
 
 * Fix check for s3 glacier/deep. [Michael Terry]
 
-  This allows encryption validation to continue to work outside of
-  those s3 glacier/deep scenarios.
+    This allows encryption validation to continue to work outside of
+    those s3 glacier/deep scenarios.
 
 * Change from push to upload. [Kenneth Loafman]
 
@@ -4720,7 +4859,7 @@ use it to pass supplementary info to the backend. [Joshua Chan]
 
 * Support PyDrive2 library in the pydrive backend. [Jindrich Makovicka]
 
-  Unlike PyDrive, the PyDrive2 fork is actively maintained.
+    Unlike PyDrive, the PyDrive2 fork is actively maintained.
 
 * Tidy .gitlab-ci.yml, fix py3.5 test, add py2.7 test (allowed to fail) [Aaron Whitehouse]
 
@@ -4778,44 +4917,51 @@ more-itertools are incompatible with python 2. [Aaron Whitehouse]
 
 * Patched in a megav2backend.py to update to MEGAcmd tools. [Kenneth Loafman]
 
-  - Author: Jose L. Domingo Lopez <github@24x7linux.com>     - Man
-  pages, docs, etc. were included.
+    - Author: Jose L. Domingo Lopez <github@24x7linux.com>
+      - Man pages, docs, etc. were included.
 
 * Change log.Warning to log.Warn.  Whoops! [Kenneth Loafman]
 
 * Fixed bug #1875937 - validate\_encryption\_settings() fails w/S3
 glacier. [Kenneth Loafman]
 
-  - Skip validation with a warning if S3 glacier or deep storage
-  specified
+    - Skip validation with a warning if S3 glacier or deep storage
+    specified
 
 * Restore commented our backend requirements. [Kenneth Loafman]
 
 * Fixes for rclonebackend from Francesco Magno (original author) [Kenneth Loafman]
 
-  - copy command has been replaced with copyto, that is a specialized
-  version for single file operation. Performance-wise, we don't have
-  to include a single file in the local side directory, and we don't
-  have to list all the files in the remote to check what to
-  syncronize.       Additionally, we don't have to mess up with renaming
-  because the       copy command didn't support changing filename during
-  transfer       (because was oriented to transfer whole directories).
-  - delete command has been replaced with deletefile. Same here, we
-  have a specialized command for single file operation. Much more
-  efficient.     - ls command has been replaced with lsf, that is a
-  specialized version       that returns only filenames. Since duplicity
-  needs only those, less       bytes to transfer, and less parsing to
-  do.     - lastly, I have reintroduced a custom subprocess function
-  because the   one       inherithed from base class is checked, and
-  throws an exception in   case of       non zero return code. The ls
-  command family returns a non zero value   if       the directory does
-  not exist in the remote, so starting a new backup       in a non
-  existent directory is impossible at the moment because ls   fails
-  repeatedly until duplicity gives up. This is a bug in the current
-  implementation.       There is the same problem (but less severe) in
-  _get method, using   the default       self.subprocess_popen a non
-  zero return code will throw an exception   before we       can cleanup
-  the partially downloaded file, if any.
+    - copy command has been replaced with copyto, that is a specialized
+        version for single file operation. Performance-wise, we don't have
+        to include a single file in the local side directory, and we don't
+        have to list all the files in the remote to check what to
+    syncronize.
+        Additionally, we don't have to mess up with renaming because the
+        copy command didn't support changing filename during transfer
+        (because was oriented to transfer whole directories).
+      - delete command has been replaced with deletefile. Same here, we
+        have a specialized command for single file operation. Much more
+    efficient.
+      - ls command has been replaced with lsf, that is a specialized version
+        that returns only filenames. Since duplicity needs only those, less
+        bytes to transfer, and less parsing to do.
+      - lastly, I have reintroduced a custom subprocess function because the
+    one
+        inherithed from base class is checked, and throws an exception in
+    case of
+        non zero return code. The ls command family returns a non zero value
+    if
+        the directory does not exist in the remote, so starting a new backup
+        in a non existent directory is impossible at the moment because ls
+    fails
+        repeatedly until duplicity gives up. This is a bug in the current
+    implementation.
+        There is the same problem (but less severe) in _get method, using
+    the default
+        self.subprocess_popen a non zero return code will throw an exception
+    before we
+        can cleanup the partially downloaded file, if any.
 
 * Version man pages during setup.py install. [Kenneth Loafman]
 
@@ -5293,8 +5439,7 @@ integer division. [kenneth@loafman.com]
 * In version 1 of the B2sdk, the list\_file\_names method is removed
 from the B2Bucket class. [Adam Jacobs]
 
-  This change makes the b2 backend backwards-compatible with the old
-  version 0 AND forward-compatible with the new version 1.
+    This change makes the b2 backend backwards-compatible with the old version 0 AND forward-compatible with the new version 1.
 
 * Complete fix for string concatenation in b2 backend. [Adam Jacobs]
 
@@ -5510,25 +5655,31 @@ failing on Docker and Launchpad testing. [kenneth@loafman.com]
 
 * Optimize loading backup chains; reduce file\_naming.parse calls. [Matthew Glazar]
 
-  For each filename in filename_list,
-  CollectionsStatus.get_backup_chains calls file_naming.parse   (through
-  BackupSet.add_filename) between 0 and len(sets)*2   times. In the
-  worst case, this leads to a *ton* of redundant   calls to
-  file_naming.parse.
-  For example, when running 'duplicity collection-status' on   one of my
-  backup directories:
-  * filename_list contains 7545 files   * get_backup_chains creates 2515
-  BackupSet-s   * get_backup_chains calls file_naming.parse 12650450
-  times!
-  This command took 9 minutes and 32 seconds. Similar   commands, like
-  no-op incremental backups, also take a long   time. (The directory
-  being backed up contains only 9 MiB   across 30 files.)
-  Avoid many redundant calls to file_naming.parse by hoisting   the call
-  outside the loop over BackupSet-s. This   optimization makes
-  'duplicity collection-status' *20 times   faster* for me (572 seconds
-  -> 29 seconds).
-  Aside from improving performance, this commit should not   change
-  behavior.
+    For each filename in filename_list,
+    CollectionsStatus.get_backup_chains calls file_naming.parse
+    (through BackupSet.add_filename) between 0 and len(sets)*2
+    times. In the worst case, this leads to a *ton* of redundant
+    calls to file_naming.parse.
+
+    For example, when running 'duplicity collection-status' on
+    one of my backup directories:
+
+    * filename_list contains 7545 files
+    * get_backup_chains creates 2515 BackupSet-s
+    * get_backup_chains calls file_naming.parse 12650450 times!
+
+    This command took 9 minutes and 32 seconds. Similar
+    commands, like no-op incremental backups, also take a long
+    time. (The directory being backed up contains only 9 MiB
+    across 30 files.)
+
+    Avoid many redundant calls to file_naming.parse by hoisting
+    the call outside the loop over BackupSet-s. This
+    optimization makes 'duplicity collection-status' *20 times
+    faster* for me (572 seconds -> 29 seconds).
+
+    Aside from improving performance, this commit should not
+    change behavior.
 
 * Correct types for os.join in Dropbox backend. [Gwyn Ciesla]
 
@@ -5618,8 +5769,8 @@ to use /usr/bin/python instead of python2. [kenneth@loafman.com]
 
 * Fix Azure backend for python 3. [Frank Fischer]
 
-  By definition, the list of keys from "list" is byte-formatted.   As
-  such we have to decode the parameter offered to "get"
+    By definition, the list of keys from "list" is byte-formatted.
+    As such we have to decode the parameter offered to "get"
 
 * Fixed bug #1831178 sequence item 0: expected str instance, int found
 - Simply converted int to str when making list. [kenneth@loafman.com]
@@ -5636,7 +5787,7 @@ The new     import fail is "from future import standard\_library" [kenneth@loafm
 
 * Have uexc to always return a string. [Michael Terry]
 
-  This fixes unhandled exception reporting
+    This fixes unhandled exception reporting
 
 * Add requirements for python-gettext. [kenneth@loafman.com]
 
@@ -5644,40 +5795,44 @@ The new     import fail is "from future import standard\_library" [kenneth@loafm
 
 * Remove unnecessary sleeping after running backups in tests. [Matthew Glazar]
 
-  ptyprocess' 'PtyProcess.close' function [1] closes the   terminal,
-  then terminates the process if it's still alive.   Before checking if
-  the process is alive, ptyprocess   unconditionally sleeps for 100
-  milliseconds [2][3].
-  In 'run_duplicity', after we call 'child.wait()', we know   that the
-  process is no longer alive. ptyprocess' 100 ms   sleep just slows down
-  tests. Tell ptyprocess to not sleep.
-  [1] pexpect uses ptyprocess. 'PtyProcess.close' is called by
-  'PtyProcess.__del__', so 'PtyProcess.close' is called       when
-  'run_duplicity' returns.   [1] https://github.com/pexpect/ptyprocess/b
-  lob/3931cd45db50ee8533b8b0fef424b8d75f7ba1c2/ptyprocess/ptyprocess.py#
-  L403   [2] https://github.com/pexpect/ptyprocess/blob/3931cd45db50ee85
-  33b8b0fef424b8d75f7ba1c2/ptyprocess/ptyprocess.py#L173
+    ptyprocess' 'PtyProcess.close' function [1] closes the
+    terminal, then terminates the process if it's still alive.
+    Before checking if the process is alive, ptyprocess
+    unconditionally sleeps for 100 milliseconds [2][3].
+
+    In 'run_duplicity', after we call 'child.wait()', we know
+    that the process is no longer alive. ptyprocess' 100 ms
+    sleep just slows down tests. Tell ptyprocess to not sleep.
+
+    [1] pexpect uses ptyprocess. 'PtyProcess.close' is called by
+        'PtyProcess.__del__', so 'PtyProcess.close' is called
+        when 'run_duplicity' returns.
+    [1] https://github.com/pexpect/ptyprocess/blob/3931cd45db50ee8533b8b0fef424b8d75f7ba1c2/ptyprocess/ptyprocess.py#L403
+    [2] https://github.com/pexpect/ptyprocess/blob/3931cd45db50ee8533b8b0fef424b8d75f7ba1c2/ptyprocess/ptyprocess.py#L173
 
 * Minimize time spent sleeping between backups. [Matthew Glazar]
 
-  During testing, if a backup completes at time 10:49:30.621,   the next
-  call to 'backup' sleeps to ensure the new backup   has a different
-  integer time stamp (10:49:31). Currently,   'backup' sleeps for an
-  entire second, even though the next   integer time stamp is less than
-  half a second away (0.379   seconds). This extra sleeping causes tests
-  to take longer   than they need to.
-  Make tests run faster by sleeping only enough to reach the   next
-  integer time stamp.
+    During testing, if a backup completes at time 10:49:30.621,
+    the next call to 'backup' sleeps to ensure the new backup
+    has a different integer time stamp (10:49:31). Currently,
+    'backup' sleeps for an entire second, even though the next
+    integer time stamp is less than half a second away (0.379
+    seconds). This extra sleeping causes tests to take longer
+    than they need to.
+
+    Make tests run faster by sleeping only enough to reach the
+    next integer time stamp.
 
 * Ensure all duplicity output is captured in tests. [Matthew Glazar]
 
-  The loop in 'run_duplicity' which captures output has a race
-  condition. If duplicity writes output then exits before
-  'child.isalive()' is called, then 'run_duplicity' exits the   loop
-  before calling 'child.readline()'. This means that some   output is
-  not read into the 'lines' list.
-  Fix this race condition by reading all output until EOF,   then
-  waiting for the child to exit.
+    The loop in 'run_duplicity' which captures output has a race
+    condition. If duplicity writes output then exits before
+    'child.isalive()' is called, then 'run_duplicity' exits the
+    loop before calling 'child.readline()'. This means that some
+    output is not read into the 'lines' list.
+
+    Fix this race condition by reading all output until EOF,
+    then waiting for the child to exit.
 
 * Fix TestGlobToRegex.test\_glob\_to\_regex for py3.6 and above   - see
 https://bugs.python.org/issue29995 for details. [kenneth@loafman.com]
@@ -5698,8 +5853,8 @@ been deprecated in 2, removed in 3.7. [kenneth@loafman.com]
 
 * Sync: handle parsed filenames without start/end times. [Mike Gorse]
 
-  Signatures set time, rather than start_time and end_time, so
-  comparisons   against the latter generate an exception on Python 3.
+    Signatures set time, rather than start_time and end_time, so comparisons
+    against the latter generate an exception on Python 3.
 
 * More PEP 479 fixes. [Mike Gorse]
 
@@ -5748,7 +5903,7 @@ was throwing an error and does not seem to be needed. [Aaron A Whitehouse]
 
 * Attempt to port sx backend to python 3. [Mike Gorse]
 
-  Untested, but likely needed changes similar to some other backends.
+    Untested, but likely needed changes similar to some other backends.
 
 * Rsync: py3 fixes. [Mike Gorse]
 
@@ -5758,9 +5913,9 @@ was throwing an error and does not seem to be needed. [Aaron A Whitehouse]
 
 * Fix sync\_archive on python 3. [Mike Gorse]
 
-  The recognized suffixes were being stored as unicode, but they were
-  being   compared against filenames that are stored as bytes, so the
-  comparisons   were failing.
+    The recognized suffixes were being stored as unicode, but they were being
+    compared against filenames that are stored as bytes, so the comparisons
+    were failing.
 
 * Ssh\_pexpect: py3 fixes. [Mike Gorse]
 
@@ -5775,14 +5930,14 @@ end of imports. [kenneth@loafman.com]
 
 * Return temporary filenames as bytes. [Mike Gorse]
 
-  We should be consistent in terms of the class used for filenames.
-  Fixes warnings about forgetting unknown tempfiles.
+    We should be consistent in terms of the class used for filenames.
+      Fixes warnings about forgetting unknown tempfiles.
 
 * Modify some generators to return when finished. [Mike Gorse]
 
-  Per PEP 479, the proper way to terminate a generator is to return,
-  rather   than throwing StopIteration.   Fixes a traceback on Python 3
-  where RuntimeError is raised.
+    Per PEP 479, the proper way to terminate a generator is to return, rather
+    than throwing StopIteration.
+    Fixes a traceback on Python 3 where RuntimeError is raised.
 
 * Bug #1813214 was marked fixed in 0.7.13.  There were still a couple of
 copy.com references remaining in the docs and web.  Got those nuked,
@@ -5808,8 +5963,7 @@ them from/to disk to/from the remote endpoint. [Maurus Cuelenaere]
 
 * Tox: Target py3, rather than py36. [Mike Gorse]
 
-  This should make tox accept versions of python 3 other than 3.6 (ie,
-  3.7).
+    This should make tox accept versions of python 3 other than 3.6 (ie, 3.7).
 
 * \_librsyncmodule.c: Use s in format parameters again under python 2. [Mike Gorse]
 
@@ -5820,13 +5974,13 @@ collections module. [Mike Gorse]
 
 * First pass at a python 3 port. [Mike Gorse]
 
-  Futurized, adjusted some string adornments, added py36 to tox, etc.
+    Futurized, adjusted some string adornments, added py36 to tox, etc.
 
 * Tox: pass LC\_CTYPE. [Mike Gorse]
 
-  Without this, LC_CTYPE is unset in the test environment. If it is
-  unset and   LANG is also unset, then sys.getfilesystemencoding() will
-  return "ascii" or   something similar.
+    Without this, LC_CTYPE is unset in the test environment. If it is unset and
+    LANG is also unset, then sys.getfilesystemencoding() will return "ascii" or
+    something similar.
 
 * Fixed but #1797797 with patch from Bas Hulsken   - use bytes instead
 of unicode for '/' in filenames. [Kenneth Loafman]
@@ -5853,7 +6007,7 @@ tbd. [Mike Gorse]
 
 * Unicode fixes. [Mike Gorse]
 
-  All tests pass now
+    All tests pass now
 
 * Make files executable. [kenneth@loafman.com]
 
@@ -6026,11 +6180,12 @@ the list of fsencodings that globals.fsencode treats as probably UTF-8. [Aaron A
 
 * Dpbxbackend: fix small files upload (API change) [Eugene Crosser]
 
-  Dropbox file upload API for small files (that do not requre chunking)
-  changed as described here:
-  https://github.com/dropbox/dropbox-sdk-python/releases/tag/v7.1.0
-  Now a data blob needs to be passed to the API instead of a file
-  object.
+    Dropbox file upload API for small files (that do not requre chunking)
+    changed as described here:
+
+    https://github.com/dropbox/dropbox-sdk-python/releases/tag/v7.1.0
+
+    Now a data blob needs to be passed to the API instead of a file object.
 
 * Dpbxbackend: check for specific API error for missing folder. [crosser@average.org]
 
@@ -6112,18 +6267,16 @@ already used rstrip('/') so change to just strip('/') [Kenneth Loafman]
 
 * 2017-08-31  Kenneth Loafman  <kenneth@loafman.com> [Kenneth Loafman]
 
-  Fixed bug #1538333 Assertion error in manifest.py: assert filecount ==
-  ...         - Made sure to never pass .part files as true manifest
-  files         - Changed assert to log.Error to warn about
-  truncated/corrupt filelist         - Added unit test to make sure
-  detection works         - Note: while this condition is serious, it
-  will not affect the basic backup and restore           functions.
-  Interactive options like --list-files-changed and --file-changed will
-  not           work correctly for this backup set, so it is advised to
-  run a full backup as soon as           possible after this error
-  occurs.       * Fixed bug #1638033 Remove leading slash on --file-to-
-  restore         - code already used rstrip('/') so change to just
-  strip('/')
+    Fixed bug #1538333 Assertion error in manifest.py: assert filecount == ...
+          - Made sure to never pass .part files as true manifest files
+          - Changed assert to log.Error to warn about truncated/corrupt filelist
+          - Added unit test to make sure detection works
+          - Note: while this condition is serious, it will not affect the basic backup and restore
+            functions.  Interactive options like --list-files-changed and --file-changed will not
+            work correctly for this backup set, so it is advised to run a full backup as soon as
+            possible after this error occurs.
+        * Fixed bug #1638033 Remove leading slash on --file-to-restore
+          - code already used rstrip('/') so change to just strip('/')
 
 * Fixed bug #1394386 with new module megabackend.py from Tomas Vondra
 - uses megatools from https://megatools.megous.com/ instead of mega.py
@@ -6374,24 +6527,28 @@ when trying to do unattended / fully automatic backups. [ken]
 
 * GPG: enable truly non-interactive operation with gpg2. [Martin Wilck]
 
-  GPG always tries to grab a passphrase from the gpg agent, even   if is
-  run with "--batch --no-tty" (as enforced by the   meta_interactive = 0
-  setting of gpginterface.py).
-  Sometimes this behavior is not intended. I would like to be able   to
-  run a backup job truly interactively. This would be possible,   but
-  duplicity's check_manifests() function calls gpg to compare   the
-  remote (encrypted) and local manifest, which, with gpg2,   will pop up
-  the gpg agent pinentry every time I try to save backup   (with gpg1,
-  duplicity will just give up on the verification).
-  I found that it's possible to force gpg2 to behave like gpg1 by
-  using the command line option "--pinentry-mode=cancel". My patch
-  applies this option if duplicity's "--use-agent" option is unset.
-  Now, even with gpg2, backups can be saved without any passphrase
-  dialog, at the cost of not being able to verify the manifests. Users
-  who want the verification would just need to use "--use-agent", as
-  with gpg1.
-  For restore, this change has no effect, as duplicity will ask for the
-  passphrase anyway if "--use-agent" is not specirfied.
+    GPG always tries to grab a passphrase from the gpg agent, even
+    if is run with "--batch --no-tty" (as enforced by the
+    meta_interactive = 0 setting of gpginterface.py).
+
+    Sometimes this behavior is not intended. I would like to be able
+    to run a backup job truly interactively. This would be possible,
+    but duplicity's check_manifests() function calls gpg to compare
+    the remote (encrypted) and local manifest, which, with gpg2,
+    will pop up the gpg agent pinentry every time I try to save backup
+    (with gpg1, duplicity will just give up on the verification).
+
+    I found that it's possible to force gpg2 to behave like gpg1 by
+    using the command line option "--pinentry-mode=cancel". My patch
+    applies this option if duplicity's "--use-agent" option is unset.
+
+    Now, even with gpg2, backups can be saved without any passphrase
+    dialog, at the cost of not being able to verify the manifests. Users
+    who want the verification would just need to use "--use-agent", as
+    with gpg1.
+
+    For restore, this change has no effect, as duplicity will ask for the
+    passphrase anyway if "--use-agent" is not specirfied.
 
 * Fixed bug #1623342 with patch from Daniel Jakots   - failing test on
 OpenBSD because tar/gtar not found. [Kenneth Loafman]
@@ -6422,42 +6579,38 @@ https://code.launchpad.net/\~mwilck/duplicity/0.7-series/+merge/301492
 
 * Fix unit test failures for {Old,Short}FilenamesFinalTest. [Martin Wilck]
 
-  These unit test fail because of the following tricky series of events:
-  1. duplicity is started with setsid(1). The setsid process forks
-  duplicity      and terminates   2. duplicity prints a warning about
-  depracated option (--old-filenames,      --short-filenames) before
-  asking for the passphrase. This causes pexpect      to call
-  os.waitpid(self.pid) but self.pid is the PID of the setsid(1)
-  process which has already terminated.   3. pexpect quits the expect
-  loop for the passphrase with EOF.
-  The problem can be solved by using the -w flag for sedsid (wait for
-  child),   so that the setsid process won't exit before duplicity
-  itself.
+    These unit test fail because of the following tricky series of events:
+
+    1. duplicity is started with setsid(1). The setsid process forks duplicity
+       and terminates
+    2. duplicity prints a warning about depracated option (--old-filenames,
+       --short-filenames) before asking for the passphrase. This causes pexpect
+       to call os.waitpid(self.pid) but self.pid is the PID of the setsid(1)
+       process which has already terminated.
+    3. pexpect quits the expect loop for the passphrase with EOF.
+
+    The problem can be solved by using the -w flag for sedsid (wait for child),
+    so that the setsid process won't exit before duplicity itself.
 
 * Fix failures of unit tests with --hidden-encrypt-key. [Martin Wilck]
 
-  On distributions that don't have genuine gpg 1.x any more (gpg is a
-  symlink   to gpg2), such as OpenSUSE Factory, the tests with --hidden-
-  encrypt-key fail   without the gpg option --try-all-secrets.
-  Not even that will help for gpg2 2.1.13 which has a bug preventing
-  --try-all-secrets from working correctly
-  (https://bugs.gnupg.org/gnupg/issue1985).
+    On distributions that don't have genuine gpg 1.x any more (gpg is a symlink
+    to gpg2), such as OpenSUSE Factory, the tests with --hidden-encrypt-key fail
+    without the gpg option --try-all-secrets.
+
+    Not even that will help for gpg2 2.1.13 which has a bug preventing
+    --try-all-secrets from working correctly
+    (https://bugs.gnupg.org/gnupg/issue1985).
 
 * Selection.py: use closure for matching paths with glob expressions. [Martin Wilck]
 
-  (merged from lp:~mwilck/duplicity/duplicity)
-  Glob matching in current duplicity uses a selector function that calls
-  path_matches_glob(). This means that whenever a filename is matched,
-  path_matches_glob() goes through the process of transforming a glob
-  expression into regular expressions for filename and directory
-  matching.
-  My proposed patches create a closure function instead that uses
-  precalculated regular expressions; the regular expressions are thus
-  constructed only once at initialization time.
-  This change speeds up duplicity a *lot* when complex include/exclude
-  lists are in use: for my use case (dry-run, backup of an SSD
-  filesystem), the speedup is a factor of 25 (runtime: 4s rather than
-  90s).
+    (merged from lp:~mwilck/duplicity/duplicity)
+
+    Glob matching in current duplicity uses a selector function that calls path_matches_glob(). This means that whenever a filename is matched, path_matches_glob() goes through the process of transforming a glob expression into regular expressions for filename and directory matching.
+
+    My proposed patches create a closure function instead that uses precalculated regular expressions; the regular expressions are thus constructed only once at initialization time.
+
+    This change speeds up duplicity a *lot* when complex include/exclude lists are in use: for my use case (dry-run, backup of an SSD filesystem), the speedup is a factor of 25 (runtime: 4s rather than 90s).
 
 * Fixed PEP8 and 2to3 issues. [Kenneth Loafman]
 
@@ -6467,8 +6620,7 @@ https://code.launchpad.net/\~mwilck/duplicity/0.7-series/+merge/301492
 
 * Add integration test for newly added replicate command. [Martin Nowak]
 
-  - also see
-  https://code.launchpad.net/~dawgfoto/duplicity/replicate/+merge/322836
+    - also see https://code.launchpad.net/~dawgfoto/duplicity/replicate/+merge/322836
 
 * Fixed problem in dist/makedist when building on Mac where AppleDouble
 files were being created in the tarball.  See:
@@ -6605,9 +6757,9 @@ defaults of the     Azure storage library will continue to be used. [Kenneth Loa
 
 * Add command line arguments to fine-tune the Azure backend. [Bjoern Meier]
 
-  Using the default values for internal block sizes and connection
-  numbers works well for small back-ups, but provides suboptimal
-  performance for larger ones.
+    Using the default values for internal block sizes and connection
+    numbers works well for small back-ups, but provides suboptimal
+    performance for larger ones.
 
 * Delete tempfiles as soon as possible. [Martin Nowak]
 
@@ -6763,15 +6915,15 @@ Temporarily add ignores to allow these tests to pass. [Aaron A Whitehouse]
 
 * Add support for Shared Access Signatures to the Azure backend. [Matthias Bach]
 
-  Authenticating to the Azure storage via the account is suboptimal as
-  it   grants the process full administrative permissions on the storage
-  account. Usage of a shared access signature allows to pass only the
-  minimal permissions on a single container to Duplicity. This makes it
-  much more sutable for automated usage, e.g. in cron jobs.
+    Authenticating to the Azure storage via the account is suboptimal as it
+    grants the process full administrative permissions on the storage
+    account. Usage of a shared access signature allows to pass only the
+    minimal permissions on a single container to Duplicity. This makes it
+    much more sutable for automated usage, e.g. in cron jobs.
 
 * Fix backup creation using azure-storage > 0.30.0. [Matthias Bach]
 
-  The previous fix only fixed restore and verification of backups.
+    The previous fix only fixed restore and verification of backups.
 
 * Make the Azure backend compatible with azure-storage 0.30.0 and up. [Matthias Bach]
 
@@ -6868,11 +7020,10 @@ included. [Kenneth Loafman]
 
 * Add flag to copy target of symlinks rather than the link. [root]
 
-  This allows us to dereference and include what symlinks point to in
-  our backup.   I named the argument --copy-links. This is the name
-  rsync gives to a similar   flag. There is a bug requesting this
-  feature on launchpad, 721599:
-  https://bugs.launchpad.net/duplicity/+bug/721599
+    This allows us to dereference and include what symlinks point to in our backup.
+    I named the argument --copy-links. This is the name rsync gives to a similar
+    flag. There is a bug requesting this feature on launchpad, 721599:
+    https://bugs.launchpad.net/duplicity/+bug/721599
 
 * Merged in lp:\~ed.so/duplicity/manpage.fixes   - Fix html output via
 rman on the website. [Kenneth Loafman]
@@ -6994,15 +7145,14 @@ https://code.launchpad.net/\~mwilck/duplicity/0.7-series/+merge/301492
 * Selection.py: glob\_get\_normal\_sf: use closure
 path\_matches\_glob\_fn. [Martin Wilck]
 
-  Use the closure function for checking paths rather than
-  path_matches_glob().
+    Use the closure function for checking paths rather than path_matches_glob().
 
 * Globmatch: path\_matches\_glob\_fn: return closure for path match. [Martin Wilck]
 
-  path_matches_glob() re-calculates the regular expressions for   path
-  matching in every match operation. This is highly inefficient.
-  Return a closure with pre-calculated REs instead which can be used
-  for path matching later.
+    path_matches_glob() re-calculates the regular expressions for
+    path matching in every match operation. This is highly inefficient.
+    Return a closure with pre-calculated REs instead which can be used
+    for path matching later.
 
 * Revert log.Error to log.Warn, as it was prior to the merge in rev
 1224, as this was affecting other applications (deja dup). [Aaron A Whitehouse]
@@ -7077,12 +7227,12 @@ upload small files using non-chunked api. [ken]
 
 * Adds prefix support to swift backend. [Ghozlane TOUMI]
 
-  Right now duplicity's swift backend only accept a container as target
-  (swift://container)   trying to use a prefix / pseudo folder
-  (swift://container/backup/path ) results in a JSON exception.
-  This patch adds the abiliy to use path in the swift backend, in order
-  to have multiple backups to the same container neatly organized.
-  It borrows some code from the S3 backend, and is quite unobtrusive .
+    Right now duplicity's swift backend only accept a container as target (swift://container)
+    trying to use a prefix / pseudo folder (swift://container/backup/path ) results in a JSON exception.
+
+    This patch adds the abiliy to use path in the swift backend, in order to have multiple backups to the same container neatly organized.
+
+    It borrows some code from the S3 backend, and is quite unobtrusive .
 
 * Fix typo in error handling code. [Scott McKenzie]
 
@@ -7158,12 +7308,15 @@ rather than local directory.  Fixes bug #1548080. [Kenneth Loafman]
 
 * Use built-in username/password support in backends.py. [Roman Yepishev]
 
-  Backend is no longer reading environment variables.
-  MEDIAFIRE_EMAIL ->
-  mf://duplicity%40example.com@mediafire.com/some_path
-  MEDIAFIRE_PASSWORD ->      provided via command line via
-  get_password() or      FTP_PASSWORD env var or
-  mf://duplicity%40example.com:some%20password@mediafire.com/some_path
+    Backend is no longer reading environment variables.
+
+    MEDIAFIRE_EMAIL ->
+       mf://duplicity%40example.com@mediafire.com/some_path
+
+    MEDIAFIRE_PASSWORD ->
+       provided via command line via get_password() or
+       FTP_PASSWORD env var or
+       mf://duplicity%40example.com:some%20password@mediafire.com/some_path
 
 * Remove custom logging, add usage info. [Roman Yepishev]
 
@@ -7171,9 +7324,9 @@ rather than local directory.  Fixes bug #1548080. [Kenneth Loafman]
 
 * Use upload session context manager. [Roman Yepishev]
 
-  This context manager allocates an action token that replaces
-  session/signature during uploads. This avoids signature check
-  failure if an upload operation needs to be retried.
+    This context manager allocates an action token that replaces
+    session/signature during uploads. This avoids signature check
+    failure if an upload operation needs to be retried.
 
 * Allow importing module, but fail on init. [Roman Yepishev]
 
@@ -7385,27 +7538,29 @@ file placement of this one file (deleted automatically on close). [Kenneth Loafm
 
 * Add an ID cache to the PyDrive backend. [Bruce Merry]
 
-  This is an in-memory cache mapping filenames to object IDs. This
-  potentially   speeds up searching for a filename (although there is
-  some cost to validate the   cache on each use). It also ensures that
-  running _query immediately after _put   will find the file, even if
-  the server doesn't have list-after-write   consistency (Google Cloud
-  Storage doesn't, but I can't find any info on Drive).
-  There are also a number of other improvements:   - Putting a file with
-  a filename that already exists will replace the file     in-place,
-  instead of creating a new file with identical filename (which
-  Google Drive allows).   - id_by_name now does a targeted search for
-  just the filename, instead of     iterating over a complete directory
-  listing.   - Added _error_code to map 404 errors to backend_not_found
-  - Files in the trash are excluded from listings   - Print a warning
-  when trying to delete a file that doesn't exist.
-  This should fix cases where duplicate filenames are created, but it
-  doesn't yet   deal explicitly with cases where they already exist
-  (it's untested).
-  There is also a race condition where if a file is externally deleted
-  during   _delete, it will raise an exception (which is mapped to
-  backend_not_found).   That is probably acceptable behaviour, but the
-  behaviour really ought to be   consistent.
+    This is an in-memory cache mapping filenames to object IDs. This potentially
+    speeds up searching for a filename (although there is some cost to validate the
+    cache on each use). It also ensures that running _query immediately after _put
+    will find the file, even if the server doesn't have list-after-write
+    consistency (Google Cloud Storage doesn't, but I can't find any info on Drive).
+
+    There are also a number of other improvements:
+    - Putting a file with a filename that already exists will replace the file
+      in-place, instead of creating a new file with identical filename (which
+      Google Drive allows).
+    - id_by_name now does a targeted search for just the filename, instead of
+      iterating over a complete directory listing.
+    - Added _error_code to map 404 errors to backend_not_found
+    - Files in the trash are excluded from listings
+    - Print a warning when trying to delete a file that doesn't exist.
+
+    This should fix cases where duplicate filenames are created, but it doesn't yet
+    deal explicitly with cases where they already exist (it's untested).
+
+    There is also a race condition where if a file is externally deleted during
+    _delete, it will raise an exception (which is mapped to backend_not_found).
+    That is probably acceptable behaviour, but the behaviour really ought to be
+    consistent.
 
 * Par2 backend remove par2 files. [Germar]
 
@@ -7735,15 +7890,15 @@ expected failure so as not to cause the test suite to fail. [Aaron Whitehouse]
 
 * Modified:   duplicity/backends/azurebackend.py. [Scott McKenzie]
 
-  Added _error_code method.
+    Added _error_code method.
 
 * Modified:   duplicity/backends/azurebackend.py. [Scott McKenzie]
 
-  Added _query method.
+    Added _query method.
 
 * Modified:   bin/duplicity.1   duplicity/commandline.py. [Scott McKenzie]
 
-  Added man page and help entry for Azure backend.
+    Added man page and help entry for Azure backend.
 
 * Added:   duplicity/backends/azurebackend.py. [Scott McKenzie]
 
@@ -7962,14 +8117,13 @@ uploaded volumes. [ede]
 
 * CopyComBackend: implement \_query method. [Marco Trevisan (Treviño)]
 
-  Now the backend should be pretty complete
+    Now the backend should be pretty complete
 
 * CopyComBackend: disable the \_delete\_list support, it won't work if a
 file doesn't exist. [Marco Trevisan (Treviño)]
 
-  If a file in list does not exist, the Copy server will stop deleting
-  the subsequent stuff,   raising an error and making test_delete_list
-  to fail.
+    If a file in list does not exist, the Copy server will stop deleting the subsequent stuff,
+    raising an error and making test_delete_list to fail.
 
 * CopyComBackend: add ability to delete list of files. [Marco Trevisan (Treviño)]
 
@@ -8283,10 +8437,12 @@ log it and continue. [Michael Terry]
 
 * Adding Mega backend for mega.co.nz. [Christian]
 
-  this code is based on gdocsbackend.py
-  it requires either   https://github.com/ckornacker/mega.py.git   or
-  (changes not yet pulled)
-  https://github.com/richardasaurus/mega.py.git
+    this code is based on gdocsbackend.py
+
+    it requires either
+    https://github.com/ckornacker/mega.py.git
+    or (changes not yet pulled)
+    https://github.com/richardasaurus/mega.py.git
 
 * Add documentation for GCS to duplicity.1. [Lee Verberne]
 
@@ -8297,9 +8453,8 @@ only) [Lee Verberne]
 
 * Explicitly set umask in test\_tarfile.py. [Lee Verberne]
 
-  tar honors umasks which causes the unittest to fail if a more
-  restrictive mask   (e.g. 027) is set.  This change sets umask
-  explicitly.
+    tar honors umasks which causes the unittest to fail if a more restrictive mask
+    (e.g. 027) is set.  This change sets umask explicitly.
 
 * Adds doc. [Matthieu Huin]
 
@@ -8413,10 +8568,10 @@ send.     This is a forecast based on gathered evidence. [Juan A. Moya Vicén]
 * Paramiko backend, delete(): Terminate when all files have been deleted
 successfully. [Tilman Blumenbach]
 
-  Previously, delete() would delete the entire list of files (as
-  expected) and   then *always* go into its "retry on error" loop, i. e.
-  it would try to delete   the (now non-existant) files _again_, which
-  obviously always caused it to fail   eventually.
+    Previously, delete() would delete the entire list of files (as expected) and
+    then *always* go into its "retry on error" loop, i. e. it would try to delete
+    the (now non-existant) files _again_, which obviously always caused it to fail
+    eventually.
 
 * Make the Paramiko backend work with Paramiko 1.10.0. [Tilman Blumenbach]
 
@@ -8508,15 +8663,17 @@ gpg.py patch to use 64k block size so unit test passes. [Kenneth Loafman]
 
 * Fix "not bytearray" prevents PUT with python 2.6. [ede]
 
-  conn.request(method, request_uri, body, headers)     File
-  "/usr/lib/python2.6/httplib.py", line 914, in request
-  self._send_request(method, url, body, headers)     File
-  "/usr/lib/python2.6/httplib.py", line 954, in _send_request
-  self.send(body)     File "/usr/lib/python2.6/httplib.py", line 759, in
-  send       self.sock.sendall(str)     File
-  "/usr/lib/python2.6/ssl.py", line 203, in sendall       v =
-  self.send(data[count:])     File "/usr/lib/python2.6/ssl.py", line
-  174, in send       v = self._sslobj.write(data)
+    conn.request(method, request_uri, body, headers)
+      File "/usr/lib/python2.6/httplib.py", line 914, in request
+        self._send_request(method, url, body, headers)
+      File "/usr/lib/python2.6/httplib.py", line 954, in _send_request
+        self.send(body)
+      File "/usr/lib/python2.6/httplib.py", line 759, in send
+        self.sock.sendall(str)
+      File "/usr/lib/python2.6/ssl.py", line 203, in sendall
+        v = self.send(data[count:])
+      File "/usr/lib/python2.6/ssl.py", line 174, in send
+        v = self._sslobj.write(data)
 
 * Don't hang after putting in credentials (cause it silently retries in
 background) but go through with backup. [ede]
@@ -8526,7 +8683,8 @@ background) but go through with backup. [ede]
 * Manpage - document Ubuntu One required libs - added continous
 contributors and backend author notes. [ede]
 
-  U1backend   - lazily import non standard python libs
+    U1backend
+    - lazily import non standard python libs
 
 * Clear up PASSPHRASE reusage as sign passphrase minor fixes. [ede]
 
@@ -8555,8 +8713,7 @@ recipient in man gpg(1) [Marcos Lenharo]
 pipe" in socket.pyas reported here
 https://answers.launchpad.net/duplicity/+question/212966. [ede]
 
-  added a more generalized 'retry_fatal' decorator which makes retrying
-  backend methods even easier
+    added a more generalized 'retry_fatal' decorator which makes retrying backend methods even easier
 
 * Avoid using TestCase.addCleanup, which isn't in older python versions. [Michael Terry]
 
@@ -8585,11 +8742,13 @@ the bug keeping them on the remote side. [Michael Terry]
 
 * Fix python 2.4 vs 2.5 syntax error. [ede]
 
-  File "/usr/lib64/python2.4/site-packages/duplicity/commandline.py",
-  line 188       return encoding if encoding else 'utf-8'
-  ^   SyntaxError: invalid syntax
-  see   http://lists.nongnu.org/archive/html/duplicity-
-  talk/2012-10/msg00027.html
+    File "/usr/lib64/python2.4/site-packages/duplicity/commandline.py", line 188
+        return encoding if encoding else 'utf-8'
+                         ^
+    SyntaxError: invalid syntax
+
+    see
+    http://lists.nongnu.org/archive/html/duplicity-talk/2012-10/msg00027.html
 
 * Update CHANGELOG to reflect all bugs fixed. [Kenneth Loafman]
 
@@ -8658,11 +8817,8 @@ older Python versions. [Michael Terry]
 
 * Probably fix. [ede]
 
-  File "/usr/local/lib/python2.7/dist-
-  packages/duplicity/backends/_ssh_pexpect.py", line 223, in
-  run_sftp_command       log.Warn("Running '%s' with commands:\n %s\n
-  failed (attempt #%d): %s" % (commandline, "\n ".join(commands), n,
-  msg))
+    File "/usr/local/lib/python2.7/dist-packages/duplicity/backends/_ssh_pexpect.py", line 223, in run_sftp_command
+        log.Warn("Running '%s' with commands:\n %s\n failed (attempt #%d): %s" % (commandline, "\n ".join(commands), n, msg))
 
 * Wrap CHANGELOG to col 80. [Kenneth Loafman]
 
@@ -8673,9 +8829,9 @@ avoid writing such entries out. [Michael Terry]
 
 * Retry cloudfiles deletes. [Greg Retkowski]
 
-  This will retry cloudfile delete commands with large numbers of
-  archive files over mediocre links deletes occasionally fail   and
-  should be retried.
+    This will retry cloudfile delete commands with large numbers of
+    archive files over mediocre links deletes occasionally fail
+    and should be retried.
 
 * Missing space. [ede]
 
@@ -8792,7 +8948,7 @@ in url: scp://u123@u123.example.com/foo/ [kenneth@loafman.com]
 
 * Applied patch from 930727. [kenneth@loafman.com]
 
-  ftpsbackend should respect num_retries for ftp commands
+    ftpsbackend should respect num_retries for ftp commands
 
 * Drop unused pexpect.py. [Michael Terry]
 
@@ -8968,7 +9124,7 @@ usage. [edso]
 
 * Updated --verbosity symmetric and signing. [edso]
 
-  minor fixes
+    minor fixes
 
 * Checkpoint. [kenneth@loafman.com]
 
@@ -9126,7 +9282,7 @@ we don't end up with three copies of a metadata file. [Michael Terry]
 
 * 777377     collection-status asking for passphrase. [Kenneth Loafman]
 
-  Various fixes to unit tests to comprehend changes made.
+    Various fixes to unit tests to comprehend changes made.
 
 * Duplicity.1: move information about the PASSPHRASE and
 SIGN\_PASSPHRASE   environment variables to the Environment Variables
@@ -9340,7 +9496,7 @@ rsync over ssh does not ask for password (only keyauth supported) [ed]
 * When using listmatch filenames are now unqouted so colons and other
 special characters don't cause problems. [Tomaž Muraus]
 
-  Also all the tests now pass.
+    Also all the tests now pass.
 
 * Added test for SpiderOak backend (it should probably just fail in most
 cases since the API is still very unstable). [Tomaž Muraus]
@@ -9352,7 +9508,7 @@ status code on HTTPError exception. [Tomaž Muraus]
 
 * First version of SpiderOak DIY backend. [Tomaž Muraus]
 
-  Still very rough and needs tests.
+    Still very rough and needs tests.
 
 * Support new backend-error log codes. [Michael Terry]
 
@@ -9474,7 +9630,7 @@ command arguments. [Kenneth Loafman]
 * 579958     Assertion error "time not moving forward at appropriate
 pace" [Kenneth Loafman]
 
-  setcurtime() must change with time changes.
+    setcurtime() must change with time changes.
 
 * 550455           duplicity doesn't handle with large files well
 (change librsync.SigGenerator.sig\_string to a list) [ken]
@@ -9589,8 +9745,8 @@ from the 'source dir changed' message. [Michael Terry]
 * Fix problems with unittests under Jaunty.  It appears that redirection
 in os.system() has changed for the worse, so a workaround for now. [Kenneth Loafman]
 
-  Fix problem in restart where there were no manifest entries and no
-  remote volumes stored.  We clean out the partial and restart.
+    Fix problem in restart where there were no manifest entries and no
+    remote volumes stored.  We clean out the partial and restart.
 
 * Applied "426282 [PATCH] par2 creating support", corrected some coding
 format issues and made sure all unit tests passed. [Kenneth Loafman]
@@ -9653,8 +9809,8 @@ from the 'source dir changed' message. [Michael Terry]
 * Fix problems with unittests under Jaunty.  It appears that redirection
 in os.system() has changed for the worse, so a workaround for now. [Kenneth Loafman]
 
-  Fix problem in restart where there were no manifest entries and no
-  remote volumes stored.  We clean out the partial and restart.
+    Fix problem in restart where there were no manifest entries and no
+    remote volumes stored.  We clean out the partial and restart.
 
 * Add some machine codes to various warnings when iterating over source
 files. [Michael Terry]
