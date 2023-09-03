@@ -21,10 +21,14 @@
 
 import glob
 import os
-import pytest
 import sys
+from subprocess import (
+    Popen,
+    PIPE,
+    STDOUT,
+)
 
-from subprocess import Popen, PIPE, STDOUT
+import pytest
 
 if os.getenv("RUN_CODE_TESTS", None) == "1":
     # Make conditional so that we do not have to import in environments that
@@ -33,11 +37,6 @@ if os.getenv("RUN_CODE_TESTS", None) == "1":
 
 from . import _top_dir, DuplicityTestCase
 
-skipCodeTest = pytest.mark.skipif(
-    not os.getenv("RUN_CODE_TESTS", None) == "1",
-    reason="Must set environment var RUN_CODE_TESTS=1",
-)
-
 files_to_test = [os.path.join(_top_dir, "bin/duplicity")]
 files_to_test.extend(glob.glob(os.path.join(_top_dir, "duplicity/**/*.py"), recursive=True))
 files_to_test.extend(glob.glob(os.path.join(_top_dir, "testing/functional/*.py")))
@@ -45,6 +44,10 @@ files_to_test.extend(glob.glob(os.path.join(_top_dir, "testing/unit/*.py")))
 files_to_test.extend(glob.glob(os.path.join(_top_dir, "testing/*.py")))
 
 
+@pytest.mark.skipif(
+    not os.getenv("RUN_CODE_TESTS", None) == "1",
+    reason="Must set environment var RUN_CODE_TESTS=1",
+)
 class CodeTest(DuplicityTestCase):
     def run_checker(self, cmd, returncodes=None):
         if returncodes is None:
@@ -60,7 +63,6 @@ class CodeTest(DuplicityTestCase):
             f"Test failed: returncode = {process.returncode}",
         )
 
-    @skipCodeTest
     def test_black(self):
         """Black check for out of format files"""
         print()
@@ -70,10 +72,8 @@ class CodeTest(DuplicityTestCase):
                 "--check",
             ]
             + files_to_test,
-            returncodes=[0],
         )
 
-    @skipCodeTest
     def test_pylint(self):
         """Pylint test (requires pylint to be installed to pass)"""
         print()
@@ -85,7 +85,6 @@ class CodeTest(DuplicityTestCase):
             + files_to_test
         )
 
-    @skipCodeTest
     def test_pep8(self):
         """Test that we conform to PEP-8 using pycodestyle."""
         # Note that the settings, ignores etc for pycodestyle are set in tox.ini, not here
