@@ -117,6 +117,11 @@ def register_backend(scheme, backend_factory):
 
     _backends[scheme] = backend_factory
 
+    # TODO: remove once we fix the help_url_formats
+    from duplicity.cli_data import help_url_formats
+    if scheme not in help_url_formats:
+        log.Debug(f"Scheme {scheme} is not documented in help_url_formats")
+
 
 def register_backend_prefix(scheme, backend_factory):
     """
