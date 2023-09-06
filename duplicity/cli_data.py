@@ -398,7 +398,7 @@ class OptionKwargs:
     log_fd = {
         "metavar": _("file_descriptor"),
         "type": set_log_fd,
-        "help": "Logging file descripto to use",
+        "help": "File descriptor to be used for logging",
         "default": dflt(None)
     }
     log_file = {
@@ -780,7 +780,8 @@ changed_options = {
 deprecated_options = {
     "--gio", "--old-filenames", "--short-filenames", "--exclude-globbing-filelist",
     "--include-globbing-filelist", "--exclude-filelist-stdin", "--include-filelist-stdin",
-    "--s3-multipart-max-timeout", "--s3-use-multiprocessing",
+    "--s3-multipart-max-timeout", "--s3-european-buckets", "--s3-use-multiprocessing",
+    "--s3-use-new-style", "--s3-use-server-side-encryption"
 }
 
 deprecated_backup_options = {

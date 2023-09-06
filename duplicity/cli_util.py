@@ -41,6 +41,14 @@ from duplicity import selection
 gpg_key_patt = re.compile(r"^(0x)?([0-9A-Fa-f]{8}|[0-9A-Fa-f]{16}|[0-9A-Fa-f]{40})$")
 url_regexp = re.compile(r"^[\w\+]+://")
 
+help_footer = (
+    _("Enter 'duplicity --help' for help screen.")
+    + "\n"
+    + _(
+        "Enter 'duplicity <action_command> --help' for help specific to the given action command."
+    )
+)
+
 
 class CommandLineError(errors.UserError):
     pass
@@ -51,8 +59,7 @@ def command_line_error(message):
     Indicate a command line error and exit
     """
     sys.tracebacklimit = 0
-    raise CommandLineError(f"{message}\n" +
-                           _("Enter 'duplicity --help' for help screen."))
+    raise CommandLineError(f"{message}\n\n{help_footer}")
 
 
 class DuplicityAction(argparse.Action):
@@ -123,27 +130,17 @@ class IgnoreErrorsAction(DuplicityAction):
         config.ignore_errors = True
 
 
-class DeprecationAction(DuplicityAction):
+class RemovedOptionAction(DuplicityAction):
     def __init__(self, option_strings, dest, **kwargs):
         super().__init__(option_strings, dest, **kwargs)
 
     def __call__(self, parser, namespace, values, option_string=None):
-        command_line_error(dedent(
-            f"""\
-            Option '{option_string} was removed in 2.0.0.
-            These additional options were deprecated in 2.0.0
-                --exclude-filelist-stdin
-                --exclude-globbing-filelist
-                --gio
-                --include-filelist-stdin
-                --include-globbing-filelist
-                --old-filenames
-                --s3-auropean-buckets
-                --s3-multipart-max-timeout
-                --s3-use-multiprocessing
-                --short-filenames
-                --time-separator
-                """))
+        from duplicity.cli_data import deprecated_options
+        removed_commands_string = "\n".join(f'    {c}' for c in sorted(deprecated_options))
+        command_line_error(
+            _(f"Option '{option_string}' was removed in 2.0.0.") + "\n" +
+            _("The following options were deprecated and removed in 2.0.0") +
+            f"\n{removed_commands_string}\n")
 
 
 class ChangedOptionAction(DuplicityAction):
