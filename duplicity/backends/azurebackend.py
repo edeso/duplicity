@@ -50,7 +50,6 @@ class AzureBackend(duplicity.backend.Backend):
 
         # Import Microsoft Azure Storage SDK for Python library.
         try:
-            import azure_storage_blob
             from azure.storage.blob import BlobServiceClient
         except ImportError as e:
             raise BackendException(f"Azure backend requires Microsoft Azure Storage SDK for Python\n"

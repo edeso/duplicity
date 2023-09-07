@@ -28,7 +28,6 @@ google-api-python-client
 google-auth-oauthlib
 httplib2
 jottalib
-kerberos
 keyring
 lxml
 mediafire
