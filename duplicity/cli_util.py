@@ -28,8 +28,8 @@ import os
 import re
 import socket
 import sys
-from textwrap import dedent
 from hashlib import md5
+from textwrap import dedent
 
 from duplicity import config
 from duplicity import dup_time
@@ -45,7 +45,7 @@ help_footer = (
     _("Enter 'duplicity --help' for help screen.")
     + "\n"
     + _(
-        "Enter 'duplicity <action_command> --help' for help specific to the given action command."
+        "Enter 'duplicity <action_command> --help' for help specific to the given command."
     )
 )
 
@@ -135,7 +135,6 @@ class RemovedOptionAction(DuplicityAction):
         super().__init__(option_strings, dest, **kwargs)
 
     def __call__(self, parser, namespace, values, option_string=None):
-        from duplicity.cli_data import deprecated_options
         removed_commands_string = "\n".join(f'    {c}' for c in sorted(deprecated_options))
         command_line_error(
             _(f"Option '{option_string}' was removed in 2.0.0.") + "\n" +

@@ -21,20 +21,14 @@
 """
 Main for parse command line, check for consistency, and set config
 """
-import argparse
 import copy
-import sys
 import inspect
 
 from duplicity import backend
 from duplicity import cli_util
-from duplicity import config
 from duplicity import gpg
-from duplicity import log
-from duplicity import path
 from duplicity import util
 from duplicity.cli_data import *
-from duplicity.cli_util import *
 
 
 class DuplicityHelpFormatter(argparse.ArgumentDefaultsHelpFormatter,
@@ -72,6 +66,46 @@ def harvest_namespace(args):
         setattr(config, f, v)
 
 
+def init_kwargs():
+    """
+    Add changed/removed args to OptionsKwargs
+    """
+    # add changed options to OptionKwargs
+    for opt in sorted(changed_options):
+        var = opt2var(opt)
+        OptionKwargs[var] = dict(
+            nargs=0,
+            action=ChangedOptionAction,
+            help=argparse.SUPPRESS,
+        )
+
+    # add removed options to OptionKwargs
+    for opt in sorted(removed_options):
+        var = opt2var(opt)
+        OptionKwargs[var] = dict(
+            nargs=0,
+            action=RemovedOptionAction,
+            help=argparse.SUPPRESS,
+        )
+
+
+def parse_log_options(arglist):
+    """
+    Parse the commands and options that need to be handled first.
+    Everything else is passed on to the main parsers subparsers.
+    """
+    # set up parent parser
+    parser = argparse.ArgumentParser(
+        prog='duplicity',
+        add_help=False,
+        argument_default=None)
+
+    # process parent args now
+    args, remainder = parser.parse_known_args(arglist)
+
+    return args, remainder
+
+
 def parse_implied_command(arglist):
     """
     Err out on changed/removed options early.
@@ -79,26 +113,12 @@ def parse_implied_command(arglist):
     - no or wrong command was given
     - number of positional arguments is 2
     - the order of positional arguments implies backup (2nd is url) or restore (first is url)
-    Check if there is a valid action command or throw command line error
+    Check if there is a valid command or throw command line error
     """
     parser = argparse.ArgumentParser(
         prog='duplicity',
         add_help=False,
         argument_default=None)
-
-    # add changed options to the parser
-    for opt in sorted(changed_options):
-        parser.add_argument(opt,
-                            nargs=0,
-                            action=ChangedOptionAction,
-                            help=argparse.SUPPRESS)
-
-    # add deprecated options to the parser
-    for opt in sorted(deprecated_options):
-        parser.add_argument(opt,
-                            nargs=0,
-                            action=RemovedOptionAction,
-                            help=argparse.SUPPRESS)
 
     # add dummy -h and --help
     parser.add_argument("-h", "--help", action="store_true")
@@ -115,81 +135,49 @@ def parse_implied_command(arglist):
                 if not (inspect.isclass(v) and issubclass(v, argparse.Action))
                 else DoNothingAction
             )
-            for k, v in OptionKwargs.__dict__[var].items()
+            for k, v in OptionKwargs[var].items()
             if k not in {'type'}
         }
         # needed as store action does not tolerate nargs=0, we do not want to interpret just now anyway
         parser.add_argument(*names, **selected_args_only)
 
-    # strip known arguments should leave us with pos_args only and unknown options paramters unfortunately
     args, remainder = parser.parse_known_args(arglist)
 
-    # strip unknown options starting with '-'
-    pos_args = list()
-    for var in remainder:
-        if var.startswith("-"):
-            continue
-        pos_args.append(var)
-
-    # let's test the action command and try to assume,
+    # let's test the command and try to assume,
     # eventually err out if no valid action could be determined/was given
-    if len(pos_args) > 0 and pos_args[0] not in all_commands:
-        if len(pos_args) == 2 and is_path(pos_args[0]) and is_url(pos_args[1]):
-            log.Notice(_("No valid action command found. Will imply 'backup' because "
+    if len(remainder) > 0 and remainder[0] not in all_commands:
+        if len(remainder) == 2 and is_path(remainder[0]) and is_url(remainder[1]):
+            log.Notice(_("No valid command found. Will imply 'backup' because "
                          "a path source was given and target is a url location."))
             arglist.insert(0, 'backup')
             # config.inc_explicit = False
-        elif len(pos_args) == 2 and is_url(pos_args[0]) and is_path(pos_args[1]):
-            log.Notice(_("No valid action command found. Will imply 'restore' because "
+        elif len(remainder) == 2 and is_url(remainder[0]) and is_path(remainder[1]):
+            log.Notice(_("No valid command found. Will imply 'restore' because "
                          "url source was given and target is a local path."))
             arglist.insert(0, 'restore')
         else:
-            pos_args_string = ', '.join(f"'{c}'" for c in pos_args)
+            args_string = ', '.join(f"'{c}'" for c in remainder)
             all_long_commands = set()
             for var, aliases in CommandAliases.__dict__.items():
                 if var.startswith("__") or len(var) <= 2:
                     continue
                 all_long_commands.add(var2cmd(var))
             all_long_commands_string = ', '.join(f"'{c}'" for c in sorted(all_long_commands))
-            msg = _(f"Invalid '{pos_args[0]}' action command and cannot be implied from the "
-                    f"given arguments. {pos_args_string}\n"
+            msg = _(f"Invalid '{remainder[0]}' command and cannot be implied from the "
+                    f"given arguments. {args_string}\n"
                     f"Valid action commands are: {all_long_commands_string}")
             command_line_error(msg)
-
-
-def pre_parse_cmdline_options(arglist):
-    """
-    Parse the commands and options that need to be handled first.
-    Everything else is passed on to the main parsers subparsers.
-    """
-    # set up parent parser
-    parser = argparse.ArgumentParser(
-        prog='duplicity',
-        add_help=False,
-        argument_default=None)
-
-    # add parent_only options to the parser
-    for opt in sorted(parent_only_options):
-        var = opt2var(opt)
-        names = [opt] + OptionAliases.__dict__.get(var, [])
-        parser.add_argument(*names, **OptionKwargs.__dict__[var])
-
-    # process parent args now
-    args, remainder = parser.parse_known_args(arglist)
-
-    # harvest args to config
-    harvest_namespace(args)
-
-    return args, remainder
 
 
 def parse_cmdline_options(arglist):
     """
     Parse remaining argument list once all is defined.
     """
+    # make sure kwargs is complete
+    init_kwargs()
+
     # preprocess config type args
-    # args, remainder = pre_parse_cmdline_options(arglist)
-    remainder = arglist
+    args, remainder = parse_log_options(arglist)
 
     # add implied command, check if command valid
     parse_implied_command(remainder)
@@ -200,12 +188,6 @@ def parse_cmdline_options(arglist):
         argument_default=None,
         formatter_class=make_wide(DuplicityHelpFormatter),
         epilog=help_footer)
-
-    # add parent_only options to the parser
-    for opt in sorted(parent_only_options):
-        var = opt2var(opt)
-        names = [opt] + OptionAliases.__dict__.get(var, [])
-        parser.add_argument(*names, **OptionKwargs.__dict__[var])
 
     # set up command subparsers
     subparsers = parser.add_subparsers(
@@ -237,13 +219,7 @@ def parse_cmdline_options(arglist):
         for opt in sorted(CommandOptions.__dict__[var]):
             var = opt2var(opt)
             names = [opt] + OptionAliases.__dict__.get(var, [])
-            subparser_dict[cmd].add_argument(*names, **OptionKwargs.__dict__[var])
-
-        # add generic parent options too
-        for opt in sorted(parent_only_options):
-            var = opt2var(opt)
-            names = [opt] + OptionAliases.__dict__.get(var, [])
-            subparser_dict[cmd].add_argument(*names, **OptionKwargs.__dict__[var])
+            subparser_dict[cmd].add_argument(*names, **OptionKwargs[var])
 
     # parse the options
     args = parser.parse_args(remainder)
