@@ -85,7 +85,6 @@ def fixup_old_options(parser):
                             help=argparse.SUPPRESS)
 
 
-
 def parse_log_options(arglist):
     """
     Parse the commands and options that need to be handled first.
@@ -163,6 +162,11 @@ def parse_implied_command(arglist):
                          "url source was given and target is a local path."))
             arglist.insert(0, 'restore')
         else:
+            # pass it on to be handled properly if not a possible implied action.
+            if len(remainder) != 2:
+                return
+            if remainder[0].startswith('-') or remainder[1].startswith('-'):
+                return
             args_string = ', '.join(f"'{c}'" for c in remainder)
             all_long_commands = set()
             for var, aliases in CommandAliases.__dict__.items():
