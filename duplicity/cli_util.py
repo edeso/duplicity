@@ -42,11 +42,8 @@ gpg_key_patt = re.compile(r"^(0x)?([0-9A-Fa-f]{8}|[0-9A-Fa-f]{16}|[0-9A-Fa-f]{40
 url_regexp = re.compile(r"^[\w\+]+://")
 
 help_footer = (
-    _("Enter 'duplicity --help' for help screen.")
-    + "\n"
-    + _(
-        "Enter 'duplicity <action_command> --help' for help specific to the given command."
-    )
+    _("Enter 'duplicity --help' for help screen.\n"
+      "Enter 'duplicity <action_command> --help' for help specific to the given command.")
 )
 
 
@@ -59,7 +56,7 @@ def command_line_error(message):
     Indicate a command line error and exit
     """
     sys.tracebacklimit = 0
-    raise CommandLineError(f"{message}\n\n{help_footer}")
+    raise CommandLineError(f"{message}\n{help_footer}")
 
 
 class DuplicityAction(argparse.Action):
