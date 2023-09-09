@@ -780,8 +780,7 @@ removed_options = {
 }
 
 # make list of all options available
-all_options = {var2opt(var) for var in OptionKwargs.keys()
-               if not var.startswith("__")}
+all_options = {var2opt(var) for var in OptionKwargs.keys()}
 
 removed_backup_options = {
     "--time-separator",
