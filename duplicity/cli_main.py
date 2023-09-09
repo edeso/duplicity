@@ -95,7 +95,8 @@ def parse_log_options(arglist):
     parser = argparse.ArgumentParser(
         prog='duplicity',
         add_help=False,
-        argument_default=None)
+        argument_default=None,
+        allow_abbrev=False)
 
     # add logging/version options to the parser
     for opt in sorted(logging_options):
@@ -121,7 +122,8 @@ def parse_implied_command(arglist):
     parser = argparse.ArgumentParser(
         prog='duplicity',
         add_help=False,
-        argument_default=None)
+        argument_default=None,
+        allow_abbrev=False)
 
     # add dummy -h and --help
     parser.add_argument("-h", "--help", action="store_true")
@@ -151,20 +153,18 @@ def parse_implied_command(arglist):
 
     # let's test the command and try to assume,
     # eventually err out if no valid action could be determined/was given
-    if len(remainder) > 0 and remainder[0] not in all_commands:
-        if len(remainder) == 2 and is_path(remainder[0]) and is_url(remainder[1]):
+    if len(remainder) == 2 and remainder[0] not in all_commands:
+        if is_path(remainder[0]) and is_url(remainder[1]):
             log.Notice(_("No valid command found. Will imply 'backup' because "
                          "a path source was given and target is a url location."))
             arglist.insert(0, 'backup')
             # config.inc_explicit = False
-        elif len(remainder) == 2 and is_url(remainder[0]) and is_path(remainder[1]):
+        elif is_url(remainder[0]) and is_path(remainder[1]):
             log.Notice(_("No valid command found. Will imply 'restore' because "
                          "url source was given and target is a local path."))
             arglist.insert(0, 'restore')
         else:
             # pass it on to be handled properly if not a possible implied action.
-            if len(remainder) != 2:
-                return
             if remainder[0].startswith('-') or remainder[1].startswith('-'):
                 return
             args_string = ', '.join(f"'{c}'" for c in remainder)
@@ -195,7 +195,8 @@ def parse_cmdline_options(arglist):
         prog='duplicity',
         argument_default=None,
         formatter_class=make_wide(DuplicityHelpFormatter),
-        epilog=help_footer)
+        epilog=help_footer,
+        allow_abbrev=False)
 
     # add changed/removed option handling to the parser
     fixup_old_options(parser)
