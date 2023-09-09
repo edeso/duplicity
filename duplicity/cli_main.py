@@ -66,32 +66,10 @@ def harvest_namespace(args):
         setattr(config, f, v)
 
 
-def init_kwargs():
-    """
-    Add changed/removed args to OptionsKwargs
-    """
-    # add changed options to OptionKwargs
-    for opt in sorted(changed_options):
-        var = opt2var(opt)
-        OptionKwargs[var] = dict(
-            nargs=0,
-            action=ChangedOptionAction,
-            help=argparse.SUPPRESS,
-        )
-
-    # add removed options to OptionKwargs
-    for opt in sorted(removed_options):
-        var = opt2var(opt)
-        OptionKwargs[var] = dict(
-            nargs=0,
-            action=RemovedOptionAction,
-            help=argparse.SUPPRESS,
-        )
-
-
 def parse_log_options(arglist):
     """
     Parse the commands and options that need to be handled first.
+    Mainly to make sure logging goes to the right place with correct verbosity.
     Everything else is passed on to the main parsers subparsers.
     """
     # set up parent parser
@@ -99,6 +77,12 @@ def parse_log_options(arglist):
         prog='duplicity',
         add_help=False,
         argument_default=None)
+
+    # add logging/version options to the parser
+    for opt in sorted(logging_options):
+        var = opt2var(opt)
+        names = [opt] + OptionAliases.__dict__.get(var, [])
+        parser.add_argument(*names, **OptionKwargs[var])
 
     # process parent args now
     args, remainder = parser.parse_known_args(arglist)
@@ -122,6 +106,20 @@ def parse_implied_command(arglist):
 
     # add dummy -h and --help
     parser.add_argument("-h", "--help", action="store_true")
+
+    # add changed options to the parser
+    for opt in sorted(changed_options):
+        parser.add_argument(opt,
+                            nargs=0,
+                            action=ChangedOptionAction,
+                            help=argparse.SUPPRESS)
+
+    # add removed options to the parser
+    for opt in sorted(removed_options):
+        parser.add_argument(opt,
+                            nargs=0,
+                            action=RemovedOptionAction,
+                            help=argparse.SUPPRESS)
 
     # add all known options
     for opt in all_options:
@@ -173,13 +171,10 @@ def parse_cmdline_options(arglist):
     """
     Parse remaining argument list once all is defined.
     """
-    # make sure kwargs is complete
-    init_kwargs()
-
-    # preprocess config type args
+    # interpret logging/version options early
     args, remainder = parse_log_options(arglist)
 
-    # add implied command, check if command valid
+    # add implied command, check if command valid, interpret removed/changed options
     parse_implied_command(remainder)
 
     # set up parent parser
@@ -188,6 +183,13 @@ def parse_cmdline_options(arglist):
         argument_default=None,
         formatter_class=make_wide(DuplicityHelpFormatter),
         epilog=help_footer)
+
+    # add logging options to the parser, needed for online help `duplicity --help`
+    # they were actually interpreted and stripped in parse_log_options() above already
+    for opt in sorted(logging_options):
+        var = opt2var(opt)
+        names = [opt] + OptionAliases.__dict__.get(var, [])
+        parser.add_argument(*names, **OptionKwargs[var])
 
     # set up command subparsers
     subparsers = parser.add_subparsers(
@@ -304,3 +306,4 @@ if __name__ == "__main__":
         if a.startswith("_") or isinstance(config.__dict__[a], types.ModuleType):
             continue
         print(f"{a} = {v} ({type(config.__dict__[a])})")
+    print("verbosity: " + str(log.getverbosity()))

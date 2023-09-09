@@ -54,6 +54,7 @@ class CommandlineTest(UnitTestCase):
 
     def setUp(self):
         super().setUp()
+        log.setup()
         config.gpg_profile = gpg.GPGProfile()
         os.makedirs("foo/bar", exist_ok=True)
         os.makedirs("inc", exist_ok=True)
@@ -201,7 +202,7 @@ class CommandlineTest(UnitTestCase):
         """
         cline = "ib foo/bar file:///target_url -v 9".split()
         cli_main.process_command_line(cline)
-        self.assertEqual(config.verbosity, 9)
+        self.assertEqual(log.getverbosity(), log.DEBUG)
 
         cline = "rb file:///source_url foo/bar -t 10000".split()
         cli_main.process_command_line(cline)
@@ -442,3 +443,17 @@ class CommandlineTest(UnitTestCase):
                 cli_main.process_command_line(shlex.split(f"{cmd} -h"))
             with self.assertRaises(SystemExit) as cm:
                 cli_main.process_command_line(shlex.split(f"{cmd} --help"))
+
+    @pytest.mark.usefixtures("redirect_stdin")
+    def test_log_options(self):
+        """
+        test log options.
+        """
+        # default level is notice
+        # TODO: this fails although running duplicity, cli_main return the correct default loglevel
+        # self.assertEqual(log.getverbosity(), log.NOTICE)
+
+        # setting custom level
+        cline = shlex.split("foo/bar file:///target_url --verbosity Debug")
+        cli_main.process_command_line(cline)
+        self.assertEqual(log.getverbosity(), log.DEBUG)

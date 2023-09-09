@@ -135,7 +135,8 @@ class RemovedOptionAction(DuplicityAction):
         super().__init__(option_strings, dest, **kwargs)
 
     def __call__(self, parser, namespace, values, option_string=None):
-        removed_commands_string = "\n".join(f'    {c}' for c in sorted(deprecated_options))
+        from duplicity.cli_data import removed_options
+        removed_commands_string = "\n".join(f'    {c}' for c in sorted(removed_options))
         command_line_error(
             _(f"Option '{option_string}' was removed in 2.0.0.") + "\n" +
             _("The following options were deprecated and removed in 2.0.0") +
@@ -272,7 +273,7 @@ def check_verbosity(val):
         command_line_error(_(
             "Verbosity must be one of: digit [0-9], character [ewnid],\n"
             "or word ['error', 'warning', 'notice', 'info', 'debug'].\n"
-            "The default is 4 (Notice).  It is strongly recommended\n"
+            "The default is 3 (Notice).  It is strongly recommended\n"
             "that verbosity level is set at 2 (Warning) or higher."))
 
     log.setverbosity(verb)

@@ -384,22 +384,24 @@ OptionKwargs = dict(
     ),
     jsonstat=dict(
         action="store_true",
-        help="if set, an extra file with statistices in json format will bestored with each backup. "
-        "it includes the staistics printed out on stdout by default. "
-        "With 'collection-status' it returs these stats.",
+        help=_("If set, an extra file with statistics in json format will be stored with each backup. "
+               "It includes the statistics printed out on stdout by default. "
+               "With 'collection-status' it returs these stats."),
         default=dflt(config.jsonstat)
     ),
+    # log_fd is directly applied in set_log_fd(), not saved in config
     log_fd=dict(
         metavar=_("file_descriptor"),
+        dest="",
         type=set_log_fd,
-        help="File descriptor to be used for logging",
-        default=dflt(None)
+        help="File descriptor to be used for logging"
     ),
+    # log_file is directly applied in set_log_file(), not saved in config
     log_file=dict(
         metavar=_("log_filename"),
+        dest="",
         type=set_log_file,
-        help="Logging filename to use",
-        default=dflt(None)
+        help="Logging filename to use"
     ),
     log_timestamp=dict(
         action="store_true",
@@ -699,11 +701,12 @@ OptionKwargs = dict(
         help="Whether to specify --use-agent in GnuPG options",
         default=dflt(config.use_agent)
     ),
+    # verbosity is set directly via check_verbosity(), not saved in config
     verbosity=dict(
         metavar=_("verb"),
+        dest="",
         type=check_verbosity,
-        help="Logging verbosity=[0-9] or [e, w, n, i, d] or [error, warning, notice, info, debug]",
-        default=dflt(log.NOTICE)
+        help="Logging verbosity=[0-9] or [e, w, n, i, d] or [error, warning, notice, info, debug]"
     ),
     version=dict(
         action="version",
