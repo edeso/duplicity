@@ -66,25 +66,6 @@ def harvest_namespace(args):
         setattr(config, f, v)
 
 
-def fixup_old_options(parser):
-    """
-    Add error handling for changed/removed options
-    """
-    # add changed options to the parser
-    for opt in sorted(changed_options):
-        parser.add_argument(opt,
-                            nargs=0,
-                            action=ChangedOptionAction,
-                            help=argparse.SUPPRESS)
-
-    # add removed options to the parser
-    for opt in sorted(removed_options):
-        parser.add_argument(opt,
-                            nargs=0,
-                            action=RemovedOptionAction,
-                            help=argparse.SUPPRESS)
-
-
 def parse_log_options(arglist):
     """
     Parse the commands and options that need to be handled first.
@@ -93,10 +74,10 @@ def parse_log_options(arglist):
     """
     # set up parent parser
     parser = argparse.ArgumentParser(
-        prog='duplicity',
+        prog='duplicity_logging',
         add_help=False,
         argument_default=None,
-        allow_abbrev=False)
+        allow_abbrev=True)
 
     # add logging/version options to the parser
     for opt in sorted(logging_options):
@@ -120,16 +101,13 @@ def parse_implied_command(arglist):
     Check if there is a valid command or throw command line error
     """
     parser = argparse.ArgumentParser(
-        prog='duplicity',
+        prog='duplicity_implied',
         add_help=False,
         argument_default=None,
-        allow_abbrev=False)
+        allow_abbrev=True)
 
     # add dummy -h and --help
     parser.add_argument("-h", "--help", action="store_true")
-
-    # add changed/removed option handling to the parser
-    fixup_old_options(parser)
 
     # add all known options
     for opt in all_options:
@@ -192,14 +170,11 @@ def parse_cmdline_options(arglist):
 
     # set up parent parser
     parser = argparse.ArgumentParser(
-        prog='duplicity',
+        prog='duplicity_main',
         argument_default=None,
         formatter_class=make_wide(DuplicityHelpFormatter),
         epilog=help_footer,
-        allow_abbrev=False)
-
-    # add changed/removed option handling to the parser
-    fixup_old_options(parser)
+        allow_abbrev=True)
 
     # add logging options to the parser, needed for online help `duplicity --help`
     # they were actually interpreted and stripped in parse_log_options() above already
@@ -210,8 +185,7 @@ def parse_cmdline_options(arglist):
 
     # set up command subparsers
     subparsers = parser.add_subparsers(
-        title=_("Valid action commands"),
-        required=False)
+        title=_("Valid action commands"))
 
     # add sub_parser for each command
     subparser_dict = dict()

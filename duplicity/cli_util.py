@@ -55,7 +55,7 @@ def command_line_error(message):
     """
     Indicate a command line error and exit
     """
-    sys.tracebacklimit = 0
+    sys.tracebacklimit = 1
     raise CommandLineError(f"{message}\n{help_footer}")
 
 
