@@ -457,3 +457,28 @@ class CommandlineTest(UnitTestCase):
         cline = shlex.split("foo/bar file:///target_url --verbosity Debug")
         cli_main.process_command_line(cline)
         self.assertEqual(log.getverbosity(), log.DEBUG)
+
+    @pytest.mark.usefixtures("redirect_stdin")
+    def test_changed_removed(self):
+        """
+        test changed/removed in odd places.
+        """
+        # removed option with command
+        with self.assertRaises(cli_main.CommandLineError) as cm:
+            cline = shlex.split("--gio backup foo/bar file:///target_url")
+            cli_main.process_command_line(cline)
+
+        # removed option without command
+        with self.assertRaises(SystemExit) as cm:
+            cline = shlex.split("--gio foo/bar file:///target_url")
+            cli_main.process_command_line(cline)
+
+        # changed option with command
+        with self.assertRaises(cli_main.CommandLineError) as cm:
+            cline = shlex.split("restore --file-to-restore foo/bar file://source_url path")
+            cli_main.process_command_line(cline)
+
+        # changed option without command
+        with self.assertRaises(SystemExit) as cm:
+            cline = shlex.split("--file-to-restore foo/bar file://source_url path")
+            cli_main.process_command_line(cline)

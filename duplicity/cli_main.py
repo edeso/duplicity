@@ -23,6 +23,7 @@ Main for parse command line, check for consistency, and set config
 """
 import copy
 import inspect
+from textwrap import dedent
 
 from duplicity import backend
 from duplicity import cli_util
@@ -215,7 +216,35 @@ def parse_cmdline_options(arglist):
             subparser_dict[cmd].add_argument(*names, **OptionKwargs[var])
 
     # parse the options
-    args = parser.parse_args(remainder)
+    args, remainder = parser.parse_known_args(remainder)
+
+    # check for added/removed/invalid options
+    for opt in remainder:
+        if opt.startswith("-"):
+            if opt in changed_options:
+                command_line_error(
+                dedent(
+                    f"""\
+                    Option '{opt} was changed in 2.0.0.
+                        --file-to-restore to --path-to-restore
+                        --do-not-restore-ownership to --no-restore-ownership
+                        """
+                )
+            )
+            elif opt in removed_options:
+                removed_commands_string = "\n".join(f"    {c}" for c in sorted(removed_options))
+                command_line_error(
+                    dedent(
+                        f"""\
+                        Option '{opt}' was removed in 2.0.0.
+                        The following options were deprecated and removed in 2.0.0
+                        """
+                    )
+                    + f"{removed_commands_string}"
+                )
+            else:
+                parser.print_usage()
+                sys.exit(2)
 
     # if no command, print general help
     if not hasattr(args, "action"):

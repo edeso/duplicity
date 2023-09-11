@@ -29,7 +29,6 @@ import re
 import socket
 import sys
 from hashlib import md5
-from textwrap import dedent
 
 from duplicity import config
 from duplicity import dup_time
@@ -55,7 +54,7 @@ def command_line_error(message):
     """
     Indicate a command line error and exit
     """
-    sys.tracebacklimit = 1
+    sys.tracebacklimit = 0
     raise CommandLineError(f"{message}\n{help_footer}")
 
 
@@ -125,31 +124,6 @@ class IgnoreErrorsAction(DuplicityAction):
         log.Warn(_("Running in 'ignore errors' mode due to --ignore-errors.\n"
                    "Please reconsider if this was not intended"))
         config.ignore_errors = True
-
-
-class RemovedOptionAction(DuplicityAction):
-    def __init__(self, option_strings, dest, **kwargs):
-        super().__init__(option_strings, dest, **kwargs)
-
-    def __call__(self, parser, namespace, values, option_string=None):
-        from duplicity.cli_data import removed_options
-        removed_commands_string = "\n".join(f'    {c}' for c in sorted(removed_options))
-        command_line_error(
-            _(f"Option '{option_string}' was removed in 2.0.0.") + "\n" +
-            _("The following options were deprecated and removed in 2.0.0") +
-            f"\n{removed_commands_string}\n")
-
-
-class ChangedOptionAction(DuplicityAction):
-    def __init__(self, option_strings, dest, **kwargs):
-        super().__init__(option_strings, dest, **kwargs)
-
-    def __call__(self, parser, namespace, values, option_string=None):
-        command_line_error(dedent(
-            f"""\
-            Option '{option_string} was changed in 2.0.0.
-                --file-to-restore to --path-to-restore
-                --do-not-restore-ownership to --no-restore-ownership"""))
 
 
 class WarnAsyncStoreConstAction(argparse._StoreConstAction):
