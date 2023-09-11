@@ -260,6 +260,14 @@ Are you sure you want to continue connecting (yes/no)? """
         # set url values for beautiful login prompt
         parsed_url.username = self.config['user']
         parsed_url.hostname = self.config['hostname']
+
+        self.scheme = duplicity.backend.strip_prefix(parsed_url.scheme,
+                                                     'paramiko')
+        self.use_scp = (self.scheme == 'scp')
+
+        self.connect()
+
+    def connect(self):
         password = self.get_password()
 
         try:
@@ -275,10 +283,6 @@ Are you sure you want to continue connecting (yes/no)? """
                                    f"{self.config['user']}@{self.config['hostname']}:{int(self.config['port'])} "
                                    f"failed: {e}")
         self.client.get_transport().set_keepalive(int(config.timeout / 2))
-
-        self.scheme = duplicity.backend.strip_prefix(parsed_url.scheme,
-                                                     'paramiko')
-        self.use_scp = (self.scheme == 'scp')
 
         # scp or sftp?
         if self.use_scp:
@@ -445,6 +449,10 @@ Are you sure you want to continue connecting (yes/no)? """
             raise BackendException(f"could not load '{file}', maybe corrupt?")
 
         return sshconfig.lookup(host)
+
+    def _retry_cleanup(self):
+        self.client.close()
+        self.connect()
 
 
 duplicity.backend.register_backend("sftp", SSHParamikoBackend)
