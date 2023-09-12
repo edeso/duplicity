@@ -388,11 +388,11 @@ class CommandlineTest(UnitTestCase):
         """
         test bad commands
         """
-        with self.assertRaises((CommandLineError, SystemExit)) as cm:
+        with self.assertRaises(SystemExit) as cm:
             cline = "fbx foo/bar file:///target_url".split()
             cli_main.process_command_line(cline)
 
-        with self.assertRaises((CommandLineError, SystemExit)) as cm:
+        with self.assertRaises(SystemExit) as cm:
             cline = "rbx file:///target_url foo/bar".split()
             cli_main.process_command_line(cline)
 
@@ -401,15 +401,21 @@ class CommandlineTest(UnitTestCase):
         """
         test bad commands
         """
-        with self.assertRaises((argparse.ArgumentError, SystemExit)) as cm:
+        with self.assertRaises(CommandLineError) as cm:
             cline = "fb foo/bar file:///target_url extra".split()
             cli_main.process_command_line(cline)
-        self.assertEqual(cm.exception.code, 2)
 
-        with self.assertRaises((argparse.ArgumentError, SystemExit)) as cm:
+        with self.assertRaises(CommandLineError) as cm:
             cline = "rb file:///target_url foo/bar extra".split()
             cli_main.process_command_line(cline)
-        self.assertEqual(cm.exception.code, 2)
+
+        with self.assertRaises(SystemExit) as cm:
+            cline = "foo/bar file:///target_url extra".split()
+            cli_main.process_command_line(cline)
+
+        with self.assertRaises(SystemExit) as cm:
+            cline = "file:///target_url foo/bar extra".split()
+            cli_main.process_command_line(cline)
 
     @pytest.mark.usefixtures("redirect_stdin")
     def test_list_commands(self):

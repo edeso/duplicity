@@ -76,6 +76,17 @@ for var, aliases in CommandAliases.__dict__.items():
         all_commands.add(alias)
 
 
+command_args_expected = dict()
+for var, aliases in CommandAliases.__dict__.items():
+    if var.startswith("__"):
+        continue
+    cmd = var2cmd(var)
+    expect = len(DuplicityCommands.__dict__[var])
+    command_args_expected[cmd] = expect
+    for alias in aliases:
+        command_args_expected[alias] = expect
+
+
 OptionKwargs = dict(
     allow_source_mismatch=dict(
         action="store_true",

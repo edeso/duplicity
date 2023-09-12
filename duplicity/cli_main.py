@@ -137,7 +137,6 @@ def parse_implied_command(arglist):
             log.Notice(_("No valid command found. Will imply 'backup' because "
                          "a path source was given and target is a url location."))
             arglist.insert(0, 'backup')
-            # config.inc_explicit = False
         elif is_url(remainder[0]) and is_path(remainder[1]):
             log.Notice(_("No valid command found. Will imply 'restore' because "
                          "url source was given and target is a local path."))
@@ -171,7 +170,7 @@ def parse_cmdline_options(arglist):
 
     # set up parent parser
     parser = argparse.ArgumentParser(
-        prog='duplicity_main',
+        prog='duplicity',
         argument_default=None,
         formatter_class=make_wide(DuplicityHelpFormatter),
         epilog=help_footer,
@@ -218,18 +217,26 @@ def parse_cmdline_options(arglist):
     # parse the options
     args, remainder = parser.parse_known_args(remainder)
 
+    # if no command, print general help
+    if not hasattr(args, "action"):
+        parser.print_usage()
+        sys.exit(2)
+
     # check for added/removed/invalid options
+    num_pos = 0
     for opt in remainder:
-        if opt.startswith("-"):
+        if not opt.startswith("-"):
+            num_pos += 1
+        else:
             if opt in changed_options:
                 command_line_error(
-                dedent(
-                    f"""\
-                    Option '{opt} was changed in 2.0.0.
-                        --file-to-restore to --path-to-restore
-                        --do-not-restore-ownership to --no-restore-ownership
-                        """
-                )
+                    dedent(
+                        f"""\
+                        Option '{opt} was changed in 2.0.0.
+                            --file-to-restore to --path-to-restore
+                            --do-not-restore-ownership to --no-restore-ownership
+                            """
+                    )
             )
             elif opt in removed_options:
                 removed_commands_string = "\n".join(f"    {c}" for c in sorted(removed_options))
@@ -246,10 +253,11 @@ def parse_cmdline_options(arglist):
                 parser.print_usage()
                 sys.exit(2)
 
-    # if no command, print general help
-    if not hasattr(args, "action"):
-        parser.print_usage()
-        sys.exit(2)
+    # check for wrong number of positional args
+    if len(remainder):
+        if num_pos - 1 < command_args_expected.get(args.action, 0):
+            command_line_error(f"Wrong number of positional args for '{args.action}', got {num_pos}, "
+                               f"expected {len(DuplicityCommands.__dict__[args.action])}.")
 
     # harvest args to config
     harvest_namespace(args)
