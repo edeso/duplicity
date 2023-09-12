@@ -237,7 +237,7 @@ def parse_cmdline_options(arglist):
                             --do-not-restore-ownership to --no-restore-ownership
                             """
                     )
-            )
+                )
             elif opt in removed_options:
                 removed_commands_string = "\n".join(f"    {c}" for c in sorted(removed_options))
                 command_line_error(
