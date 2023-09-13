@@ -158,7 +158,7 @@ class ChangedOptionAction(DuplicityAction):
                 --do-not-restore-ownership to --no-restore-ownership"""))
 
 
-class WarnAsyncStoreConstAction(argparse._StoreConstAction):
+class WarnAsyncStoreConstAction(DuplicityAction):
     def __call__(self, parser, namespace, values, option_string=None):
         log.Warn(_("Use of the --asynchronous-upload option is experimental "
                    "and not safe for production! There are reported cases of "
