@@ -96,10 +96,11 @@ class OptionKwargs:
     }
     asynchronous_upload = {
         "action": WarnAsyncStoreConstAction,
+        "nargs": 0,
         "const": 1,
         "dest": "async_concurrency",
         "help": "Number of async upload tasks, max of 1",
-        "default": dflt(config.async_concurrency)
+        "default": argparse.SUPPRESS
     }
     azure_blob_tier = {
         "metavar": _("Hot|Cool|Archive"),
