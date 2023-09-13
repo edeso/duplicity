@@ -48,7 +48,10 @@ ifndef READTHEDOCS
 endif
 
 ext:
-	./setup.py build_ext
+	python3.8 ./setup.py build_ext
+	python3.9 ./setup.py build_ext
+	python3.10 ./setup.py build_ext
+	python3.11 ./setup.py build_ext
 
 pot:
 	po/update-pot
