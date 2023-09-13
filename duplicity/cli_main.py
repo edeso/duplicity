@@ -244,7 +244,6 @@ def parse_cmdline_options(arglist):
     except (argparse.ArgumentError, argparse.ArgumentTypeError) as e:
         raise CommandLineError(str(e))
 
-
     # if no command, print general help
     if not hasattr(args, "action"):
         command_line_error("Missing explicit or implicit action.")
