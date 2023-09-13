@@ -176,7 +176,7 @@ def parse_implied_command(arglist):
             all_long_commands_string = ', '.join(f"'{c}'" for c in sorted(all_long_commands))
             msg = _(f"Invalid '{remainder[0]}' command and cannot be implied from the "
                     f"given arguments. {args_string}\n"
-                    f"Valid action commands are: {all_long_commands_string}")
+                    f"Valid actions are: {all_long_commands_string}")
             command_line_error(msg)
 
 
@@ -209,7 +209,7 @@ def parse_cmdline_options(arglist):
 
     # set up command subparsers
     subparsers = parser.add_subparsers(
-        title=_("Valid action commands"))
+        title=_("Valid actioons"))
 
     # add sub_parser for each command
     subparser_dict = dict()

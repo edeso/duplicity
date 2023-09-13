@@ -19,20 +19,14 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-import argparse
 import copy
-import os
 import shlex
 import unittest
 
 import pytest
-import sys
 
 from duplicity import cli_main
-from duplicity import config
-from duplicity import errors
 from duplicity import gpg
-from duplicity import log
 from duplicity.cli_data import *
 from duplicity.cli_util import *
 from testing.unit import UnitTestCase
@@ -439,10 +433,33 @@ class CommandlineTest(UnitTestCase):
         """
         Test -h/--help
         """
+        def check_main_help(output):
+            current = """\
+                Valid actions:
+                  {backup,bu,cleanup,cl,collection-status,st,full,fb,incremental,incr,inc,ib,list-current-files,ls,remove-all-but-n-full,ra,remove-all-inc-of-but-n-full,ri,remove-older-than,ro,restore,rb,verify,vb}
+                    backup (bu)                               # duplicity backup [options] source_path target_url
+                    cleanup (cl)                              # duplicity cleanup [options] target_url
+                    collection-status (st)                    # duplicity collection_status [options] target_url
+                    full (fb)                                 # duplicity full [options] source_path target_url
+                    incremental (incr, inc, ib)               # duplicity incremental [options] source_path target_url
+                    list-current-files (ls)                   # duplicity list_current_files [options] target_url
+                    remove-all-but-n-full (ra)                # duplicity remove_all_but_n_full [options] count target_url
+                    remove-all-inc-of-but-n-full (ri)         # duplicity remove_all_inc_of_but_n_full [options] count target_url
+                    remove-older-than (ro)                    # duplicity remove_older_than [options] remove_time target_url
+                    restore (rb)                              # duplicity restore [options] source_url target_dir
+                    verify (vb)                               # duplicity verify [options] source_url target_dir
+
+                Enter 'duplicity --help' for help screen.
+                Enter 'duplicity <action_command> --help' for help specific to the given command.
+                """  # noqa
+            return dedent(current) in output
+
         with self.assertRaises(SystemExit) as cm:
             cli_main.process_command_line(shlex.split("-h"))
+            self.assertTrue(check_main_help(cm.content))
         with self.assertRaises(SystemExit) as cm:
             cli_main.process_command_line(shlex.split(f"--help"))
+            self.assertTrue(check_main_help(cm.content))
 
         for cmd in [var2cmd(v) for v in DuplicityCommands.__dict__.keys() if not v.startswith("__")]:
             with self.assertRaises(SystemExit) as cm:
