@@ -44,6 +44,8 @@ files_to_test.extend(glob.glob(os.path.join(_top_dir, 'testing/functional/*.py')
 files_to_test.extend(glob.glob(os.path.join(_top_dir, 'testing/unit/*.py')))
 files_to_test.extend(glob.glob(os.path.join(_top_dir, 'testing/*.py')))
 
+# TODO: Remove duplicity.argparse311 when py38 goes EOL
+files_to_test.remove("argparse311")
 
 class CodeTest(DuplicityTestCase):
 
