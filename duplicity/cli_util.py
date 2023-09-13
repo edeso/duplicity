@@ -22,13 +22,18 @@
 Utils for parse command line, check for consistency, and set config
 """
 
-import argparse
 import io
 import os
 import re
 import socket
 import sys
 from hashlib import md5
+
+# TODO: Remove duplicity.argparse311 when py38 goes EOL
+if sys.version_info[0:2] == [3, 8]:
+    import duplicity.argparse311 as argparse
+else:
+    import argparse
 
 from duplicity import config
 from duplicity import dup_time

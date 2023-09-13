@@ -388,11 +388,11 @@ class CommandlineTest(UnitTestCase):
         """
         test bad commands
         """
-        with self.assertRaises(SystemExit) as cm:
+        with self.assertRaises(CommandLineError) as cm:
             cline = "fbx foo/bar file:///target_url".split()
             cli_main.process_command_line(cline)
 
-        with self.assertRaises(SystemExit) as cm:
+        with self.assertRaises(CommandLineError) as cm:
             cline = "rbx file:///target_url foo/bar".split()
             cli_main.process_command_line(cline)
 
@@ -409,11 +409,11 @@ class CommandlineTest(UnitTestCase):
             cline = "rb file:///target_url foo/bar extra".split()
             cli_main.process_command_line(cline)
 
-        with self.assertRaises(SystemExit) as cm:
+        with self.assertRaises(CommandLineError) as cm:
             cline = "foo/bar file:///target_url extra".split()
             cli_main.process_command_line(cline)
 
-        with self.assertRaises(SystemExit) as cm:
+        with self.assertRaises(CommandLineError) as cm:
             cline = "file:///target_url foo/bar extra".split()
             cli_main.process_command_line(cline)
 
@@ -475,16 +475,16 @@ class CommandlineTest(UnitTestCase):
             cli_main.process_command_line(cline)
 
         # removed option without command
-        with self.assertRaises(SystemExit) as cm:
+        with self.assertRaises(CommandLineError) as cm:
             cline = shlex.split("--gio foo/bar file:///target_url")
             cli_main.process_command_line(cline)
 
         # changed option with command
-        with self.assertRaises(cli_main.CommandLineError) as cm:
+        with self.assertRaises(CommandLineError) as cm:
             cline = shlex.split("restore --file-to-restore foo/bar file://source_url path")
             cli_main.process_command_line(cline)
 
         # changed option without command
-        with self.assertRaises(SystemExit) as cm:
+        with self.assertRaises(CommandLineError) as cm:
             cline = shlex.split("--file-to-restore foo/bar file://source_url path")
             cli_main.process_command_line(cline)

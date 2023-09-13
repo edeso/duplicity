@@ -21,9 +21,17 @@
 """
 Main for parse command line, check for consistency, and set config
 """
+
 import copy
 import inspect
+import sys
 from textwrap import dedent
+
+# TODO: Remove duplicity.argparse311 when py38 goes EOL
+if sys.version_info[0:2] == [3, 8]:
+    import duplicity.argparse311 as argparse
+else:
+    import argparse
 
 from duplicity import backend
 from duplicity import cli_util
@@ -77,8 +85,12 @@ def parse_log_options(arglist):
     parser = argparse.ArgumentParser(
         prog='duplicity_logging',
         add_help=False,
+        formatter_class=make_wide(DuplicityHelpFormatter),
+        epilog=help_footer,
         argument_default=None,
-        allow_abbrev=True)
+        allow_abbrev=True,
+        exit_on_error=False,
+    )
 
     # add logging/version options to the parser
     for opt in sorted(logging_options):
@@ -87,7 +99,10 @@ def parse_log_options(arglist):
         parser.add_argument(*names, **OptionKwargs[var])
 
     # process parent args now
-    args, remainder = parser.parse_known_args(arglist)
+    try:
+        args, remainder = parser.parse_known_args(arglist)
+    except (argparse.ArgumentError, argparse.ArgumentTypeError) as e:
+        raise CommandLineError(str(e))
 
     return args, remainder
 
@@ -104,8 +119,12 @@ def parse_implied_command(arglist):
     parser = argparse.ArgumentParser(
         prog='duplicity_implied',
         add_help=False,
+        formatter_class=make_wide(DuplicityHelpFormatter),
+        epilog=help_footer,
         argument_default=None,
-        allow_abbrev=True)
+        allow_abbrev=True,
+        exit_on_error=False,
+    )
 
     # add dummy -h and --help
     parser.add_argument("-h", "--help", action="store_true")
@@ -128,7 +147,10 @@ def parse_implied_command(arglist):
         # needed as store action does not tolerate nargs=0, we do not want to interpret just now anyway
         parser.add_argument(*names, **selected_args_only)
 
-    args, remainder = parser.parse_known_args(arglist)
+    try:
+        args, remainder = parser.parse_known_args(arglist)
+    except (argparse.ArgumentError, argparse.ArgumentTypeError) as e:
+        raise CommandLineError(str(e))
 
     # let's test the command and try to assume,
     # eventually err out if no valid action could be determined/was given
@@ -174,7 +196,9 @@ def parse_cmdline_options(arglist):
         argument_default=None,
         formatter_class=make_wide(DuplicityHelpFormatter),
         epilog=help_footer,
-        allow_abbrev=True)
+        allow_abbrev=True,
+        exit_on_error=False,
+    )
 
     # add logging options to the parser, needed for online help `duplicity --help`
     # they were actually interpreted and stripped in parse_log_options() above already
@@ -215,12 +239,15 @@ def parse_cmdline_options(arglist):
             subparser_dict[cmd].add_argument(*names, **OptionKwargs[var])
 
     # parse the options
-    args, remainder = parser.parse_known_args(remainder)
+    try:
+        args, remainder = parser.parse_known_args(remainder)
+    except (argparse.ArgumentError, argparse.ArgumentTypeError) as e:
+        raise CommandLineError(str(e))
+
 
     # if no command, print general help
     if not hasattr(args, "action"):
-        parser.print_usage()
-        sys.exit(2)
+        command_line_error("Missing explicit or implicit action.")
 
     # check for added/removed/invalid options
     num_pos = 0
