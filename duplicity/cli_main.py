@@ -276,8 +276,7 @@ def parse_cmdline_options(arglist):
                     + f"{removed_commands_string}"
                 )
             else:
-                parser.print_usage()
-                sys.exit(2)
+                command_line_error(f"{opt} is not a valid option.")
 
     # check for wrong number of positional args
     if len(remainder):
