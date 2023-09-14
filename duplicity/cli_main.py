@@ -107,14 +107,14 @@ def parse_log_options(arglist):
     return args, remainder
 
 
-def parse_implied_command(arglist):
+def parse_implied_action(arglist):
     """
     Err out on changed/removed options early.
     Add implied commands if
     - no or wrong command was given
     - number of positional arguments is 2
     - the order of positional arguments implies backup (2nd is url) or restore (first is url)
-    Check if there is a valid command or throw command line error
+    Check if there is a valid action or throw command line error
     """
     parser = argparse.ArgumentParser(
         prog='duplicity_implied',
@@ -188,7 +188,7 @@ def parse_cmdline_options(arglist):
     args, remainder = parse_log_options(arglist)
 
     # add implied command, check if command valid, interpret removed/changed options
-    parse_implied_command(remainder)
+    parse_implied_action(remainder)
 
     # set up parent parser
     parser = argparse.ArgumentParser(

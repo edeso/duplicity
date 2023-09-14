@@ -9,7 +9,7 @@
 duplicity \- Encrypted incremental backup to local or remote storage.
 
 .SH SYNOPSIS
-For detailed descriptions for each command see chapter
+For detailed descriptions for each action see chapter
 .BR ACTIONS .
 
 .B duplicity [backup|full|incremental]
@@ -103,7 +103,7 @@ directory.  If we wanted to restore just the file "Mail/article" in
 duplicity -t 3D --path-to-restore Mail/article sftp://uid@other.host/some_dir /home/me/restored_file
 .PP
 .RE
-The following command compares the latest backup with the current files:
+The following action compares the latest backup with the current files:
 .PP
 .RS
 duplicity verify sftp://uid@other.host/some_dir /home/me
@@ -135,21 +135,21 @@ password:
 FTP_PASSWORD=mypassword duplicity /local/dir ftp://user@other.host/some_dir
 
 .SH ACTIONS
-Duplicity uses action commands, which can be give in long or in short form
+Duplicity uses actions, which can be give in long or in short form
 and finetuned with options.
 .br
-The action commands 'backup' or 'restore' can be implied from the order local path
+The actions 'backup' or 'restore' can be implied from the order local path
 and remote url are given. Other actions need to be given explicitly.
-For the rare case that the local path may be a valid duplicity command name
+For the rare case that the local path may be a valid duplicity action name
 you may append a '/' to the local path name so it can no longer be mistaken for
-an command.
+an action.
 .br
 
 .PP
 .B NOTE:
 The following explanations explain some but
 .B not
-all options that can be used in connection with that command.
+all options that can be used in connection with that action.
 Consult the OPTIONS section for more detailed descriptions.
 
 .TP
@@ -212,7 +212,7 @@ Lists the files contained in the most current backup or backup at time.
 The information will be extracted from the signature files, not the archive data
 itself. Thus the whole archive does not have to be downloaded, but on
 the other hand if the archive has been deleted or corrupted, this
-command will not detect it.
+action will not detect it.
 
 .TP
 .BI "restore, rb " "[--path-to-restore <relpath>] [--time <time>] <url> <target_folder>"
@@ -1040,7 +1040,8 @@ Enable server-side encryption using key management service.
 .TP
 .BI "--skip-if-no-change " command
 .RS
-By default an emty incremental backup is stored if no files has changed. Setting this optioin will skip the backup. Nothing will be send to the traget nor information cached.
+By default an emty incremental backup is stored if no files has changed. Setting this optioin will skip the backup.
+Nothing will be send to the traget nor information cached.
 .RE
 
 .TP
@@ -1218,7 +1219,7 @@ Use
 as the time separator in filenames instead of colon (":").
 
 .B NOTE:
-This option only applies to recovery and status style commands.
+This option only applies to recovery and status style actions.
 We no longer create or write filenames with time separators,
 but will read older backups that may need this option.
 .RE
@@ -2471,7 +2472,7 @@ be specified and the password will be requested.
 The
 .B from_address_prefix
 may be specified (and probably should be). The text will be used as
-the "From" address in the IMAP server.  Then on a restore (or list) command
+the "From" address in the IMAP server.  Then on a restore (or list) action
 the
 .B from_address_prefix
 will distinguish between different backups.
