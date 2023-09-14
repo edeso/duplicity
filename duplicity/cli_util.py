@@ -47,7 +47,7 @@ url_regexp = re.compile(r"^[\w\+]+://")
 
 help_footer = (
     _("Enter 'duplicity --help' for help screen.\n"
-      "Enter 'duplicity <action_command> --help' for help specific to the given command.")
+      "Enter 'duplicity <action> --help' for help specific to the given action.")
 )
 
 
