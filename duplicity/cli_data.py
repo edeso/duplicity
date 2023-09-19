@@ -598,6 +598,12 @@ class OptionKwargs:
                 "uploads to S3. Use this to control the maximum simultaneous uploads to S3",
         "default": dflt(config.s3_multipart_max_procs)
     }
+    s3_use_server_side_encryption = {
+        u"action": u"store_true",
+        u"dest": u"s3_use_sse",
+        u"help": u"Allow use of server side encryption",
+        u"default": dflt(config.s3_use_sse)
+    }
     s3_use_server_side_kms_encryption = {
         u"action": u"store_true",
         u"dest": u"s3_use_sse_kms",
