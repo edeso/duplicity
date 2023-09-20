@@ -29,7 +29,7 @@ import os
 import re
 import sys
 import warnings
-from binascii import hexlify
+from textwrap import dedent
 
 import duplicity.backend
 from duplicity import config
@@ -97,11 +97,10 @@ class SSHParamikoBackend(duplicity.backend.Backend):
             """
 
             def missing_host_key(self, client, hostname, key):
-                fp = hexlify(key.get_fingerprint())
-                fingerprint = ':'.join(str(a + b) for a, b in list(zip(fp[::2], fp[1::2])))
-                question = f"""The authenticity of host '{hostname}' can't be established.
-{key.get_name().upper()} key fingerprint is {fingerprint}.
-Are you sure you want to continue connecting (yes/no)? """
+                question = dedent(f"""\
+                    The authenticity of host '{hostname}' can't be established.
+                    {key.get_name().upper()} fingerprint is SHA256:{key.get_fingerprint().hex()}.
+                    Are you sure you want to continue connecting (yes/no)? """)
                 while True:
                     sys.stdout.write(question)
                     choice = input().lower()
