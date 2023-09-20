@@ -146,7 +146,7 @@ class LFTPBackend(duplicity.backend.Backend):
     def _put(self, source_path, remote_filename):
         if isinstance(remote_filename, b"".__class__):
             remote_filename = os.fsdecode(remote_filename)
-        commandline = f"lftp -c \"source {self.tempname}; mkdir -p {cmd_quote(self.remote_path)}; " \
+        commandline = f"lftp -c \"source {self.tempname}; mkdir -p -f {cmd_quote(self.remote_path)}; " \
                       f"put {cmd_quote(source_path.uc_name)} " \
                       f"-o {cmd_quote(self.remote_path) + os.fsdecode(remote_filename)}\""
         log.Debug(f"CMD: {commandline}")
@@ -174,7 +174,7 @@ class LFTPBackend(duplicity.backend.Backend):
         quoted_path = cmd_quote(self.remote_path)
         # failing to cd into the folder might be because it was not created already
         commandline = f"lftp -c \"source {cmd_quote(self.tempname)}; ( cd {quoted_path} && ls ) || " \
-                      f"( mkdir -p {quoted_path} && cd {quoted_path} && ls )\""
+                      f"( mkdir -p -f {quoted_path} && cd {quoted_path} && ls )\""
         log.Debug(f"CMD: {commandline}")
         _, l, e = self.subprocess_popen(commandline)
         log.Debug(f"STDERR:\n{e}")
