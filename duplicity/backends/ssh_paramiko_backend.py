@@ -99,7 +99,7 @@ class SSHParamikoBackend(duplicity.backend.Backend):
             def missing_host_key(self, client, hostname, key):
                 question = dedent(f"""\
                     The authenticity of host '{hostname}' can't be established.
-                    {key.get_name().upper()} fingerprint is SHA256:{key.get_fingerprint().hex()}.
+                    {key.get_name().upper()} fingerprint is MD5:{key.get_fingerprint().hex()}.
                     Are you sure you want to continue connecting (yes/no)? """)
                 while True:
                     sys.stdout.write(question)
