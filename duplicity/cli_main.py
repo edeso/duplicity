@@ -79,7 +79,12 @@ def parse_implied_command(arglist):
     - the order of positional arguments implies backup (2nd is url) or restore (first is url)
     Check if there is a valid action command or throw command line error
     """
-    parser = argparse.ArgumentParser(prog="duplicity", add_help=False, argument_default=None)
+    parser = argparse.ArgumentParser(
+        prog="duplicity",
+        add_help=False,
+        argument_default=None,
+        formatter_class=make_wide(DuplicityHelpFormatter),
+    )
 
     # add dummy -h and --help
     parser.add_argument("-h", "--help", action="store_true")
@@ -143,7 +148,12 @@ def pre_parse_cmdline_options(arglist):
     Everthing else is passed on to the main parser.
     """
     # set up parent parser
-    parser = argparse.ArgumentParser(prog="duplicity", add_help=False, argument_default=None)
+    parser = argparse.ArgumentParser(
+        prog="duplicity",
+        add_help=False,
+        argument_default=None,
+        formatter_class=make_wide(DuplicityHelpFormatter),
+    )
 
     # add parent_only options to the parser
     for opt in sorted(parent_only_options):

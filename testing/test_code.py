@@ -74,17 +74,6 @@ class CodeTest(DuplicityTestCase):
             + files_to_test,
         )
 
-    def test_pylint(self):
-        """Pylint test (requires pylint to be installed to pass)"""
-        print()
-        self.run_checker(
-            [
-                "pylint",
-                f"--rcfile={os.path.join(_top_dir, '.pylintrc')}",
-            ]
-            + files_to_test
-        )
-
     def test_pep8(self):
         """Test that we conform to PEP-8 using pycodestyle."""
         # Note that the settings, ignores etc for pycodestyle are set in tox.ini, not here
@@ -95,6 +84,17 @@ class CodeTest(DuplicityTestCase):
             result.total_errors,
             0,
             f"Found {result.total_errors} code style errors (and warnings).",
+        )
+
+    def test_pylint(self):
+        """Pylint test (requires pylint to be installed to pass)"""
+        print()
+        self.run_checker(
+            [
+                "pylint",
+                f"--rcfile={os.path.join(_top_dir, '.pylintrc')}",
+            ]
+            + files_to_test
         )
 
 
