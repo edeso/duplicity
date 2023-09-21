@@ -31,7 +31,7 @@ keyring
 lxml
 mediafire
 megatools
-paramiko
+paramiko>=3.2
 pexpect
 psutil
 pydrive2

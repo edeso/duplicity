@@ -33,6 +33,7 @@ from textwrap import dedent
 
 import duplicity.backend
 from duplicity import config
+from duplicity import log
 from duplicity import progress
 from duplicity import util
 from duplicity.errors import BackendException
@@ -86,6 +87,8 @@ class SSHParamikoBackend(duplicity.backend.Backend):
                 import paramiko
             except ImportError:
                 raise
+            if paramiko.__version__ < "3.2.0":
+                log.FatalError(f"Module paramiko is at {paramiko.__version__}.  Should be 3.2 or later.")
 
         class AgreedAddPolicy(paramiko.AutoAddPolicy):
             """
@@ -99,7 +102,7 @@ class SSHParamikoBackend(duplicity.backend.Backend):
             def missing_host_key(self, client, hostname, key):
                 question = dedent(f"""\
                     The authenticity of host '{hostname}' can't be established.
-                    {key.get_name().upper()} fingerprint is MD5:{key.get_fingerprint().hex()}.
+                    {key.get_name().upper()} key fingerprint is {key.fingerprint}.
                     Are you sure you want to continue connecting (yes/no)? """)
                 while True:
                     sys.stdout.write(question)
