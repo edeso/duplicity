@@ -72,7 +72,7 @@ class MegaBackend(duplicity.backend.Backend):
         if self._megarc:
             cmd = ['megamkdir', '--config', self._megarc, path]
         else:
-            cmd = ['megamkdir', '-', self._username, '-p', self._password, path]
+            cmd = ['megamkdir', '-u', self._username, '-p', self._password, path]
 
         self.subprocess_popen(cmd)
 
@@ -125,7 +125,7 @@ class MegaBackend(duplicity.backend.Backend):
         if self._megarc:
             cmd = ['megals', '--config', self._megarc, self._folder]
         else:
-            cmd = ['megals', '-', self._username, '-p', self._password, self._folder]
+            cmd = ['megals', '-u', self._username, '-p', self._password, self._folder]
 
         files = subprocess.check_output(cmd)
         files = os.fsdecode(files.strip()).split('\n')
@@ -180,7 +180,7 @@ class MegaBackend(duplicity.backend.Backend):
         if self._megarc:
             cmd = ['megarm', '--config', self._megarc, f"{self._folder}/{remote_file}"]
         else:
-            cmd = ['megarm', '-', self._username, '-p', self._password, f"{self._folder}/{remote_file}"]
+            cmd = ['megarm', '-u', self._username, '-p', self._password, f"{self._folder}/{remote_file}"]
 
         self.subprocess_popen(cmd)
 
