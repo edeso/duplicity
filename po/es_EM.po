@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: duplicity\n"
 "Report-Msgid-Bugs-To: Kenneth Loafman <kenneth@loafman.com>\n"
-"POT-Creation-Date: 2023-09-02 10:30-0500\n"
-"PO-Revision-Date: 2023-09-02 15:47\n"
+"POT-Creation-Date: 2023-09-26 13:14-0500\n"
+"PO-Revision-Date: 2023-09-26 19:11\n"
 "Last-Translator: \n"
 "Language-Team: Spanish (Modern)\n"
 "Language: es_EM\n"
@@ -417,44 +417,44 @@ msgstr "WebDAV DEL Mal código de estado %s motivo %s."
 
 #. Used in usage help to represent a Unix-style path name. Example:
 #. --archive-dir <path>
-#: ../duplicity/cli_data.py:92 ../duplicity/cli_data.py:152
-#: ../duplicity/cli_data.py:186 ../duplicity/cli_data.py:231
-#: ../duplicity/cli_data.py:334 ../duplicity/cli_data.py:352
-#: ../duplicity/cli_data.py:508 ../duplicity/cli_data.py:684
-#: ../duplicity/cli_data.py:924
+#: ../duplicity/cli_data.py:100 ../duplicity/cli_data.py:161
+#: ../duplicity/cli_data.py:195 ../duplicity/cli_data.py:240
+#: ../duplicity/cli_data.py:343 ../duplicity/cli_data.py:361
+#: ../duplicity/cli_data.py:519 ../duplicity/cli_data.py:701
+#: ../duplicity/cli_data.py:930
 msgid "path"
 msgstr "ruta"
 
-#: ../duplicity/cli_data.py:105
+#: ../duplicity/cli_data.py:114
 msgid "Hot|Cool|Archive"
 msgstr ""
 
 #. Used in usage help to represent a desired number of
 #. something. Example:
 #. --num-retries <number>
-#: ../duplicity/cli_data.py:110 ../duplicity/cli_data.py:116
-#: ../duplicity/cli_data.py:124 ../duplicity/cli_data.py:158
-#: ../duplicity/cli_data.py:416 ../duplicity/cli_data.py:432
-#: ../duplicity/cli_data.py:479 ../duplicity/cli_data.py:496
-#: ../duplicity/cli_data.py:502 ../duplicity/cli_data.py:520
-#: ../duplicity/cli_data.py:586 ../duplicity/cli_data.py:594
-#: ../duplicity/cli_data.py:640 ../duplicity/cli_data.py:720
-#: ../duplicity/cli_data.py:907
+#: ../duplicity/cli_data.py:119 ../duplicity/cli_data.py:125
+#: ../duplicity/cli_data.py:133 ../duplicity/cli_data.py:167
+#: ../duplicity/cli_data.py:427 ../duplicity/cli_data.py:443
+#: ../duplicity/cli_data.py:490 ../duplicity/cli_data.py:507
+#: ../duplicity/cli_data.py:513 ../duplicity/cli_data.py:531
+#: ../duplicity/cli_data.py:597 ../duplicity/cli_data.py:605
+#: ../duplicity/cli_data.py:657 ../duplicity/cli_data.py:738
+#: ../duplicity/cli_data.py:913
 msgid "number"
 msgstr "número"
 
 #. Used in usage help. Example:
 #. --timeout <seconds>
-#: ../duplicity/cli_data.py:136 ../duplicity/cli_data.py:691
-#: ../duplicity/cli_data.py:941
+#: ../duplicity/cli_data.py:145 ../duplicity/cli_data.py:708
+#: ../duplicity/cli_data.py:947
 msgid "seconds"
 msgstr "segundos"
 
 #. Used in usage help to represent an ID for a GnuPG key. Example:
 #. --encrypt-key <gpg_key_id>
-#: ../duplicity/cli_data.py:174 ../duplicity/cli_data.py:180
-#: ../duplicity/cli_data.py:346 ../duplicity/cli_data.py:647
-#: ../duplicity/cli_data.py:897
+#: ../duplicity/cli_data.py:183 ../duplicity/cli_data.py:189
+#: ../duplicity/cli_data.py:355 ../duplicity/cli_data.py:664
+#: ../duplicity/cli_data.py:903
 msgid "gpg-key-id"
 msgstr ""
 
@@ -462,181 +462,185 @@ msgstr ""
 #. matching one or more files, as described in the documentation.
 #. Example:
 #. --exclude <shell_pattern>
-#: ../duplicity/cli_data.py:191 ../duplicity/cli_data.py:374
-#: ../duplicity/cli_data.py:947
+#: ../duplicity/cli_data.py:200 ../duplicity/cli_data.py:383
+#: ../duplicity/cli_data.py:953
 msgid "shell_pattern"
 msgstr ""
 
 #. Used in usage help to represent the name of a file. Example:
 #. --log-file <filename>
-#: ../duplicity/cli_data.py:202 ../duplicity/cli_data.py:208
-#: ../duplicity/cli_data.py:267 ../duplicity/cli_data.py:380
-#: ../duplicity/cli_data.py:893
+#: ../duplicity/cli_data.py:211 ../duplicity/cli_data.py:217
+#: ../duplicity/cli_data.py:276 ../duplicity/cli_data.py:389
+#: ../duplicity/cli_data.py:899
 msgid "filename"
 msgstr "nombre de archivo"
 
 #. Used in usage help to represent a time spec for a previous
 #. point in time, as described in the documentation. Example:
 #. duplicity remove-older-than time [options] target_url
-#: ../duplicity/cli_data.py:214 ../duplicity/cli_data.py:328
-#: ../duplicity/cli_data.py:533 ../duplicity/cli_data.py:979
+#: ../duplicity/cli_data.py:223 ../duplicity/cli_data.py:337
+#: ../duplicity/cli_data.py:544 ../duplicity/cli_data.py:985
 msgid "time"
 msgstr "hora"
 
-#: ../duplicity/cli_data.py:225 ../duplicity/cli_data.py:386
+#: ../duplicity/cli_data.py:234 ../duplicity/cli_data.py:395
 msgid "regex"
 msgstr ""
 
 #. Used in usage help. (Should be consistent with the "Options:"
 #. header.) Example:
 #. duplicity [full|incremental] [options] source_path target_url
-#: ../duplicity/cli_data.py:340 ../duplicity/cli_data.py:490
-#: ../duplicity/cli_data.py:539 ../duplicity/cli_data.py:663
-#: ../duplicity/cli_data.py:912
+#: ../duplicity/cli_data.py:349 ../duplicity/cli_data.py:501
+#: ../duplicity/cli_data.py:550 ../duplicity/cli_data.py:680
+#: ../duplicity/cli_data.py:918 ../duplicity/argparse311.py:1773
 msgid "options"
 msgstr "opciones"
 
-#: ../duplicity/cli_data.py:369
+#: ../duplicity/cli_data.py:378
 msgid "imap_mailbox"
 msgstr ""
 
-#: ../duplicity/cli_data.py:399
+#: ../duplicity/cli_data.py:402
+msgid "If set, an extra file with statistics in json format will be stored with each backup. It includes the statistics printed out on stdout by default. With 'collection-status' it returs these stats."
+msgstr ""
+
+#: ../duplicity/cli_data.py:409
 msgid "file_descriptor"
 msgstr ""
 
-#: ../duplicity/cli_data.py:405
+#: ../duplicity/cli_data.py:416
 msgid "log_filename"
 msgstr ""
 
-#: ../duplicity/cli_data.py:438
+#: ../duplicity/cli_data.py:449
 msgid "backup name"
 msgstr "nombre de respaldo"
 
-#: ../duplicity/cli_data.py:545
+#: ../duplicity/cli_data.py:556
 msgid "s3_endpoint_url"
 msgstr ""
 
-#: ../duplicity/cli_data.py:607
+#: ../duplicity/cli_data.py:624
 msgid "s3_kms_key_id"
 msgstr ""
 
-#: ../duplicity/cli_data.py:613
+#: ../duplicity/cli_data.py:630
 msgid "s3_kms_grant"
 msgstr ""
 
-#: ../duplicity/cli_data.py:619
+#: ../duplicity/cli_data.py:636
 msgid "s3_region_name"
 msgstr ""
 
-#: ../duplicity/cli_data.py:625
+#: ../duplicity/cli_data.py:642
 msgid "policy"
 msgstr ""
 
 #. noun
-#: ../duplicity/cli_data.py:630 ../duplicity/cli_data.py:635
-#: ../duplicity/cli_data.py:878
+#: ../duplicity/cli_data.py:647 ../duplicity/cli_data.py:652
+#: ../duplicity/cli_data.py:884
 msgid "command"
 msgstr "orden"
 
-#: ../duplicity/cli_data.py:670
+#: ../duplicity/cli_data.py:687
 msgid "pem formatted bundle of certificate authorities"
 msgstr "paquete formateado pem de entidades de certificación"
 
-#: ../duplicity/cli_data.py:675
+#: ../duplicity/cli_data.py:692
 msgid "path to a folder with certificate authority files"
 msgstr "ruta a una carpeta con archivos de autoridad de certificados"
 
 #. abbreviation for "character" (noun)
-#: ../duplicity/cli_data.py:697 ../duplicity/cli_data.py:875
+#: ../duplicity/cli_data.py:714 ../duplicity/cli_data.py:881
 msgid "char"
 msgstr "carácter"
 
-#: ../duplicity/cli_data.py:709
+#: ../duplicity/cli_data.py:727
 msgid "verb"
 msgstr ""
 
-#: ../duplicity/cli_data.py:727
-msgid "extra headers for Webdav, like 'Cookie,name: value'"
+#: ../duplicity/cli_data.py:745
+msgid "extra headers for Webdav, like 'Cookie,name=value'"
 msgstr ""
 
 #. Used in usage help to represent a Unix-style path name. Example:
 #. rsync://user[:password]@other_host[:port]//absolute_path
-#: ../duplicity/cli_data.py:863
+#: ../duplicity/cli_data.py:869
 msgid "absolute_path"
 msgstr "ruta_absoluta"
 
 #. Used in usage help. Example:
 #. tahoe://alias/some_dir
-#: ../duplicity/cli_data.py:867
+#: ../duplicity/cli_data.py:873
 msgid "alias"
 msgstr ""
 
 #. Used in help to represent a "bucket name" for Amazon Web
 #. Services' Simple Storage Service (S3). Example:
 #. s3://other.host/bucket_name[/prefix]
-#: ../duplicity/cli_data.py:872
+#: ../duplicity/cli_data.py:878
 msgid "bucket_name"
 msgstr "nombre_cubo"
 
 #. Used in usage help to represent the name of a container in
 #. Amazon Web Services' Cloudfront. Example:
 #. cf+http://container_name
-#: ../duplicity/cli_data.py:883
+#: ../duplicity/cli_data.py:889
 msgid "container_name"
 msgstr "nombre_contenedor"
 
 #. noun
-#: ../duplicity/cli_data.py:886
+#: ../duplicity/cli_data.py:892
 msgid "count"
 msgstr "recuento"
 
 #. Used in usage help to represent the name of a file directory
-#: ../duplicity/cli_data.py:889
+#: ../duplicity/cli_data.py:895
 msgid "directory"
 msgstr "directorio"
 
 #. Used in usage help, e.g. to represent the name of a code
 #. module. Example:
 #. rsync://user[:password]@other.host[:port]::/module/some_dir
-#: ../duplicity/cli_data.py:902
+#: ../duplicity/cli_data.py:908
 msgid "module"
 msgstr "módulo"
 
 #. Used in usage help to represent an internet hostname. Example:
 #. ftp://user[:password]@other.host[:port]/some_dir
-#: ../duplicity/cli_data.py:916
+#: ../duplicity/cli_data.py:922
 msgid "other.host"
 msgstr "otro.host"
 
 #. Used in usage help. Example:
 #. ftp://user[:password]@other.host[:port]/some_dir
-#: ../duplicity/cli_data.py:920
+#: ../duplicity/cli_data.py:926
 msgid "password"
 msgstr "contraseña"
 
 #. Used in usage help to represent a TCP port number. Example:
 #. ftp://user[:password]@other.host[:port]/some_dir
-#: ../duplicity/cli_data.py:928
+#: ../duplicity/cli_data.py:934
 msgid "port"
 msgstr "puerto"
 
 #. Used in usage help. This represents a string to be used as a
 #. prefix to names for backup files created by Duplicity. Example:
 #. s3://other.host/bucket_name[/prefix]
-#: ../duplicity/cli_data.py:933
+#: ../duplicity/cli_data.py:939
 msgid "prefix"
 msgstr "prefijo"
 
 #. Used in usage help to represent a Unix-style path name. Example:
 #. rsync://user[:password]@other.host[:port]/relative_path
-#: ../duplicity/cli_data.py:937
+#: ../duplicity/cli_data.py:943
 msgid "relative_path"
 msgstr "ruta_relativa"
 
 #. Used in usage help to represent the name of a single file
 #. directory or a Unix-style path to a directory. Example:
 #. file:///some_dir
-#: ../duplicity/cli_data.py:952
+#: ../duplicity/cli_data.py:958
 msgid "some_dir"
 msgstr "algun_dir"
 
@@ -644,14 +648,14 @@ msgstr "algun_dir"
 #. directory or a Unix-style path to a directory where files will be
 #. coming FROM. Example:
 #. duplicity [full|incremental] [options] source_path target_url
-#: ../duplicity/cli_data.py:958
+#: ../duplicity/cli_data.py:964
 msgid "source_path"
 msgstr ""
 
 #. Used in usage help to represent a URL files will be coming
 #. FROM. Example:
 #. duplicity [restore] [options] source_url target_dir
-#: ../duplicity/cli_data.py:963
+#: ../duplicity/cli_data.py:969
 msgid "source_url"
 msgstr "url_origen"
 
@@ -659,42 +663,42 @@ msgstr "url_origen"
 #. directory or a Unix-style path to a directory. where files will be
 #. going TO. Example:
 #. duplicity [restore] [options] source_url target_dir
-#: ../duplicity/cli_data.py:969
+#: ../duplicity/cli_data.py:975
 msgid "target_dir"
 msgstr "dir_objetivo"
 
 #. Used in usage help to represent a URL files will be going TO.
 #. Example:
 #. duplicity [full|incremental] [options] source_path target_url
-#: ../duplicity/cli_data.py:974
+#: ../duplicity/cli_data.py:980
 msgid "target_url"
 msgstr "url_objetivo"
 
 #. Used in usage help to represent a user name (i.e. login).
 #. Example:
 #. ftp://user[:password]@other.host[:port]/some_dir
-#: ../duplicity/cli_data.py:984
+#: ../duplicity/cli_data.py:990
 msgid "user"
 msgstr "usuario"
 
 #. account id for b2. Example: b2://account_id@bucket/
-#: ../duplicity/cli_data.py:987
+#: ../duplicity/cli_data.py:993
 msgid "account_id"
 msgstr "id_cuenta"
 
 #. application_key for b2.
 #. Example: b2://account_id:application_key@bucket/
-#: ../duplicity/cli_data.py:991
+#: ../duplicity/cli_data.py:997
 msgid "application_key"
 msgstr "clave_aplicación"
 
 #. remote name for rclone.
 #. Example: rclone://remote:/some_dir
-#: ../duplicity/cli_data.py:995 ../duplicity/dup_collections.py:546
+#: ../duplicity/cli_data.py:1001 ../duplicity/dup_collections.py:546
 msgid "remote"
 msgstr "remoto"
 
-#: ../duplicity/cli_data.py:998
+#: ../duplicity/cli_data.py:1004
 msgid "Backends and their URL formats:"
 msgstr "Motores y sus formatos de URL:"
 
@@ -760,33 +764,34 @@ msgstr "Cadena de fecha incorrecta «%s»\n\n"
 "(son aceptables distintas combinaciones, pero el mes debe preceder\n"
 " al día siempre)."
 
-#: ../duplicity/cli_main.py:116
-msgid "No valid action command found. Will imply 'backup' because a path source was given and target is a url location."
+#: ../duplicity/cli_main.py:159
+msgid "No valid command found. Will imply 'backup' because a path source was given and target is a url location."
 msgstr ""
 
-#: ../duplicity/cli_main.py:121
-msgid "No valid action command found. Will imply 'restore' because url source was given and target is a local path."
+#: ../duplicity/cli_main.py:163
+msgid "No valid command found. Will imply 'restore' because url source was given and target is a local path."
 msgstr ""
 
-#: ../duplicity/cli_main.py:132
-msgid "Invalid or missing action command and cannot be implied from the "
+#: ../duplicity/cli_main.py:177
+#, python-brace-format
+msgid "Invalid '{remainder[0]}' command and cannot be implied from the "
 msgstr ""
 
-#: ../duplicity/cli_main.py:202
-msgid "Valid action commands"
+#: ../duplicity/cli_main.py:212
+msgid "Valid actioons"
 msgstr ""
 
-#: ../duplicity/cli_main.py:267
+#: ../duplicity/cli_main.py:324
 #, python-brace-format
 msgid "GPG binary is {config.gpg_binary}, version {gpg_version}"
 msgstr ""
 
-#: ../duplicity/cli_main.py:301
+#: ../duplicity/cli_main.py:358
 #, python-brace-format
 msgid "Using archive dir: {config.archive_dir_path.uc_name}"
 msgstr ""
 
-#: ../duplicity/cli_main.py:302
+#: ../duplicity/cli_main.py:359
 #, python-brace-format
 msgid "Using backup name: {config.backup_name}"
 msgstr ""
@@ -1564,73 +1569,238 @@ msgstr "Tocando %s"
 msgid "Deleting tree %s"
 msgstr "Eliminando árbol %s"
 
-#: ../duplicity/cli_util.py:55
-msgid "Enter 'duplicity --help' for help screen."
-msgstr "Introduzca «duplicity --help» para tener ayuda en pantalla."
+#: ../duplicity/cli_util.py:49
+msgid "Enter 'duplicity --help' for help screen.\n"
+"Enter 'duplicity <action> --help' for help specific to the given action."
+msgstr ""
 
-#: ../duplicity/cli_util.py:121
+#: ../duplicity/cli_util.py:129
 msgid "Running in 'ignore errors' mode due to --ignore-errors.\n"
 "Please reconsider if this was not intended"
 msgstr ""
 
-#: ../duplicity/cli_util.py:163
+#: ../duplicity/cli_util.py:139
 msgid "Use of the --asynchronous-upload option is experimental and not safe for production! There are reported cases of undetected data loss during upload. Be aware and periodically verify your backups to be safe."
 msgstr ""
 
-#: ../duplicity/cli_util.py:174
+#: ../duplicity/cli_util.py:150
 msgid "'{val}' is not an int: {str(e)}"
 msgstr ""
 
-#: ../duplicity/cli_util.py:188
+#: ../duplicity/cli_util.py:164
 #, python-brace-format
 msgid "'{val} is not a single character."
 msgstr ""
 
-#: ../duplicity/cli_util.py:208
+#: ../duplicity/cli_util.py:184
 #, python-brace-format
 msgid "Source should be pathname, not url.  Got '{val}' instead."
 msgstr ""
 
-#: ../duplicity/cli_util.py:210
+#: ../duplicity/cli_util.py:186
 #, python-brace-format
 msgid "Argument source_path '{val}' does not exist."
 msgstr ""
 
-#: ../duplicity/cli_util.py:216 ../duplicity/cli_util.py:233
+#: ../duplicity/cli_util.py:192
 #, python-brace-format
 msgid "Source should be url, not directory.  Got '{val}' instead."
 msgstr ""
 
-#: ../duplicity/cli_util.py:222
+#: ../duplicity/cli_util.py:198
 #, python-brace-format
 msgid "Target should be directory, not url.  Got '{val}' instead."
 msgstr ""
 
-#: ../duplicity/cli_util.py:227
+#: ../duplicity/cli_util.py:203
 msgid "Unable to create target dir '{val}': {str(e)}"
 msgstr ""
 
-#: ../duplicity/cli_util.py:277
+#: ../duplicity/cli_util.py:209
+#, python-brace-format
+msgid "Target should be url, not directory.  Got '{val}' instead."
+msgstr ""
+
+#: ../duplicity/cli_util.py:253
 msgid "Verbosity must be one of: digit [0-9], character [ewnid],\n"
 "or word ['error', 'warning', 'notice', 'info', 'debug'].\n"
-"The default is 4 (Notice).  It is strongly recommended\n"
+"The default is 3 (Notice).  It is strongly recommended\n"
 "that verbosity level is set at 2 (Warning) or higher."
 msgstr ""
 
-#: ../duplicity/cli_util.py:412
+#: ../duplicity/cli_util.py:388
 #, python-brace-format
 msgid "Specified archive directory '{archive_dir_path.uc_name}' is not a directory"
 msgstr ""
 
-#: ../duplicity/cli_util.py:419
+#: ../duplicity/cli_util.py:395
 msgid "Encrypt key should be an 8, 16, or 40 character hex string, like 'AA0E73D2'.\n"
 msgstr ""
 
-#: ../duplicity/cli_util.py:435
+#: ../duplicity/cli_util.py:411
 msgid "Hidden dncrypt key should be an 8, 16, or 40 character hex string, like 'AA0E73D2'.\n"
 msgstr ""
 
-#: ../duplicity/cli_util.py:445
+#: ../duplicity/cli_util.py:421
 msgid "Sign key should be an 8, 16, or 40 character hex string, like 'AA0E73D2'.\n"
+msgstr ""
+
+#: ../duplicity/argparse311.py:299
+msgid "usage: "
+msgstr ""
+
+#: ../duplicity/argparse311.py:776
+#, python-format
+msgid "argument %(argument_name)s: %(message)s"
+msgstr ""
+
+#: ../duplicity/argparse311.py:882
+msgid ".__call__() not defined"
+msgstr ""
+
+#: ../duplicity/argparse311.py:1192
+#, python-format
+msgid "conflicting subparser: %s"
+msgstr ""
+
+#: ../duplicity/argparse311.py:1196
+#, python-format
+msgid "conflicting subparser alias: %s"
+msgstr ""
+
+#: ../duplicity/argparse311.py:1231
+#, python-format
+msgid "unknown parser %(parser_name)r (choices: %(choices)s)"
+msgstr ""
+
+#: ../duplicity/argparse311.py:1291
+#, python-format
+msgid "argument \"-\" with mode %r"
+msgstr ""
+
+#: ../duplicity/argparse311.py:1300
+#, python-format
+msgid "can't open '%(filename)s': %(error)s"
+msgstr ""
+
+#: ../duplicity/argparse311.py:1509
+#, python-format
+msgid "cannot merge actions - two groups are named %r"
+msgstr ""
+
+#: ../duplicity/argparse311.py:1547
+msgid "'required' is an invalid argument for positionals"
+msgstr ""
+
+#: ../duplicity/argparse311.py:1569
+#, python-format
+msgid "invalid option string %(option)r: must start with a character %(prefix_chars)r"
+msgstr ""
+
+#: ../duplicity/argparse311.py:1587
+#, python-format
+msgid "dest= is required for options like %r"
+msgstr ""
+
+#: ../duplicity/argparse311.py:1604
+#, python-format
+msgid "invalid conflict_resolution value: %r"
+msgstr ""
+
+#: ../duplicity/argparse311.py:1622
+#, python-format
+msgid "conflicting option string: %s"
+msgid_plural "conflicting option strings: %s"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../duplicity/argparse311.py:1696
+msgid "mutually exclusive arguments must be optional"
+msgstr ""
+
+#: ../duplicity/argparse311.py:1772
+msgid "positional arguments"
+msgstr ""
+
+#: ../duplicity/argparse311.py:1788
+msgid "show this help message and exit"
+msgstr ""
+
+#: ../duplicity/argparse311.py:1819
+msgid "cannot have multiple subparser arguments"
+msgstr ""
+
+#: ../duplicity/argparse311.py:1871 ../duplicity/argparse311.py:2384
+#, python-format
+msgid "unrecognized arguments: %s"
+msgstr ""
+
+#: ../duplicity/argparse311.py:1971
+#, python-format
+msgid "not allowed with argument %s"
+msgstr ""
+
+#: ../duplicity/argparse311.py:2021 ../duplicity/argparse311.py:2035
+#, python-format
+msgid "ignored explicit argument %r"
+msgstr ""
+
+#: ../duplicity/argparse311.py:2142
+#, python-format
+msgid "the following arguments are required: %s"
+msgstr ""
+
+#: ../duplicity/argparse311.py:2157
+#, python-format
+msgid "one of the arguments %s is required"
+msgstr ""
+
+#: ../duplicity/argparse311.py:2199
+msgid "expected one argument"
+msgstr ""
+
+#: ../duplicity/argparse311.py:2200
+msgid "expected at most one argument"
+msgstr ""
+
+#: ../duplicity/argparse311.py:2201
+msgid "expected at least one argument"
+msgstr ""
+
+#: ../duplicity/argparse311.py:2205
+#, python-format
+msgid "expected %s argument"
+msgid_plural "expected %s arguments"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../duplicity/argparse311.py:2263
+#, python-format
+msgid "ambiguous option: %(option)s could match %(matches)s"
+msgstr ""
+
+#: ../duplicity/argparse311.py:2327
+#, python-format
+msgid "unexpected option string: %s"
+msgstr ""
+
+#: ../duplicity/argparse311.py:2524
+#, python-format
+msgid "%r is not callable"
+msgstr ""
+
+#: ../duplicity/argparse311.py:2541
+#, python-format
+msgid "invalid %(type)s value: %(value)r"
+msgstr ""
+
+#: ../duplicity/argparse311.py:2552
+#, python-format
+msgid "invalid choice: %(value)r (choose from %(choices)s)"
+msgstr ""
+
+#: ../duplicity/argparse311.py:2630
+#, python-format
+msgid "%(prog)s: error: %(message)s\n"
 msgstr ""
 
