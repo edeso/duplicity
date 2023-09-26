@@ -1582,7 +1582,7 @@ def do_backup(action):
         log.Notice(f"{_('Last full backup date:')} {dup_time.timetopretty(last_full_time)}")
     else:
         log.Notice(_("Last full backup date: none"))
-    if not config.restart and action == "inc" and config.full_if_older_than is not None and \
+    if not config.restart and action in ["inc", "backup"] and config.full_if_older_than is not None and \
             last_full_time < config.full_if_older_than:
         log.Notice(_("Last full backup is too old, forcing full backup"))
         action = "full"

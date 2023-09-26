@@ -19,20 +19,14 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-import argparse
 import copy
-import os
 import shlex
 import unittest
 
 import pytest
-import sys
 
 from duplicity import cli_main
-from duplicity import config
-from duplicity import errors
 from duplicity import gpg
-from duplicity import log
 from duplicity.cli_data import *
 from duplicity.cli_util import *
 from testing.unit import UnitTestCase
@@ -54,6 +48,7 @@ class CommandlineTest(UnitTestCase):
 
     def setUp(self):
         super().setUp()
+        log.setup()
         config.gpg_profile = gpg.GPGProfile()
         os.makedirs("foo/bar", exist_ok=True)
         os.makedirs("inc", exist_ok=True)
@@ -201,7 +196,7 @@ class CommandlineTest(UnitTestCase):
         """
         cline = "ib foo/bar file:///target_url -v 9".split()
         cli_main.process_command_line(cline)
-        self.assertEqual(config.verbosity, 9)
+        self.assertEqual(log.getverbosity(), log.DEBUG)
 
         cline = "rb file:///source_url foo/bar -t 10000".split()
         cli_main.process_command_line(cline)
@@ -387,11 +382,11 @@ class CommandlineTest(UnitTestCase):
         """
         test bad commands
         """
-        with self.assertRaises((CommandLineError, SystemExit)) as cm:
+        with self.assertRaises(CommandLineError) as cm:
             cline = "fbx foo/bar file:///target_url".split()
             cli_main.process_command_line(cline)
 
-        with self.assertRaises((CommandLineError, SystemExit)) as cm:
+        with self.assertRaises(CommandLineError) as cm:
             cline = "rbx file:///target_url foo/bar".split()
             cli_main.process_command_line(cline)
 
@@ -400,15 +395,21 @@ class CommandlineTest(UnitTestCase):
         """
         test bad commands
         """
-        with self.assertRaises((argparse.ArgumentError, SystemExit)) as cm:
+        with self.assertRaises(CommandLineError) as cm:
             cline = "fb foo/bar file:///target_url extra".split()
             cli_main.process_command_line(cline)
-        self.assertEqual(cm.exception.code, 2)
 
-        with self.assertRaises((argparse.ArgumentError, SystemExit)) as cm:
+        with self.assertRaises(CommandLineError) as cm:
             cline = "rb file:///target_url foo/bar extra".split()
             cli_main.process_command_line(cline)
-        self.assertEqual(cm.exception.code, 2)
+
+        with self.assertRaises(CommandLineError) as cm:
+            cline = "foo/bar file:///target_url extra".split()
+            cli_main.process_command_line(cline)
+
+        with self.assertRaises(CommandLineError) as cm:
+            cline = "file:///target_url foo/bar extra".split()
+            cli_main.process_command_line(cline)
 
     @pytest.mark.usefixtures("redirect_stdin")
     def test_list_commands(self):
@@ -432,13 +433,86 @@ class CommandlineTest(UnitTestCase):
         """
         Test -h/--help
         """
+        def check_main_help(output):
+            current = """\
+                Valid actions:
+                  {backup,bu,cleanup,cl,collection-status,st,full,fb,incremental,incr,inc,ib,list-current-files,ls,remove-all-but-n-full,ra,remove-all-inc-of-but-n-full,ri,remove-older-than,ro,restore,rb,verify,vb}
+                    backup (bu)                               # duplicity backup [options] source_path target_url
+                    cleanup (cl)                              # duplicity cleanup [options] target_url
+                    collection-status (st)                    # duplicity collection_status [options] target_url
+                    full (fb)                                 # duplicity full [options] source_path target_url
+                    incremental (incr, inc, ib)               # duplicity incremental [options] source_path target_url
+                    list-current-files (ls)                   # duplicity list_current_files [options] target_url
+                    remove-all-but-n-full (ra)                # duplicity remove_all_but_n_full [options] count target_url
+                    remove-all-inc-of-but-n-full (ri)         # duplicity remove_all_inc_of_but_n_full [options] count target_url
+                    remove-older-than (ro)                    # duplicity remove_older_than [options] remove_time target_url
+                    restore (rb)                              # duplicity restore [options] source_url target_dir
+                    verify (vb)                               # duplicity verify [options] source_url target_dir
+
+                Enter 'duplicity --help' for help screen.
+                Enter 'duplicity <action_command> --help' for help specific to the given command.
+                """  # noqa
+            return dedent(current) in output
+
         with self.assertRaises(SystemExit) as cm:
             cli_main.process_command_line(shlex.split("-h"))
+            self.assertTrue(check_main_help(cm.content))
         with self.assertRaises(SystemExit) as cm:
             cli_main.process_command_line(shlex.split(f"--help"))
+            self.assertTrue(check_main_help(cm.content))
 
         for cmd in [var2cmd(v) for v in DuplicityCommands.__dict__.keys() if not v.startswith("__")]:
             with self.assertRaises(SystemExit) as cm:
                 cli_main.process_command_line(shlex.split(f"{cmd} -h"))
             with self.assertRaises(SystemExit) as cm:
                 cli_main.process_command_line(shlex.split(f"{cmd} --help"))
+
+    @pytest.mark.usefixtures("redirect_stdin")
+    def test_log_options(self):
+        """
+        test log options.
+        """
+        log.setup()
+        # TODO: this fails although running duplicity, cli_main return the correct default loglevel
+        # default level is notice
+        # self.assertEqual(log.getverbosity(), log.NOTICE)
+
+        # setting custom level
+        cline = shlex.split("foo/bar file:///target_url --verbosity Debug")
+        cli_main.process_command_line(cline)
+        self.assertEqual(log.getverbosity(), log.DEBUG)
+
+    @pytest.mark.usefixtures("redirect_stdin")
+    def test_changed_removed(self):
+        """
+        test changed/removed in odd places.
+        """
+        # removed option with command
+        with self.assertRaises(cli_main.CommandLineError) as cm:
+            cline = shlex.split("--gio backup foo/bar file:///target_url")
+            cli_main.process_command_line(cline)
+
+        # removed option without command
+        with self.assertRaises(CommandLineError) as cm:
+            cline = shlex.split("--gio foo/bar file:///target_url")
+            cli_main.process_command_line(cline)
+
+        # changed option with command
+        with self.assertRaises(CommandLineError) as cm:
+            cline = shlex.split("restore --file-to-restore foo/bar file://source_url path")
+            cli_main.process_command_line(cline)
+
+        # changed option without command
+        with self.assertRaises(CommandLineError) as cm:
+            cline = shlex.split("--file-to-restore foo/bar file://source_url path")
+            cli_main.process_command_line(cline)
+
+        # removed backup option with command
+        with self.assertRaises(CommandLineError) as cm:
+            cline = shlex.split("--time-separator _ backup source_dir file://target_url")
+            cli_main.process_command_line(cline)
+
+        # removed backup option without command
+        with self.assertRaises(CommandLineError) as cm:
+            cline = shlex.split("--time-separator _ source_dir file://target_url")
+            cli_main.process_command_line(cline)

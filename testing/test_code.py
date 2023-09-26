@@ -44,6 +44,9 @@ files_to_test.extend(glob.glob(os.path.join(_top_dir, 'testing/functional/*.py')
 files_to_test.extend(glob.glob(os.path.join(_top_dir, 'testing/unit/*.py')))
 files_to_test.extend(glob.glob(os.path.join(_top_dir, 'testing/*.py')))
 
+# TODO: Remove duplicity.argparse311 when py38 goes EOL
+files_to_test.remove(os.path.join(_top_dir, 'duplicity/argparse311.py'))
+
 
 class CodeTest(DuplicityTestCase):
 
@@ -65,6 +68,7 @@ class CodeTest(DuplicityTestCase):
     @skipCodeTest
     def test_pylint(self):
         """Pylint test (requires pylint to be installed to pass)"""
+        print()
         self.run_checker([
             "pylint",
             f"--rcfile={os.path.join(_top_dir, '.pylintrc')}",
@@ -75,6 +79,7 @@ class CodeTest(DuplicityTestCase):
     def test_pep8(self):
         """Test that we conform to PEP-8 using pycodestyle."""
         # Note that the settings, ignores etc for pycodestyle are set in tox.ini, not here
+        print()
         style = pycodestyle.StyleGuide(config_file=os.path.join(_top_dir, 'tox.ini'))
         result = style.check_files(files_to_test)
         self.assertEqual(result.total_errors, 0,

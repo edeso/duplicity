@@ -22,14 +22,18 @@
 Utils for parse command line, check for consistency, and set config
 """
 
-import argparse
 import io
 import os
 import re
 import socket
 import sys
-from textwrap import dedent
 from hashlib import md5
+
+# TODO: Remove duplicity.argparse311 when py38 goes EOL
+if sys.version_info[0:2] == (3, 8):
+    from duplicity import argparse311 as argparse
+else:
+    import argparse
 
 from duplicity import config
 from duplicity import dup_time
@@ -41,8 +45,14 @@ from duplicity import selection
 gpg_key_patt = re.compile(r"^(0x)?([0-9A-Fa-f]{8}|[0-9A-Fa-f]{16}|[0-9A-Fa-f]{40})$")
 url_regexp = re.compile(r"^[\w\+]+://")
 
+help_footer = (
+    _("Enter 'duplicity --help' for help screen.\n"
+      "Enter 'duplicity <action> --help' for help specific to the given action.")
+)
+
 
 class CommandLineError(errors.UserError):
+    sys.tracebacklimit = 0
     pass
 
 
@@ -50,9 +60,7 @@ def command_line_error(message):
     """
     Indicate a command line error and exit
     """
-    sys.tracebacklimit = 0
-    raise CommandLineError(f"{message}\n" +
-                           _("Enter 'duplicity --help' for help screen."))
+    raise CommandLineError(f"{message}\n{help_footer}")
 
 
 class DuplicityAction(argparse.Action):
@@ -123,42 +131,10 @@ class IgnoreErrorsAction(DuplicityAction):
         config.ignore_errors = True
 
 
-class DeprecationAction(DuplicityAction):
-    def __init__(self, option_strings, dest, **kwargs):
-        super().__init__(option_strings, dest, **kwargs)
-
-    def __call__(self, parser, namespace, values, option_string=None):
-        command_line_error(dedent(
-            f"""\
-            Option '{option_string} was removed in 2.0.0.
-            These additional options were deprecated in 2.0.0
-                --exclude-filelist-stdin
-                --exclude-globbing-filelist
-                --gio
-                --include-filelist-stdin
-                --include-globbing-filelist
-                --old-filenames
-                --s3-auropean-buckets
-                --s3-multipart-max-timeout
-                --s3-use-multiprocessing
-                --short-filenames
-                --time-separator
-                """))
-
-
-class ChangedOptionAction(DuplicityAction):
-    def __init__(self, option_strings, dest, **kwargs):
-        super().__init__(option_strings, dest, **kwargs)
-
-    def __call__(self, parser, namespace, values, option_string=None):
-        command_line_error(dedent(
-            f"""\
-            Option '{option_string} was changed in 2.0.0.
-                --file-to-restore to --path-to-restore
-                --do-not-restore-ownership to --no-restore-ownership"""))
-
-
 class WarnAsyncStoreConstAction(DuplicityAction):
+    def __init__(self, option_strings, dest, nargs=None, **kwargs):
+        super().__init__(option_strings, dest, **kwargs)
+
     def __call__(self, parser, namespace, values, option_string=None):
         log.Warn(_("Use of the --asynchronous-upload option is experimental "
                    "and not safe for production! There are reported cases of "
@@ -276,7 +252,7 @@ def check_verbosity(val):
         command_line_error(_(
             "Verbosity must be one of: digit [0-9], character [ewnid],\n"
             "or word ['error', 'warning', 'notice', 'info', 'debug'].\n"
-            "The default is 4 (Notice).  It is strongly recommended\n"
+            "The default is 3 (Notice).  It is strongly recommended\n"
             "that verbosity level is set at 2 (Warning) or higher."))
 
     log.setverbosity(verb)
