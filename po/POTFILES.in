@@ -74,3 +74,4 @@ duplicity/filechunkio.py
 duplicity/path.py
 duplicity/cached_ops.py
 duplicity/cli_util.py
+duplicity/argparse311.py
