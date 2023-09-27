@@ -5,6 +5,8 @@
 
 ### Changes
 
+* Ignore commit error in release-prep. [Kenneth Loafman]
+
 * Run po/update-pot. [Kenneth Loafman]
 
 * Don't truncate CHANGELOG.md. [Kenneth Loafman]
@@ -14,6 +16,18 @@
 ### Fix
 
 * More argparse refinements, especially wrt. removed/changed options ... [ede]
+
+    - add a generic help footer
+    - remove all options from parent parser, only add parent options
+      needed for proper `duplicity --help` without command
+    - re-add to removed options so the appropriate error is thrown
+      - --s3-european-buckets,
+      - --s3-use-new-style,
+      - --s3-use-server-side-encryption
+    - refactor deprecated to removed option, because they were
+    - dynamically list removed options as opposed to former static string
+    - fix handling of removed_backup_options (--time-separator).  Fixes #763
+    - fix full-if-older-than being ignored.  Fixes #764
 
 * Fix mega v1 backend.  Fixes #762. [Kenneth Loafman]
 
