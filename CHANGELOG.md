@@ -5,6 +5,8 @@
 
 ### Changes
 
+* Fix archive name in release-prep. [Kenneth Loafman]
+
 * Ignore commit error in release-prep. [Kenneth Loafman]
 
 * Run po/update-pot. [Kenneth Loafman]
