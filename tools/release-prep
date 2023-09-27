@@ -62,4 +62,4 @@ git push --tags -f origin main
 
 # make and sign the release
 ./setup.py sdist --dist-dir=.
-gpg --use-agent -b duplicity-${REL}.tar.gz
+gpg --use-agent -b duplicity_${REL}.tar.gz
