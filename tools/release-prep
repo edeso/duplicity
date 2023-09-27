@@ -19,8 +19,6 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-set -e
-
 if [ "$1" != "" ]; then
     REL=$1
 else
@@ -49,7 +47,7 @@ set -v
 
 # put in correct version for Launchpad
 ${SED} -i s/^Version\ =\ \".*\"/Version\ =\ \"${REL}\"/g setup.py
-git commit -a -m"chg:pkg: Prep for ${REL}"
+git commit -a -m"chg:pkg: Prep for ${REL}" || true
 
 # add release tag and push it
 git tag -f rel.${REL}
