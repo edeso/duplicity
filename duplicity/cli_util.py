@@ -175,6 +175,13 @@ def check_file(val):
         command_line_error(f"{val} is not a valide pathname: {str(e)}")
 
 
+def check_interval(val):
+    try:
+        return dup_time.intstringtoseconds(val)
+    except dup_time.TimeException as e:
+        command_line_error(str(e))
+
+
 def check_remove_time(val):
     return _check_time(val)
 

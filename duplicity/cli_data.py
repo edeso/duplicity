@@ -334,8 +334,8 @@ OptionKwargs = dict(
         default=dflt(config.ftp_connection)
     ),
     full_if_older_than=dict(
-        metavar=_("time"),
-        type=check_time,
+        metavar=_("interval"),
+        type=check_interval,
         help="Perform full backup if last full is older than 'time'",
         default=dflt(config.full_if_older_than)
     ),

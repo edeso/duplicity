@@ -516,3 +516,18 @@ class CommandlineTest(UnitTestCase):
         with self.assertRaises(CommandLineError) as cm:
             cline = shlex.split("--time-separator _ source_dir file://target_url")
             cli_main.process_command_line(cline)
+
+    @pytest.mark.usefixtures("redirect_stdin")
+    def test_regression_issues(self):
+        """
+        test regression issues.
+        """
+        # Issue 764 - --full-if-older-than -- explicit
+        cline = shlex.split("backup --full-if-older-than 30D foo/bar file://target_url")
+        cli_main.process_command_line(cline)
+        self.assertEqual(config.full_if_older_than, 2592000)
+
+        # Issue 764 - --full-if-older-than -- implied
+        cline = shlex.split("--full-if-older-than 30D foo/bar file://target_url")
+        cli_main.process_command_line(cline)
+        self.assertEqual(config.full_if_older_than, 2592000)
