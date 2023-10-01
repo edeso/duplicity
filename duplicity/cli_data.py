@@ -388,7 +388,7 @@ OptionKwargs = dict(
     include_filelist=dict(
         metavar=_("filename"),
         action=AddFilelistAction,
-        help="File with list of file patters to include",
+        help="File with list of file patterns to include",
         default=dflt(None)
     ),
     include_regexp=dict(
