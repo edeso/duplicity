@@ -210,7 +210,7 @@ OptionKwargs = dict(
     exclude_filelist=dict(
         metavar=_("filename"),
         action=AddFilelistAction,
-        help="File with list of file patters to exclude",
+        help="File with list of file patterns to exclude",
         default=dflt(None)
     ),
     exclude_if_present=dict(
