@@ -219,8 +219,10 @@ class FinalTest(FunctionalTestCase):
                      ('largefile', 400000, 'dir3')]
         self.test_basic_cycle(backup_options=backup_options,
                               restore_options=restore_options,
-                              dirlist=['/tmp/testfiles/dir1', '/tmp/testfiles/dir1',
-                                       '/tmp/testfiles/dir2', '/tmp/testfiles/dir3'],
+                              dirlist=[f'{_runtest_dir}/testfiles/dir1',
+                                       f'{_runtest_dir}/testfiles/dir1',
+                                       f'{_runtest_dir}/testfiles/dir2',
+                                       f'{_runtest_dir}/testfiles/dir3'],
                               testfiles=testfiles)
 
 
