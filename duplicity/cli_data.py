@@ -731,7 +731,7 @@ OptionKwargs = dict(
     ),
     version=dict(
         action="version",
-        version=f"%(prog)s {__version__}",
+        version=f"duplicity {__version__}",
         help="Display version and exit",
     ),
     volsize=dict(
