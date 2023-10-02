@@ -643,7 +643,7 @@ def check_sig_chain(col_stats):
     @param col_stats: collection status
     """
     if not col_stats.matched_chain_pair:
-        if config.action == 'inc':
+        if config.action == 'inc' and not config.implied_inc:
             log.FatalError(_("Fatal Error: Unable to start incremental backup.  "
                              "Old signatures not found and incremental specified"),
                            log.ErrorCode.inc_without_sigs)

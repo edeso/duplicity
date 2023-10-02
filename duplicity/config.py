@@ -44,6 +44,9 @@ target_url = None
 # action to take
 action = None
 
+# True if inc implied, not explicit
+implied_inc = False
+
 # Prefix for all files (appended before type-specific prefixes)
 file_prefix = b""
 

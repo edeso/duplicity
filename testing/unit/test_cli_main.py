@@ -268,7 +268,7 @@ class CommandlineTest(UnitTestCase):
         """
         cline = "foo/bar file:///target_url".split()
         cli_main.process_command_line(cline)
-        self.assertEqual(config.action, "backup")
+        self.assertEqual(config.action, "inc")
         self.assertEqual(config.source_path, "foo/bar")
         self.assertEqual(config.target_url, "file:///target_url")
 
@@ -280,7 +280,7 @@ class CommandlineTest(UnitTestCase):
 
         cline = "-v9 foo/bar file:///target_url".split()
         cli_main.process_command_line(cline)
-        self.assertEqual(config.action, "backup")
+        self.assertEqual(config.action, "inc")
         self.assertEqual(config.source_path, "foo/bar")
         self.assertEqual(config.target_url, "file:///target_url")
 
@@ -292,7 +292,7 @@ class CommandlineTest(UnitTestCase):
 
         cline = "foo/bar -v9 file:///target_url".split()
         cli_main.process_command_line(cline)
-        self.assertEqual(config.action, "backup")
+        self.assertEqual(config.action, "inc")
         self.assertEqual(config.source_path, "foo/bar")
         self.assertEqual(config.target_url, "file:///target_url")
 
@@ -304,7 +304,7 @@ class CommandlineTest(UnitTestCase):
 
         cline = "--verbosity n foo/bar file:///target_url".split()
         cli_main.process_command_line(cline)
-        self.assertEqual(config.action, "backup")
+        self.assertEqual(config.action, "inc")
         self.assertEqual(config.source_path, "foo/bar")
         self.assertEqual(config.target_url, "file:///target_url")
 
@@ -316,7 +316,7 @@ class CommandlineTest(UnitTestCase):
 
         cline = "foo/bar --verbosity n file:///target_url".split()
         cli_main.process_command_line(cline)
-        self.assertEqual(config.action, "backup")
+        self.assertEqual(config.action, "inc")
         self.assertEqual(config.source_path, "foo/bar")
         self.assertEqual(config.target_url, "file:///target_url")
 
@@ -339,7 +339,7 @@ class CommandlineTest(UnitTestCase):
         # implied inc works if '/' supplied
         cline = "inc/ file:///target_url".split()
         cli_main.process_command_line(cline)
-        self.assertEqual(config.action, "backup")
+        self.assertEqual(config.action, "inc")
         self.assertEqual(config.source_path, "inc/")
         self.assertEqual(config.target_url, "file:///target_url")
 

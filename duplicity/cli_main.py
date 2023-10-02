@@ -323,8 +323,11 @@ def process_command_line(cmdline_list):
     gpg_version = ".".join(map(str, config.gpg_profile.gpg_version))
     log.Info(_(f"GPG binary is {config.gpg_binary}, version {gpg_version}"))
 
-    # shorten incremental to inc
-    config.action = "inc" if config.action == "incremental" else config.action
+    # shorten incremental to inc, replace backup with inc
+    if config.action in ("incremental", "backup"):
+        if config.action == "backup":
+            config.implied_inc = True
+        config.action = "inc"
 
     # import all backends and determine which one we use
     backend.import_backends()
@@ -351,7 +354,7 @@ def process_command_line(cmdline_list):
     config.keep_chains = config.count
 
     # selection only applies to certain commands
-    if config.action in ["backup", 'full', 'inc', 'verify']:
+    if config.action in ['full', 'inc', 'verify']:
         set_selection()
 
     # print derived info
