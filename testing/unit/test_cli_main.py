@@ -531,3 +531,15 @@ class CommandlineTest(UnitTestCase):
         cline = shlex.split("--full-if-older-than 30D foo/bar file://target_url")
         cli_main.process_command_line(cline)
         self.assertEqual(config.full_if_older_than, 2592000)
+
+        # Issue 773 - --exclude-device-files
+        config.select_opts = []
+        cline = shlex.split("backup --exclude-device-files / file://target_url")
+        cli_main.process_command_line(cline)
+        self.assertListEqual(config.select_opts, [("--exclude-device-files", [])])
+
+        # Issue 773 - --exclude-other-fileystems
+        config.select_opts = []
+        cline = shlex.split("backup --exclude-other-filesystems / file://target_url")
+        cli_main.process_command_line(cline)
+        self.assertListEqual(config.select_opts, [("--exclude-other-filesystems", [])])

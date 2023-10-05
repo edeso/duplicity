@@ -203,7 +203,8 @@ OptionKwargs = dict(
         default=dflt(None)
     ),
     exclude_device_files=dict(
-        action="store_true",
+        nargs=0,
+        action=AddSelectionAction,
         help="Exclude device files",
         default=dflt(False)
     ),
@@ -226,7 +227,8 @@ OptionKwargs = dict(
         default=dflt(None)
     ),
     exclude_other_filesystems=dict(
-        action="store_true",
+        nargs=0,
+        action=AddSelectionAction,
         help="Exclude other filesystems from backup",
         default=dflt(False)
     ),
