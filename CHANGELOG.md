@@ -1,6 +1,31 @@
 # Changelog
 
 
+## rel.2.1.3 (2023-10-08)
+
+### Changes
+
+* Run po/update-pot. [Kenneth Loafman]
+
+* Fix typo in cli\_data.py. [Rena Kunisaki]
+
+### Fix
+
+* Intermixed argument lists cause problems. [Kenneth Loafman]
+
+* Exclude-other-filesystems seems to be ignored since duplicity 2. [Kenneth Loafman]
+
+* Change backup to inc after CLI processing. [Kenneth Loafman]
+
+* Fix test\_skip\_if\_no\_change to use \_runtest\_dir not /tmp. [Kenneth Loafman]
+
+* Fix typos in cli\_data.py and release-prep. [Kenneth Loafman]
+
+* --version showing 'duplicity\_logging' not 'duplicity' [Kenneth Loafman]
+
+* --full-if-older-than being ignored? [Kenneth Loafman]
+
+
 ## rel.2.1.2 (2023-09-27)
 
 ### Changes
