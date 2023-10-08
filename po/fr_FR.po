@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: duplicity\n"
 "Report-Msgid-Bugs-To: Kenneth Loafman <kenneth@loafman.com>\n"
-"POT-Creation-Date: 2023-09-26 13:14-0500\n"
-"PO-Revision-Date: 2023-09-26 19:10\n"
+"POT-Creation-Date: 2023-10-08 11:05-0500\n"
+"PO-Revision-Date: 2023-10-08 16:10\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -418,10 +418,10 @@ msgstr ""
 #. Used in usage help to represent a Unix-style path name. Example:
 #. --archive-dir <path>
 #: ../duplicity/cli_data.py:100 ../duplicity/cli_data.py:161
-#: ../duplicity/cli_data.py:195 ../duplicity/cli_data.py:240
-#: ../duplicity/cli_data.py:343 ../duplicity/cli_data.py:361
-#: ../duplicity/cli_data.py:519 ../duplicity/cli_data.py:701
-#: ../duplicity/cli_data.py:930
+#: ../duplicity/cli_data.py:195 ../duplicity/cli_data.py:242
+#: ../duplicity/cli_data.py:345 ../duplicity/cli_data.py:363
+#: ../duplicity/cli_data.py:521 ../duplicity/cli_data.py:703
+#: ../duplicity/cli_data.py:932
 msgid "path"
 msgstr "chemin"
 
@@ -434,27 +434,27 @@ msgstr ""
 #. --num-retries <number>
 #: ../duplicity/cli_data.py:119 ../duplicity/cli_data.py:125
 #: ../duplicity/cli_data.py:133 ../duplicity/cli_data.py:167
-#: ../duplicity/cli_data.py:427 ../duplicity/cli_data.py:443
-#: ../duplicity/cli_data.py:490 ../duplicity/cli_data.py:507
-#: ../duplicity/cli_data.py:513 ../duplicity/cli_data.py:531
-#: ../duplicity/cli_data.py:597 ../duplicity/cli_data.py:605
-#: ../duplicity/cli_data.py:657 ../duplicity/cli_data.py:738
-#: ../duplicity/cli_data.py:913
+#: ../duplicity/cli_data.py:429 ../duplicity/cli_data.py:445
+#: ../duplicity/cli_data.py:492 ../duplicity/cli_data.py:509
+#: ../duplicity/cli_data.py:515 ../duplicity/cli_data.py:533
+#: ../duplicity/cli_data.py:599 ../duplicity/cli_data.py:607
+#: ../duplicity/cli_data.py:659 ../duplicity/cli_data.py:740
+#: ../duplicity/cli_data.py:915
 msgid "number"
 msgstr "nombre"
 
 #. Used in usage help. Example:
 #. --timeout <seconds>
-#: ../duplicity/cli_data.py:145 ../duplicity/cli_data.py:708
-#: ../duplicity/cli_data.py:947
+#: ../duplicity/cli_data.py:145 ../duplicity/cli_data.py:710
+#: ../duplicity/cli_data.py:949
 msgid "seconds"
 msgstr "secondes"
 
 #. Used in usage help to represent an ID for a GnuPG key. Example:
 #. --encrypt-key <gpg_key_id>
 #: ../duplicity/cli_data.py:183 ../duplicity/cli_data.py:189
-#: ../duplicity/cli_data.py:355 ../duplicity/cli_data.py:664
-#: ../duplicity/cli_data.py:903
+#: ../duplicity/cli_data.py:357 ../duplicity/cli_data.py:666
+#: ../duplicity/cli_data.py:905
 msgid "gpg-key-id"
 msgstr "identifiant_clé_gpg"
 
@@ -462,185 +462,189 @@ msgstr "identifiant_clé_gpg"
 #. matching one or more files, as described in the documentation.
 #. Example:
 #. --exclude <shell_pattern>
-#: ../duplicity/cli_data.py:200 ../duplicity/cli_data.py:383
-#: ../duplicity/cli_data.py:953
+#: ../duplicity/cli_data.py:200 ../duplicity/cli_data.py:385
+#: ../duplicity/cli_data.py:955
 msgid "shell_pattern"
 msgstr ""
 
 #. Used in usage help to represent the name of a file. Example:
 #. --log-file <filename>
-#: ../duplicity/cli_data.py:211 ../duplicity/cli_data.py:217
-#: ../duplicity/cli_data.py:276 ../duplicity/cli_data.py:389
-#: ../duplicity/cli_data.py:899
+#: ../duplicity/cli_data.py:212 ../duplicity/cli_data.py:218
+#: ../duplicity/cli_data.py:278 ../duplicity/cli_data.py:391
+#: ../duplicity/cli_data.py:901
 msgid "filename"
 msgstr "nom_de_fichier"
 
 #. Used in usage help to represent a time spec for a previous
 #. point in time, as described in the documentation. Example:
 #. duplicity remove-older-than time [options] target_url
-#: ../duplicity/cli_data.py:223 ../duplicity/cli_data.py:337
-#: ../duplicity/cli_data.py:544 ../duplicity/cli_data.py:985
+#: ../duplicity/cli_data.py:224 ../duplicity/cli_data.py:546
+#: ../duplicity/cli_data.py:987
 msgid "time"
 msgstr "temps"
 
-#: ../duplicity/cli_data.py:234 ../duplicity/cli_data.py:395
+#: ../duplicity/cli_data.py:236 ../duplicity/cli_data.py:397
 msgid "regex"
+msgstr ""
+
+#: ../duplicity/cli_data.py:339
+msgid "interval"
 msgstr ""
 
 #. Used in usage help. (Should be consistent with the "Options:"
 #. header.) Example:
 #. duplicity [full|incremental] [options] source_path target_url
-#: ../duplicity/cli_data.py:349 ../duplicity/cli_data.py:501
-#: ../duplicity/cli_data.py:550 ../duplicity/cli_data.py:680
-#: ../duplicity/cli_data.py:918 ../duplicity/argparse311.py:1773
+#: ../duplicity/cli_data.py:351 ../duplicity/cli_data.py:503
+#: ../duplicity/cli_data.py:552 ../duplicity/cli_data.py:682
+#: ../duplicity/cli_data.py:920 ../duplicity/argparse311.py:1773
 msgid "options"
 msgstr ""
 
-#: ../duplicity/cli_data.py:378
+#: ../duplicity/cli_data.py:380
 msgid "imap_mailbox"
 msgstr "boîte_aux_lettres_IMAP"
 
-#: ../duplicity/cli_data.py:402
+#: ../duplicity/cli_data.py:404
 msgid "If set, an extra file with statistics in json format will be stored with each backup. It includes the statistics printed out on stdout by default. With 'collection-status' it returs these stats."
 msgstr ""
 
-#: ../duplicity/cli_data.py:409
+#: ../duplicity/cli_data.py:411
 msgid "file_descriptor"
 msgstr "descripteur_fichier"
 
-#: ../duplicity/cli_data.py:416
+#: ../duplicity/cli_data.py:418
 msgid "log_filename"
 msgstr ""
 
-#: ../duplicity/cli_data.py:449
+#: ../duplicity/cli_data.py:451
 msgid "backup name"
 msgstr "nom_sauvegarde"
 
-#: ../duplicity/cli_data.py:556
+#: ../duplicity/cli_data.py:558
 msgid "s3_endpoint_url"
 msgstr ""
 
-#: ../duplicity/cli_data.py:624
+#: ../duplicity/cli_data.py:626
 msgid "s3_kms_key_id"
 msgstr ""
 
-#: ../duplicity/cli_data.py:630
+#: ../duplicity/cli_data.py:632
 msgid "s3_kms_grant"
 msgstr ""
 
-#: ../duplicity/cli_data.py:636
+#: ../duplicity/cli_data.py:638
 msgid "s3_region_name"
 msgstr ""
 
-#: ../duplicity/cli_data.py:642
+#: ../duplicity/cli_data.py:644
 msgid "policy"
 msgstr ""
 
 #. noun
-#: ../duplicity/cli_data.py:647 ../duplicity/cli_data.py:652
-#: ../duplicity/cli_data.py:884
+#: ../duplicity/cli_data.py:649 ../duplicity/cli_data.py:654
+#: ../duplicity/cli_data.py:886
 msgid "command"
 msgstr "commande"
 
-#: ../duplicity/cli_data.py:687
+#: ../duplicity/cli_data.py:689
 msgid "pem formatted bundle of certificate authorities"
 msgstr "Convertir au format PEM l'ensemble des autorités de certification"
 
-#: ../duplicity/cli_data.py:692
+#: ../duplicity/cli_data.py:694
 msgid "path to a folder with certificate authority files"
 msgstr ""
 
 #. abbreviation for "character" (noun)
-#: ../duplicity/cli_data.py:714 ../duplicity/cli_data.py:881
+#: ../duplicity/cli_data.py:716 ../duplicity/cli_data.py:883
 msgid "char"
 msgstr "caract."
 
-#: ../duplicity/cli_data.py:727
+#: ../duplicity/cli_data.py:729
 msgid "verb"
 msgstr ""
 
-#: ../duplicity/cli_data.py:745
+#: ../duplicity/cli_data.py:747
 msgid "extra headers for Webdav, like 'Cookie,name=value'"
 msgstr ""
 
 #. Used in usage help to represent a Unix-style path name. Example:
 #. rsync://user[:password]@other_host[:port]//absolute_path
-#: ../duplicity/cli_data.py:869
+#: ../duplicity/cli_data.py:871
 msgid "absolute_path"
 msgstr "chemin_absolu"
 
 #. Used in usage help. Example:
 #. tahoe://alias/some_dir
-#: ../duplicity/cli_data.py:873
+#: ../duplicity/cli_data.py:875
 msgid "alias"
 msgstr ""
 
 #. Used in help to represent a "bucket name" for Amazon Web
 #. Services' Simple Storage Service (S3). Example:
 #. s3://other.host/bucket_name[/prefix]
-#: ../duplicity/cli_data.py:878
+#: ../duplicity/cli_data.py:880
 msgid "bucket_name"
 msgstr "nom_de_bucket"
 
 #. Used in usage help to represent the name of a container in
 #. Amazon Web Services' Cloudfront. Example:
 #. cf+http://container_name
-#: ../duplicity/cli_data.py:889
+#: ../duplicity/cli_data.py:891
 msgid "container_name"
 msgstr "nom_de_conteneur"
 
 #. noun
-#: ../duplicity/cli_data.py:892
+#: ../duplicity/cli_data.py:894
 msgid "count"
 msgstr "compte"
 
 #. Used in usage help to represent the name of a file directory
-#: ../duplicity/cli_data.py:895
+#: ../duplicity/cli_data.py:897
 msgid "directory"
 msgstr "dossier"
 
 #. Used in usage help, e.g. to represent the name of a code
 #. module. Example:
 #. rsync://user[:password]@other.host[:port]::/module/some_dir
-#: ../duplicity/cli_data.py:908
+#: ../duplicity/cli_data.py:910
 msgid "module"
 msgstr ""
 
 #. Used in usage help to represent an internet hostname. Example:
 #. ftp://user[:password]@other.host[:port]/some_dir
-#: ../duplicity/cli_data.py:922
+#: ../duplicity/cli_data.py:924
 msgid "other.host"
 msgstr "autre.hote"
 
 #. Used in usage help. Example:
 #. ftp://user[:password]@other.host[:port]/some_dir
-#: ../duplicity/cli_data.py:926
+#: ../duplicity/cli_data.py:928
 msgid "password"
 msgstr "mot_de_passe"
 
 #. Used in usage help to represent a TCP port number. Example:
 #. ftp://user[:password]@other.host[:port]/some_dir
-#: ../duplicity/cli_data.py:934
+#: ../duplicity/cli_data.py:936
 msgid "port"
 msgstr ""
 
 #. Used in usage help. This represents a string to be used as a
 #. prefix to names for backup files created by Duplicity. Example:
 #. s3://other.host/bucket_name[/prefix]
-#: ../duplicity/cli_data.py:939
+#: ../duplicity/cli_data.py:941
 msgid "prefix"
 msgstr "préfixe"
 
 #. Used in usage help to represent a Unix-style path name. Example:
 #. rsync://user[:password]@other.host[:port]/relative_path
-#: ../duplicity/cli_data.py:943
+#: ../duplicity/cli_data.py:945
 msgid "relative_path"
 msgstr "chemin_relatif"
 
 #. Used in usage help to represent the name of a single file
 #. directory or a Unix-style path to a directory. Example:
 #. file:///some_dir
-#: ../duplicity/cli_data.py:958
+#: ../duplicity/cli_data.py:960
 msgid "some_dir"
 msgstr "dossier_quelconque"
 
@@ -648,14 +652,14 @@ msgstr "dossier_quelconque"
 #. directory or a Unix-style path to a directory where files will be
 #. coming FROM. Example:
 #. duplicity [full|incremental] [options] source_path target_url
-#: ../duplicity/cli_data.py:964
+#: ../duplicity/cli_data.py:966
 msgid "source_path"
 msgstr ""
 
 #. Used in usage help to represent a URL files will be coming
 #. FROM. Example:
 #. duplicity [restore] [options] source_url target_dir
-#: ../duplicity/cli_data.py:969
+#: ../duplicity/cli_data.py:971
 msgid "source_url"
 msgstr "url_source"
 
@@ -663,42 +667,42 @@ msgstr "url_source"
 #. directory or a Unix-style path to a directory. where files will be
 #. going TO. Example:
 #. duplicity [restore] [options] source_url target_dir
-#: ../duplicity/cli_data.py:975
+#: ../duplicity/cli_data.py:977
 msgid "target_dir"
 msgstr "dossier_cible"
 
 #. Used in usage help to represent a URL files will be going TO.
 #. Example:
 #. duplicity [full|incremental] [options] source_path target_url
-#: ../duplicity/cli_data.py:980
+#: ../duplicity/cli_data.py:982
 msgid "target_url"
 msgstr "url_cible"
 
 #. Used in usage help to represent a user name (i.e. login).
 #. Example:
 #. ftp://user[:password]@other.host[:port]/some_dir
-#: ../duplicity/cli_data.py:990
+#: ../duplicity/cli_data.py:992
 msgid "user"
 msgstr "utilisateur"
 
 #. account id for b2. Example: b2://account_id@bucket/
-#: ../duplicity/cli_data.py:993
+#: ../duplicity/cli_data.py:995
 msgid "account_id"
 msgstr "identifiant_de_compte"
 
 #. application_key for b2.
 #. Example: b2://account_id:application_key@bucket/
-#: ../duplicity/cli_data.py:997
+#: ../duplicity/cli_data.py:999
 msgid "application_key"
 msgstr "clef_d_application"
 
 #. remote name for rclone.
 #. Example: rclone://remote:/some_dir
-#: ../duplicity/cli_data.py:1001 ../duplicity/dup_collections.py:546
+#: ../duplicity/cli_data.py:1003 ../duplicity/dup_collections.py:546
 msgid "remote"
 msgstr "distant"
 
-#: ../duplicity/cli_data.py:1004
+#: ../duplicity/cli_data.py:1006
 msgid "Backends and their URL formats:"
 msgstr "Moteurs et leurs formats URL :"
 
@@ -763,34 +767,30 @@ msgstr "Mauvais chaîne de temps « %s »\n\n"
 "fuseau horaire courant), ou des dates ordinaires comme 2/4/1997 ou 2001-04-23\n"
 "(plusieurs combinaisons sont possibles, mais le mois précède toujours le jour)."
 
-#: ../duplicity/cli_main.py:159
-msgid "No valid command found. Will imply 'backup' because a path source was given and target is a url location."
+#: ../duplicity/cli_main.py:190
+msgid "No valid action found. Will imply 'backup' because a path source was given and target is a url location."
 msgstr ""
 
-#: ../duplicity/cli_main.py:163
-msgid "No valid command found. Will imply 'restore' because url source was given and target is a local path."
+#: ../duplicity/cli_main.py:194
+msgid "No valid action found. Will imply 'restore' because url source was given and target is a local path."
 msgstr ""
 
-#: ../duplicity/cli_main.py:177
+#: ../duplicity/cli_main.py:198
 #, python-brace-format
-msgid "Invalid '{remainder[0]}' command and cannot be implied from the "
+msgid "Invalid '{remainder[0]}' action and cannot be implied from the "
 msgstr ""
 
-#: ../duplicity/cli_main.py:212
-msgid "Valid actioons"
-msgstr ""
-
-#: ../duplicity/cli_main.py:324
+#: ../duplicity/cli_main.py:260
 #, python-brace-format
 msgid "GPG binary is {config.gpg_binary}, version {gpg_version}"
 msgstr ""
 
-#: ../duplicity/cli_main.py:358
+#: ../duplicity/cli_main.py:296
 #, python-brace-format
 msgid "Using archive dir: {config.archive_dir_path.uc_name}"
 msgstr ""
 
-#: ../duplicity/cli_main.py:359
+#: ../duplicity/cli_main.py:297
 #, python-brace-format
 msgid "Using backup name: {config.backup_name}"
 msgstr ""
@@ -1570,78 +1570,77 @@ msgid "Deleting tree %s"
 msgstr "Suppression de l'arbre %s"
 
 #: ../duplicity/cli_util.py:49
-msgid "Enter 'duplicity --help' for help screen.\n"
-"Enter 'duplicity <action> --help' for help specific to the given action."
+msgid "Enter 'duplicity --help' for help screen."
 msgstr ""
 
-#: ../duplicity/cli_util.py:129
+#: ../duplicity/cli_util.py:128
 msgid "Running in 'ignore errors' mode due to --ignore-errors.\n"
 "Please reconsider if this was not intended"
 msgstr ""
 
-#: ../duplicity/cli_util.py:139
+#: ../duplicity/cli_util.py:138
 msgid "Use of the --asynchronous-upload option is experimental and not safe for production! There are reported cases of undetected data loss during upload. Be aware and periodically verify your backups to be safe."
 msgstr ""
 
-#: ../duplicity/cli_util.py:150
+#: ../duplicity/cli_util.py:149
 msgid "'{val}' is not an int: {str(e)}"
 msgstr ""
 
-#: ../duplicity/cli_util.py:164
+#: ../duplicity/cli_util.py:163
 #, python-brace-format
 msgid "'{val} is not a single character."
 msgstr ""
 
-#: ../duplicity/cli_util.py:184
+#: ../duplicity/cli_util.py:190
 #, python-brace-format
 msgid "Source should be pathname, not url.  Got '{val}' instead."
 msgstr ""
 
-#: ../duplicity/cli_util.py:186
+#: ../duplicity/cli_util.py:192
 #, python-brace-format
 msgid "Argument source_path '{val}' does not exist."
 msgstr ""
 
-#: ../duplicity/cli_util.py:192
+#: ../duplicity/cli_util.py:198
 #, python-brace-format
 msgid "Source should be url, not directory.  Got '{val}' instead."
 msgstr ""
 
-#: ../duplicity/cli_util.py:198
+#: ../duplicity/cli_util.py:204
 #, python-brace-format
 msgid "Target should be directory, not url.  Got '{val}' instead."
 msgstr ""
 
-#: ../duplicity/cli_util.py:203
+#: ../duplicity/cli_util.py:209
 msgid "Unable to create target dir '{val}': {str(e)}"
 msgstr ""
 
-#: ../duplicity/cli_util.py:209
+#: ../duplicity/cli_util.py:215
 #, python-brace-format
 msgid "Target should be url, not directory.  Got '{val}' instead."
 msgstr ""
 
-#: ../duplicity/cli_util.py:253
+#: ../duplicity/cli_util.py:259
 msgid "Verbosity must be one of: digit [0-9], character [ewnid],\n"
 "or word ['error', 'warning', 'notice', 'info', 'debug'].\n"
 "The default is 3 (Notice).  It is strongly recommended\n"
 "that verbosity level is set at 2 (Warning) or higher."
 msgstr ""
 
-#: ../duplicity/cli_util.py:388
+#: ../duplicity/cli_util.py:394
 #, python-brace-format
 msgid "Specified archive directory '{archive_dir_path.uc_name}' is not a directory"
 msgstr ""
 
-#: ../duplicity/cli_util.py:395
+#: ../duplicity/cli_util.py:401
 msgid "Encrypt key should be an 8, 16, or 40 character hex string, like 'AA0E73D2'.\n"
 msgstr ""
 
-#: ../duplicity/cli_util.py:411
+#: ../duplicity/cli_util.py:417
 msgid "Hidden dncrypt key should be an 8, 16, or 40 character hex string, like 'AA0E73D2'.\n"
 msgstr ""
 
-#: ../duplicity/cli_util.py:421
+#: ../duplicity/cli_util.py:427
 msgid "Sign key should be an 8, 16, or 40 character hex string, like 'AA0E73D2'.\n"
 msgstr ""
 
