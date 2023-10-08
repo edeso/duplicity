@@ -433,27 +433,6 @@ class CommandlineTest(UnitTestCase):
         """
         Test -h/--help
         """
-        def check_main_help(output):
-            current = """\
-                Valid actions:
-                  {backup,bu,cleanup,cl,collection-status,st,full,fb,incremental,incr,inc,ib,list-current-files,ls,remove-all-but-n-full,ra,remove-all-inc-of-but-n-full,ri,remove-older-than,ro,restore,rb,verify,vb}
-                    backup (bu)                               # duplicity backup [options] source_path target_url
-                    cleanup (cl)                              # duplicity cleanup [options] target_url
-                    collection-status (st)                    # duplicity collection_status [options] target_url
-                    full (fb)                                 # duplicity full [options] source_path target_url
-                    incremental (incr, inc, ib)               # duplicity incremental [options] source_path target_url
-                    list-current-files (ls)                   # duplicity list_current_files [options] target_url
-                    remove-all-but-n-full (ra)                # duplicity remove_all_but_n_full [options] count target_url
-                    remove-all-inc-of-but-n-full (ri)         # duplicity remove_all_inc_of_but_n_full [options] count target_url
-                    remove-older-than (ro)                    # duplicity remove_older_than [options] remove_time target_url
-                    restore (rb)                              # duplicity restore [options] source_url target_dir
-                    verify (vb)                               # duplicity verify [options] source_url target_dir
-
-                Enter 'duplicity --help' for help screen.
-                Enter 'duplicity <action_command> --help' for help specific to the given command.
-                """  # noqa
-            return dedent(current) in output
-
         with self.assertRaises(SystemExit) as cm:
             cli_main.process_command_line(shlex.split("-h"))
             self.assertTrue(check_main_help(cm.content))
@@ -516,6 +495,41 @@ class CommandlineTest(UnitTestCase):
         with self.assertRaises(CommandLineError) as cm:
             cline = shlex.split("--time-separator _ source_dir file://target_url")
             cli_main.process_command_line(cline)
+
+    @pytest.mark.usefixtures("redirect_stdin")
+    def test_intermixed_args(self):
+        """
+        test intermixed args.
+        """
+        # Issue 766 -- intermixed -- explicit
+        cline = shlex.split(
+            "--archive-dir /tmp/backup-metadata/archive/ --tempdir /tmp/backup-metadata/temp/ "
+            "--allow-source-mismatch --encrypt-sign-key DEADDEAD --volsize 4096 --progress -v 4 "
+            "incr --full-if-older-than 30D foo/bar --log-file /tmp/log.txt boto3+s3://foo"
+        )
+        cli_main.process_command_line(cline)
+        self.assertEqual(config.action, "inc")
+        self.assertEqual(config.allow_source_mismatch, True)
+        self.assertEqual(config.archive_dir, b'/tmp/backup-metadata/archive/')
+        self.assertEqual(config.full_if_older_than, 2592000)
+        self.assertEqual(config.progress, True)
+        self.assertEqual(config.temproot, b'/tmp/backup-metadata/temp/')
+        self.assertEqual(config.volsize, 4294967296)
+
+        # Issue 766 -- intermixed -- implicit
+        cline = shlex.split(
+            "--archive-dir /tmp/backup-metadata/archive/ --tempdir /tmp/backup-metadata/temp/ "
+            "--allow-source-mismatch --encrypt-sign-key DEADDEAD --volsize 4096 --progress -v 4 "
+            "--full-if-older-than 30D foo/bar --log-file /tmp/log.txt boto3+s3://foo"
+        )
+        cli_main.process_command_line(cline)
+        self.assertEqual(config.action, "inc")
+        self.assertEqual(config.allow_source_mismatch, True)
+        self.assertEqual(config.archive_dir, b'/tmp/backup-metadata/archive/')
+        self.assertEqual(config.full_if_older_than, 2592000)
+        self.assertEqual(config.progress, True)
+        self.assertEqual(config.temproot, b'/tmp/backup-metadata/temp/')
+        self.assertEqual(config.volsize, 4294967296)
 
     @pytest.mark.usefixtures("redirect_stdin")
     def test_regression_issues(self):

@@ -34,6 +34,7 @@ else:
     import argparse
 
 from duplicity import backend
+from duplicity import config
 from duplicity import cli_util
 from duplicity import gpg
 from duplicity import util
@@ -55,12 +56,37 @@ def make_wide(formatter, w=120, h=46):
     Beware: "Only the name of this class is considered a public API."
     """
     try:
-        kwargs = {'width': w, 'max_help_position': h}
+        kwargs = {"width": w, "max_help_position": h}
         formatter(None, **kwargs)
         return lambda prog: formatter(prog, **kwargs)
     except TypeError:
         warnings.warn("argparse help formatter failed, falling back.")
         return formatter
+
+
+def new_parser(**kwargs):
+    """
+    Return properly defined overrideable parser
+    """
+    action_help = "positional args:\n"
+    for var, meta in DuplicityCommands.__dict__.items():
+        if var.startswith('__'):
+            continue
+        action_str = f"  {var2cmd(var)} {' '.join(meta)}"
+        action_help += (f"{action_str:48}"
+                        f"# duplicity {var2cmd(var)} [options] {' '.join(meta)}")
+        action_help += "\n"
+    action_help += "\n"
+
+    return argparse.ArgumentParser(
+        prog="duplicity",
+        argument_default=None,
+        formatter_class=make_wide(DuplicityHelpFormatter),
+        epilog=action_help + help_footer,
+        allow_abbrev=True,
+        exit_on_error=False,
+        **kwargs,
+    )
 
 
 def harvest_namespace(args):
@@ -79,18 +105,10 @@ def parse_log_options(arglist):
     """
     Parse the commands and options that need to be handled first.
     Mainly to make sure logging goes to the right place with correct verbosity.
-    Everything else is passed on to the main parsers subparsers.
+    Everything else is passed on to the main parsers.
     """
     # set up parent parser
-    parser = argparse.ArgumentParser(
-        prog='duplicity_logging',
-        add_help=False,
-        formatter_class=make_wide(DuplicityHelpFormatter),
-        epilog=help_footer,
-        argument_default=None,
-        allow_abbrev=True,
-        exit_on_error=False,
-    )
+    parser = new_parser(add_help=False)
 
     # add logging/version options to the parser
     for opt in sorted(logging_options):
@@ -100,84 +118,11 @@ def parse_log_options(arglist):
 
     # process parent args now
     try:
-        args, remainder = parser.parse_known_args(arglist)
+        args, remainder = parser.parse_known_intermixed_args(arglist)
     except (argparse.ArgumentError, argparse.ArgumentTypeError) as e:
         raise CommandLineError(str(e))
 
     return args, remainder
-
-
-def parse_implied_action(arglist):
-    """
-    Err out on changed/removed options early.
-    Add implied commands if
-    - no or wrong command was given
-    - number of positional arguments is 2
-    - the order of positional arguments implies backup (2nd is url) or restore (first is url)
-    Check if there is a valid action or throw command line error
-    """
-    parser = argparse.ArgumentParser(
-        prog='duplicity_implied',
-        add_help=False,
-        formatter_class=make_wide(DuplicityHelpFormatter),
-        epilog=help_footer,
-        argument_default=None,
-        allow_abbrev=True,
-        exit_on_error=False,
-    )
-
-    # add dummy -h and --help
-    parser.add_argument("-h", "--help", action="store_true")
-
-    # add all known options
-    for opt in all_options:
-        var = opt2var(opt)
-        names = [opt] + OptionAliases.__dict__.get(var, [])
-        # arparse store and friends define nargs, so we keep em
-        # strip actually config retrieving action classes _and_ type functions checking validity
-        selected_args_only = {
-            k: (
-                v
-                if not (inspect.isclass(v) and issubclass(v, argparse.Action))
-                else DoNothingAction
-            )
-            for k, v in OptionKwargs[var].items()
-            if k not in {'type'}
-        }
-        # needed as store action does not tolerate nargs=0, we do not want to interpret just now anyway
-        parser.add_argument(*names, **selected_args_only)
-
-    try:
-        args, remainder = parser.parse_known_args(arglist)
-    except (argparse.ArgumentError, argparse.ArgumentTypeError) as e:
-        raise CommandLineError(str(e))
-
-    # let's test the command and try to assume,
-    # eventually err out if no valid action could be determined/was given
-    if len(remainder) == 2 and remainder[0] not in all_commands:
-        if is_path(remainder[0]) and is_url(remainder[1]):
-            log.Notice(_("No valid command found. Will imply 'backup' because "
-                         "a path source was given and target is a url location."))
-            arglist.insert(0, 'backup')
-        elif is_url(remainder[0]) and is_path(remainder[1]):
-            log.Notice(_("No valid command found. Will imply 'restore' because "
-                         "url source was given and target is a local path."))
-            arglist.insert(0, 'restore')
-        else:
-            # pass it on to be handled properly if not a possible implied action.
-            if remainder[0].startswith('-') or remainder[1].startswith('-'):
-                return
-            args_string = ', '.join(f"'{c}'" for c in remainder)
-            all_long_commands = set()
-            for var, aliases in CommandAliases.__dict__.items():
-                if var.startswith("__") or len(var) <= 2:
-                    continue
-                all_long_commands.add(var2cmd(var))
-            all_long_commands_string = ', '.join(f"'{c}'" for c in sorted(all_long_commands))
-            msg = _(f"Invalid '{remainder[0]}' command and cannot be implied from the "
-                    f"given arguments. {args_string}\n"
-                    f"Valid actions are: {all_long_commands_string}")
-            command_line_error(msg)
 
 
 def parse_cmdline_options(arglist):
@@ -187,69 +132,23 @@ def parse_cmdline_options(arglist):
     # interpret logging/version options early
     args, remainder = parse_log_options(arglist)
 
-    # add implied command, check if command valid, interpret removed/changed options
-    parse_implied_action(remainder)
+    # set up parser
+    parser = new_parser()
 
-    # set up parent parser
-    parser = argparse.ArgumentParser(
-        prog='duplicity',
-        argument_default=None,
-        formatter_class=make_wide(DuplicityHelpFormatter),
-        epilog=help_footer,
-        allow_abbrev=True,
-        exit_on_error=False,
-    )
-
-    # add logging options to the parser, needed for online help `duplicity --help`
-    # they were actually interpreted and stripped in parse_log_options() above already
-    for opt in sorted(logging_options):
+    # add all options to the parser
+    for opt in sorted(all_options):
         var = opt2var(opt)
         names = [opt] + OptionAliases.__dict__.get(var, [])
         parser.add_argument(*names, **OptionKwargs[var])
 
-    # set up command subparsers
-    subparsers = parser.add_subparsers(
-        title=_("Valid actioons"))
-
-    # add sub_parser for each command
-    subparser_dict = dict()
-    for var, meta in sorted(DuplicityCommands.__dict__.items()):
-        if var.startswith("__"):
-            continue
-        cmd = var2cmd(var)
-        subparser_dict[cmd] = subparsers.add_parser(
-            cmd,
-            aliases=CommandAliases.__dict__[var],
-            help=f"# duplicity {var} [options] {u' '.join(meta)}",
-            formatter_class=make_wide(DuplicityHelpFormatter),
-            epilog=help_url_formats + "\n" + help_footer,
-        )
-        subparser_dict[cmd].add_argument(
-            dest="action",
-            action="store_const",
-            const=cmd)
-        for arg in meta:
-            func = getattr(cli_util, f"check_{arg}")
-            subparser_dict[cmd].add_argument(arg, type=func)
-
-        # add valid options for each command
-        for opt in sorted(CommandOptions.__dict__[var]):
-            var = opt2var(opt)
-            names = [opt] + OptionAliases.__dict__.get(var, [])
-            subparser_dict[cmd].add_argument(*names, **OptionKwargs[var])
-
     # parse the options
     try:
-        args, remainder = parser.parse_known_args(remainder)
+        args, remainder = parser.parse_known_intermixed_args(remainder)
     except (argparse.ArgumentError, argparse.ArgumentTypeError) as e:
         raise CommandLineError(str(e))
 
-    # if no command, print general help
-    if not hasattr(args, "action"):
-        command_line_error("Missing explicit or implicit action.")
-
     # check for added/removed options
-    for opt in arglist:
+    for opt in remainder:
         if opt.startswith("-"):
             if opt in changed_options:
                 command_line_error(
@@ -284,15 +183,52 @@ def parse_cmdline_options(arglist):
                     + f"{removed_commands_string}"
                 )
 
-    # check for wrong number of positional args
-    if len(remainder):
-        num_pos = 0
-        for opt in remainder:
-            if not opt.startswith("-"):
-                num_pos += 1
-        if num_pos - 1 < command_args_expected.get(args.action, 0):
-            command_line_error(f"Wrong number of positional args for '{args.action}', got {num_pos}, "
-                               f"expected {len(DuplicityCommands.__dict__[args.action])}.")
+    # let's test the command and try to assume which action,
+    # eventually err out if no valid action could be determined/was given
+    if len(remainder) == 2 and remainder[0] not in all_commands:
+        if is_path(remainder[0]) and is_url(remainder[1]):
+            log.Notice(_("No valid action found. Will imply 'backup' because "
+                         "a path source was given and target is a url location."))
+            remainder.insert(0, 'backup')
+        elif is_url(remainder[0]) and is_path(remainder[1]):
+            log.Notice(_("No valid action found. Will imply 'restore' because "
+                         "url source was given and target is a local path."))
+            remainder.insert(0, 'restore')
+        else:
+            msg = _(f"Invalid '{remainder[0]}' action and cannot be implied from the "
+                    f"given arguments:\n{arglist}\n"
+                    f"Valid actions are: {all_commands}")
+            command_line_error(msg)
+
+    # check for proper action
+    if remainder[0] in all_commands:
+        args.action = remainder[0]
+    else:
+        command_line_error("Missing or invalid explicit or implicit action.")
+
+    # translate aliases to long action
+    var = cmd2var(args.action)
+    arg_checks = DuplicityCommands.__dict__.get(var, None)
+    if not arg_checks:
+        for var, aliases in CommandAliases.__dict__.items():
+            if var.startswith("__"):
+                continue
+            if args.action in aliases:
+                arg_checks = DuplicityCommands.__dict__.get(var, None)
+                args.action = var2cmd(var)
+    if not arg_checks:
+        command_line_error(f"'{args.action}' is not a valid action or alias.")
+
+    # parse the positionals relating to action
+    if len(arg_checks) == len(remainder[1:]):
+        for name, val in zip(arg_checks, remainder[1:]):
+            func = getattr(cli_util, f"check_{name}")
+            setattr(config, name, func(val))
+    else:
+        command_line_error(
+            f"Wrong number of positional args for '{args.action}', got {len(remainder[1:])}\n"
+            f"Expected {len(arg_checks)} positionals from {remainder[1:]}."
+        )
 
     # harvest args to config
     harvest_namespace(args)
@@ -319,7 +255,7 @@ def process_command_line(cmdline_list):
             recipients=src.recipients,
             hidden_recipients=src.hidden_recipients)
     else:
-        config.gpg_binary = util.which('gpg')
+        config.gpg_binary = util.which("gpg")
     gpg_version = ".".join(map(str, config.gpg_profile.gpg_version))
     log.Info(_(f"GPG binary is {config.gpg_binary}, version {gpg_version}"))
 
@@ -347,14 +283,13 @@ def process_command_line(cmdline_list):
     # generate backup name and set up archive dir
     if config.backup_name is None:
         config.backup_name = generate_default_backup_name(remote_url)
-    set_archive_dir(expand_archive_dir(config.archive_dir,
-                                       config.backup_name))
+    set_archive_dir(expand_archive_dir(config.archive_dir, config.backup_name))
 
     # count is only used by the remove-* commands
     config.keep_chains = config.count
 
     # selection only applies to certain commands
-    if config.action in ['full', 'inc', 'verify']:
+    if config.action in ["full", "inc", "verify"]:
         set_selection()
 
     # print derived info
@@ -366,6 +301,7 @@ def process_command_line(cmdline_list):
 
 if __name__ == "__main__":
     import types
+
     log.setup()
     action = process_command_line(sys.argv[1:])
     for a, v in sorted(config.__dict__.items()):

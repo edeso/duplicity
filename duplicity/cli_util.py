@@ -46,13 +46,12 @@ gpg_key_patt = re.compile(r"^(0x)?([0-9A-Fa-f]{8}|[0-9A-Fa-f]{16}|[0-9A-Fa-f]{40
 url_regexp = re.compile(r"^[\w\+]+://")
 
 help_footer = (
-    _("Enter 'duplicity --help' for help screen.\n"
-      "Enter 'duplicity <action> --help' for help specific to the given action.")
+    _("Enter 'duplicity --help' for help screen.")
 )
 
 
 class CommandLineError(errors.UserError):
-    sys.tracebacklimit = 0
+    sys.tracebacklimit = 4
     pass
 
 
