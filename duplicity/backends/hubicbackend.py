@@ -38,8 +38,10 @@ class HubicBackend(PyraxBackend):
         try:
             import pyrax
         except ImportError as e:
-            raise BackendException(f"""Hubic backend requires the pyrax library available from Rackspace.
-Exception: {str(e)}""")
+            raise BackendException(
+                f"""Hubic backend requires the pyrax library available from Rackspace.
+Exception: {str(e)}"""
+            )
 
         # Inform Pyrax that we're talking to Hubic
         pyrax.set_setting("identity_type", "duplicity.backends.pyrax_identity.hubic.HubicIdentity")
@@ -49,14 +51,15 @@ Exception: {str(e)}""")
             try:
                 pyrax.set_credential_file(CREDENTIALS_FILE)
             except Exception as e:
-                log.FatalError(f"Connection failed, please check your credentials: "
-                               f"{e.__class__.__name__} {util.uexc(e)}",
-                               log.ErrorCode.connection_failed)
+                log.FatalError(
+                    f"Connection failed, please check your credentials: " f"{e.__class__.__name__} {util.uexc(e)}",
+                    log.ErrorCode.connection_failed,
+                )
 
         else:
             raise BackendException("No ~/.hubic_credentials file found.")
 
-        container = parsed_url.path.lstrip('/')
+        container = parsed_url.path.lstrip("/")
 
         self.client_exc = pyrax.exceptions.ClientException
         self.nso_exc = pyrax.exceptions.NoSuchObject

@@ -72,9 +72,9 @@ class SSHParamikoBackend(duplicity.backend.Backend):
 
         if parsed_url.path:
             # remove first leading '/'
-            self.remote_dir = re.sub(r'^/', r'', parsed_url.path, 1)
+            self.remote_dir = re.sub(r"^/", r"", parsed_url.path, 1)
         else:
-            self.remote_dir = '.'
+            self.remote_dir = "."
 
         # lazily import paramiko when we need it
         # debian squeeze's paramiko is a bit old, so we silence randompool
@@ -101,30 +101,30 @@ class SSHParamikoBackend(duplicity.backend.Backend):
                 # format md5 as ssh does
                 fingerprints = f"  MD5:{':'.join(str(a + b) for a, b in list(zip(md5[::2], md5[1::2])))}"
                 # sha256 fingerprint available since paramiko 3.2 only
-                if hasattr(key, 'fingerprint'):
+                if hasattr(key, "fingerprint"):
                     fingerprints += f"\n  {key.fingerprint}"
                 keyname = key.get_name().upper()
-                question = dedent("""
+                question = dedent(
+                    """
                     The authenticity of host '{hostname}' can't be established.
                     {keyname} fingerprint is
                     {fingerprints}.
-                    Are you sure you want to continue connecting (yes/no)? """).format(**locals())
+                    Are you sure you want to continue connecting (yes/no)? """
+                ).format(**locals())
                 while True:
                     sys.stdout.write(question)
                     choice = input().lower()
-                    if choice in ['yes', 'y']:
-                        paramiko.AutoAddPolicy.missing_host_key(self, client,
-                                                                hostname, key)
+                    if choice in ["yes", "y"]:
+                        paramiko.AutoAddPolicy.missing_host_key(self, client, hostname, key)
                         return
-                    elif choice in ['no', 'n']:
+                    elif choice in ["no", "n"]:
                         raise AuthenticityException(hostname)
                     else:
                         question = "Please type 'yes' or 'no': "
 
         class AuthenticityException(paramiko.SSHException):
             def __init__(self, hostname):
-                paramiko.SSHException.__init__(self,
-                                               f'Host key verification for server {hostname} failed.')
+                paramiko.SSHException.__init__(self, f"Host key verification for server {hostname} failed.")
 
         self.client = paramiko.SSHClient()
         self.client.set_missing_host_key_policy(AgreedAddPolicy())
@@ -134,7 +134,7 @@ class SSHParamikoBackend(duplicity.backend.Backend):
         self.client.set_log_channel("sshbackend")
         ours = paramiko.util.get_logger("sshbackend")
         dest = logging.StreamHandler(sys.stderr)
-        dest.setFormatter(logging.Formatter('ssh: %(message)s'))
+        dest.setFormatter(logging.Formatter("ssh: %(message)s"))
         ours.addHandler(dest)
 
         # ..and the duplicity levels are neither linear,
@@ -156,7 +156,8 @@ class SSHParamikoBackend(duplicity.backend.Backend):
         # load user/local known_hosts files
         # paramiko is very picky wrt format and bails out on any problem...
         global_known_hosts = "/etc/ssh/ssh_known_hosts"
-        m = re.search(r"""
+        m = re.search(
+            r"""
                       ^(?:.+\s+)?
                       (?:-oGlobalKnownHostsFile=)
                       (
@@ -167,7 +168,9 @@ class SSHParamikoBackend(duplicity.backend.Backend):
                           [\S]+
                       )
                       """,
-                      config.ssh_options, re.VERBOSE)
+            config.ssh_options,
+            re.VERBOSE,
+        )
         if m is not None:
             global_known_hosts = m.group(3) if m.group(3) else m.group(1)
         try:
@@ -177,7 +180,8 @@ class SSHParamikoBackend(duplicity.backend.Backend):
             raise BackendException(f"could not load {global_known_hosts}, maybe corrupt?")
 
         user_known_hosts = os.path.expanduser("~/.ssh/known_hosts")
-        m = re.search(r"""
+        m = re.search(
+            r"""
                       ^(?:.+\s+)?
                       (?:-oUserKnownHostsFile=)
                       (
@@ -188,7 +192,9 @@ class SSHParamikoBackend(duplicity.backend.Backend):
                           [\S]+
                       )
                       """,
-                      config.ssh_options, re.VERBOSE)
+            config.ssh_options,
+            re.VERBOSE,
+        )
         if m is not None:
             user_known_hosts = m.group(3) if m.group(3) else m.group(1)
         try:
@@ -207,30 +213,29 @@ class SSHParamikoBackend(duplicity.backend.Backend):
         rationale is that it is easiest to deal wrt overwriting multiple
         values from ssh_config file. (ede 03/2012)
         """
-        self.config = {'hostname': parsed_url.hostname}
+        self.config = {"hostname": parsed_url.hostname}
         # get system host config entries
-        self.config.update(self.gethostconfig('/etc/ssh/ssh_config',
-                                              parsed_url.hostname))
+        self.config.update(self.gethostconfig("/etc/ssh/ssh_config", parsed_url.hostname))
         # update with user's config file
-        self.config.update(self.gethostconfig('~/.ssh/config',
-                                              parsed_url.hostname))
+        self.config.update(self.gethostconfig("~/.ssh/config", parsed_url.hostname))
         # update with url values
         # username from url
         if parsed_url.username:
-            self.config.update({'user': parsed_url.username})
+            self.config.update({"user": parsed_url.username})
         # username from input
-        if 'user' not in self.config:
-            self.config.update({'user': getpass.getuser()})
+        if "user" not in self.config:
+            self.config.update({"user": getpass.getuser()})
         # port from url
         if parsed_url.port:
-            self.config.update({'port': parsed_url.port})
+            self.config.update({"port": parsed_url.port})
         # ensure there is deafult 22 or an int value
-        if 'port' in self.config:
-            self.config.update({'port': int(self.config['port'])})
+        if "port" in self.config:
+            self.config.update({"port": int(self.config["port"])})
         else:
-            self.config.update({'port': 22})
+            self.config.update({"port": 22})
         # parse ssh options for alternative ssh private key, identity file
-        m = re.search(r"""
+        m = re.search(
+            r"""
                       ^(?:.+\s+)?
                       (?:-oIdentityFile=|-i\s+)
                       (([\"'])
@@ -240,13 +245,15 @@ class SSHParamikoBackend(duplicity.backend.Backend):
                           [\S]+
                       )
                       """,
-                      config.ssh_options, re.VERBOSE)
+            config.ssh_options,
+            re.VERBOSE,
+        )
         if m is not None:
             keyfilename = m.group(3) if m.group(3) else m.group(1)
-            self.config['identityfile'] = keyfilename.strip('\'\"')
+            self.config["identityfile"] = keyfilename.strip("'\"")
         # ensure ~ is expanded and identity exists in dictionary
-        if 'identityfile' in self.config:
-            if not isinstance(self.config['identityfile'], list):
+        if "identityfile" in self.config:
+            if not isinstance(self.config["identityfile"], list):
                 # Paramiko 1.9.0 and earlier do not support multiple
                 # identity files when parsing config files and always
                 # return a string; later versions always return a list,
@@ -255,22 +262,20 @@ class SSHParamikoBackend(duplicity.backend.Backend):
                 # All recent versions seem to support *using* multiple
                 # identity files, though, so to make things easier, we
                 # simply always use a list.
-                self.config['identityfile'] = [self.config['identityfile']]
+                self.config["identityfile"] = [self.config["identityfile"]]
 
-            self.config['identityfile'] = [
-                os.path.expanduser(i) for i in self.config['identityfile']]
+            self.config["identityfile"] = [os.path.expanduser(i) for i in self.config["identityfile"]]
         else:
-            self.config['identityfile'] = None
+            self.config["identityfile"] = None
 
         # get password, enable prompt if askpass is set
         self.use_getpass = config.ssh_askpass
         # set url values for beautiful login prompt
-        parsed_url.username = self.config['user']
-        parsed_url.hostname = self.config['hostname']
+        parsed_url.username = self.config["user"]
+        parsed_url.hostname = self.config["hostname"]
 
-        self.scheme = duplicity.backend.strip_prefix(parsed_url.scheme,
-                                                     'paramiko')
-        self.use_scp = (self.scheme == 'scp')
+        self.scheme = duplicity.backend.strip_prefix(parsed_url.scheme, "paramiko")
+        self.use_scp = self.scheme == "scp"
 
         self.connect()
 
@@ -278,17 +283,21 @@ class SSHParamikoBackend(duplicity.backend.Backend):
         password = self.get_password()
 
         try:
-            self.client.connect(hostname=self.config['hostname'],
-                                port=self.config['port'],
-                                username=self.config['user'],
-                                password=password,
-                                allow_agent=True,
-                                look_for_keys=True,
-                                key_filename=self.config['identityfile'])
+            self.client.connect(
+                hostname=self.config["hostname"],
+                port=self.config["port"],
+                username=self.config["user"],
+                password=password,
+                allow_agent=True,
+                look_for_keys=True,
+                key_filename=self.config["identityfile"],
+            )
         except Exception as e:
-            raise BackendException(f"ssh connection to "
-                                   f"{self.config['user']}@{self.config['hostname']}:{int(self.config['port'])} "
-                                   f"failed: {e}")
+            raise BackendException(
+                f"ssh connection to "
+                f"{self.config['user']}@{self.config['hostname']}:{int(self.config['port'])} "
+                f"failed: {e}"
+            )
         self.client.get_transport().set_keepalive(int(config.timeout / 2))
 
         # scp or sftp?
@@ -308,10 +317,10 @@ class SSHParamikoBackend(duplicity.backend.Backend):
             # move to the appropriate directory, possibly after creating it and its parents
             dirs = self.remote_dir.split(os.sep)
             if len(dirs) > 0:
-                if dirs[0] == '':
-                    dirs[0] = '/'
+                if dirs[0] == "":
+                    dirs[0] = "/"
                 for d in dirs:
-                    if d == '':
+                    if d == "":
                         continue
                     try:
                         attrs = self.sftp.stat(d)
@@ -332,7 +341,7 @@ class SSHParamikoBackend(duplicity.backend.Backend):
         # remote_filename is a byte object, not str or unicode
         remote_filename = os.fsdecode(remote_filename)
         if self.use_scp:
-            f = open(source_path.name, 'rb')
+            f = open(source_path.name, "rb")
             try:
                 chan = self.client.get_transport().open_session()
                 chan.settimeout(config.timeout)
@@ -347,7 +356,7 @@ class SSHParamikoBackend(duplicity.backend.Backend):
             if response != b"\0":
                 raise BackendException(b"scp remote error: %b" % chan.recv(-1))
             fstat = os.stat(source_path.name)
-            chan.send(f'C{oct(fstat.st_mode)[-4:]} {int(fstat.st_size)} {remote_filename}\n')
+            chan.send(f"C{oct(fstat.st_mode)[-4:]} {int(fstat.st_size)} {remote_filename}\n")
             response = chan.recv(1)
             if response != b"\0":
                 raise BackendException(b"scp remote error: %b" % chan.recv(-1))
@@ -357,7 +366,7 @@ class SSHParamikoBackend(duplicity.backend.Backend):
                 chan.sendall(f.read(16384))
                 file_pos = f.tell()
                 progress.report_transfer(file_pos, file_size)
-            chan.sendall(b'\0')
+            chan.sendall(b"\0")
             f.close()
             response = chan.recv(1)
             if response != b"\0":
@@ -377,7 +386,7 @@ class SSHParamikoBackend(duplicity.backend.Backend):
             except Exception as e:
                 raise BackendException(f"scp execution failed: {e}")
 
-            chan.send('\0')  # overall ready indicator
+            chan.send("\0")  # overall ready indicator
             msg = chan.recv(-1)
             if isinstance(msg, bytes):  # make msg into str
                 msg = msg.decode()
@@ -388,8 +397,8 @@ class SSHParamikoBackend(duplicity.backend.Backend):
 
             size = int(m.group(2))
             togo = size
-            f = open(local_path.name, 'wb')
-            chan.send('\0')  # ready for data
+            f = open(local_path.name, "wb")
+            chan.send("\0")  # ready for data
             try:
                 while togo > 0:
                     if togo > read_blocksize:
@@ -403,10 +412,10 @@ class SSHParamikoBackend(duplicity.backend.Backend):
                 raise BackendException(f"scp get {remote_filename} failed: {e}")
 
             msg = chan.recv(1)  # check the final status
-            if msg != b'\0':
+            if msg != b"\0":
                 raise BackendException(f"scp get {remote_filename} failed: {chan.recv(-1)}")
             f.close()
-            chan.send('\0')  # send final done indicator
+            chan.send("\0")  # send final done indicator
             chan.close()
         else:
             self.sftp.get(remote_filename, local_path.name)
@@ -415,8 +424,7 @@ class SSHParamikoBackend(duplicity.backend.Backend):
         # In scp mode unavoidable quoting issues will make this fail if the
         # directory name contains single quotes.
         if self.use_scp:
-            output = self.runremote(f"ls -1 '{self.remote_dir}'", False,
-                                    "scp dir listing ")
+            output = self.runremote(f"ls -1 '{self.remote_dir}'", False, "scp dir listing ")
             return output.splitlines()
         else:
             return self.sftp.listdir()
@@ -427,8 +435,7 @@ class SSHParamikoBackend(duplicity.backend.Backend):
         # In scp mode unavoidable quoting issues will cause failures if
         # filenames containing single quotes are encountered.
         if self.use_scp:
-            self.runremote(f"rm '{self.remote_dir}/{filename}'", False,
-                           "scp rm ")
+            self.runremote(f"rm '{self.remote_dir}/{filename}'", False, "scp rm ")
         else:
             self.sftp.remove(filename)
 
@@ -466,4 +473,4 @@ duplicity.backend.register_backend("sftp", SSHParamikoBackend)
 duplicity.backend.register_backend("scp", SSHParamikoBackend)
 duplicity.backend.register_backend("paramiko+sftp", SSHParamikoBackend)
 duplicity.backend.register_backend("paramiko+scp", SSHParamikoBackend)
-duplicity.backend.uses_netloc.extend(['sftp', 'scp', 'paramiko+sftp', 'paramiko+scp'])
+duplicity.backend.uses_netloc.extend(["sftp", "scp", "paramiko+sftp", "paramiko+scp"])

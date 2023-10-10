@@ -33,15 +33,17 @@ class TimeTest(object):
         dup_time.setcurtime()
         assert isinstance(dup_time.curtime, int)
         assert isinstance(dup_time.curtimestr, (str, "".__class__))
-        assert (dup_time.cmp(int(dup_time.curtime), dup_time.curtimestr) == 0 or
-                dup_time.cmp(int(dup_time.curtime) + 1, dup_time.curtimestr) == 0)
+        assert (
+            dup_time.cmp(int(dup_time.curtime), dup_time.curtimestr) == 0
+            or dup_time.cmp(int(dup_time.curtime) + 1, dup_time.curtimestr) == 0
+        )
         time.sleep(1.05)
         assert dup_time.cmp(time.time(), dup_time.curtime) == 1
         assert dup_time.cmp(dup_time.timetostring(time.time()), dup_time.curtimestr) == 1
 
     def testConversion_separator(self):
         """Same as testConversion, but change time Separator"""
-        self.set_config('time_separator', "_")
+        self.set_config("time_separator", "_")
         self.testConversion()
 
     def testCmp(self):
@@ -60,7 +62,7 @@ class TimeTest(object):
 
     def testCmp_separator(self):
         """Like testCmp but with new separator"""
-        self.set_config('time_separator', "_")
+        self.set_config("time_separator", "_")
         cmp = dup_time.cmp
         assert cmp(1, 2) == -1
         assert cmp(2, 2) == 0
@@ -101,8 +103,7 @@ class TimeTest(object):
         i2s = dup_time.intstringtoseconds
         assert i2s("7D2h") == 7 * 86400 + 2 * 3600
         assert i2s("2Y3s") == 2 * 365 * 86400 + 3
-        assert i2s("1M2W4D2h5m20s") == (30 * 86400 + 2 * 7 * 86400 + 4 * 86400 +
-                                        2 * 3600 + 5 * 60 + 20)
+        assert i2s("1M2W4D2h5m20s") == (30 * 86400 + 2 * 7 * 86400 + 4 * 86400 + 2 * 3600 + 5 * 60 + 20)
 
     def testPrettyIntervals(self):
         """Test printable interval conversion"""
@@ -116,17 +117,15 @@ class TimeTest(object):
     def testGenericString(self):
         """Test genstrtotime, conversion of arbitrary string to time"""
         g2t = dup_time.genstrtotime
-        assert g2t('now', 1000) == 1000
-        assert g2t('2h3s', 10000) == 10000 - 2 * 3600 - 3
-        assert g2t('2001-09-01T21:49:04Z') == \
-               dup_time.stringtotime('2001-09-01T21:49:04Z')
-        assert g2t('2002-04-26T04:22:01') == \
-               dup_time.stringtotime(f"2002-04-26T04:22:01{dup_time.gettzd(0)}")
+        assert g2t("now", 1000) == 1000
+        assert g2t("2h3s", 10000) == 10000 - 2 * 3600 - 3
+        assert g2t("2001-09-01T21:49:04Z") == dup_time.stringtotime("2001-09-01T21:49:04Z")
+        assert g2t("2002-04-26T04:22:01") == dup_time.stringtotime(f"2002-04-26T04:22:01{dup_time.gettzd(0)}")
         t = dup_time.stringtotime(f"2001-05-12T00:00:00{dup_time.gettzd(0)}")
-        assert g2t('2001-05-12') == t
-        assert g2t('2001/05/12') == t
-        assert g2t('5/12/2001') == t
-        assert g2t('123456') == 123456
+        assert g2t("2001-05-12") == t
+        assert g2t("2001/05/12") == t
+        assert g2t("5/12/2001") == t
+        assert g2t("123456") == 123456
 
     def testGenericStringErrors(self):
         """Test genstrtotime on some bad strings"""
@@ -140,5 +139,5 @@ class TimeTest(object):
         assert dup_time.stringtotime(dup_time.timetostring(t)) == t
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

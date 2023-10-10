@@ -35,23 +35,24 @@ from .. import _top_dir
 
 class CmdError(Exception):
     """Indicates an error running an external command"""
+
     def __init__(self, code):
         Exception.__init__(self, code)
         self.exit_status = code
 
 
 class RegressionTestCase(DuplicityTestCase):
-
     _setsid_w = None
 
     @classmethod
     def _check_setsid(cls):
         if cls._setsid_w is not None:
             return
-        if platform.platform().startswith('Linux'):
+        if platform.platform().startswith("Linux"):
             # setsid behavior differs between distributions.
             # If setsid supports -w ("wait"), use it.
             import subprocess
+
             try:
                 with open("/dev/null", "w") as sink:
                     subprocess.check_call(["setsid", "-w", "ls"], stdout=sink, stderr=sink)
@@ -68,7 +69,7 @@ class RegressionTestCase(DuplicityTestCase):
         self.class_args = []
         self.backend_url = f"file://{_runtest_dir}/testfiles/output"
         self.last_backup = None
-        self.set_environ('PASSPHRASE', self.sign_passphrase)
+        self.set_environ("PASSPHRASE", self.sign_passphrase)
         self.set_environ("SIGN_PASSPHRASE", self.sign_passphrase)
 
         backend_inst = backend.get_backend(self.backend_url)
@@ -78,8 +79,7 @@ class RegressionTestCase(DuplicityTestCase):
         backend_inst.close()
         self._check_setsid()
 
-    def run_duplicity(self, options=None, current_time=None, fail=None,
-                      passphrase_input=None):
+    def run_duplicity(self, options=None, current_time=None, fail=None, passphrase_input=None):
         """
         Run duplicity binary with given arguments and options
         """
@@ -96,19 +96,19 @@ class RegressionTestCase(DuplicityTestCase):
         for item in passphrase_input:
             assert isinstance(item, "".__class__), f"item {os.fsdecode(item)} in passphrase_input is not unicode"
 
-        if platform.platform().startswith('Linux'):
-            cmd_list = ['setsid']
+        if platform.platform().startswith("Linux"):
+            cmd_list = ["setsid"]
             if self._setsid_w:
                 cmd_list.extend(["-w"])
         else:
             cmd_list = []
 
-        if basepython := os.environ.get('TOXPYTHON', None):
-            cmd_list.extend([basepython, '-bb'])
+        if basepython := os.environ.get("TOXPYTHON", None):
+            cmd_list.extend([basepython, "-bb"])
         else:
-            cmd_list.extend(["python3", '-bb'])
+            cmd_list.extend(["python3", "-bb"])
 
-        if run_coverage := os.environ.get('RUN_COVERAGE', None):
+        if run_coverage := os.environ.get("RUN_COVERAGE", None):
             cmd_list.extend(["-m", "coverage", "run", "--source=duplicity", "-p"])
 
         cmd_list.extend([f"{_top_dir}/bin/duplicity"])
@@ -135,10 +135,10 @@ class RegressionTestCase(DuplicityTestCase):
             cmdline += " < /dev/null"
 
         # Set encoding to filesystem encoding and send to spawn
-        child = pexpect.spawn('/bin/sh', ['-c', cmdline], timeout=None, encoding=config.fsencoding)
+        child = pexpect.spawn("/bin/sh", ["-c", cmdline], timeout=None, encoding=config.fsencoding)
 
         for passphrase in passphrase_input:
-            child.expect('passphrase.*:')
+            child.expect("passphrase.*:")
             child.sendline(passphrase)
 
         # if the command fails, we need to clear its output
@@ -186,22 +186,25 @@ class RegressionTestCase(DuplicityTestCase):
         if options is None:
             options = []
         assert not os.system(f"rm -rf {_runtest_dir}/testfiles/restore_out")
-        options = ["restore", self.backend_url, f"{_runtest_dir}/testfiles/restore_out"] + options
+        options = [
+            "restore",
+            self.backend_url,
+            f"{_runtest_dir}/testfiles/restore_out",
+        ] + options
         if file_to_restore:
-            options.extend(['--path-to-restore', file_to_restore])
+            options.extend(["--path-to-restore", file_to_restore])
         if time:
-            options.extend(['--restore-time', "".__class__(time)])
+            options.extend(["--restore-time", "".__class__(time)])
         self.run_duplicity(options=options, **kwargs)
 
-    def verify(self, dirname, file_to_verify=None, time=None, options=None,
-               **kwargs):
+    def verify(self, dirname, file_to_verify=None, time=None, options=None, **kwargs):
         if options is None:
             options = []
         options = ["verify", self.backend_url, dirname] + options
         if file_to_verify:
-            options.extend(['--path-to-restore', file_to_verify])
+            options.extend(["--path-to-restore", file_to_verify])
         if time:
-            options.extend(['--restore-time', "".__class__(time)])
+            options.extend(["--restore-time", "".__class__(time)])
         self.run_duplicity(options=options, **kwargs)
 
     def cleanup(self, options=None):
@@ -228,4 +231,5 @@ class RegressionTestCase(DuplicityTestCase):
         for n in range(count):
             assert not os.system(
                 f"dd if=/dev/urandom of={_runtest_dir}/testfiles/largefiles/file{n+1} "
-                f"bs=1024 count={size*1024} > /dev/null 2>&1")
+                f"bs=1024 count={size*1024} > /dev/null 2>&1"
+            )

@@ -147,9 +147,9 @@ class TemporaryDirectory(object):
         if isinstance(temproot, b"".__class__):
             temproot = os.fsdecode(temproot)
 
-        if platform.system().startswith('Darwin') and defaults_to_tmp(temproot):
+        if platform.system().startswith("Darwin") and defaults_to_tmp(temproot):
             # Use temp space from getconf, never /tmp
-            temproot = subprocess.check_output(['getconf', 'DARWIN_USER_TEMP_DIR'])
+            temproot = subprocess.check_output(["getconf", "DARWIN_USER_TEMP_DIR"])
             temproot = os.fsdecode(temproot).rstrip()
 
         self.__dir = tempfile.mkdtemp("-tempdir", "duplicity-", temproot)
@@ -218,7 +218,11 @@ class TemporaryDirectory(object):
         try:
             self.__tempcount = self.__tempcount + 1
             suffix = f"-{int(self.__tempcount)}"
-            fd, filename = tempfile.mkstemp(suffix, "mkstemp-", self.__dir, )
+            fd, filename = tempfile.mkstemp(
+                suffix,
+                "mkstemp-",
+                self.__dir,
+            )
 
             log.Debug(_("Registering (mkstemp) temporary file %s") % filename)
             self.__pending[filename] = None
@@ -282,8 +286,10 @@ class TemporaryDirectory(object):
                 try:
                     os.rmdir(self.__dir)
                 except Exception:
-                    log.Warn(_("Cleanup of temporary directory %s failed - "
-                               "this is probably a bug.") % os.fsdecode(self.__dir))
+                    log.Warn(
+                        _("Cleanup of temporary directory %s failed - " "this is probably a bug.")
+                        % os.fsdecode(self.__dir)
+                    )
                     pass
                 self.__pending = None
                 self.__dir = None

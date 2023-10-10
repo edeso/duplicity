@@ -60,102 +60,128 @@ def prepare_regex(force=False):
     if full_vol_re and not force:
         return
 
-    full_vol_re = re.compile(b"^" + config.file_prefix + config.file_prefix_archive + b"duplicity-full"
-                             b"\\.(?P<time>.*?)"
-                             b"\\.vol(?P<num>[0-9]+)"
-                             b"\\.difftar"
-                             b"(?P<partial>(\\.part))?"
-                             b"($|\\.)")
+    full_vol_re = re.compile(
+        b"^" + config.file_prefix + config.file_prefix_archive + b"duplicity-full"
+        b"\\.(?P<time>.*?)"
+        b"\\.vol(?P<num>[0-9]+)"
+        b"\\.difftar"
+        b"(?P<partial>(\\.part))?"
+        b"($|\\.)"
+    )
 
-    full_vol_re_short = re.compile(b"^" + config.file_prefix + config.file_prefix_archive + b"df"
-                                   b"\\.(?P<time>[0-9a-z]+?)"
-                                   b"\\.(?P<num>[0-9a-z]+)"
-                                   b"\\.dt"
-                                   b"(?P<partial>(\\.p))?"
-                                   b"($|\\.)")
+    full_vol_re_short = re.compile(
+        b"^" + config.file_prefix + config.file_prefix_archive + b"df"
+        b"\\.(?P<time>[0-9a-z]+?)"
+        b"\\.(?P<num>[0-9a-z]+)"
+        b"\\.dt"
+        b"(?P<partial>(\\.p))?"
+        b"($|\\.)"
+    )
 
-    full_manifest_re = re.compile(b"^" + config.file_prefix + config.file_prefix_manifest + b"duplicity-full"
-                                  b"\\.(?P<time>.*?)"
-                                  b"\\.manifest"
-                                  b"(?P<partial>(\\.part))?"
-                                  b"($|\\.)")
+    full_manifest_re = re.compile(
+        b"^" + config.file_prefix + config.file_prefix_manifest + b"duplicity-full"
+        b"\\.(?P<time>.*?)"
+        b"\\.manifest"
+        b"(?P<partial>(\\.part))?"
+        b"($|\\.)"
+    )
 
-    full_manifest_re_short = re.compile(b"^" + config.file_prefix + config.file_prefix_manifest + b"df"
-                                        b"\\.(?P<time>[0-9a-z]+?)"
-                                        b"\\.m"
-                                        b"(?P<partial>(\\.p))?"
-                                        b"($|\\.)")
+    full_manifest_re_short = re.compile(
+        b"^" + config.file_prefix + config.file_prefix_manifest + b"df"
+        b"\\.(?P<time>[0-9a-z]+?)"
+        b"\\.m"
+        b"(?P<partial>(\\.p))?"
+        b"($|\\.)"
+    )
 
-    inc_vol_re = re.compile(b"^" + config.file_prefix + config.file_prefix_archive + b"duplicity-inc"
-                            b"\\.(?P<start_time>.*?)"
-                            b"\\.to\\.(?P<end_time>.*?)"
-                            b"\\.vol(?P<num>[0-9]+)"
-                            b"\\.difftar"
-                            b"($|\\.)")
+    inc_vol_re = re.compile(
+        b"^" + config.file_prefix + config.file_prefix_archive + b"duplicity-inc"
+        b"\\.(?P<start_time>.*?)"
+        b"\\.to\\.(?P<end_time>.*?)"
+        b"\\.vol(?P<num>[0-9]+)"
+        b"\\.difftar"
+        b"($|\\.)"
+    )
 
-    inc_vol_re_short = re.compile(b"^" + config.file_prefix + config.file_prefix_archive + b"di"
-                                  b"\\.(?P<start_time>[0-9a-z]+?)"
-                                  b"\\.(?P<end_time>[0-9a-z]+?)"
-                                  b"\\.(?P<num>[0-9a-z]+)"
-                                  b"\\.dt"
-                                  b"($|\\.)")
+    inc_vol_re_short = re.compile(
+        b"^" + config.file_prefix + config.file_prefix_archive + b"di"
+        b"\\.(?P<start_time>[0-9a-z]+?)"
+        b"\\.(?P<end_time>[0-9a-z]+?)"
+        b"\\.(?P<num>[0-9a-z]+)"
+        b"\\.dt"
+        b"($|\\.)"
+    )
 
-    inc_manifest_re = re.compile(b"^" + config.file_prefix + config.file_prefix_manifest + b"duplicity-inc"
-                                 b"\\.(?P<start_time>.*?)"
-                                 b"\\.to"
-                                 b"\\.(?P<end_time>.*?)"
-                                 b"\\.manifest"
-                                 b"(?P<partial>(\\.part))?"
-                                 b"(\\.|$)")
+    inc_manifest_re = re.compile(
+        b"^" + config.file_prefix + config.file_prefix_manifest + b"duplicity-inc"
+        b"\\.(?P<start_time>.*?)"
+        b"\\.to"
+        b"\\.(?P<end_time>.*?)"
+        b"\\.manifest"
+        b"(?P<partial>(\\.part))?"
+        b"(\\.|$)"
+    )
 
-    inc_manifest_re_short = re.compile(b"^" + config.file_prefix + config.file_prefix_manifest + b"di"
-                                       b"\\.(?P<start_time>[0-9a-z]+?)"
-                                       b"\\.(?P<end_time>[0-9a-z]+?)"
-                                       b"\\.m"
-                                       b"(?P<partial>(\\.p))?"
-                                       b"(\\.|$)")
+    inc_manifest_re_short = re.compile(
+        b"^" + config.file_prefix + config.file_prefix_manifest + b"di"
+        b"\\.(?P<start_time>[0-9a-z]+?)"
+        b"\\.(?P<end_time>[0-9a-z]+?)"
+        b"\\.m"
+        b"(?P<partial>(\\.p))?"
+        b"(\\.|$)"
+    )
 
-    full_sig_re = re.compile(b"^" + config.file_prefix + config.file_prefix_signature + b"duplicity-full-signatures"
-                             b"\\.(?P<time>.*?)"
-                             b"\\.sigtar"
-                             b"(?P<partial>(\\.part))?"
-                             b"(\\.|$)")
+    full_sig_re = re.compile(
+        b"^" + config.file_prefix + config.file_prefix_signature + b"duplicity-full-signatures"
+        b"\\.(?P<time>.*?)"
+        b"\\.sigtar"
+        b"(?P<partial>(\\.part))?"
+        b"(\\.|$)"
+    )
 
-    full_sig_re_short = re.compile(b"^" + config.file_prefix + config.file_prefix_signature + b"dfs"
-                                   b"\\.(?P<time>[0-9a-z]+?)"
-                                   b"\\.st"
-                                   b"(?P<partial>(\\.p))?"
-                                   b"(\\.|$)")
+    full_sig_re_short = re.compile(
+        b"^" + config.file_prefix + config.file_prefix_signature + b"dfs"
+        b"\\.(?P<time>[0-9a-z]+?)"
+        b"\\.st"
+        b"(?P<partial>(\\.p))?"
+        b"(\\.|$)"
+    )
 
-    new_sig_re = re.compile(b"^" + config.file_prefix + config.file_prefix_signature + b"duplicity-new-signatures"
-                            b"\\.(?P<start_time>.*?)"
-                            b"\\.to"
-                            b"\\.(?P<end_time>.*?)"
-                            b"\\.sigtar"
-                            b"(?P<partial>(\\.part))?"
-                            b"(\\.|$)")
+    new_sig_re = re.compile(
+        b"^" + config.file_prefix + config.file_prefix_signature + b"duplicity-new-signatures"
+        b"\\.(?P<start_time>.*?)"
+        b"\\.to"
+        b"\\.(?P<end_time>.*?)"
+        b"\\.sigtar"
+        b"(?P<partial>(\\.part))?"
+        b"(\\.|$)"
+    )
 
-    new_sig_re_short = re.compile(b"^" + config.file_prefix + config.file_prefix_signature + b"dns"
-                                  b"\\.(?P<start_time>[0-9a-z]+?)"
-                                  b"\\.(?P<end_time>[0-9a-z]+?)"
-                                  b"\\.st"
-                                  b"(?P<partial>(\\.p))?"
-                                  b"(\\.|$)")
-    stat_re = re.compile(b"^" + config.file_prefix + config.file_prefix_jsonstat +
-                         b"duplicity-(?P<type>full|inc)"
-                         b"\\.(?P<time>.*?)"
-                         b"(?:\\.to\\.(?P<end_time>.+?))?"
-                         b"\\.jsonstat"
-                         b"(?P<partial>(\\.part))?"
-                         b"(\\.|$)")
+    new_sig_re_short = re.compile(
+        b"^" + config.file_prefix + config.file_prefix_signature + b"dns"
+        b"\\.(?P<start_time>[0-9a-z]+?)"
+        b"\\.(?P<end_time>[0-9a-z]+?)"
+        b"\\.st"
+        b"(?P<partial>(\\.p))?"
+        b"(\\.|$)"
+    )
+    stat_re = re.compile(
+        b"^" + config.file_prefix + config.file_prefix_jsonstat + b"duplicity-(?P<type>full|inc)"
+        b"\\.(?P<time>.*?)"
+        b"(?:\\.to\\.(?P<end_time>.+?))?"
+        b"\\.jsonstat"
+        b"(?P<partial>(\\.part))?"
+        b"(\\.|$)"
+    )
 
-    stat_re_short = re.compile(b"^" + config.file_prefix + config.file_prefix_jsonstat +
-                               b"(?P<type>dfst|dist)"
-                               b"\\.(?P<time>.*?)"
-                               b"(?:\\.to\\.(?P<end_time>.+?))?"
-                               b"\\.jst"
-                               b"(?P<partial>(\\.p))?"
-                               b"(\\.|$)")
+    stat_re_short = re.compile(
+        b"^" + config.file_prefix + config.file_prefix_jsonstat + b"(?P<type>dfst|dist)"
+        b"\\.(?P<time>.*?)"
+        b"(?:\\.to\\.(?P<end_time>.+?))?"
+        b"\\.jst"
+        b"(?P<partial>(\\.p))?"
+        b"(\\.|$)"
+    )
 
 
 def to_base36(n):
@@ -166,7 +192,7 @@ def to_base36(n):
     if mod <= 9:
         last_digit = str(mod)
     else:
-        last_digit = chr(ord('a') + mod - 10)
+        last_digit = chr(ord("a") + mod - 10)
     last_digit = last_digit.encode()
     if n == mod:
         return last_digit
@@ -185,10 +211,10 @@ def from_base36(s):
             digit_ord = s[i]
         else:
             digit_ord = ord(s[i])
-        if ord('0') <= digit_ord <= ord('9'):
-            total += digit_ord - ord('0')
-        elif ord('a') <= digit_ord <= ord('z'):
-            total += digit_ord - ord('a') + 10
+        if ord("0") <= digit_ord <= ord("9"):
+            total += digit_ord - ord("0")
+        elif ord("a") <= digit_ord <= ord("z"):
+            total += digit_ord - ord("a") + 10
         else:
             assert 0, f"Digit {s[i]} in {s} not in proper range"
     return total
@@ -203,14 +229,20 @@ def get_suffix(encrypted, gzipped):
     if encrypted:
         suffix = b".gpg"
     elif gzipped:
-        suffix = b'.gz'
+        suffix = b".gz"
     else:
         suffix = b""
     return suffix
 
 
-def get(type, volume_number=None, manifest=False,  # pylint: disable=redefined-builtin
-        encrypted=False, gzipped=False, partial=False):
+def get(
+    type,
+    volume_number=None,
+    manifest=False,  # pylint: disable=redefined-builtin
+    encrypted=False,
+    gzipped=False,
+    partial=False,
+):
     """
     Return duplicity filename of specified type
 
@@ -227,14 +259,23 @@ def get(type, volume_number=None, manifest=False,  # pylint: disable=redefined-b
         assert not volume_number and not manifest
         assert not (volume_number and part_string)
         if type == "full-sig":
-            return (config.file_prefix + config.file_prefix_signature +
-                    b"duplicity-full-signatures.%s.sigtar%s%s" %
-                    (dup_time.curtimestr.encode(), part_string, suffix))
+            return (
+                config.file_prefix
+                + config.file_prefix_signature
+                + b"duplicity-full-signatures.%s.sigtar%s%s" % (dup_time.curtimestr.encode(), part_string, suffix)
+            )
         elif type == "new-sig":
-            return (config.file_prefix + config.file_prefix_signature +
-                    b"duplicity-new-signatures.%s.to.%s.sigtar%s%s" %
-                    (dup_time.prevtimestr.encode(), dup_time.curtimestr.encode(),
-                     part_string, suffix))
+            return (
+                config.file_prefix
+                + config.file_prefix_signature
+                + b"duplicity-new-signatures.%s.to.%s.sigtar%s%s"
+                % (
+                    dup_time.prevtimestr.encode(),
+                    dup_time.curtimestr.encode(),
+                    part_string,
+                    suffix,
+                )
+            )
     elif type == "full-stat" or type == "inc-stat":
         assert not volume_number and not manifest
         assert not (volume_number and part_string)
@@ -249,8 +290,11 @@ def get(type, volume_number=None, manifest=False,  # pylint: disable=redefined-b
             timestamp = b"%s.to.%s" % (start, end)
         else:
             raise ValueError("Not a know type {type}.")
-        return (config.file_prefix + config.file_prefix_jsonstat +
-                b"%s.%s.%s%s%s" % (main_name, timestamp, type_suffix, part_string, suffix))
+        return (
+            config.file_prefix
+            + config.file_prefix_jsonstat
+            + b"%s.%s.%s%s%s" % (main_name, timestamp, type_suffix, part_string, suffix)
+        )
     else:
         assert volume_number or manifest
         assert not (volume_number and manifest)
@@ -265,12 +309,22 @@ def get(type, volume_number=None, manifest=False,  # pylint: disable=redefined-b
             prefix += config.file_prefix_manifest
 
         if type == "full":
-            return (b"%sduplicity-full.%s.%s%s%s" % (prefix, dup_time.curtimestr.encode(),
-                                                     vol_string, part_string, suffix))
+            return b"%sduplicity-full.%s.%s%s%s" % (
+                prefix,
+                dup_time.curtimestr.encode(),
+                vol_string,
+                part_string,
+                suffix,
+            )
         elif type == "inc":
-            return (b"%sduplicity-inc.%s.to.%s.%s%s%s" % (prefix, dup_time.prevtimestr.encode(),
-                                                          dup_time.curtimestr.encode(),
-                                                          vol_string, part_string, suffix))
+            return b"%sduplicity-inc.%s.to.%s.%s%s%s" % (
+                prefix,
+                dup_time.prevtimestr.encode(),
+                dup_time.curtimestr.encode(),
+                vol_string,
+                part_string,
+                suffix,
+            )
         else:
             assert 0
 
@@ -321,11 +375,18 @@ def parse(filename):
             t = str2time((m1 or m2).group("time"), short)
             if t:
                 if m1:
-                    return ParseResults("full", time=t,
-                                        volume_number=get_vol_num(m1.group("num"), short))
+                    return ParseResults(
+                        "full",
+                        time=t,
+                        volume_number=get_vol_num(m1.group("num"), short),
+                    )
                 else:
-                    return ParseResults("full", time=t, manifest=True,
-                                        partial=(m2.group("partial") is not None))
+                    return ParseResults(
+                        "full",
+                        time=t,
+                        manifest=True,
+                        partial=(m2.group("partial") is not None),
+                    )
         return None
 
     def check_inc():
@@ -345,11 +406,20 @@ def parse(filename):
             t2 = str2time((m1 or m2).group("end_time"), short)
             if t1 and t2:
                 if m1:
-                    return ParseResults("inc", start_time=t1,
-                                        end_time=t2, volume_number=get_vol_num(m1.group("num"), short))
+                    return ParseResults(
+                        "inc",
+                        start_time=t1,
+                        end_time=t2,
+                        volume_number=get_vol_num(m1.group("num"), short),
+                    )
                 else:
-                    return ParseResults("inc", start_time=t1, end_time=t2, manifest=1,
-                                        partial=(m2.group("partial") is not None))
+                    return ParseResults(
+                        "inc",
+                        start_time=t1,
+                        end_time=t2,
+                        manifest=1,
+                        partial=(m2.group("partial") is not None),
+                    )
         return None
 
     def check_sig():
@@ -365,8 +435,7 @@ def parse(filename):
         if m:
             t = str2time(m.group("time"), short)
             if t:
-                return ParseResults("full-sig", time=t,
-                                    partial=(m.group("partial") is not None))
+                return ParseResults("full-sig", time=t, partial=(m.group("partial") is not None))
             else:
                 return None
 
@@ -379,12 +448,16 @@ def parse(filename):
             t1 = str2time(m.group("start_time"), short)
             t2 = str2time(m.group("end_time"), short)
             if t1 and t2:
-                return ParseResults("new-sig", start_time=t1, end_time=t2,
-                                    partial=(m.group("partial") is not None))
+                return ParseResults(
+                    "new-sig",
+                    start_time=t1,
+                    end_time=t2,
+                    partial=(m.group("partial") is not None),
+                )
         return None
 
     def check_stat():
-        u"""
+        """
         Return ParseResults if file is a signature, None otherwise
         """
         prepare_regex()
@@ -407,15 +480,20 @@ def parse(filename):
                 end_time = str2time(m.group("end_time"), short)
             else:
                 raise DuplicityError(f'Statistic filename "{filename}" not valid')
-            return ParseResults(type, time=time, start_time=start_time, end_time=end_time,
-                                partial=(m.group("partial") is not None))
+            return ParseResults(
+                type,
+                time=time,
+                start_time=start_time,
+                end_time=end_time,
+                partial=(m.group("partial") is not None),
+            )
 
     def set_encryption_or_compression(pr):
         """
         Set encryption and compression flags in ParseResults pr
         """
-        pr.compressed = filename.endswith(b'.z') or filename.endswith(b'.gz')
-        pr.encrypted = filename.endswith(b'.g') or filename.endswith(b'.gpg')
+        pr.compressed = filename.endswith(b".z") or filename.endswith(b".gz")
+        pr.encrypted = filename.endswith(b".g") or filename.endswith(b".gpg")
 
     for check in (check_full, check_inc, check_sig, check_stat):
         pr = check()
@@ -430,10 +508,18 @@ class ParseResults:
     Hold information taken from a duplicity filename
     """
 
-    def __init__(self, type, manifest=None, volume_number=None,  # pylint: disable=redefined-builtin
-                 time=None, start_time=None, end_time=None,
-                 encrypted=None, compressed=None, partial=False):
-
+    def __init__(
+        self,
+        type,
+        manifest=None,
+        volume_number=None,  # pylint: disable=redefined-builtin
+        time=None,
+        start_time=None,
+        end_time=None,
+        encrypted=None,
+        compressed=None,
+        partial=False,
+    ):
         assert type in ["full-sig", "new-sig", "inc", "full", "full-stat", "inc-stat"]
 
         self.type = type
@@ -455,9 +541,11 @@ class ParseResults:
         self.partial = partial
 
     def __eq__(self, other):
-        return self.type == other.type and \
-            self.manifest == other.manifest and \
-            self.time == other.time and \
-            self.start_time == other.start_time and \
-            self.end_time == other.end_time and \
-            self.partial == other.partial
+        return (
+            self.type == other.type
+            and self.manifest == other.manifest
+            and self.time == other.time
+            and self.start_time == other.start_time
+            and self.end_time == other.end_time
+            and self.partial == other.partial
+        )

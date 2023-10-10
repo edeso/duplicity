@@ -65,12 +65,14 @@ class Snapshot(sys_collections.deque):
         # If restarting Full, discard marshalled data and start over
         if config.restart is not None and config.restart.start_vol >= 1:
             try:
-                progressfd = open(f'{config.archive_dir_path.name}/progress', 'r')
+                progressfd = open(f"{config.archive_dir_path.name}/progress", "r")
                 snapshot = pickle.load(progressfd)
                 progressfd.close()
             except Exception as e:
-                log.Warn(f"Warning, cannot read stored progress info from previous backup: {util.uexc(e)}",
-                         log.WarningCode.cannot_stat)
+                log.Warn(
+                    f"Warning, cannot read stored progress info from previous backup: {util.uexc(e)}",
+                    log.WarningCode.cannot_stat,
+                )
                 snapshot = Snapshot()
         # Reached here no cached data found or wrong marshalling
         return snapshot
@@ -79,7 +81,7 @@ class Snapshot(sys_collections.deque):
         """
         Serializes object to cache
         """
-        progressfd = open(b'%s/progress' % config.archive_dir_path.name, 'wb+')
+        progressfd = open(b"%s/progress" % config.archive_dir_path.name, "wb+")
         pickle.dump(self, progressfd)
         progressfd.close()
 
@@ -108,7 +110,6 @@ class Snapshot(sys_collections.deque):
 
 
 class ProgressTracker(object):
-
     def __init__(self):
         self.total_stats = None
         self.nsteps = 0
@@ -158,7 +159,7 @@ class ProgressTracker(object):
         if self.start_time is None:
             self.start_time = current_time
         if self.last_time is not None:
-            elapsed = (current_time - self.last_time)
+            elapsed = current_time - self.last_time
         else:
             elapsed = timedelta()
         self.last_time = current_time
@@ -167,12 +168,14 @@ class ProgressTracker(object):
         if self.stall_last_time is None:
             self.stall_last_time = current_time
         if (current_time - self.stall_last_time).seconds > max(5, 2 * config.progress_rate):
-            log.TransferProgress(100.0 * self.progress_estimation,
-                                 self.time_estimation, self.total_bytecount,
-                                 (current_time - self.start_time).seconds,
-                                 self.speed,
-                                 True
-                                 )
+            log.TransferProgress(
+                100.0 * self.progress_estimation,
+                self.time_estimation,
+                self.total_bytecount,
+                (current_time - self.start_time).seconds,
+                self.speed,
+                True,
+            )
             return
 
         self.nsteps += 1
@@ -188,6 +191,7 @@ class ProgressTracker(object):
         statistical noise.
         """
         from duplicity import diffdir
+
         changes = diffdir.stats.NewFileSize + diffdir.stats.ChangedFileSize
         total_changes = self.total_stats.NewFileSize + self.total_stats.ChangedFileSize
         if total_changes == 0 or diffdir.stats.RawDeltaSize == 0:
@@ -216,18 +220,26 @@ class ProgressTracker(object):
                 Conversely, use 50% C.I. upper bound during the second half. Scale it to the
                 changes/total ratio
             """
-            self.current_estimation = float(changes) / float(total_changes) * (
-                (self.change_mean_ratio - 0.67 * change_sigma) * (1.0 - self.current_estimation) +
-                (self.change_mean_ratio + 0.67 * change_sigma) * self.current_estimation
+            self.current_estimation = (
+                float(changes)
+                / float(total_changes)
+                * (
+                    (self.change_mean_ratio - 0.67 * change_sigma) * (1.0 - self.current_estimation)
+                    + (self.change_mean_ratio + 0.67 * change_sigma) * self.current_estimation
+                )
             )
             """
             In case that we overpassed the 100%, drop the confidence and trust more the mean as the
             sigma may be large.
             """
             if self.current_estimation > 1.0:
-                self.current_estimation = float(changes) / float(total_changes) * (
-                    (self.change_mean_ratio - 0.33 * change_sigma) * (1.0 - self.current_estimation) +
-                    (self.change_mean_ratio + 0.33 * change_sigma) * self.current_estimation
+                self.current_estimation = (
+                    float(changes)
+                    / float(total_changes)
+                    * (
+                        (self.change_mean_ratio - 0.33 * change_sigma) * (1.0 - self.current_estimation)
+                        + (self.change_mean_ratio + 0.33 * change_sigma) * self.current_estimation
+                    )
                 )
             """
             Meh!, if again overpassed the 100%, drop the confidence to 0 and trust only the mean.
@@ -240,9 +252,13 @@ class ProgressTracker(object):
         Cap it to 99%, as the remaining 1% to 100% we reserve for the last step
         uploading of signature and manifests
         """
-        self.progress_estimation = max(0.0, min(self.prev_estimation +
-                                                (1.0 - self.prev_estimation) *
-                                                self.current_estimation, 0.99))
+        self.progress_estimation = max(
+            0.0,
+            min(
+                self.prev_estimation + (1.0 - self.prev_estimation) * self.current_estimation,
+                0.99,
+            ),
+        )
 
         """
         Estimate the time just as a projection of the remaining time, fit to a
@@ -264,8 +280,9 @@ class ProgressTracker(object):
         Compute Exponential Moving Average of speed as bytes/sec of the last 30 probes
         """
         if elapsed.total_seconds() > 0:
-            self.transfers.append(float(self.total_bytecount - self.last_total_bytecount) /
-                                  float(elapsed.total_seconds()))
+            self.transfers.append(
+                float(self.total_bytecount - self.last_total_bytecount) / float(elapsed.total_seconds())
+            )
         self.last_total_bytecount = self.total_bytecount
         if len(self.transfers) > 30:
             self.transfers.popleft()
@@ -273,13 +290,14 @@ class ProgressTracker(object):
         for x in self.transfers:
             self.speed = 0.3 * x + 0.7 * self.speed
 
-        log.TransferProgress(100.0 * self.progress_estimation,
-                             self.time_estimation,
-                             self.total_bytecount,
-                             (current_time - self.start_time).seconds,
-                             self.speed,
-                             False
-                             )
+        log.TransferProgress(
+            100.0 * self.progress_estimation,
+            self.time_estimation,
+            self.total_bytecount,
+            (current_time - self.start_time).seconds,
+            self.speed,
+            False,
+        )
 
     def annotate_written_bytes(self, bytecount):
         """

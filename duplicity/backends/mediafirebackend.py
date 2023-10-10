@@ -25,7 +25,7 @@ import os
 import duplicity.backend
 from duplicity.errors import BackendException
 
-DUPLICITY_APP_ID = '45593'
+DUPLICITY_APP_ID = "45593"
 
 
 class MediafireBackend(duplicity.backend.Backend):
@@ -38,8 +38,10 @@ class MediafireBackend(duplicity.backend.Backend):
         try:
             import mediafire.client
         except ImportError as e:
-            raise BackendException(f"""Mediafire backend requires the mediafire library.
-Exception: {str(e)}""")
+            raise BackendException(
+                f"""Mediafire backend requires the mediafire library.
+Exception: {str(e)}"""
+            )
 
         duplicity.backend.Backend.__init__(self, parsed_url)
 
@@ -52,9 +54,7 @@ Exception: {str(e)}""")
         self._notfound_exc = mediafire.client.ResourceNotFoundError
 
         self.client = mediafire.client.MediaFireClient()
-        self.client.login(app_id=DUPLICITY_APP_ID,
-                          email=mediafire_email,
-                          password=mediafire_password)
+        self.client.login(app_id=DUPLICITY_APP_ID, email=mediafire_email, password=mediafire_password)
 
         # //username:password@host/path/to/folder -> path/to/folder
         uri = f"mf:///{parsed_url.path.split('/', 3)[3]}"
@@ -65,12 +65,11 @@ Exception: {str(e)}""")
         try:
             folder = self.client.get_resource_by_uri(uri)
             if not isinstance(folder, self._folder_res):
-                raise BackendException("target_url already exists "
-                                       "and is not a folder")
+                raise BackendException("target_url already exists " "and is not a folder")
         except mediafire.client.ResourceNotFoundError:
             # force folder to be private
             folder = self.client.create_folder(uri, recursive=True)
-            self.client.update_folder_metadata(uri, privacy='private')
+            self.client.update_folder_metadata(uri, privacy="private")
 
         self.folder = folder
 
@@ -83,13 +82,13 @@ Exception: {str(e)}""")
         uri = self._build_uri(remote_filename)
 
         with self.client.upload_session():
-            self.client.upload_file(source_path.open('rb'), uri)
+            self.client.upload_file(source_path.open("rb"), uri)
 
     def _get(self, filename, local_path):
         """Download file"""
         uri = self._build_uri(filename)
         try:
-            self.client.download_file(uri, local_path.open('wb'))
+            self.client.download_file(uri, local_path.open("wb"))
         except self._downloaderror_exc as ex:
             raise BackendException(ex)
 
@@ -101,7 +100,7 @@ Exception: {str(e)}""")
             if not isinstance(item, self._file_res):
                 continue
 
-            filenames.append(item['filename'].encode('utf-8'))
+            filenames.append(item["filename"].encode("utf-8"))
 
         return filenames
 
@@ -121,17 +120,15 @@ Exception: {str(e)}""")
 
         try:
             resource = self.client.get_resource_by_uri(uri)
-            size = int(resource['size'])
+            size = int(resource["size"])
         except self._notfound_exc:
             size = -1
 
-        return {'size': size}
+        return {"size": size}
 
-    def _build_uri(self, filename=''):
+    def _build_uri(self, filename=""):
         """Build relative URI"""
-        return (
-            f"mf:{self.folder['folderkey']}/{os.fsdecode(filename)}"
-        )
+        return f"mf:{self.folder['folderkey']}/{os.fsdecode(filename)}"
 
 
 duplicity.backend.register_backend("mf", MediafireBackend)

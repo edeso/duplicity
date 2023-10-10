@@ -8,9 +8,9 @@
 import io
 import os
 
-SEEK_SET = getattr(io, 'SEEK_SET', 0)
-SEEK_CUR = getattr(io, 'SEEK_CUR', 1)
-SEEK_END = getattr(io, 'SEEK_END', 2)
+SEEK_SET = getattr(io, "SEEK_SET", 0)
+SEEK_CUR = getattr(io, "SEEK_CUR", 1)
+SEEK_END = getattr(io, "SEEK_END", 2)
 
 
 class FileChunkIO(io.FileIO):
@@ -18,15 +18,16 @@ class FileChunkIO(io.FileIO):
     A class that allows you reading only a chunk of a file.
     """
 
-    def __init__(self, name, mode='r', closefd=True, offset=0, bytes=None,  # pylint: disable=redefined-builtin
-                 *args, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(
+        self, name, mode="r", closefd=True, offset=0, bytes=None, *args, **kwargs  # pylint: disable=redefined-builtin
+    ):  # pylint: disable=redefined-builtin
         """
         Open a file chunk. The mode can only be 'r' for reading. Offset
         is the amount of bytes that the chunks starts after the real file's
         first byte. Bytes defines the amount of bytes the chunk has, which you
         can set to None to include the last byte of the real file.
         """
-        if not mode.startswith('r'):
+        if not mode.startswith("r"):
             raise ValueError("Mode string must begin with 'r'")
         self.offset = offset
         self.bytes = bytes
@@ -79,7 +80,8 @@ class FileChunkIO(io.FileIO):
             b[:n] = data
         except TypeError as err:
             import array
+
             if not isinstance(b, array.array):
                 raise err
-            b[:n] = array.array(b'b', data)
+            b[:n] = array.array(b"b", data)
         return n

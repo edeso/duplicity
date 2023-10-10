@@ -21,8 +21,7 @@
 import duplicity.backend
 from duplicity import config
 
-if (config.cf_backend and
-        config.cf_backend.lower().strip() == 'pyrax'):
+if config.cf_backend and config.cf_backend.lower().strip() == "pyrax":
     from ._cf_pyrax import PyraxBackend as CFBackend
 else:
     from ._cf_cloudfiles import CloudFilesBackend as CFBackend

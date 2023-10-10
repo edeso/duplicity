@@ -21,69 +21,84 @@
 
 import glob
 import os
-import subprocess
 import sys
+from subprocess import (
+    Popen,
+    PIPE,
+    STDOUT,
+)
 
 import pytest
 
-if os.getenv('RUN_CODE_TESTS', None) == '1':
+if os.getenv("RUN_CODE_TESTS", None) == "1":
     # Make conditional so that we do not have to import in environments that
     # do not run the tests (e.g. the build servers)
     import pycodestyle
 
 from . import _top_dir, DuplicityTestCase
 
-skipCodeTest = pytest.mark.skipif(not os.getenv('RUN_CODE_TESTS', None) == '1',
-                                  reason='Must set environment var RUN_CODE_TESTS=1')
+files_to_test = [os.path.join(_top_dir, "bin/duplicity")]
+files_to_test.extend(glob.glob(os.path.join(_top_dir, "duplicity/**/*.py"), recursive=True))
+files_to_test.extend(glob.glob(os.path.join(_top_dir, "testing/functional/*.py")))
+files_to_test.extend(glob.glob(os.path.join(_top_dir, "testing/unit/*.py")))
+files_to_test.extend(glob.glob(os.path.join(_top_dir, "testing/*.py")))
 
-files_to_test = [
-    os.path.join(_top_dir, 'bin/duplicity'),
-]
-files_to_test.extend(glob.glob(os.path.join(_top_dir, 'duplicity/**/*.py'), recursive=True))
-files_to_test.extend(glob.glob(os.path.join(_top_dir, 'testing/functional/*.py')))
-files_to_test.extend(glob.glob(os.path.join(_top_dir, 'testing/unit/*.py')))
-files_to_test.extend(glob.glob(os.path.join(_top_dir, 'testing/*.py')))
-
-# TODO: Remove duplicity.argparse311 when py38 goes EOL
-files_to_test.remove(os.path.join(_top_dir, 'duplicity/argparse311.py'))
+# don't test argparse311.py.  not really ours.
+files_to_test.remove(os.path.join(_top_dir, "duplicity/argparse311.py"))
 
 
+@pytest.mark.skipif(
+    not os.getenv("RUN_CODE_TESTS", None) == "1",
+    reason="Must set environment var RUN_CODE_TESTS=1",
+)
 class CodeTest(DuplicityTestCase):
-
     def run_checker(self, cmd, returncodes=None):
         if returncodes is None:
             returncodes = [0]
-        process = subprocess.Popen(cmd,
-                                   stdout=subprocess.PIPE,
-                                   stderr=subprocess.PIPE,
-                                   universal_newlines=True)
+        process = Popen(cmd, stdout=PIPE, stderr=STDOUT, universal_newlines=True)
         output = process.communicate()[0]
         if len(output):
-            for line in output.split('\n'):
+            for line in output.split("\n"):
                 print(line, file=sys.stderr)
             output = ""
-        self.assertTrue(process.returncode in returncodes,
-                        f"Test failed: returncode = {process.returncode}")
-
-    @skipCodeTest
-    def test_pylint(self):
-        """Pylint test (requires pylint to be installed to pass)"""
-        print()
-        self.run_checker([
-            "pylint",
-            f"--rcfile={os.path.join(_top_dir, '.pylintrc')}",
-        ] + files_to_test
+        self.assertTrue(
+            process.returncode in returncodes,
+            f"Test failed: returncode = {process.returncode}",
         )
 
-    @skipCodeTest
+    def test_black(self):
+        """Black check for out of format files"""
+        print()
+        self.run_checker(
+            [
+                "black",
+                "--check",
+            ]
+            + files_to_test,
+        )
+
     def test_pep8(self):
         """Test that we conform to PEP-8 using pycodestyle."""
         # Note that the settings, ignores etc for pycodestyle are set in tox.ini, not here
         print()
-        style = pycodestyle.StyleGuide(config_file=os.path.join(_top_dir, 'tox.ini'))
+        style = pycodestyle.StyleGuide(config_file=os.path.join(_top_dir, "tox.ini"))
         result = style.check_files(files_to_test)
-        self.assertEqual(result.total_errors, 0,
-                         f"Found {result.total_errors} code style errors (and warnings).")
+        self.assertEqual(
+            result.total_errors,
+            0,
+            f"Found {result.total_errors} code style errors (and warnings).",
+        )
+
+    def test_pylint(self):
+        """Pylint test (requires pylint to be installed to pass)"""
+        print()
+        self.run_checker(
+            [
+                "pylint",
+                f"--rcfile={os.path.join(_top_dir, '.pylintrc')}",
+            ]
+            + files_to_test
+        )
 
 
 if __name__ == "__main__":

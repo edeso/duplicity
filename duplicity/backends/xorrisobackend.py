@@ -47,7 +47,6 @@ class Xorriso:
     """
 
     def __init__(self, device, xorriso_path="xorriso", xorriso_args=None):
-
         self.device = device
 
         # Xorriso process
@@ -55,11 +54,17 @@ class Xorriso:
 
         # Default arguments for xorriso.
         self.xorriso_args = [
-            "-abort_on", "FAILURE",
-            "-return_with", "SORRY", "0",
-            "-osirrox", "on",  # Enable copying from ISO to disk.
-            "-calm_drive", "off",  # Don't immediately turn off device. Increases access speed for next action.abs
-            "-joliet", "on",
+            "-abort_on",
+            "FAILURE",
+            "-return_with",
+            "SORRY",
+            "0",
+            "-osirrox",
+            "on",  # Enable copying from ISO to disk.
+            "-calm_drive",
+            "off",  # Don't immediately turn off device. Increases access speed for next action.abs
+            "-joliet",
+            "on",
         ]
 
         if xorriso_args is not None:
@@ -67,10 +72,12 @@ class Xorriso:
 
         self.__start_subprocess(
             [xorriso_path]
-            + self.xorriso_args +
-            [
-                "-dev", self.device,
-                "-dialog", "on",  # Enable interactive mode
+            + self.xorriso_args
+            + [
+                "-dev",
+                self.device,
+                "-dialog",
+                "on",  # Enable interactive mode
             ]
         )
 
@@ -80,7 +87,6 @@ class Xorriso:
         stdout, stderr = self.__send_cmd("-version")  # Test connectivity to subprocess.
 
     def __start_subprocess(self, commandline):
-
         def setNonBlocking(fd):
             flags = fcntl.fcntl(fd, fcntl.F_GETFL)
             flags = flags | os.O_NONBLOCK
@@ -102,7 +108,6 @@ class Xorriso:
         setNonBlocking(self.proc.stderr)
 
     def __send_cmd(self, *args):
-
         # Drain stdout and stderr
 
         while self.proc.stdout.readline():
@@ -130,7 +135,6 @@ class Xorriso:
         stdout = []
         stderr = []
         while True:
-
             if self.proc.poll() is not None:
                 # Process terminated
                 break
@@ -208,7 +212,7 @@ class Xorriso:
             if not line:  # Skip empty lines
                 continue
 
-            parts = re.split('\\s+', line, maxsplit=8)
+            parts = re.split("\\s+", line, maxsplit=8)
 
             if len(parts) != 9:
                 continue
@@ -225,7 +229,7 @@ class Xorriso:
                 raise BackendException("Could not parse file size.")
 
             filename = filename[1:-1]  # strip leading and trailing `'`s
-            files.append((filename, {'size': size}))
+            files.append((filename, {"size": size}))
 
         return files
 
@@ -234,9 +238,7 @@ class Xorriso:
         Commit changes and write them to the image.
         """
 
-        stdout, stderr = self.__send_cmd(
-            "-commit"
-        )
+        stdout, stderr = self.__send_cmd("-commit")
 
         if "exceeds free space on media" in "\n".join(stderr):
             raise BackendException("Not enough free space on media.")
@@ -290,11 +292,7 @@ class Xorriso:
         if len(files) == 0:
             return
 
-        stdout, stderr = self.__send_cmd(
-            "-cpx",
-            *files,
-            dest
-        )
+        stdout, stderr = self.__send_cmd("-cpx", *files, dest)
 
 
 class XorrisoBackend(duplicity.backend.Backend):
@@ -318,33 +316,33 @@ class XorrisoBackend(duplicity.backend.Backend):
         duplicity.backend.Backend.__init__(self, parsed_url)
 
         # Path to xorriso executable.
-        xorriso_cmd = os.environ.get('XORRISO_PATH', default='xorriso')
+        xorriso_cmd = os.environ.get("XORRISO_PATH", default="xorriso")
 
         # Check if xorriso is installed.
-        if xorriso_cmd == 'xorriso':
-            if not util.which('xorriso'):
+        if xorriso_cmd == "xorriso":
+            if not util.which("xorriso"):
                 raise FatalBackendException("xorriso not installed")
 
         # Default arguments for xorriso.
         self.xorriso_args = []
 
-        args_pre = os.environ.get('XORRISO_ARGS')
+        args_pre = os.environ.get("XORRISO_ARGS")
         if args_pre is not None:
             arg_list = shlex.split(args_pre)
             self.xorriso_args.extend(arg_list)
 
-        assert_volid = os.environ.get('XORRISO_ASSERT_VOLID')
+        assert_volid = os.environ.get("XORRISO_ASSERT_VOLID")
         if assert_volid is not None:
             self.xorriso_args += ["-assert_volid", assert_volid, "FAILURE"]
 
-        speed = os.environ.get('XORRISO_WRITE_SPEED', default='min')
+        speed = os.environ.get("XORRISO_WRITE_SPEED", default="min")
         if speed in ["min", "max"]:
             self.xorriso_args += ["-speed", speed]
         else:
             self.xorriso_args += ["-speed", "min"]
 
         # The URL form "file:MyFile" is not a valid duplicity target.
-        if not parsed_url.path.startswith('//'):
+        if not parsed_url.path.startswith("//"):
             raise InvalidBackendURl("Bad xorriso:// path syntax.")
 
         path = parsed_url.path[2:]  # Strip '//'
@@ -364,47 +362,46 @@ class XorrisoBackend(duplicity.backend.Backend):
             raise InvalidBackendURL(f"Optical disc device does not exist: {self.device}")
 
         # Start xorriso subprocess.
-        self.xorriso = Xorriso(
-            device=self.device,
-            xorriso_path=xorriso_cmd,
-            xorriso_args=self.xorriso_args
-        )
+        self.xorriso = Xorriso(device=self.device, xorriso_path=xorriso_cmd, xorriso_args=self.xorriso_args)
 
     def _put(self, source_path, remote_filename):
-        assert not os.path.isdir(source_path.name.decode('utf8'))
+        assert not os.path.isdir(source_path.name.decode("utf8"))
         source_path.setdata()
         source_size = source_path.getsize()
         progress.report_transfer(0, source_size)
 
-        self.xorriso.cp([source_path.name.decode('utf8')], self.iso_path + remote_filename.decode('utf8'))
+        self.xorriso.cp(
+            [source_path.name.decode("utf8")],
+            self.iso_path + remote_filename.decode("utf8"),
+        )
         self.xorriso.commit()
 
         progress.report_transfer(source_size, source_size)
 
     def _get(self, filename, local_path):
-        self.xorriso.extract([self.iso_path + filename.decode('utf8')], local_path.name.decode('utf8'))
+        self.xorriso.extract([self.iso_path + filename.decode("utf8")], local_path.name.decode("utf8"))
 
     def _list(self):
         files = self.xorriso.ls(pattern=self.iso_path)
         return [f.encode() for f in files]
 
     def _delete(self, filename):
-        self.xorriso.rm([self.iso_path + filename.decode('utf8')])
+        self.xorriso.rm([self.iso_path + filename.decode("utf8")])
 
     def _delete_list(self, filenames):
-        filenames = [self.iso_path + f.decode('utf8') for f in filenames]
+        filenames = [self.iso_path + f.decode("utf8") for f in filenames]
         self.xorriso.rm(filenames)
 
     def _query(self, filename):
-        filename = self.iso_path + filename.decode('utf8')
+        filename = self.iso_path + filename.decode("utf8")
         files = self.xorriso.lsl(filename)
 
         if len(files) == 0 or files[0][0] != filename:
             size = -1
         else:
-            size = files[0][1]['size']
+            size = files[0][1]["size"]
 
-        return {'size': size}
+        return {"size": size}
 
     def _close(self):
         self.xorriso.commit()

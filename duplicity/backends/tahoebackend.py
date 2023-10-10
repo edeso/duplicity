@@ -32,7 +32,7 @@ class TAHOEBackend(duplicity.backend.Backend):
     def __init__(self, parsed_url):
         duplicity.backend.Backend.__init__(self, parsed_url)
 
-        url = parsed_url.path.strip('/').split('/')
+        url = parsed_url.path.strip("/").split("/")
 
         self.alias = url[0]
 
@@ -70,7 +70,7 @@ class TAHOEBackend(duplicity.backend.Backend):
 
     def _list(self):
         output = self.run("tahoe", "ls", self.get_remote_path())
-        return [os.fsencode(x) for x in output.split('\n') if x]
+        return [os.fsencode(x) for x in output.split("\n") if x]
 
     def _delete(self, filename):
         self.run("tahoe", "rm", self.get_remote_path(filename))

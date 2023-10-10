@@ -65,4 +65,4 @@ class HSIBackend(duplicity.backend.Backend):
 
 
 duplicity.backend.register_backend("hsi", HSIBackend)
-duplicity.backend.uses_netloc.extend(['hsi'])
+duplicity.backend.uses_netloc.extend(["hsi"])

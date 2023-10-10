@@ -37,6 +37,7 @@ from . import UnitTestCase
 
 class VolumeInfoTest(UnitTestCase):
     """Test VolumeInfo"""
+
     def test_basic(self):
         """Basic VolumeInfoTest"""
         vi = manifest.VolumeInfo()
@@ -52,11 +53,17 @@ class VolumeInfoTest(UnitTestCase):
     def test_special(self):
         """Test VolumeInfo with special characters"""
         vi = manifest.VolumeInfo()
-        vi.set_info(3234,
-                    (b"\n eu \x233", b"heuo", b'\xd8\xab\xb1Wb\xae\xc5]\x8a\xbb\x15v*\xf4\x0f!\xf9>\xe2Y\x86\xbb\xab\xdbp\xb0\x84\x13k\x1d\xc2\xf1\xf5e\xa5U\x82\x9aUV\xa0\xf4\xdf4\xba\xfdX\x03\x82\x07s\xce\x9e\x8b\xb34\x04\x9f\x17 \xf4\x8f\xa6\xfa\x97\xab\xd8\xac\xda\x85\xdcKvC\xfa#\x94\x92\x9e\xc9\xb7\xc3_\x0f\x84g\x9aB\x11<=^\xdbM\x13\x96c\x8b\xa7|*"\\\'^$@#!(){}?+ ~` '),  # noqa
-                    None,
-                    (b"\n",),
-                    None)
+        vi.set_info(
+            3234,
+            (
+                b"\n eu \x233",
+                b"heuo",
+                b"\xd8\xab\xb1Wb\xae\xc5]\x8a\xbb\x15v*\xf4\x0f!\xf9>\xe2Y\x86\xbb\xab\xdbp\xb0\x84\x13k\x1d\xc2\xf1\xf5e\xa5U\x82\x9aUV\xa0\xf4\xdf4\xba\xfdX\x03\x82\x07s\xce\x9e\x8b\xb34\x04\x9f\x17 \xf4\x8f\xa6\xfa\x97\xab\xd8\xac\xda\x85\xdcKvC\xfa#\x94\x92\x9e\xc9\xb7\xc3_\x0f\x84g\x9aB\x11<=^\xdbM\x13\x96c\x8b\xa7|*\"\\'^$@#!(){}?+ ~` ",  # noqa
+            ),
+            None,
+            (b"\n",),
+            None,
+        )
         s = vi.to_string()
         assert isinstance(s, (str, bytes))
         # print "---------\n%s\n---------" % s
@@ -88,7 +95,7 @@ class ManifestTest(UnitTestCase):
     def setUp(self):
         UnitTestCase.setUp(self)
         self.old_files_changed = config.file_changed
-        config.file_changed = 'testing'
+        config.file_changed = "testing"
 
     def tearDown(self):
         config.file_changed = self.old_files_changed
@@ -104,7 +111,7 @@ class ManifestTest(UnitTestCase):
         for vi in [vi1, vi2, vi3]:
             m.add_volume_info(vi)
 
-        self.set_config('local_path', path.Path("Foobar"))
+        self.set_config("local_path", path.Path("Foobar"))
         m.set_dirinfo()
         m.set_files_changed_info([])
 
@@ -126,41 +133,43 @@ class ManifestTest(UnitTestCase):
         for vi in [vi1, vi2, vi3]:
             m.add_volume_info(vi)
 
-        self.set_config('local_path', path.Path("Foobar"))
+        self.set_config("local_path", path.Path("Foobar"))
         m.set_dirinfo()
-        m.set_files_changed_info([
-            (b'one', b'new'),
-            (b'two', b'changed'),
-            (b'three', b'new'),
-        ])
+        m.set_files_changed_info(
+            [
+                (b"one", b"new"),
+                (b"two", b"changed"),
+                (b"three", b"new"),
+            ]
+        )
 
         # build manifest string
         s = m.to_string()
 
         # make filecount higher than files in list
-        s2 = re.sub(b'Filelist 3', b'Filelist 5', s)
+        s2 = re.sub(b"Filelist 3", b"Filelist 5", s)
         m2 = manifest.Manifest().from_string(s2)
-        assert hasattr(m2, 'corrupt_filelist')
+        assert hasattr(m2, "corrupt_filelist")
 
     def test_hostname_checks(self):
-        self.set_config('hostname', 'hostname')
-        self.set_config('fqdn', 'fqdn')
+        self.set_config("hostname", "hostname")
+        self.set_config("fqdn", "fqdn")
         m = manifest.Manifest()
 
         # Matching hostname should work
-        m.hostname = 'hostname'
+        m.hostname = "hostname"
         m.check_dirinfo()
 
         # Matching fqdn should also work for backwards compatibility
-        m.hostname = 'fqdn'
+        m.hostname = "fqdn"
         m.check_dirinfo()
 
         # Bad match should throw a fatal error and quit
-        m.hostname = 'foobar'
+        m.hostname = "foobar"
         self.assertRaises(SystemExit, m.check_dirinfo)
 
         # But not if we tell the system to ignore it
-        self.set_config('allow_source_mismatch', True)
+        self.set_config("allow_source_mismatch", True)
         m.check_dirinfo()
 
 

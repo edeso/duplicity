@@ -41,8 +41,7 @@ from duplicity import util
 from duplicity.cli_data import *
 
 
-class DuplicityHelpFormatter(argparse.ArgumentDefaultsHelpFormatter,
-                             argparse.RawDescriptionHelpFormatter):
+class DuplicityHelpFormatter(argparse.ArgumentDefaultsHelpFormatter, argparse.RawDescriptionHelpFormatter):
     """
     A working class to combine ArgumentDefaults, RawDescription.
     Use with make_wide() to insure we catch argparse API changes.
@@ -70,11 +69,10 @@ def new_parser(**kwargs):
     """
     action_help = "positional args:\n"
     for var, meta in DuplicityCommands.__dict__.items():
-        if var.startswith('__'):
+        if var.startswith("__"):
             continue
         action_str = f"  {var2cmd(var)} {' '.join(meta)}"
-        action_help += (f"{action_str:48}"
-                        f"# duplicity {var2cmd(var)} [options] {' '.join(meta)}")
+        action_help += f"{action_str:48}" f"# duplicity {var2cmd(var)} [options] {' '.join(meta)}"
         action_help += "\n"
     action_help += "\n"
 
@@ -187,17 +185,27 @@ def parse_cmdline_options(arglist):
     # eventually err out if no valid action could be determined/was given
     if len(remainder) == 2 and remainder[0] not in all_commands:
         if is_path(remainder[0]) and is_url(remainder[1]):
-            log.Notice(_("No valid action found. Will imply 'backup' because "
-                         "a path source was given and target is a url location."))
-            remainder.insert(0, 'backup')
+            log.Notice(
+                _(
+                    "No valid action found. Will imply 'backup' because "
+                    "a path source was given and target is a url location."
+                )
+            )
+            remainder.insert(0, "backup")
         elif is_url(remainder[0]) and is_path(remainder[1]):
-            log.Notice(_("No valid action found. Will imply 'restore' because "
-                         "url source was given and target is a local path."))
-            remainder.insert(0, 'restore')
+            log.Notice(
+                _(
+                    "No valid action found. Will imply 'restore' because "
+                    "url source was given and target is a local path."
+                )
+            )
+            remainder.insert(0, "restore")
         else:
-            msg = _(f"Invalid '{remainder[0]}' action and cannot be implied from the "
-                    f"given arguments:\n{arglist}\n"
-                    f"Valid actions are: {all_commands}")
+            msg = _(
+                f"Invalid '{remainder[0]}' action and cannot be implied from the "
+                f"given arguments:\n{arglist}\n"
+                f"Valid actions are: {all_commands}"
+            )
             command_line_error(msg)
 
     # check for proper action
@@ -253,7 +261,8 @@ def process_command_line(cmdline_list):
             passphrase=src.passphrase,
             sign_key=src.sign_key,
             recipients=src.recipients,
-            hidden_recipients=src.hidden_recipients)
+            hidden_recipients=src.hidden_recipients,
+        )
     else:
         config.gpg_binary = util.which("gpg")
     gpg_version = ".".join(map(str, config.gpg_profile.gpg_version))

@@ -42,13 +42,33 @@ def check_common_error(error_handler, function, args=()):
     #        RPathException, Rdiff.RdiffException,
     #        librsync.librsyncError, C.UnknownFileTypeError), exc:
     #    TracebackArchive.add()
-    except (IOError, EnvironmentError, librsync.librsyncError, path.PathException) as exc:
-        if (not isinstance(exc, EnvironmentError) or
-                hasattr(exc, "errno") and
-                errno.errorcode[exc.errno] in
-                ['EPERM', 'ENOENT', 'EACCES', 'EBUSY', 'EEXIST',
-                 'ENOTDIR', 'ENAMETOOLONG', 'EINTR', 'ENOTEMPTY',
-                 'EIO', 'ETXTBSY', 'ESRCH', 'EINVAL', 'EOPNOTSUPP']):
+    except (
+        IOError,
+        EnvironmentError,
+        librsync.librsyncError,
+        path.PathException,
+    ) as exc:
+        if (
+            not isinstance(exc, EnvironmentError)
+            or hasattr(exc, "errno")
+            and errno.errorcode[exc.errno]
+            in [
+                "EPERM",
+                "ENOENT",
+                "EACCES",
+                "EBUSY",
+                "EEXIST",
+                "ENOTDIR",
+                "ENAMETOOLONG",
+                "EINTR",
+                "ENOTEMPTY",
+                "EIO",
+                "ETXTBSY",
+                "ESRCH",
+                "EINVAL",
+                "EOPNOTSUPP",
+            ]
+        ):
             # Log.exception()
             if error_handler:
                 return error_handler(exc, *args)

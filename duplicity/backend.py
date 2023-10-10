@@ -146,7 +146,7 @@ def strip_prefix(url_string, prefix_scheme):
     """
     strip the prefix from a string e.g. par2+ftp://... -> ftp://...
     """
-    return re.sub(f"(?i)^{re.escape(prefix_scheme)}\\+", r'', url_string)
+    return re.sub(f"(?i)^{re.escape(prefix_scheme)}\\+", r"", url_string)
 
 
 def is_backend_url(url_string):
@@ -294,12 +294,14 @@ class ParsedUrl(object):
         try:
             self.port = pu.port
         except Exception:  # just returns None
-            if self.scheme in ['rclone']:
+            if self.scheme in ["rclone"]:
                 pass
             # old style rsync://host::[/]dest, are still valid, though they contain no port
-            elif not ('rsync' in self.scheme and re.search('::[^:]*$', self.url_string)):
-                raise InvalidBackendURL(f"Syntax error (port) in: {url_string} A{'rsync' in self.scheme} "
-                                        f"B{re.search('::[^:]+$', self.netloc)} C{self.netloc}")
+            elif not ("rsync" in self.scheme and re.search("::[^:]*$", self.url_string)):
+                raise InvalidBackendURL(
+                    f"Syntax error (port) in: {url_string} A{'rsync' in self.scheme} "
+                    f"B{re.search('::[^:]+$', self.netloc)} C{self.netloc}"
+                )
 
         # Our URL system uses two slashes more than urlparse's does when using
         # non-netloc URLs.  And we want to make sure that if urlparse assuming
@@ -307,9 +309,9 @@ class ParsedUrl(object):
         if self.scheme not in uses_netloc:
             if self.netloc:
                 self.path = f"//{self.netloc}{self.path}"
-                self.netloc = ''
+                self.netloc = ""
                 self.hostname = None
-            elif not self.path.startswith('//') and self.path.startswith('/'):
+            elif not self.path.startswith("//") and self.path.startswith("/"):
                 self.path = f"//{self.path}"
 
         # This happens for implicit local paths.
@@ -318,13 +320,15 @@ class ParsedUrl(object):
 
         # Our backends do not handle implicit hosts.
         if self.scheme in uses_netloc and not self.hostname:
-            raise InvalidBackendURL(f"Missing hostname in a backend URL which requires an "
-                                    f"explicit hostname: {url_string}")
+            raise InvalidBackendURL(
+                f"Missing hostname in a backend URL which requires an " f"explicit hostname: {url_string}"
+            )
 
         # Our backends do not handle implicit relative paths.
-        if self.scheme not in uses_netloc and not self.path.startswith('//'):
-            raise InvalidBackendURL(f"missing // - relative paths not supported for "
-                                    f"scheme {self.scheme}: {url_string}")
+        if self.scheme not in uses_netloc and not self.path.startswith("//"):
+            raise InvalidBackendURL(
+                f"missing // - relative paths not supported for " f"scheme {self.scheme}: {url_string}"
+            )
 
     def geturl(self):
         return self.url_string
@@ -336,16 +340,16 @@ class ParsedUrl(object):
 def strip_auth_from_url(parsed_url):
     """Return a URL from a urlparse object without a username or password."""
 
-    clean_url = re.sub('^([^:/]+://)(.*@)?(.*)', r'\1\3', parsed_url.geturl())
+    clean_url = re.sub("^([^:/]+://)(.*@)?(.*)", r"\1\3", parsed_url.geturl())
     return clean_url
 
 
 def _get_code_from_exception(backend, operation, e):
     if isinstance(e, BackendException) and e.code != log.ErrorCode.backend_error:
         return e.code
-    elif hasattr(backend, '_error_code'):
+    elif hasattr(backend, "_error_code"):
         return backend._error_code(operation, e) or log.ErrorCode.backend_error
-    elif hasattr(e, 'errno'):
+    elif hasattr(e, "errno"):
         # A few backends return such errors (local, paramiko, etc)
         if e.errno == errno.EACCES:
             return log.ErrorCode.backend_permission_denied
@@ -381,8 +385,7 @@ def retry(operation, fatal=True):
                         return errors_default
                     else:
                         # retry on anything else
-                        log.Debug(_("Backtrace of previous error: %s")
-                                  % exception_traceback())
+                        log.Debug(_("Backtrace of previous error: %s") % exception_traceback())
                         at_end = n == config.num_retries
                         code = _get_code_from_exception(self.backend, operation, e)
                         if code == log.ErrorCode.backend_not_found:
@@ -390,26 +393,32 @@ def retry(operation, fatal=True):
                             # no need to retry.
                             at_end = True
                         if at_end and fatal:
+
                             def make_filename(f):
                                 if isinstance(f, path.ROPath):
                                     return util.escape(f.uc_name)
                                 else:
                                     return util.escape(f)
 
-                            extra = ' '.join([operation] + [make_filename(x) for x in args
-                                                            if (x and isinstance(x, str))])
-                            log.FatalError(_("Giving up after %s attempts. %s: %s")
-                                           % (n, e.__class__.__name__,
-                                              util.uexc(e)), code=code, extra=extra)
+                            extra = " ".join(
+                                [operation] + [make_filename(x) for x in args if (x and isinstance(x, str))]
+                            )
+                            log.FatalError(
+                                _("Giving up after %s attempts. %s: %s") % (n, e.__class__.__name__, util.uexc(e)),
+                                code=code,
+                                extra=extra,
+                            )
                         else:
-                            log.Warn(_("Attempt of %s Nr. %s failed. %s: %s")
-                                     % (fn.__name__, n, e.__class__.__name__, util.uexc(e)))
+                            log.Warn(
+                                _("Attempt of %s Nr. %s failed. %s: %s")
+                                % (fn.__name__, n, e.__class__.__name__, util.uexc(e))
+                            )
                         if not at_end:
                             if isinstance(e, TemporaryLoadException):
                                 time.sleep(3 * config.backend_retry_delay)  # wait longer before trying again
                             else:
                                 time.sleep(config.backend_retry_delay)  # wait a bit before trying again
-                            if hasattr(self.backend, '_retry_cleanup'):
+                            if hasattr(self.backend, "_retry_cleanup"):
                                 self.backend._retry_cleanup()
 
         return inner_retry
@@ -439,11 +448,11 @@ class Backend(object):
             return self.parsed_url.password
 
         try:
-            password = os.environ['FTP_PASSWORD']
+            password = os.environ["FTP_PASSWORD"]
         except KeyError:
             if self.use_getpass:
                 password = getpass.getpass(f"Password for '{self.parsed_url.username}@{self.parsed_url.hostname}': ")
-                os.environ['FTP_PASSWORD'] = password
+                os.environ["FTP_PASSWORD"] = password
             else:
                 password = None
         return password
@@ -458,7 +467,7 @@ class Backend(object):
         the ':password@' may be substituted.
         """
         if self.parsed_url.password:
-            return re.sub(r'(:([^\s:/@]+)@([^\s@]+))', r':*****@\3', commandline)
+            return re.sub(r"(:([^\s:/@]+)@([^\s@]+))", r":*****@\3", commandline)
         else:
             return commandline
 
@@ -493,7 +502,7 @@ class Backend(object):
         import shlex
 
         if isinstance(commandline, (list, tuple)):
-            logstr = ' '.join(commandline)
+            logstr = " ".join(commandline)
             args = commandline
         else:
             logstr = commandline
@@ -508,10 +517,11 @@ class Backend(object):
                 ignores = self.popen_breaks[args[0]]
                 ignores.index(result)
                 """ ignore a predefined set of error codes """
-                return 0, '', ''
+                return 0, "", ""
             except (KeyError, ValueError):
-                raise BackendException("Error running '%s': returned %d, with output:\n%s" %
-                                       (logstr, result, f"{stdout}\n{stderr}\n"))
+                raise BackendException(
+                    "Error running '%s': returned %d, with output:\n%s" % (logstr, result, f"{stdout}\n{stderr}\n")
+                )
         return result, stdout, stderr
 
 
@@ -525,13 +535,13 @@ class BackendWrapper(object):
         self.backend = backend
 
     def __do_put(self, source_path, remote_filename):
-        if hasattr(self.backend, '_put'):
+        if hasattr(self.backend, "_put"):
             log.Info(_("Writing %s") % os.fsdecode(remote_filename))
             self.backend._put(source_path, remote_filename)
         else:
             raise NotImplementedError()
 
-    @retry('put', fatal=True)
+    @retry("put", fatal=True)
     def put(self, source_path, remote_filename=None):
         """
         Transfer source_path (Path object) to remote_filename (string)
@@ -543,7 +553,7 @@ class BackendWrapper(object):
             remote_filename = source_path.get_filename()
         self.__do_put(source_path, remote_filename)
 
-    @retry('move', fatal=True)
+    @retry("move", fatal=True)
     def move(self, source_path, remote_filename=None):
         """
         Move source_path (Path object) to remote_filename (string)
@@ -553,26 +563,25 @@ class BackendWrapper(object):
         """
         if not remote_filename:
             remote_filename = source_path.get_filename()
-        if hasattr(self.backend, '_move'):
+        if hasattr(self.backend, "_move"):
             if self.backend._move(source_path, remote_filename) is not False:
                 source_path.setdata()
                 return
         self.__do_put(source_path, remote_filename)
         source_path.delete()
 
-    @retry('get', fatal=True)
+    @retry("get", fatal=True)
     def get(self, remote_filename, local_path):
         """Retrieve remote_filename and place in local_path"""
-        if hasattr(self.backend, '_get'):
+        if hasattr(self.backend, "_get"):
             self.backend._get(remote_filename, local_path)
             local_path.setdata()
             if not local_path.exists():
-                raise BackendException(_("File %s not found locally after get "
-                                         "from backend") % local_path.uc_name)
+                raise BackendException(_("File %s not found locally after get " "from backend") % local_path.uc_name)
         else:
             raise NotImplementedError()
 
-    @retry('list', fatal=True)
+    @retry("list", fatal=True)
     def list(self):
         """
         Return list of filenames (byte strings) present in backend
@@ -588,7 +597,7 @@ class BackendWrapper(object):
             else:
                 return filename
 
-        if hasattr(self.backend, '_list'):
+        if hasattr(self.backend, "_list"):
             # Make sure that duplicity internals only ever see byte strings
             # for filenames, no matter what the backend thinks it is talking.
             return [tobytes(x) for x in self.backend._list()]
@@ -600,7 +609,7 @@ class BackendWrapper(object):
         Manages remote access before downloading files
         (unseal data in cold storage for instance)
         """
-        if hasattr(self.backend, 'pre_process_download'):
+        if hasattr(self.backend, "pre_process_download"):
             return self.backend.pre_process_download(remote_filename)
 
     def pre_process_download_batch(self, remote_filenames):
@@ -608,7 +617,7 @@ class BackendWrapper(object):
         Manages remote access before downloading files
         (unseal data in cold storage for instance)
         """
-        if hasattr(self.backend, 'pre_process_download_batch'):
+        if hasattr(self.backend, "pre_process_download_batch"):
             return self.backend.pre_process_download_batch(remote_filenames)
 
     def delete(self, filename_list):
@@ -616,22 +625,22 @@ class BackendWrapper(object):
         Delete each filename in filename_list, in order if possible.
         """
         assert not isinstance(filename_list, bytes)
-        if hasattr(self.backend, '_delete_list'):
+        if hasattr(self.backend, "_delete_list"):
             self._do_delete_list(filename_list)
-        elif hasattr(self.backend, '_delete'):
+        elif hasattr(self.backend, "_delete"):
             for filename in filename_list:
                 self._do_delete(filename)
         else:
             raise NotImplementedError()
 
-    @retry('delete', fatal=False)
+    @retry("delete", fatal=False)
     def _do_delete_list(self, filename_list):
         while filename_list:
             sublist = filename_list[:100]
             self.backend._delete_list(sublist)
             filename_list = filename_list[100:]
 
-    @retry('delete', fatal=False)
+    @retry("delete", fatal=False)
     def _do_delete(self, filename):
         self.backend._delete(filename)
 
@@ -650,11 +659,11 @@ class BackendWrapper(object):
         Return metadata about each filename in filename_list
         """
         info = {}
-        if hasattr(self.backend, '_query_list'):
+        if hasattr(self.backend, "_query_list"):
             info = self._do_query_list(filename_list)
             if info is None:
                 info = {}
-        elif hasattr(self.backend, '_query'):
+        elif hasattr(self.backend, "_query"):
             for filename in filename_list:
                 info[filename] = self._do_query(filename)
 
@@ -663,26 +672,26 @@ class BackendWrapper(object):
         for filename in filename_list:
             if filename not in info or info[filename] is None:
                 info[filename] = {}
-            for metadata in ['size']:
+            for metadata in ["size"]:
                 info[filename].setdefault(metadata, None)
 
         return info
 
-    @retry('query', fatal=False)
+    @retry("query", fatal=False)
     def _do_query_list(self, filename_list):
         info = self.backend._query_list(filename_list)
         if info is None:
             info = {}
         return info
 
-    @retry('query', fatal=False)
+    @retry("query", fatal=False)
     def _do_query(self, filename):
         try:
             return self.backend._query(filename)
         except Exception as e:
-            code = _get_code_from_exception(self.backend, 'query', e)
+            code = _get_code_from_exception(self.backend, "query", e)
             if code == log.ErrorCode.backend_not_found:
-                return {'size': -1}
+                return {"size": -1}
             else:
                 raise e
 
@@ -691,7 +700,7 @@ class BackendWrapper(object):
         Close the backend, releasing any resources held and
         invalidating any file objects obtained from the backend.
         """
-        if hasattr(self.backend, '_close'):
+        if hasattr(self.backend, "_close"):
             self.backend._close()
 
     def get_fileobj_read(self, filename, parseresults=None):

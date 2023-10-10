@@ -29,6 +29,7 @@ from . import UnitTestCase
 
 class PathTest(UnitTestCase):
     """Test basic path functions"""
+
     def setUp(self):
         super().setUp()
         self.unpack_testfiles()

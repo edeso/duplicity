@@ -74,15 +74,27 @@ def get_fileobj_duppath(dirpath, partname, permname, remname, overwrite=False):
         td = tempdir.TemporaryDirectory(dirpath.name)
         tdpname = td.mktemp()
         tdp = TempDupPath(tdpname, parseresults=file_naming.parse(partname))
-        fh = FileobjHooked(tdp.filtered_open("wb"), tdp=tdp, dirpath=dirpath,
-                           partname=partname, permname=permname, remname=remname)
+        fh = FileobjHooked(
+            tdp.filtered_open("wb"),
+            tdp=tdp,
+            dirpath=dirpath,
+            partname=partname,
+            permname=permname,
+            remname=remname,
+        )
     else:
         dp = path.DupPath(dirpath.name, index=(partname,))
         mode = "ab"
         if overwrite:
             mode = "wb"
-        fh = FileobjHooked(dp.filtered_open(mode), tdp=None, dirpath=dirpath,
-                           partname=partname, permname=permname, remname=remname)
+        fh = FileobjHooked(
+            dp.filtered_open(mode),
+            tdp=None,
+            dirpath=dirpath,
+            partname=partname,
+            permname=permname,
+            remname=remname,
+        )
 
     def rename_and_forget():
         tdp.rename(dirpath.append(partname))
@@ -137,8 +149,15 @@ class FileobjHooked(object):
     Simulate a file, but add hook on close
     """
 
-    def __init__(self, fileobj, tdp=None, dirpath=None,
-                 partname=None, permname=None, remname=None):
+    def __init__(
+        self,
+        fileobj,
+        tdp=None,
+        dirpath=None,
+        partname=None,
+        permname=None,
+        remname=None,
+    ):
         """
         Initializer.  fileobj is the file object to simulate
         """
@@ -273,9 +292,10 @@ class SrcIter(object):
         try:
             res = Block(self.fp.read(self.get_read_size()))
         except Exception:
-            log.FatalError(_("Failed to read %s: %s") %
-                           (self.src.uc_name, sys.exc_info()),
-                           log.ErrorCode.generic)
+            log.FatalError(
+                _("Failed to read %s: %s") % (self.src.uc_name, sys.exc_info()),
+                log.ErrorCode.generic,
+            )
         if not res.data:
             self.fp.close()
             raise StopIteration

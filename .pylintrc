@@ -1,5 +1,5 @@
 [pylint]
-jobs=4
+jobs=8
 errors-only=yes
 ignore=_librsync.so
 msg-template='{path}:{line}: [{msg_id}({symbol}), {obj}] {msg}'

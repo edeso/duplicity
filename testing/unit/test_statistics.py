@@ -30,6 +30,7 @@ from . import UnitTestCase
 
 class StatsObjTest(UnitTestCase):
     """Test StatsObj class"""
+
     def setUp(self):
         super().setUp()
         self.unpack_testfiles()
@@ -53,12 +54,12 @@ class StatsObjTest(UnitTestCase):
     def test_get_stats(self):
         """Test reading and writing stat objects"""
         s = StatsObj()
-        assert s.get_stat('SourceFiles') is None
+        assert s.get_stat("SourceFiles") is None
         self.set_obj(s)
-        assert s.get_stat('SourceFiles') == 1
+        assert s.get_stat("SourceFiles") == 1
 
         s1 = StatsDeltaProcess()
-        assert s1.get_stat('SourceFiles') == 0
+        assert s1.get_stat("SourceFiles") == 0
 
     def test_get_stats_string(self):
         """Test conversion of stat object into string"""
@@ -68,7 +69,9 @@ class StatsObjTest(UnitTestCase):
 
         self.set_obj(s)
         stats_string = s.get_stats_string()
-        assert stats_string == """\
+        assert (
+            stats_string
+            == """\
 StartTime 13.00 (Thu Jan  1 00:00:13 1970)
 EndTime 14.00 (Thu Jan  1 00:00:14 1970)
 ElapsedTime 1.00 (1 second)
@@ -83,22 +86,21 @@ ChangedDeltaSize 9 (9 bytes)
 DeltaEntries 10
 RawDeltaSize 11 (11 bytes)
 TotalDestinationSizeChange 12 (12 bytes)
-""", f"'{stats_string}'"
+"""
+        ), f"'{stats_string}'"
 
     def test_line_string(self):
         """Test conversion to a single line"""
         s = StatsObj()
         self.set_obj(s)
         statline = s.get_stats_line(("sample", "index", "w", "new\nline"))
-        assert statline == "sample/index/w/new\\nline 1 2 3 4 5 7 8 9 10 11", \
-            repr(statline)
+        assert statline == "sample/index/w/new\\nline 1 2 3 4 5 7 8 9 10 11", repr(statline)
 
         statline = s.get_stats_line(())
         assert statline == ". 1 2 3 4 5 7 8 9 10 11"
 
         statline = s.get_stats_line(("file name with spaces",))
-        assert statline == ("file\\x20name\\x20with\\x20spaces "
-                            "1 2 3 4 5 7 8 9 10 11"), repr(statline)
+        assert statline == ("file\\x20name\\x20with\\x20spaces " "1 2 3 4 5 7 8 9 10 11"), repr(statline)
 
     def test_byte_summary(self):
         """Test conversion of bytes to strings like 7.23MB"""
@@ -117,7 +119,7 @@ TotalDestinationSizeChange 12 (12 bytes)
         s = StatsObj()
         s.set_stats_from_string("NewFiles 3 hello there")
         for attr in s.stat_attrs:
-            if attr == 'NewFiles':
+            if attr == "NewFiles":
                 assert s.get_stat(attr) == 3
             else:
                 assert s.get_stat(attr) is None, (attr, s.__dict__[attr])
@@ -165,8 +167,10 @@ TotalDestinationSizeChange 12 (12 bytes)
         s3 = StatsObj().set_to_average([s1, s2])
         assert s3.StartTime is s3.EndTime is None
         assert s3.ElapsedTime == 7.5
-        assert s3.DeletedFiles is s3.NewFileSize is None, (s3.DeletedFiles,
-                                                           s3.NewFileSize)
+        assert s3.DeletedFiles is s3.NewFileSize is None, (
+            s3.DeletedFiles,
+            s3.NewFileSize,
+        )
         assert s3.ChangedFiles == 1.5
         assert s3.SourceFiles == 75
 

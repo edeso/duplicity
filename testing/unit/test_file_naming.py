@@ -33,8 +33,18 @@ from . import UnitTestCase
 class Test36(UnitTestCase):
     def test_base36(self):
         """Test conversion to/from base 36"""
-        numlist = [0, 1, 10, 1313, 34233, 872338, 2342889,
-                   134242234, 1204684368, 34972382455]
+        numlist = [
+            0,
+            1,
+            10,
+            1313,
+            34233,
+            872338,
+            2342889,
+            134242234,
+            1204684368,
+            34972382455,
+        ]
         for n in numlist:
             b = file_naming.to_base36(n)
             assert file_naming.from_base36(b) == n, (b, n)
@@ -42,6 +52,7 @@ class Test36(UnitTestCase):
 
 class FileNamingBase(object):
     """Holds file naming test functions, for use in subclasses"""
+
     def test_basic(self):
         """Check get/parse cycle"""
         dup_time.setprevtime(10)
@@ -106,9 +117,11 @@ class FileNamingBase(object):
         assert pr.type == "new-sig"
         assert pr.end_time == 1029826800
 
-        pr = file_naming.parse(config.file_prefix +
-                               config.file_prefix_signature +
-                               b"duplicity-new-signatures.2002-08-18T00:04:30-07:00.to.2002-08-20T00:00:00-07:00.sigtar.gpg")  # noqa
+        pr = file_naming.parse(
+            config.file_prefix
+            + config.file_prefix_signature
+            + b"duplicity-new-signatures.2002-08-18T00:04:30-07:00.to.2002-08-20T00:00:00-07:00.sigtar.gpg"
+        )  # noqa
         assert pr, pr
         assert pr.type == "new-sig"
         assert pr.end_time == 1029826800
@@ -127,7 +140,11 @@ class FileNamingBase(object):
         assert pr.type == "new-sig"
         assert pr.end_time == 1029826800
 
-        pr = file_naming.parse(config.file_prefix + config.file_prefix_signature + b"duplicity-new-signatures.2002-08-18T00:04:30-07:00.to.2002-08-20T00:00:00-07:00.sigtar.part.gpg")  # noqa
+        pr = file_naming.parse(
+            config.file_prefix
+            + config.file_prefix_signature
+            + b"duplicity-new-signatures.2002-08-18T00:04:30-07:00.to.2002-08-20T00:00:00-07:00.sigtar.part.gpg"
+        )  # noqa
         assert pr, pr
         assert pr.partial
         assert pr.type == "new-sig"
@@ -142,19 +159,21 @@ class FileNamingBase(object):
 
 class FileNaming(UnitTestCase, FileNamingBase):
     """Test long filename parsing and generation"""
+
     def setUp(self):
         super().setUp()
 
 
 class FileNamingPrefixes(UnitTestCase, FileNamingBase):
     """Test filename parsing and generation with prefixes"""
+
     def setUp(self):
         super().setUp()
-        self.set_config('file_prefix', b"global-")
-        self.set_config('file_prefix_manifest', b"mani-")
-        self.set_config('file_prefix_signature', b"sign-")
-        self.set_config('file_prefix_archive', b"arch-")
-        self.set_config('file_prefix_jsonstat', b"jsonstat-")
+        self.set_config("file_prefix", b"global-")
+        self.set_config("file_prefix_manifest", b"mani-")
+        self.set_config("file_prefix_signature", b"sign-")
+        self.set_config("file_prefix_archive", b"arch-")
+        self.set_config("file_prefix_jsonstat", b"jsonstat-")
 
 
 if __name__ == "__main__":

@@ -24,11 +24,12 @@
     rules:
         - if: $CI_COMMIT_MESSAGE =~ /\[skip[ _-]tests?\]/i || $SKIP_TESTS
           when: never
-        - if: $CI_MERGE_REQUEST_APPROVED
-          when: always
         - changes:
             - .gitlab-ci.yml
+            - .pylintrc
+            - .pyproject.toml
             - requirements.txt
+            - setup.cfg
             - tox.ini
             - bin/duplicity
             - duplicity/**/*
@@ -100,47 +101,6 @@ py311:
         - python3 -m pip install -r requirements.txt
         - tox -e py311
 
-build_pip:
-    stage: deploy
-    when: manual
-    image: ubuntu:20.04
-    before_script:
-        - apt-get update
-        - apt-get install -y git python3-pip git intltool
-        - python3 -m pip install --upgrade pip
-        - python3 -m pip install -r requirements.txt
-        - python3 -m pip install twine
-    script:
-        - ./setup.py sdist --dist-dir=.
-    artifacts:
-        paths:
-            - duplicity-*.tar.gz
-        expire_in: 30 days
-
-build_snap:
-    stage: deploy
-    when: manual
-    image: ubuntudesktop/gnome-3-38-2004
-    before_script:
-        # Set locale to prevent UTF-8 errors
-        - export LANG=C.UTF-8
-        - export LC_ALL=C.UTF-8
-        - export SNAP_ARCH=amd64
-        - export SNAPCRAFT_BUILD_INFO=1
-        - apt-get update
-        - apt-get install -y git python3-pip git intltool squashfs-tools
-        - python3 -m pip install --upgrade pip
-        - python3 -m pip install -r requirements.txt
-    script:
-        - tools/makesnap
-        - tools/installsnap
-        - tools/testsnap
-    artifacts:
-        paths:
-            - build/duplicity-*/duplicity_*.snap
-            - build/duplicity-*/duplicity_*.txt
-        expire_in: 30 days
-
 pages:
     stage: deploy
     when: manual
@@ -171,6 +131,8 @@ website:
     stage: deploy
     image: curlimages/curl:latest
     rules:
+        - if: $CI_COMMIT_BRANCH != "main"
+          when: manual
         - if: $CI_COMMIT_TAG
           when: always
         - changes:

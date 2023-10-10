@@ -42,13 +42,13 @@ _log_timestamp = False
 
 def DupToLoggerLevel(verb):
     """Convert duplicity level to the logging module's system, where higher is
-        more severe"""
+    more severe"""
     return MAX - verb + 1
 
 
 def LoggerToDupLevel(verb):
     """Convert logging module level to duplicity's system, where lower is
-        more severe"""
+    more severe"""
     return DupToLoggerLevel(verb)
 
 
@@ -69,11 +69,11 @@ def Log(s, verb_level, code=1, extra=None, force_print=False, transfer_progress=
     """Write s to stderr if verbosity level low enough"""
     global _logger
     if extra:
-        controlLine = f'{int(code)} {extra}'
+        controlLine = f"{int(code)} {extra}"
     else:
-        controlLine = f'{int(code)}'
+        controlLine = f"{int(code)}"
     if not s:
-        s = ''  # If None is passed, standard logging would render it as 'None'
+        s = ""  # If None is passed, standard logging would render it as 'None'
 
     if force_print:
         initial_level = _logger.getEffectiveLevel()
@@ -86,10 +86,15 @@ def Log(s, verb_level, code=1, extra=None, force_print=False, transfer_progress=
     if not isinstance(s, str):
         s = s.decode("utf8", "replace")
 
-    _logger.log(DupToLoggerLevel(verb_level), s,
-                extra={'levelName': LevelName(verb_level),
-                       'controlLine': controlLine,
-                       'transferProgress': transfer_progress})
+    _logger.log(
+        DupToLoggerLevel(verb_level),
+        s,
+        extra={
+            "levelName": LevelName(verb_level),
+            "controlLine": controlLine,
+            "transferProgress": transfer_progress,
+        },
+    )
 
     if force_print:
         _logger.setLevel(initial_level)
@@ -102,8 +107,9 @@ def Debug(s):
 
 class InfoCode(object):
     """Enumeration class to hold info code values.
-        These values should never change, as frontends rely upon them.
-        Don't use 0 or negative numbers."""
+    These values should never change, as frontends rely upon them.
+    Don't use 0 or negative numbers."""
+
     generic = 1
     progress = 2
     collection_status = 3
@@ -130,9 +136,9 @@ def Info(s, code=InfoCode.generic, extra=None):
 def Progress(s, current, total=None):
     """Shortcut used for progress messages (verbosity 5)."""
     if total:
-        controlLine = f'{int(current)} {int(total)}'
+        controlLine = f"{int(current)} {int(total)}"
     else:
-        controlLine = f'{int(current)}'
+        controlLine = f"{int(current)}"
     Log(s, INFO, InfoCode.progress, controlLine)
 
 
@@ -204,8 +210,10 @@ def TransferProgress(progress, eta, changed_bytes, elapsed, speed, stalled):
         if speed_amount > 1000.0:
             speed_amount /= 1024.0
             speed_scale = "GB"
-    s = f"{data_amount:.1f}{data_scale} {_ElapsedSecs2Str(elapsed)} [{speed_amount:.1f}{speed_scale}/s] " \
+    s = (
+        f"{data_amount:.1f}{data_scale} {_ElapsedSecs2Str(elapsed)} [{speed_amount:.1f}{speed_scale}/s] "
         f"[{'=' * dots}>{' ' * (40 - dots)}] {int(progress)}% ETA {eta_str}"
+    )
 
     controlLine = f"{int(changed_bytes)} {int(elapsed)} {int(progress)} {int(eta)} {int(speed)} {int(stalled)}"
     Log(s, NOTICE, InfoCode.upload_progress, controlLine, transfer_progress=True)
@@ -213,18 +221,35 @@ def TransferProgress(progress, eta, changed_bytes, elapsed, speed, stalled):
 
 def PrintCollectionStatus(col_stats, force_print=False):
     """Prints a collection status to the log"""
-    Log(str(col_stats), 8, InfoCode.collection_status,
-        '\n' + '\n'.join(col_stats.to_log_info()), force_print)
+    Log(
+        str(col_stats),
+        8,
+        InfoCode.collection_status,
+        "\n" + "\n".join(col_stats.to_log_info()),
+        force_print,
+    )
 
 
 def PrintCollectionFileChangedStatus(col_stats, filepath, force_print=False):
     """Prints a collection status to the log"""
-    Log(str(col_stats.get_file_changed_record(filepath)), 8, InfoCode.collection_status, None, force_print)
+    Log(
+        str(col_stats.get_file_changed_record(filepath)),
+        8,
+        InfoCode.collection_status,
+        None,
+        force_print,
+    )
 
 
 def PrintCollectionChangesInSet(col_stats, set_index, force_print=False):
     """Prints changes in the specified set to the log"""
-    Log(str(col_stats.get_all_file_changed_records(set_index)), 8, InfoCode.collection_status, None, force_print)
+    Log(
+        str(col_stats.get_all_file_changed_records(set_index)),
+        8,
+        InfoCode.collection_status,
+        None,
+        force_print,
+    )
 
 
 def Notice(s):
@@ -234,8 +259,9 @@ def Notice(s):
 
 class WarningCode(object):
     """Enumeration class to hold warning code values.
-        These values should never change, as frontends rely upon them.
-        Don't use 0 or negative numbers."""
+    These values should never change, as frontends rely upon them.
+    Don't use 0 or negative numbers."""
+
     generic = 1
     orphaned_sig = 2
     unnecessary_sig = 3
@@ -258,9 +284,10 @@ def Warn(s, code=WarningCode.generic, extra=None):
 
 class ErrorCode(object):
     """Enumeration class to hold error code values.
-        These values should never change, as frontends rely upon them.
-        Don't use 0 or negative numbers.  This code is returned by duplicity
-        to indicate which error occurred via both exit code and log."""
+    These values should never change, as frontends rely upon them.
+    Don't use 0 or negative numbers.  This code is returned by duplicity
+    to indicate which error occurred via both exit code and log."""
+
     generic = 1  # Don't use if possible, please create a new code and use it
     command_line = 2
     hostname_mismatch = 3
@@ -371,7 +398,7 @@ def setup():
 
     # have to get log options from commandline before initializing logger
     # hackish? yes, but I see no other way other than external config
-    if '--log-timestamp' in sys.argv[1:]:
+    if "--log-timestamp" in sys.argv[1:]:
         _log_timestamp = True
 
     # OK, now we can start setup
@@ -400,6 +427,7 @@ def setup():
 
 class PrettyProgressFormatter(logging.Formatter):
     """Formatter that overwrites previous progress lines on ANSI terminals"""
+
     last_record_was_progress = False
 
     def __init__(self):
@@ -456,10 +484,10 @@ class MachineFormatter(logging.Formatter):
         # Add user-text hint of 'message' back in, with each line prefixed by a
         # dot, so consumers know it's not part of 'controlLine'
         if record.message:
-            s += ('\n' + record.message).replace('\n', '\n. ')
+            s += ("\n" + record.message).replace("\n", "\n. ")
 
         # Add a newline so consumers know the message is over.
-        return s + '\n'
+        return s + "\n"
 
 
 class MachineFilter(logging.Filter):
@@ -467,13 +495,13 @@ class MachineFilter(logging.Filter):
 
     def filter(self, record):
         # We only want to allow records that have our custom level names
-        return hasattr(record, 'levelName')
+        return hasattr(record, "levelName")
 
 
 def add_fd(fd):
     """Add stream to which to write machine-readable logging"""
     global _logger
-    handler = logging.StreamHandler(os.fdopen(fd, 'w'))
+    handler = logging.StreamHandler(os.fdopen(fd, "w"))
     handler.setFormatter(MachineFormatter())
     handler.addFilter(MachineFilter())
     _logger.addHandler(handler)
@@ -482,7 +510,7 @@ def add_fd(fd):
 def add_file(filename):
     """Add file to which to write machine-readable logging"""
     global _logger
-    handler = logging.FileHandler(filename, encoding='utf8')
+    handler = logging.FileHandler(filename, encoding="utf8")
     handler.setFormatter(MachineFormatter())
     handler.addFilter(MachineFilter())
     _logger.addHandler(handler)

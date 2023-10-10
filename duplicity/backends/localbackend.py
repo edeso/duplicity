@@ -40,7 +40,7 @@ class LocalBackend(duplicity.backend.Backend):
     def __init__(self, parsed_url):
         duplicity.backend.Backend.__init__(self, parsed_url)
         # The URL form "file:MyFile" is not a valid duplicity target.
-        if not parsed_url.path.startswith('//'):
+        if not parsed_url.path.startswith("//"):
             raise BackendException("Bad file:// path syntax.")
         self.remote_pathdir = path.Path(parsed_url.path[2:])
         try:
@@ -82,7 +82,7 @@ class LocalBackend(duplicity.backend.Backend):
         target_file = self.remote_pathdir.append(filename)
         target_file.setdata()
         size = target_file.getsize() if target_file.exists() else -1
-        return {'size': size}
+        return {"size": size}
 
 
 duplicity.backend.register_backend("file", LocalBackend)

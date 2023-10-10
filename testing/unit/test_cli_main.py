@@ -431,15 +431,11 @@ class CommandlineTest(UnitTestCase):
         cli_main.process_command_line(cline)
         self.assertEqual(config.ssh_options, "--foo")
 
-        cline = shlex.split(
-            "inc foo/bar file:///target_url --ssh-options='--foo' --ssh-options='--bar'"
-        )
+        cline = shlex.split("inc foo/bar file:///target_url --ssh-options='--foo' --ssh-options='--bar'")
         cli_main.process_command_line(cline)
         self.assertEqual(config.ssh_options, "--foo --bar")
 
-        cline = shlex.split(
-            "inc foo/bar file:///target_url --ssh-options='--foo --bar'"
-        )
+        cline = shlex.split("inc foo/bar file:///target_url --ssh-options='--foo --bar'")
         cli_main.process_command_line(cline)
         self.assertEqual(config.ssh_options, "--foo --bar")
 
