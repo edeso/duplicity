@@ -104,10 +104,9 @@ OptionKwargs = dict(
     ),
     asynchronous_upload=dict(
         action=WarnAsyncStoreConstAction,
-        nargs=0,
         const=1,
         dest="async_concurrency",
-        help="Number of async upload tasks, max of 1",
+        help="Use asynchronous upload",
         default=dflt(config.async_concurrency)
     ),
     azure_blob_tier=dict(
