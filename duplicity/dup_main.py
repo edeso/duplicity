@@ -1629,7 +1629,7 @@ def do_backup(action):
         not config.restart
         and action in ["inc", "backup"]
         and config.full_if_older_than is not None
-        and last_full_time < config.full_if_older_than
+        and last_full_time < dup_time.curtime - config.full_if_older_than
     ):
         log.Notice(_("Last full backup is too old, forcing full backup"))
         action = "full"

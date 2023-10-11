@@ -115,16 +115,12 @@ class CommandlineTest(UnitTestCase):
             self.assertEqual(config.action, "list-current-files")
             self.assertEqual(config.target_url, "file://duptest")
 
-        for cmd in [
-            "remove-all-but-n-full"
-        ] + cli_main.CommandAliases.remove_all_but_n_full:
+        for cmd in ["remove-all-but-n-full"] + cli_main.CommandAliases.remove_all_but_n_full:
             cli_main.process_command_line(f"{cmd} 5 file://duptest".split())
             self.assertEqual(config.action, "remove-all-but-n-full")
             self.assertEqual(config.target_url, "file://duptest")
 
-        for cmd in [
-            "remove-all-inc-of-but-n-full"
-        ] + cli_main.CommandAliases.remove_all_inc_of_but_n_full:
+        for cmd in ["remove-all-inc-of-but-n-full"] + cli_main.CommandAliases.remove_all_inc_of_but_n_full:
             cli_main.process_command_line(f"{cmd} 5 file://duptest".split())
             self.assertEqual(config.action, "remove-all-inc-of-but-n-full")
             self.assertEqual(config.target_url, "file://duptest")
@@ -369,23 +365,17 @@ class CommandlineTest(UnitTestCase):
         """
         test implied commands
         """
-        cline = (
-            "foo/bar file:///target_url --copy-blocksize=1024 --volsize=1024".split()
-        )
+        cline = "foo/bar file:///target_url --copy-blocksize=1024 --volsize=1024".split()
         cli_main.process_command_line(cline)
         self.assertEqual(config.copy_blocksize, 1024 * 1024)
         self.assertEqual(config.volsize, 1024 * 1024 * 1024)
 
         with self.assertRaises(CommandLineError) as cm:
-            cline = (
-                "foo/bar file:///target_url --copy-blocksize=foo --volsize=1024".split()
-            )
+            cline = "foo/bar file:///target_url --copy-blocksize=foo --volsize=1024".split()
             cli_main.process_command_line(cline)
 
         with self.assertRaises(CommandLineError) as cm:
-            cline = (
-                "foo/bar file:///target_url --copy-blocksize=1024 --volsize=foo".split()
-            )
+            cline = "foo/bar file:///target_url --copy-blocksize=1024 --volsize=foo".split()
             cli_main.process_command_line(cline)
 
     @pytest.mark.usefixtures("redirect_stdin")
@@ -451,11 +441,7 @@ class CommandlineTest(UnitTestCase):
             cli_main.process_command_line(shlex.split(f"--help"))
             self.assertTrue(check_main_help(cm.content))
 
-        for cmd in [
-            var2cmd(v)
-            for v in DuplicityCommands.__dict__.keys()
-            if not v.startswith("__")
-        ]:
+        for cmd in [var2cmd(v) for v in DuplicityCommands.__dict__.keys() if not v.startswith("__")]:
             with self.assertRaises(SystemExit) as cm:
                 cli_main.process_command_line(shlex.split(f"{cmd} -h"))
             with self.assertRaises(SystemExit) as cm:
@@ -493,9 +479,7 @@ class CommandlineTest(UnitTestCase):
 
         # changed option with command
         with self.assertRaises(CommandLineError) as cm:
-            cline = shlex.split(
-                "restore --file-to-restore foo/bar file://source_url path"
-            )
+            cline = shlex.split("restore --file-to-restore foo/bar file://source_url path")
             cli_main.process_command_line(cline)
 
         # changed option without command
@@ -505,9 +489,7 @@ class CommandlineTest(UnitTestCase):
 
         # removed backup option with command
         with self.assertRaises(CommandLineError) as cm:
-            cline = shlex.split(
-                "--time-separator _ backup source_dir file://target_url"
-            )
+            cline = shlex.split("--time-separator _ backup source_dir file://target_url")
             cli_main.process_command_line(cline)
 
         # removed backup option without command
