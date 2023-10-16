@@ -209,10 +209,7 @@ def parse_cmdline_options(arglist):
             command_line_error(msg)
 
     # check for proper action
-    if not remainder:
-        parser.print_help()
-        exit(1)
-    elif remainder[0] in all_commands:
+    if remainder and remainder[0] in all_commands:
         args.action = remainder[0]
     else:
         command_line_error("Missing or invalid explicit or implicit action.")
