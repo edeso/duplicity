@@ -43,7 +43,7 @@ if not (sys.version_info[0] == 3 and sys.version_info[1] >= 8):
     sys.exit(1)
 
 
-Version = "2.1.4"
+Version = "2.1.5.dev"
 scm_version_args = {
     "tag_regex": r"^(?P<prefix>rel.)?(?P<version>[^\+]+)(?P<suffix>.*)?$",
     "local_scheme": "no-local-version",
