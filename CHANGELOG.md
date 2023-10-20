@@ -1,6 +1,27 @@
 # Changelog
 
 
+## rel.2.1.4 (2023-10-20)
+
+### Changes
+
+* Run po/update-pot. [Kenneth Loafman]
+
+* Add test\_black to test\_code.py.  Convert to black format. [Kenneth Loafman]
+
+* --asynchronous-upload is not parsed correctly. [Kenneth Loafman]
+
+* Update version for LP. [Kenneth Loafman]
+
+### Fix
+
+* Print command line error on empty commandline. [Kenneth Loafman]
+
+* Print help on empty commandline. [Kenneth Loafman]
+
+* --full-if-older-than being ignored? [Kenneth Loafman]
+
+
 ## rel.2.1.3 (2023-10-08)
 
 ### Changes
