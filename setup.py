@@ -38,8 +38,14 @@ from setuptools.command.test import test
 
 
 # check that we can function here
-if not (sys.version_info[0] == 3 and sys.version_info[1] >= 8):
-    print("Sorry, duplicity requires version 3.8 or later of Python3.")
+min_version = "3.8"
+max_version = "3.11"
+this_version = f"{sys.version_info.major}.{sys.version_info.minor}"
+if not (min_version <= this_version >= max_version):
+    print(
+        f"Sorry, duplicity requires version {min_version} to {max_version} of Python.\n"
+        f"You are running on version {this_version}."
+    )
     sys.exit(1)
 
 
