@@ -37,14 +37,18 @@ from setuptools.command.sdist import sdist
 from setuptools.command.test import test
 
 
+def v(vers):
+    return f"{vers[0]}.{vers[1]}"
+
+
 # check that we can function here
-min_version = "3.8"
-max_version = "3.11"
-this_version = f"{sys.version_info.major}.{sys.version_info.minor}"
-if not (min_version <= this_version >= max_version):
+min_version = (3, 8)
+max_version = (3, 11)
+this_version = (sys.version_info.major, sys.version_info.minor)
+if not (min_version <= this_version <= max_version):
     print(
-        f"Sorry, duplicity requires version {min_version} to {max_version} of Python.\n"
-        f"You are running on version {this_version}."
+        f"Sorry, duplicity requires version {v(min_version)} to {v(max_version)} of Python.\n"
+        f"You are running on version {v(this_version)}."
     )
     sys.exit(1)
 
