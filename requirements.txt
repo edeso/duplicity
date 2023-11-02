@@ -9,6 +9,7 @@ urllib3<1.26
 ##### basic requirements #####
 
 fasteners
+humanize
 python-gettext
 setuptools>=44.1.1
 setuptools-scm>=5.0.2
