@@ -12,13 +12,14 @@ def get_hardlinks(path):
         inode = entry.inode()
         nlinks = entry.stat().st_nlink
         if nlinks > 1 and not entry.is_symlink():
+            size = entry.stat().st_size
             if inode not in inodes:
                 inodes[inode] = []
-            inodes[inode].append(entry.path)
-            size = entry.stat().st_size
-            savings = size * (nlinks - 1)
-            print(f"{entry.path}, {nlinks}, {size}, {savings}")
-            saved += savings
+                inodes[inode].append(entry.path)
+            else:
+                inodes[inode].append(entry.path)
+                saved += size
+            print(f"{entry.path}, {nlinks}, {size}")
     return inodes, saved
 
 
