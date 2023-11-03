@@ -410,9 +410,19 @@ OptionKwargs = dict(
         default=dflt(config.jsonstat),
     ),
     # log_fd is directly applied in set_log_fd(), not saved in config
-    log_fd=dict(metavar=_("file_descriptor"), dest="", type=set_log_fd, help="File descriptor to be used for logging"),
+    log_fd=dict(
+        metavar=_("file_descriptor"),
+        dest="",
+        type=set_log_fd,
+        help="File descriptor to be used for logging",
+    ),
     # log_file is directly applied in set_log_file(), not saved in config
-    log_file=dict(metavar=_("log_filename"), dest="", type=set_log_file, help="Logging filename to use"),
+    log_file=dict(
+        metavar=_("log_filename"),
+        dest="",
+        type=set_log_file,
+        help="Logging filename to use",
+    ),
     log_timestamp=dict(
         action="store_true",
         help="Whether to include timestamp and level in log",
@@ -835,17 +845,39 @@ class CommandOptions:
     legal options by command
     """
 
-    backup = list(all_options)
-    cleanup = list(all_options - backup_only_options - selection_only_options)
-    collection_status = list(all_options - backup_only_options - selection_only_options)
-    full = list(all_options)
-    incremental = list(all_options)
-    list_current_files = list(all_options - backup_only_options - selection_only_options)
-    remove_older_than = list(all_options - backup_only_options - selection_only_options)
-    remove_all_but_n_full = list(all_options - backup_only_options - selection_only_options)
-    remove_all_inc_of_but_n_full = list(all_options - backup_only_options - selection_only_options)
-    restore = list(all_options - backup_only_options - selection_only_options)
-    verify = list(all_options - backup_only_options)
+    backup = list(
+        all_options,
+    )
+    cleanup = list(
+        all_options - backup_only_options - selection_only_options,
+    )
+    collection_status = list(
+        all_options - backup_only_options - selection_only_options,
+    )
+    full = list(
+        all_options,
+    )
+    incremental = list(
+        all_options,
+    )
+    list_current_files = list(
+        all_options - backup_only_options - selection_only_options,
+    )
+    remove_older_than = list(
+        all_options - backup_only_options - selection_only_options,
+    )
+    remove_all_but_n_full = list(
+        all_options - backup_only_options - selection_only_options,
+    )
+    remove_all_inc_of_but_n_full = list(
+        all_options - backup_only_options - selection_only_options,
+    )
+    restore = list(
+        all_options - backup_only_options - selection_only_options,
+    )
+    verify = list(
+        all_options - backup_only_options,
+    )
 
 
 trans = {
