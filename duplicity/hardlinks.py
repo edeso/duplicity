@@ -4,24 +4,40 @@ import time
 from humanize import intcomma
 
 
-def get_hardlinks(path):
-    saved = 0
-    total = 0
-    inodes = dict()
-    it = os.scandir(path)
-    for entry in it:
-        inode = entry.inode()
-        nlinks = entry.stat().st_nlink
-        size = entry.stat().st_size
-        total += size
-        if nlinks > 1 and not entry.is_symlink():
-            if inode not in inodes:
-                inodes[inode] = []
+class HardLinks:
+    def __init__(self, path):
+        self.inodes = dict()
+        self.num_entries = 0
+        self.num_files = 0
+        self.path = path
+        self.total_dirsize = 0
+        self.total_without = 0
+        self.would_save = 0
+
+    def get_hardlinks(self):
+        for entry in os.scandir(self.path):
+            self.num_entries += 1
+            if not entry.is_file(follow_symlinks=False):
+                continue
+            self.num_files += 1
+            inode = entry.inode()
+            stat = entry.stat(follow_symlinks=False)
+            size = stat.st_size
+            self.total_without += size
+            if (nlinks := stat.st_nlink) > 1:
+                if inode not in self.inodes:
+                    # first of this inode
+                    self.inodes[inode] = []
+                    self.total_dirsize += size
+                else:
+                    # subsequent hard link
+                    self.would_save += size
+                self.inodes[inode].append(entry.path)
+                print(f"{entry.path:40}: {nlinks:4}: {intcomma(size):>20}")
             else:
-                saved += size
-            inodes[inode].append(entry.path)
-            print(f"{entry.path}, {nlinks}, {intcomma(size)}")
-    return inodes, saved, total
+                # normal entry
+                if not entry.is_symlink():
+                    self.total_dirsize += size
 
 
 if __name__ == "__main__":
@@ -32,6 +48,11 @@ if __name__ == "__main__":
 
     print(f"Scanning {path} for hardlinks")
     start = time.time()
-    inodes, saved, total = get_hardlinks(path)
-    print(f"Elapsed: {time.time()-start:.4f} for {len(inodes)} entries.")
-    print(f"Would save {intcomma(saved)} bytes of {intcomma(total)} without hard link support.")
+    hl = HardLinks(path)
+    hl.get_hardlinks()
+    print(
+        f"Directory size is {intcomma(hl.total_dirsize)} in {hl.num_files} of {hl.num_entries} entries.\n"
+        f"Would cosumee {intcomma(hl.total_without)} without hard link support.\n"
+        f"Would save {intcomma(hl.would_save)} with hard link support."
+    )
+    print(f"Elapsed: {time.time()-start:.4f} for {len(hl.inodes)} entries.")
