@@ -10,34 +10,20 @@ class HardLinks:
         self.num_entries = 0
         self.num_files = 0
         self.path = path
-        self.total_dirsize = 0
-        self.total_without = 0
-        self.would_save = 0
 
     def get_hardlinks(self):
         for entry in os.scandir(self.path):
             self.num_entries += 1
-            if not entry.is_file(follow_symlinks=False):
-                continue
-            self.num_files += 1
-            inode = entry.inode()
-            stat = entry.stat(follow_symlinks=False)
-            size = stat.st_size
-            self.total_without += size
-            if (nlinks := stat.st_nlink) > 1:
-                if inode not in self.inodes:
-                    # first of this inode
-                    self.inodes[inode] = []
-                    self.total_dirsize += size
-                else:
+            if entry.is_file(follow_symlinks=False):
+                self.num_files += 1
+                inode = entry.inode()
+                stat = entry.stat(follow_symlinks=False)
+                if (nlinks := stat.st_nlink) > 1:
+                    if inode not in self.inodes:
+                        # first of this inode
+                        self.inodes[inode] = []
                     # subsequent hard link
-                    self.would_save += size
-                self.inodes[inode].append(entry.path)
-                print(f"{entry.path:40}: {nlinks:4}: {intcomma(size):>20}")
-            else:
-                # normal entry
-                if not entry.is_symlink():
-                    self.total_dirsize += size
+                    self.inodes[inode].append(entry)
 
 
 if __name__ == "__main__":
@@ -50,9 +36,23 @@ if __name__ == "__main__":
     start = time.time()
     hl = HardLinks(path)
     hl.get_hardlinks()
-    print(
-        f"Directory size is {intcomma(hl.total_dirsize)} in {hl.num_files} of {hl.num_entries} entries.\n"
-        f"Would cosumee {intcomma(hl.total_without)} without hard link support.\n"
-        f"Would save {intcomma(hl.would_save)} with hard link support."
-    )
     print(f"Elapsed: {time.time()-start:.4f} for {len(hl.inodes)} entries.")
+
+    hlinks_expanded = 0
+    hlinks_supported = 0
+    print(f"\nSummary of {path}:")
+    for inode in hl.inodes:
+        entry = hl.inodes[inode][0]
+        hlinks_expanded += entry.stat().st_size * len(hl.inodes[inode])
+        hlinks_supported += entry.stat().st_size
+        if entry.stat().st_nlink > len(hl.inodes[inode]):
+            print(
+                f"Inode at {entry.path} has hardlinks outside this directory. "
+                f"({entry.stat().st_nlink} > {len(hl.inodes[inode])})"
+            )
+
+    print(
+        f"Size if hardlinks expanded:   {intcomma(hlinks_expanded):>20}\n"
+        f"Size if hardlinks supported:  {intcomma(hlinks_supported):>20}\n"
+        f"Support would save:           {intcomma(hlinks_expanded-hlinks_supported):>20}"
+    )
