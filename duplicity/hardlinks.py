@@ -1,15 +1,15 @@
+import json
 import os
 import sys
 import time
 import platform
 
-exclude_lists = {
+default_excludes = {
     "Darwin": [
         "/System/Volumes/Data/private",
         "/Volumes",
         "/private",
         "/tmp",
-        "/var",
     ],
     "Linux": [
         "/boot",
@@ -20,7 +20,6 @@ exclude_lists = {
         "/proc",
         "/swapfile",
         "/tmp",
-        "/var",
     ],
 }
 
@@ -28,30 +27,29 @@ exclude_lists = {
 class HardLinks:
     def __init__(self):
         self.inodes = dict()
+        self.num_dirs = 1
         self.num_entries = 0
         self.num_files = 0
         self.num_nlinks = 0
+        self.start = time.time()
 
-        self.exclude = exclude_lists[platform.system()]
+        self.exclude = default_excludes.get(platform.system(), "Linux")
 
-    def get_hardlinks(
-        self,
-        path,
-        follow_symlinkks=False,
-    ):
+    def get_hardlinks(self, path: str, follow_symlinkks: bool = False) -> None:
         our_dev = os.stat(path).st_dev
         for entry in os.scandir(path):
-            if entry.path in self.exclude:
-                continue
             self.num_entries += 1
+
             try:
                 stat = entry.stat(follow_symlinks=follow_symlinkks)
             except OSError as e:
                 print(str(e))
                 continue
+
             if stat.st_dev != our_dev:
                 # stay on same filesystem
                 continue
+
             if entry.is_file(follow_symlinks=follow_symlinkks):
                 self.num_files += 1
                 inode = entry.inode()
@@ -63,31 +61,67 @@ class HardLinks:
                     else:
                         # sub sequent hard link
                         self.inodes[inode].append(entry)
+
             if entry.is_dir(follow_symlinks=follow_symlinkks):
+                skip = False
+                for patt in self.exclude:
+                    if entry.path.startswith(patt):
+                        # some paths are trouble
+                        skip = True
+                        break
+                if skip:
+                    continue
+
+                self.num_dirs += 1
                 try:
                     self.get_hardlinks(entry.path)
                 except OSError as e:
                     print(str(e))
                     continue
 
-    def print_summary(self):
+    def dump_hardlinks(self):
+        hardlinks = {}
+        for inode in self.inodes:
+            hardlinks[inode] = {}
+            for entry in self.inodes[inode]:
+                path, file = os.path.split(entry.path)
+                if path not in hardlinks[inode]:
+                    hardlinks[inode][path] = [file]
+                else:
+                    hardlinks[inode][path].append(file)
+
+        with open("/tmp/hardlinks.json", "w") as fd:
+            fd.write(json.dumps(hardlinks, indent=2))
+
+    def print_summary(self) -> None:
         hlinks_expanded = 0
         hlinks_supported = 0
+        hlinks_incomplete = 0
+
         print(f"\nSummary of {path}:")
+
         for inode in self.inodes:
             entry = self.inodes[inode][0]
             hlinks_expanded += entry.stat().st_size * len(self.inodes[inode])
             hlinks_supported += entry.stat().st_size
             if entry.stat().st_nlink > len(self.inodes[inode]):
+                hlinks_incomplete += entry.stat().st_nlink - len(self.inodes[inode])
                 print(
                     f"Inode at {entry.path} has hardlinks outside this directory. "
                     f"({entry.stat().st_nlink:,} > {len(self.inodes[inode]):,})"
                 )
 
         print(
+            f"Elapsed (secs):               {f'{time.time()-self.start:.4f}':>20}\n"
+            f"inodes:                       {f'{len(self.inodes):,}':>20}\n"
+            f"hardlinks:                    {f'{self.num_nlinks:,}':>20}\n"
+            f"reg files:                    {f'{self.num_files:,}':>20}\n"
+            f"dir entries:                  {f'{self.num_entries:,}':>20}\n"
+            f"directories:                  {f'{self.num_dirs:,}':>20}\n"
             f"Size if hardlinks expanded:   {f'{hlinks_expanded:,}':>20}\n"
             f"Size if hardlinks supported:  {f'{hlinks_supported:,}':>20}\n"
-            f"Support would save:           {f'{hlinks_expanded-hlinks_supported:,}':>20}"
+            f"Support would save:           {f'{hlinks_expanded-hlinks_supported:,}':>20}\n"
+            f"inode paths outside dir:      {f'{hlinks_incomplete:,}':>20}"
         )
 
 
@@ -97,14 +131,10 @@ if __name__ == "__main__":
     except Exception:
         path = "/usr"
 
-    follow = True
+    follow = False
 
     print(f"\nScanning {path} for hardlinks, follow_symlinks={follow}")
-    start = time.time()
     hl = HardLinks()
     hl.get_hardlinks(path, follow_symlinkks=follow)
-    print(
-        f"Elapsed: {time.time()-start:.4f} seconds for {len(hl.inodes):,} "
-        f"inodes in {hl.num_nlinks:,} hardlinks out of {hl.num_files:,} files."
-    )
+    hl.dump_hardlinks()
     hl.print_summary()
