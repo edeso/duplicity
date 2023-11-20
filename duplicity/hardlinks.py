@@ -6,7 +6,7 @@ import platform
 
 default_excludes = {
     "Darwin": [
-        "/System/Volumes/Data/private",
+        "/System/Volumes/Data",
         "/Volumes",
         "/private",
         "/tmp",
@@ -41,19 +41,19 @@ class HardLinks:
             self.num_entries += 1
 
             try:
-                stat = entry.stat(follow_symlinks=follow_symlinkks)
+                stat_res = entry.stat(follow_symlinks=follow_symlinkks)
             except OSError as e:
                 print(str(e))
                 continue
 
-            if stat.st_dev != our_dev:
+            if stat_res.st_dev != our_dev:
                 # stay on same filesystem
                 continue
 
             if entry.is_file(follow_symlinks=follow_symlinkks):
                 self.num_files += 1
                 inode = entry.inode()
-                if stat.st_nlink > 1:
+                if stat_res.st_nlink > 1:
                     self.num_nlinks += 1
                     if inode not in self.inodes:
                         # first of this inode
@@ -79,18 +79,20 @@ class HardLinks:
                     print(str(e))
                     continue
 
-    def dump_hardlinks(self):
+    def dump_hardlinks(self, filename: str = "/tmp/hardlinks.json") -> None:
+        print(f"Dumping hardlinks to {filename}")
         hardlinks = {}
         for inode in self.inodes:
             hardlinks[inode] = {}
             for entry in self.inodes[inode]:
                 path, file = os.path.split(entry.path)
                 if path not in hardlinks[inode]:
+                    hardlinks[inode]["stat"] = entry.stat()
                     hardlinks[inode][path] = [file]
                 else:
                     hardlinks[inode][path].append(file)
 
-        with open("/tmp/hardlinks.json", "w") as fd:
+        with open(filename, "w") as fd:
             fd.write(json.dumps(hardlinks, indent=2))
 
     def print_summary(self) -> None:
@@ -102,13 +104,15 @@ class HardLinks:
 
         for inode in self.inodes:
             entry = self.inodes[inode][0]
-            hlinks_expanded += entry.stat().st_size * len(self.inodes[inode])
+            hlinks_found = len(self.inodes[inode])
+            hlinks_expanded += entry.stat().st_size * hlinks_found
             hlinks_supported += entry.stat().st_size
-            if entry.stat().st_nlink > len(self.inodes[inode]):
-                hlinks_incomplete += entry.stat().st_nlink - len(self.inodes[inode])
+            hlinks_outside = entry.stat().st_nlink - hlinks_found
+            if hlinks_outside:
+                hlinks_incomplete += entry.stat().st_nlink - hlinks_found
                 print(
-                    f"Inode at {entry.path} has hardlinks outside this directory. "
-                    f"({entry.stat().st_nlink:,} > {len(self.inodes[inode]):,})"
+                    f"Inode at {entry.path} has {hlinks_outside:,} hardlinks outside this directory. "
+                    f"({entry.stat().st_nlink:,} > {hlinks_found:,})"
                 )
 
         print(
@@ -120,7 +124,7 @@ class HardLinks:
             f"directories:                  {f'{self.num_dirs:,}':>20}\n"
             f"Size if hardlinks expanded:   {f'{hlinks_expanded:,}':>20}\n"
             f"Size if hardlinks supported:  {f'{hlinks_supported:,}':>20}\n"
-            f"Support would save:           {f'{hlinks_expanded-hlinks_supported:,}':>20}\n"
+            f"Hardlink support would save:  {f'{hlinks_expanded-hlinks_supported:,}':>20}\n"
             f"inode paths outside dir:      {f'{hlinks_incomplete:,}':>20}"
         )
 
