@@ -8,7 +8,10 @@ default_excludes = {
     "Darwin": [
         "/System/Volumes/Data",
         "/Volumes",
+        "/dev",
+        "/lost+found",
         "/private",
+        "/run",
         "/tmp",
     ],
     "Linux": [
@@ -48,6 +51,7 @@ class HardLinks:
 
             if stat_res.st_dev != our_dev:
                 # stay on same filesystem
+                print(f"Skipping {entry.path}.  Not on our filesystem.")
                 continue
 
             if entry.is_file(follow_symlinks=follow_symlinkks):
@@ -67,6 +71,7 @@ class HardLinks:
                 for patt in self.exclude:
                     if entry.path.startswith(patt):
                         # some paths are trouble
+                        print(f"Skipping {entry.path}.  In exclusions.")
                         skip = True
                         break
                 if skip:
