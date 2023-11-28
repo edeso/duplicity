@@ -231,6 +231,30 @@ def which(program):
 
 
 def start_debugger():
+    def is_port_in_use(port: int) -> bool:
+        import socket
+
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            return s.connect_ex(("localhost", port)) == 0
+
+    if os.environ.get("PYDEVD", None) == "vscode":
+        try:
+            import debugpy  # pylint: disable=import-error
+        except ImportError:
+            log.FatalError(
+                "Module debugpy must be available for debugging.\n"
+                "Don't set 'PYDEVD=vscode'\n"
+                "to avoid starting debugpy as debugger."
+            )
+        port = 5678
+        while is_port_in_use(port):
+            port += 1
+
+        debugpy.listen(5678)
+        print(f"Waiting for debugger attach on port: {port}")
+        debugpy.wait_for_client()
+        return
+
     if "--pydevd" in sys.argv or os.environ.get("PYDEVD", None):
         try:
             import pydevd_pycharm  # pylint: disable=import-error

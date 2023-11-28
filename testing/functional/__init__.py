@@ -79,7 +79,7 @@ class FunctionalTestCase(DuplicityTestCase):
         backend_inst.close()
         self._check_setsid()
 
-    def run_duplicity(self, options=None, current_time=None, fail=None, passphrase_input=None):
+    def run_duplicity(self, options=None, current_time=None, fail=None, passphrase_input=None, timeout=None):
         """
         Run duplicity binary with given arguments and options
         """
@@ -135,7 +135,7 @@ class FunctionalTestCase(DuplicityTestCase):
             cmdline += " < /dev/null"
 
         # Set encoding to filesystem encoding and send to spawn
-        child = pexpect.spawn("/bin/sh", ["-c", cmdline], timeout=None, encoding=config.fsencoding)
+        child = pexpect.spawn("/bin/sh", ["-c", cmdline], timeout=timeout, encoding=config.fsencoding)  # type: ignore
 
         for passphrase in passphrase_input:
             child.expect("passphrase.*:")
@@ -181,6 +181,25 @@ class FunctionalTestCase(DuplicityTestCase):
 
         after_files = self.get_backend_files()
         return after_files - before_files
+
+    def backup_with_failure(self, type, input_dir, failure_type, failure_condition, error_code, options=None, **kwargs):
+        """
+        using _testbackent to trigger certain failure conditions. See backends/_testbackend.py for possible trigger
+        """
+        self.backend_url = self.backend_url.replace("file", "fortestsonly")  # use _testbackend
+        if not options:
+            options = [  # lower the retry count to fail faster.
+                "--num-ret=2",
+                "--backend-ret=3",
+            ]
+
+        try:
+            with EnvController(failure_type, failure_condition):
+                self.backup(type, input_dir, options, **kwargs)
+        except CmdError as e:  # Backup must fail with an exit code != 0
+            self.assertEqual(e.exit_status, error_code, str(e))
+        else:
+            self.fail("Expected CmdError not thrown")
 
     def restore(self, file_to_restore=None, time=None, options=None, **kwargs):
         if options is None:
@@ -240,3 +259,16 @@ class FunctionalTestCase(DuplicityTestCase):
                 f"dd if=/dev/urandom of={_runtest_dir}/testfiles/largefiles/file{n+1} "
                 f"bs=1024 count={size*1024} > /dev/null 2>&1"
             )
+
+
+class EnvController:
+    def __init__(self, var_name, new_value):
+        self.var_name = var_name
+        self.new_value = new_value
+
+    def __enter__(self):
+        os.environ[self.var_name] = self.new_value
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        os.unsetenv(self.var_name)
+        del os.environ[self.var_name]
