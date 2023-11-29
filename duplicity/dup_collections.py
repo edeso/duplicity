@@ -1242,7 +1242,7 @@ class CollectionsStatus(object):
         """
         # quick fix to spaces in filepath
         modified_filepath = filepath
-        if " " in filepath:
+        if " " in str(filepath):
             modified_filepath = '"' + filepath.replace(" ", r"\x20") + '"'
 
         if not self.matched_chain_pair:
