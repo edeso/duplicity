@@ -193,9 +193,10 @@ volsize = 200 * 1024 * 1024
 # file copy blocksize
 copy_blocksize = 128 * 1024
 
-# after this volume, we will switch to multipart upload
-mp_factor = 1.1
-mp_segment_size = int(mp_factor * volsize)
+# Swift has a limit on the size of a single uploaded object; by default this is 5GB.
+# https://docs.openstack.org/swift/latest/overview_large_objects.html
+# With a volume large than this size, we will switch to multipart upload.
+mp_segment_size = 5 * 2**30
 
 # Working directory for the tempfile module. Defaults to /tmp on most systems.
 temproot = None
