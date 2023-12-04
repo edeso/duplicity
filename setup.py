@@ -358,6 +358,8 @@ setup(
     include_package_data=True,
     install_requires=[
         "fasteners",
+    ],
+    setup_requires=[
         "setuptools_scm",
     ],
     tests_require=[
