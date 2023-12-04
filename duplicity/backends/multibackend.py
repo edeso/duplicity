@@ -366,9 +366,6 @@ class MultiBackend(duplicity.backend.Backend):
                 elif hasattr(s.backend, "_delete"):
                     s._do_delete(filename)
                 passed = True
-                # In stripe mode, only one item will have the file
-                if self.__mode == "stripe":
-                    return
         if not passed:
             log.Log(
                 _("MultiBackend: failed to delete %s. Tried all backing stores and none succeeded") % filename,
@@ -396,9 +393,6 @@ class MultiBackend(duplicity.backend.Backend):
                 for filename in cleaned:
                     s._do_delete(filename)
             passed = True
-            # In stripe mode, only one item will have the file
-            if self.__mode == "stripe":
-                return
         if not passed:
             log.Log(
                 _("MultiBackend: failed to delete %s. Tried all backing stores and none succeeded") % filenames,
