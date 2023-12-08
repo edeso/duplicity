@@ -29,14 +29,20 @@ class PyDriveBackend(duplicity.backend.Backend):
 
     def __init__(self, parsed_url):
         duplicity.backend.Backend.__init__(self, parsed_url)
+
+        log.Warn(
+            "\n\nThe PyDrive backend is now deprecated and will be removed in a future version.\n"
+            "It has been replaced by the GDrive backend.  See the manpage for details.\n\n\n"
+        )
+
         try:
             import httplib2
             from apiclient.discovery import build
         except ImportError as e:
             raise BackendException(
-                f"""PyDrive backend requires PyDrive2 and Google API client installation.
-Please read the manpage for setup details.
-Exception: {str(e)}"""
+                "PyDrive backend requires PyDrive2 and Google API client installation.\n"
+                "Please read the manpage for setup details.\n"
+                f"Exception: {str(e)}"
             )
 
         # Shared Drive ID specified as a query parameter in the backend URL.
