@@ -27,8 +27,8 @@ import os
 import re
 import time
 
+import duplicity.backend
 from duplicity import (
-    backend,
     log,
     path,
     progress,
