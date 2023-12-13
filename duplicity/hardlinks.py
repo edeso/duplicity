@@ -30,55 +30,61 @@ default_excludes = {
 
 class HardLinks:
     """
-    Class HardLinks represents a utility for retrieving and counting hard links in a directory. It provides methods
-    for getting hard links, dumping hard links to a JSON file, and printing a summary of the current state of the
-    object.
 
-    Constructor:
+    This class represents a utility for finding and analyzing hard links in a directory tree.
 
-        def __init__(self):
-            Initializes HardLinks object with the following attributes:
-            - inodes: dictionary to store hard links with their corresponding entries
-            - num_dirs: number of directories encountered during search
-            - num_entries: total number of entries encountered (files + directories)
-            - num_files: number of regular files encountered
-            - num_nlinks: number of hard links encountered
-            - start: start time of the search
-            - exclude: list of directories to exclude from the search
-            - oserrors: dictionary to store the count of encountered OS errors
-            - not_our_filesystem: number of directories not in the current filesystem
-            - in_exclusions: number of directories in the exclusions list
-            - hlinks_expanded: size if hard links are expanded
-            - hlinks_supported: size if hard links are supported
-            - hlinks_incomplete: number of hard links outside the based dir
+    Attributes:
+        inodes (dict): A dictionary that maps inode numbers to a list of entries that share the same inode.
+        num_dirs (int): The total number of directories processed.
+        num_entries (int): The total number of entries (files and directories) encountered.
+        num_files (int): The total number of regular files encountered.
+        num_nlinks (int): The total number of hard links encountered.
+        start (float): The starting time of the hard link analysis.
+        basepath (str): The absolute path of the directory being analyzed.
+        follow_symlinks (bool): Whether or not to follow symlinks during the analysis.
+        exclude (list): A list of patterns representing paths to be excluded from the analysis.
+        oserrors (dict): A dictionary that maps errno values to the number of occurrences.
+        not_our_filesystem (int): The number of directories that are not part of the same filesystem as the basepath.
+        in_exclusions (int): The number of directories that are excluded from the analysis.
+        hlinks_expanded (int): The estimated size in bytes if hard links were expanded.
+        hlinks_supported (int): The estimated size in bytes if hard links were supported.
+        hlinks_incomplete (int): The number of hard links outside the current directory that are incomplete.
 
     Methods:
+        __init__(self, path: str, follow_symlinks: bool = False) -> None:
+            Initializes a new instance of the HardLinks class.
 
-        def get_hardlinks(self, path: str, follow_symlinkks: bool = False) -> None:
-            Retrieve and count the hard links at a given path.
+            Args:
+                path (str): The path of the directory to analyze.
+                follow_symlinks (bool): Whether or not to follow symlinks during the analysis (default: False).
 
-            Parameters:
-            - path: The path to the directory to search for hard links.
-            - follow_symlinks: If True, follow symbolic links. Default is False.
+        get_hardlinks(self, path: str, follow_symlinks: bool = False) -> None:
+            Recursively finds and analyzes hard links in the specified directory.
 
-        def dump_hardlinks(self, filename: str = "/tmp/hardlinks.json") -> None:
-            Dump hard links to a JSON file.
+            Args:
+                path (str): The path of the directory to analyze.
+                follow_symlinks (bool): Whether or not to follow symlinks during the analysis (default: False).
 
-            Parameters:
-            - filename (str): The path of the JSON file where the hard links will be dumped.
-                              Default is "/tmp/hardlinks.json".
+        dump_hardlinks(self, filename: str = "/tmp/hardlinks.json") -> None:
+            Writes the hard links information to a JSON file.
 
-        def print_summary(self) -> None:
-            Prints a summary of the current state of the object.
+            Args:
+                filename (str): The path of the output file (default: "/tmp/hardlinks.json").
+
+        print_summary(self) -> None:
+            Prints a summary of the hard link analysis.
+
     """
 
-    def __init__(self):
+    def __init__(self, path: str, follow_symlinks: bool = False) -> None:
         self.inodes = dict()
         self.num_dirs = 1
         self.num_entries = 0
         self.num_files = 0
         self.num_nlinks = 0
         self.start = time.time()
+        self.basepath = path
+        self.follow_symlinks = follow_symlinks
 
         self.exclude = default_excludes.get(platform.system(), "Linux")
 
@@ -93,13 +99,14 @@ class HardLinks:
         self.hlinks_supported = 0
         self.hlinks_incomplete = 0
 
-    def get_hardlinks(self, path: str, follow_symlinkks: bool = False) -> None:
+    def get_hardlinks(self, path: str, follow_symlinks: bool = False) -> None:
+        self.basepath = os.path.abspath(path)
         our_dev = os.stat(path).st_dev
         for entry in os.scandir(path):
             self.num_entries += 1
 
             try:
-                stat_res = entry.stat(follow_symlinks=follow_symlinkks)
+                stat_res = entry.stat(follow_symlinks=follow_symlinks)
             except OSError as e:
                 if e.errno in self.oserrors:
                     self.oserrors[e.errno] += 1
@@ -113,7 +120,7 @@ class HardLinks:
                 self.not_our_filesystem += 1
                 continue
 
-            if entry.is_file(follow_symlinks=follow_symlinkks):
+            if entry.is_file(follow_symlinks=follow_symlinks):
                 self.num_files += 1
                 inode = entry.inode()
                 if stat_res.st_nlink > 1:
@@ -125,7 +132,7 @@ class HardLinks:
                         # subsequent hard link
                         self.inodes[inode].append(entry)
 
-            if entry.is_dir(follow_symlinks=follow_symlinkks):
+            if entry.is_dir(follow_symlinks=follow_symlinks):
                 skip = False
                 for patt in self.exclude:
                     if entry.path.startswith(patt):
@@ -168,7 +175,7 @@ class HardLinks:
             fd.write(json.dumps(hardlinks))
 
     def print_summary(self) -> None:
-        print(f"\nSummary of {path}:")
+        print(f"\nSummary of {self.basepath}:")
 
         for inode in self.inodes:
             entry = self.inodes[inode][0]
@@ -216,7 +223,7 @@ if __name__ == "__main__":
     follow = False
 
     print(f"\nScanning {path} for hardlinks, follow_symlinks={follow}")
-    hl = HardLinks()
-    hl.get_hardlinks(path, follow_symlinkks=follow)
+    hl = HardLinks(path, follow_symlinks=follow)
+    hl.get_hardlinks(path, follow_symlinks=follow)
     hl.dump_hardlinks()
     hl.print_summary()
