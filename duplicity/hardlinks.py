@@ -30,7 +30,6 @@ default_excludes = {
 
 class HardLinks:
     """
-
     This class represents a utility for finding and analyzing hard links in a directory tree.
 
     Attributes:
@@ -73,7 +72,6 @@ class HardLinks:
 
         print_summary(self) -> None:
             Prints a summary of the hard link analysis.
-
     """
 
     def __init__(self, path: str, follow_symlinks: bool = False) -> None:
@@ -83,7 +81,7 @@ class HardLinks:
         self.num_files = 0
         self.num_nlinks = 0
         self.start = time.time()
-        self.basepath = path
+        self.basepath = os.path.abspath(path)
         self.follow_symlinks = follow_symlinks
 
         self.exclude = default_excludes.get(platform.system(), "Linux")
@@ -100,7 +98,6 @@ class HardLinks:
         self.hlinks_incomplete = 0
 
     def get_hardlinks(self, path: str, follow_symlinks: bool = False) -> None:
-        self.basepath = os.path.abspath(path)
         our_dev = os.stat(path).st_dev
         for entry in os.scandir(path):
             self.num_entries += 1
