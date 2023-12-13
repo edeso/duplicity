@@ -6,8 +6,9 @@ import platform
 
 default_excludes = {
     "Darwin": [
-        "/System/Volumes/Data",
-        "/Volumes",
+        "/System/Volumes",
+        # "/Volumes",
+        "/cores",
         "/dev",
         "/lost+found",
         "/private",
@@ -28,6 +29,49 @@ default_excludes = {
 
 
 class HardLinks:
+    """
+    Class HardLinks represents a utility for retrieving and counting hard links in a directory. It provides methods
+    for getting hard links, dumping hard links to a JSON file, and printing a summary of the current state of the
+    object.
+
+    Constructor:
+
+        def __init__(self):
+            Initializes HardLinks object with the following attributes:
+            - inodes: dictionary to store hard links with their corresponding entries
+            - num_dirs: number of directories encountered during search
+            - num_entries: total number of entries encountered (files + directories)
+            - num_files: number of regular files encountered
+            - num_nlinks: number of hard links encountered
+            - start: start time of the search
+            - exclude: list of directories to exclude from the search
+            - oserrors: dictionary to store the count of encountered OS errors
+            - not_our_filesystem: number of directories not in the current filesystem
+            - in_exclusions: number of directories in the exclusions list
+            - hlinks_expanded: size if hard links are expanded
+            - hlinks_supported: size if hard links are supported
+            - hlinks_incomplete: number of hard links outside the based dir
+
+    Methods:
+
+        def get_hardlinks(self, path: str, follow_symlinkks: bool = False) -> None:
+            Retrieve and count the hard links at a given path.
+
+            Parameters:
+            - path: The path to the directory to search for hard links.
+            - follow_symlinks: If True, follow symbolic links. Default is False.
+
+        def dump_hardlinks(self, filename: str = "/tmp/hardlinks.json") -> None:
+            Dump hard links to a JSON file.
+
+            Parameters:
+            - filename (str): The path of the JSON file where the hard links will be dumped.
+                              Default is "/tmp/hardlinks.json".
+
+        def print_summary(self) -> None:
+            Prints a summary of the current state of the object.
+    """
+
     def __init__(self):
         self.inodes = dict()
         self.num_dirs = 1
@@ -78,7 +122,7 @@ class HardLinks:
                         # first of this inode
                         self.inodes[inode] = [entry]
                     else:
-                        # sub sequent hard link
+                        # subsequent hard link
                         self.inodes[inode].append(entry)
 
             if entry.is_dir(follow_symlinks=follow_symlinkks):
@@ -107,17 +151,21 @@ class HardLinks:
         print(f"Dumping hardlinks to {filename}")
         hardlinks = {}
         for inode in self.inodes:
+            # entry can't be serialized, so keep just what we need, stat info
+            # plus split full path into dir and filename to save space
             hardlinks[inode] = {}
             for entry in self.inodes[inode]:
                 path, file = os.path.split(entry.path)
                 if path not in hardlinks[inode]:
+                    # first path adds stat info
                     hardlinks[inode]["stat"] = entry.stat()
                     hardlinks[inode][path] = [file]
                 else:
+                    # subsequent paths do not
                     hardlinks[inode][path].append(file)
 
         with open(filename, "w") as fd:
-            fd.write(json.dumps(hardlinks, indent=2))
+            fd.write(json.dumps(hardlinks))
 
     def print_summary(self) -> None:
         print(f"\nSummary of {path}:")
@@ -155,7 +203,7 @@ class HardLinks:
             f"Size if hardlinks expanded:   {f'{self.hlinks_expanded:,}':>20}\n"
             f"Size if hardlinks supported:  {f'{self.hlinks_supported:,}':>20}\n"
             f"Hardlink support would save:  {f'{self.hlinks_expanded-self.hlinks_supported:,}':>20}\n"
-            f"inode paths outside dir:      {f'{self.hlinks_incomplete:,}':>20}"
+            f"Hardlinks outside based ir:   {f'{self.hlinks_incomplete:,}':>20}"
         )
 
 

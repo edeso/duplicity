@@ -261,9 +261,9 @@ class Select(object):
                 dedent(
                     _(
                         """\
-                The last file selection option is the filter option %s, which will have no
-                effect as there are no subsequent file selection options. Exiting because
-                this probably isn't what you meant."""
+                        The last file selection option is the filter option %s, which will have no
+                        effect as there are no subsequent file selection options. Exiting because
+                        this probably isn't what you meant."""
                     )
                 )
                 % (argtuples[-1][0],),
@@ -276,10 +276,10 @@ class Select(object):
                 dedent(
                     _(
                         """\
-                Only these filter mode options were specified:
-                    %s
-                Case sensitive globbing is the default behaviour and so this has no effect.
-                Exiting because this probably isn't what you meant."""
+                        Only these filter mode options were specified:
+                            %s
+                        Case sensitive globbing is the default behaviour and so this has no effect.
+                        Exiting because this probably isn't what you meant."""
                     )
                 )
                 % (", ".join(f_opt),),
@@ -344,12 +344,12 @@ class Select(object):
                 dedent(
                     _(
                         """\
-                Fatal Error: The file specification
-                    %s
-                cannot match any files in the base directory
-                    %s
-                Useful file specifications begin with the base directory or some
-                pattern (such as '**') which matches the base directory."""
+                        Fatal Error: The file specification
+                            %s
+                        cannot match any files in the base directory
+                            %s
+                        Useful file specifications begin with the base directory or some
+                        pattern (such as '**') which matches the base directory."""
                     )
                 )
                 % (exc, self.prefix),
@@ -401,10 +401,10 @@ class Select(object):
                 dedent(
                     _(
                         """\
-                Files-from list contains the absolute path:
-                    %s
-                All paths specified in a files-from list must be given relative to the backup
-                source path."""
+                        Files-from list contains the absolute path:
+                            %s
+                        All paths specified in a files-from list must be given relative to the backup
+                        source path."""
                     )
                 )
                 % (absolute_path,),
@@ -416,8 +416,8 @@ class Select(object):
                 dedent(
                     _(
                         """\
-                Files-from list specified which contains no files, the backup will be empty as
-                a result. Exiting as this probably isn't what you meant,"""
+                        Files-from list specified which contains no files, the backup will be empty as
+                        a result. Exiting as this probably isn't what you meant,"""
                     )
                 ),
                 log.ErrorCode.empty_files_from,
@@ -433,11 +433,11 @@ class Select(object):
                 dedent(
                     _(
                         """\
-                Last selection expression:
-                    %s
-                only specifies that files be included.  Because the default is to
-                include all files, the expression is redundant.  Exiting because this
-                probably isn't what you meant."""
+                        Last selection expression:
+                            %s
+                        only specifies that files be included.  Because the default is to
+                        include all files, the expression is redundant.  Exiting because this
+                        probably isn't what you meant."""
                     )
                 )
                 % (self.selection_functions[-1].name,),
