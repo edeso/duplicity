@@ -1594,7 +1594,7 @@ def do_backup(action):
                 break
             last_backup = last_full_chain.get_last()
             if last_backup.partial:
-                if action in ["backup", "full", "inc"]:
+                if action in ["full", "inc"]:
                     # set restart parms from last_backup info
                     config.restart = Restart(last_backup)
                     # (possibly) reset action
@@ -1627,7 +1627,7 @@ def do_backup(action):
         log.Notice(_("Last full backup date: none"))
     if (
         not config.restart
-        and action in ["inc", "backup"]
+        and action in ["inc"]
         and config.full_if_older_than is not None
         and last_full_time < dup_time.curtime - config.full_if_older_than
     ):
@@ -1666,7 +1666,7 @@ def do_backup(action):
     elif action == "sync":
         sync_archive(col_stats)
     else:
-        assert action in ["backup", "full", "inc"], action
+        assert action in ["full", "inc"], action
         # the passphrase for full and inc is used by --sign-key
         # the sign key can have a different passphrase than the encrypt
         # key, therefore request a passphrase
