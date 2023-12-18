@@ -29,6 +29,7 @@ class BoxBackend(duplicity.backend.Backend):
     def __init__(self, parsed_url):
         duplicity.backend.Backend.__init__(self, parsed_url)
 
+        global Client, JWTAuth
         from boxsdk import (
             Client,
             JWTAuth,
