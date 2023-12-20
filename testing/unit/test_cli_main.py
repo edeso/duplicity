@@ -563,3 +563,9 @@ class CommandlineTest(UnitTestCase):
         cline = shlex.split("backup --exclude-other-filesystems / file://target_url")
         cli_main.process_command_line(cline)
         self.assertListEqual(config.select_opts, [("--exclude-other-filesystems", [])])
+
+        # Issue 789 - error on dry-run with verify, restore, and implied restore
+        for cmd in ["restore", "verify", ""]:
+            with self.assertRaises(CommandLineError) as cm:
+                cline = shlex.split(f"{cmd} file://source_url foo/bar --dry-run")
+                cli_main.process_command_line(cline)
