@@ -146,6 +146,33 @@ def parse_cmdline_options(arglist):
     except (argparse.ArgumentError, argparse.ArgumentTypeError) as e:
         raise CommandLineError(str(e))
 
+    # let's test the command and try to assume which action,
+    # eventually err out if no valid action could be determined/was given
+    if len(remainder) == 2 and remainder[0] not in all_commands:
+        if is_path(remainder[0]) and is_url(remainder[1]):
+            log.Notice(
+                _(
+                    "No valid action found. Will imply 'backup' because "
+                    "a path source was given and target is a url location."
+                )
+            )
+            remainder.insert(0, "backup")
+        elif is_url(remainder[0]) and is_path(remainder[1]):
+            log.Notice(
+                _(
+                    "No valid action found. Will imply 'restore' because "
+                    "url source was given and target is a local path."
+                )
+            )
+            remainder.insert(0, "restore")
+        else:
+            msg = _(
+                f"Invalid '{remainder[0]}' action and cannot be implied from the "
+                f"given arguments:\n{arglist}\n"
+                f"Valid actions are: {all_commands}"
+            )
+            command_line_error(msg)
+
     # check for added/removed options
     for opt in remainder:
         if opt.startswith("-"):
@@ -181,33 +208,6 @@ def parse_cmdline_options(arglist):
                     )
                     + f"{removed_commands_string}"
                 )
-
-    # let's test the command and try to assume which action,
-    # eventually err out if no valid action could be determined/was given
-    if len(remainder) == 2 and remainder[0] not in all_commands:
-        if is_path(remainder[0]) and is_url(remainder[1]):
-            log.Notice(
-                _(
-                    "No valid action found. Will imply 'backup' because "
-                    "a path source was given and target is a url location."
-                )
-            )
-            remainder.insert(0, "backup")
-        elif is_url(remainder[0]) and is_path(remainder[1]):
-            log.Notice(
-                _(
-                    "No valid action found. Will imply 'restore' because "
-                    "url source was given and target is a local path."
-                )
-            )
-            remainder.insert(0, "restore")
-        else:
-            msg = _(
-                f"Invalid '{remainder[0]}' action and cannot be implied from the "
-                f"given arguments:\n{arglist}\n"
-                f"Valid actions are: {all_commands}"
-            )
-            command_line_error(msg)
 
     # check for proper action
     if remainder and remainder[0] in all_commands:
