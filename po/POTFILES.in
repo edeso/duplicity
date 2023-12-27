@@ -18,6 +18,7 @@ duplicity/backends/boxbackend.py
 duplicity/backends/swiftbackend.py
 duplicity/backends/tahoebackend.py
 duplicity/backends/giobackend.py
+duplicity/backends/_testbackend.py
 duplicity/backends/localbackend.py
 duplicity/backends/adbackend.py
 duplicity/backends/slatebackend.py
