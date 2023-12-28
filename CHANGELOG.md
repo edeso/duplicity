@@ -1,6 +1,65 @@
 # Changelog
 
 
+## rel.2.1.5 (2023-12-28)
+
+### New
+
+* \_testbackend to simulate issues. [Thomas Laubrock]
+
+    \_testbackend is a copy of the localbackend and allows to trigger certain miss behaviours. Failure type and condition can be set via env vars. Some test cases are added to test_badupload.py.
+
+    This is pre-work for !153 but want to decouple it for better handling.
+
+### Changes
+
+* Run po/update-pot. [Kenneth Loafman]
+
+* Remove "backup" and "replicate" dead code. [Kenneth Loafman]
+
+* Fix imports in \_testbackend.py. [Kenneth Loafman]
+
+* Move addhandler() to \_\_init\_\_. [Kenneth Loafman]
+
+    - Will not produce temp log unless in use
+    - Reorg imports
+
+* Deprecate PyDrive backend. Replaced with GDrive backend. [Kenneth Loafman]
+
+* Setuptools\_scm not needed at runtime. [Gwyn Ciesla]
+
+* Fix swift uploads to default to 5GB segment size. [Garth Williamson]
+
+* Add venv* to .gitignore. [Kenneth Loafman]
+
+* Some formatting fixes. [Kenneth Loafman]
+
+* Fix check of versions in setup.py. [Kenneth Loafman]
+
+* Limit range of versions in setup.py. [Kenneth Loafman]
+
+    - We already had lower limit of 3.8, make 3.11 upper limit.
+
+* Update version for LP. [Kenneth Loafman]
+
+### Fix
+
+* Swap implied and removed action checks. [Kenneth Loafman]
+
+* Error on dry-run with verify. [Kenneth Loafman]
+
+* Fix imports in boxbackend.py. [Kenneth Loafman]
+
+* Multibackend not working with remove-all-but-n-full in stripe mode. [Kenneth Loafman]
+
+    remove short-circuit logic that fails
+    * add test in testing/regression
+
+    Fixes #781
+
+* Fix collection-status with file-changed argument. [JulianWgs]
+
+
 ## rel.2.1.4 (2023-10-20)
 
 ### Changes
