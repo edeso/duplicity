@@ -53,7 +53,7 @@ if not (min_version <= this_version <= max_version):
     sys.exit(1)
 
 
-Version = "2.1.5.dev"
+Version = "2.1.5"
 scm_version_args = {
     "tag_regex": r"^(?P<prefix>rel.)?(?P<version>[^\+]+)(?P<suffix>.*)?$",
     "local_scheme": "no-local-version",
