@@ -5,6 +5,7 @@ import platform
 import queue
 import sys
 import time
+from copy import copy
 from dataclasses import dataclass
 from queue import Empty, Full
 
@@ -40,7 +41,6 @@ exclude = default_excludes.get(platform.system(), "Linux")
 
 @dataclass
 class Results:
-    hardlinks: dict
     num_dirs: int
     num_entries: int
     num_files: int
@@ -48,9 +48,9 @@ class Results:
     not_our_fs: int
     in_exclusions: int
     oserrors: dict
+    hardlinks: dict
 
     def __init__(self):
-        self.hardlinks = dict()
         self.num_dirs = 0
         self.num_entries = 0
         self.num_files = 0
@@ -58,16 +58,15 @@ class Results:
         self.not_our_fs = 0
         self.in_exclusions = 0
         self.oserrors = dict(((1, 0), (13, 0)))
+        self.hardlinks = dict()
 
 
 res_queue = mp.Queue()
 path_queue = mp.Queue()
 
-Totals = Results()
-
 
 def run(basepath: str):
-    start = time.time()
+    Totals = Results()
 
     def err(e):
         print(f"Callback Error: {str(e)}")
@@ -83,12 +82,35 @@ def run(basepath: str):
         for result in results:
             result = result.get()
             if result is not None:
-                total_results(result)
+                total_results(Totals, result)
+
+    return Totals
 
 
-def total_results(result: Results):
-    global Totals
-    Totals.hardlinks = Totals.hardlinks.update(result.hardlinks)
+def total_results(Totals: Results, result: Results):
+    assert isinstance(Totals, Results), f"Expected Results, got {type(Totals)}"
+    assert isinstance(result, Results), f"Expected Results, got {type(result)}"
+
+    def merge_hardlinks(tot: dict, res: dict):
+        for inode in res.keys():
+            if inode not in tot:
+                # just a straight copy
+                tot[inode] = copy(res[inode])
+            else:
+                # merge the data
+                for k in res[inode].keys():
+                    if k == "stat":
+                        # stat present and does not change
+                        continue
+                    if k in tot[inode]:
+                        # add the two lists of filenames
+                        tot[inode][k] += res[inode][k]
+                    else:
+                        # just copy the list of filenames
+                        tot[inode][k] = copy(res[inode][k])
+        return tot
+
+    Totals.hardlinks = merge_hardlinks(Totals.hardlinks, result.hardlinks)
     Totals.num_entries += result.num_entries
     Totals.num_dirs += result.num_dirs
     Totals.num_files += result.num_files
@@ -96,6 +118,8 @@ def total_results(result: Results):
     Totals.in_exclusions += result.in_exclusions
     for key in Totals.oserrors.keys():
         Totals.oserrors[key] += result.oserrors[key]
+
+    return Totals
 
 
 def get_hardlinks() -> None:
@@ -106,7 +130,7 @@ def get_hardlinks() -> None:
     while True:
         try:
             dpath = path_queue.get(timeout=2)
-        except queue.Empty as e:
+        except queue.Empty:
             break
         # print(f"Entering {dpath}")
         try:
@@ -127,6 +151,7 @@ def get_hardlinks() -> None:
                         # entry can't be serialized, so keep just what we need, stat info
                         # plus split full path into dir and filename to save space
                         inode = entry.inode()
+                        res.num_nlinks += stat_res.st_nlink - 1
                         if inode not in res.hardlinks:
                             res.hardlinks[inode] = dict()
                         if entry.path not in res.hardlinks[inode]:
@@ -160,46 +185,50 @@ def get_hardlinks() -> None:
     return res
 
 
-def dump_hardlinks(filename: str = "/tmp/hardlinks.json") -> None:
+def dump_hardlinks(totals: Results, filename: str = "/tmp/hardlinks.json") -> None:
     print(f"Dumping hardlinks to {filename}")
 
     with open(filename, "w") as fd:
-        fd.write(json.dumps(hardlinks))
+        fd.write(json.dumps(totals.hardlinks))
 
 
-def print_summary() -> None:
-    print(f"\nSummary of {basepath}:")
+def print_summary(totals: Results) -> None:
+    print(f"\nSummary of {dirpath}:")
 
-    for inode in res.hardlinks:
-        entry = res.hardlinks[inode][0]
-        hlinks_found = len(res.hardlinks[inode])
-        hlinks_expanded += entry.stat().st_size * hlinks_found
-        hlinks_supported += entry.stat().st_size
-        hlinks_outside = entry.stat().st_nlink - hlinks_found
+    hlinks_incomplete = 0
+    hlinks_expanded = 0
+    hlinks_supported = 0
+
+    for inode in totals.hardlinks.keys():
+        hlinks_found = len(totals.hardlinks[inode]) - 1
+        stat = totals.hardlinks[inode]["stat"]
+        hlinks_expanded += stat.st_size * hlinks_found
+        hlinks_supported += stat.st_size
+        hlinks_outside = stat.st_nlink - hlinks_found
         if hlinks_outside:
-            hlinks_incomplete += entry.stat().st_nlink - hlinks_found
+            hlinks_incomplete += stat.st_nlink - hlinks_found
             print(
-                f"Inode at {entry.path} has {hlinks_outside:,} hardlinks outside this directory. "
-                f"({entry.stat().st_nlink:,} > {hlinks_found:,})"
+                f"Inode at {inode} has {hlinks_outside:,} hardlinks outside this directory. "
+                f"{stat.st_nlink:,} > {hlinks_found:,})"
             )
 
-    for errno in sorted(res.oserrors.keys()):
-        if res.oserrors[errno]:
-            print(f"Encountered {res.oserrors[errno]:,} errors: {os.strerror(errno)}")
+    for errno in sorted(totals.oserrors.keys()):
+        if totals.oserrors[errno]:
+            print(f"Encountered {totals.oserrors[errno]:,} errors: {os.strerror(errno)}")
 
-    if res.in_exclusions:
+    if totals.in_exclusions:
         print(f"Found {in_exclusions:,} dirs in exclusions list.")
 
-    if res.not_our_fs:
-        print(f"Found {res.not_our_fs:,} dirs not in our filesystem.")
+    if totals.not_our_fs:
+        print(f"Found {totals.not_our_fs:,} dirs not in our filesystem.")
 
     print(
         f"Elapsed (secs):               {f'{time.time()-start:.4f}':>20}\n"
-        f"res.hardlinks:                       {f'{len(res.hardlinks):,}':>20}\n"
-        f"hardlinks:                    {f'{res.num_num_nlinks:,}':>20}\n"
-        f"reg files:                    {f'{res.num_files:,}':>20}\n"
-        f"dir entries:                  {f'{res.num_entries:,}':>20}\n"
-        f"directories:                  {f'{res.num_dirs:,}':>20}\n"
+        f"inodes:                       {f'{len(totals.hardlinks):,}':>20}\n"
+        f"hardlinks:                    {f'{totals.num_nlinks:,}':>20}\n"
+        f"reg files:                    {f'{totals.num_files:,}':>20}\n"
+        f"dir entries:                  {f'{totals.num_entries:,}':>20}\n"
+        f"directories:                  {f'{totals.num_dirs:,}':>20}\n"
         f"Size if hardlinks expanded:   {f'{hlinks_expanded:,}':>20}\n"
         f"Size if hardlinks supported:  {f'{hlinks_supported:,}':>20}\n"
         f"Hardlink support would save:  {f'{hlinks_expanded-hlinks_supported:,}':>20}\n"
@@ -215,7 +244,9 @@ if __name__ == "__main__":
 
     dirpath = os.path.abspath(dirpath)
 
+    start = time.time()
+
     print(f"\nScanning {dirpath} for hardlinks.")
-    run(dirpath)
-    # dump_hardlinks()
-    # print_summary()
+    totals = run(dirpath)
+    dump_hardlinks(totals)
+    print_summary(totals)
