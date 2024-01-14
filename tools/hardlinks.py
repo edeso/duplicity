@@ -207,7 +207,7 @@ class HardLinks:
             f"Size if hardlinks expanded:   {f'{self.hlinks_expanded:,}':>20}\n"
             f"Size if hardlinks supported:  {f'{self.hlinks_supported:,}':>20}\n"
             f"Hardlink support would save:  {f'{self.hlinks_expanded-self.hlinks_supported:,}':>20}\n"
-            f"Hardlinks outside based ir:   {f'{self.hlinks_incomplete:,}':>20}"
+            f"Hardlinks outside base dir:   {f'{self.hlinks_incomplete:,}':>20}"
         )
 
 
