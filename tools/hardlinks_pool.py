@@ -151,7 +151,6 @@ def get_hardlinks() -> None:
                         # entry can't be serialized, so keep just what we need, stat info
                         # plus split full path into dir and filename to save space
                         inode = entry.inode()
-                        res.num_nlinks += stat_res.st_nlink - 1
                         if inode not in res.hardlinks:
                             res.hardlinks[inode] = dict()
                         if entry.path not in res.hardlinks[inode]:
@@ -221,6 +220,9 @@ def print_summary(totals: Results) -> None:
 
     if totals.not_our_fs:
         print(f"Found {totals.not_our_fs:,} dirs not in our filesystem.")
+
+    for inode in totals.hardlinks.keys():
+        totals.num_nlinks += totals.hardlinks[inode]["stat"].st_nlink
 
     print(
         f"Elapsed (secs):               {f'{time.time()-start:.4f}':>20}\n"
