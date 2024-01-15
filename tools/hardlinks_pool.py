@@ -80,17 +80,12 @@ def run(basepath: str):
         results = [pool.apply_async(get_hardlinks, (), error_callback=err) for _ in range(tasks)]
 
         for result in results:
-            result = result.get()
-            if result is not None:
-                total_results(Totals, result)
+            total_results(Totals, result.get())
 
     return Totals
 
 
 def total_results(Totals: Results, result: Results):
-    assert isinstance(Totals, Results), f"Expected Results, got {type(Totals)}"
-    assert isinstance(result, Results), f"Expected Results, got {type(result)}"
-
     def merge_hardlinks(tot: dict, res: dict):
         for inode in res.keys():
             if inode not in tot:
