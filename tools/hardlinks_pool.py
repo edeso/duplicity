@@ -71,48 +71,24 @@ def run(basepath: str):
     def err(e):
         print(f"Callback Error: {str(e)}")
 
-    tasks = os.cpu_count()
+    tasks = os.cpu_count() // 2 * 3
     with mp.Pool(tasks) as pool:
         # prime the pump
         path_queue.put(basepath)
 
         # get all rewults
+        res_start = time.time()
         results = [pool.apply_async(get_hardlinks, (), error_callback=err) for _ in range(tasks)]
+        print(f"pool took {time.time()-res_start} seconds")
 
+        # total results
+        num_results = 0
+        tot_start = time.time()
         for result in results:
+            num_results += 1
             total_results(Totals, result.get())
-
-    return Totals
-
-
-def total_results(Totals: Results, result: Results):
-    def merge_hardlinks(tot: dict, res: dict):
-        for inode in res.keys():
-            if inode not in tot:
-                # just a straight copy
-                tot[inode] = copy(res[inode])
-            else:
-                # merge the data
-                for k in res[inode].keys():
-                    if k == "stat":
-                        # stat present and does not change
-                        continue
-                    if k in tot[inode]:
-                        # add the two lists of filenames
-                        tot[inode][k] += res[inode][k]
-                    else:
-                        # just copy the list of filenames
-                        tot[inode][k] = copy(res[inode][k])
-        return tot
-
-    Totals.hardlinks = merge_hardlinks(Totals.hardlinks, result.hardlinks)
-    Totals.num_entries += result.num_entries
-    Totals.num_dirs += result.num_dirs
-    Totals.num_files += result.num_files
-    Totals.num_nlinks += result.num_nlinks
-    Totals.in_exclusions += result.in_exclusions
-    for key in Totals.oserrors.keys():
-        Totals.oserrors[key] += result.oserrors[key]
+        print(f"num results: {num_results:,}")
+        print(f"totals took {time.time()-tot_start} seconds")
 
     return Totals
 
@@ -179,6 +155,38 @@ def get_hardlinks() -> None:
     return res
 
 
+def total_results(Totals: Results, result: Results):
+    def merge_hardlinks(tot: dict, res: dict):
+        for inode in res.keys():
+            if inode not in tot:
+                # just a straight copy
+                tot[inode] = copy(res[inode])
+            else:
+                # merge the data
+                for k in res[inode].keys():
+                    if k == "stat":
+                        # stat present and does not change
+                        continue
+                    if k in tot[inode]:
+                        # add the two lists of filenames
+                        tot[inode][k] += res[inode][k]
+                    else:
+                        # just copy the list of filenames
+                        tot[inode][k] = copy(res[inode][k])
+        return tot
+
+    Totals.hardlinks = merge_hardlinks(Totals.hardlinks, result.hardlinks)
+    Totals.num_entries += result.num_entries
+    Totals.num_dirs += result.num_dirs
+    Totals.num_files += result.num_files
+    Totals.num_nlinks += result.num_nlinks
+    Totals.in_exclusions += result.in_exclusions
+    for key in Totals.oserrors.keys():
+        Totals.oserrors[key] += result.oserrors[key]
+
+    return Totals
+
+
 def dump_hardlinks(totals: Results, filename: str = "/tmp/hardlinks.json") -> None:
     print(f"Dumping hardlinks to {filename}")
 
@@ -201,10 +209,7 @@ def print_summary(totals: Results) -> None:
         hlinks_outside = stat.st_nlink - hlinks_found
         if hlinks_outside:
             hlinks_incomplete += stat.st_nlink - hlinks_found
-            print(
-                f"Inode at {inode} has {hlinks_outside:,} hardlinks outside this directory. "
-                f"{stat.st_nlink:,} > {hlinks_found:,})"
-            )
+            print(f"Inode {inode} has {stat.st_nlink:,} hardlinks, {hlinks_outside:,} outside this directory.")
 
     for errno in sorted(totals.oserrors.keys()):
         if totals.oserrors[errno]:
