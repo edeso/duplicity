@@ -71,24 +71,17 @@ def run(basepath: str):
     def err(e):
         print(f"Callback Error: {str(e)}")
 
-    tasks = os.cpu_count() // 2 * 3
+    tasks = os.cpu_count() * 2
     with mp.Pool(tasks) as pool:
         # prime the pump
         path_queue.put(basepath)
 
         # get all rewults
-        res_start = time.time()
         results = [pool.apply_async(get_hardlinks, (), error_callback=err) for _ in range(tasks)]
-        print(f"pool took {time.time()-res_start} seconds")
 
         # total results
-        num_results = 0
-        tot_start = time.time()
         for result in results:
-            num_results += 1
             total_results(Totals, result.get())
-        print(f"num results: {num_results:,}")
-        print(f"totals took {time.time()-tot_start} seconds")
 
     return Totals
 
