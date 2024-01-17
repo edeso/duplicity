@@ -48,7 +48,7 @@ scm_version_args: dict = {
     "local_scheme": "no-local-version",
 }
 
-Version: str = "2.2.1.dev2"
+Version: str = "2.2.0"
 try:
     Version = scm.get_version(**scm_version_args)
 except Exception:
