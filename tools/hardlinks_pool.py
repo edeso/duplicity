@@ -61,20 +61,19 @@ class Results:
         self.hardlinks = dict()
 
 
-res_queue = mp.Queue()
-path_queue = mp.Queue()
+task_queue = mp.Queue()
 
 
-def run(basepath: str):
+def main(basepath: str):
     Totals = Results()
 
     def err(e):
         print(f"Callback Error: {str(e)}")
 
-    tasks = os.cpu_count() * 2
+    tasks = os.cpu_count()
     with mp.Pool(tasks) as pool:
         # prime the pump
-        path_queue.put(basepath)
+        task_queue.put(basepath)
 
         # get all rewults
         results = [pool.apply_async(get_hardlinks, (), error_callback=err) for _ in range(tasks)]
@@ -86,14 +85,14 @@ def run(basepath: str):
     return Totals
 
 
-def get_hardlinks() -> None:
+def get_hardlinks():
     res = Results()
 
     our_dev = os.stat(dirpath).st_dev
 
     while True:
         try:
-            dpath = path_queue.get(timeout=2)
+            dpath = task_queue.get(timeout=2)
         except queue.Empty:
             break
         # print(f"Entering {dpath}")
@@ -137,7 +136,7 @@ def get_hardlinks() -> None:
                     if skip:
                         continue
                     res.num_dirs += 1
-                    path_queue.put(entry.path)
+                    task_queue.put(entry.path)
 
         except OSError as e:
             if e.errno in res.oserrors:
@@ -180,14 +179,14 @@ def total_results(Totals: Results, result: Results):
     return Totals
 
 
-def dump_hardlinks(totals: Results, filename: str = "/tmp/hardlinks.json") -> None:
+def dump_hardlinks(totals: Results, filename: str = "/tmp/hardlinks.json"):
     print(f"Dumping hardlinks to {filename}")
 
     with open(filename, "w") as fd:
         fd.write(json.dumps(totals.hardlinks))
 
 
-def print_summary(totals: Results) -> None:
+def print_summary(totals: Results):
     print(f"\nSummary of {dirpath}:")
 
     hlinks_incomplete = 0
@@ -242,6 +241,6 @@ if __name__ == "__main__":
     start = time.time()
 
     print(f"\nScanning {dirpath} for hardlinks.")
-    totals = run(dirpath)
+    totals = main(dirpath)
     dump_hardlinks(totals)
     print_summary(totals)
