@@ -1,3 +1,5 @@
+#!/usr/bin/env pytho3
+
 import json
 import multiprocessing as mp
 import os
