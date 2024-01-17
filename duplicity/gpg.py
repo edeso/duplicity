@@ -56,6 +56,10 @@ class GPGProfile(object):
     Just hold some GPG settings, avoid passing tons of arguments
     """
 
+    _version_re = re.compile(
+        b"^gpg.*\\(GnuPG(?:/MacGPG2)?\\) (?P<maj>[0-9]+)\\.(?P<min>[0-9]+)\\.(?P<bug>[0-9]+)(-.+)?$"
+    )
+
     def __init__(self, passphrase=None, sign_key=None, recipients=None, hidden_recipients=None):
         """
         Set all data with initializer
@@ -84,9 +88,6 @@ class GPGProfile(object):
             self.hidden_recipients = []
 
         self.gpg_version = self.get_gpg_version(config.gpg_binary)
-
-    rc = re.compile
-    _version_re = rc(b"^gpg.*\\(GnuPG(?:/MacGPG2)?\\) (?P<maj>[0-9]+)\\.(?P<min>[0-9]+)\\.(?P<bug>[0-9]+)(-.+)?$")
 
     def get_gpg_version(self, binary):
         gnupg = gpginterface.GnuPG()
@@ -197,7 +198,10 @@ class GPGFile(object):
                     "stdin",
                 ]
             else:
-                gnupg_fhs = ["stdin", "passphrase"]
+                gnupg_fhs = [
+                    "stdin",
+                    "passphrase",
+                ]
             # Turn off compression if needed
             if not config.compression:
                 cmdlist.append("--compress-algo=none")
@@ -227,7 +231,10 @@ class GPGFile(object):
                     "stdout",
                 ]
             else:
-                gnupg_fhs = ["stdout", "passphrase"]
+                gnupg_fhs = [
+                    "stdout",
+                    "passphrase",
+                ]
             p1 = gnupg.run(["--decrypt"], create_fhs=gnupg_fhs, attach_fhs=gpg_attach)
             if not config.use_agent:
                 p1.handles["passphrase"].write(passphrase)
@@ -389,7 +396,7 @@ def GPGWriteFile(block_iter, filename, profile, size=200 * 1024 * 1024, max_foot
                 at_end_of_blockiter = 1
                 break
             except Exception as e:
-                log.FatalError(f"Read error on {filename}: {str(e)}")
+                log.FatalError(f"Read error on {os.fsdecode(filename)}: {str(e)}")
             file.write(data)
 
         file.write(block_iter.get_footer())

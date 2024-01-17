@@ -109,8 +109,8 @@ class PatchingTest(UnitTestCase):
         """Test for the .. bug that lets tar overwrite parent dir"""
 
         def make_bad_tar(filename):
-            """Write attack tarfile to filename"""
-            tf = tarfile.TarFile(name=filename, mode="w")
+            """Write attack dup_tarfile to filename"""
+            tf = dup_tarfile.TarFile(name=filename, mode="w")
 
             # file object will be empty, and tarinfo will have path
             # "snapshot/../warning-security-error"

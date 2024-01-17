@@ -31,6 +31,7 @@ import io
 
 from duplicity import progress
 from duplicity import statistics
+from duplicity import dup_tarfile
 from duplicity import util
 from duplicity.path import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 
@@ -488,9 +489,9 @@ class TarBlockIter(object):
         """
         tarinfo.size = len(file_data)
         headers = tarinfo.tobuf(errors="replace", encoding=config.fsencoding)
-        blocks, remainder = divmod(tarinfo.size, tarfile.BLOCKSIZE)
+        blocks, remainder = divmod(tarinfo.size, dup_tarfile.BLOCKSIZE)
         if remainder > 0:
-            filler_data = b"\0" * (tarfile.BLOCKSIZE - remainder)
+            filler_data = b"\0" * (dup_tarfile.BLOCKSIZE - remainder)
         else:
             filler_data = b""
         return TarBlock(index, b"%s%s%s" % (headers, file_data, filler_data))
@@ -572,11 +573,11 @@ class TarBlockIter(object):
 
     def get_footer(self):
         """
-        Return closing string for tarfile, reset offset
+        Return closing string for dup_tarfile, reset offset
         """
-        blocks, remainder = divmod(self.offset, tarfile.RECORDSIZE)
+        blocks, remainder = divmod(self.offset, dup_tarfile.RECORDSIZE)
         self.offset = 0
-        return b"\0" * (tarfile.RECORDSIZE - remainder)  # remainder can be 0
+        return b"\0" * (dup_tarfile.RECORDSIZE - remainder)  # remainder can be 0
 
     def __iter__(self):  # pylint: disable=non-iterator-returned
         return self

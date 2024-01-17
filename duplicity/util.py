@@ -26,6 +26,7 @@ Miscellaneous utilities.
 import atexit
 import csv
 import errno
+import fasteners
 import json
 import os
 import sys
@@ -34,7 +35,7 @@ from io import StringIO
 
 import duplicity.config as config
 import duplicity.log as log
-from duplicity import tarfile
+from duplicity import dup_tarfile
 
 
 def exception_traceback(limit=50):
@@ -128,13 +129,13 @@ def make_tarfile(mode, fp):
     # yet.  So we want to ignore ReadError exceptions, which are used to signal
     # this.
     try:
-        tf = tarfile.TarFile("arbitrary", mode, fp)
+        tf = dup_tarfile.TarFile("arbitrary", mode, fp)
         # Now we cause TarFile to not cache TarInfo objects.  It would end up
         # consuming a lot of memory over the lifetime of our long-lasting
         # signature files otherwise.
         tf.members = BlackHoleList()
         return tf
-    except tarfile.ReadError:
+    except dup_tarfile.ReadError:
         return FakeTarFile()
 
 
@@ -164,10 +165,28 @@ def ignore_missing(fn, filename):
             raise
 
 
+def acquire_lockfile():
+    config.lockpath = os.path.join(config.archive_dir_path.name, b"lockfile")
+    config.lockfile = fasteners.process_lock.InterProcessLock(config.lockpath)
+    log.Log(
+        _("Acquiring lockfile %s") % os.fsdecode(config.lockpath),
+        log.DEBUG,
+    )
+    if not config.lockfile.acquire(blocking=False):
+        log.FatalError(
+            f"Another duplicity instance is already running with this archive directory\n"
+            f"If this is not the case, remove {config.lockpath}'.",
+            log.ErrorCode.user_error,
+        )
+
+
 @atexit.register
 def release_lockfile():
-    if config.lockfile and os.path.exists(config.lockpath):
-        log.Debug(_("Releasing lockfile %s") % os.fsdecode(config.lockpath))
+    if config.lockfile is not None:
+        log.Log(
+            _("Releasing lockfile %s") % os.fsdecode(config.lockpath),
+            log.DEBUG,
+        )
         try:
             config.lockfile.release()
             os.remove(config.lockpath)

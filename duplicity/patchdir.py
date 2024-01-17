@@ -23,6 +23,7 @@
 import tempfile
 
 from duplicity import diffdir
+from duplicity import dup_tarfile
 from duplicity import errors
 from duplicity import selection
 from duplicity import tempdir
@@ -37,7 +38,7 @@ class PatchDirException(Exception):
 
 def Patch(base_path, difftar_fileobj):
     """Patch given base_path and file object containing delta"""
-    diff_tarfile = tarfile.TarFile("arbitrary", "r", difftar_fileobj)
+    diff_tarfile = dup_tarfile.TarFile("arbitrary", "r", difftar_fileobj)
     patch_diff_tarfile(base_path, diff_tarfile)
     assert not difftar_fileobj.close()
 
@@ -49,7 +50,7 @@ def Patch_from_iter(base_path, fileobj_iter, restrict_index=()):
 
 
 def patch_diff_tarfile(base_path, diff_tarfile, restrict_index=()):
-    """Patch given Path object using delta tarfile (as in tarfile.TarFile)
+    """Patch given Path object using delta dup_tarfile (as in dup_tarfile.TarFile)
 
     If restrict_index is set, ignore any deltas in diff_tarfile that
     don't start with restrict_index.
@@ -313,7 +314,7 @@ class PathPatcher(ITRBranch):
 
 
 class TarFile_FromFileobjs(object):
-    """Like a tarfile.TarFile iterator, but read from multiple fileobjs"""
+    """Like a dup_tarfile.TarFile iterator, but read from multiple fileobjs"""
 
     def __init__(self, fileobj_iter):
         """Make new tarinfo iterator
@@ -323,14 +324,14 @@ class TarFile_FromFileobjs(object):
 
         """
         self.fileobj_iter = fileobj_iter
-        self.tarfile, self.tar_iter = None, None
+        self.dup_tarfile, self.tar_iter = None, None
         self.current_fp = None
 
     def __iter__(self):  # pylint: disable=non-iterator-returned
         return self
 
     def set_tarfile(self):
-        """Set tarfile from next file object, or raise StopIteration"""
+        """Set dup_tarfile from next file object, or raise StopIteration"""
         if self.current_fp:
             assert not self.current_fp.close()
 
@@ -343,11 +344,11 @@ class TarFile_FromFileobjs(object):
                 self.current_fp = x
                 break
 
-        self.tarfile = util.make_tarfile("r", self.current_fp)
-        self.tar_iter = iter(self.tarfile)
+        self.dup_tarfile = util.make_tarfile("r", self.current_fp)
+        self.tar_iter = iter(self.dup_tarfile)
 
     def __next__(self):
-        if not self.tarfile:
+        if not self.dup_tarfile:
             try:
                 self.set_tarfile()
             except StopIteration:
@@ -355,13 +356,13 @@ class TarFile_FromFileobjs(object):
         try:
             return next(self.tar_iter)
         except StopIteration:
-            assert not self.tarfile.close()
+            assert not self.dup_tarfile.close()
             self.set_tarfile()
             return next(self.tar_iter)
 
     def extractfile(self, tarinfo):
         """Return data associated with given tarinfo"""
-        return self.tarfile.extractfile(tarinfo)
+        return self.dup_tarfile.extractfile(tarinfo)
 
 
 def collate_iters(iter_list):

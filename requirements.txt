@@ -50,7 +50,7 @@ pylint
 pytest
 pytest-cov
 pytest-runner
-tox<4.0
+tox
 
 ##### documentation libraries #####
 

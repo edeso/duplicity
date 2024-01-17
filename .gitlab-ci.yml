@@ -24,16 +24,16 @@
     rules:
         - if: $CI_COMMIT_MESSAGE =~ /\[skip[ _-]tests?\]/i || $SKIP_TESTS
           when: never
+        - if: $CI_MERGE_REQUEST_ID == null
+          when: never
         - changes:
             - .gitlab-ci.yml
-            - .pylintrc
-            - .pyproject.toml
-            - requirements.txt
-            - setup.cfg
-            - tox.ini
-            - bin/duplicity
             - duplicity/**/*
+            - pyproject.toml
+            - requirements.txt
+            - setup.*
             - testing/**/*
+            - tox.ini
           when: always
         - when: never
     before_script:
@@ -66,7 +66,7 @@ code:
     stage: qual
     script:
         - python3 -m pip install -r requirements.txt
-        - tox -e code
+        - tox run -e code
     allow_failure: true
 
 py38:
@@ -75,7 +75,7 @@ py38:
     stage: test
     script:
         - python3 -m pip install -r requirements.txt
-        - tox -e py38
+        - tox run -e py38
 
 py39:
     <<: *test-template
@@ -83,7 +83,7 @@ py39:
     stage: test
     script:
         - python3 -m pip install -r requirements.txt
-        - tox -e py39
+        - tox run -e py39
 
 py310:
     <<: *test-template
@@ -91,7 +91,7 @@ py310:
     stage: test
     script:
         - python3 -m pip install -r requirements.txt
-        - tox -e py310
+        - tox run -e py310
 
 py311:
     <<: *test-template
@@ -99,7 +99,15 @@ py311:
     stage: test
     script:
         - python3 -m pip install -r requirements.txt
-        - tox -e py311
+        - tox run -e py311
+
+py312:
+    <<: *test-template
+    image: python:3.12
+    stage: test
+    script:
+        - python3 -m pip install -r requirements.txt
+        - tox run -e py312
 
 pages:
     stage: deploy

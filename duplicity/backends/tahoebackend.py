@@ -50,7 +50,7 @@ class TAHOEBackend(duplicity.backend.Backend):
             else:
                 return f"{self.alias}:"
 
-        if isinstance(filename, b"".__class__):
+        if isinstance(filename, bytes):
             filename = os.fsdecode(filename)
         if self.directory != "":
             return f"{self.alias}:{self.directory}/{filename}"

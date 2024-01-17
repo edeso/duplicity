@@ -1,3 +1,110 @@
+[build-system]
+requires = [
+    "setuptools>=60",
+    "setuptools-scm>=8.0",
+    "wheel",
+]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "duplicity"
+dynamic = ["version"]
+
+
+[project.scripts]
+duplicity = "duplicity.__main__:dup_run"
+
+
+[tool.setuptools_scm]
+tag_regex = "^(?P<prefix>rel.)?(?P<version>[^\\+]+)(?P<suffix>.*)?$"
+local_scheme = "no-local-version"
+fallback_version = "2.2.1.dev2"
+
+
+[tools.setuptools]
+description = "Encrypted backup using rsync algorithm"
+readme = "README.md"
+author = "Ben Escoto"
+author_email = "ben at emrose dot org"
+maintainer = "Kenneth Loafman"
+maintainer_email = "kenneth at loafman dot com"
+url = "http://duplicity.us"
+python_requires = ">= 3.8, <3.12"
+platforms = [
+    "any"
+]
+install_requires = [
+    "fasteners",
+    "setuptools_scm",
+]
+tests_require = [
+    "fasteners",
+    "mock",
+    "pexpect",
+    "pytest",
+    "pytest-runner",
+]
+test_suite = [
+    "testing.test_code.py",
+    "testing/unit",
+    "testing/functional",
+]
+classifiers = [
+    "Development Status :: 6 - Mature",
+    "Environment :: Console",
+    "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
+    "Operating System :: MacOS",
+    "Operating System :: POSIX",
+    "Programming Language :: C",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: System :: Archiving :: Backup",
+]
+
+
+[tool.setuptools.packages.find]
+where = [
+    ".",
+]
+include = [
+    "duplicity",
+    "duplicity.backends",
+    "duplicity.backends.pyrax_identity",
+]
+exclude = [
+    "snap*",
+    "testing*",
+    "tools*",
+    "venv*",
+]
+
+
 [tool.black]
 line-length = 120
-target-version = ['py38','py39','py310','py311']
+target-version = [
+    "py38",
+    "py39",
+    "py310",
+    "py311",
+    "py312",
+]
+
+
+[tool.pytest.ini_options]
+addopts = [
+    "--capture=no",
+    "--failed-first",
+    "--showlocals",
+]
+markers = [
+    "slow: test runs >= 10 secs",
+]
+testpaths = [
+    "testing/unit",
+    "testing/functional",
+]

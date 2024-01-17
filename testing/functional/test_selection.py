@@ -643,8 +643,8 @@ class TestIncludeExcludeOptions(IncludeExcludeFunctionalTest):
     def test_include_exclude_trailing_whitespace(self):
         """Test that folders with trailing whitespace in the names work correctly when passing as include/exclude"""
         # Note that, because this only passes items in as a list of options, this test does not test whether duplicity
-        # would correctly interpret commandline options with spaces. However, bin/duplicity uses sys.argv[1:], which
-        # should return a list of strings after having correctly processed quotes etc.
+        # would correctly interpret commandline options with spaces. However, duplicity/__main__.py uses sys.argv[1:],
+        # which should return a list of strings after having correctly processed quotes etc.
         self.backup(
             "full",
             "testfiles/select2",
@@ -814,8 +814,8 @@ class TestIncludeExcludeFilterModes(IncludeExcludeFunctionalTest):
         when passing as include/exclude, specifically in literal mode.
         """
         # Note that, because this only passes items in as a list of options, this test does not test whether duplicity
-        # would correctly interpret commandline options with spaces. However, bin/duplicity uses sys.argv[1:], which
-        # should return a list of strings after having correctly processed quotes etc.
+        # would correctly interpret commandline options with spaces. However, duplicity/__main__.py uses sys.argv[1:],
+        # which should return a list of strings after having correctly processed quotes etc.
         self.backup(
             "full",
             "testfiles/select2",

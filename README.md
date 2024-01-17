@@ -2,12 +2,12 @@
 
 Thank you for trying duplicity.  To install, run:
 ```
-python3 setup.py install
+python3 -m pip install
 ```
 
 The build process can be also be run separately:
 ```
-python3 setup.py build
+python3 -m build
 ```
 
 The default prefix is /usr, so files are put in /usr/bin,
@@ -21,21 +21,20 @@ export PYTHONPATH='/usr/local/lib/python.x/site-packages/'
 
 # REQUIREMENTS
 
- * Python 3.8 to 3.10
+ * Python 3.8 to 3.12
  * librsync v0.9.6 or later
  * GnuPG for encryption
  * see `requirements.txt` for complete list
 
 If you install from the source package, you will also need:
 
- * Python development files, normally found in module 'python-dev'.
+ * Python development files, normally found in module 'python3-dev'.
  * librsync development files, normally found in module 'librsync-dev'.
  
 Install python modules by performing the following command in duplicity's root directory:
 ```
-pip3 install -r requirements.txt
+python3 -m pip install -r requirements.txt
 ```
-if you're using python3
 
 # DEVELOPMENT
 

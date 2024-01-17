@@ -44,7 +44,7 @@ class LogTest(FunctionalTestCase):
         """Check notification of a simple error code"""
 
         # Run actual duplicity command (will fail because bad dirs passed)
-        cmd = f"{_top_dir}/bin/duplicity --log-file={self.logfile} full testing baddir >/dev/null 2>&1"
+        cmd = f"{_top_dir}/duplicity/__main__.py --log-file={self.logfile} full testing baddir >/dev/null 2>&1"
         basepython = os.environ.get("TOXPYTHON", None)
         if basepython is not None:
             cmd = f"{basepython} {cmd}"

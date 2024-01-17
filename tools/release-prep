@@ -37,28 +37,39 @@ while true; do
     esac
 done
 
-if [ `uname` == "Darwin" ]; then
-    SED=gsed
+# find out if repo is clean
+CNT=`git status --porcelain | tee /dev/stderr | wc -l`
+if [ "$CNT" -eq 0 ]; then
+    echo "Repo is clean.  Proceeding."
 else
-    SED=sed
+    echo "Repo is dirty.  Stopping."
+    exit 1
 fi
-
-set -v
-
-# put in correct version for Launchpad
-${SED} -i s/^Version\ =\ \".*\"/Version\ =\ \"${REL}\"/g setup.py
-git commit -a -m"chg:pkg: Prep for ${REL}" || true
 
 # add release tag and push it
 git tag -f rel.${REL}
-git push --tags -f origin main -o ci.skip
+git push --tags -f -o ci.skip
 
-# make changelog and move tag to include it
-tools/makechangelog
-git commit -m"chg:pkg: Update changelog." -m"[skip tests]" CHANGELOG.md
-git push
+# put in correct version
+./setup.py scmversion
+git commit -m"chg:pkg: Prep for ${REL}" \
+    duplicity/__init__.py \
+    man/duplicity.1 \
+    setup.py \
+    snap/snapcraft.yaml
+
+# move release tag and push it
 git tag -f rel.${REL}
-git push --tags -f origin main
+git push --tags -f -o ci.skip
+
+# make CHANGELOG.md
+tools/makechangelog
+git commit -m"chg:pkg: Update changelog." CHANGELOG.md
+git push -o ci.skip
+
+# move release tag and push it
+git tag -f rel.${REL}
+git push --tags -f -o ci.skip
 
 # make and sign the release
 ./setup.py sdist --dist-dir=.

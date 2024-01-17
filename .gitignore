@@ -34,7 +34,7 @@ mprofile_*.dat
 po/duplicity.pot-e
 random_seed
 report.xml
-testfiles
+testfiles/
 testing/gnupg/.gpg-v21-migrated
 testing/gnupg/S.*
 testing/gnupg/private-keys-v1.d/

@@ -299,7 +299,7 @@ class Manifest(object):
         """
         Return list of volume numbers that may contain index_prefix
         """
-        if len(index_prefix) == 1 and isinstance(index_prefix[0], "".__class__):
+        if len(index_prefix) == 1 and isinstance(index_prefix[0], str):
             index_prefix = (index_prefix[0].encode(),)
         return [
             vol_num

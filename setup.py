@@ -30,43 +30,34 @@ import time
 
 from distutils.command.build_scripts import build_scripts
 from distutils.command.install_data import install_data
-from setuptools import setup, Extension
+from setuptools import setup, Extension, Command
 from setuptools.command.build_ext import build_ext
-from setuptools.command.install import install
 from setuptools.command.sdist import sdist
 from setuptools.command.test import test
 
-
-def v(vers):
-    return f"{vers[0]}.{vers[1]}"
-
+import setuptools_scm as scm
 
 # check that we can function here
-min_version = (3, 8)
-max_version = (3, 11)
-this_version = (sys.version_info.major, sys.version_info.minor)
-if not (min_version <= this_version <= max_version):
-    print(
-        f"Sorry, duplicity requires version {v(min_version)} to {v(max_version)} of Python.\n"
-        f"You are running on version {v(this_version)}."
-    )
+if not ((3, 8) <= sys.version_info[:2] <= (3, 12)):
+    print("Sorry, duplicity requires version 3.8 thru 3.12 of Python.")
     sys.exit(1)
 
-
-Version = "2.1.5"
-scm_version_args = {
-    "tag_regex": r"^(?P<prefix>rel.)?(?P<version>[^\+]+)(?P<suffix>.*)?$",
+scm_version_args: dict = {
+    "tag_regex": r"^(?P<prefix>rel\.)?(?P<version>[^\+]+)(?P<suffix>.*)?$",
+    "version_scheme": "guess-next-dev",
     "local_scheme": "no-local-version",
-    "fallback_version": Version,
 }
+
+Version: str = "2.2.1.dev2"
 try:
-    from setuptools_scm import get_version  # pylint: disable=import-error
+    Version = scm.get_version(**scm_version_args)
+except Exception:
+    print(
+        f"ERROR: Could not parse version from local git repository.\nUsing fallback version: {Version}",
+        file=sys.stderr,
+    )
 
-    Version = get_version(**scm_version_args)
-except Exception as e:
-    pass
-Reldate = time.strftime("%B %d, %Y", time.gmtime(int(os.environ.get("SOURCE_DATE_EPOCH", time.time()))))
-
+reldate: str = time.strftime("%B %d, %Y", time.gmtime(int(os.environ.get("SOURCE_DATE_EPOCH", time.time()))))
 
 # READTHEDOCS uses setup.py sdist but can't handle extensions
 ext_modules = list()
@@ -105,14 +96,14 @@ def get_data_files():
         (
             "share/man/man1",
             [
-                "bin/duplicity.1",
+                "man/duplicity.1",
             ],
         ),
         (
             f"share/doc/duplicity-{Version}",
             [
                 "CHANGELOG.md",
-                "CONTRIBUTING.md",
+                "AUTHORS.md",
                 "COPYING",
                 "README.md",
                 "README-LOG.md",
@@ -149,21 +140,6 @@ def get_data_files():
     return data_files
 
 
-def VersionedCopy(source, dest):
-    """
-    Copy source to dest, substituting $version with version
-    $reldate with today's date, i.e. December 28, 2008.
-    """
-    with open(source, "rt") as fd:
-        buffer = fd.read()
-
-    buffer = re.sub("\$version", Version, buffer)
-    buffer = re.sub("\$reldate", Reldate, buffer)
-
-    with open(dest, "wt") as fd:
-        fd.write(buffer)
-
-
 def cleanup():
     if os.path.exists("po/LINGUAS"):
         linguas = open("po/LINGUAS").readlines()
@@ -174,6 +150,115 @@ def cleanup():
                     shutil.rmtree(os.path.join("po", lang))
                 except Exception:
                     pass
+
+
+class BuildExtCommand(build_ext):
+    """Build extension modules."""
+
+    def run(self):
+        # build the _librsync.so module
+        print("Building extension for librsync...")
+        self.inplace = True
+        build_ext.run(self)
+
+
+class SCMVersionSourceCommand(Command):
+    """
+    Mod the versioned files and add correct scmversion
+    """
+
+    description: str = "Version souce based on SCM tag"
+
+    user_options: list = []
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        if self.dry_run:
+            print("Dry run, no changes will be made.")
+
+        # .TH DUPLICITY 1 "$reldate" "Version $version" "User Manuals" \"  -*- nroff -*-
+        self.version_source(
+            r"""\.TH\ DUPLICITY\ 1\ "(?P<reldate>[^"]*)"\ "Version\ (?P<version>[^"]*)"\ "User\ Manuals"\ \\"\ """
+            r"""\ \-\*\-\ nroff\ \-\*\-""",
+            r"""\.TH\ DUPLICITY\ 1\ "(?P<reldate>[^"]*)"\ "Version\ (?P<version>[^"]*)"\ "User\ Manuals"\ \\"\ """
+            r"""\ \-\*\-\ nroff\ \-\*\-""",
+            os.path.join("man", "duplicity.1"),
+        )
+
+        # __version__ = "$version"
+        self.version_source(
+            r'__version__: str = "(?P<version>[^"]*)"',
+            r'__reldate__: str = "(?P<reldate>[^"]*)"',
+            os.path.join("duplicity", "__init__.py"),
+        )
+
+        # version: $version
+        self.version_source(
+            r"version: (?P<version>.*)\n",
+            None,
+            os.path.join("snap", "snapcraft.yaml"),
+        )
+
+        # Version: str = "$version"
+        self.version_source(
+            r'Version: str = "(?P<version>[^\"]*)"',
+            None,
+            os.path.join(".", "setup.py"),
+        )
+
+        # fallback_version = "$version"
+        self.version_source(
+            r'fallback_version = "(?P<version>[^\"]*)"',
+            None,
+            os.path.join(".", "pyproject.toml"),
+        )
+
+    def version_source(self, version_patt: str, reldate_patt: str, pathname: str):
+        """
+        Copy source to dest, substituting current version with scmversion
+        current release date with today's date, i.e. December 28, 2008.
+        """
+        with open(pathname) as fd:
+            buffer = fd.read()
+
+        # process version
+        if version_patt:
+            if m := re.search(version_patt, buffer):
+                version_sub = re.escape(m.group("version"))
+                newbuffer = re.sub(version_sub, Version, buffer)
+                if newbuffer == buffer:
+                    print(f"ERROR: version unchanged in {pathname}.", file=sys.stderr)
+                else:
+                    buffer = newbuffer
+                    if self.verbose:
+                        print(f"Substituted '{version_sub}' with '{Version}' in {pathname}.")
+            else:
+                print(f"ERROR: {version_patt} not found in {pathname}.", file=sys.stderr)
+                sys.exit(1)
+
+        # process reldate
+        if reldate_patt:
+            if m := re.search(reldate_patt, buffer):
+                reldate_sub = re.escape(m.group("reldate"))
+                newbuffer = re.sub(reldate_sub, reldate, buffer)
+                if newbuffer == buffer:
+                    print(f"ERROR: reldate unchanged in {pathname}.", file=sys.stderr)
+                else:
+                    buffer = newbuffer
+                    if self.verbose:
+                        print(f"Substituted '{reldate_sub}' with '{reldate}' in {pathname}.")
+            else:
+                print(f"ERROR: {reldate_patt} not found in {pathname}.", file=sys.stderr)
+                sys.exit(1)
+
+        if not self.dry_run:
+            with open(pathname, "w") as fd:
+                fd.write(buffer)
 
 
 class SdistCommand(sdist):
@@ -189,21 +274,7 @@ class SdistCommand(sdist):
 
         # make sure executables are
         assert not os.chmod(os.path.join(tardir, "setup.py"), 0o755)
-        assert not os.chmod(os.path.join(tardir, "bin", "duplicity"), 0o755)
-
-        # recopy the unversioned files and add correct version
-        VersionedCopy(
-            os.path.join("bin", "duplicity.1"),
-            os.path.join(tardir, "bin", "duplicity.1"),
-        )
-        VersionedCopy(
-            os.path.join("duplicity", "__init__.py"),
-            os.path.join(tardir, "duplicity", "__init__.py"),
-        )
-        VersionedCopy(
-            os.path.join("snap", "snapcraft.yaml"),
-            os.path.join(tardir, "snap", "snapcraft.yaml"),
-        )
+        assert not os.chmod(os.path.join(tardir, "duplicity", "__main__.py"), 0o755)
 
         # set COPYFILE_DISABLE to disable appledouble file creation
         os.environ["COPYFILE_DISABLE"] = "true"
@@ -218,6 +289,7 @@ class SdistCommand(sdist):
                                  --exclude readthedocs.yaml \
                                  --exclude testing/docker \
                                  --exclude testing/manual \
+                                 --exclude testing/regression \
                                  --exclude tools \
                                  {tardir}
                               """
@@ -251,47 +323,6 @@ class TestCommand(test):
         cleanup()
 
 
-class InstallCommand(install):
-    def run(self):
-        # Normally, install will call build().  But we want to delete the
-        # testing dir between building and installing.  So we manually build
-        # and mark ourselves to skip building when we run() for real.
-        self.run_command("build")
-        self.skip_build = True
-
-        # remove testing dir
-        top_dir = os.path.dirname(os.path.abspath(__file__))
-        if self.build_lib != top_dir:
-            testing_dir = os.path.join(self.build_lib, "testing")
-            shutil.rmtree(testing_dir)
-
-        install.run(self)
-
-
-class InstallDataCommand(install_data):
-    def run(self):
-        install_data.run(self)
-
-        # version the man pages
-        for tup in self.data_files:
-            base, filenames = tup
-            if base == "share/man/man1":
-                for fn in filenames:
-                    fn = os.path.split(fn)[-1]
-                    path = os.path.join(self.install_dir, base, fn)
-                    VersionedCopy(path, path)
-
-
-class BuildExtCommand(build_ext):
-    """Build extension modules."""
-
-    def run(self):
-        # build the _librsync.so module
-        print("Building extension for librsync...")
-        self.inplace = True
-        build_ext.run(self)
-
-
 with open("README.md") as fh:
     long_description = fh.read()
 
@@ -299,15 +330,7 @@ with open("README.md") as fh:
 setup(
     name="duplicity",
     version=Version,
-    description="Encrypted backup using rsync algorithm",
-    long_description=long_description,
-    long_description_content_type="text/plain",
-    author="Ben Escoto <ben@emrose.org>",
-    author_email="ben@emrose.org",
-    maintainer="Kenneth Loafman <kenneth@loafman.com>",
-    maintainer_email="kenneth@loafman.com",
     url="http://duplicity.us",
-    python_requires=">=3.8, <4",
     platforms=["any"],
     packages=[
         "duplicity",
@@ -351,17 +374,8 @@ setup(
         ],
     },
     ext_modules=ext_modules,
-    scripts=[
-        "bin/duplicity",
-    ],
     data_files=get_data_files(),
     include_package_data=True,
-    install_requires=[
-        "fasteners",
-    ],
-    setup_requires=[
-        "setuptools_scm",
-    ],
     tests_require=[
         "fasteners",
         "mock",
@@ -372,25 +386,10 @@ setup(
     test_suite="testing",
     cmdclass={
         "build_ext": BuildExtCommand,
-        "install": InstallCommand,
-        "install_data": InstallDataCommand,
         "sdist": SdistCommand,
         "test": TestCommand,
+        "scmversion": SCMVersionSourceCommand,
     },
-    classifiers=[
-        "Development Status :: 6 - Mature",
-        "Environment :: Console",
-        "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
-        "Operating System :: MacOS",
-        "Operating System :: POSIX",
-        "Programming Language :: C",
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
-        "Programming Language :: Python :: 3.10",
-        "Programming Language :: Python :: 3.11",
-        "Topic :: System :: Archiving :: Backup",
-    ],
 )
 
 cleanup()

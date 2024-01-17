@@ -290,7 +290,7 @@ class ParseArgsTest(UnitTestCase):
         """Turn strings in filelist into fileobjs"""
         new_filelists = []
         for f in filelist:
-            if isinstance(f, "".__class__):
+            if isinstance(f, str):
                 new_filelists.append(io.StringIO(f))
             else:
                 new_filelists.append(f)

@@ -249,7 +249,7 @@ def cmp(time1, time2):
     if isinstance(time1, (str, string)):
         time1 = stringtotime(time1)
         assert time1 is not None
-    if isinstance(time2, (str, "".__class__)):
+    if isinstance(time2, (str, str)):
         time2 = stringtotime(time2)
         assert time2 is not None
 

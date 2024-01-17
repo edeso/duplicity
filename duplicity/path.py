@@ -40,7 +40,7 @@ from duplicity import dup_time
 from duplicity import file_naming
 from duplicity import gpg
 from duplicity import librsync
-from duplicity import tarfile
+from duplicity import dup_tarfile
 from duplicity.lazy import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 
 _tmp_path_counter = 1
@@ -187,27 +187,27 @@ class ROPath(object):
         self.opened = None
 
     def init_from_tarinfo(self, tarinfo):
-        """Set data from tarinfo object (part of tarfile module)"""
+        """Set data from tarinfo object (part of dup_tarfile module)"""
         # Set the typepp
         type = tarinfo.type  # pylint: disable=redefined-builtin
-        if type == tarfile.REGTYPE or type == tarfile.AREGTYPE:
+        if type == dup_tarfile.REGTYPE or type == dup_tarfile.AREGTYPE:
             self.type = "reg"
-        elif type == tarfile.LNKTYPE:
+        elif type == dup_tarfile.LNKTYPE:
             raise PathException("Hard links not supported yet")
-        elif type == tarfile.SYMTYPE:
+        elif type == dup_tarfile.SYMTYPE:
             self.type = "sym"
             self.symtext = tarinfo.linkname
-            if isinstance(self.symtext, "".__class__):
+            if isinstance(self.symtext, str):
                 self.symtext = os.fsencode(self.symtext)
-        elif type == tarfile.CHRTYPE:
+        elif type == dup_tarfile.CHRTYPE:
             self.type = "chr"
             self.devnums = (tarinfo.devmajor, tarinfo.devminor)
-        elif type == tarfile.BLKTYPE:
+        elif type == dup_tarfile.BLKTYPE:
             self.type = "blk"
             self.devnums = (tarinfo.devmajor, tarinfo.devminor)
-        elif type == tarfile.DIRTYPE:
+        elif type == dup_tarfile.DIRTYPE:
             self.type = "dir"
-        elif type == tarfile.FIFOTYPE:
+        elif type == dup_tarfile.FIFOTYPE:
             self.type = "fifo"
         else:
             raise PathException(f"Unknown tarinfo type {type}")
@@ -253,14 +253,14 @@ class ROPath(object):
         return new_ropath
 
     def get_tarinfo(self):
-        """Generate a tarfile.TarInfo object based on self
+        """Generate a dup_tarfile.TarInfo object based on self
 
         Doesn't set size based on stat, because we may want to replace
         data wiht other stream.  Size should be set separately by
         calling function.
 
         """
-        ti = tarfile.TarInfo()
+        ti = dup_tarfile.TarInfo()
         if self.index:
             ti.name = os.fsdecode(b"/".join(self.index))
         else:
@@ -270,25 +270,25 @@ class ROPath(object):
 
         ti.size = 0
         if self.type:
-            # Lots of this is specific to tarfile.py, hope it doesn't
+            # Lots of this is specific to dup_tarfile.py, hope it doesn't
             # change much...
             if self.isreg():
-                ti.type = tarfile.REGTYPE
+                ti.type = dup_tarfile.REGTYPE
                 ti.size = self.stat.st_size
             elif self.isdir():
-                ti.type = tarfile.DIRTYPE
+                ti.type = dup_tarfile.DIRTYPE
             elif self.isfifo():
-                ti.type = tarfile.FIFOTYPE
+                ti.type = dup_tarfile.FIFOTYPE
             elif self.issym():
-                ti.type = tarfile.SYMTYPE
+                ti.type = dup_tarfile.SYMTYPE
                 ti.linkname = self.symtext
                 if isinstance(ti.linkname, bytes):
                     ti.linkname = os.fsdecode(ti.linkname)
             elif self.isdev():
                 if self.type == "chr":
-                    ti.type = tarfile.CHRTYPE
+                    ti.type = dup_tarfile.CHRTYPE
                 else:
-                    ti.type = tarfile.BLKTYPE
+                    ti.type = dup_tarfile.BLKTYPE
                 ti.devmajor, ti.devminor = self.devnums
             else:
                 raise PathException(f"Unrecognized type {str(self.type)}")
@@ -310,7 +310,7 @@ class ROPath(object):
             except KeyError:
                 ti.gname = ""
 
-            if ti.type in (tarfile.CHRTYPE, tarfile.BLKTYPE):
+            if ti.type in (dup_tarfile.CHRTYPE, dup_tarfile.BLKTYPE):
                 if hasattr(os, "major") and hasattr(os, "minor"):
                     ti.devmajor, ti.devminor = self.devnums
         else:
@@ -555,7 +555,7 @@ class Path(ROPath):
 
     def append(self, ext):
         """Return new Path with ext added to index"""
-        if isinstance(ext, "".__class__):
+        if isinstance(ext, str):
             ext = os.fsencode(ext)
         return self.__class__(self.base, self.index + (ext,))
 
@@ -573,7 +573,7 @@ class Path(ROPath):
 
     def contains(self, child):
         """Return true if path is a directory and contains child"""
-        if isinstance(child, "".__class__):
+        if isinstance(child, str):
             child = os.fsencode(child)
         # We don't use append(child).exists() here because that requires exec
         # permissions as well as read. listdir() just needs read permissions.
