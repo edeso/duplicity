@@ -24,8 +24,8 @@
     rules:
         - if: $CI_COMMIT_MESSAGE =~ /\[skip[ _-]tests?\]/i || $SKIP_TESTS
           when: never
-        - if: $CI_MERGE_REQUEST_ID == null
-          when: never
+#        - if: $CI_MERGE_REQUEST_ID == null
+#          when: never
         - changes:
             - .gitlab-ci.yml
             - duplicity/**/*
