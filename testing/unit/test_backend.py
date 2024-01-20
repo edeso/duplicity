@@ -21,12 +21,8 @@
 
 
 import sys
-
-try:
-    import unittest.mock as mock
-except ImportError:
-    import mock
 import unittest
+import unittest.mock as mock
 
 import duplicity.backend
 import duplicity.backends

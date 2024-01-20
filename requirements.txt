@@ -44,7 +44,6 @@ requests-oauthlib
 
 black==23.7.0
 coverage
-mock>=3.0.5
 pycodestyle
 pylint
 pytest

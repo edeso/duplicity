@@ -378,7 +378,6 @@ setup(
     include_package_data=True,
     tests_require=[
         "fasteners",
-        "mock",
         "pexpect",
         "pytest",
         "pytest-runner",

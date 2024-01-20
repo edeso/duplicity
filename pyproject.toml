@@ -40,7 +40,6 @@ install_requires = [
 ]
 tests_require = [
     "fasteners",
-    "mock",
     "pexpect",
     "pytest",
     "pytest-runner",
