@@ -21,7 +21,6 @@
 
 cd `dirname "$0"`/..
 
-echo bin/duplicity > po/POTFILES.in
 find duplicity -name '*.py' >> po/POTFILES.in
 
 find testing -name '*.py' > po/POTFILES.skip

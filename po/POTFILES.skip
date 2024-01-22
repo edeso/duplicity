@@ -26,7 +26,6 @@ testing/__init__.py
 testing/manual/__init__.py
 testing/manual/backendtest.py
 testing/manual/roottest.py
-testing/regression/__init__.py
 testing/functional/test_verify.py
 testing/functional/test_cleanup.py
 testing/functional/__init__.py
