@@ -146,7 +146,7 @@ website:
         - changes:
             - "CHANGELOG.md"
             - "README.md"
-            - "bin/*.1"
+            - "man/*.1"
           if: $CI_PIPELINE_SOURCE == "push"
           when: always
         - when: manual
@@ -157,7 +157,7 @@ website:
     script: |
         if [[ $WEBSITE_TRIGGER_TOKEN != "" ]]; then
             curl --fail-with-body \
-                 -X POST \
-                 -F token=${WEBSITE_TRIGGER_TOKEN} \
-                 -F ref=master https://gitlab.com/api/v4/projects/29130748/trigger/pipeline
+                -X POST \
+                -F token=${WEBSITE_TRIGGER_TOKEN} \
+                -F ref=master https://gitlab.com/api/v4/projects/29130748/trigger/pipeline
         fi
