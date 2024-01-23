@@ -240,16 +240,24 @@ def parse_cmdline_options(arglist):
         )
 
     # check that option is supported by command
+    skip_options = False
     valid_opts = CommandOptions.__dict__[opt2var(args.action)]
-    for opt in [o.split("=")[0] for o in arglist if o.startswith("--")]:
+    for opt in [o for o in arglist if o.startswith("--")]:
         # Search for possibly abbreviated opt in valid_opts. Argparse has already vetted the abbreviation to be
         # unique, so we don't need to. This simulates the affect of argparse subcommands which we can't use because
         # of interspersed options.
+        if is_bound := "=" in opt:
+            opt = opt.split("=")[0]
+        if skip_options:
+            skip_options = False
+            continue
         for val in valid_opts:
             if val.startswith(opt):
                 break
+            if not is_bound and "metavar" in OptionKwargs[opt2var(val)]:
+                skip_options = True
+                continue
         else:
-            # cols, lines = shutil.get_terminal_size()
             wrapped = wrap(" ".join(sorted(valid_opts)), break_on_hyphens=False)
             wstr = ""
             for line in wrapped:

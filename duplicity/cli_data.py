@@ -753,10 +753,12 @@ OptionKwargs = dict(
     ),
     # TESTING ONLY - do not use in production
     current_time=dict(
+        metavar="time",
         type=int,
         help=argparse.SUPPRESS,
     ),
     fail_on_volume=dict(
+        metavar="volume",
         type=int,
         help=argparse.SUPPRESS,
     ),
@@ -765,6 +767,7 @@ OptionKwargs = dict(
         help=argparse.SUPPRESS,
     ),
     skip_volume=dict(
+        metavar="volume",
         type=int,
         help=argparse.SUPPRESS,
     ),
