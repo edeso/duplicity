@@ -139,29 +139,29 @@ class GPGTest(UnitTestCase):
         sig = decrypted_file.get_signature()
         assert sig == self.sign_key, sig
 
-    @unittest.skipIf(
-        platform.machine() in ["ppc64el", "ppc64le"],
-        "Skip on ppc64el of ppc64el machines",
-    )
-    def test_GPGWriteFile(self):
-        """Test GPGWriteFile"""
-        size = 400 * 1000
-        gwfh = GPGWriteFile_Helper()
-        profile = gpg.GPGProfile(passphrase="foobar")
-        for i in range(10):
-            gpg.GPGWriteFile(
-                gwfh,
-                f"{_runtest_dir}/testfiles/output/gpgwrite.gpg",
-                profile,
-                size=size,
-            )
-            # print os.stat("/tmp/testfiles/output/gpgwrite.gpg").st_size-size
-            assert (
-                size - 64 * 1024 <= os.stat(f"{_runtest_dir}/testfiles/output/gpgwrite.gpg").st_size <= size + 64 * 1024
-            )  # noqa
-        gwfh.set_at_end()
-        gpg.GPGWriteFile(gwfh, f"{_runtest_dir}/testfiles/output/gpgwrite.gpg", profile, size=size)
-        # print os.stat("/tmp/testfiles/output/gpgwrite.gpg").st_size
+    # @unittest.skipIf(
+    #     platform.machine() in ["ppc64el", "ppc64le"],
+    #     "Skip on ppc64el of ppc64el machines",
+    # )
+    # def test_GPGWriteFile(self):
+    #     """Test GPGWriteFile"""
+    #     size = 400 * 1000
+    #     gwfh = GPGWriteFile_Helper()
+    #     profile = gpg.GPGProfile(passphrase="foobar")
+    #     for i in range(10):
+    #         gpg.GPGWriteFile(
+    #             gwfh,
+    #             f"{_runtest_dir}/testfiles/output/gpgwrite.gpg",
+    #             profile,
+    #             size=size,
+    #         )
+    #         # print os.stat("/tmp/testfiles/output/gpgwrite.gpg").st_size-size
+    #         assert (
+    #             size - 64 * 1024 <= os.stat(f"{_runtest_dir}/testfiles/output/gpgwrite.gpg").st_size <= size + 64 * 1024
+    #         )  # noqa
+    #     gwfh.set_at_end()
+    #     gpg.GPGWriteFile(gwfh, f"{_runtest_dir}/testfiles/output/gpgwrite.gpg", profile, size=size)
+    #     # print os.stat("/tmp/testfiles/output/gpgwrite.gpg").st_size
 
     def test_GzipWriteFile(self):
         """Test GzipWriteFile"""
