@@ -157,8 +157,8 @@ class GPGTest(UnitTestCase):
     #         )
     #         # print os.stat("/tmp/testfiles/output/gpgwrite.gpg").st_size-size
     #         assert (
-    #             size - 64 * 1024 <= os.stat(f"{_runtest_dir}/testfiles/output/gpgwrite.gpg").st_size <= size + 64 * 1024
-    #         )  # noqa
+    #             size - 64 * 1024 <= os.stat(f"{_runtest_dir}/testfiles/output/gpgwrite.gpg").st_size <= size + 64 * 1024  # noqa
+    #         )
     #     gwfh.set_at_end()
     #     gpg.GPGWriteFile(gwfh, f"{_runtest_dir}/testfiles/output/gpgwrite.gpg", profile, size=size)
     #     # print os.stat("/tmp/testfiles/output/gpgwrite.gpg").st_size
