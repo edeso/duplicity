@@ -33,7 +33,6 @@
             - requirements.txt
             - setup.*
             - testing/**/*
-            - tox.ini
           when: always
         - when: never
     before_script:
@@ -66,7 +65,8 @@ code:
     stage: qual
     script:
         - python3 -m pip install -r requirements.txt
-        - tox run -e code
+        - python3 ./setup.py build_ext
+        - RUN_CODE_TESTS=1 pytest testing/test_code.py
     allow_failure: true
 
 py38:
@@ -75,7 +75,8 @@ py38:
     stage: test
     script:
         - python3 -m pip install -r requirements.txt
-        - tox run -e py38
+        - python3 ./setup.py build_ext
+        - pytest testing/unit testing/functional
 
 py39:
     <<: *test-template
@@ -83,7 +84,8 @@ py39:
     stage: test
     script:
         - python3 -m pip install -r requirements.txt
-        - tox run -e py39
+        - python3 ./setup.py build_ext
+        - pytest testing/unit testing/functional
 
 py310:
     <<: *test-template
@@ -91,7 +93,8 @@ py310:
     stage: test
     script:
         - python3 -m pip install -r requirements.txt
-        - tox run -e py310
+        - python3 ./setup.py build_ext
+        - pytest testing/unit testing/functional
 
 py311:
     <<: *test-template
@@ -99,7 +102,8 @@ py311:
     stage: test
     script:
         - python3 -m pip install -r requirements.txt
-        - tox run -e py311
+        - python3 ./setup.py build_ext
+        - pytest testing/unit testing/functional
 
 py312:
     <<: *test-template
@@ -107,7 +111,8 @@ py312:
     stage: test
     script:
         - python3 -m pip install -r requirements.txt
-        - tox run -e py312
+        - python3 ./setup.py build_ext
+        - pytest testing/unit testing/functional
 
 pages:
     stage: deploy
