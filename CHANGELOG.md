@@ -1,6 +1,57 @@
 # Changelog
 
 
+## rel.2.2.0 (2024-01-26)
+
+### Changes
+
+* Use pytest not tox on GitLab CI. [Kenneth Loafman]
+
+    - saves build time
+
+* Run po/update-pot. [Kenneth Loafman]
+
+* Remove support for old mock. [Alexandre Detiste]
+
+    Project says "REQUIREMENTS: Python 3.8 to 3.12"
+
+* Allow pipelines to run if not merge request. [Kenneth Loafman]
+
+* Version as 2.2.0. [Kenneth Loafman]
+
+* Upgrade current build and test systems. [Kenneth Loafman]
+
+    # Changes:
+      - move bin/duplicity to duplicity/__main__.py
+      - add entry point dup_run() no args
+      - rename bin to man (only contents now)
+      - rename duplicity/tarfile.py to duplicity/dup_tarfile.py to avoid import problems
+      - duplicity now runs as a module `python3 -m duplicity` as well as a script `/usr/bin/duplicity`
+      - py2->py3 oddities changed, `"".__class__` and `b"".__class__` changed to `str` and `bytes`
+      - tox v4 now runs correctly as `tox run -e code`
+      - moved [pycodestyle] from tox.ini to setup.cfg
+      - moved .pylintrc from to setup.cfg
+      - sources released fully versioned
+        - duplicity/\_\_init\_\_.py
+        - man/duplicity.1
+        - pyproject.toml
+        - setup.py
+        - snap/snapcraft.yaml
+
+    Closes #774,#793
+
+### Fix
+
+* Remove test\_GPGWriteFile. [Kenneth Loafman]
+
+    - Fails on GitLab
+    - Runs on Linux and macOS just fine
+
+* Invalid option error using `--[gpg|par2|rsync|ssh]-options '...' [Kenneth Loafman]
+
+    Fixes #795.
+
+
 ## rel.2.1.5 (2023-12-28)
 
 ### New
@@ -12,6 +63,10 @@
     This is pre-work for !153 but want to decouple it for better handling.
 
 ### Changes
+
+* Fix debian/rules for versioned. [Kenneth Loafman]
+
+* Version as 2.1.5. [Kenneth Loafman]
 
 * Run po/update-pot. [Kenneth Loafman]
 
