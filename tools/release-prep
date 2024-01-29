@@ -55,6 +55,7 @@ git push --tags -f -o ci.skip
 git commit -m"chg:pkg: Prep for ${REL}" \
     duplicity/__init__.py \
     man/duplicity.1 \
+    pyproject.toml \
     setup.py \
     snap/snapcraft.yaml
 

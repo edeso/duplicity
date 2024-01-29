@@ -48,7 +48,7 @@ scm_version_args: dict = {
     "local_scheme": "no-local-version",
 }
 
-Version: str = "2.2.0"
+Version: str = "2.2.1"
 try:
     Version = scm.get_version(**scm_version_args)
 except Exception:
@@ -388,6 +388,11 @@ setup(
         "sdist": SdistCommand,
         "test": TestCommand,
         "scmversion": SCMVersionSourceCommand,
+    },
+    entry_points={
+        "console_scripts": [
+            "duplicity=duplicity.duplicity.__main__:run_dup",
+        ],
     },
 )
 

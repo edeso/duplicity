@@ -1,7 +1,18 @@
 # Changelog
 
 
-## rel.2.2.0 (2024-01-26)
+## rel.2.2.1 (2024-01-29)
+
+### Changes
+
+* Mod tools/release-prep. [Kenneth Loafman]
+
+* Mod tools/release-prep. [Kenneth Loafman]
+
+* Add back setup entry points. [Kenneth Loafman]
+
+
+## rel.2.2.0 (2024-01-27)
 
 ### Changes
 
