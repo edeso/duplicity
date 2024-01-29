@@ -9,6 +9,8 @@
 
 * Mod tools/release-prep. [Kenneth Loafman]
 
+* Mod tools/release-prep. [Kenneth Loafman]
+
 * Add back setup entry points. [Kenneth Loafman]
 
 
