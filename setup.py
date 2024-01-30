@@ -389,11 +389,6 @@ setup(
         "test": TestCommand,
         "scmversion": SCMVersionSourceCommand,
     },
-    entry_points={
-        "console_scripts": [
-            "duplicity=duplicity.duplicity.__main__:run_dup",
-        ],
-    },
 )
 
 cleanup()
