@@ -21,9 +21,9 @@
 
 cd `dirname "$0"`/..
 
-find duplicity -name '*.py' >> po/POTFILES.in
+find duplicity -name '*.py' | sort > po/POTFILES.in
 
-find testing -name '*.py' > po/POTFILES.skip
+find testing -name '*.py' | sort > po/POTFILES.skip
 
 cd `dirname "$0"`
 
