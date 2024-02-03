@@ -1,17 +1,25 @@
 # Changelog
 
 
-## rel.2.2.1 (2024-01-29)
+## rel.2.2.2 (2024-02-03)
 
 ### Changes
 
-* Mod tools/release-prep. [Kenneth Loafman]
+* Ask google\_auth\_oauthlib not to open browser during authentication
+flow. [Christopher Haglund]
 
-* Mod tools/release-prep. [Kenneth Loafman]
+* Run po/update-pot. [Kenneth Loafman]
 
-* Mod tools/release-prep. [Kenneth Loafman]
+* Update `python\_requires` to allow py3.12. [Kenneth Loafman]
 
-* Add back setup entry points. [Kenneth Loafman]
+### Fix
+
+* Clean up debian/rules. [Kenneth Loafman]
+
+* Add duplicity console script. [Kenneth Loafman]
+
+    - Copied from pip install
+    - LP does not generate it
 
 
 ## rel.2.2.0 (2024-01-27)
