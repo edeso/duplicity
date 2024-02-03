@@ -125,7 +125,7 @@ Exception: {str(e)}"""
                             f"does not match the URL ({client_id})"
                         )
 
-                    flow_args = {}
+                    flow_args = {"open_browser": False}
                     if "GOOGLE_OAUTH_LOCAL_SERVER_PORT" in os.environ:
                         flow_args["port"] = int(os.environ["GOOGLE_OAUTH_LOCAL_SERVER_PORT"])
                     if "GOOGLE_OAUTH_LOCAL_SERVER_HOST" in os.environ:
