@@ -302,8 +302,8 @@ def process_command_line(cmdline_list):
     if (
         config.use_agent
         and config.gpg_profile.sign_key is None
-        and config.gpg_profile.recipients is None
-        and config.gpg_profile.hidden_recipients is None
+        and len(config.gpg_profile.recipients) == 0
+        and len(config.gpg_profile.hidden_recipients) == 0
     ):
         config.use_agent = False
         log.Warn(
