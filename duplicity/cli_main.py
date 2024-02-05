@@ -298,6 +298,19 @@ def process_command_line(cmdline_list):
     gpg_version = ".".join(map(str, config.gpg_profile.gpg_version))
     log.Info(_(f"GPG binary is {config.gpg_binary}, version {gpg_version}"))
 
+    # --use-agent is not valid for symmetric encryption.  Turn it off and notify user.
+    if (
+        config.use_agent
+        and config.gpg_profile.sign_key is None
+        and config.gpg_profile.recipients is None
+        and config.gpg_profile.hidden_recipients is None
+    ):
+        config.use_agent = False
+        log.Warn(
+            "Option --gpg-agent is unsafe with symmetric encryption.  Ignoring --gpg-agent.\n"
+            "Refer to https://gitlab.com/duplicity/duplicity/-/issues/799 for more information."
+        )
+
     # shorten incremental to inc, replace backup with inc
     if config.action in ("incremental", "backup"):
         if config.action == "backup":
