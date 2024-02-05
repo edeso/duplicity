@@ -2,9 +2,6 @@
 
 set -e
 
-# in git repo, no .py extension
-echo bin/duplicity > /tmp/filelist
-
 # in git repo
 git ls-files | grep '.*.py$' >> /tmp/filelist
 
