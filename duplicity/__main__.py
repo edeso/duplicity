@@ -55,7 +55,7 @@ def with_tempdir(fn):
         tempdir.default().cleanup()
 
 
-if __name__ == "__main__":
+def dup_run():
     try:
         log.setup()
         util.start_debugger()
@@ -105,3 +105,7 @@ if __name__ == "__main__":
         else:
             # Traceback and that mess
             log.FatalError(util.exception_traceback(), log.ErrorCode.exception, e.__class__.__name__)
+
+
+if __name__ == "__main__":
+    dup_run()

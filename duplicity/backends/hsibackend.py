@@ -37,13 +37,13 @@ class HSIBackend(duplicity.backend.Backend):
             self.remote_prefix = ""
 
     def _put(self, source_path, remote_filename):
-        if isinstance(remote_filename, b"".__class__):
+        if isinstance(remote_filename, bytes):
             remote_filename = os.fsdecode(remote_filename)
         commandline = f'{hsi_command} "put {source_path.uc_name} : {self.remote_prefix}{remote_filename}"'
         self.subprocess_popen(commandline)
 
     def _get(self, remote_filename, local_path):
-        if isinstance(remote_filename, b"".__class__):
+        if isinstance(remote_filename, bytes):
             remote_filename = os.fsdecode(remote_filename)
         commandline = f'{hsi_command} "get {local_path.uc_name} : {self.remote_prefix}{remote_filename}"'
         self.subprocess_popen(commandline)
@@ -58,7 +58,7 @@ class HSIBackend(duplicity.backend.Backend):
         return [os.fsencode(x) for x in l if x]
 
     def _delete(self, filename):
-        if isinstance(filename, b"".__class__):
+        if isinstance(filename, bytes):
             filename = os.fsdecode(filename)
         commandline = f'{hsi_command} "rm {self.remote_prefix}{filename}"'
         self.subprocess_popen(commandline)

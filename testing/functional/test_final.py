@@ -21,12 +21,16 @@
 
 
 import os
-import pytest
 import unittest
 
+import pytest
+
 from duplicity import path
-from testing import _runtest_dir
-from . import CmdError, FunctionalTestCase
+from testing.functional import (
+    _runtest_dir,
+    CmdError,
+    FunctionalTestCase,
+)
 
 
 class FinalTest(FunctionalTestCase):

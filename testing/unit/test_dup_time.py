@@ -32,7 +32,7 @@ class TimeTest(object):
         """test timetostring and stringtotime"""
         dup_time.setcurtime()
         assert isinstance(dup_time.curtime, int)
-        assert isinstance(dup_time.curtimestr, (str, "".__class__))
+        assert isinstance(dup_time.curtimestr, (str, str))
         assert (
             dup_time.cmp(int(dup_time.curtime), dup_time.curtimestr) == 0
             or dup_time.cmp(int(dup_time.curtime) + 1, dup_time.curtimestr) == 0

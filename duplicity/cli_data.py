@@ -24,6 +24,7 @@ Data for parse command line, check for consistency, and set config
 
 from dataclasses import dataclass
 
+from duplicity import __reldate__
 from duplicity import __version__
 from duplicity.cli_util import *
 
@@ -736,7 +737,7 @@ OptionKwargs = dict(
     ),
     version=dict(
         action="version",
-        version=f"duplicity {__version__}",
+        version=f"duplicity {__version__} {__reldate__}",
         help="Display version and exit",
     ),
     volsize=dict(
@@ -752,10 +753,12 @@ OptionKwargs = dict(
     ),
     # TESTING ONLY - do not use in production
     current_time=dict(
+        metavar="time",
         type=int,
         help=argparse.SUPPRESS,
     ),
     fail_on_volume=dict(
+        metavar="volume",
         type=int,
         help=argparse.SUPPRESS,
     ),
@@ -764,6 +767,7 @@ OptionKwargs = dict(
         help=argparse.SUPPRESS,
     ),
     skip_volume=dict(
+        metavar="volume",
         type=int,
         help=argparse.SUPPRESS,
     ),

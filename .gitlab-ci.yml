@@ -24,15 +24,14 @@
     rules:
         - if: $CI_COMMIT_MESSAGE =~ /\[skip[ _-]tests?\]/i || $SKIP_TESTS
           when: never
+#        - if: $CI_MERGE_REQUEST_ID == null
+#          when: never
         - changes:
             - .gitlab-ci.yml
-            - .pylintrc
-            - .pyproject.toml
-            - requirements.txt
-            - setup.cfg
-            - tox.ini
-            - bin/duplicity
             - duplicity/**/*
+            - pyproject.toml
+            - requirements.txt
+            - setup.*
             - testing/**/*
           when: always
         - when: never
@@ -66,7 +65,8 @@ code:
     stage: qual
     script:
         - python3 -m pip install -r requirements.txt
-        - tox -e code
+        - python3 ./setup.py build_ext
+        - RUN_CODE_TESTS=1 pytest testing/test_code.py
     allow_failure: true
 
 py38:
@@ -75,7 +75,8 @@ py38:
     stage: test
     script:
         - python3 -m pip install -r requirements.txt
-        - tox -e py38
+        - python3 ./setup.py build_ext
+        - pytest testing/unit testing/functional
 
 py39:
     <<: *test-template
@@ -83,7 +84,8 @@ py39:
     stage: test
     script:
         - python3 -m pip install -r requirements.txt
-        - tox -e py39
+        - python3 ./setup.py build_ext
+        - pytest testing/unit testing/functional
 
 py310:
     <<: *test-template
@@ -91,7 +93,8 @@ py310:
     stage: test
     script:
         - python3 -m pip install -r requirements.txt
-        - tox -e py310
+        - python3 ./setup.py build_ext
+        - pytest testing/unit testing/functional
 
 py311:
     <<: *test-template
@@ -99,7 +102,17 @@ py311:
     stage: test
     script:
         - python3 -m pip install -r requirements.txt
-        - tox -e py311
+        - python3 ./setup.py build_ext
+        - pytest testing/unit testing/functional
+
+py312:
+    <<: *test-template
+    image: python:3.12
+    stage: test
+    script:
+        - python3 -m pip install -r requirements.txt
+        - python3 ./setup.py build_ext
+        - pytest testing/unit testing/functional
 
 pages:
     stage: deploy
@@ -138,7 +151,7 @@ website:
         - changes:
             - "CHANGELOG.md"
             - "README.md"
-            - "bin/*.1"
+            - "man/*.1"
           if: $CI_PIPELINE_SOURCE == "push"
           when: always
         - when: manual
@@ -149,7 +162,7 @@ website:
     script: |
         if [[ $WEBSITE_TRIGGER_TOKEN != "" ]]; then
             curl --fail-with-body \
-                 -X POST \
-                 -F token=${WEBSITE_TRIGGER_TOKEN} \
-                 -F ref=master https://gitlab.com/api/v4/projects/29130748/trigger/pipeline
+                -X POST \
+                -F token=${WEBSITE_TRIGGER_TOKEN} \
+                -F ref=master https://gitlab.com/api/v4/projects/29130748/trigger/pipeline
         fi

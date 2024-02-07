@@ -63,13 +63,11 @@ class OneDriveBackend(duplicity.backend.Backend):
         self.directory_onedrive_path = f"{self.drive_root + '/root'}:/{self.directory}/"
         if self.directory == "":
             raise BackendException(
-                ("You did not specify a path. " "Please specify a path, e.g. onedrive://duplicity_backups")
+                "You did not specify a path. " "Please specify a path, e.g. onedrive://duplicity_backups"
             )
 
         if config.volsize > (10 * 1024 * 1024 * 1024):
-            raise BackendException(
-                ("Your --volsize is bigger than 10 GiB, which is the maximum " "file size on OneDrive.")
-            )
+            raise BackendException("Your --volsize is bigger than 10 GiB, which is the maximum file size on OneDrive.")
 
         self.initialize_oauth2_session()
 
@@ -104,7 +102,7 @@ class OneDriveBackend(duplicity.backend.Backend):
             response.raise_for_status()
             responseJson = response.json()
             if "value" not in responseJson:
-                raise BackendException((f'Malformed JSON: expected "value" member in {responseJson}'))
+                raise BackendException(f'Malformed JSON: expected "value" member in {responseJson}')
             accum += responseJson["value"]
             if "@odata.nextLink" in responseJson:
                 next_url = responseJson["@odata.nextLink"]
@@ -192,7 +190,7 @@ class OneDriveBackend(duplicity.backend.Backend):
             timeout=config.timeout,
         )
         if response.status_code == 404:
-            raise BackendException((f'File "{remote_filename}" cannot be deleted: it does not exist'))
+            raise BackendException(f'File "{remote_filename}" cannot be deleted: it does not exist')
         response.raise_for_status()
 
     def _query(self, remote_filename):
@@ -204,7 +202,7 @@ class OneDriveBackend(duplicity.backend.Backend):
         if response.status_code != 200:
             return {"size": -1}
         if "size" not in response.json():
-            raise BackendException((f'Malformed JSON: expected "size" member in {response.json()}'))
+            raise BackendException(f'Malformed JSON: expected "size" member in {response.json()}')
         return {"size": response.json()["size"]}
 
     def _retry_cleanup(self):

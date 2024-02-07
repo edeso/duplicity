@@ -22,14 +22,14 @@
 import unittest
 
 from duplicity import cached_ops
-from duplicity import tarfile
+from duplicity import dup_tarfile
 from . import UnitTestCase
 
 
 class TarfileTest(UnitTestCase):
     def test_cached_ops(self):
-        self.assertTrue(tarfile.grp is cached_ops)
-        self.assertTrue(tarfile.pwd is cached_ops)
+        self.assertTrue(dup_tarfile.grp is cached_ops)
+        self.assertTrue(dup_tarfile.pwd is cached_ops)
 
 
 if __name__ == "__main__":

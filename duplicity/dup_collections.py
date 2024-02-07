@@ -144,10 +144,7 @@ class BackupSet(object):
         ), f"Cannot set filename of remote manifest to {remote_filename}; already set to {self.remote_jsonstat_name}."
         self.remote_jsonstat_name = remote_filename
 
-        if self.action != "replicate":
-            local_filename_list = config.archive_dir_path.listdir()
-        else:
-            local_filename_list = []
+        local_filename_list = config.archive_dir_path.listdir()
         for local_filename in local_filename_list:
             pr = file_naming.parse(local_filename)
             if (

@@ -29,13 +29,11 @@ import time
 
 import duplicity.backend
 from duplicity import (
+    log,
     path,
     progress,
 )
 from duplicity.errors import BackendException
-import duplicity.log as log
-
-log._logger.addHandler(logging.FileHandler("/tmp/testbackend.log"))
 
 ERROR_ON = {}
 
@@ -57,6 +55,7 @@ class _TestBackend(duplicity.backend.Backend):
     """
 
     def __init__(self, parsed_url):
+        log._logger.addHandler(logging.FileHandler("/tmp/testbackend.log"))
         log.Warn("TestBackend is not made for produtcion use!")
         # The URL form "file:MyFile" is not a valid duplicity target.
         if not parsed_url.path.startswith("//"):

@@ -26,11 +26,12 @@ import time
 
 import pexpect
 
-from duplicity import config
 from duplicity import backend
-from .. import DuplicityTestCase
-from .. import _runtest_dir
-from .. import _top_dir
+from duplicity import config
+from duplicity import util
+from testing import DuplicityTestCase
+from testing import _runtest_dir
+from testing import _top_dir
 
 
 class CmdError(Exception):
@@ -83,35 +84,38 @@ class FunctionalTestCase(DuplicityTestCase):
         """
         Run duplicity binary with given arguments and options
         """
-        # We run under setsid and take input from /dev/null (below) because
-        # this way we force a failure if duplicity tries to read from the
-        # console unexpectedly (like for gpg password or such).
 
-        # Check all string inputs are unicode -- we will convert to system encoding before running the command
         if options is None:
             options = []
         if passphrase_input is None:
             passphrase_input = []
 
+        # Check all string inputs are unicode -- we will convert to system encoding before running the command
         for item in passphrase_input:
-            assert isinstance(item, "".__class__), f"item {os.fsdecode(item)} in passphrase_input is not unicode"
+            assert isinstance(item, str), f"item {os.fsdecode(item)} in passphrase_input is not unicode"
 
+        # set python path to be dev directory
+        os.environ["PYTHONPATH"] = _top_dir
+
+        cmd_list = []
+
+        # We run under setsid and take input from /dev/null (below) because
+        # this way we force a failure if duplicity tries to read from the
+        # console unexpectedly (like for gpg password or such).
         if platform.platform().startswith("Linux"):
-            cmd_list = ["setsid"]
+            cmd_list.extend(["setsid"])
             if self._setsid_w:
                 cmd_list.extend(["-w"])
-        else:
-            cmd_list = []
 
         if basepython := os.environ.get("TOXPYTHON", None):
-            cmd_list.extend([basepython, "-bb"])
+            cmd_list.extend([util.which(basepython)])
         else:
-            cmd_list.extend(["python3", "-bb"])
+            cmd_list.extend(["python3"])
 
         if run_coverage := os.environ.get("RUN_COVERAGE", None):
             cmd_list.extend(["-m", "coverage", "run", "--source=duplicity", "-p"])
 
-        cmd_list.extend([f"{_top_dir}/bin/duplicity"])
+        cmd_list.extend([os.path.join(_top_dir, "duplicity", "__main__.py")])
         cmd_list.extend(options)
 
         if run_debugger := os.environ.get("PYDEVD", None):
@@ -127,15 +131,23 @@ class FunctionalTestCase(DuplicityTestCase):
         cmd_list.extend(self.class_args)
 
         if fail:
-            cmd_list.extend(["--fail", "".__class__(fail)])
+            cmd_list.extend(["--fail", fail])
 
-        cmdline = " ".join([f'"{x}"' for x in cmd_list])
+        # convert to string and single quote to avoid shell expansion
+        cmdline = " ".join([f"'{x}'" for x in cmd_list])
 
         if not passphrase_input:
             cmdline += " < /dev/null"
 
-        # Set encoding to filesystem encoding and send to spawn
-        child = pexpect.spawn("/bin/sh", ["-c", cmdline], timeout=timeout, encoding=config.fsencoding)  # type: ignore
+        # Set encoding to filesystem encoding and send to spawn.
+        # option -f to shell avoids globbing which breaks selection tests.
+        # shell used instead of cmdline to allow setsid to be prepended.
+        child = pexpect.spawn(
+            "/bin/sh",
+            ["-f", "-c", cmdline],
+            timeout=None,
+            encoding=config.fsencoding,
+        )
 
         for passphrase in passphrase_input:
             child.expect("passphrase.*:")
@@ -161,12 +173,17 @@ class FunctionalTestCase(DuplicityTestCase):
                     print(os.fsdecode(line), file=sys.stderr)
             print("...return_val:", return_val, file=sys.stderr)
             raise CmdError(return_val)
+        else:
+            for line in lines:
+                line = line.rstrip()
+                if line:
+                    print(os.fsdecode(line), file=sys.stderr)
 
     def backup(self, type, input_dir, options=None, **kwargs):  # pylint: disable=redefined-builtin
         """Run duplicity backup to default directory"""
         if options is None:
             options = []
-        options = [type, input_dir, self.backend_url, "--volsize", "1"] + options
+        options = [type, input_dir, self.backend_url, "--volsize=1"] + options
         before_files = self.get_backend_files()
 
         # If a chain ends with time X and the next full chain begins at time X,
@@ -213,7 +230,7 @@ class FunctionalTestCase(DuplicityTestCase):
         if file_to_restore:
             options.extend(["--path-to-restore", file_to_restore])
         if time:
-            options.extend(["--restore-time", "".__class__(time)])
+            options.extend(["--restore-time", str(time)])
         self.run_duplicity(options=options, **kwargs)
 
     def verify(self, dirname, file_to_verify=None, time=None, options=None, **kwargs):
@@ -223,7 +240,7 @@ class FunctionalTestCase(DuplicityTestCase):
         if file_to_verify:
             options.extend(["--path-to-restore", file_to_verify])
         if time:
-            options.extend(["--restore-time", "".__class__(time)])
+            options.extend(["--restore-time", str(time)])
         self.run_duplicity(options=options, **kwargs)
 
     def cleanup(self, options=None):
@@ -235,10 +252,12 @@ class FunctionalTestCase(DuplicityTestCase):
         options = ["cleanup", self.backend_url, "--force"] + options
         self.run_duplicity(options=options)
 
-    def collection_status(self, options=[]):
+    def collection_status(self, options=None):
         """
         Run duplicity collection-status to default directory
         """
+        if options is None:
+            options = []
         options = ["collection-status", self.backend_url] + options
         self.run_duplicity(options=options)
 

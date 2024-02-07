@@ -24,15 +24,11 @@
 import io
 import platform
 import unittest
+from unittest.mock import patch
 
 from duplicity.lazy import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 from duplicity.selection import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 from . import UnitTestCase
-
-try:
-    from unittest.mock import patch
-except ImportError:
-    from mock import patch
 
 
 class MatchingTest(UnitTestCase):
@@ -290,7 +286,7 @@ class ParseArgsTest(UnitTestCase):
         """Turn strings in filelist into fileobjs"""
         new_filelists = []
         for f in filelist:
-            if isinstance(f, "".__class__):
+            if isinstance(f, str):
                 new_filelists.append(io.StringIO(f))
             else:
                 new_filelists.append(f)

@@ -144,7 +144,7 @@ class TemporaryDirectory(object):
             else:
                 global _initialSystemTempRoot
                 temproot = _initialSystemTempRoot
-        if isinstance(temproot, b"".__class__):
+        if isinstance(temproot, bytes):
             temproot = os.fsdecode(temproot)
 
         if platform.system().startswith("Darwin") and defaults_to_tmp(temproot):

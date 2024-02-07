@@ -1,5 +1,5 @@
 name: duplicity
-version: $version
+version: 2.2.2
 license: GPL-2.0
 summary: Efficient, encrypted backup to local or remote hosts
 description: |

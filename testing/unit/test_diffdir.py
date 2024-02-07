@@ -26,7 +26,7 @@ from duplicity import diffdir
 from duplicity import selection
 from duplicity.path import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 from testing import _runtest_dir
-from . import UnitTestCase
+from testing.unit import UnitTestCase
 
 
 class DDTest(UnitTestCase):
@@ -55,7 +55,7 @@ class DDTest(UnitTestCase):
         diffdir.write_block_iter(sigtar, f"{_runtest_dir}/testfiles/output/sigtar")
 
         i = 0
-        for tarinfo in tarfile.TarFile(f"{_runtest_dir}/testfiles/output/sigtar", "r"):
+        for tarinfo in dup_tarfile.TarFile(f"{_runtest_dir}/testfiles/output/sigtar", "r"):
             i += 1
         assert i >= 5, "There should be at least 5 files in sigtar"
 
@@ -127,7 +127,7 @@ class DDTest(UnitTestCase):
             "snapshot/directory_to_file",
             "snapshot/file_to_directory/",
         ]
-        for tarinfo in tarfile.TarFile(f"{_runtest_dir}/testfiles/output/dir1dir2.difftar", "r"):
+        for tarinfo in dup_tarfile.TarFile(f"{_runtest_dir}/testfiles/output/dir1dir2.difftar", "r"):
             tiname = util.get_tarinfo_name(tarinfo)
             if tiname in changed_files:
                 changed_files.remove(tiname)
@@ -148,7 +148,7 @@ class DDTest(UnitTestCase):
         diffdir.write_block_iter(delta_tar, f"{_runtest_dir}/testfiles/output/dir2dir3.difftar")
 
         buffer = b""
-        tf = tarfile.TarFile(f"{_runtest_dir}/testfiles/output/dir2dir3.difftar", "r")
+        tf = dup_tarfile.TarFile(f"{_runtest_dir}/testfiles/output/dir2dir3.difftar", "r")
         for tarinfo in tf:
             if tarinfo.name.startswith(r"multivol_diff/"):
                 buffer += tf.extractfile(tarinfo).read()
@@ -254,15 +254,15 @@ class DDTest(UnitTestCase):
 
 def compare_tar(tarfile1, tarfile2):
     """Compare two tarfiles"""
-    tf1 = tarfile.TarFile("none", "r", tarfile1)
-    tf2 = tarfile.TarFile("none", "r", tarfile2)
+    tf1 = dup_tarfile.TarFile("none", "r", tarfile1)
+    tf2 = dup_tarfile.TarFile("none", "r", tarfile2)
     tf2_iter = iter(tf2)
 
     for ti1 in tf1:
         try:
             ti2 = next(tf2_iter)
         except StopIteration:
-            assert 0, f"Premature end to second tarfile, ti1.name = {ti1.name}"
+            assert 0, f"Premature end to second dup_tarfile, ti1.name = {ti1.name}"
         # print "Comparing ", ti1.name, ti2.name
         assert tarinfo_eq(ti1, ti2), f"{ti1.name} {ti2.name}"
         if ti1.size != 0:
@@ -278,7 +278,7 @@ def compare_tar(tarfile1, tarfile2):
     except StopIteration:
         pass
     else:
-        assert 0, f"Premature end to first tarfile, ti2.name = {ti2.name}"
+        assert 0, f"Premature end to first dup_tarfile, ti2.name = {ti2.name}"
 
     tarfile1.close()
     tarfile2.close()

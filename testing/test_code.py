@@ -37,7 +37,7 @@ if os.getenv("RUN_CODE_TESTS", None) == "1":
 
 from . import _top_dir, DuplicityTestCase
 
-files_to_test = [os.path.join(_top_dir, "bin/duplicity")]
+files_to_test = []
 files_to_test.extend(glob.glob(os.path.join(_top_dir, "duplicity/**/*.py"), recursive=True))
 files_to_test.extend(glob.glob(os.path.join(_top_dir, "testing/functional/*.py")))
 files_to_test.extend(glob.glob(os.path.join(_top_dir, "testing/unit/*.py")))
@@ -81,7 +81,7 @@ class CodeTest(DuplicityTestCase):
         """Test that we conform to PEP-8 using pycodestyle."""
         # Note that the settings, ignores etc for pycodestyle are set in tox.ini, not here
         print()
-        style = pycodestyle.StyleGuide(config_file=os.path.join(_top_dir, "tox.ini"))
+        style = pycodestyle.StyleGuide(config_file=os.path.join(_top_dir, "setup.cfg"))
         result = style.check_files(files_to_test)
         self.assertEqual(
             result.total_errors,
@@ -95,7 +95,7 @@ class CodeTest(DuplicityTestCase):
         self.run_checker(
             [
                 "pylint",
-                f"--rcfile={os.path.join(_top_dir, '.pylintrc')}",
+                f"--rcfile={os.path.join(_top_dir, 'setup.cfg')}",
             ]
             + files_to_test
         )

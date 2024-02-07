@@ -28,9 +28,8 @@ import unittest
 
 import pytest
 
-from duplicity import config
-from testing import _runtest_dir
-from . import FunctionalTestCase
+from testing.functional import _runtest_dir
+from testing.functional import FunctionalTestCase
 
 
 class RestartTest(FunctionalTestCase):

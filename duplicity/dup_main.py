@@ -30,16 +30,13 @@
 # any suggestions.
 
 
-import copy
 import os
 import platform
 import resource
-import socket
 import sys
 import time
 from datetime import datetime
-
-import fasteners
+from textwrap import dedent
 
 from duplicity import __version__
 from duplicity import asyncscheduler
@@ -49,7 +46,6 @@ from duplicity import diffdir
 from duplicity import dup_collections
 from duplicity import dup_temp
 from duplicity import dup_time
-from duplicity import errors
 from duplicity import file_naming
 from duplicity import gpg
 from duplicity import log
@@ -67,7 +63,6 @@ exit_val = None
 
 def getpass_safe(message):
     import getpass
-    import locale
 
     return getpass.getpass(message)
 
@@ -1479,7 +1474,7 @@ class Restart(object):
                     )
                 )
                 self.last_backup.delete()
-                os.execve(sys.argv[0], sys.argv, os.environ)
+                os.execve(sys.argv[0], sys.argv[1:], os.environ)
             elif mf_len - self.start_vol > 0:
                 # upload of N vols failed, fix manifest and restart
                 log.Notice(
@@ -1502,7 +1497,7 @@ class Restart(object):
                     % (mf_len, self.start_vol)
                 )
                 self.last_backup.delete()
-                os.execve(sys.argv[0], sys.argv, os.environ)
+                os.execve(sys.argv[0], sys.argv[1:], os.environ)
 
     def setLastSaved(self, mf):
         vi = mf.volume_info_dict[self.start_vol]
@@ -1519,14 +1514,16 @@ def main():
     # and refuse to run if it is set.
     if "PYTHONOPTIMIZE" in os.environ:
         log.FatalError(
-            _(
-                """\
-PYTHONOPTIMIZE in the environment causes duplicity to fail to
-recognize its own backups.  Please remove PYTHONOPTIMIZE from
-the environment and rerun the backup.
+            dedent(
+                _(
+                    """\
+                PYTHONOPTIMIZE in the environment causes duplicity to fail to
+                recognize its own backups.  Please remove PYTHONOPTIMIZE from
+                the environment and rerun the backup.
 
-See https://bugs.launchpad.net/duplicity/+bug/931175
-"""
+                See https://bugs.launchpad.net/duplicity/+bug/931175
+                """
+                )
             ),
             log.ErrorCode.pythonoptimize_set,
         )
@@ -1544,15 +1541,8 @@ See https://bugs.launchpad.net/duplicity/+bug/931175
     # determine what action we're performing and process command line
     action = cli_main.process_command_line(sys.argv[1:])
 
-    config.lockpath = os.path.join(config.archive_dir_path.name, b"lockfile")
-    config.lockfile = fasteners.process_lock.InterProcessLock(config.lockpath)
-    log.Debug(_("Acquiring lockfile %s") % os.fsdecode(config.lockpath))
-    if not config.lockfile.acquire(blocking=False):
-        log.FatalError(
-            "Another duplicity instance is already running with this archive directory\n", log.ErrorCode.user_error
-        )
-        log.shutdown()
-        sys.exit(2)
+    # make sure we have lock
+    util.acquire_lockfile()
 
     # log some status info
     log_startup_parms(log.INFO)
@@ -1594,7 +1584,7 @@ def do_backup(action):
                 break
             last_backup = last_full_chain.get_last()
             if last_backup.partial:
-                if action in ["backup", "full", "inc"]:
+                if action in ["full", "inc"]:
                     # set restart parms from last_backup info
                     config.restart = Restart(last_backup)
                     # (possibly) reset action
@@ -1627,7 +1617,7 @@ def do_backup(action):
         log.Notice(_("Last full backup date: none"))
     if (
         not config.restart
-        and action in ["inc", "backup"]
+        and action in ["inc"]
         and config.full_if_older_than is not None
         and last_full_time < dup_time.curtime - config.full_if_older_than
     ):
@@ -1666,7 +1656,7 @@ def do_backup(action):
     elif action == "sync":
         sync_archive(col_stats)
     else:
-        assert action in ["backup", "full", "inc"], action
+        assert action in ["full", "inc"], action
         # the passphrase for full and inc is used by --sign-key
         # the sign key can have a different passphrase than the encrypt
         # key, therefore request a passphrase

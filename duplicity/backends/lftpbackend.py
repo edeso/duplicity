@@ -142,7 +142,7 @@ class LFTPBackend(duplicity.backend.Backend):
             log.Debug(f"SETTINGS: \n{f.read()}")
 
     def _put(self, source_path, remote_filename):
-        if isinstance(remote_filename, b"".__class__):
+        if isinstance(remote_filename, bytes):
             remote_filename = os.fsdecode(remote_filename)
         commandline = (
             f'lftp -c "source {self.tempname}; mkdir -p -f {cmd_quote(self.remote_path)}; '
@@ -156,7 +156,7 @@ class LFTPBackend(duplicity.backend.Backend):
         log.Debug(f"STDOUT:\n{l}")
 
     def _get(self, remote_filename, local_path):
-        if isinstance(remote_filename, b"".__class__):
+        if isinstance(remote_filename, bytes):
             remote_filename = os.fsdecode(remote_filename)
         commandline = (
             f'lftp -c "source {cmd_quote(self.tempname)}; '
