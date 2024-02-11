@@ -326,8 +326,9 @@ no --archive-dir, --name=foo
 .RE
 
 .TP
-.BI "--asynchronous-upload "
-(EXPERIMENTAL) Perform file uploads asynchronously in the background,
+.B --asynchronous-upload
+.B (EXPERIMENTAL)
+Perform file uploads asynchronously in the background,
 with respect to volume creation. This means that duplicity can upload
 a volume while, at the same time, preparing the next volume for
 upload. The intended end-result is a faster backup, because the local
@@ -497,7 +498,6 @@ section for more information.
 
 .TP
 .BI "--files-from " filename
-.RS
 Read a list of files to backup from filename rather than searching the entire
 backup source directory. Operation is otherwise normal, just on the specified
 subset of the backup source directory.
@@ -512,7 +512,6 @@ switch was given.
 It is not necessary to include the parent directory of listed files, their
 inclusion is implied. However, the content of any explicitly listed directories
 is not implied. All required files must be listed when this option is used.
-.RE
 
 .TP
 .BI "--file-prefix " prefix
@@ -525,7 +524,6 @@ is not implied. All required files must be listed when this option is used.
 .PD 0
 .TP
 .BI "--file-prefix-signature " prefix
-.RS
 Adds a prefix to either all files or only manifest, archive, signature files.
 The same set of prefixes must be passed in on backup and restore.
 .br
@@ -534,7 +532,6 @@ type-specific prefixes.
 
 See also
 .B "A NOTE ON FILENAME PREFIXES"
-.RE
 
 .TP
 .BI "--path-to-restore " path
@@ -558,7 +555,6 @@ should be given relative to the root of the directory backed up.
 .PD 0
 .TP
 .BI --filter-strictcase
-.RS
 Change the interpretation of patterns passed to the file selection condition
 option arguments
 .BI --exclude
@@ -574,7 +570,6 @@ option.
 See the
 .B FILE SELECTION
 section for more information.
-.RE
 
 .TP
 .BI "--full-if-older-than " time
@@ -630,7 +625,6 @@ backup. See gpg(1) for more details.
 
 .TP
 .BI --ignore-errors
-.RS
 Try to ignore certain errors if they happen. This option is only
 intended to allow the restoration of a backup in the face of certain
 problems that would otherwise cause the backup to fail. It is not ever
@@ -649,7 +643,6 @@ If you ever have to use this option for reasons that are not
 understood or understood but not your own responsibility, please
 contact duplicity maintainers. The need to use this option under
 production circumstances would normally be considered a bug.
-.RE
 
 .TP
 .BI "--imap-full-address " email_address
@@ -747,7 +740,6 @@ Write the log with timestamp and log level before the message, similar to syslog
 
 .TP
 .BI "--max-blocksize " number
-.RS
 determines the number of the blocks examined for changes during the diff process.
 For files < 1MB the blocksize is a constant of 512.
 For files over 1MB the size is given by:
@@ -759,7 +751,6 @@ where config.max_blocksize defaults to 2048.
 If you specify a larger max_blocksize, your difftar files will be larger, but your sigtar files will be smaller.
 If you specify a smaller max_blocksize, the reverse occurs.
 The --max-blocksize option should be in multiples of 512.
-.RE
 
 .TP
 .BI --mf-purge
@@ -771,7 +762,6 @@ Swift backend segment size in megabytes
 
 .TP
 .BI "--name " symbolicname
-.RS
 Set the symbolic name of the backup being operated on. The intent is
 to use a separate name for each logically distinct backup. For
 example, someone may use "home_daily_s3" for the daily backup of a
@@ -783,7 +773,6 @@ name is currently only used to affect the expansion of
 more than one distinct backup are encouraged to use this option.
 
 If not specified, the default value is a hash of the backend URL.
-.RE
 
 .TP
 .BI --no-check-remote
@@ -868,7 +857,6 @@ option). Default is to print the status each 3 seconds.
 
 .TP
 .BI "--rename " "<original path> <new path>"
-.RS
 Treats the path
 .I orig
 in the backup as if it were the path
@@ -876,11 +864,9 @@ in the backup as if it were the path
 Can be passed multiple times. An example:
 
 duplicity restore --rename Documents/metal Music/metal sftp://uid@other.host/some_dir /home/me
-.RE
 
 .TP
 .BI "--rsync-options " options
-.RS
 Allows you to pass options to the rsync backend.  The
 .I options
 list should be of the form "opt1=parm1 opt2=parm2" where the option string is
@@ -889,17 +875,13 @@ will be passed verbatim to rsync, after any internally generated option
 designating the remote port to use. Here is a possibly useful example:
 
 duplicity --rsync-options="--partial-dir=.rsync-partial" /home/me rsync://uid@other.host/some_dir
-.RE
 
 .TP
 .BI "--s3-endpoint-url " url
-.RS
 Specifies the endpoint URL of the S3 storage.
-.RE
 
 .TP
 .BI "--s3-multipart-chunk-size"
-.RS
 Chunk size (in MB, default is 20MB) used for S3 multipart uploads. Adjust this
 to maximize bandwidth usage. For example, a chunk size of 10MB and a
 volsize of 100MB would result in 10 chunks per volume upload.
@@ -912,11 +894,9 @@ for optimal performance.
 See also
 .B "A NOTE ON AMAZON S3"
 below.
-.RE
 
 .TP
 .BI "--s3-multipart-max-procs"
-.RS
 Maximum number of concurrent uploads when performing a multipart upload.
 The default is 4. You can adjust this number to maximizing bandwidth
 and CPU utilization.
@@ -927,17 +907,13 @@ Too many concurrent uploads may have diminishing returns.
 See also
 .B "A NOTE ON AMAZON S3"
 below.
-.RE
 
 .TP
 .BI "--s3-region-name"
-.RS
 Specifies the region of the S3 storage. Usually mandatory if the bucket is created in a specific region.
-.RE
 
 .TP
 .BI "--s3-unencrypted-connection"
-.RS
 Disable SSL for connections to S3. This may be much faster, at some cost to confidentiality.
 
 With this option set, anyone between your computer and S3 can observe the traffic
@@ -951,11 +927,9 @@ the file names or contents.
 See also
 .B "A NOTE ON AMAZON S3"
 below.
-.RE
 
 .TP
 .BI "--s3-use-deep-archive"
-.RS
 Store volumes using Glacier Deep Archive S3 when uploading to Amazon S3. This storage class
 has a lower cost of storage but a higher per-request cost along with delays
 of up to 48 hours from the time of retrieval request. This storage cost is
@@ -968,11 +942,9 @@ Glacier Deep Archive back to Standard S3 and wait for AWS to complete the migrat
 Duplicity will store the manifest.gpg and sigtar.gpg files from full and incremental backups on
 AWS S3 standard storage to allow quick retrieval for later incremental backups,
 all other data is stored in S3 Glacier Deep Archive.
-.RE
 
 .TP
 .BI "--s3-use-glacier"
-.RS
 Store volumes using Glacier Flexible Storage when uploading to Amazon S3. This storage class
 has a lower cost of storage but a higher per-request cost along with delays
 of up to 12 hours from the time of retrieval request. This storage cost is
@@ -985,11 +957,9 @@ Glacier back to Standard S3 and wait for AWS to complete the migration.
 Duplicity will store the manifest.gpg and sigtar.gpg files from full and incremental backups on
 AWS S3 standard storage to allow quick retrieval for later incremental backups,
 all other data is stored in S3 Glacier.
-.RE
 
 .TP
 .BI "--s3-use-glacier-ir"
-.RS
 Store volumes using Glacier Instant Retrieval when uploading to Amazon S3. This storage class
 is similar to Glacier Flexible Storage but offers instant retrieval at standard speeds.
 
@@ -997,34 +967,27 @@ is similar to Glacier Flexible Storage but offers instant retrieval at standard 
 Duplicity will store the manifest.gpg and sigtar.gpg files from full and incremental backups on
 AWS S3 standard storage to allow quick retrieval for later incremental backups,
 all other data is stored in S3 Glacier.
-.RE
 
 .TP
 .BI "--s3-use-ia"
-.RS
 Store volumes using Standard - Infrequent Access when uploading to Amazon S3.
 This storage class has a lower storage cost but a higher per-request cost, and
 the storage cost is calculated against a 30-day storage minimum. According to
 Amazon, this storage is ideal for long-term file storage, backups, and disaster
 recovery.
-.RE
 
 .TP
 .BI "--s3-use-onezone-ia"
-.RS
 Store volumes using One Zone - Infrequent Access when uploading to Amazon S3.
 This storage is similar to Standard - Infrequent Access, but only stores object
 data in one Availability Zone.
-.RE
 
 .TP
 .BI "--s3-use-rrs"
-.RS
 Store volumes using Reduced Redundancy Storage when uploading to Amazon S3.
 This will lower the cost of storage but also lower the durability of stored
 volumes to 99.99% instead the 99.999999999% durability offered by Standard
 Storage on S3.
-.RE
 
 .TP
 .B --s3-use-server-side-kms-encryption
@@ -1034,17 +997,13 @@ Storage on S3.
 .PD 0
 .TP
 .BI "--s3-kms-grant " grant
-.RS
 Enable server-side encryption using key management service.
-.RE
 
 .TP
 .BI "--skip-if-no-change " command
-.RS
 By default an empty incremental backup is created if no files have changed.
 Setting this option will skip creating a backup if no data has changed.
 Nothing will be sent to the target nor information be cached.
-.RE
 
 .TP
 .BI "--scp-command " command
@@ -1077,7 +1036,6 @@ section
 
 .TP
 .BI "--sign-key " key-id
-.RS
 This option can be used when backing up, restoring or verifying.
 When backing up, all backup files will be signed with keyid
 .IR key .
@@ -1092,19 +1050,15 @@ signing key is supported. Last entry overrides all other entries.
 .br
 See also
 .BI "A NOTE ON SYMMETRIC ENCRYPTION AND SIGNING"
-.RE
 
 .TP
 .BI --ssh-askpass
-.RS
 Tells the ssh backend to prompt the user for the remote system password,
 if it was not defined in target url and no FTP_PASSWORD env var is set.
 This password is also used for passphrase-protected ssh keys.
-.RE
 
 .TP
 .BI "--ssh-options " options
-.RS
 Allows you to pass options to the ssh backend.
 Can be specified multiple times or as a space separated options list.
 The
@@ -1113,18 +1067,17 @@ list should be of the form "-oOpt1='parm1' -oOpt2='parm2'" where the option stri
 quoted and the only spaces allowed are between options. The option string
 will be passed verbatim to both scp and sftp, whose command line syntax
 differs slightly hence the options should therefore be given in the long option format described in
-.BR ssh_config(5).
-
-
+.BR ssh_config(5) .
+.br
 example of a list:
-
-    duplicity --ssh-options="-oProtocol=2 -oIdentityFile='/my/backup/id'" /home/me scp://user@host/some_dir
-
-
+.RS
+.RS
+duplicity --ssh-options="-oProtocol=2 -oIdentityFile='/my/backup/id'" /home/me scp://user@host/some_dir
+.RE
 example with multiple parameters:
-
-    duplicity --ssh-options="-oProtocol=2" --ssh-options="-oIdentityFile='/my/backup/id'" /home/me scp://user@host/some_dir
-
+.RS
+duplicity --ssh-options="-oProtocol=2" --ssh-options="-oIdentityFile='/my/backup/id'" /home/me scp://user@host/some_dir
+.RE
 
 .B NOTE:
 The
@@ -1142,46 +1095,37 @@ settings. If needed provide more host specific options via ssh_config file.
 
 .TP
 .BI "--ssl-cacert-file " file
-.RS
 .B (only webdav & lftp backend)
 Provide a cacert file for ssl certificate verification.
 
 See also
 .BR "A NOTE ON SSL CERTIFICATE VERIFICATION" .
-.RE
 
 .TP
 .BI "--ssl-cacert-path " path/to/certs/
-.RS
 .B (only webdav backend and python 2.7.9+ OR lftp+webdavs and a recent lftp)
 Provide a path to a folder containing cacert files for ssl certificate verification.
 
 See also
 .BR "A NOTE ON SSL CERTIFICATE VERIFICATION" .
-.RE
 
 .TP
 .BI --ssl-no-check-certificate
-.RS
 .B (only webdav & lftp backend)
 Disable ssl certificate verification.
 
 See also
 .BR "A NOTE ON SSL CERTIFICATE VERIFICATION" .
-.RE
 
 .TP
 .BI --swift-storage-policy
-.RS
 Use this storage policy when operating on Swift containers.
 
 See also
 .BR "A NOTE ON SWIFT (OPENSTACK OBJECT STORAGE) ACCESS" .
-.RE
 
 .TP
 .BI "--metadata-sync-mode " mode
-.RS
 This option defaults to 'partial', but you can set it to 'full'
 
 Use 'partial' to avoid syncing metadata for backup chains that you are not going to use.
@@ -1190,32 +1134,26 @@ old backup that was encrypted with a different passphrase by supplying only
 the target passphrase.
 
 Use 'full' to sync metadata for all backup chains on the remote.
-.RE
 
 .TP
 .BI "--tempdir " directory
-.RS
 Use this existing directory for duplicity temporary files instead of
 the system default, which is usually the /tmp directory. This option
 supersedes any environment variable.
 
 See also
 .BR "ENVIRONMENT VARIABLES" .
-.RE
 
 .TP
 .BI "-t " time ", --time " time ", --restore-time " time
-.RS
 Specify the time from which to restore or list files.
 
 See section
 .B TIME FORMATS
 for details.
-.RE
 
 .TP
 .BI "--time-separator " char
-.RS
 Use
 .IR char
 as the time separator in filenames instead of colon (":").
@@ -1224,20 +1162,16 @@ as the time separator in filenames instead of colon (":").
 This option only applies to recovery and status style actions.
 We no longer create or write filenames with time separators,
 but will read older backups that may need this option.
-.RE
 
 .TP
 .BI "--timeout " seconds
-.RS
 Use
 .IR seconds
 as the socket timeout value if duplicity begins to timeout during
 network operations.  The default is 30 seconds.
-.RE
 
 .TP
 .BI --use-agent
-.RS
 If this option is specified, then
 .I --use-agent
 is passed to the GnuPG encryption process and it will try to connect to
@@ -1258,11 +1192,9 @@ is specified on the duplicity command line. This has the effect that GnuPG 2
 uses the agent only if
 .I --use-agent
 is given, just like GnuPG 1.
-.RE
 
 .TP
 .BI "--verbosity " level ", -v" level
-.RS
 Specify output verbosity level (log level).
 Named levels and corresponding values are
 0 Error, 2 Warning, 4 Notice (default), 8 Info, 9 Debug (noisiest).
@@ -1270,41 +1202,36 @@ Named levels and corresponding values are
 .I level
 may also be
 .RS
+.RS
 .B a character:
 e, w, n, i, d
 .br
 .B a word:
 error, warning, notice, info, debug
 .RE
+.RE
 
 The options -v4, -vn and -vnotice are functionally equivalent, as are the mixed/\
 upper-case versions -vN, -vNotice and -vNOTICE.
-.RE
 
 .TP
 .BI --version
-.RS
 Print duplicity's version and quit.
-.RE
 
 .TP
 .BI "--volsize " number
-.RS
 Change the volume size to
 .IR number
 MB. Default is 200MB.
-.RE
 
 .TP
 .BI "--webdav-headers " "csv formatted key,value pairs"
-.RS
 The input format is comma separated list of key,value pairs. Standard
 CSV encoding may be used.
 
 For example to set a Cookie use 'Cookie,name=value', or '"Cookie","name=value"'.
 
 You can set multiple headers, e.g. '"Cookie","name=value","Authorization","xxx"'.
-.RE
 
 .SH ENVIRONMENT VARIABLES
 
@@ -1385,79 +1312,60 @@ Formats of each of the URL schemes follow:
 
 .TP
 .B "Amazon Drive Backend"
-.RS
 ad://some_dir
 
 See also
 .B "A NOTE ON AMAZON DRIVE"
-.RE
 
 .TP
 .BR "Azure"
-.RS
 azure://container-name
 
 See also
 .B "A NOTE ON AZURE ACCESS"
-.RE
 
 .TP
 .BR "B2"
-.RS
 b2://account_id[:application_key]@bucket_name/[folder/]
-.RE
 
 .TP
 .BR "Box"
-.RS
 box:///some_dir[?config=path_to_config]
 
 See also
 .B "A NOTE ON BOX ACCESS"
-.RE
 
 .TP
 .BR "Cloud Files" " (Rackspace)"
-.RS
 cf+http://container_name
 
 See also
 .B "A NOTE ON CLOUD FILES ACCESS"
-.RE
 
 .TP
 .B Dropbox
-.RS
 dpbx:///some_dir
 
 Make sure to read
 .BR "A NOTE ON DROPBOX ACCESS" " first!"
-.RE
 
 .TP
 .BR File " (local file system)"
-.RS
 file://[relative|/absolute]/local/path
-.RE
 
 .TP
 .BR "FISH" " (Files transferred over Shell protocol) over ssh"
-.RS
 fish://user[:password]@other.host[:port]/[relative|/absolute]_path
-.RE
 
 .TP
 .B "FTP"
-.RS
 ftp[s]://user[:password]@other.host[:port]/some_dir
 
 .B NOTE:
 use lftp+, ncftp+ prefixes to enforce a specific backend, default is lftp+ftp://...
-.RE
 
 .TP
 .BR "Google Cloud Storage" " (GCS via Interoperable Access)"
-.RS
 s3://bucket[/path]
 
 See
@@ -1465,164 +1373,131 @@ See
 about
 .B needed
 endpoint option and env vars for authentication.
-.RE
 
 .TP
 .B "Google Docs"
-.RS
 gdocs://user[:password]@other.host/some_dir
 
 .B NOTE:
 use pydrive+, gdata+ prefixes to enforce a specific backend, default is pydrive+gdocs://...
-.RE
 
 .TP
 .B "Google Drive"
-
-.RS
 gdrive://<service account' email address>@developer.gserviceaccount.com/some_dir
 
 See also
 .B "A NOTE ON GDRIVE BACKEND"
 below.
-.RE
 
 .TP
-.B "HSI"
-.RS
+.B HSI
 hsi://user[:password]@other.host/some_dir
-.RE
 
 .TP
-.B "hubiC"
-.RS
+.B hubiC
 cf+hubic://container_name
 
 See also
 .B "A NOTE ON HUBIC"
-.RE
 
 .TP
 .B "IMAP email storage"
-.RS
 imap[s]://user[:password]@host.com[/from_address_prefix]
 
 See also
 .B "A NOTE ON IMAP"
-.RE
 
 .TP
 .BR "MediaFire"
-.RS
 mf://user[:password]@mediafire.com/some_dir
 
 See also
 .B "A NOTE ON MEDIAFIRE BACKEND"
 below.
-.RE
 
 .TP
 .BR "MEGA.nz cloud storage" " (only works for accounts created prior to November 2018, uses ""megatools"")"
-.RS
 mega://user[:password]@mega.nz/some_dir
 
 .B NOTE:
 if not given in the URL, relies on password being stored within $HOME/.megarc (as used by the "megatools" utilities)
-.RE
 
 .TP
 .BR "MEGA.nz cloud storage" " (works for all MEGA accounts, uses ""MEGAcmd"" tools)"
-.RS
 megav2://user[:password]@mega.nz/some_dir
 megav3://user[:password]@mega.nz/some_dir[?no_logout=1] (For latest MEGAcmd)
 
 .B NOTE:
 despite "MEGAcmd" no longer uses a configuration file, for convenience storing the user password this backend searches it in the $HOME/.megav2rc file (same syntax as the old $HOME/.megarc)
-    [Login]
-    Username = MEGA_USERNAME
-    Password = MEGA_PASSWORD
+.RS
+.nf
+[Login]
+Username = MEGA_USERNAME
+Password = MEGA_PASSWORD
+.fi
 .RE
 
 .TP
 .BR "multi"
-.RS
 multi:///path/to/config.json
 
 See also
 .B "A NOTE ON MULTI BACKEND"
 below.
-.RE
 
 .TP
 .B "OneDrive Backend"
-.RS
 onedrive://some_dir
 See also
 .B "A NOTE ON ONEDRIVE BACKEND"
-.RE
 
 .TP
 .B "Par2 Wrapper Backend"
-.RS
 par2+scheme://[user[:password]@]host[:port]/[/]path
 
 See also
 .B "A NOTE ON PAR2 WRAPPER BACKEND"
-.RE
 
 .TP
 .BR "Public Cloud Archive" " (OVH)"
-.RS
 pca://container_name[/prefix]
 
 See also
 .B "A NOTE ON PCA ACCESS"
-.RE
 
 .TP
 .BR "pydrive"
-.RS
 pydrive://<service account' email address>@developer.gserviceaccount.com/some_dir
 
 See also
 .B "A NOTE ON PYDRIVE BACKEND"
 below.
-.RE
 
 .TP
 .B "Rclone Backend"
-.RS
 rclone://remote:/some_dir
-.RE
 
 See also
 .B "A NOTE ON RCLONE BACKEND"
 
 .TP
 .B "Rsync via daemon"
-.RS
 rsync://user[:password]@host.com[:port]::[/]module/some_dir
-.RE
 
 .TP
 .BR "Rsync over ssh" " (only key auth)"
-.RS
 rsync://user@host.com[:port]/[relative|/absolute]_path
-.RE
 
 .TP
 .BR "S3 storage" " (Amazon)"
-.RS
 s3:///bucket_name[/path]
 
 See also
 .B "A NOTE ON AMAZON S3"
 below.
-.RE
 
 .TP
 .BR "SCP/SFTP" " Secure Copy Protocol/SSH File Transfer Protocol"
-.RS
 scp://.. or
 .br
 sftp://user[:password]@other.host[:port]/[relative|/absolute]_path
@@ -1636,51 +1511,40 @@ See also
 .B  --ssh-options
 and
 .BR "A NOTE ON SSH BACKENDS" .
-.RE
 
 .TP
 .BR "slate"
-.RS
 slate://[slate-id]
 
 See also
 .B "A NOTE ON SLATE BACKEND"
-.RE
 
 .TP
 .BR "Swift" " (Openstack)"
-.RS
 swift://container_name[/prefix]
 
 See also
 .B "A NOTE ON SWIFT (OPENSTACK OBJECT STORAGE) ACCESS"
-.RE
 
 .TP
 .B "Tahoe-LAFS"
-.RS
 tahoe://alias/directory
-.RE
 
 .TP
 .B "WebDAV"
-.RS
 webdav[s]://user[:password]@other.host[:port]/some_dir
 
 .B alternatively
 try lftp+webdav[s]://
-.RE
 
 .TP
 .B "Optical media (ISO9660 CD/DVD/Bluray using xorriso)"
-.RS
 xorriso:///dev/byOpticalDrive[:/path/to/directory/on/iso]
+.br
 xorriso:///path/to/image.iso[:/path/to/directory/on/iso]
-
 
 See also
 .B "A NOTE ON THE XORRISO BACKEND"
-.RE
 
 .SH TIME FORMATS
 duplicity uses time strings in two places.  Firstly, many of the files
@@ -1808,9 +1672,7 @@ options are interpretted as
 .IR "extended shell globbing patterns"
 by default. This behaviour can be changed with the following filter
 mode arguments:
-
 .RS
-.br
 --filter-globbing
 .br
 --filter-literal
@@ -1863,10 +1725,8 @@ expands to any string of characters whether or not it contains "/".
 
 In addition to the above filter mode arguments, the following can be used
 in the same fashion to enable (default) or disable case sensitivity in the
-evaluation of file sslection conditions:
-
+evaluation of file selection conditions:
 .RS
-.br
 --filter-ignorecase
 .br
 --filter-strictcase
@@ -1875,14 +1735,14 @@ evaluation of file sslection conditions:
 An example of filter mode switching including case insensitivity is
 
 .RS
-.BI --filter-ignorecase
-.BI --include
+.B --filter-ignorecase
+.B --include
 /usr/bin/*.PY
-.BI --filter-literal
-.BI --filter-include
+.B --filter-literal
+.B --filter-include
 /usr/bin/special?file*name
-.BI --filter-strictcase
-.BI --exclude
+.B --filter-strictcase
+.B --exclude
 /usr/bin
 .RE
 
@@ -1919,11 +1779,10 @@ globbing patterns, the
 .I pattern
 option matches a file if:
 
-.B 1.
+.IP 1.
 .I pattern
 can be expanded into the file's filename, or
-.br
-.B 2.
+.IP 2.
 the file is inside a directory matched by the option.
 
 Conversely, the
@@ -1931,14 +1790,12 @@ Conversely, the
 .I pattern
 option matches a file if:
 
-.B 1.
+.IP 1.
 .I pattern
 can be expanded into the file's filename, or
-.br
-.B 2.
+.IP 2.
 the file is inside a directory matched by the option, or
-.br
-.B 3.
+.IP 3.
 the file is a directory which contains a file matched by the option.
 
 For example,
@@ -2018,15 +1875,13 @@ found within an include filelist.
 For example, if file "list.txt" contains the lines:
 
 .RS
+.nf
 /usr/local
-.br
 - /usr/local/doc
-.br
 /usr/local/bin
-.br
 + /var
-.br
 - /var
+.fi
 .RE
 
 then
@@ -2045,11 +1900,11 @@ and
 options are interpreted. For instance, if the file "list.txt" contains the lines:
 
 .RS
+.nf
 dir/foo
-.br
 + dir/bar
-.br
 - **
+.fi
 .RE
 
 Then
@@ -2454,17 +2309,14 @@ You will need to set your credentials for hubiC in a file called ~/.hubic_creden
 pattern:
 .PP
 .RS
+.nf
 [hubic]
-.br
 email = your_email
-.br
 password = your_password
-.br
 client_id = api_client_id
-.br
 client_secret = api_secret_key
-.br
 redirect_uri = http://localhost/
+.fi
 .RE
 
 .SH A NOTE ON IMAP
@@ -2704,8 +2556,8 @@ filename in the
 .BR GOOGLE_DRIVE_SETTINGS
 environment variable:
 .PP
-.nf
 .RS
+.nf
 client_config_backend: settings
 client_config:
     client_id: <Client ID from developers' console>
@@ -2714,8 +2566,8 @@ save_credentials: True
 save_credentials_backend: file
 save_credentials_file: <filename to cache credentials>
 get_refresh_token: True
-.RE
 .fi
+.RE
 
 In this scenario, the username and host parts of the URL play no role;
 only the path matters. During the first run, you will be prompted to
@@ -3030,8 +2882,7 @@ and
 respectively. These signatures will be stored both locally and remotely.
 The remote signatures will be encrypted if encryption is enabled.
 The local signatures will not be encrypted and stored in the archive dir (see
-.B "--archive-dir"
-).
+.BR --archive-dir ).
 
 .SH REQUIREMENTS
 Duplicity requires a POSIX-like operating system with a
@@ -3199,10 +3050,8 @@ for kerberos authentication
 
 .SH AUTHOR
 
-.TP
 .BR "Original Author" " - Ben Escoto <bescoto@stanford.edu>"
 
-.TP
 .BR "Current Maintainer" " - Kenneth Loafman <kenneth@loafman.com>"
 
 .TP
@@ -3222,6 +3071,5 @@ special "duplicity friends" rate for their offsite backup service.  Email
 info@rsync.net for details.
 
 .SH SEE ALSO
-.BR python (1),
-.BR rdiff (1),
-.BR rdiff-backup (1).
+.BR python(1) ,
+.BR rdiff(1) .
