@@ -96,7 +96,7 @@ target-version = [
 
 [tool.pytest.ini_options]
 addopts = [
-    "--capture=no",
+    "--capture=fd",
     "--failed-first",
     "--showlocals",
 ]
