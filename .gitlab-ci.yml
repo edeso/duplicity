@@ -61,12 +61,12 @@ default:
 
 code:
     <<: *test-template
-    image: python:3.11
+    image: python:3.12
     stage: qual
     script:
         - python3 -m pip install -r requirements.txt
         - python3 ./setup.py build_ext
-        - RUN_CODE_TESTS=1 pytest testing/test_code.py
+        - pytest testing/test_code.py
     allow_failure: true
 
 py38:

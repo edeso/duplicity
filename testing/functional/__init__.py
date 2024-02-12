@@ -107,18 +107,15 @@ class FunctionalTestCase(DuplicityTestCase):
             if self._setsid_w:
                 cmd_list.extend(["-w"])
 
-        if basepython := os.environ.get("TOXPYTHON", None):
-            cmd_list.extend([util.which(basepython)])
-        else:
-            cmd_list.extend(["python3"])
+        cmd_list.extend([f"python{sys.version_info.major}.{sys.version_info.minor}"])
 
-        if run_coverage := os.environ.get("RUN_COVERAGE", None):
+        if os.environ.get("RUN_COVERAGE", None):
             cmd_list.extend(["-m", "coverage", "run", "--source=duplicity", "-p"])
 
         cmd_list.extend([os.path.join(_top_dir, "duplicity", "__main__.py")])
         cmd_list.extend(options)
 
-        if run_debugger := os.environ.get("PYDEVD", None):
+        if os.environ.get("PYDEVD", None):
             cmd_list.extend(["--pydevd"])
 
         cmd_list.extend(["-v0"])
@@ -275,8 +272,8 @@ class FunctionalTestCase(DuplicityTestCase):
         assert not os.system(f"mkdir {_runtest_dir}/testfiles/largefiles")
         for n in range(count):
             assert not os.system(
-                f"dd if=/dev/urandom of={_runtest_dir}/testfiles/largefiles/file{n+1} "
-                f"bs=1024 count={size*1024} > /dev/null 2>&1"
+                f"dd if=/dev/urandom of={_runtest_dir}/testfiles/largefiles/file{n + 1} "
+                f"bs=1024 count={size * 1024} > /dev/null 2>&1"
             )
 
 
