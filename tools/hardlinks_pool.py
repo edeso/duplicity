@@ -1,4 +1,4 @@
-#!/usr/bin/env pytho3
+#!/usr/bin/env python
 
 import json
 import multiprocessing as mp
@@ -81,8 +81,15 @@ def main(basepath: str):
         results = [pool.apply_async(get_hardlinks, (), error_callback=err) for _ in range(tasks)]
 
         # total results
-        for result in results:
-            total_results(Totals, result.get())
+        while True:
+            for i, result in enumerate(results):
+                if result.ready():
+                    total_results(Totals, result.get())
+                    del results[i]
+                    print(f"processed result {i + 1} of {len(results) + 1}")
+                time.sleep(0.0001)
+            if len(results) == 0:
+                break
 
     return Totals
 
