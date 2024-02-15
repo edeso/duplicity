@@ -19,13 +19,20 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+workflow:
+    rules:
+        - if: $CI_PIPELINE_SOURCE == "schedule"
+          when: never
+        - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+          when: never
+        - if: $CI_PIPELINE_SOURCE == "push"
+          when: always
+
 .test-template: &test-template
     stage: test
     rules:
         - if: $CI_COMMIT_MESSAGE =~ /\[skip[ _-]tests?\]/i || $SKIP_TESTS
           when: never
-#        - if: $CI_MERGE_REQUEST_ID == null
-#          when: never
         - changes:
             - .gitlab-ci.yml
             - duplicity/**/*
