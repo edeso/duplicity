@@ -64,7 +64,7 @@ default:
     interruptible: true
 
 code:
-    <<: *test-template
+#    <<: *test-template
     image: python:3.12
     stage: qual
     script:
