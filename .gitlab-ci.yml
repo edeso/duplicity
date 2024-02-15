@@ -19,8 +19,9 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-workflow:
+workflow:  # change
     rules:
+        # merge requests trigger push as well so only run on push
         - if: $CI_PIPELINE_SOURCE == "push"
           when: always
         - when: never
@@ -64,7 +65,7 @@ default:
     interruptible: true
 
 code:
-#    <<: *test-template
+    <<: *test-template
     image: python:3.12
     stage: qual
     script:
