@@ -21,12 +21,9 @@
 
 workflow:
     rules:
-        - if: $CI_PIPELINE_SOURCE == "schedule"
-          when: never
-        - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-          when: never
         - if: $CI_PIPELINE_SOURCE == "push"
           when: always
+        - when: never
 
 .test-template: &test-template
     stage: test
