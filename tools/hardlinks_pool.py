@@ -86,15 +86,19 @@ def main(basepath: str):
         results = [pool.apply_async(get_hardlinks, (), error_callback=err) for _ in range(tasks)]
 
         # total results
+        polls = 0
+        delay = 0.00001
         while True:
             for i, result in enumerate(results):
                 if result.ready():
                     print(f"processing result {i + 1} of {len(results)}")
                     total_results(Totals, result.get())
                     del results[i]
-                time.sleep(0.0001)
+                time.sleep(delay)
+                polls += 1
             if len(results) == 0:
                 break
+        print(f"Total Polls: {polls:,}, Delay: {delay * polls:.4f}")
 
     return Totals
 
@@ -213,7 +217,7 @@ def print_summary(totals: Results):
         hlinks_outside = stat.st_nlink - hlinks_found
         if hlinks_outside:
             hlinks_incomplete += stat.st_nlink - hlinks_found
-            print(f"Inode {inode} has {stat.st_nlink:,} hardlinks, {hlinks_outside:,} outside this directory.")
+            # print(f"Inode {inode} has {stat.st_nlink:,} hardlinks, {hlinks_outside:,} outside this directory.")
 
     for errno in sorted(totals.oserrors.keys()):
         if totals.oserrors[errno]:
