@@ -17,8 +17,9 @@ entry_kwargs = {"follow_symlinks": False}
 
 default_excludes = {
     "Darwin": [
-        "/System/Volumes",
-        # "/Volumes",
+        "/Applications",
+        "/System",
+        "/Volumes",
         "/cores",
         "/dev",
         "/lost+found",
@@ -63,11 +64,15 @@ class Results:
         self.hardlinks = dict()
 
 
+our_dev = None
 task_queue = mp.Queue()
 
 
 def main(basepath: str):
+    global our_dev, task_queue
+
     Totals = Results()
+    our_dev = os.stat(dirpath).st_dev
 
     def err(e):
         print(f"Callback Error: {str(e)}")
@@ -84,9 +89,9 @@ def main(basepath: str):
         while True:
             for i, result in enumerate(results):
                 if result.ready():
+                    print(f"processing result {i + 1} of {len(results)}")
                     total_results(Totals, result.get())
                     del results[i]
-                    print(f"processed result {i + 1} of {len(results) + 1}")
                 time.sleep(0.0001)
             if len(results) == 0:
                 break
@@ -96,8 +101,6 @@ def main(basepath: str):
 
 def get_hardlinks():
     res = Results()
-
-    our_dev = os.stat(dirpath).st_dev
 
     while True:
         try:
@@ -214,10 +217,10 @@ def print_summary(totals: Results):
 
     for errno in sorted(totals.oserrors.keys()):
         if totals.oserrors[errno]:
-            print(f"Encountered {totals.oserrors[errno]:,} errors: {os.strerror(errno)}")
+            print(f"Encountered {totals.oserrors[errno]:,} errors: {os.strerror(errno)}.")
 
     if totals.in_exclusions:
-        print(f"Found {in_exclusions:,} dirs in exclusions list.")
+        print(f"Found {totals.in_exclusions:,} dirs in exclusions list.")
 
     if totals.not_our_fs:
         print(f"Found {totals.not_our_fs:,} dirs not in our filesystem.")
