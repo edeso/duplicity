@@ -20,7 +20,7 @@ Build-Depends: debhelper (>= 13),
                rdiff,
                rename,
                rsync,
-Homepage: https://launchpad.net/duplicity
+Homepage: https://duplicity.gitlab.io
 Standards-Version: 3.9.5
 X-Python3-Version: >= 3.8
 
