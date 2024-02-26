@@ -20,6 +20,7 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import glob
+import hashlib
 import inspect
 import json
 import logging
@@ -39,12 +40,14 @@ ERROR_ON = {}
 
 
 class BackendErrors:
-    FAIL_WITH_EXCEPTION = "DUP_FAIL_WITH_EXCEPTION"  # set to substring mached by the filename.
-    WAIT_FOR_OTHER_VOLUME = (
-        "DUP_FAIL_WAIT_FOR_VOLUME"  # set to json string: ["file_to_delay", "file_wait_for"] (substing match)
-    )
-    LAST_BYTE_MISSING = "DUP_FAIL_LAST_BYTE_MISSING"  # set to substring mached by the filename.
-    SKIP_PUT_SILENT = "DUP_FAIL_SKIP_PUT_SILENT"  # Don't put file contains string
+    # FAIL_WITH_EXCEPTION: set to substring mached by the filename.
+    FAIL_WITH_EXCEPTION = "DUP_FAIL_WITH_EXCEPTION"
+    # WAIT_FOR_OTHER_VOLUME: set to json string: ["file_to_delay", "file_wait_for"] (substing match)
+    WAIT_FOR_OTHER_VOLUME = "DUP_FAIL_WAIT_FOR_VOLUME"
+    # LAST_BYTE_MISSING: set to substring mached by the filename.
+    LAST_BYTE_MISSING = "DUP_FAIL_LAST_BYTE_MISSING"
+    # SKIP_PUT_SILENT: Don't put file if name contains string
+    SKIP_PUT_SILENT = "DUP_FAIL_SKIP_PUT_SILENT"
 
 
 class _TestBackend(duplicity.backend.Backend):
@@ -145,6 +148,43 @@ class _TestBackend(duplicity.backend.Backend):
     def _list(self):
         return self.remote_pathdir.listdir()
 
+    def _validate(self, remote_filename, size, source_path=None, **kwargs):
+        # poc to show that validate can do additional things.
+
+        self._remove_last_byte(remote_filename)
+
+        results_str = []
+        results_bool = []
+        try:
+            if source_path:
+                target_path = self.remote_pathdir.append(remote_filename)
+                target_hash = self.__hash_fileobj(target_path.open())
+                source_hash = self.__hash_fileobj(source_path.open())
+                if target_hash == source_hash:
+                    results_str.append(f"file hash {target_hash} matches")
+                    results_bool.append(True)
+                else:
+                    results_str.append(f"expected hash {source_hash} doesn't match file hash {target_hash}")
+                    results_bool.append(False)
+            if size == self._query(remote_filename)["size"]:
+                results_str.append(f"file size {size}")
+                results_bool.append(True)
+            else:
+                results_str.append(
+                    f'expected size {size} and file size {self._query(remote_filename)["size"]} don\'t match'
+                )
+                results_bool.append(False)
+        except FileNotFoundError as e:
+            results_bool.append(False)
+            results_str.append(f"FileNotFoundError: {e}")
+        except Exception as e:
+            log.FatalError(
+                _("Unexpected exception while validate %s.") % os.fsdecode(remote_filename),
+                log.ErrorCode.backend_verification_failed,
+                extra=f"Exception: {e}",
+            )
+        return (all(results_bool), ", ".join(results_str))
+
     def _delete(self, filename):
         self._fail_with_exception(filename)
         self.remote_pathdir.append(filename).delete()
@@ -160,6 +200,34 @@ class _TestBackend(duplicity.backend.Backend):
         target_file.setdata()
         size = target_file.getsize() if target_file.exists() else -1
         return {"size": size}
+
+    def _query_list(self, filename_list):
+        return {x: self._query(x) for x in filename_list}
+
+    def _retry_cleanup(self):
+        pass
+
+    def _close(self):
+        pass
+
+    def _error_code(self, operation, e):  # pylint: disable=unused-argument
+        return log.ErrorCode.backend_error
+
+    def __hash_file(self, filename):
+        self.__hash_fileobj(open(filename, "rb"))
+
+    def __hash_fileobj(self, fileobj):
+        h = hashlib.sha1()
+
+        # loop till the end of the file
+        chunk = 0
+        while chunk != b"":
+            # read only 1024 bytes at a time
+            chunk = fileobj.read(1024)
+            h.update(chunk)
+        fileobj.close()
+        # return the hex representation of digest
+        return h.hexdigest()
 
 
 duplicity.backend.register_backend("fortestsonly", _TestBackend)

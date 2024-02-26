@@ -196,7 +196,9 @@ class FunctionalTestCase(DuplicityTestCase):
         after_files = self.get_backend_files()
         return after_files - before_files
 
-    def backup_with_failure(self, type, input_dir, failure_type, failure_condition, error_code, options=None, **kwargs):
+    def backup_with_failure(
+        self, type, input_dir, failure_type, failure_condition, error_code, options=None, PYDEVD=None, **kwargs
+    ):
         """
         using _testbackent to trigger certain failure conditions. See backends/_testbackend.py for possible trigger
         """
@@ -208,7 +210,10 @@ class FunctionalTestCase(DuplicityTestCase):
             ]
 
         try:
-            with EnvController(failure_type, failure_condition):
+            env = {failure_type: failure_condition}
+            if PYDEVD:  # start debugger in forked duplicity execution. Use for troubleshooting only.
+                env["PYDEVD"] = PYDEVD
+            with EnvController(**env):
                 self.backup(type, input_dir, options, **kwargs)
         except CmdError as e:  # Backup must fail with an exit code != 0
             self.assertEqual(e.exit_status, error_code, str(e))
@@ -278,13 +283,14 @@ class FunctionalTestCase(DuplicityTestCase):
 
 
 class EnvController:
-    def __init__(self, var_name, new_value):
-        self.var_name = var_name
-        self.new_value = new_value
+    def __init__(self, **kwargs):
+        self.env = kwargs
 
     def __enter__(self):
-        os.environ[self.var_name] = self.new_value
+        for k, v in self.env.items():
+            os.environ[k] = v
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        os.unsetenv(self.var_name)
-        del os.environ[self.var_name]
+        for k, _ in self.env.items():
+            os.unsetenv(k)
+            del os.environ[k]

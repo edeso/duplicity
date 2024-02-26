@@ -20,13 +20,24 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
+import os
 import sys
+from typing import cast
+
+from testing.functional import EnvController
+
+try:
+    import unittest.mock as mock
+except ImportError:
+    import mock
 import unittest
-import unittest.mock as mock
 
 import duplicity.backend
 import duplicity.backends
+import duplicity.backends._testbackend
+import duplicity.path
 from duplicity.errors import *  # pylint: disable=unused-wildcard-import
+from duplicity.backends._testbackend import BackendErrors as BE
 from duplicity import config
 from . import UnitTestCase
 
@@ -156,7 +167,7 @@ class ParsedUrlTest(UnitTestCase):
 class BackendWrapperTest(UnitTestCase):
     def setUp(self):
         super().setUp()
-        self.mock = mock.MagicMock()
+        self.mock = mock.MagicMock(spec=duplicity.backends._testbackend._TestBackend)
         self.backend = duplicity.backend.BackendWrapper(self.mock)
         self.local = mock.MagicMock()
         self.remote = "remote"
@@ -288,6 +299,77 @@ class BackendWrapperTest(UnitTestCase):
         self.backend.move(self.local, self.remote)
         self.mock._put.assert_called_once_with(self.local, self.remote)
         self.local.delete.assert_called_once_with()
+
+    def test_verify(self):
+        self.mock._validate.return_value = True
+        assert self.backend.validate(self.remote, 2345) is True
+
+    def test_verify_fallback(self):
+        self.mock._validate.return_value = False
+        self.mock._query = {self.remote: {"size": 2345}}
+        assert self.backend.validate(self.remote, 2345) is False
+
+    def test_verify_generic(self):
+        try:
+            del self.mock._validate
+        except Exception as e:
+            return
+        ql_resp = mock.MagicMock()
+        ql_resp.return_value = {self.remote: {"size": 2345}}
+        self.mock._query_list = ql_resp
+        assert self.backend.validate(self.remote, 2345)[0] is True
+
+    @mock.patch("time.sleep")
+    def test_verify_generic_fail(self, time_mock):  # pylint: disable=unused-argument
+        try:
+            del self.mock._validate
+        except Exception as e:
+            pass
+        ql_resp = mock.MagicMock()
+        ql_resp.return_value = {self.remote: {"size": 111}}
+        self.mock._query_list = ql_resp
+        assert self.backend.validate(self.remote, 2345)[0] is False
+
+    @mock.patch("time.sleep")
+    def test_verify_generic_fail_1(self, time_mock):  # pylint: disable=unused-argument
+        try:
+            del self.mock._validate
+        except Exception as e:
+            pass
+        ql_resp = mock.MagicMock()
+        ql_resp.return_value = {self.remote: {"size": -1}}
+        self.mock._query_list = ql_resp
+        assert self.backend.validate(self.remote, 2345)[0] is False
+
+    @mock.patch("time.sleep")
+    def test_verify_generic_fail_2(self, time_mock):  # pylint: disable=unused-argument
+        try:
+            del self.mock._validate
+        except Exception as e:
+            pass
+        ql_resp = mock.MagicMock()
+        ql_resp.return_value = {self.remote: {"size": None}}
+        self.mock._query_list = ql_resp
+        assert self.backend.validate(self.remote, 2345)[0] is False
+
+    def test_verify_testbackend(self):
+        file = duplicity.path.Path("testfiles/dir1/regular_file")
+        test_backend = cast(
+            duplicity.backend.BackendWrapper,
+            duplicity.backend.get_backend("fortestsonly://testfiles/output"),
+        )
+        test_backend.put(file)
+        assert test_backend.validate(os.fsdecode(file.get_filename()), 75650, file)[0] is True
+
+    def test_verify_testbackend_fail(self):
+        file = duplicity.path.Path("testfiles/dir1/regular_file")
+        test_backend = cast(
+            duplicity.backend.BackendWrapper,
+            duplicity.backend.get_backend("fortestsonly://testfiles/output"),
+        )
+        test_backend.put(file)
+        with EnvController(**{BE.LAST_BYTE_MISSING: "regular_file"}):
+            assert test_backend.validate(os.fsdecode(file.get_filename()), 75650, file)[0] is False
 
     def test_close(self):
         self.mock._close.return_value = None

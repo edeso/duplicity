@@ -24,13 +24,14 @@ Provides a common interface to all backends and certain sevices
 intended to be used by the backends themselves.
 """
 
+from datetime import datetime
 import errno
 import getpass
 import os
 import re
-import socket
 import sys
 import time
+from typing import Tuple
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -603,6 +604,38 @@ class BackendWrapper(object):
             return [tobytes(x) for x in self.backend._list()]
         else:
             raise NotImplementedError()
+
+    def validate(self, remote_filename, expected_size, source_path=None) -> Tuple[bool, str]:
+        """
+        validates a file transferred to the backend by comparing the size.
+        source_path is optional to allow the backend do further validation, e.g. by
+        calulating a hash or so.
+        Returns: return a tuple of (result, reason)
+            - result: bool: True if file validation successful otherwise False
+            - reason: str: If False a reason why validation failed; True: emtpy str or description
+        """
+        msg = "Validation fail for unknow reaons."
+        if hasattr(self.backend, "_validate"):
+            return self.backend._validate(remote_filename, expected_size, source_path=source_path)
+        else:
+            # as some backends take some time refresh file attributes after upload
+            # retry config.num_retries times.
+            for attempt in range(0, config.num_retries + 1):
+                info = self.query_info([remote_filename])[remote_filename]
+                size = info["size"]
+                if size is None:
+                    return (False, "Can't determin size of file")
+                if size == expected_size:
+                    return (True, "Validation OK, file size matches.")
+                msg = _("%s Remote filesize %d for %s does not match local size %d") % (
+                    datetime.now(),
+                    size,
+                    util.escape(remote_filename),
+                    expected_size,
+                )
+                log.Notice(f"{msg}, retrying.")
+                time.sleep(2**attempt)
+        return (False, f"{msg}.")
 
     def pre_process_download(self, remote_filename):
         """

@@ -314,31 +314,6 @@ def write_multivol(backup_type, tarblock_iter, man_outfp, sig_outfp, backend):
             end_block -= 1
         return start_index, start_block, end_index, end_block
 
-    def validate_block(orig_size, dest_filename):
-        info = backend.query_info([dest_filename])[dest_filename]
-        size = info["size"]
-        if size is None:
-            return  # error querying file
-        for attempt in range(1, config.num_retries + 1):
-            info = backend.query_info([dest_filename])[dest_filename]
-            size = info["size"]
-            if size == orig_size:
-                break
-            if size is None:
-                return
-            log.Notice(
-                _("%s Remote filesize %d for %s does not match local size %d, retrying.")
-                % (datetime.now(), size, util.escape(dest_filename), orig_size)
-            )
-            time.sleep(2**attempt)
-        if size != orig_size:
-            code_extra = f"{util.escape(dest_filename)} {int(orig_size)} {int(size)}"
-            log.FatalError(
-                _("File %s was corrupted during upload.") % os.fsdecode(dest_filename),
-                log.ErrorCode.volume_wrong_size,
-                code_extra,
-            )
-
     def put(tdp, dest_filename, vol_num):
         """
         Retrieve file size *before* calling backend.put(), which may (at least
@@ -348,7 +323,15 @@ def write_multivol(backup_type, tarblock_iter, man_outfp, sig_outfp, backend):
         putsize = tdp.getsize()
         if config.skip_volume != vol_num:  # for testing purposes only
             backend.put(tdp, dest_filename)
-        validate_block(putsize, dest_filename)
+        res, msg = backend.validate(dest_filename, putsize, source_path=tdp)
+        if not res:
+            code_extra = f"{util.escape(dest_filename)}: {msg}"
+            log.FatalError(
+                _("File %s was corrupted during upload.") % os.fsdecode(dest_filename),
+                log.ErrorCode.backend_verification_failed,
+                code_extra,
+            )
+
         if tdp.stat:
             tdp.delete()
         return putsize

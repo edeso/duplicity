@@ -217,9 +217,11 @@ class B2Backend(duplicity.backend.Backend):
         log.Log(f"Query: {self.path}{os.fsdecode(filename)}", log.INFO)
         file_version_info = self.file_info(quote_plus(self.path + os.fsdecode(filename), "/"))
         return {
-            "size": int(file_version_info.size)
-            if file_version_info is not None and file_version_info.size is not None
-            else -1
+            "size": (
+                int(file_version_info.size)
+                if file_version_info is not None and file_version_info.size is not None
+                else -1
+            )
         }
 
     def file_info(self, filename):
