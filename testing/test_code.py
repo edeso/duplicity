@@ -21,6 +21,7 @@
 
 import glob
 import os
+import pycodestyle
 import sys
 from subprocess import (
     Popen,
@@ -29,11 +30,6 @@ from subprocess import (
 )
 
 import pytest
-
-if os.getenv("RUN_CODE_TESTS", None) == "1":
-    # Make conditional so that we do not have to import in environments that
-    # do not run the tests (e.g. the build servers)
-    import pycodestyle
 
 from . import _top_dir, DuplicityTestCase
 
@@ -47,10 +43,6 @@ files_to_test.extend(glob.glob(os.path.join(_top_dir, "testing/*.py")))
 files_to_test.remove(os.path.join(_top_dir, "duplicity/argparse311.py"))
 
 
-@pytest.mark.skipif(
-    not os.getenv("RUN_CODE_TESTS", None) == "1",
-    reason="Must set environment var RUN_CODE_TESTS=1",
-)
 class CodeTest(DuplicityTestCase):
     def run_checker(self, cmd, returncodes=None):
         if returncodes is None:
@@ -79,7 +71,7 @@ class CodeTest(DuplicityTestCase):
 
     def test_pep8(self):
         """Test that we conform to PEP-8 using pycodestyle."""
-        # Note that the settings, ignores etc for pycodestyle are set in tox.ini, not here
+        # Note that the settings, ignores etc for pycodestyle are set in pyproject.toml, not here
         print()
         style = pycodestyle.StyleGuide(config_file=os.path.join(_top_dir, "setup.cfg"))
         result = style.check_files(files_to_test)

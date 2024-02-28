@@ -224,6 +224,7 @@ OptionKwargs = dict(
     ),
     exclude_older_than=dict(
         metavar=_("time"),
+        type=check_time,
         action=AddSelectionAction,
         help="Exclude files older than time",
         default=dflt(None),

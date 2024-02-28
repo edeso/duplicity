@@ -346,6 +346,7 @@ class ErrorCode(object):
     backend_no_space = 53
     backend_command_error = 54
     backend_code_error = 55
+    backend_verification_failed = 56
 
     # file selection filter mode errors
     redundant_filter = 70
