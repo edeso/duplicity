@@ -31,11 +31,22 @@ if [ "$#" -ne 0 ]; then
     exit 2
 fi
 
-VERSION=`./setup.py --version`
-echo "$0 of ${VERSION}"
+VERS="3.8 3.9 3.10 3.11 3.12"
 
-# make source distribution
-python3 ./setup.py -q sdist
+# install python build environ
+sudo apt update
+sudo apt install -y build-essential libssl-dev zlib1g-dev \
+                 libbz2-dev libreadline-dev libsqlite3-dev curl \
+                 libncursesw5-dev xz-utils tk-dev libxml2-dev \
+                 libxmlsec1-dev libffi-dev liblzma-dev
 
-## upload to pypi
-twine upload --non-interactive dist/duplicity-*
+# install duplicity build environ
+sudo apt install -y python3-dev librsync-dev gnupg
+
+# install all versions of python and do initial setup
+for V in ${VERS}; do
+    pyenv install $V
+    pyenv global $V
+    python$V -m pip install -U build pip setuptools wheel
+    python$V -m pip install -U -r requirements.txt
+done

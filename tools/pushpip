@@ -34,8 +34,10 @@ fi
 VERSION=`./setup.py --version`
 echo "$0 of ${VERSION}"
 
-# make source distribution
-python3 ./setup.py -q sdist
+if [ -e "wheelhouse" ]; then
+    mv wheelhouse/duplicity-${VERSION}-*.whl dist
+    rmdir wheelhouse
+fi
 
 ## upload to pypi
-twine upload --non-interactive dist/duplicity-*
+twine upload --non-interactive dist/duplicity-${VERSION}-*

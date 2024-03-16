@@ -28,42 +28,23 @@ import subprocess
 import sys
 import time
 
-from distutils.command.build_scripts import build_scripts
-from distutils.command.install_data import install_data
 from setuptools import setup, Extension, Command
 from setuptools.command.build_ext import build_ext
 from setuptools.command.sdist import sdist
-from setuptools.command.test import test
-
-import setuptools_scm as scm
 
 # check that we can function here
 if not ((3, 8) <= sys.version_info[:2] <= (3, 12)):
     print("Sorry, duplicity requires version 3.8 thru 3.12 of Python.")
     sys.exit(1)
 
-scm_version_args: dict = {
-    "tag_regex": r"^(?P<prefix>rel\.)?(?P<version>[^\+]+)(?P<suffix>.*)?$",
-    "version_scheme": "guess-next-dev",
-    "local_scheme": "no-local-version",
-}
-
 Version: str = "2.2.2"
-try:
-    Version = scm.get_version(**scm_version_args)
-except Exception:
-    print(
-        f"ERROR: Could not parse version from local git repository.\nUsing fallback version: {Version}",
-        file=sys.stderr,
-    )
-
 reldate: str = time.strftime("%B %d, %Y", time.gmtime(int(os.environ.get("SOURCE_DATE_EPOCH", time.time()))))
 
 # READTHEDOCS uses setup.py sdist but can't handle extensions
 ext_modules = list()
 incdir_list = list()
 libdir_list = list()
-if not os.environ.get("READTHEDOCS") == "True":
+if not os.environ.get("READTHEDOCS", False) == "True":
     # set incdir and libdir for librsync
     if os.name == "posix":
         LIBRSYNC_DIR = os.environ.get("LIBRSYNC_DIR", "")
@@ -76,11 +57,24 @@ if not os.environ.get("READTHEDOCS") == "True":
             incdir_list = [os.path.join(LIBRSYNC_DIR, "include")]
             libdir_list = [os.path.join(LIBRSYNC_DIR, "lib")]
 
+    # set incdir for pyenv
+    if pyenv_root := os.environ.get("PYENV_ROOT", None):
+        major, minor, patch = sys.version_info[:3]
+        incdir_list.append(
+            os.path.join(
+                f"{pyenv_root}",
+                f"versions",
+                f"{major}.{minor}.{patch}",
+                f"include",
+                f"python{major}.{minor}",
+            )
+        )
+
     # build the librsync extension
     ext_modules = [
         Extension(
             name=r"duplicity._librsync",
-            sources=[r"duplicity/_librsyncmodule.c"],
+            sources=["duplicity/_librsyncmodule.c"],
             include_dirs=incdir_list,
             library_dirs=libdir_list,
             libraries=["rsync"],
@@ -167,9 +161,24 @@ class SCMVersionSourceCommand(Command):
     Mod the versioned files and add correct scmversion
     """
 
-    description: str = "Version souce based on SCM tag"
+    description: str = "Version source based on SCM tag"
 
     user_options: list = []
+
+    try:
+        import setuptools_scm as scm
+
+        Version = scm.get_version(
+            tag_regex=r"^(?P<prefix>rel\.)?(?P<version>[^\+]+)(?P<suffix>.*)?$",
+            version_scheme="guess-next-dev",
+            local_scheme="no-local-version",
+            fallback_version=Version,
+        )
+    except Exception:
+        print(
+            f"ERROR: Could not get/parse version from local git repository.\nUsing fallback version: {Version}",
+            file=sys.stderr,
+        )
 
     def initialize_options(self):
         pass
@@ -211,9 +220,9 @@ class SCMVersionSourceCommand(Command):
             os.path.join(".", "setup.py"),
         )
 
-        # fallback_version = "$version"
+        # version = "$version"
         self.version_source(
-            r'fallback_version = "(?P<version>[^\"]*)"',
+            r'version = "(?P<version>[^\"]*)"',
             None,
             os.path.join(".", "pyproject.toml"),
         )
@@ -283,6 +292,7 @@ class SdistCommand(sdist):
         assert not os.system(
             f"""tar czf {tarball} \
                                  --exclude '.*' \
+                                 --exclude crowdin.yml \
                                  --exclude Makefile \
                                  --exclude debian \
                                  --exclude docs \
@@ -297,41 +307,11 @@ class SdistCommand(sdist):
         assert not shutil.rmtree(tardir)
 
 
-class TestCommand(test):
-    def run(self):
-        # Make sure all modules are ready
-        build_cmd = self.get_finalized_command("build_py")
-        build_cmd.run()
-        # And make sure our scripts are ready
-        build_scripts_cmd = self.get_finalized_command("build_scripts")
-        build_scripts_cmd.run()
-
-        # make symlinks for test data
-        if build_cmd.build_lib != top_dir:
-            for path in ["source_files.tar.gz", "gnupg"]:
-                src = os.path.join(top_dir, "testing", path)
-                target = os.path.join(build_cmd.build_lib, "testing", path)
-                try:
-                    os.symlink(src, target)
-                except Exception:
-                    pass
-
-        os.environ["PATH"] = f"{os.path.abspath(build_scripts_cmd.build_dir)}:{os.environ.get('PATH')}"
-
-        test.run(self)
-
-        cleanup()
-
-
 with open("README.md") as fh:
     long_description = fh.read()
 
 
 setup(
-    name="duplicity",
-    version=Version,
-    url="http://duplicity.us",
-    platforms=["any"],
     packages=[
         "duplicity",
         "duplicity.backends",
@@ -386,7 +366,6 @@ setup(
     cmdclass={
         "build_ext": BuildExtCommand,
         "sdist": SdistCommand,
-        "test": TestCommand,
         "scmversion": SCMVersionSourceCommand,
     },
 )

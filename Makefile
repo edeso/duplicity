@@ -32,6 +32,7 @@ genned_files=\
 	'testdb*' \
 	'testextension.sqlext' \
 	'testing*.rst' \
+	'wheelhouse' \
 	'work'
 
 clean:
@@ -54,6 +55,6 @@ pot:
 	po/update-pot
 
 sdist:
-	./setup.py sdist --dist-dir=.
+	python3 ./setup.py -q sdist
 
 .PHONY: clean docs ext help pot sdist

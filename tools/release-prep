@@ -73,5 +73,5 @@ git tag -f rel.${REL}
 git push --tags -f -o ci.skip
 
 # make and sign the release
-./setup.py sdist --dist-dir=.
+python3 ./setup.py -q sdist --dist-dir=.
 gpg --use-agent -b duplicity-${REL}.tar.gz
