@@ -121,8 +121,8 @@ def get_data_files():
             os.mkdir(os.path.join("po", lang))
         except os.error:
             pass
-        assert not os.system(f"cp po/{lang}.po po/{lang}"), lang
-        assert not os.system(f"msgfmt po/{lang}.po -o po/{lang}/duplicity.mo"), lang
+        subprocess.run(f"cp po/{lang}.po po/{lang}", shell=True, check=True)
+        subprocess.run(f"msgfmt po/{lang}.po -o po/{lang}/duplicity.mo", shell=True, check=True)
 
     for root, dirs, files in os.walk("po"):
         for file in files:
@@ -140,10 +140,7 @@ def cleanup():
         for line in linguas:
             langs = line.split()
             for lang in langs:
-                try:
-                    shutil.rmtree(os.path.join("po", lang))
-                except Exception:
-                    pass
+                shutil.rmtree(os.path.join("po", lang), ignore_errors=True)
 
 
 class BuildExtCommand(build_ext):
@@ -227,6 +224,13 @@ class SCMVersionSourceCommand(Command):
             os.path.join(".", "pyproject.toml"),
         )
 
+        # fallback_version = "$version"
+        self.version_source(
+            r'fallback_version = "(?P<version>[^\"]*)"',
+            None,
+            os.path.join(".", "pyproject.toml"),
+        )
+
     def version_source(self, version_patt: str, reldate_patt: str, pathname: str):
         """
         Copy source to dest, substituting current version with scmversion
@@ -278,7 +282,7 @@ class SdistCommand(sdist):
         tardir = f"duplicity-{Version}"
         tarball = f"{self.dist_dir}/duplicity-{Version}.tar.gz"
 
-        assert not os.system(f"tar -xf {orig}")
+        subprocess.run(f"tar -xf {orig}", shell=True, check=True)
         assert not os.remove(orig)
 
         # make sure executables are
@@ -289,7 +293,7 @@ class SdistCommand(sdist):
         os.environ["COPYFILE_DISABLE"] = "true"
 
         # make the new tarball and remove tardir
-        assert not os.system(
+        subprocess.run(
             f"""tar czf {tarball} \
                                  --exclude '.*' \
                                  --exclude crowdin.yml \
@@ -302,7 +306,9 @@ class SdistCommand(sdist):
                                  --exclude testing/regression \
                                  --exclude tools \
                                  {tardir}
-                              """
+                              """,
+            shell=True,
+            check=True,
         )
         assert not shutil.rmtree(tardir)
 
