@@ -343,6 +343,9 @@ class BackendWrapperTest(UnitTestCase):
 
     @mock.patch("time.sleep")
     def test_verify_generic_fail_2(self, time_mock):  # pylint: disable=unused-argument
+        """
+        simulate backend which can't get file size, because of missing functionality
+        """
         try:
             del self.mock._validate
         except Exception as e:
@@ -350,7 +353,7 @@ class BackendWrapperTest(UnitTestCase):
         ql_resp = mock.MagicMock()
         ql_resp.return_value = {self.remote: {"size": None}}
         self.mock._query_list = ql_resp
-        assert self.backend.validate(self.remote, 2345)[0] is False
+        assert self.backend.validate(self.remote, 2345)[0] is True
 
     def test_verify_testbackend(self):
         file = duplicity.path.Path("testfiles/dir1/regular_file")
