@@ -54,7 +54,7 @@ for V in ${VERS}; do
 done
 
 # get wheels from last good run of wheels job
-BRANCH=issue797    # TODO: change to main
+BRANCH=main
 JOB=wheels
 echo "Downloading artifacts from branch ${BRANCH} job ${JOB}"
 curl --location "https://gitlab.com/api/v4/projects/12450835/jobs/artifacts/${BRANCH}/download?job=${JOB}"  \
