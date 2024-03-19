@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: duplicity\n"
 "Report-Msgid-Bugs-To: Kenneth Loafman <kenneth@loafman.com>\n"
-"POT-Creation-Date: 2024-02-02 10:39-0600\n"
-"PO-Revision-Date: 2024-02-03 16:00\n"
+"POT-Creation-Date: 2024-03-19 10:08-0500\n"
+"PO-Revision-Date: 2024-03-19 15:12\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -116,9 +116,9 @@ msgstr "posisjonsargumenter"
 #. Used in usage help. (Should be consistent with the "Options:"
 #. header.) Example:
 #. duplicity [full|incremental] [options] source_path target_url
-#: ../duplicity/argparse311.py:1671 ../duplicity/cli_data.py:353
-#: ../duplicity/cli_data.py:507 ../duplicity/cli_data.py:556
-#: ../duplicity/cli_data.py:686 ../duplicity/cli_data.py:927
+#: ../duplicity/argparse311.py:1671 ../duplicity/cli_data.py:354
+#: ../duplicity/cli_data.py:508 ../duplicity/cli_data.py:557
+#: ../duplicity/cli_data.py:687 ../duplicity/cli_data.py:928
 msgid "options"
 msgstr "valg"
 
@@ -209,45 +209,55 @@ msgstr "%(prog)s: feil: %(message)s\n"
 msgid "task execution done (success: %s)"
 msgstr "oppgaven er utført (vellykket: %s)"
 
-#: ../duplicity/backend.py:92
+#: ../duplicity/backend.py:93
 #, python-format
 msgid "Import of %s %s"
 msgstr "Import av %s %s"
 
-#: ../duplicity/backend.py:197
+#: ../duplicity/backend.py:198
 #, python-format
 msgid "Could not initialize backend: %s"
 msgstr "Kunne ikke initialisere administrator: %s"
 
-#: ../duplicity/backend.py:388
+#: ../duplicity/backend.py:389
 #, python-format
 msgid "Backtrace of previous error: %s"
 msgstr "Restsporing av forrige feil: %s"
 
-#: ../duplicity/backend.py:407
+#: ../duplicity/backend.py:408
 #, python-format
 msgid "Giving up after %s attempts. %s: %s"
 msgstr "Gir opp etter %s forsøk. %s: %s"
 
-#: ../duplicity/backend.py:413
+#: ../duplicity/backend.py:414
 #, python-format
 msgid "Attempt of %s Nr. %s failed. %s: %s"
 msgstr ""
 
-#: ../duplicity/backend.py:512
+#: ../duplicity/backend.py:513
 #, python-format
 msgid "Reading results of '%s'"
 msgstr "Leser resultater av '%s'"
 
-#: ../duplicity/backend.py:539
+#: ../duplicity/backend.py:540
 #, python-format
 msgid "Writing %s"
 msgstr "Skrive %s"
 
-#: ../duplicity/backend.py:580
+#: ../duplicity/backend.py:581
 #, python-format
 msgid "File %s not found locally after get from backend"
 msgstr "Fil %s ble ikke funnet lokalt etter inntak av sikkerhetskopi"
+
+#: ../duplicity/backend.py:634
+#, python-format
+msgid "%s Remote filesize %d for %s does not match local size %d"
+msgstr ""
+
+#: ../duplicity/backends/_testbackend.py:182
+#, python-format
+msgid "Unexpected exception while validate %s."
+msgstr ""
 
 #: ../duplicity/backends/giobackend.py:108
 #, python-format
@@ -474,10 +484,10 @@ msgstr "WebDAV DEL Bad status code %s reason %s."
 #. Used in usage help to represent a Unix-style path name. Example:
 #. --archive-dir <path>
 #: ../duplicity/cli_data.py:103 ../duplicity/cli_data.py:163
-#: ../duplicity/cli_data.py:197 ../duplicity/cli_data.py:244
-#: ../duplicity/cli_data.py:347 ../duplicity/cli_data.py:365
-#: ../duplicity/cli_data.py:525 ../duplicity/cli_data.py:707
-#: ../duplicity/cli_data.py:936
+#: ../duplicity/cli_data.py:197 ../duplicity/cli_data.py:245
+#: ../duplicity/cli_data.py:348 ../duplicity/cli_data.py:366
+#: ../duplicity/cli_data.py:526 ../duplicity/cli_data.py:708
+#: ../duplicity/cli_data.py:937
 msgid "path"
 msgstr "sti"
 
@@ -490,27 +500,27 @@ msgstr "Hot∙Cool∙Arkiv"
 #. --num-retries <number>
 #: ../duplicity/cli_data.py:121 ../duplicity/cli_data.py:127
 #: ../duplicity/cli_data.py:135 ../duplicity/cli_data.py:169
-#: ../duplicity/cli_data.py:433 ../duplicity/cli_data.py:449
-#: ../duplicity/cli_data.py:496 ../duplicity/cli_data.py:513
-#: ../duplicity/cli_data.py:519 ../duplicity/cli_data.py:537
-#: ../duplicity/cli_data.py:603 ../duplicity/cli_data.py:611
-#: ../duplicity/cli_data.py:663 ../duplicity/cli_data.py:744
-#: ../duplicity/cli_data.py:923
+#: ../duplicity/cli_data.py:434 ../duplicity/cli_data.py:450
+#: ../duplicity/cli_data.py:497 ../duplicity/cli_data.py:514
+#: ../duplicity/cli_data.py:520 ../duplicity/cli_data.py:538
+#: ../duplicity/cli_data.py:604 ../duplicity/cli_data.py:612
+#: ../duplicity/cli_data.py:664 ../duplicity/cli_data.py:745
+#: ../duplicity/cli_data.py:924
 msgid "number"
 msgstr "nummer"
 
 #. Used in usage help. Example:
 #. --timeout <seconds>
-#: ../duplicity/cli_data.py:147 ../duplicity/cli_data.py:714
-#: ../duplicity/cli_data.py:949
+#: ../duplicity/cli_data.py:147 ../duplicity/cli_data.py:715
+#: ../duplicity/cli_data.py:950
 msgid "seconds"
 msgstr "sekunder"
 
 #. Used in usage help to represent an ID for a GnuPG key. Example:
 #. --encrypt-key <gpg_key_id>
 #: ../duplicity/cli_data.py:185 ../duplicity/cli_data.py:191
-#: ../duplicity/cli_data.py:359 ../duplicity/cli_data.py:670
-#: ../duplicity/cli_data.py:915
+#: ../duplicity/cli_data.py:360 ../duplicity/cli_data.py:671
+#: ../duplicity/cli_data.py:916
 msgid "gpg-key-id"
 msgstr "gpg-nøkkel-id"
 
@@ -518,180 +528,180 @@ msgstr "gpg-nøkkel-id"
 #. matching one or more files, as described in the documentation.
 #. Example:
 #. --exclude <shell_pattern>
-#: ../duplicity/cli_data.py:202 ../duplicity/cli_data.py:387
-#: ../duplicity/cli_data.py:954
+#: ../duplicity/cli_data.py:202 ../duplicity/cli_data.py:388
+#: ../duplicity/cli_data.py:955
 msgid "shell_pattern"
 msgstr "skall_mønster"
 
 #. Used in usage help to represent the name of a file. Example:
 #. --log-file <filename>
 #: ../duplicity/cli_data.py:214 ../duplicity/cli_data.py:220
-#: ../duplicity/cli_data.py:280 ../duplicity/cli_data.py:393
-#: ../duplicity/cli_data.py:912
+#: ../duplicity/cli_data.py:281 ../duplicity/cli_data.py:394
+#: ../duplicity/cli_data.py:913
 msgid "filename"
 msgstr "filnavn"
 
 #. Used in usage help to represent a time spec for a previous
 #. point in time, as described in the documentation. Example:
 #. duplicity remove-older-than time [options] target_url
-#: ../duplicity/cli_data.py:226 ../duplicity/cli_data.py:550
-#: ../duplicity/cli_data.py:980
+#: ../duplicity/cli_data.py:226 ../duplicity/cli_data.py:551
+#: ../duplicity/cli_data.py:981
 msgid "time"
 msgstr "tid"
 
-#: ../duplicity/cli_data.py:238 ../duplicity/cli_data.py:399
+#: ../duplicity/cli_data.py:239 ../duplicity/cli_data.py:400
 msgid "regex"
 msgstr "regex"
 
-#: ../duplicity/cli_data.py:341
+#: ../duplicity/cli_data.py:342
 msgid "interval"
 msgstr "intervall"
 
-#: ../duplicity/cli_data.py:382
+#: ../duplicity/cli_data.py:383
 msgid "imap_mailbox"
 msgstr "imap_mailbox"
 
-#: ../duplicity/cli_data.py:407
+#: ../duplicity/cli_data.py:408
 msgid "If set, an extra file with statistics in json format will be stored with each backup. It includes the statistics printed out on stdout by default. With 'collection-status' it returs these stats."
 msgstr "Hvis satt vil en ekstra fil med statistikk i json-format bli lagret med hver sikkerhetskopi. Den inkluderer statistikker som standard skrives ut som «collection-status» den returnerer."
 
-#: ../duplicity/cli_data.py:415
+#: ../duplicity/cli_data.py:416
 msgid "file_descriptor"
 msgstr "fil_deskriptor"
 
-#: ../duplicity/cli_data.py:422
+#: ../duplicity/cli_data.py:423
 msgid "log_filename"
 msgstr "log_filnavn"
 
-#: ../duplicity/cli_data.py:455
+#: ../duplicity/cli_data.py:456
 msgid "backup name"
 msgstr "navn på sikkerhetskopi"
 
-#: ../duplicity/cli_data.py:562
+#: ../duplicity/cli_data.py:563
 msgid "s3_endpoint_url"
 msgstr "s3_endpoint_url"
 
-#: ../duplicity/cli_data.py:630
+#: ../duplicity/cli_data.py:631
 msgid "s3_kms_key_id"
 msgstr "s3_kms_key_id"
 
-#: ../duplicity/cli_data.py:636
+#: ../duplicity/cli_data.py:637
 msgid "s3_kms_grant"
 msgstr "s3_kms_grant"
 
-#: ../duplicity/cli_data.py:642
+#: ../duplicity/cli_data.py:643
 msgid "s3_region_name"
 msgstr "s3_region_navn"
 
-#: ../duplicity/cli_data.py:648
+#: ../duplicity/cli_data.py:649
 msgid "policy"
 msgstr "politikk"
 
 #. noun
-#: ../duplicity/cli_data.py:653 ../duplicity/cli_data.py:658
-#: ../duplicity/cli_data.py:901
+#: ../duplicity/cli_data.py:654 ../duplicity/cli_data.py:659
+#: ../duplicity/cli_data.py:902
 msgid "command"
 msgstr "kommando"
 
-#: ../duplicity/cli_data.py:693
+#: ../duplicity/cli_data.py:694
 msgid "pem formatted bundle of certificate authorities"
 msgstr "Pem formatert bunt med sertifikatutstedere"
 
-#: ../duplicity/cli_data.py:698
+#: ../duplicity/cli_data.py:699
 msgid "path to a folder with certificate authority files"
 msgstr "sti til en mappe med sertifikatfiler"
 
 #. abbreviation for "character" (noun)
-#: ../duplicity/cli_data.py:720 ../duplicity/cli_data.py:899
+#: ../duplicity/cli_data.py:721 ../duplicity/cli_data.py:900
 msgid "char"
 msgstr "tegn"
 
-#: ../duplicity/cli_data.py:733
+#: ../duplicity/cli_data.py:734
 msgid "verb"
 msgstr "restituering"
 
-#: ../duplicity/cli_data.py:751
+#: ../duplicity/cli_data.py:752
 msgid "extra headers for Webdav, like 'Cookie,name=value'"
 msgstr "ekstra overskrifter for Webdav, som \"Cookie,name=value\""
 
 #. Used in usage help to represent a Unix-style path name. Example:
 #. rsync://user[:password]@other_host[:port]//absolute_path
-#: ../duplicity/cli_data.py:890
+#: ../duplicity/cli_data.py:891
 msgid "absolute_path"
 msgstr "absolute_path"
 
 #. Used in usage help. Example:
 #. tahoe://alias/some_dir
-#: ../duplicity/cli_data.py:893
+#: ../duplicity/cli_data.py:894
 msgid "alias"
 msgstr "alias"
 
 #. Used in help to represent a "bucket name" for Amazon Web
 #. Services' Simple Storage Service (S3). Example:
 #. s3://other.host/bucket_name[/prefix]
-#: ../duplicity/cli_data.py:897
+#: ../duplicity/cli_data.py:898
 msgid "bucket_name"
 msgstr "bøtte_navn"
 
 #. Used in usage help to represent the name of a container in
 #. Amazon Web Services' Cloudfront. Example:
 #. cf+http://container_name
-#: ../duplicity/cli_data.py:905
+#: ../duplicity/cli_data.py:906
 msgid "container_name"
 msgstr "beholder_navn"
 
 #. noun
-#: ../duplicity/cli_data.py:907
+#: ../duplicity/cli_data.py:908
 msgid "count"
 msgstr "teller"
 
 #. Used in usage help to represent the name of a file directory
-#: ../duplicity/cli_data.py:909
+#: ../duplicity/cli_data.py:910
 msgid "directory"
 msgstr "mappe"
 
 #. Used in usage help, e.g. to represent the name of a code
 #. module. Example:
 #. rsync://user[:password]@other.host[:port]::/module/some_dir
-#: ../duplicity/cli_data.py:919
+#: ../duplicity/cli_data.py:920
 msgid "module"
 msgstr "modul"
 
 #. Used in usage help to represent an internet hostname. Example:
 #. ftp://user[:password]@other.host[:port]/some_dir
-#: ../duplicity/cli_data.py:930
+#: ../duplicity/cli_data.py:931
 msgid "other.host"
 msgstr "annet.vert"
 
 #. Used in usage help. Example:
 #. ftp://user[:password]@other.host[:port]/some_dir
-#: ../duplicity/cli_data.py:933
+#: ../duplicity/cli_data.py:934
 msgid "password"
 msgstr "passord"
 
 #. Used in usage help to represent a TCP port number. Example:
 #. ftp://user[:password]@other.host[:port]/some_dir
-#: ../duplicity/cli_data.py:939
+#: ../duplicity/cli_data.py:940
 msgid "port"
 msgstr "port"
 
 #. Used in usage help. This represents a string to be used as a
 #. prefix to names for backup files created by Duplicity. Example:
 #. s3://other.host/bucket_name[/prefix]
-#: ../duplicity/cli_data.py:943
+#: ../duplicity/cli_data.py:944
 msgid "prefix"
 msgstr "prefiks"
 
 #. Used in usage help to represent a Unix-style path name. Example:
 #. rsync://user[:password]@other.host[:port]/relative_path
-#: ../duplicity/cli_data.py:946
+#: ../duplicity/cli_data.py:947
 msgid "relative_path"
 msgstr "relative_bane"
 
 #. Used in usage help to represent the name of a single file
 #. directory or a Unix-style path to a directory. Example:
 #. file:///some_dir
-#: ../duplicity/cli_data.py:958
+#: ../duplicity/cli_data.py:959
 msgid "some_dir"
 msgstr "no_NO"
 
@@ -699,14 +709,14 @@ msgstr "no_NO"
 #. directory or a Unix-style path to a directory where files will be
 #. coming FROM. Example:
 #. duplicity [full|incremental] [options] source_path target_url
-#: ../duplicity/cli_data.py:963
+#: ../duplicity/cli_data.py:964
 msgid "source_path"
 msgstr "source_path"
 
 #. Used in usage help to represent a URL files will be coming
 #. FROM. Example:
 #. duplicity [restore] [options] source_url target_dir
-#: ../duplicity/cli_data.py:967
+#: ../duplicity/cli_data.py:968
 msgid "source_url"
 msgstr "source_url"
 
@@ -714,42 +724,42 @@ msgstr "source_url"
 #. directory or a Unix-style path to a directory. where files will be
 #. going TO. Example:
 #. duplicity [restore] [options] source_url target_dir
-#: ../duplicity/cli_data.py:972
+#: ../duplicity/cli_data.py:973
 msgid "target_dir"
 msgstr "target_dir"
 
 #. Used in usage help to represent a URL files will be going TO.
 #. Example:
 #. duplicity [full|incremental] [options] source_path target_url
-#: ../duplicity/cli_data.py:976
+#: ../duplicity/cli_data.py:977
 msgid "target_url"
 msgstr "target_url"
 
 #. Used in usage help to represent a user name (i.e. login).
 #. Example:
 #. ftp://user[:password]@other.host[:port]/some_dir
-#: ../duplicity/cli_data.py:984
+#: ../duplicity/cli_data.py:985
 msgid "user"
 msgstr "bruker"
 
 #. account id for b2. Example: b2://account_id@bucket/
-#: ../duplicity/cli_data.py:986
+#: ../duplicity/cli_data.py:987
 msgid "account_id"
 msgstr "Konto_id"
 
 #. application_key for b2.
 #. Example: b2://account_id:application_key@bucket/
-#: ../duplicity/cli_data.py:989
+#: ../duplicity/cli_data.py:990
 msgid "application_key"
 msgstr "applikasjon_nøkkel"
 
 #. remote name for rclone.
 #. Example: rclone://remote:/some_dir
-#: ../duplicity/cli_data.py:992 ../duplicity/dup_collections.py:565
+#: ../duplicity/cli_data.py:993 ../duplicity/dup_collections.py:565
 msgid "remote"
 msgstr "fjernkontroll"
 
-#: ../duplicity/cli_data.py:996
+#: ../duplicity/cli_data.py:997
 msgid "Backends and their URL formats:"
 msgstr "Backends and their URL formats:"
 
@@ -771,12 +781,12 @@ msgstr "Ugyldig '{rest[0]}' handling og kan ikke underforstås fra "
 msgid "GPG binary is {config.gpg_binary}, version {gpg_version}"
 msgstr "GPG binær er {config.gpg_binary}, versjon {gpg_version}"
 
-#: ../duplicity/cli_main.py:335
+#: ../duplicity/cli_main.py:348
 #, python-brace-format
 msgid "Using archive dir: {config.archive_dir_path.uc_name}"
 msgstr "Bruker arkiv dir: {config.archive_dir_path.uc_name}"
 
-#: ../duplicity/cli_main.py:336
+#: ../duplicity/cli_main.py:349
 #, python-brace-format
 msgid "Using backup name: {config.backup_name}"
 msgstr "Bruker sikkerhetskopinavn: {config.backup_name}"
@@ -961,11 +971,11 @@ msgstr "Antall lagrede sikkerhetskopisett: %d"
 msgid "Total number of contained volumes: %d"
 msgstr "Totalt antall inneholdt volumer: %d"
 
-#: ../duplicity/dup_collections.py:494 ../duplicity/dup_collections.py:1308
+#: ../duplicity/dup_collections.py:494 ../duplicity/dup_collections.py:1301
 msgid "Type of backup set:"
 msgstr "Type reserveløsning:"
 
-#: ../duplicity/dup_collections.py:494 ../duplicity/dup_collections.py:1308
+#: ../duplicity/dup_collections.py:494 ../duplicity/dup_collections.py:1301
 msgid "Time:"
 msgstr "Tid:"
 
@@ -973,11 +983,11 @@ msgstr "Tid:"
 msgid "Num volumes:"
 msgstr "Antall volumer:"
 
-#: ../duplicity/dup_collections.py:499 ../duplicity/dup_collections.py:1315
+#: ../duplicity/dup_collections.py:499 ../duplicity/dup_collections.py:1308
 msgid "Full"
 msgstr "Full"
 
-#: ../duplicity/dup_collections.py:502 ../duplicity/dup_collections.py:1317
+#: ../duplicity/dup_collections.py:502 ../duplicity/dup_collections.py:1310
 msgid "Incremental"
 msgstr "Incremental"
 
@@ -1041,102 +1051,100 @@ msgstr "Ingen foreldreløse eller ufullstendige sikkerhetskopieringer funnet."
 msgid "%d file(s) exists on backend"
 msgstr "%d fil(er) finnes i backend"
 
-#: ../duplicity/dup_collections.py:772
+#: ../duplicity/dup_collections.py:770
 #, python-format
-msgid "%d file exists in cache"
-msgid_plural "%d files exist in cache"
-msgstr[0] "%d fil finnes i hurtiglager"
-msgstr[1] "%d filer finnes i hurtigbuffer"
+msgid "%d file(s) exist in cache"
+msgstr ""
 
-#: ../duplicity/dup_collections.py:831
+#: ../duplicity/dup_collections.py:824
 msgid "Warning, discarding last backup set, because of missing signature file."
 msgstr "Advarsel, kassering av siste sikkerhetskopi, på grunn av manglende signaturfil."
 
-#: ../duplicity/dup_collections.py:854
+#: ../duplicity/dup_collections.py:847
 msgid "Warning, found the following local orphaned signature file(s):"
 msgstr "Advarsel, fant følgende lokale signatur fil(er):"
 
-#: ../duplicity/dup_collections.py:862
+#: ../duplicity/dup_collections.py:855
 msgid "Warning, found the following remote orphaned signature file(s):"
 msgstr "Advarsel, fant følgende eksterne foreldreløse signaturfil(er):"
 
-#: ../duplicity/dup_collections.py:870
+#: ../duplicity/dup_collections.py:863
 msgid "Warning, found signatures but no corresponding backup files"
 msgstr "Advarsel, funnede signaturer, men ingen tilsvarende sikkerhetskopifiler"
 
-#: ../duplicity/dup_collections.py:876
+#: ../duplicity/dup_collections.py:869
 msgid "Warning, found incomplete backup sets, probably left from aborted session"
 msgstr "Advarsel, funnet ufullstendige sikkerhetskopieringssett, sannsynligvis igjen fra avbrutt økt"
 
-#: ../duplicity/dup_collections.py:882
+#: ../duplicity/dup_collections.py:875
 msgid "Warning, found the following orphaned backup file(s):"
 msgstr "Advarsel, fant følgende foreldreløse sikkerhetskopifil(er):"
 
-#: ../duplicity/dup_collections.py:897
+#: ../duplicity/dup_collections.py:890
 #, python-format
 msgid "Extracting backup chains from list of files: %s"
 msgstr "Ekstraksjon av sikkerhetskopierte kjeder fra liste over filer: %s"
 
-#: ../duplicity/dup_collections.py:908
+#: ../duplicity/dup_collections.py:901
 #, python-format
 msgid "File %s is part of known set"
 msgstr "Filen %s er en del av det kjente settet"
 
-#: ../duplicity/dup_collections.py:911
+#: ../duplicity/dup_collections.py:904
 #, python-format
 msgid "File %s is not part of a known set; creating new set"
 msgstr "Fil %s er ikke en del av et kjent sett; oppretting av nytt sett"
 
-#: ../duplicity/dup_collections.py:916
+#: ../duplicity/dup_collections.py:909
 #, python-format
 msgid "Ignoring file (rejected by backup set) '%s'"
 msgstr "Ignorerer filen (avvist av sikkerhetskopieringssett) '%s'"
 
-#: ../duplicity/dup_collections.py:932
+#: ../duplicity/dup_collections.py:925
 #, python-format
 msgid "Found backup chain %s"
 msgstr "Fant backup-kjede %s"
 
-#: ../duplicity/dup_collections.py:937
+#: ../duplicity/dup_collections.py:930
 #, python-format
 msgid "Added set %s to pre-existing chain %s"
 msgstr "Lagt til %s til eksisterende kjede %s"
 
-#: ../duplicity/dup_collections.py:940
+#: ../duplicity/dup_collections.py:933
 #, python-format
 msgid "Found orphaned set %s"
 msgstr "Fant foreldreløse sett %s"
 
-#: ../duplicity/dup_collections.py:1088
+#: ../duplicity/dup_collections.py:1081
 #, python-format
 msgid "No signature chain for the requested time. Using oldest available chain, starting at time %s."
 msgstr "Ingen signaturkjede for forespurt tid. Bruker eldste tilgjengelige kjetting, som starter på tidspunkt %s."
 
-#: ../duplicity/dup_collections.py:1306
+#: ../duplicity/dup_collections.py:1299
 #, python-format
 msgid "File: %s"
 msgstr "Fil: %s"
 
-#: ../duplicity/dup_collections.py:1307
+#: ../duplicity/dup_collections.py:1300
 #, python-format
 msgid "Total number of backup: %d"
 msgstr "Totalt antall backup: %d"
 
-#: ../duplicity/dup_collections.py:1308 ../duplicity/dup_collections.py:1344
+#: ../duplicity/dup_collections.py:1301 ../duplicity/dup_collections.py:1337
 msgid "Type of file change:"
 msgstr "Type filendring:"
 
-#: ../duplicity/dup_collections.py:1342
+#: ../duplicity/dup_collections.py:1335
 #, python-format
 msgid " Backup set time: %s"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:1343
+#: ../duplicity/dup_collections.py:1336
 #, python-format
 msgid "Total number of changes: %d"
 msgstr "Totalt antall endringer: %d"
 
-#: ../duplicity/dup_collections.py:1344
+#: ../duplicity/dup_collections.py:1337
 msgid "File:"
 msgstr "Fil:"
 
@@ -1184,243 +1192,238 @@ msgstr "Filen %s mangler i sikkerhetskopisettet.\n"
 
 #: ../duplicity/dup_main.py:330
 #, python-format
-msgid "%s Remote filesize %d for %s does not match local size %d, retrying."
-msgstr "%s Remote filesize %d for %s samsvarer ikke med den lokale størrelsen %d, prøver på nytt."
-
-#: ../duplicity/dup_main.py:337
-#, python-format
 msgid "File %s was corrupted during upload."
 msgstr "Filen %s ble skadet under opplasting."
 
-#: ../duplicity/dup_main.py:377
+#: ../duplicity/dup_main.py:360
 msgid "Restarting backup, but current encryption settings do not match original settings"
 msgstr "Restart sikkerhetskopiering, men gjeldende krypteringsinnstillinger samsvarer ikke med opprinnelige innstillinger"
 
-#: ../duplicity/dup_main.py:399
+#: ../duplicity/dup_main.py:382
 msgid "Skipping encryption validation due to glacier/deep storage"
 msgstr "Hopper over krypteringsvalidering på grunn av glasier/dyplagring"
 
-#: ../duplicity/dup_main.py:403
+#: ../duplicity/dup_main.py:386
 #, python-format
 msgid "Restarting after volume %s, file %s, block %s"
 msgstr "Restarter etter volum %s, fil %s, blokk %s"
 
-#: ../duplicity/dup_main.py:466
+#: ../duplicity/dup_main.py:449
 msgid "Skipped volume upload, as effectivly nothing has changed"
 msgstr "Hoppet over volumet opplastet, siden ingenting er endret"
 
-#: ../duplicity/dup_main.py:480
+#: ../duplicity/dup_main.py:463
 #, python-format
 msgid "Processed volume %d"
 msgstr "Behandlet volum %d"
 
-#: ../duplicity/dup_main.py:648
+#: ../duplicity/dup_main.py:631
 msgid "Fatal Error: Unable to start incremental backup.  Old signatures not found and incremental specified"
 msgstr "Fatal feil: Kan ikke starte trinnvis sikkerhetskopi. Gamle signaturer ikke funnet og trinnvis spesifisert"
 
-#: ../duplicity/dup_main.py:654
+#: ../duplicity/dup_main.py:637
 msgid "No signatures found, switching to full backup."
 msgstr "Ingen signaturer funnet, bytter til full sikkerhetskopi."
 
-#: ../duplicity/dup_main.py:668
+#: ../duplicity/dup_main.py:651
 msgid "Backup Statistics"
 msgstr "Sikkerhetskopier statistikk"
 
-#: ../duplicity/dup_main.py:808
+#: ../duplicity/dup_main.py:791
 #, python-format
 msgid "%s not found in archive - no files restored."
 msgstr "%s ble ikke funnet i arkivet - ingen filer gjenopprettet."
 
-#: ../duplicity/dup_main.py:812
+#: ../duplicity/dup_main.py:795
 msgid "No files found in archive - nothing restored."
 msgstr "Ingen filer funnet i arkivet - ingenting gjenopprettet."
 
-#: ../duplicity/dup_main.py:848
+#: ../duplicity/dup_main.py:831
 #, python-format
 msgid "Processed volume %d of %d"
 msgstr ""
 
-#: ../duplicity/dup_main.py:891
+#: ../duplicity/dup_main.py:874
 #, python-format
 msgid "Invalid data - %s hash mismatch for file:"
 msgstr "Ugyldige data - %s hash mismatch for filen:"
 
-#: ../duplicity/dup_main.py:893
+#: ../duplicity/dup_main.py:876
 #, python-format
 msgid "Calculated hash: %s"
 msgstr "Beregnet hash: %s"
 
-#: ../duplicity/dup_main.py:894
+#: ../duplicity/dup_main.py:877
 #, python-format
 msgid "Manifest hash: %s"
 msgstr "Manifest hash: %s"
 
-#: ../duplicity/dup_main.py:901 ../duplicity/util.py:106
+#: ../duplicity/dup_main.py:884 ../duplicity/util.py:106
 #, python-format
 msgid "IGNORED_ERROR: Warning: ignoring error as requested: %s: %s"
 msgstr "IGNORED_ERROR: Advarsel: ignorerer feil som forespurt: %s: %s"
 
-#: ../duplicity/dup_main.py:947
+#: ../duplicity/dup_main.py:930
 #, python-format
 msgid "Volume was signed by key %s, not %s"
 msgstr "Volumet ble signert av nøkkel %s, ikke %s"
 
-#: ../duplicity/dup_main.py:979
+#: ../duplicity/dup_main.py:962
 #, python-format
 msgid "Verify complete: %s, %s."
 msgstr "Verifiser fullført: %s, %s."
 
-#: ../duplicity/dup_main.py:980
+#: ../duplicity/dup_main.py:963
 #, python-format
 msgid "%d file(s) compared"
 msgstr "%d fil(er) er sammenlignet"
 
-#: ../duplicity/dup_main.py:980
+#: ../duplicity/dup_main.py:963
 #, python-format
 msgid "%d difference(s) found"
 msgstr "%d forskjell(er) funnet"
 
-#: ../duplicity/dup_main.py:999
+#: ../duplicity/dup_main.py:982
 msgid "No extraneous files found, nothing deleted in cleanup."
 msgstr "Ingen filer funnet, ingenting ble slettet i opprydningen."
 
-#: ../duplicity/dup_main.py:1014
+#: ../duplicity/dup_main.py:997
 msgid "Found the following file(s) to delete:"
 msgstr "Fant følgende fil(er) for å slette:"
 
-#: ../duplicity/dup_main.py:1018
+#: ../duplicity/dup_main.py:1001
 msgid "Run duplicity again with the --force option to actually delete."
 msgstr "Kjør duplisering igjen med --force option to actually delete."
 
-#: ../duplicity/dup_main.py:1064
+#: ../duplicity/dup_main.py:1047
 msgid "There are backup set(s) at time(s):"
 msgstr "Det er sikkerhetskopieringssett(er) om gangen(e):"
 
-#: ../duplicity/dup_main.py:1066
+#: ../duplicity/dup_main.py:1049
 msgid "Which can't be deleted because newer sets depend on them."
 msgstr "Som ikke kan slettes fordi nyere sett er avhengig av dem."
 
-#: ../duplicity/dup_main.py:1073
+#: ../duplicity/dup_main.py:1056
 msgid "Current active backup chain is older than specified time.  However, it will not be deleted.  To remove all your backups, manually purge the repository."
 msgstr "Den gjeldende aktive backup-kjeden er eldre enn angitt tid. Det vil imidlertid ikke bli slettet. For å fjerne alle sikkerhetskopiene dine fjernes manuelt fra arkivet."
 
-#: ../duplicity/dup_main.py:1091
+#: ../duplicity/dup_main.py:1074
 msgid "No old backup sets found, nothing deleted."
 msgstr "Ingen gamle backup sett funnet, ingenting slettet."
 
-#: ../duplicity/dup_main.py:1094
+#: ../duplicity/dup_main.py:1077
 msgid "Deleting backup chain(s) at time:"
 msgstr "Sletter sikkerhetskopieringskjeden(e) om gangen:"
 
-#: ../duplicity/dup_main.py:1103
+#: ../duplicity/dup_main.py:1086
 #, python-format
 msgid "Deleting any incremental signature chain rooted at %s"
 msgstr "Slette enhver inkrementell signaturkjede rootet ved %s"
 
-#: ../duplicity/dup_main.py:1105
+#: ../duplicity/dup_main.py:1088
 #, python-format
 msgid "Deleting any incremental backup chain rooted at %s"
 msgstr "Slette hvilken som helst sikkerhetskopiert kjede som er rootet ved %s"
 
-#: ../duplicity/dup_main.py:1108
+#: ../duplicity/dup_main.py:1091
 #, python-format
 msgid "Deleting complete signature chain %s"
 msgstr "Sletter komplett signaturkjede %s"
 
-#: ../duplicity/dup_main.py:1110
+#: ../duplicity/dup_main.py:1093
 #, python-format
 msgid "Deleting complete backup chain %s"
 msgstr "Sletter komplett sikkerhetskopiert kjede %s"
 
-#: ../duplicity/dup_main.py:1117
+#: ../duplicity/dup_main.py:1100
 msgid "Found old backup chain(s) at the following time:"
 msgstr "Fant gamle backup-kjetting(er) ved følgende tidspunkt:"
 
-#: ../duplicity/dup_main.py:1121
+#: ../duplicity/dup_main.py:1104
 msgid "Rerun command with --force option to actually delete."
 msgstr "Rerun kommando med --force option to actually delete."
 
-#: ../duplicity/dup_main.py:1224
+#: ../duplicity/dup_main.py:1207
 #, python-format
 msgid "Deleting local %s (not authoritative at backend)."
 msgstr "Sletter lokal %s (ikke autoritativ i administrasjon)."
 
-#: ../duplicity/dup_main.py:1228
+#: ../duplicity/dup_main.py:1211
 #, python-format
 msgid "Unable to delete %s: %s"
 msgstr "Kan ikke slette %s: %s"
 
-#: ../duplicity/dup_main.py:1262 ../duplicity/dup_temp.py:296
+#: ../duplicity/dup_main.py:1245 ../duplicity/dup_temp.py:296
 #, python-format
 msgid "Failed to read %s: %s"
 msgstr "Kunne ikke lese %s: %s"
 
-#: ../duplicity/dup_main.py:1274
+#: ../duplicity/dup_main.py:1257
 #, python-format
 msgid "Copying %s to local cache."
 msgstr "Kopierer %s til lokal cache."
 
-#: ../duplicity/dup_main.py:1322
+#: ../duplicity/dup_main.py:1305
 msgid "Local and Remote metadata are synchronized, no sync needed."
 msgstr "Lokalt og eksternt metadata er synkronisert, det er ikke nødvendig med synkronisering."
 
-#: ../duplicity/dup_main.py:1327
+#: ../duplicity/dup_main.py:1310
 msgid "Synchronizing remote metadata to local cache..."
 msgstr "Synkroniserer eksterne metadata til lokal mellomlager..."
 
-#: ../duplicity/dup_main.py:1341
+#: ../duplicity/dup_main.py:1324
 msgid "Sync would copy the following from remote to local:"
 msgstr "Synkronisering ville kopiere følgende fra fjernkontroll til lokalt:"
 
-#: ../duplicity/dup_main.py:1347
+#: ../duplicity/dup_main.py:1330
 msgid "Sync would remove the following spurious local files:"
 msgstr "Synkronisering ville fjerne følgende falske lokale filer:"
 
-#: ../duplicity/dup_main.py:1393
+#: ../duplicity/dup_main.py:1376
 msgid "Unable to get free space on temp."
 msgstr "Kan ikke få ledig plass på midlertidig lager."
 
-#: ../duplicity/dup_main.py:1400
+#: ../duplicity/dup_main.py:1383
 #, python-format
 msgid "Temp space has %d available, backup needs approx %d."
 msgstr "Midlertidig plass har %d tilgjengelig, sikkerhetskopiering trenger å godkjenne %d."
 
-#: ../duplicity/dup_main.py:1404
+#: ../duplicity/dup_main.py:1387
 #, python-format
 msgid "Temp has %d available, backup will use approx %d."
 msgstr "Temp har %d tilgjengelig, sikkerhetskopien vil bruke approx %d."
 
-#: ../duplicity/dup_main.py:1411
+#: ../duplicity/dup_main.py:1394
 msgid "Unable to get max open files."
 msgstr "Kan ikke hente maks åpne filer."
 
-#: ../duplicity/dup_main.py:1416
+#: ../duplicity/dup_main.py:1399
 #, python-format
 msgid "Max open files of %s is too low, should be >= 1024.\n"
 "Use 'ulimit -n 1024' or higher to correct.\n"
 msgstr "Maks åpne filer for %s er for lav, må være > = 1024.\n"
 "Bruk 'ulimit -n 1024' eller høyere til riktig.\n"
 
-#: ../duplicity/dup_main.py:1472
+#: ../duplicity/dup_main.py:1455
 msgid "RESTART: The first volume failed to upload before termination.\n"
 "         Restart is impossible...starting backup from beginning."
 msgstr "RESTART: Det første volumet klarte ikke å laste opp før avslutning.\n"
 "         Restart er umulig...å starte sikkerhetskopi fra begynnelsen."
 
-#: ../duplicity/dup_main.py:1482
+#: ../duplicity/dup_main.py:1465
 #, python-format
 msgid "RESTART: Volumes %d to %d failed to upload before termination.\n"
 "         Restarting backup at volume %d."
 msgstr ""
 
-#: ../duplicity/dup_main.py:1493
+#: ../duplicity/dup_main.py:1476
 #, python-format
 msgid "RESTART: Impossible backup state: manifest has %d vols, remote has %d vols.\n"
 "         Restart is impossible ... duplicity will clean off the last partial\n"
 "         backup then restart the backup from the beginning."
 msgstr ""
 
-#: ../duplicity/dup_main.py:1519
+#: ../duplicity/dup_main.py:1502
 msgid "                PYTHONOPTIMIZE in the environment causes duplicity to fail to\n"
 "                recognize its own backups.  Please remove PYTHONOPTIMIZE from\n"
 "                the environment and rerun the backup.\n\n"
@@ -1428,25 +1431,25 @@ msgid "                PYTHONOPTIMIZE in the environment causes duplicity to fai
 "                "
 msgstr ""
 
-#: ../duplicity/dup_main.py:1599
+#: ../duplicity/dup_main.py:1582
 #, python-brace-format
 msgid "Last {action} backup left a partial set, restarting."
 msgstr ""
 
-#: ../duplicity/dup_main.py:1603
+#: ../duplicity/dup_main.py:1586
 #, python-brace-format
 msgid "Cleaning up previous partial {action} backup set, restarting."
 msgstr "Rydder opp til tidligere partielle {action} sikkerhetskopieringssett, omstart"
 
-#: ../duplicity/dup_main.py:1617
+#: ../duplicity/dup_main.py:1600
 msgid "Last full backup date: none"
 msgstr "Siste fullstendige backup dato: ingen"
 
-#: ../duplicity/dup_main.py:1624
+#: ../duplicity/dup_main.py:1607
 msgid "Last full backup is too old, forcing full backup"
 msgstr "Siste fullstendige sikkerhetskopi er for gammel, ved å tvinge full sikkerhetskopi"
 
-#: ../duplicity/dup_main.py:1680
+#: ../duplicity/dup_main.py:1663
 msgid "When using symmetric encryption, the signing passphrase must equal the encryption passphrase."
 msgstr "Ved bruk av symmetrisk kryptering må signeringsadgangsfrase være lik krypteringspassasjen."
 
