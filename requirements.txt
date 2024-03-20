@@ -13,7 +13,6 @@ fasteners
 python-gettext
 packaging>=20.0
 setuptools>=44.1.1
-setuptools-scm>=5.0.2
 
 ##### backend libraries #####
 

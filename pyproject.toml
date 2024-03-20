@@ -1,7 +1,6 @@
 [build-system]
 requires = [
     "setuptools>=60",
-    "setuptools_scm>=8",
     "wheel",
 ]
 build-backend = "setuptools.build_meta"
@@ -9,18 +8,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "duplicity"
-version = "2.2.2"
+version = "2.2.3.dev"
 
 
 [project.scripts]
 duplicity = "duplicity.__main__:dup_run"
-
-
-[tool.setuptools_scm]
-tag_regex = "^(?P<prefix>rel.)?(?P<version>[^\\+]+)(?P<suffix>.*)?$"
-version_scheme = "guess-next-dev"
-local_scheme = "no-local-version"
-fallback_version = "2.2.2"
 
 
 [tools.setuptools]

@@ -37,7 +37,7 @@ if not ((3, 8) <= sys.version_info[:2] <= (3, 12)):
     print("Sorry, duplicity requires version 3.8 thru 3.12 of Python.")
     sys.exit(1)
 
-Version: str = "2.2.2"
+Version: str = "2.2.3.dev"
 reldate: str = time.strftime("%B %d, %Y", time.gmtime(int(os.environ.get("SOURCE_DATE_EPOCH", time.time()))))
 
 # READTHEDOCS uses setup.py sdist but can't handle extensions
@@ -153,29 +153,14 @@ class BuildExtCommand(build_ext):
         build_ext.run(self)
 
 
-class SCMVersionSourceCommand(Command):
+class SetVersionCommand(Command):
     """
-    Mod the versioned files and add correct scmversion
+    Mod the versioned files and add correct version and reldate
     """
 
-    description: str = "Version source based on SCM tag"
+    description: str = "Version source based env var DUP_VERSION"
 
     user_options: list = []
-
-    try:
-        import setuptools_scm as scm
-
-        Version = scm.get_version(
-            tag_regex=r"^(?P<prefix>rel\.)?(?P<version>[^\+]+)(?P<suffix>.*)?$",
-            version_scheme="guess-next-dev",
-            local_scheme="no-local-version",
-            fallback_version=Version,
-        )
-    except Exception:
-        print(
-            f"ERROR: Could not get/parse version from local git repository.\nUsing fallback version: {Version}",
-            file=sys.stderr,
-        )
 
     def initialize_options(self):
         pass
@@ -184,6 +169,12 @@ class SCMVersionSourceCommand(Command):
         pass
 
     def run(self):
+        global Version
+
+        if not (Version := os.environ.get("DUP_VERSION", False).strip("\"\'")):
+            print("DUP_VERSION not set in environment.\nSet DUP_VERSION and try again")
+            sys.exit(1)
+
         if self.dry_run:
             print("Dry run, no changes will be made.")
 
@@ -224,19 +215,12 @@ class SCMVersionSourceCommand(Command):
             os.path.join(".", "pyproject.toml"),
         )
 
-        # fallback_version = "$version"
-        self.version_source(
-            r'fallback_version = "(?P<version>[^\"]*)"',
-            None,
-            os.path.join(".", "pyproject.toml"),
-        )
-
     def version_source(self, version_patt: str, reldate_patt: str, pathname: str):
         """
-        Copy source to dest, substituting current version with scmversion
+        Copy source to dest, substituting current version with Version
         current release date with today's date, i.e. December 28, 2008.
         """
-        with open(pathname) as fd:
+        with open(pathname, "rt") as fd:
             buffer = fd.read()
 
         # process version
@@ -372,7 +356,7 @@ setup(
     cmdclass={
         "build_ext": BuildExtCommand,
         "sdist": SdistCommand,
-        "scmversion": SCMVersionSourceCommand,
+        "setversion": SetVersionCommand,
     },
 )
 
