@@ -43,6 +43,7 @@ files_to_test.extend(glob.glob(os.path.join(_top_dir, "testing/*.py")))
 files_to_test.remove(os.path.join(_top_dir, "duplicity/argparse311.py"))
 
 
+@unittest.skipIf(os.environ.get("USER", "") == "buildd", "Skip test on Launchpad")
 class CodeTest(DuplicityTestCase):
     def run_checker(self, cmd, returncodes=None):
         if returncodes is None:
