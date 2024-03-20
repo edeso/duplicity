@@ -28,6 +28,7 @@ from subprocess import (
     PIPE,
     STDOUT,
 )
+import unittest
 
 import pytest
 
