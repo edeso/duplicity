@@ -26,35 +26,18 @@ if [ "`uname`" != "Linux" ]; then
     exit 2
 fi
 
-if [ "$#" -gt 1 ]; then
-    echo "usage: $0 <comma-sep-list-of-architectures>"
-    echo "      - default is amd64 only"
-    echo "      - working arch: amd64,arm64,armhf,ppc64el"
+if [ "$#" -ne 0 ]; then
+    echo "usage: $0"
     exit 2
-elif [ "$#" -eq 1 ]; then
-    BUILD="$1"
-else
-    BUILD="amd64"
 fi
 
 VERSION=`./setup.py --version`
-echo "$0 of ${VERSION} on ${BUILD}"
+echo "$0 of ${VERSION}"
 
-# make distribution
-python3 ./setup.py -q sdist --dist-dir=.
+if [ -e "wheelhouse" ]; then
+    mv wheelhouse/duplicity-${VERSION}-*.whl dist
+    rmdir wheelhouse
+fi
 
-# make clean source dir
-rm -rf build
-mkdir -p build
-tar xf duplicity-"${VERSION}".tar.gz -C build
-rm -f duplicity-"${VERSION}".tar.gz
-cd build/duplicity-"${VERSION}"
-
-# print version in build copy of snapcraft.yaml
-head -2 snap/snapcraft.yaml | tail -1
-
-# kerberos will not build in snap so remove it
-sed -i s/kerberos/#kerberos/g requirements.txt
-
-# build snap via remote build on LP
-snapcraft remote-build --build-on=${BUILD} --launchpad-accept-public-upload
+## upload to pypi
+twine upload --non-interactive dist/duplicity-${VERSION}-*

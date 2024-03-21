@@ -767,14 +767,7 @@ class CollectionsStatus(object):
 
         # get local filename list
         local_filename_list = self.archive_dir_path.listdir()
-        log.Debug(
-            ngettext(
-                "%d file exists in cache",
-                "%d files exist in cache",
-                len(local_filename_list),
-            )
-            % len(local_filename_list)
-        )
+        log.Debug(_("%d file(s) exist in cache") % len(local_filename_list))
 
         # check for partial backups
         partials = []

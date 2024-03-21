@@ -624,7 +624,11 @@ class BackendWrapper(object):
                 info = self.query_info([remote_filename])[remote_filename]
                 size = info["size"]
                 if size is None:
-                    return (False, "Can't determin size of file")
+                    log.Warn(
+                        "File size can't be validated, because of missing capabilities of the backend. "
+                        "Please verify the backup separately."
+                    )
+                    return (True, "Backend has no capabilities to check filesize, skip validation.")
                 if size == expected_size:
                     return (True, "Validation OK, file size matches.")
                 msg = _("%s Remote filesize %d for %s does not match local size %d") % (

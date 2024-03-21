@@ -1,7 +1,6 @@
 [build-system]
 requires = [
     "setuptools>=60",
-    "setuptools-scm>=8.0",
     "wheel",
 ]
 build-backend = "setuptools.build_meta"
@@ -9,17 +8,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "duplicity"
-dynamic = ["version"]
+version = "2.2.3"
 
 
 [project.scripts]
 duplicity = "duplicity.__main__:dup_run"
-
-
-[tool.setuptools_scm]
-tag_regex = "^(?P<prefix>rel.)?(?P<version>[^\\+]+)(?P<suffix>.*)?$"
-local_scheme = "no-local-version"
-fallback_version = "2.2.2"
 
 
 [tools.setuptools]
@@ -36,7 +29,6 @@ platforms = [
 ]
 install_requires = [
     "fasteners",
-    "setuptools_scm",
 ]
 tests_require = [
     "fasteners",
@@ -106,4 +98,20 @@ markers = [
 testpaths = [
     "testing/unit",
     "testing/functional",
+]
+
+
+[tool.cibuildwheel]
+archs = [
+    "x86_64",
+]
+build = [
+    "cp{38,39,310,311,312}-manylinux_x86_64",
+]
+before-build = [
+    # WARNING: wheel builds are Centos based, not Debian.
+    "yum install -y gcc gcc-c++ make git intltool lftp librsync-devel",
+    "yum install -y libffi-devel openssl-devel openssl par2cmdline rdiff-backup tzdata",
+    "python -m pip install -r requirements.txt",
+    "python ./setup.py build_ext",
 ]

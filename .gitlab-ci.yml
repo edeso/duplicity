@@ -33,6 +33,7 @@ workflow:
     stage: test
     rules:
         - if: $CI_COMMIT_MESSAGE =~ /\[skip[ _-]tests?\]/i || $SKIP_TESTS
+          allow_failure: true
           when: manual
         - changes:
             - .gitlab-ci.yml
@@ -59,10 +60,9 @@ variables:
     # Signal we are running on GitLab CI
     NON_NATIVE: "true"
 
-stages:
-    - qual
-    - test
-    - deploy
+#stages:
+#    - test
+#    - deploy
 
 default:
     interruptible: true
@@ -70,7 +70,7 @@ default:
 code:
     <<: *test-template
     image: python:3.12
-    stage: qual
+    stage: test
     script:
         - python3 -m pip install -r requirements.txt
         - python3 ./setup.py build_ext
@@ -174,3 +174,27 @@ website:
                 -F token=${WEBSITE_TRIGGER_TOKEN} \
                 -F ref=master https://gitlab.com/api/v4/projects/29130748/trigger/pipeline
         fi
+
+# run cibuildwheel for all pythons and arches we support
+# see config in pyproject.toml
+wheels:
+    stage: deploy
+    when: manual
+    image: python:3.8
+    # make a docker daemon available for cibuildwheel to use
+    services:
+        - name: docker:dind
+          entrypoint: ["env", "-u", "DOCKER_HOST"]
+          command: ["dockerd-entrypoint.sh"]
+    variables:
+        DOCKER_HOST: tcp://docker:2375/
+        DOCKER_DRIVER: overlay2
+        # See https://github.com/docker-library/docker/pull/166
+        DOCKER_TLS_CERTDIR: ""
+    script:
+        - curl -sSL https://get.docker.com/ | sh
+        - python -m pip install cibuildwheel==2.16.5
+        - cibuildwheel --output-dir wheelhouse
+    artifacts:
+        paths:
+            - wheelhouse/

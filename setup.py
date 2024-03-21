@@ -28,42 +28,23 @@ import subprocess
 import sys
 import time
 
-from distutils.command.build_scripts import build_scripts
-from distutils.command.install_data import install_data
 from setuptools import setup, Extension, Command
 from setuptools.command.build_ext import build_ext
 from setuptools.command.sdist import sdist
-from setuptools.command.test import test
-
-import setuptools_scm as scm
 
 # check that we can function here
 if not ((3, 8) <= sys.version_info[:2] <= (3, 12)):
     print("Sorry, duplicity requires version 3.8 thru 3.12 of Python.")
     sys.exit(1)
 
-scm_version_args: dict = {
-    "tag_regex": r"^(?P<prefix>rel\.)?(?P<version>[^\+]+)(?P<suffix>.*)?$",
-    "version_scheme": "guess-next-dev",
-    "local_scheme": "no-local-version",
-}
-
-Version: str = "2.2.2"
-try:
-    Version = scm.get_version(**scm_version_args)
-except Exception:
-    print(
-        f"ERROR: Could not parse version from local git repository.\nUsing fallback version: {Version}",
-        file=sys.stderr,
-    )
-
+Version: str = "2.2.3"
 reldate: str = time.strftime("%B %d, %Y", time.gmtime(int(os.environ.get("SOURCE_DATE_EPOCH", time.time()))))
 
 # READTHEDOCS uses setup.py sdist but can't handle extensions
 ext_modules = list()
 incdir_list = list()
 libdir_list = list()
-if not os.environ.get("READTHEDOCS") == "True":
+if not os.environ.get("READTHEDOCS", False) == "True":
     # set incdir and libdir for librsync
     if os.name == "posix":
         LIBRSYNC_DIR = os.environ.get("LIBRSYNC_DIR", "")
@@ -76,11 +57,24 @@ if not os.environ.get("READTHEDOCS") == "True":
             incdir_list = [os.path.join(LIBRSYNC_DIR, "include")]
             libdir_list = [os.path.join(LIBRSYNC_DIR, "lib")]
 
+    # set incdir for pyenv
+    if pyenv_root := os.environ.get("PYENV_ROOT", None):
+        major, minor, patch = sys.version_info[:3]
+        incdir_list.append(
+            os.path.join(
+                f"{pyenv_root}",
+                f"versions",
+                f"{major}.{minor}.{patch}",
+                f"include",
+                f"python{major}.{minor}",
+            )
+        )
+
     # build the librsync extension
     ext_modules = [
         Extension(
             name=r"duplicity._librsync",
-            sources=[r"duplicity/_librsyncmodule.c"],
+            sources=["duplicity/_librsyncmodule.c"],
             include_dirs=incdir_list,
             library_dirs=libdir_list,
             libraries=["rsync"],
@@ -127,8 +121,8 @@ def get_data_files():
             os.mkdir(os.path.join("po", lang))
         except os.error:
             pass
-        assert not os.system(f"cp po/{lang}.po po/{lang}"), lang
-        assert not os.system(f"msgfmt po/{lang}.po -o po/{lang}/duplicity.mo"), lang
+        subprocess.run(f"cp po/{lang}.po po/{lang}", shell=True, check=True)
+        subprocess.run(f"msgfmt po/{lang}.po -o po/{lang}/duplicity.mo", shell=True, check=True)
 
     for root, dirs, files in os.walk("po"):
         for file in files:
@@ -146,10 +140,7 @@ def cleanup():
         for line in linguas:
             langs = line.split()
             for lang in langs:
-                try:
-                    shutil.rmtree(os.path.join("po", lang))
-                except Exception:
-                    pass
+                shutil.rmtree(os.path.join("po", lang), ignore_errors=True)
 
 
 class BuildExtCommand(build_ext):
@@ -162,12 +153,12 @@ class BuildExtCommand(build_ext):
         build_ext.run(self)
 
 
-class SCMVersionSourceCommand(Command):
+class SetVersionCommand(Command):
     """
-    Mod the versioned files and add correct scmversion
+    Mod the versioned files and add correct version and reldate
     """
 
-    description: str = "Version souce based on SCM tag"
+    description: str = "Version source based env var DUP_VERSION"
 
     user_options: list = []
 
@@ -178,6 +169,12 @@ class SCMVersionSourceCommand(Command):
         pass
 
     def run(self):
+        global Version
+
+        if not (Version := os.environ.get("DUP_VERSION", False).strip("\"\'")):
+            print("DUP_VERSION not set in environment.\nSet DUP_VERSION and try again")
+            sys.exit(1)
+
         if self.dry_run:
             print("Dry run, no changes will be made.")
 
@@ -211,19 +208,19 @@ class SCMVersionSourceCommand(Command):
             os.path.join(".", "setup.py"),
         )
 
-        # fallback_version = "$version"
+        # version = "$version"
         self.version_source(
-            r'fallback_version = "(?P<version>[^\"]*)"',
+            r'version = "(?P<version>[^\"]*)"',
             None,
             os.path.join(".", "pyproject.toml"),
         )
 
     def version_source(self, version_patt: str, reldate_patt: str, pathname: str):
         """
-        Copy source to dest, substituting current version with scmversion
+        Copy source to dest, substituting current version with Version
         current release date with today's date, i.e. December 28, 2008.
         """
-        with open(pathname) as fd:
+        with open(pathname, "rt") as fd:
             buffer = fd.read()
 
         # process version
@@ -269,7 +266,7 @@ class SdistCommand(sdist):
         tardir = f"duplicity-{Version}"
         tarball = f"{self.dist_dir}/duplicity-{Version}.tar.gz"
 
-        assert not os.system(f"tar -xf {orig}")
+        subprocess.run(f"tar -xf {orig}", shell=True, check=True)
         assert not os.remove(orig)
 
         # make sure executables are
@@ -280,9 +277,10 @@ class SdistCommand(sdist):
         os.environ["COPYFILE_DISABLE"] = "true"
 
         # make the new tarball and remove tardir
-        assert not os.system(
+        subprocess.run(
             f"""tar czf {tarball} \
                                  --exclude '.*' \
+                                 --exclude crowdin.yml \
                                  --exclude Makefile \
                                  --exclude debian \
                                  --exclude docs \
@@ -292,35 +290,11 @@ class SdistCommand(sdist):
                                  --exclude testing/regression \
                                  --exclude tools \
                                  {tardir}
-                              """
+                              """,
+            shell=True,
+            check=True,
         )
         assert not shutil.rmtree(tardir)
-
-
-class TestCommand(test):
-    def run(self):
-        # Make sure all modules are ready
-        build_cmd = self.get_finalized_command("build_py")
-        build_cmd.run()
-        # And make sure our scripts are ready
-        build_scripts_cmd = self.get_finalized_command("build_scripts")
-        build_scripts_cmd.run()
-
-        # make symlinks for test data
-        if build_cmd.build_lib != top_dir:
-            for path in ["source_files.tar.gz", "gnupg"]:
-                src = os.path.join(top_dir, "testing", path)
-                target = os.path.join(build_cmd.build_lib, "testing", path)
-                try:
-                    os.symlink(src, target)
-                except Exception:
-                    pass
-
-        os.environ["PATH"] = f"{os.path.abspath(build_scripts_cmd.build_dir)}:{os.environ.get('PATH')}"
-
-        test.run(self)
-
-        cleanup()
 
 
 with open("README.md") as fh:
@@ -328,10 +302,6 @@ with open("README.md") as fh:
 
 
 setup(
-    name="duplicity",
-    version=Version,
-    url="http://duplicity.us",
-    platforms=["any"],
     packages=[
         "duplicity",
         "duplicity.backends",
@@ -386,8 +356,7 @@ setup(
     cmdclass={
         "build_ext": BuildExtCommand,
         "sdist": SdistCommand,
-        "test": TestCommand,
-        "scmversion": SCMVersionSourceCommand,
+        "setversion": SetVersionCommand,
     },
 )
 

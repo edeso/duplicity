@@ -51,7 +51,8 @@ git tag -f rel.${REL}
 git push --tags -f -o ci.skip
 
 # put in correct version
-./setup.py scmversion
+export DUP_VERSION=${REL}
+./setup.py setversion
 git commit -m"chg:pkg: Prep for ${REL}" \
     duplicity/__init__.py \
     man/duplicity.1 \
@@ -73,5 +74,5 @@ git tag -f rel.${REL}
 git push --tags -f -o ci.skip
 
 # make and sign the release
-./setup.py sdist --dist-dir=.
-gpg --use-agent -b duplicity-${REL}.tar.gz
+python3 ./setup.py -q sdist
+gpg --use-agent -b dist/duplicity-${REL}.tar.gz

@@ -1,6 +1,89 @@
 # Changelog
 
 
+## rel.2.2.3 (2024-03-20)
+
+### New
+
+* Add test case issue725.sh. [Kenneth Loafman]
+
+### Changes
+
+* Remove setuptools\_scm and usages. [Kenneth Loafman]
+
+* Run po/update-pot. [Kenneth Loafman]
+
+* !Minor changes to pip build and test. [Kenneth Loafman]
+
+* Pip install duplicity fails with "AssertionError: es\_PR" (or other
+language) [Kenneth Loafman]
+
+* Launchpad PPAs not built correctly for 2.2.[0,1], PyPI pips for
+2.2.[0,1,2] [Kenneth Loafman]
+
+    - tested on:
+      - Ubuntu 20.04, 22.04, 24.04
+      - Python 3.8, 3.9, 3.10, 3.11, 3.12
+    - added tools/testpip
+    - added wheel builds to .gitlab-ci.yml
+      - build wheels for manylinux
+    - added tools/testpip
+    - remove disutils includes in setup.py
+    - remove old test command in setup.py
+    - moved use of setuptools-scm to scmversion command
+    - add tools to build pyenv & pythons & more.
+      - installpyenv - install pyenv and environ
+      - installpythons - install pythons and environ
+      - pushpip - push pip sdist and wheels
+     - tools/list_python_files - removed, unused
+
+    Fixes #797
+
+* Change ngettext to \_ and fix wording. [Kenneth Loafman]
+
+* Move validate to backend. [Thomas Laubrock]
+
+* Run only one pipeline on merge request. [Kenneth Loafman]
+
+* Small fixes to the test system. [Kenneth Loafman]
+
+    - run test cases with the same Python as pytest
+    - fix some comments that pointed to wrong config file
+    - code tests now run without RUN_CODE_TESTS=1
+
+* Change from --capture=no to --capture=fd. [Kenneth Loafman]
+
+    - Should only print on test failure.
+
+* Warn on symmetric encrypt with --use-agent. [Kenneth Loafman]
+
+    Fixes #799
+
+* Warn on symmetric encrypt with --use-agent. [Kenneth Loafman]
+
+    Fixes #799
+
+* Remove last of bin/duplicity. [Kenneth Loafman]
+
+### Fix
+
+* Add fail open condition, for backends with no support. [Thomas Laubrock]
+
+* Update homepage. [sblondon]
+
+* Change path logging from Info to Debug. [Kenneth Loafman]
+
+    Fixes #804
+
+* Whoops! Remove parens in fix of #803. [Kenneth Loafman]
+
+* Exception using --exclude-older-than. [Kenneth Loafman]
+
+    fixes #803
+
+* Manpage remove superfluous indentions, some formatting fixes. [ede]
+
+
 ## rel.2.2.2 (2024-02-03)
 
 ### Changes

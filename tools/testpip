@@ -1,0 +1,78 @@
+#!/bin/bash
+# -*- Mode:Shell; indent-tabs-mode:nil; tab-width -*-
+#
+# Copyright 2022 Kenneth Loafman <kenneth@loafman.com>
+#
+# This file is part of duplicity.
+#
+# Duplicity is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the
+# Free Software Foundation; either version 2 of the License, or (at your
+# option) any later version.
+#
+# Duplicity is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with duplicity; if not, write to the Free Software Foundation,
+# Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
+set -e
+
+if [ "`uname`" != "Linux" ]; then
+    echo "$0 does not run on `uname`"
+    exit 2
+fi
+
+if [ "$#" -ne 0 ]; then
+    echo "usage: $0"
+    exit 2
+fi
+
+VERSION=`./setup.py --version`
+echo "$0 of ${VERSION}"
+
+VERS="3.8 3.9 3.10 3.11 3.12"
+
+# We use pyenv to make a reproducible environment for multiple versions.
+# See: https://github.com/pyenv/pyenv/ for links and install commands.
+
+# test sdist build and install on each version
+for V in ${VERS}; do
+    echo "Testing sdist on Python$V"
+    pyenv global $V
+    python$V -m build --sdist
+    python$V -m pip install dist/duplicity-*.tar.gz
+    echo "----------"
+    cd ..
+    python$V -m duplicity -V
+    duplicity -V
+    cd -
+    echo "----------"
+done
+
+# get wheels from last good run of wheels job
+BRANCH=main
+JOB=wheels
+echo "Downloading artifacts from branch ${BRANCH} job ${JOB}"
+curl --location "https://gitlab.com/api/v4/projects/12450835/jobs/artifacts/${BRANCH}/download?job=${JOB}"  \
+     --output /tmp/artifacts.zip
+unzip -o /tmp/artifacts.zip
+
+# test wheel install on each python version supported
+for V in ${VERS}; do
+    echo "Testing wheel on Python$V"
+    pyenv global $V
+    python$V -m pip uninstall -y duplicity
+    python$V -m pip install wheelhouse/duplicity-*-cp${V//.}-*.whl
+    echo "----------"
+    cd ..
+    python$V -m duplicity -V
+    duplicity -V
+    cd -
+    echo "----------"
+done
+
+pyenv global system
