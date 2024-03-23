@@ -307,7 +307,11 @@ def generate_default_backup_name(backend_url):
     # where relative paths are used yet the relative path is the same
     # (but duplicity is run from a different directory or similar),
     # then it is simply up to the user to set --archive-dir properly.
-    burlhash = md5(usedforsecurity=False)
+    # TODO: Remove when py38 goes EOL
+    if sys.version_info[:2] == (3, 8):
+        burlhash = md5()
+    else:
+        burlhash = md5(usedforsecurity=False)
     burlhash.update(backend_url.encode())
     return burlhash.hexdigest()
 

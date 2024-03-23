@@ -407,11 +407,7 @@ class WebDAVBackend(duplicity.backend.Backend):
             target_file = local_path.open("wb")
             response = self.request("GET", url)
             if response.status == 200:
-                # data=response.read()
                 shutil.copyfileobj(response, target_file)
-                # import hashlib
-                # log.Info("WebDAV GOT %s bytes with md5=%s" %
-                # (len(data),hashlib.md5(data, usedforsecurity=False).hexdigest()) )
                 assert not target_file.close()
                 response.close()
             else:
