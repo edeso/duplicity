@@ -491,9 +491,9 @@ def get_hash(hash, path, hex=1):  # pylint: disable=redefined-builtin
     # assert path.isreg()
     fp = path.open("rb")
     if hash == "SHA1":
-        hash_obj = sha1()
+        hash_obj = sha1(usedforsecurity=False)
     elif hash == "MD5":
-        hash_obj = md5()
+        hash_obj = md5(usedforsecurity=False)
     else:
         assert 0, f"Unknown hash {hash}"
 

@@ -217,7 +217,7 @@ class _TestBackend(duplicity.backend.Backend):
         self.__hash_fileobj(open(filename, "rb"))
 
     def __hash_fileobj(self, fileobj):
-        h = hashlib.sha1()
+        h = hashlib.sha1(usedforsecurity=False)
 
         # loop till the end of the file
         chunk = 0
