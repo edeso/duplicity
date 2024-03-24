@@ -37,7 +37,7 @@ if not ((3, 8) <= sys.version_info[:2] <= (3, 12)):
     print("Sorry, duplicity requires version 3.8 thru 3.12 of Python.")
     sys.exit(1)
 
-Version: str = "2.2.3"
+Version: str = "2.2.4.dev"
 reldate: str = time.strftime("%B %d, %Y", time.gmtime(int(os.environ.get("SOURCE_DATE_EPOCH", time.time()))))
 
 # READTHEDOCS uses setup.py sdist but can't handle extensions
