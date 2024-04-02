@@ -624,7 +624,7 @@ class BackendWrapper(object):
                 info = self.query_info([remote_filename])[remote_filename]
                 size = info["size"]
                 if size is None:
-                    log.Warn(
+                    log.Debug(
                         "File size can't be validated, because of missing capabilities of the backend. "
                         "Please verify the backup separately."
                     )
