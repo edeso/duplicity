@@ -254,7 +254,7 @@ def parse_cmdline_options(arglist):
         for val in valid_opts:
             if val.startswith(opt):
                 break
-            if not is_bound and "metavar" in OptionKwargs[opt2var(val)]:
+            if not is_bound and opt.endswith("-options") and "metavar" in OptionKwargs[opt2var(val)]:
                 skip_options = True
                 continue
         else:
