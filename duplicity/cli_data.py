@@ -843,48 +843,6 @@ removed_backup_options = {
 # make list of all options available
 all_options = {var2opt(var) for var in OptionKwargs.keys()}
 
-
-@dataclass(order=True)
-class CommandOptions:
-    """
-    legal options by command
-    """
-
-    backup = list(
-        all_options,
-    )
-    cleanup = list(
-        all_options - backup_only_options - selection_only_options,
-    )
-    collection_status = list(
-        all_options - backup_only_options - selection_only_options,
-    )
-    full = list(
-        all_options,
-    )
-    incremental = list(
-        all_options,
-    )
-    list_current_files = list(
-        all_options - backup_only_options - selection_only_options,
-    )
-    remove_older_than = list(
-        all_options - backup_only_options - selection_only_options,
-    )
-    remove_all_but_n_full = list(
-        all_options - backup_only_options - selection_only_options,
-    )
-    remove_all_inc_of_but_n_full = list(
-        all_options - backup_only_options - selection_only_options,
-    )
-    restore = list(
-        all_options - backup_only_options - selection_only_options,
-    )
-    verify = list(
-        all_options - backup_only_options,
-    )
-
-
 trans = {
     # TRANSL: Used in usage help to represent a Unix-style path name. Example:
     # rsync://user[:password]@other_host[:port]//absolute_path

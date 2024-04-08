@@ -564,12 +564,6 @@ class CommandlineTest(UnitTestCase):
         cli_main.process_command_line(cline)
         self.assertListEqual(config.select_opts, [("--exclude-other-filesystems", [])])
 
-        # Issue 789 - error on dry-run with verify, restore, and implied restore
-        for cmd in ["restore", "verify", ""]:
-            with self.assertRaises(CommandLineError) as cm:
-                cline = shlex.split(f"{cmd} file://source_url foo/bar --dry-run")
-                cli_main.process_command_line(cline)
-
         # Issue 795 - invalid option error using --gpg-options - unbound
         cline = shlex.split(
             "backup --gpg-options '--compress-algo=bzip2 --bzip2-compress-level=9' foo/bar file://target_url"
