@@ -28,6 +28,7 @@ import re
 import socket
 import sys
 from hashlib import md5
+from textwrap import dedent
 
 # TODO: Remove duplicity.argparse311 when py38 goes EOL
 if sys.version_info[:2] == (3, 8):
@@ -136,10 +137,22 @@ class WarnAsyncStoreConstAction(argparse._StoreConstAction):
     def __call__(self, parser, namespace, values, option_string=None):
         log.Warn(
             _(
-                "Use of the --asynchronous-upload option is experimental "
-                "and not safe for production! There are reported cases of "
-                "undetected data loss during upload. Be aware and "
-                "periodically verify your backups to be safe."
+                dedent(
+                    """
+                    ----------------------------------------------------------------
+                    | DEPRECATION WARNING:                                         |
+                    | as this function is know to be unstable (see below) it get   |
+                    | replaced with `--concurrency` in VERSION 3.0.0 which should  |
+                    | offer similar functionality, but stable implementation.      |
+                    | See: https://gitlab.com/duplicity/duplicity/-/issues/745 and |
+                    | https://gitlab.com/duplicity/duplicity/-/merge_requests/153  |
+                    ----------------------------------------------------------------
+                    Use of the --asynchronous-upload option is experimental
+                    and not safe for production! There are reported cases of
+                    undetected data loss during upload. Be aware and
+                    periodically verify your backups to be safe.
+                    """
+                )
             )
         )
         setattr(namespace, self.dest, self.const)
