@@ -141,16 +141,14 @@ class WarnAsyncStoreConstAction(argparse._StoreConstAction):
                     """
                     ----------------------------------------------------------------
                     | DEPRECATION WARNING:                                         |
-                    | as this function is know to be unstable (see below) it get   |
-                    | replaced with `--concurrency` in VERSION 3.0.0 which should  |
-                    | offer similar functionality, but stable implementation.      |
+                    | Use of the --asynchronous-upload option is known to be       |
+                    | unsafe and may result in data loss.                          |
+                    | It will be removed in VERSION 3.0.0 and replaced by          |
+                    | --concurrency which will offer similar functionality, but    |
+                    | thoroughly tested implementation.                            |
                     | See: https://gitlab.com/duplicity/duplicity/-/issues/745 and |
                     | https://gitlab.com/duplicity/duplicity/-/merge_requests/153  |
                     ----------------------------------------------------------------
-                    Use of the --asynchronous-upload option is experimental
-                    and not safe for production! There are reported cases of
-                    undetected data loss during upload. Be aware and
-                    periodically verify your backups to be safe.
                     """
                 )
             )
