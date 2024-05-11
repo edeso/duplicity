@@ -1457,7 +1457,7 @@ class Restart(object):
                     )
                 )
                 self.last_backup.delete()
-                os.execve(sys.argv[0], sys.argv[1:], os.environ)
+                os.execve(sys.argv[0], sys.argv, os.environ)
             elif mf_len - self.start_vol > 0:
                 # upload of N vols failed, fix manifest and restart
                 log.Notice(
@@ -1480,7 +1480,7 @@ class Restart(object):
                     % (mf_len, self.start_vol)
                 )
                 self.last_backup.delete()
-                os.execve(sys.argv[0], sys.argv[1:], os.environ)
+                os.execve(sys.argv[0], sys.argv, os.environ)
 
     def setLastSaved(self, mf):
         vi = mf.volume_info_dict[self.start_vol]
