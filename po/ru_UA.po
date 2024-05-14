@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: duplicity\n"
 "Report-Msgid-Bugs-To: Kenneth Loafman <kenneth@loafman.com>\n"
-"POT-Creation-Date: 2024-03-19 10:08-0500\n"
-"PO-Revision-Date: 2024-03-19 15:13\n"
+"POT-Creation-Date: 2024-05-14 10:33-0500\n"
+"PO-Revision-Date: 2024-05-14 16:13\n"
 "Last-Translator: \n"
 "Language-Team: Rսssian, Սkraine\n"
 "Language: ru_UA\n"
@@ -120,7 +120,7 @@ msgstr "позиционные аргументы"
 #. duplicity [full|incremental] [options] source_path target_url
 #: ../duplicity/argparse311.py:1671 ../duplicity/cli_data.py:354
 #: ../duplicity/cli_data.py:508 ../duplicity/cli_data.py:557
-#: ../duplicity/cli_data.py:687 ../duplicity/cli_data.py:928
+#: ../duplicity/cli_data.py:687 ../duplicity/cli_data.py:886
 msgid "options"
 msgstr "параметры"
 
@@ -258,7 +258,7 @@ msgstr "Файл %s не найден локально после получен
 msgid "%s Remote filesize %d for %s does not match local size %d"
 msgstr ""
 
-#: ../duplicity/backends/_testbackend.py:182
+#: ../duplicity/backends/_testbackend.py:183
 #, python-format
 msgid "Unexpected exception while validate %s."
 msgstr ""
@@ -470,17 +470,17 @@ msgstr "Ошибка WebDAV MKCOL %s : %s %s"
 msgid "WebDAV path decoding and translation: %s -> %s"
 msgstr "Декодирование и перевод пути WebDAV: %s -> %s"
 
-#: ../duplicity/backends/webdavbackend.py:421
+#: ../duplicity/backends/webdavbackend.py:417
 #, python-format
 msgid "WebDAV GET Bad status code %s reason %s."
 msgstr "WebDAV получен неверный код статуса %s причина %s."
 
-#: ../duplicity/backends/webdavbackend.py:442
+#: ../duplicity/backends/webdavbackend.py:438
 #, python-format
 msgid "WebDAV PUT Bad status code %s reason %s."
 msgstr "WebDAV PUT неверный код статуса %s причина %s."
 
-#: ../duplicity/backends/webdavbackend.py:461
+#: ../duplicity/backends/webdavbackend.py:457
 #, python-format
 msgid "WebDAV DEL Bad status code %s reason %s."
 msgstr "WebDAV DEL Bad status code %s reason %s."
@@ -491,7 +491,7 @@ msgstr "WebDAV DEL Bad status code %s reason %s."
 #: ../duplicity/cli_data.py:197 ../duplicity/cli_data.py:245
 #: ../duplicity/cli_data.py:348 ../duplicity/cli_data.py:366
 #: ../duplicity/cli_data.py:526 ../duplicity/cli_data.py:708
-#: ../duplicity/cli_data.py:937
+#: ../duplicity/cli_data.py:895
 msgid "path"
 msgstr "путь"
 
@@ -509,14 +509,14 @@ msgstr "Архив"
 #: ../duplicity/cli_data.py:520 ../duplicity/cli_data.py:538
 #: ../duplicity/cli_data.py:604 ../duplicity/cli_data.py:612
 #: ../duplicity/cli_data.py:664 ../duplicity/cli_data.py:745
-#: ../duplicity/cli_data.py:924
+#: ../duplicity/cli_data.py:882
 msgid "number"
 msgstr "количество"
 
 #. Used in usage help. Example:
 #. --timeout <seconds>
 #: ../duplicity/cli_data.py:147 ../duplicity/cli_data.py:715
-#: ../duplicity/cli_data.py:950
+#: ../duplicity/cli_data.py:908
 msgid "seconds"
 msgstr "секунды"
 
@@ -524,7 +524,7 @@ msgstr "секунды"
 #. --encrypt-key <gpg_key_id>
 #: ../duplicity/cli_data.py:185 ../duplicity/cli_data.py:191
 #: ../duplicity/cli_data.py:360 ../duplicity/cli_data.py:671
-#: ../duplicity/cli_data.py:916
+#: ../duplicity/cli_data.py:874
 msgid "gpg-key-id"
 msgstr "gpg-key-id"
 
@@ -533,7 +533,7 @@ msgstr "gpg-key-id"
 #. Example:
 #. --exclude <shell_pattern>
 #: ../duplicity/cli_data.py:202 ../duplicity/cli_data.py:388
-#: ../duplicity/cli_data.py:955
+#: ../duplicity/cli_data.py:913
 msgid "shell_pattern"
 msgstr "шаблон оболочки"
 
@@ -541,7 +541,7 @@ msgstr "шаблон оболочки"
 #. --log-file <filename>
 #: ../duplicity/cli_data.py:214 ../duplicity/cli_data.py:220
 #: ../duplicity/cli_data.py:281 ../duplicity/cli_data.py:394
-#: ../duplicity/cli_data.py:913
+#: ../duplicity/cli_data.py:871
 msgid "filename"
 msgstr "имя файла"
 
@@ -549,7 +549,7 @@ msgstr "имя файла"
 #. point in time, as described in the documentation. Example:
 #. duplicity remove-older-than time [options] target_url
 #: ../duplicity/cli_data.py:226 ../duplicity/cli_data.py:551
-#: ../duplicity/cli_data.py:981
+#: ../duplicity/cli_data.py:939
 msgid "time"
 msgstr "время"
 
@@ -603,7 +603,7 @@ msgstr "политика"
 
 #. noun
 #: ../duplicity/cli_data.py:654 ../duplicity/cli_data.py:659
-#: ../duplicity/cli_data.py:902
+#: ../duplicity/cli_data.py:860
 msgid "command"
 msgstr "команда"
 
@@ -616,7 +616,7 @@ msgid "path to a folder with certificate authority files"
 msgstr "путь к папке с файлами центра сертификации"
 
 #. abbreviation for "character" (noun)
-#: ../duplicity/cli_data.py:721 ../duplicity/cli_data.py:900
+#: ../duplicity/cli_data.py:721 ../duplicity/cli_data.py:858
 msgid "char"
 msgstr "символ"
 
@@ -630,82 +630,82 @@ msgstr "дополнительные заголовки для Webdav, таки�
 
 #. Used in usage help to represent a Unix-style path name. Example:
 #. rsync://user[:password]@other_host[:port]//absolute_path
-#: ../duplicity/cli_data.py:891
+#: ../duplicity/cli_data.py:849
 msgid "absolute_path"
 msgstr "полный_путь"
 
 #. Used in usage help. Example:
 #. tahoe://alias/some_dir
-#: ../duplicity/cli_data.py:894
+#: ../duplicity/cli_data.py:852
 msgid "alias"
 msgstr "псевдоним"
 
 #. Used in help to represent a "bucket name" for Amazon Web
 #. Services' Simple Storage Service (S3). Example:
 #. s3://other.host/bucket_name[/prefix]
-#: ../duplicity/cli_data.py:898
+#: ../duplicity/cli_data.py:856
 msgid "bucket_name"
 msgstr "bucket_name"
 
 #. Used in usage help to represent the name of a container in
 #. Amazon Web Services' Cloudfront. Example:
 #. cf+http://container_name
-#: ../duplicity/cli_data.py:906
+#: ../duplicity/cli_data.py:864
 msgid "container_name"
 msgstr "имя контейнера"
 
 #. noun
-#: ../duplicity/cli_data.py:908
+#: ../duplicity/cli_data.py:866
 msgid "count"
 msgstr "количество"
 
 #. Used in usage help to represent the name of a file directory
-#: ../duplicity/cli_data.py:910
+#: ../duplicity/cli_data.py:868
 msgid "directory"
 msgstr "каталог"
 
 #. Used in usage help, e.g. to represent the name of a code
 #. module. Example:
 #. rsync://user[:password]@other.host[:port]::/module/some_dir
-#: ../duplicity/cli_data.py:920
+#: ../duplicity/cli_data.py:878
 msgid "module"
 msgstr "модуль"
 
 #. Used in usage help to represent an internet hostname. Example:
 #. ftp://user[:password]@other.host[:port]/some_dir
-#: ../duplicity/cli_data.py:931
+#: ../duplicity/cli_data.py:889
 msgid "other.host"
 msgstr "другой.хост"
 
 #. Used in usage help. Example:
 #. ftp://user[:password]@other.host[:port]/some_dir
-#: ../duplicity/cli_data.py:934
+#: ../duplicity/cli_data.py:892
 msgid "password"
 msgstr "пароль"
 
 #. Used in usage help to represent a TCP port number. Example:
 #. ftp://user[:password]@other.host[:port]/some_dir
-#: ../duplicity/cli_data.py:940
+#: ../duplicity/cli_data.py:898
 msgid "port"
 msgstr "порт"
 
 #. Used in usage help. This represents a string to be used as a
 #. prefix to names for backup files created by Duplicity. Example:
 #. s3://other.host/bucket_name[/prefix]
-#: ../duplicity/cli_data.py:944
+#: ../duplicity/cli_data.py:902
 msgid "prefix"
 msgstr "префикс"
 
 #. Used in usage help to represent a Unix-style path name. Example:
 #. rsync://user[:password]@other.host[:port]/relative_path
-#: ../duplicity/cli_data.py:947
+#: ../duplicity/cli_data.py:905
 msgid "relative_path"
 msgstr "относительный_путь"
 
 #. Used in usage help to represent the name of a single file
 #. directory or a Unix-style path to a directory. Example:
 #. file:///some_dir
-#: ../duplicity/cli_data.py:959
+#: ../duplicity/cli_data.py:917
 msgid "some_dir"
 msgstr "некоторый_каталог"
 
@@ -713,14 +713,14 @@ msgstr "некоторый_каталог"
 #. directory or a Unix-style path to a directory where files will be
 #. coming FROM. Example:
 #. duplicity [full|incremental] [options] source_path target_url
-#: ../duplicity/cli_data.py:964
+#: ../duplicity/cli_data.py:922
 msgid "source_path"
 msgstr "sourcce_path"
 
 #. Used in usage help to represent a URL files will be coming
 #. FROM. Example:
 #. duplicity [restore] [options] source_url target_dir
-#: ../duplicity/cli_data.py:968
+#: ../duplicity/cli_data.py:926
 msgid "source_url"
 msgstr "адрес источника"
 
@@ -728,126 +728,122 @@ msgstr "адрес источника"
 #. directory or a Unix-style path to a directory. where files will be
 #. going TO. Example:
 #. duplicity [restore] [options] source_url target_dir
-#: ../duplicity/cli_data.py:973
+#: ../duplicity/cli_data.py:931
 msgid "target_dir"
 msgstr "target_dir"
 
 #. Used in usage help to represent a URL files will be going TO.
 #. Example:
 #. duplicity [full|incremental] [options] source_path target_url
-#: ../duplicity/cli_data.py:977
+#: ../duplicity/cli_data.py:935
 msgid "target_url"
 msgstr "target_url"
 
 #. Used in usage help to represent a user name (i.e. login).
 #. Example:
 #. ftp://user[:password]@other.host[:port]/some_dir
-#: ../duplicity/cli_data.py:985
+#: ../duplicity/cli_data.py:943
 msgid "user"
 msgstr "пользователь"
 
 #. account id for b2. Example: b2://account_id@bucket/
-#: ../duplicity/cli_data.py:987
+#: ../duplicity/cli_data.py:945
 msgid "account_id"
 msgstr "id аккаунта"
 
 #. application_key for b2.
 #. Example: b2://account_id:application_key@bucket/
-#: ../duplicity/cli_data.py:990
+#: ../duplicity/cli_data.py:948
 msgid "application_key"
 msgstr "ключ приложения"
 
 #. remote name for rclone.
 #. Example: rclone://remote:/some_dir
-#: ../duplicity/cli_data.py:993 ../duplicity/dup_collections.py:565
+#: ../duplicity/cli_data.py:951 ../duplicity/dup_collections.py:565
 msgid "remote"
 msgstr "удалённая"
 
-#: ../duplicity/cli_data.py:997
+#: ../duplicity/cli_data.py:955
 msgid "Backends and their URL formats:"
 msgstr "Заглушки и формат их URL:"
 
-#: ../duplicity/cli_main.py:155
+#: ../duplicity/cli_main.py:151
 msgid "No valid action found. Will imply 'backup' because a path source was given and target is a url location."
 msgstr "Действие не найдено. Будет подразумевать резервную копию, потому что источник пути был указан, а цель - это адрес."
 
-#: ../duplicity/cli_main.py:163
+#: ../duplicity/cli_main.py:159
 msgid "No valid action found. Will imply 'restore' because url source was given and target is a local path."
 msgstr "Действие не найдено. Будет подразумевать «восстановить», потому что источник url был указан, а цель - локальный путь."
 
-#: ../duplicity/cli_main.py:170
+#: ../duplicity/cli_main.py:166
 #, python-brace-format
 msgid "Invalid '{remainder[0]}' action and cannot be implied from the "
 msgstr "Недопустимое действие «{remainder[0]}» и не может быть связано с "
 
-#: ../duplicity/cli_main.py:299
+#: ../duplicity/cli_main.py:266
 #, python-brace-format
 msgid "GPG binary is {config.gpg_binary}, version {gpg_version}"
 msgstr "Бинарный файл GPG {config.gpg_binary}, версия {gpg_version}"
 
-#: ../duplicity/cli_main.py:348
+#: ../duplicity/cli_main.py:315
 #, python-brace-format
 msgid "Using archive dir: {config.archive_dir_path.uc_name}"
 msgstr "Использование каталога архива: {config.archive_dir_path.uc_name}"
 
-#: ../duplicity/cli_main.py:349
+#: ../duplicity/cli_main.py:316
 #, python-brace-format
 msgid "Using backup name: {config.backup_name}"
 msgstr "Использование имени резервной копии: {config.backup_name}"
 
-#: ../duplicity/cli_util.py:48
+#: ../duplicity/cli_util.py:45
 msgid "Enter 'duplicity --help' for help screen."
 msgstr "Введите 'duplicity --help' для экрана справки."
 
-#: ../duplicity/cli_util.py:127
+#: ../duplicity/cli_util.py:124
 msgid "Running in 'ignore errors' mode due to --ignore-errors.\n"
 "Please reconsider if this was not intended"
 msgstr "Запуск в режиме 'игнорировать ошибки' из-за --ignore-errors.\n"
 "Пожалуйста, пересмотрите если это не было предназначено"
 
-#: ../duplicity/cli_util.py:139
-msgid "Use of the --asynchronous-upload option is experimental and not safe for production! There are reported cases of undetected data loss during upload. Be aware and periodically verify your backups to be safe."
-msgstr "Использование опции --asynchronous-upload является экспериментальной и небезопасной для производства! Имеются сообщения о случаях потери данных во время загрузки. Будьте в курсе и периодически проверяйте резервные копии, чтобы быть безопасными."
-
-#: ../duplicity/cli_util.py:152
+#: ../duplicity/cli_util.py:159
 msgid "'{val}' is not an int: {str(e)}"
 msgstr "'{val}' не является int: {str(e)}"
 
-#: ../duplicity/cli_util.py:166
+#: ../duplicity/cli_util.py:173
 #, python-brace-format
 msgid "'{val} is not a single character."
 msgstr "'{val} не является одним символом."
 
-#: ../duplicity/cli_util.py:193
+#: ../duplicity/cli_util.py:200
 #, python-brace-format
 msgid "Source should be pathname, not url.  Got '{val}' instead."
 msgstr "Исходный код должен быть путем, а не url. Вместо этого понятны '{val}'."
 
-#: ../duplicity/cli_util.py:195
+#: ../duplicity/cli_util.py:202
 #, python-brace-format
 msgid "Argument source_path '{val}' does not exist."
 msgstr "Аргумент source_path '{val}' не существует."
 
-#: ../duplicity/cli_util.py:201
+#: ../duplicity/cli_util.py:208
 #, python-brace-format
 msgid "Source should be url, not directory.  Got '{val}' instead."
 msgstr "Исходный код должен быть url, а не каталогом. Вместо этого Got '{val}'."
 
-#: ../duplicity/cli_util.py:207
+#: ../duplicity/cli_util.py:214
 #, python-brace-format
 msgid "Target should be directory, not url.  Got '{val}' instead."
 msgstr "Цель должна быть каталогом, а не url. Вместо этого Got '{val}'."
 
-#: ../duplicity/cli_util.py:212
+#: ../duplicity/cli_util.py:219
 msgid "Unable to create target dir '{val}': {str(e)}"
 msgstr ""
 
-#: ../duplicity/cli_util.py:218
+#: ../duplicity/cli_util.py:225
 #, python-brace-format
 msgid "Target should be url, not directory.  Got '{val}' instead."
 msgstr "Цель должна быть url, а не каталогом. Вместо этого Got '{val}'."
 
-#: ../duplicity/cli_util.py:263
+#: ../duplicity/cli_util.py:270
 msgid "Verbosity must be one of: digit [0-9], character [ewnid],\n"
 "or word ['error', 'warning', 'notice', 'info', 'debug'].\n"
 "The default is 3 (Notice).  It is strongly recommended\n"
@@ -857,20 +853,20 @@ msgstr "Вербость должна быть одной из цифр [0-9], �
 "По умолчанию: 3 (Примечание). Настоятельно рекомендуем\n"
 "установить уровень подробности 2 (Предупреждение) или выше."
 
-#: ../duplicity/cli_util.py:399
+#: ../duplicity/cli_util.py:410
 #, python-brace-format
 msgid "Specified archive directory '{archive_dir_path.uc_name}' is not a directory"
 msgstr "Указанный каталог архива '{archive_dir_path.uc_name}' не является каталогом"
 
-#: ../duplicity/cli_util.py:408
+#: ../duplicity/cli_util.py:419
 msgid "Encrypt key should be an 8, 16, or 40 character hex string, like 'AA0E73D2'.\n"
 msgstr "Шифрованный ключ должен быть шестнадцатеричной строкой 8, 16 или 40 символов, например 'A0E73D2'.\n"
 
-#: ../duplicity/cli_util.py:428
+#: ../duplicity/cli_util.py:439
 msgid "Hidden dncrypt key should be an 8, 16, or 40 character hex string, like 'AA0E73D2'.\n"
 msgstr "Скрытый dncrypt ключ должен быть строкой в 8, 16 или 40 символов в шестнадцатеричном формате, например 'A0E73D2'.\n"
 
-#: ../duplicity/cli_util.py:442
+#: ../duplicity/cli_util.py:453
 msgid "Sign key should be an 8, 16, or 40 character hex string, like 'AA0E73D2'.\n"
 msgstr "Ключ знака должен быть шестнадцатеричной строкой 8, 16 или 40 символов, например 'A0E73D2'.\n"
 
