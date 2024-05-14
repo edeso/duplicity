@@ -35,14 +35,13 @@ fi
 curl https://pyenv.run | bash
 
 # install into ~/.bashrc
+echo >> ~/.bashrc
 echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc
 echo 'command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc
 echo 'eval "$(pyenv init -)"' >> ~/.bashrc
 
-# install into ~/.bash_profile
-echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bash_profile
-echo '[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bash_profile
-echo 'eval "$(pyenv init -)"' >> ~/.bash_profile
-
-# for PATH changes to take effect
-exec "$SHELL"
+# install into ~/.profile
+echo >> ~/.profile
+echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.profile
+echo '[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.profile
+echo 'eval "$(pyenv init -)"' >> ~/.profile

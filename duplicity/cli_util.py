@@ -31,11 +31,7 @@ from hashlib import md5
 from textwrap import dedent
 
 # TODO: Remove duplicity.argparse311 when py38 goes EOL
-if sys.version_info[:2] == (3, 8):
-    from duplicity import argparse311 as argparse
-else:
-    import argparse
-
+from duplicity import argparse311 as argparse
 from duplicity import config
 from duplicity import dup_time
 from duplicity import errors

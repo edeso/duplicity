@@ -8,13 +8,8 @@ urllib3<1.26
 
 ##### basic requirements #####
 
-build>=1.1.1
 fasteners>=0.19
-pip>=24.0
 python-gettext>=5.0
-packaging>=20.0
-setuptools>=69.1.1
-wheel>=0.42.0
 
 ##### backend libraries #####
 

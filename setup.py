@@ -27,24 +27,29 @@ import shutil
 import subprocess
 import sys
 import time
+import warnings
+
+warnings.filterwarnings("ignore", message="setup.py install is deprecated")
+warnings.filterwarnings("ignore", message="easy_install command is deprecated")
+warnings.filterwarnings("ignore", message="pyproject.toml does not contain a tool.setuptools_scm section")
+warnings.filterwarnings("ignore", message="Configuring installation scheme with distutils config files")
 
 from setuptools import setup, Extension, Command
 from setuptools.command.build_ext import build_ext
-from setuptools.command.sdist import sdist
 
 # check that we can function here
 if not ((3, 8) <= sys.version_info[:2] <= (3, 12)):
     print("Sorry, duplicity requires version 3.8 thru 3.12 of Python.")
     sys.exit(1)
 
-Version: str = "2.2.4.dev"
+Version: str = "2.2.4rc1"
 reldate: str = time.strftime("%B %d, %Y", time.gmtime(int(os.environ.get("SOURCE_DATE_EPOCH", time.time()))))
 
 # READTHEDOCS uses setup.py sdist but can't handle extensions
 ext_modules = list()
 incdir_list = list()
 libdir_list = list()
-if not os.environ.get("READTHEDOCS", False) == "True":
+if os.environ.get("READTHEDOCS", None) is None:
     # set incdir and libdir for librsync
     if os.name == "posix":
         LIBRSYNC_DIR = os.environ.get("LIBRSYNC_DIR", "")
@@ -54,10 +59,10 @@ if not os.environ.get("READTHEDOCS", False) == "True":
                 LIBRSYNC_DIR = arg.split("=")[1]
                 sys.argv.remove(arg)
         if LIBRSYNC_DIR:
-            incdir_list = [os.path.join(LIBRSYNC_DIR, "include")]
-            libdir_list = [os.path.join(LIBRSYNC_DIR, "lib")]
+            incdir_list.append(os.path.join(LIBRSYNC_DIR, "include"))
+            libdir_list.append(os.path.join(LIBRSYNC_DIR, "lib"))
 
-    # set incdir for pyenv
+    # set incdir and libdir for pyenv
     if pyenv_root := os.environ.get("PYENV_ROOT", None):
         major, minor, patch = sys.version_info[:3]
         incdir_list.append(
@@ -69,6 +74,21 @@ if not os.environ.get("READTHEDOCS", False) == "True":
                 f"python{major}.{minor}",
             )
         )
+        libdir_list.append(
+            os.path.join(
+                f"{pyenv_root}",
+                f"versions",
+                f"{major}.{minor}.{patch}",
+                f"lib",
+                f"python{major}.{minor}",
+            )
+        )
+
+    # add standard locs
+    incdir_list.append("/usr/local/include")
+    libdir_list.append("/usr/local/lib")
+    incdir_list.append("/usr/include")
+    libdir_list.append("/usr/lib")
 
     # build the librsync extension
     ext_modules = [
@@ -171,7 +191,7 @@ class SetVersionCommand(Command):
     def run(self):
         global Version
 
-        if not (Version := os.environ.get("DUP_VERSION", False).strip("\"\'")):
+        if not (Version := os.environ.get("DUP_VERSION", False).strip("\"'")):
             print("DUP_VERSION not set in environment.\nSet DUP_VERSION and try again")
             sys.exit(1)
 
@@ -258,90 +278,15 @@ class SetVersionCommand(Command):
                 fd.write(buffer)
 
 
-class SdistCommand(sdist):
-    def run(self):
-        sdist.run(self)
-
-        orig = f"{self.dist_dir}/duplicity-{Version}.tar.gz"
-        tardir = f"duplicity-{Version}"
-        tarball = f"{self.dist_dir}/duplicity-{Version}.tar.gz"
-
-        subprocess.run(f"tar -xf {orig}", shell=True, check=True)
-        assert not os.remove(orig)
-
-        # make sure executables are
-        assert not os.chmod(os.path.join(tardir, "setup.py"), 0o755)
-        assert not os.chmod(os.path.join(tardir, "duplicity", "__main__.py"), 0o755)
-
-        # set COPYFILE_DISABLE to disable appledouble file creation
-        os.environ["COPYFILE_DISABLE"] = "true"
-
-        # make the new tarball and remove tardir
-        subprocess.run(
-            f"""tar czf {tarball} \
-                                 --exclude '.*' \
-                                 --exclude crowdin.yml \
-                                 --exclude Makefile \
-                                 --exclude debian \
-                                 --exclude docs \
-                                 --exclude readthedocs.yaml \
-                                 --exclude testing/docker \
-                                 --exclude testing/manual \
-                                 --exclude testing/regression \
-                                 --exclude tools \
-                                 {tardir}
-                              """,
-            shell=True,
-            check=True,
-        )
-        assert not shutil.rmtree(tardir)
-
-
-with open("README.md") as fh:
-    long_description = fh.read()
-
-
 setup(
     packages=[
         "duplicity",
         "duplicity.backends",
         "duplicity.backends.pyrax_identity",
-        "testing",
-        "testing.functional",
-        "testing.unit",
     ],
     package_dir={
         "duplicity": "duplicity",
         "duplicity.backends": "duplicity/backends",
-    },
-    package_data={
-        "testing": [
-            "testing/gnupg",
-            "testing/gnupg/.gpg-v21-migrated",
-            "testing/gnupg/README",
-            "testing/gnupg/gpg-agent.conf",
-            "testing/gnupg/gpg.conf",
-            "testing/gnupg/private-keys-v1.d",
-            "testing/gnupg/private-keys-v1.d/1DBE767B921015FD5466978BAC968320E5BF6812.key",
-            "testing/gnupg/private-keys-v1.d/4572B9686180E88EA52ED65F1416E486F7A8CAF5.key",
-            "testing/gnupg/private-keys-v1.d/7229722CD5A4726D5CC5588034ADA07429FDECAB.key",
-            "testing/gnupg/private-keys-v1.d/910D6B4035D3FEE3DA5960C1EE573C5F9ECE2B8D.key",
-            "testing/gnupg/private-keys-v1.d/B29B24778338E7F20437B21704EA434E522BC1FE.key",
-            "testing/gnupg/private-keys-v1.d/D2DF6D795DFD90DB4F7A109970F506692731CA67.key",
-            "testing/gnupg/pubring.gpg",
-            "testing/gnupg/random_seed",
-            "testing/gnupg/secring.gpg",
-            "testing/gnupg/trustdb.gpg",
-            "testing/overrides",
-            "testing/overrides/__init__.py",
-            "testing/overrides/bin",
-            "testing/overrides/bin/hsi",
-            "testing/overrides/bin/lftp",
-            "testing/overrides/bin/ncftpget",
-            "testing/overrides/bin/ncftpls",
-            "testing/overrides/bin/ncftpput",
-            "testing/overrides/bin/tahoe",
-        ],
     },
     ext_modules=ext_modules,
     data_files=get_data_files(),
@@ -355,7 +300,6 @@ setup(
     test_suite="testing",
     cmdclass={
         "build_ext": BuildExtCommand,
-        "sdist": SdistCommand,
         "setversion": SetVersionCommand,
     },
 )

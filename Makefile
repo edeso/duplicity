@@ -15,7 +15,6 @@ genned_files=\
 	'*.o' \
 	'*.orig' \
 	'*.py[cdo]' \
-	'*.so' \
 	'*.tmp' \
 	'*~' \
 	'.eggs' \
@@ -27,6 +26,7 @@ genned_files=\
 	'build' \
 	'dist' \
 	'duplicity*.rst' \
+	'librsync*.so' \
 	'megatestresults' \
 	'report.xml' \
 	'testdb*' \
