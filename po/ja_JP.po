@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: duplicity\n"
 "Report-Msgid-Bugs-To: Kenneth Loafman <kenneth@loafman.com>\n"
-"POT-Creation-Date: 2024-03-19 10:08-0500\n"
-"PO-Revision-Date: 2024-03-19 15:12\n"
+"POT-Creation-Date: 2024-05-14 10:33-0500\n"
+"PO-Revision-Date: 2024-05-14 16:12\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -117,7 +117,7 @@ msgstr "位置引数"
 #. duplicity [full|incremental] [options] source_path target_url
 #: ../duplicity/argparse311.py:1671 ../duplicity/cli_data.py:354
 #: ../duplicity/cli_data.py:508 ../duplicity/cli_data.py:557
-#: ../duplicity/cli_data.py:687 ../duplicity/cli_data.py:928
+#: ../duplicity/cli_data.py:687 ../duplicity/cli_data.py:886
 msgid "options"
 msgstr "オプション"
 
@@ -252,7 +252,7 @@ msgstr "ファイル %s はバックエンドから取得した後ローカル�
 msgid "%s Remote filesize %d for %s does not match local size %d"
 msgstr ""
 
-#: ../duplicity/backends/_testbackend.py:182
+#: ../duplicity/backends/_testbackend.py:183
 #, python-format
 msgid "Unexpected exception while validate %s."
 msgstr ""
@@ -464,17 +464,17 @@ msgstr "WebDAV MKCOL %s に失敗しました: %s %s"
 msgid "WebDAV path decoding and translation: %s -> %s"
 msgstr "WebDAV パスのデコードと翻訳: %s -> %s"
 
-#: ../duplicity/backends/webdavbackend.py:421
+#: ../duplicity/backends/webdavbackend.py:417
 #, python-format
 msgid "WebDAV GET Bad status code %s reason %s."
 msgstr "WebDAV GET 不正なステータスコード %s 理由 %s."
 
-#: ../duplicity/backends/webdavbackend.py:442
+#: ../duplicity/backends/webdavbackend.py:438
 #, python-format
 msgid "WebDAV PUT Bad status code %s reason %s."
 msgstr "WebDAV PUT 不正なステータスコード %s 理由 %s."
 
-#: ../duplicity/backends/webdavbackend.py:461
+#: ../duplicity/backends/webdavbackend.py:457
 #, python-format
 msgid "WebDAV DEL Bad status code %s reason %s."
 msgstr "WebDAV DEL Bad status code %s reason %s."
@@ -485,7 +485,7 @@ msgstr "WebDAV DEL Bad status code %s reason %s."
 #: ../duplicity/cli_data.py:197 ../duplicity/cli_data.py:245
 #: ../duplicity/cli_data.py:348 ../duplicity/cli_data.py:366
 #: ../duplicity/cli_data.py:526 ../duplicity/cli_data.py:708
-#: ../duplicity/cli_data.py:937
+#: ../duplicity/cli_data.py:895
 msgid "path"
 msgstr "小道"
 
@@ -503,14 +503,14 @@ msgstr "ホット|クール|アーカイブ"
 #: ../duplicity/cli_data.py:520 ../duplicity/cli_data.py:538
 #: ../duplicity/cli_data.py:604 ../duplicity/cli_data.py:612
 #: ../duplicity/cli_data.py:664 ../duplicity/cli_data.py:745
-#: ../duplicity/cli_data.py:924
+#: ../duplicity/cli_data.py:882
 msgid "number"
 msgstr "数値"
 
 #. Used in usage help. Example:
 #. --timeout <seconds>
 #: ../duplicity/cli_data.py:147 ../duplicity/cli_data.py:715
-#: ../duplicity/cli_data.py:950
+#: ../duplicity/cli_data.py:908
 msgid "seconds"
 msgstr "秒"
 
@@ -518,7 +518,7 @@ msgstr "秒"
 #. --encrypt-key <gpg_key_id>
 #: ../duplicity/cli_data.py:185 ../duplicity/cli_data.py:191
 #: ../duplicity/cli_data.py:360 ../duplicity/cli_data.py:671
-#: ../duplicity/cli_data.py:916
+#: ../duplicity/cli_data.py:874
 msgid "gpg-key-id"
 msgstr "gpg-key-id"
 
@@ -527,7 +527,7 @@ msgstr "gpg-key-id"
 #. Example:
 #. --exclude <shell_pattern>
 #: ../duplicity/cli_data.py:202 ../duplicity/cli_data.py:388
-#: ../duplicity/cli_data.py:955
+#: ../duplicity/cli_data.py:913
 msgid "shell_pattern"
 msgstr "shell_pattern"
 
@@ -535,7 +535,7 @@ msgstr "shell_pattern"
 #. --log-file <filename>
 #: ../duplicity/cli_data.py:214 ../duplicity/cli_data.py:220
 #: ../duplicity/cli_data.py:281 ../duplicity/cli_data.py:394
-#: ../duplicity/cli_data.py:913
+#: ../duplicity/cli_data.py:871
 msgid "filename"
 msgstr "ファイル名"
 
@@ -543,7 +543,7 @@ msgstr "ファイル名"
 #. point in time, as described in the documentation. Example:
 #. duplicity remove-older-than time [options] target_url
 #: ../duplicity/cli_data.py:226 ../duplicity/cli_data.py:551
-#: ../duplicity/cli_data.py:981
+#: ../duplicity/cli_data.py:939
 msgid "time"
 msgstr "時間"
 
@@ -597,7 +597,7 @@ msgstr "ポリシー"
 
 #. noun
 #: ../duplicity/cli_data.py:654 ../duplicity/cli_data.py:659
-#: ../duplicity/cli_data.py:902
+#: ../duplicity/cli_data.py:860
 msgid "command"
 msgstr "(Command)"
 
@@ -610,7 +610,7 @@ msgid "path to a folder with certificate authority files"
 msgstr "証明書権限ファイルのあるフォルダへのパス"
 
 #. abbreviation for "character" (noun)
-#: ../duplicity/cli_data.py:721 ../duplicity/cli_data.py:900
+#: ../duplicity/cli_data.py:721 ../duplicity/cli_data.py:858
 msgid "char"
 msgstr "char|文字"
 
@@ -624,82 +624,82 @@ msgstr "'Cookie,name=value' のような Webdav の追加ヘッダー"
 
 #. Used in usage help to represent a Unix-style path name. Example:
 #. rsync://user[:password]@other_host[:port]//absolute_path
-#: ../duplicity/cli_data.py:891
+#: ../duplicity/cli_data.py:849
 msgid "absolute_path"
 msgstr "絶対パス"
 
 #. Used in usage help. Example:
 #. tahoe://alias/some_dir
-#: ../duplicity/cli_data.py:894
+#: ../duplicity/cli_data.py:852
 msgid "alias"
 msgstr "alias"
 
 #. Used in help to represent a "bucket name" for Amazon Web
 #. Services' Simple Storage Service (S3). Example:
 #. s3://other.host/bucket_name[/prefix]
-#: ../duplicity/cli_data.py:898
+#: ../duplicity/cli_data.py:856
 msgid "bucket_name"
 msgstr "Bucket_name"
 
 #. Used in usage help to represent the name of a container in
 #. Amazon Web Services' Cloudfront. Example:
 #. cf+http://container_name
-#: ../duplicity/cli_data.py:906
+#: ../duplicity/cli_data.py:864
 msgid "container_name"
 msgstr "container_name"
 
 #. noun
-#: ../duplicity/cli_data.py:908
+#: ../duplicity/cli_data.py:866
 msgid "count"
 msgstr "カウント"
 
 #. Used in usage help to represent the name of a file directory
-#: ../duplicity/cli_data.py:910
+#: ../duplicity/cli_data.py:868
 msgid "directory"
 msgstr "ディレクトリ"
 
 #. Used in usage help, e.g. to represent the name of a code
 #. module. Example:
 #. rsync://user[:password]@other.host[:port]::/module/some_dir
-#: ../duplicity/cli_data.py:920
+#: ../duplicity/cli_data.py:878
 msgid "module"
 msgstr "モジュール"
 
 #. Used in usage help to represent an internet hostname. Example:
 #. ftp://user[:password]@other.host[:port]/some_dir
-#: ../duplicity/cli_data.py:931
+#: ../duplicity/cli_data.py:889
 msgid "other.host"
 msgstr "other.host"
 
 #. Used in usage help. Example:
 #. ftp://user[:password]@other.host[:port]/some_dir
-#: ../duplicity/cli_data.py:934
+#: ../duplicity/cli_data.py:892
 msgid "password"
 msgstr "パスワード"
 
 #. Used in usage help to represent a TCP port number. Example:
 #. ftp://user[:password]@other.host[:port]/some_dir
-#: ../duplicity/cli_data.py:940
+#: ../duplicity/cli_data.py:898
 msgid "port"
 msgstr "ポート"
 
 #. Used in usage help. This represents a string to be used as a
 #. prefix to names for backup files created by Duplicity. Example:
 #. s3://other.host/bucket_name[/prefix]
-#: ../duplicity/cli_data.py:944
+#: ../duplicity/cli_data.py:902
 msgid "prefix"
 msgstr "接頭辞："
 
 #. Used in usage help to represent a Unix-style path name. Example:
 #. rsync://user[:password]@other.host[:port]/relative_path
-#: ../duplicity/cli_data.py:947
+#: ../duplicity/cli_data.py:905
 msgid "relative_path"
 msgstr "相対パス"
 
 #. Used in usage help to represent the name of a single file
 #. directory or a Unix-style path to a directory. Example:
 #. file:///some_dir
-#: ../duplicity/cli_data.py:959
+#: ../duplicity/cli_data.py:917
 msgid "some_dir"
 msgstr "some_dir"
 
@@ -707,14 +707,14 @@ msgstr "some_dir"
 #. directory or a Unix-style path to a directory where files will be
 #. coming FROM. Example:
 #. duplicity [full|incremental] [options] source_path target_url
-#: ../duplicity/cli_data.py:964
+#: ../duplicity/cli_data.py:922
 msgid "source_path"
 msgstr "source_path"
 
 #. Used in usage help to represent a URL files will be coming
 #. FROM. Example:
 #. duplicity [restore] [options] source_url target_dir
-#: ../duplicity/cli_data.py:968
+#: ../duplicity/cli_data.py:926
 msgid "source_url"
 msgstr "ソースURL"
 
@@ -722,146 +722,142 @@ msgstr "ソースURL"
 #. directory or a Unix-style path to a directory. where files will be
 #. going TO. Example:
 #. duplicity [restore] [options] source_url target_dir
-#: ../duplicity/cli_data.py:973
+#: ../duplicity/cli_data.py:931
 msgid "target_dir"
 msgstr "target_dir"
 
 #. Used in usage help to represent a URL files will be going TO.
 #. Example:
 #. duplicity [full|incremental] [options] source_path target_url
-#: ../duplicity/cli_data.py:977
+#: ../duplicity/cli_data.py:935
 msgid "target_url"
 msgstr "target_url"
 
 #. Used in usage help to represent a user name (i.e. login).
 #. Example:
 #. ftp://user[:password]@other.host[:port]/some_dir
-#: ../duplicity/cli_data.py:985
+#: ../duplicity/cli_data.py:943
 msgid "user"
 msgstr "ユーザー"
 
 #. account id for b2. Example: b2://account_id@bucket/
-#: ../duplicity/cli_data.py:987
+#: ../duplicity/cli_data.py:945
 msgid "account_id"
 msgstr "account_id"
 
 #. application_key for b2.
 #. Example: b2://account_id:application_key@bucket/
-#: ../duplicity/cli_data.py:990
+#: ../duplicity/cli_data.py:948
 msgid "application_key"
 msgstr "application_key"
 
 #. remote name for rclone.
 #. Example: rclone://remote:/some_dir
-#: ../duplicity/cli_data.py:993 ../duplicity/dup_collections.py:565
+#: ../duplicity/cli_data.py:951 ../duplicity/dup_collections.py:565
 msgid "remote"
 msgstr "リモート"
 
-#: ../duplicity/cli_data.py:997
+#: ../duplicity/cli_data.py:955
 msgid "Backends and their URL formats:"
 msgstr "バックエンドとそのURL形式："
 
-#: ../duplicity/cli_main.py:155
+#: ../duplicity/cli_main.py:151
 msgid "No valid action found. Will imply 'backup' because a path source was given and target is a url location."
 msgstr "有効なアクションが見つかりませんでした。パスソースが指定され、ターゲットがURLの場所であるため、「backup」を意味します。"
 
-#: ../duplicity/cli_main.py:163
+#: ../duplicity/cli_main.py:159
 msgid "No valid action found. Will imply 'restore' because url source was given and target is a local path."
 msgstr "有効なアクションが見つかりませんでした。URLソースが与えられ、ターゲットがローカルパスであるため、'復元'を意味します。"
 
-#: ../duplicity/cli_main.py:170
+#: ../duplicity/cli_main.py:166
 #, python-brace-format
 msgid "Invalid '{remainder[0]}' action and cannot be implied from the "
 msgstr "'{remainder[0]}' アクションが無効で、暗示することはできません "
 
-#: ../duplicity/cli_main.py:299
+#: ../duplicity/cli_main.py:266
 #, python-brace-format
 msgid "GPG binary is {config.gpg_binary}, version {gpg_version}"
 msgstr "GPGバイナリは {config.gpg_binary}、バージョン {gpg_version}"
 
-#: ../duplicity/cli_main.py:348
+#: ../duplicity/cli_main.py:315
 #, python-brace-format
 msgid "Using archive dir: {config.archive_dir_path.uc_name}"
 msgstr "アーカイブ dir: {config.archive_dir_path.uc_name} を使用する"
 
-#: ../duplicity/cli_main.py:349
+#: ../duplicity/cli_main.py:316
 #, python-brace-format
 msgid "Using backup name: {config.backup_name}"
 msgstr "バックアップ名を使用しています: {config.backup_name}"
 
-#: ../duplicity/cli_util.py:48
+#: ../duplicity/cli_util.py:45
 msgid "Enter 'duplicity --help' for help screen."
 msgstr "ヘルプ画面に「duplicity --help」と入力します。"
 
-#: ../duplicity/cli_util.py:127
+#: ../duplicity/cli_util.py:124
 msgid "Running in 'ignore errors' mode due to --ignore-errors.\n"
 "Please reconsider if this was not intended"
 msgstr "--ignore-errors のため「無視エラー」モードで実行しています。\n"
 "意図していない場合は再度検討してください。"
 
-#: ../duplicity/cli_util.py:139
-msgid "Use of the --asynchronous-upload option is experimental and not safe for production! There are reported cases of undetected data loss during upload. Be aware and periodically verify your backups to be safe."
-msgstr "--asynchronous-upload オプションの使用は実験的であり、制作には安全ではありません! アップロード中に検出されなかったデータが失われたことが報告されています。 バックアップが安全であることを定期的に確認してください。"
-
-#: ../duplicity/cli_util.py:152
+#: ../duplicity/cli_util.py:159
 msgid "'{val}' is not an int: {str(e)}"
 msgstr "'{val}' は int: {str(e)}"
 
-#: ../duplicity/cli_util.py:166
+#: ../duplicity/cli_util.py:173
 #, python-brace-format
 msgid "'{val} is not a single character."
 msgstr "'{val} は単一文字ではありません。"
 
-#: ../duplicity/cli_util.py:193
+#: ../duplicity/cli_util.py:200
 #, python-brace-format
 msgid "Source should be pathname, not url.  Got '{val}' instead."
 msgstr "ソースは url ではなくパス名でなければなりません。代わりに '{val}' が得られました。"
 
-#: ../duplicity/cli_util.py:195
+#: ../duplicity/cli_util.py:202
 #, python-brace-format
 msgid "Argument source_path '{val}' does not exist."
 msgstr "引数 source_path '{val}' は存在しません。"
 
-#: ../duplicity/cli_util.py:201
+#: ../duplicity/cli_util.py:208
 #, python-brace-format
 msgid "Source should be url, not directory.  Got '{val}' instead."
 msgstr "ソースは url でなければならず、ディレクトリではありません。代わりに '{val}' が得られました。"
 
-#: ../duplicity/cli_util.py:207
+#: ../duplicity/cli_util.py:214
 #, python-brace-format
 msgid "Target should be directory, not url.  Got '{val}' instead."
 msgstr "ターゲットは url ではなくディレクトリである必要があります。代わりに '{val}' が得られました。"
 
-#: ../duplicity/cli_util.py:212
+#: ../duplicity/cli_util.py:219
 msgid "Unable to create target dir '{val}': {str(e)}"
 msgstr "ターゲット dir '{val}'を作成できません: {str(e)}"
 
-#: ../duplicity/cli_util.py:218
+#: ../duplicity/cli_util.py:225
 #, python-brace-format
 msgid "Target should be url, not directory.  Got '{val}' instead."
 msgstr "ターゲットは URL で、ディレクトリではありません。代わりに '{val}' が得られました。"
 
-#: ../duplicity/cli_util.py:263
+#: ../duplicity/cli_util.py:270
 msgid "Verbosity must be one of: digit [0-9], character [ewnid],\n"
 "or word ['error', 'warning', 'notice', 'info', 'debug'].\n"
 "The default is 3 (Notice).  It is strongly recommended\n"
 "that verbosity level is set at 2 (Warning) or higher."
 msgstr ""
 
-#: ../duplicity/cli_util.py:399
+#: ../duplicity/cli_util.py:410
 #, python-brace-format
 msgid "Specified archive directory '{archive_dir_path.uc_name}' is not a directory"
 msgstr "指定されたアーカイブディレクトリ '{archive_dir_path.uc_name}' はディレクトリではありません"
 
-#: ../duplicity/cli_util.py:408
+#: ../duplicity/cli_util.py:419
 msgid "Encrypt key should be an 8, 16, or 40 character hex string, like 'AA0E73D2'.\n"
 msgstr "暗号化キーは、'AA0E73D2'のような8、16、または40文字の16進数でなければなりません。\n"
 
-#: ../duplicity/cli_util.py:428
+#: ../duplicity/cli_util.py:439
 msgid "Hidden dncrypt key should be an 8, 16, or 40 character hex string, like 'AA0E73D2'.\n"
 msgstr "非表示のdncryptキーは、'AA0E73D2'のような8、16、または40文字の16進数でなければなりません。\n"
 
-#: ../duplicity/cli_util.py:442
+#: ../duplicity/cli_util.py:453
 msgid "Sign key should be an 8, 16, or 40 character hex string, like 'AA0E73D2'.\n"
 msgstr "サインキーは、'AA0E73D2'のような8、16、または40文字の16進数でなければなりません。\n"
 
