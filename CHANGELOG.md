@@ -1,6 +1,83 @@
 # Changelog
 
 
+## rel.2.2.4rc1 (2024-05-15)
+
+### Changes
+
+* Run po/update-pot. [Kenneth Loafman]
+
+* Fix typo in ignore new pylint warning. [Kenneth Loafman]
+
+* Ignore new pylint warning E0606 (possibly-used-before-assignment). [Kenneth Loafman]
+
+* Upgrade setup process and instructions (2nd try) [Kenneth Loafman]
+
+    Finally fix #797
+
+    * enhance README.md to match current PyPA install process
+    * improve and expand pyproject.toml
+      * build requires section
+      * build excludes section
+    * improve and shrink setup.py
+      * remove SdistCommand
+      * suppress nonsense warnings
+    * pyproject.toml now does most of the heavy lifting
+    * requires updates to pip, pipx, and setuptools
+      * the newer pip builds a virtual environment
+      * it installs the build requirements in that venv
+      * the build is then done in that venv
+    * fixes to tools/install\* scripts to build/test VM environment
+    * replaces argparse with duplicity/argparse311 globally
+
+* Reformating, typos. [Thomas Laubrock]
+
+* Add deprecation warning for `--async` [poggenpower]
+
+* Restore previous docs/Makefile. [Kenneth Loafman]
+
+* Set version for LP dev PPA. [Kenneth Loafman]
+
+* Set packaging and black version requirements. [Kenneth Loafman]
+
+* Adjust debian/control for focal builds. [Kenneth Loafman]
+
+* Adjust debian/control for focal builds. [Kenneth Loafman]
+
+* Adjust debian/control for focal builds. [Kenneth Loafman]
+
+### Fix
+
+* Don't drop args when restarting with execve. [Michael Terry]
+
+* Really fix invalid option error. [Kenneth Loafman]
+
+    - remove code trying to emulate subparsers
+    - all options accepted but may be ignored
+
+    Closes #795
+
+* Fix invalid option error. [Kenneth Loafman]
+
+    Closes #795
+
+* Move missleading warning to debug level #813. [Thomas Laubrock]
+
+* Duplicity 2.2.3: --use-agent can be wrongly turned off. [Kenneth Loafman]
+
+* Adjust #810 fix for py38. [Kenneth Loafman]
+
+    - py38 does not support usedforsecurity= option.
+    - FIPS will still break duplicity under py38.
+
+* Pass "usedforsecurity=False" to md5() and sha1(). [Kenneth Loafman]
+
+    - GnuPG used for security, hash for matching
+    - only needed under FIPS mode, somewhat rare
+
+    Fixes #810
+
+
 ## rel.2.2.3 (2024-03-20)
 
 ### New
