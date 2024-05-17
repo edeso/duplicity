@@ -177,7 +177,9 @@ class OneDriveBackend(duplicity.backend.Backend):
                     "Content-Range": f"bytes {int(offset)}-{int(offset + len(chunk) - 1)}/{int(source_size)}",
                 }
                 log.Debug(f"PUT {remote_filename} {headers['Content-Range']}")
-                response = self.http_client.put(uploadUrl, headers=headers, data=chunk, timeout=config.timeout)
+                response = self.http_client.put(
+                    uploadUrl, headers=headers, data=chunk, timeout=config.timeout, withhold_token=True
+                )
                 response.raise_for_status()
                 offset += len(chunk)
 
