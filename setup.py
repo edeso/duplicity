@@ -291,9 +291,6 @@ setup(
     ext_modules=ext_modules,
     data_files=get_data_files(),
     include_package_data=True,
-    install_requires=[
-        "fasteners",
-    ],
     tests_require=[
         "fasteners",
         "pexpect",
