@@ -2,36 +2,47 @@
 
 The following should be installed by apt, yum, etc., depending on your OS.
 
- * Python 3.8 to 3.12
- * librsync v0.9.6 or later
- * GnuPG for encryption
- * intltool for installing translations
- 
-If you install from source you will also need:
-
-* pipx v1.4.3 or later for installation (available via pip)
-* Python development files, normally found in module 'python3-dev'.
-* librsync development files, normally found in module 'librsync-dev'.
+NOTE: Some distro's may have different names for these.
+```
+sudo apt-get update 
+sudo apt-get install -y \
+        build-essential \
+        intltool \
+        lftp \
+        librsync-dev \
+        libffi-dev \
+        libssl-dev \
+        openssl \
+        par2 \
+        python3-dev \
+        python3-pip \
+        python3-venv \
+        python3 \
+        rclone \
+        rsync \
+        rdiff \
+        tzdata
+```
 
 # INSTALLATION
 
 Since Python3.11 site package directories have been marked as **Externally Managed** and now require 
 using `--break-system-packages` to install into them.  This means that a package like duplicity with
-many includes must use a virtual environment, or venv, to install their packages.  Rather than going
+many packages must use a virtual environment, or venv, to install their packages.  Rather than going
 through the manual process of producing a venv, activating it, installing duplicity, etc., we will be
 using `pipx` from now on to install duplicity.  This way we get the same effect as a pip install, but
-now isolated in a venv.
+isolated in a venv.
 
 To install follow instructions below.  Steps (1) and (2) are important.
 
 ## (1) Update packaging to current version
-PyPA (Python Packaging Authority) has been making rapid changes to the way
-we install Python modules.  To accomodate installing new packages on older
-systems, it is necessary to upgrade packaging tools like this:
+PyPA (Python Packaging Authority) has been making rapid changes to the way we install Python modules.  
+To accomodate installing new packages on older Pythons prior to 3.11, it is necessary to upgrade 
+packaging tools like this:
 ```shell
-sudo pip install pipx
+sudo python3 -m pip install --update pip pipx setuptools wheel
 ````
-a**NOTE: _Failure to update will probably result in a failed install._  <--IMPORTANT!**  
+**NOTE: _Failure to update will probably result in a failed install._  <--IMPORTANT!**  
 
 To make sure the pipx dirs are on your path do:
 ```shell
