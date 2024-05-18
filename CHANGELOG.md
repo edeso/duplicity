@@ -1,6 +1,41 @@
 # Changelog
 
 
+## rel.2.2.4rc2 (2024-05-18)
+
+### Changes
+
+* Adjust since twine does not do wildcards. [Kenneth Loafman]
+
+* Revert "chg:pkg: Add missing fasteners install dependency" [Kenneth Loafman]
+
+    This reverts commit ce3baa9a86ed6734dc7b013b6aaa1b873a2ba481.
+
+* Add requirements.dev to tests. [Kenneth Loafman]
+
+* Bump version to 2.2.4.rc2. [Kenneth Loafman]
+
+* Split requirements.txt into .txt and .dev. [Kenneth Loafman]
+
+* Add missing fasteners install dependency. [Michael Terry]
+
+* Run po/update-pot. [Kenneth Loafman]
+
+* Fix typo in ignore new pylint warning. [Kenneth Loafman]
+
+* Ignore new pylint warning E0606 (possibly-used-before-assignment). [Kenneth Loafman]
+
+### Fix
+
+* Onedrive: fix "unauthorized" upload error by not passing auth. [Michael Terry]
+
+    After the initial createUploadSession, apparently OneDrive actively dislikes it if you send Authorization headers on the subsequent PUT calls.
+
+    See their docs: https://learn.microsoft.com/en-us/graph/api/driveitem-createuploadsession?view=graph-rest-1.0#remarks
+
+    If you do include the Authorization header, you get 401 responses.
+
+
 ## rel.2.2.4rc1 (2024-05-15)
 
 ### Changes
