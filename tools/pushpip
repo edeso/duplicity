@@ -40,4 +40,6 @@ if [ -e "wheelhouse" ]; then
 fi
 
 ## upload to pypi
-twine upload --non-interactive dist/duplicity-${VERSION}-*
+for f in dist/duplicity-${VERSION}*; do
+    twine upload --non-interactive $f
+done
