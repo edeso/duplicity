@@ -1,6 +1,15 @@
 # Changelog
 
 
+## rel.2.2.4rc3 (2024-05-19)
+
+### Changes
+
+* Bump version to 2.2.4.rc3. [Kenneth Loafman]
+
+* Use pip-compile to build requirements.txt. [Kenneth Loafman]
+
+
 ## rel.2.2.4rc2 (2024-05-18)
 
 ### Changes
