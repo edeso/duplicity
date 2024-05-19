@@ -1,6 +1,6 @@
 [project]
 name = "duplicity"
-version = "2.2.4rc2"
+version = "2.2.4rc3"
 dynamic = ["dependencies"]
 
 
