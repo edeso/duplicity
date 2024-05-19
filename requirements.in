@@ -1,0 +1,39 @@
+
+##### installed first to avoid conflicts #####
+
+chardet<3.10
+cryptography==3.4.8
+requests
+urllib3<1.26
+
+##### basic requirements #####
+
+fasteners>=0.19
+python-gettext>=5.0
+
+##### backend libraries #####
+
+atom
+azure-storage-blob
+b2sdk
+boto3
+botocore
+boxsdk[jwt]
+dropbox
+gdata-python3
+google-api-python-client
+google-auth-oauthlib
+httplib2
+jottalib
+keyring
+lxml
+mediafire
+megatools
+paramiko
+pexpect
+psutil
+pydrive2
+pyrax
+python-swiftclient
+python-keystoneclient
+requests-oauthlib
