@@ -1,6 +1,19 @@
 # Changelog
 
 
+## rel.2.2.4 (2024-05-20)
+
+### Changes
+
+* Bump to version 2.2.4. [Kenneth Loafman]
+
+* Add tools/testpipx. [Kenneth Loafman]
+
+* Move install-requires back to setup.py. [Kenneth Loafman]
+
+    - See https://gitlab.com/duplicity/duplicity/-/merge_requests/233
+
+
 ## rel.2.2.4rc3 (2024-05-19)
 
 ### Changes
