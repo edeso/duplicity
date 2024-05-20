@@ -1,0 +1,83 @@
+#!/bin/bash
+# -*- Mode:Shell; indent-tabs-mode:nil; tab-width -*-
+#
+# Copyright 2022 Kenneth Loafman <kenneth@loafman.com>
+#
+# This file is part of duplicity.
+#
+# Duplicity is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the
+# Free Software Foundation; either version 2 of the License, or (at your
+# option) any later version.
+#
+# Duplicity is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with duplicity; if not, write to the Free Software Foundation,
+# Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
+set -e
+
+if [ "`uname`" != "Linux" ]; then
+    echo "$0 does not run on `uname`"
+    exit 2
+fi
+
+if [ "$#" -ne 0 ]; then
+    echo "usage: $0"
+    exit 2
+fi
+
+VERSION=`./setup.py --version`
+echo "$0 of ${VERSION}"
+
+VERS="3.8 3.9 3.10 3.11 3.12"
+
+# We use pyenv to make a reproducible environment for multiple versions.
+# See: https://github.com/pyenv/pyenv/ for links and install commands.
+
+trap cleanup EXIT ERR
+
+cleanup ()
+{
+    pyenv global system
+    sudo rm -rf dist build duplicity.egg-info
+    pyenv global system
+    echo "Cleanup done"
+}
+
+# test sdist build and install on each version
+for V in ${VERS}; do
+    echo "Testing sdist on Python$V"
+    pyenv global $V
+    pip install pipx
+    python -m build --sdist
+    pipx install dist/duplicity-*.tar.gz
+    echo -e "\n----------"
+    cd ..
+    # test duplicity as module
+    res=$(python -m duplicity -V)
+    if [[ "$res" == "duplicity ${VERSION}"* ]]; then
+        echo "duplicity as module passed."
+    else
+        echo "duplicity as module failed."
+        echo "$res"
+        exit 1
+    fi
+    # test duplicity as script
+    res=$(duplicity -V)
+    if [[ "$res" == "duplicity ${VERSION}"* ]]; then
+        echo "duplicity as script passed."
+    else
+        echo "duplicity as script failed."
+        echo "$res"
+        exit 1
+    fi
+    # cleanup
+    pipx uninstall duplicity
+    cd -
+    echo -e "----------\n"
+done
