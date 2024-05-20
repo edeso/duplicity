@@ -40,7 +40,7 @@ PyPA (Python Packaging Authority) has been making rapid changes to the way we in
 To accomodate installing new packages on older Pythons prior to 3.11, it is necessary to upgrade 
 packaging tools like this:
 ```shell
-sudo python3 -m pip install --update pip pipx setuptools wheel
+sudo python3 -m pip install --update pip pipx
 ````
 **NOTE: _Failure to update will probably result in a failed install._  <--IMPORTANT!**  
 
