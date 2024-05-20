@@ -14,7 +14,7 @@ override_dh_python3:
 	dh_python3
 
 override_dh_auto_test:
-	./setup.py test
+	echo "Skipping tests.  Done on GitLab"
 
 execute_after_dh_auto_install:
 	rm -r debian/duplicity/usr/share/doc/duplicity-*
