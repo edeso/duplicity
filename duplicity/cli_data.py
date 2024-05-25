@@ -353,7 +353,12 @@ OptionKwargs = dict(
     gpg_options=dict(
         metavar=_("options"),
         action=SplitOptionsAction,
-        help="Verbatim gpg options.  May be supplied multiple times.",
+        help=(
+            "Verbatim gpg options.  May be supplied multiple times.\n"
+            "NOTE: --gpg-options and value should be bound with an '=' as in\n"
+            "      --gpg-options='--some-option=value'\n"
+            "See man page at ARGPARSE PROBLEM."
+        ),
         default=dflt(config.gpg_options),
     ),
     hidden_encrypt_key=dict(
@@ -507,7 +512,12 @@ OptionKwargs = dict(
     par2_options=dict(
         metavar=_("options"),
         action=SplitOptionsAction,
-        help="Verbatim par2 options.  May be supplied multiple times.",
+        help=(
+            "Verbatim par2 options.  May be supplied multiple times.\n"
+            "NOTE: --par2-options and value should be bound with an '=' as in\n"
+            "      --par2-options='--some-option=value'\n"
+            "See man page at ARGPARSE PROBLEM."
+        ),
         default=dflt(config.par2_options),
     ),
     par2_redundancy=dict(
@@ -556,7 +566,12 @@ OptionKwargs = dict(
     rsync_options=dict(
         metavar=_("options"),
         action=SplitOptionsAction,
-        help="Verbatim rsync options.  May be supplied multiple times.",
+        help=(
+            "Verbatim rsync options.  May be supplied multiple times.\n"
+            "NOTE: --rsync-options and value should be bound with an '=' as in\n"
+            "      --rsync-options='--some-option=value'\n"
+            "See man page at ARGPARSE PROBLEM."
+        ),
         default=dflt(config.rsync_options),
     ),
     s3_endpoint_url=dict(
@@ -686,7 +701,12 @@ OptionKwargs = dict(
     ssh_options=dict(
         metavar=_("options"),
         action=SplitOptionsAction,
-        help="Verbatim ssh options.  May be supplied multiple times.",
+        help=(
+            "Verbatim ssh options.  May be supplied multiple times.\n"
+            "NOTE: --ssh-options and value should be bound with an '=' as in\n"
+            "      --ssh-options='--some-option=value'\n"
+            "See man page at ARGPARSE PROBLEM."
+        ),
         default=dflt(config.ssh_options),
     ),
     ssl_cacert_file=dict(

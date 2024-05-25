@@ -564,16 +564,13 @@ class CommandlineTest(UnitTestCase):
         cli_main.process_command_line(cline)
         self.assertListEqual(config.select_opts, [("--exclude-other-filesystems", [])])
 
-        # Issue 795 - invalid option error using --gpg-options - unbound
-        cline = shlex.split(
-            "backup --gpg-options '--compress-algo=bzip2 --bzip2-compress-level=9' foo/bar file://target_url"
-        )
-        cli_main.process_command_line(cline)
-        self.assertEqual(config.gpg_options, "--compress-algo=bzip2 --bzip2-compress-level=9")
+        # Issue 795/816 - invalid option error using --gpg-options - unbound - argparse bug
+        with self.assertRaises(CommandLineError) as cm:
+            cline = shlex.split("backup --gpg-options '--homedir=/home/user' foo/bar file://target_url")
+            cli_main.process_command_line(cline)
+            self.assertIn("design error in argparse", cm.exception)
 
-        # Issue 795 - invalid option error using --gpg-options - bound
-        cline = shlex.split(
-            "backup --gpg-options='--compress-algo=bzip2 --bzip2-compress-level=9' foo/bar file://target_url"
-        )
+        # Issue 795/816 - invalid option error using --gpg-options - bound
+        cline = shlex.split("backup --gpg-options='--homedir=/home/user' foo/bar file://target_url")
         cli_main.process_command_line(cline)
-        self.assertEqual(config.gpg_options, "--compress-algo=bzip2 --bzip2-compress-level=9")
+        self.assertEqual(config.gpg_options, "--homedir=/home/user")
