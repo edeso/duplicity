@@ -27,6 +27,7 @@ import time
 import pexpect
 
 from duplicity import backend
+from duplicity.backends._testbackend import BackendErrors
 from duplicity import config
 from duplicity import util
 from testing import DuplicityTestCase
@@ -68,7 +69,7 @@ class FunctionalTestCase(DuplicityTestCase):
         self.unpack_testfiles()
 
         self.class_args = []
-        self.backend_url = f"file://{_runtest_dir}/testfiles/output"
+        self.backend_url = f"fortestsonly://{_runtest_dir}/testfiles/output"
         self.last_backup = None
         self.set_environ("PASSPHRASE", self.sign_passphrase)
         self.set_environ("SIGN_PASSPHRASE", self.sign_passphrase)
@@ -118,7 +119,12 @@ class FunctionalTestCase(DuplicityTestCase):
         if os.environ.get("PYDEVD", None):
             cmd_list.extend(["--pydevd"])
 
-        cmd_list.extend(["-v0"])
+        if os.environ.get("TESTDEBUG", False):
+            # enable debug logging for trouble shooting
+            cmd_list.extend(["-vd"])
+        else:
+            # keep duplicity quite for a condensed test log.
+            cmd_list.extend(["-v0"])
         cmd_list.extend(["--no-print-statistics"])
         cmd_list.extend([f"--archive-dir={_runtest_dir}/testfiles/cache"])
 
@@ -127,8 +133,11 @@ class FunctionalTestCase(DuplicityTestCase):
 
         cmd_list.extend(self.class_args)
 
+        dup_env = dict(os.environ)
         if fail:
-            cmd_list.extend(["--fail", fail])
+            # cmd_list.extend(["--fail", fail]) replaced by ENV
+            dup_env[BackendErrors.FAIL_SYSTEM_EXIT] = f"vol{fail}.difftar"
+            cmd_list.extend(["--num-ret=2", "--backend-ret=3"])  # fail faster
 
         # convert to string and single quote to avoid shell expansion
         cmdline = " ".join([f"'{x}'" for x in cmd_list])
@@ -143,6 +152,7 @@ class FunctionalTestCase(DuplicityTestCase):
             "/bin/sh",
             ["-f", "-c", cmdline],
             timeout=None,
+            env=dup_env,  # type: ignore
             encoding=config.fsencoding,
         )
 
@@ -158,23 +168,18 @@ class FunctionalTestCase(DuplicityTestCase):
         child.ptyproc.delayafterclose = 0.0
         return_val = child.exitstatus
 
+        print("\n...command:", cmdline, file=sys.stderr)
+        print("...cwd:", os.getcwd(), file=sys.stderr)
+        print("...output:", file=sys.stderr)
+        for line in lines:
+            line = line.rstrip()
+            if line:
+                print(os.fsdecode(line), file=sys.stderr)
+        print("...return_val:", return_val, file=sys.stderr)
         if fail:
             self.assertEqual(30, return_val)
         elif return_val:
-            print("\n...command:", cmdline, file=sys.stderr)
-            print("...cwd:", os.getcwd(), file=sys.stderr)
-            print("...output:", file=sys.stderr)
-            for line in lines:
-                line = line.rstrip()
-                if line:
-                    print(os.fsdecode(line), file=sys.stderr)
-            print("...return_val:", return_val, file=sys.stderr)
             raise CmdError(return_val)
-        else:
-            for line in lines:
-                line = line.rstrip()
-                if line:
-                    print(os.fsdecode(line), file=sys.stderr)
 
     def backup(self, type, input_dir, options=None, **kwargs):  # pylint: disable=redefined-builtin
         """Run duplicity backup to default directory"""

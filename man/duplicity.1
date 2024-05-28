@@ -326,15 +326,9 @@ no --archive-dir, --name=foo
 
 .TP
 .B --asynchronous-upload
-.B (EXPERIMENTAL)
-Perform file uploads asynchronously in the background,
-with respect to volume creation. This means that duplicity can upload
-a volume while, at the same time, preparing the next volume for
-upload. The intended end-result is a faster backup, because the local
-CPU and your bandwidth can be more consistently utilized. Use of this
-option implies additional need for disk space in the temporary storage
-location; rather than needing to store only one volume at a time,
-enough storage space is required to store two volumes.
+.B (DISCONTINUED)
+This option is discontinued because of instability. 
+`--concurrency` is the new replacement. 
 
 .TP
 .BI "--azure-blob-tier"
@@ -375,6 +369,20 @@ Allows the explicit selection of a cloudfiles backend. Defaults to
 .BR pyrax .
 Alternatively you might choose
 .BR cloudfiles .
+
+.TP
+.BI "--concurrency " number
+Give the number of background process that should be use to run concurrent
+backend task. This decuples local operations like de/encrption, volume creation etc. 
+from transfering to/from backends.
+The intended end-result is a faster backup, because the local
+CPU and your bandwidth can be more consistently utilized. Use of this
+option implies additional need for disk space in the temporary storage
+location; rather than needing to store only one volume at a time,
+enough storage space is required to store n+1 volumes.
+Depending on the backend and network parallel operations can speed up things. 
+A good starting point for concurrency is 1-4. Check duplicity statistics for fine tuning.
+In most cases this should not extend the number of CPUs minus one of your system.
 
 .TP
 .BI "--config-dir " path

@@ -76,9 +76,6 @@ local_path = None
 # The symbolic name of the backup being operated upon.
 backup_name = None
 
-# For testing -- set current time
-current_time = None
-
 # Set to the Path of the archive directory (the directory which
 # contains the signatures and manifests of the relevent backup
 # collection), and for checkpoint state between volumes.
@@ -323,12 +320,6 @@ rsync_options = ""
 # will be a Restart object if restarting
 restart = None
 
-# used in testing only - raises exception after volume
-fail_on_volume = 0
-
-# used in testing only - skips uploading a particular volume
-skip_volume = 0
-
 # ignore (some) errors during operations; supposed to make it more
 # likely that you are able to restore data under problematic
 # circumstances. the default should absolutely always be True unless
@@ -340,6 +331,9 @@ rename = {}
 
 # enable data comparison on verify runs
 compare_data = False
+
+# sequencial backend tasks by default
+concurrency = 0
 
 # When symlinks are encountered, the item they point to is copied rather than
 # the symlink.
@@ -385,6 +379,19 @@ check_remote = True
 
 # whether 'inc` is explicit or not
 # inc_explicit = True
+
+# used in testing only -- set current time
+current_time = None
+
+# used in testing only - raises exception after volume
+fail_on_volume = 0
+
+# used in testing only - skips uploading a particular volume
+skip_volume = 0
+
+# used in testing only - fail BackendWrapper.put() on difftar volN
+put_fail_volume = 0
+
 
 # default filesystem encoding
 # It seems that sys.getfilesystemencoding() will normally return

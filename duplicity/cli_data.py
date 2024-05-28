@@ -109,7 +109,7 @@ OptionKwargs = dict(
         action=WarnAsyncStoreConstAction,
         const=1,
         dest="async_concurrency",
-        help="Number of async upload tasks, max of 1",
+        help="Discontiniued, use --concurrency",
         default=dflt(config.async_concurrency),
     ),
     azure_blob_tier=dict(
@@ -158,6 +158,16 @@ OptionKwargs = dict(
         action="store_true",
         help="Compare data on verify not only signatures",
         default=dflt(config.compare_data),
+    ),
+    concurrency=dict(
+        metavar=_("number"),
+        type=int,
+        help="Number n of concurrent backend processes to get better performance.\n"
+        "Allow parallel creation of new volume and transfer. Some backends may profit more than one transfer, too.\n"
+        "Typically a value of 1-4 is a good starting point. The impact totally depends on the backend,\n"
+        "network and other condition. This will also increase the temporary local disk usage\n"
+        "from 1 to n + 1 volumes.",
+        default=dflt(config.concurrency),
     ),
     config_dir=dict(
         metavar=_("path"),
@@ -778,12 +788,8 @@ OptionKwargs = dict(
         type=int,
         help=argparse.SUPPRESS,
     ),
-    fail_on_volume=dict(
-        metavar="volume",
-        type=int,
-        help=argparse.SUPPRESS,
-    ),
     pydevd=dict(
+        # activate remote debugging
         action="store_true",
         help=argparse.SUPPRESS,
     ),

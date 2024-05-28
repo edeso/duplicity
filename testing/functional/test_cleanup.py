@@ -44,7 +44,8 @@ class CleanupTest(FunctionalTestCase):
         good_files = self.backup("full", f"{_runtest_dir}/testfiles/largefiles")
         good_files |= self.backup("inc", f"{_runtest_dir}/testfiles/largefiles")
         good_files |= self.backup("inc", f"{_runtest_dir}/testfiles/largefiles")
-        self.backup("full", f"{_runtest_dir}/testfiles/largefiles", fail=1)
+        print("Trigger failing backup.", flush=True)
+        self.backup("full", f"{_runtest_dir}/testfiles/largefiles", fail=2)
         bad_files = self.get_backend_files()
         bad_files -= good_files
         self.assertNotEqual(bad_files, set())

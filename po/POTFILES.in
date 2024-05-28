@@ -1,8 +1,8 @@
 duplicity/__init__.py
 duplicity/__main__.py
 duplicity/argparse311.py
-duplicity/asyncscheduler.py
 duplicity/backend.py
+duplicity/backend_pool.py
 duplicity/backends/__init__.py
 duplicity/backends/_cf_cloudfiles.py
 duplicity/backends/_cf_pyrax.py
@@ -56,7 +56,6 @@ duplicity/dup_collections.py
 duplicity/dup_main.py
 duplicity/dup_tarfile.py
 duplicity/dup_temp.py
-duplicity/dup_threading.py
 duplicity/dup_time.py
 duplicity/errors.py
 duplicity/file_naming.py

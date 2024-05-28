@@ -36,6 +36,8 @@ INFO = 5
 DEBUG = 9
 MAX = 9
 
+PREFIX = ""
+
 _logger = None
 _log_timestamp = False
 
@@ -85,6 +87,8 @@ def Log(s, verb_level, code=1, extra=None, force_print=False, transfer_progress=
     # assert isinstance(s, unicode)
     if not isinstance(s, str):
         s = s.decode("utf8", "replace")
+
+    s = PREFIX + s
 
     _logger.log(
         DupToLoggerLevel(verb_level),
@@ -346,7 +350,7 @@ class ErrorCode(object):
     backend_no_space = 53
     backend_command_error = 54
     backend_code_error = 55
-    backend_verification_failed = 56
+    backend_validation_failed = 56
 
     # file selection filter mode errors
     redundant_filter = 70

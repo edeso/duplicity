@@ -136,10 +136,10 @@ class WarnAsyncStoreConstAction(argparse._StoreConstAction):
                 dedent(
                     """
                     ----------------------------------------------------------------
-                    | DEPRECATION WARNING:                                         |
-                    | Use of the --asynchronous-upload option is known to be       |
+                    | WARNING: replaced with `--concurrency`                       |
+                    | Use of the --asynchronous-upload option was known to be      |
                     | unsafe and may result in data loss.                          |
-                    | It will be removed in VERSION 3.0.0 and replaced by          |
+                    | It was removed in VERSION 3.0.0 and replaced by              |
                     | --concurrency which will offer similar functionality, but    |
                     | thoroughly tested implementation.                            |
                     | See: https://gitlab.com/duplicity/duplicity/-/issues/745 and |
