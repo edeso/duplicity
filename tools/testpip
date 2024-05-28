@@ -45,6 +45,7 @@ cleanup ()
 {
     pyenv global system
     sudo rm -rf dist build duplicity.egg-info
+    pip uninstall duplicity
     echo "Cleanup done"
 }
 
@@ -57,21 +58,23 @@ for V in ${VERS}; do
     echo -e "\n----------"
     cd ..
     # test duplicity as module
+    set +e
     res=$(python$V -m duplicity -V)
+    set -e
     if [[ "$res" == "duplicity ${VERSION}"* ]]; then
         echo "duplicity as module passed."
     else
         echo "duplicity as module failed."
-        echo "$res"
         exit 1
     fi
     # test duplicity as script
+    set +e
     res=$(duplicity -V)
+    set -e
     if [[ "$res" == "duplicity ${VERSION}"* ]]; then
         echo "duplicity as script passed."
     else
         echo "duplicity as script failed."
-        echo "$res"
         exit 1
     fi
     cd -

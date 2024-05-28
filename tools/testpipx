@@ -45,7 +45,7 @@ cleanup ()
 {
     pyenv global system
     sudo rm -rf dist build duplicity.egg-info
-    pyenv global system
+    pipx uninstall duplicity
     echo "Cleanup done"
 }
 
@@ -53,27 +53,29 @@ cleanup ()
 for V in ${VERS}; do
     echo "Testing sdist on Python$V"
     pyenv global $V
-    pip install pipx
+    pip install --upgrade pipx
     python -m build --sdist
     pipx install dist/duplicity-*.tar.gz
     echo -e "\n----------"
     cd ..
     # test duplicity as module
-    res=$(python -m duplicity -V)
+    set +e
+    res=$(~/.local/share/pipx/venvs/duplicity/bin/python -m duplicity -V)
+    set -e
     if [[ "$res" == "duplicity ${VERSION}"* ]]; then
         echo "duplicity as module passed."
     else
         echo "duplicity as module failed."
-        echo "$res"
         exit 1
     fi
     # test duplicity as script
+    set +e
     res=$(duplicity -V)
+    set -e
     if [[ "$res" == "duplicity ${VERSION}"* ]]; then
         echo "duplicity as script passed."
     else
         echo "duplicity as script failed."
-        echo "$res"
         exit 1
     fi
     # cleanup

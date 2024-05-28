@@ -38,8 +38,8 @@ from setuptools import setup, Extension, Command
 from setuptools.command.build_ext import build_ext
 
 # check that we can function here
-if not ((3, 8) <= sys.version_info[:2] <= (3, 12)):
-    print("Sorry, duplicity requires version 3.8 thru 3.12 of Python.")
+if not ((3, 8) <= sys.version_info[:2]):
+    print("Sorry, duplicity requires version 3.8 thru 3.12 of Python.", file=sys.stderr)
     sys.exit(1)
 
 Version: str = "2.2.5.dev"
@@ -291,9 +291,6 @@ setup(
     ext_modules=ext_modules,
     data_files=get_data_files(),
     include_package_data=True,
-    install_requires=[
-        "fasteners",
-    ],
     tests_require=[
         "fasteners",
         "pexpect",
