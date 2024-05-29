@@ -1,6 +1,39 @@
 # Changelog
 
 
+## rel.3.0.0 (2024-05-29)
+
+### Changes
+
+* Run po/update-pot. [Kenneth Loafman]
+
+* Collected fixes to setup process. [Kenneth Loafman]
+
+    only check Python version's lower bound
+    * remove install_requires again
+    * minor changes to tools/testpip\[x\]
+    * revert pip-compile additions
+
+* CommandLineError: argument --gpg-options: expected one argument. [Kenneth Loafman]
+
+* Set dev branch to 2.2.5.dev. [Kenneth Loafman]
+
+* Skip tests on Launchpad. [Kenneth Loafman]
+
+### Fix
+
+* Volume missing if --asynchronous-upload and put fails. [Kenneth Loafman]
+
+    Closes #745, #807, #815
+
+    - --asynchronous-upload is replaced with --concurrency=N
+    - without --concurrency=N it defaults to no multiprocessing
+    - with --concurrency=N it uses a multiprocessing pool of N
+    - requires N volumes of temp space if used, otherwise 1
+
+* Don't raise KeyError if OSError.errno is unrecognized. [Michael Terry]
+
+
 ## rel.2.2.4 (2024-05-20)
 
 ### Changes
