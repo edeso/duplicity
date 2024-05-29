@@ -21,7 +21,7 @@
 
 import gettext
 
-__version__: str = "2.2.5.dev"
-__reldate__: str = "May 24, 2024"
+__version__: str = "3.0.0"
+__reldate__: str = "May 29, 2024"
 
 gettext.install("duplicity", names=["ngettext"])
