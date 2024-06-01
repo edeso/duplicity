@@ -75,7 +75,9 @@ class AddSelectionAction(DuplicityAction):
         super().__init__(option_strings, dest, **kwargs)
 
     def __call__(self, parser, namespace, values, option_string=None):
-        addarg = os.fsdecode(value) if isinstance(values, bytes) else values
+        addarg = os.fsdecode(values) if isinstance(values, bytes) else values
+        if addarg == "":
+            command_line_error(f"Option {option_string} cannot be empty.")
         config.select_opts.append((os.fsdecode(option_string), addarg))
 
 
