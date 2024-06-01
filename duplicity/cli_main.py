@@ -115,7 +115,7 @@ def parse_log_options(arglist):
     try:
         args, remainder = parser.parse_known_intermixed_args(arglist)
     except (argparse.ArgumentError, argparse.ArgumentTypeError) as e:
-        raise CommandLineError(str(e))
+        command_line_error(str(e))
 
     return args, remainder
 
@@ -140,7 +140,7 @@ def parse_cmdline_options(arglist):
     try:
         args, remainder = parser.parse_known_intermixed_args(remainder)
     except (argparse.ArgumentError, argparse.ArgumentTypeError) as e:
-        raise CommandLineError(str(e))
+        command_line_error(str(e))
 
     # let's test the command and try to assume which action,
     # eventually err out if no valid action could be determined/was given
