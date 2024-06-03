@@ -1,4 +1,4 @@
-.TH DUPLICITY 1 "March 20, 2024" "Version 2.2.3" "User Manuals" \"  -*- nroff -*-
+.TH DUPLICITY 1 "May 29, 2024" "Version 3.0.0" "User Manuals" \"  -*- nroff -*-
 .\" disable justification (adjust text to left margin only)
 .\" command line examples stay readable through that
 .ad l
@@ -326,15 +326,9 @@ no --archive-dir, --name=foo
 
 .TP
 .B --asynchronous-upload
-.B (EXPERIMENTAL)
-Perform file uploads asynchronously in the background,
-with respect to volume creation. This means that duplicity can upload
-a volume while, at the same time, preparing the next volume for
-upload. The intended end-result is a faster backup, because the local
-CPU and your bandwidth can be more consistently utilized. Use of this
-option implies additional need for disk space in the temporary storage
-location; rather than needing to store only one volume at a time,
-enough storage space is required to store two volumes.
+.B (DISCONTINUED)
+This option is discontinued because of instability. 
+`--concurrency` is the new replacement. 
 
 .TP
 .BI "--azure-blob-tier"
@@ -375,6 +369,20 @@ Allows the explicit selection of a cloudfiles backend. Defaults to
 .BR pyrax .
 Alternatively you might choose
 .BR cloudfiles .
+
+.TP
+.BI "--concurrency " number
+Give the number of background process that should be use to run concurrent
+backend task. This decuples local operations like de/encrption, volume creation etc. 
+from transfering to/from backends.
+The intended end-result is a faster backup, because the local
+CPU and your bandwidth can be more consistently utilized. Use of this
+option implies additional need for disk space in the temporary storage
+location; rather than needing to store only one volume at a time,
+enough storage space is required to store n+1 volumes.
+Depending on the backend and network parallel operations can speed up things. 
+A good starting point for concurrency is 1-4. Check duplicity statistics for fine tuning.
+In most cases this should not extend the number of CPUs minus one of your system.
 
 .TP
 .BI "--config-dir " path
@@ -606,11 +614,21 @@ as gpg command line binary. Can be an absolute or relative file path or a file n
 Default value is 'gpg'. The binary will be localized via the PATH environment variable.
 
 .TP
-.BI "--gpg-options " options
-Allows you to pass options to gpg encryption.  The
+.BI "--gpg-options" "='options'"
+
+Allows you to pass options to gpg encryption. The
 .I options
-list should be of the form "--opt1 --opt2=parm" where the string is
+list should be of the form '--opt1 --opt2=val2' where the string is
 quoted and the only spaces allowed are between options.
+
+.B NOTE:
+This options value should be bound with '=' as in
+
+--gpg-options='--gpg-option=value'
+
+See
+.B "ARGPARSE PROBLEM"
+for more detail.
 
 .TP
 .BI "--hidden-encrypt-key " key-id
@@ -827,8 +845,17 @@ support Unix ownership or when root privileges are not available.
 Number of retries to make on errors before giving up.
 
 .TP
-.BI "--par2-options " options
+.BI --par2-options "='options'"
 Verbatim options to pass to par2.
+
+.B NOTE:
+This options value should be bound with '=' as in
+
+--par2-options='-a -b'
+
+See
+.B "ARGPARSE PROBLEM"
+for more detail.
 
 .TP
 .BI "--par2-redundancy " percent
@@ -865,7 +892,7 @@ Can be passed multiple times. An example:
 duplicity restore --rename Documents/metal Music/metal sftp://uid@other.host/some_dir /home/me
 
 .TP
-.BI "--rsync-options " options
+.BI --rsync-options "='options'"
 Allows you to pass options to the rsync backend.  The
 .I options
 list should be of the form "opt1=parm1 opt2=parm2" where the option string is
@@ -874,6 +901,15 @@ will be passed verbatim to rsync, after any internally generated option
 designating the remote port to use. Here is a possibly useful example:
 
 duplicity --rsync-options="--partial-dir=.rsync-partial" /home/me rsync://uid@other.host/some_dir
+
+.B NOTE:
+This options value should be bound with '=' as in
+
+--rsync-options='--partial-dir=.rsync-partial'
+
+See
+.B "ARGPARSE PROBLEM"
+for more detail.
 
 .TP
 .BI "--s3-endpoint-url " url
@@ -1057,7 +1093,7 @@ if it was not defined in target url and no FTP_PASSWORD env var is set.
 This password is also used for passphrase-protected ssh keys.
 
 .TP
-.BI "--ssh-options " options
+.BI --ssh-options "='options'"
 Allows you to pass options to the ssh backend.
 Can be specified multiple times or as a space separated options list.
 The
@@ -1090,6 +1126,15 @@ or
 or
 .B -oGlobalKnownHostsFile
 settings. If needed provide more host specific options via ssh_config file.
+
+.B NOTE2:
+This options value should be bound with '=' as in
+
+--ssh-options='-oProtocol=2 -oIdentityFile=/my/backup/id'
+
+See
+.B "ARGPARSE PROBLEM"
+for more detail.
 .RE
 
 .TP
@@ -2817,6 +2862,31 @@ Use the following environment variables for more settings:
 . br
 . BR XORRISO_ARGS ", for expert use only. Pass arbitrary arguments to xorriso. Example: XORRISO_ARGS='-md5 all'"
 .RE
+
+.SH ARGPARSE PROBLEM
+Since we converted command line parsing from 
+.B optparse
+to
+.B argparse
+one bug has haunted our efforts.
+Values that look like options are interpreted as options.
+That means that something like
+
+--gpg-options '--homedir=/home/user'
+
+is not treated as option and corresponding value, but as two different options
+leading --gpg-options to complain that it misses it's value.
+To work around this problem, you will need to bind them with '=' like so:
+
+--gpg-options="--homedir=/home/user"
+
+The argparse bug is here:
+
+https://github.com/python/cpython/issues/53580 .
+
+If you feel inclined to go there and add a supporting comment to push for a fix. With enough upvotes the bug may be fixed.
+
+Note that in the bug report itself, the '=' workaround is never mentioned, but we have found this to be the cleanest and most readable of the workarounds we have seen.
 
 .SH KNOWN ISSUES / BUGS
 Hard links currently unsupported (they will be treated as non-linked

@@ -1,14 +1,19 @@
-[build-system]
-requires = [
-    "setuptools>=60",
-    "wheel",
-]
-build-backend = "setuptools.build_meta"
-
-
 [project]
 name = "duplicity"
-version = "2.2.3"
+version = "3.0.0"
+dynamic = ["dependencies"]
+
+
+[build-system]
+requires = [
+    "build>=1.1",
+    "pip>=24.0",
+    "pipx>=1.5",
+    "packaging>=20.0",
+    "setuptools>=60.0",
+    "wheel>=0.42.0",
+]
+build-backend = "setuptools.build_meta"
 
 
 [project.scripts]
@@ -17,6 +22,8 @@ duplicity = "duplicity.__main__:dup_run"
 
 [tools.setuptools]
 description = "Encrypted backup using rsync algorithm"
+long_description = {file = "README.md"}
+long_description_content_type = "text/markdown"
 readme = "README.md"
 author = "Ben Escoto"
 author_email = "ben at emrose dot org"
@@ -26,9 +33,6 @@ url = "http://duplicity.us"
 python_requires = ">= 3.8, <3.13"
 platforms = [
     "any"
-]
-install_requires = [
-    "fasteners",
 ]
 tests_require = [
     "fasteners",
@@ -58,6 +62,10 @@ classifiers = [
 ]
 
 
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+
+
 [tool.setuptools.packages.find]
 where = [
     ".",
@@ -68,6 +76,12 @@ include = [
     "duplicity.backends.pyrax_identity",
 ]
 exclude = [
+    ".*",
+    "Makefile",
+    "crowdin.yml",
+    "debian*",
+    "docs*",
+    "readthedocs.yaml",
     "snap*",
     "testing*",
     "tools*",

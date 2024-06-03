@@ -51,7 +51,7 @@ def check_common_error(error_handler, function, args=()):
         if (
             not isinstance(exc, EnvironmentError)
             or hasattr(exc, "errno")
-            and errno.errorcode[exc.errno]
+            and errno.errorcode.get(exc.errno)
             in [
                 "EPERM",
                 "ENOENT",

@@ -109,7 +109,7 @@ OptionKwargs = dict(
         action=WarnAsyncStoreConstAction,
         const=1,
         dest="async_concurrency",
-        help="Number of async upload tasks, max of 1",
+        help="Discontiniued, use --concurrency",
         default=dflt(config.async_concurrency),
     ),
     azure_blob_tier=dict(
@@ -158,6 +158,16 @@ OptionKwargs = dict(
         action="store_true",
         help="Compare data on verify not only signatures",
         default=dflt(config.compare_data),
+    ),
+    concurrency=dict(
+        metavar=_("number"),
+        type=int,
+        help="Number n of concurrent backend processes to get better performance.\n"
+        "Allow parallel creation of new volume and transfer. Some backends may profit more than one transfer, too.\n"
+        "Typically a value of 1-4 is a good starting point. The impact totally depends on the backend,\n"
+        "network and other condition. This will also increase the temporary local disk usage\n"
+        "from 1 to n + 1 volumes.",
+        default=dflt(config.concurrency),
     ),
     config_dir=dict(
         metavar=_("path"),
@@ -353,7 +363,12 @@ OptionKwargs = dict(
     gpg_options=dict(
         metavar=_("options"),
         action=SplitOptionsAction,
-        help="Verbatim gpg options.  May be supplied multiple times.",
+        help=(
+            "Verbatim gpg options.  May be supplied multiple times.\n"
+            "NOTE: --gpg-options and value should be bound with an '=' as in\n"
+            "      --gpg-options='--some-option=value'\n"
+            "See man page at ARGPARSE PROBLEM."
+        ),
         default=dflt(config.gpg_options),
     ),
     hidden_encrypt_key=dict(
@@ -507,7 +522,12 @@ OptionKwargs = dict(
     par2_options=dict(
         metavar=_("options"),
         action=SplitOptionsAction,
-        help="Verbatim par2 options.  May be supplied multiple times.",
+        help=(
+            "Verbatim par2 options.  May be supplied multiple times.\n"
+            "NOTE: --par2-options and value should be bound with an '=' as in\n"
+            "      --par2-options='--some-option=value'\n"
+            "See man page at ARGPARSE PROBLEM."
+        ),
         default=dflt(config.par2_options),
     ),
     par2_redundancy=dict(
@@ -556,7 +576,12 @@ OptionKwargs = dict(
     rsync_options=dict(
         metavar=_("options"),
         action=SplitOptionsAction,
-        help="Verbatim rsync options.  May be supplied multiple times.",
+        help=(
+            "Verbatim rsync options.  May be supplied multiple times.\n"
+            "NOTE: --rsync-options and value should be bound with an '=' as in\n"
+            "      --rsync-options='--some-option=value'\n"
+            "See man page at ARGPARSE PROBLEM."
+        ),
         default=dflt(config.rsync_options),
     ),
     s3_endpoint_url=dict(
@@ -686,7 +711,12 @@ OptionKwargs = dict(
     ssh_options=dict(
         metavar=_("options"),
         action=SplitOptionsAction,
-        help="Verbatim ssh options.  May be supplied multiple times.",
+        help=(
+            "Verbatim ssh options.  May be supplied multiple times.\n"
+            "NOTE: --ssh-options and value should be bound with an '=' as in\n"
+            "      --ssh-options='--some-option=value'\n"
+            "See man page at ARGPARSE PROBLEM."
+        ),
         default=dflt(config.ssh_options),
     ),
     ssl_cacert_file=dict(
@@ -758,12 +788,8 @@ OptionKwargs = dict(
         type=int,
         help=argparse.SUPPRESS,
     ),
-    fail_on_volume=dict(
-        metavar="volume",
-        type=int,
-        help=argparse.SUPPRESS,
-    ),
     pydevd=dict(
+        # activate remote debugging
         action="store_true",
         help=argparse.SUPPRESS,
     ),
@@ -842,48 +868,6 @@ removed_backup_options = {
 
 # make list of all options available
 all_options = {var2opt(var) for var in OptionKwargs.keys()}
-
-
-@dataclass(order=True)
-class CommandOptions:
-    """
-    legal options by command
-    """
-
-    backup = list(
-        all_options,
-    )
-    cleanup = list(
-        all_options - backup_only_options - selection_only_options,
-    )
-    collection_status = list(
-        all_options - backup_only_options - selection_only_options,
-    )
-    full = list(
-        all_options,
-    )
-    incremental = list(
-        all_options,
-    )
-    list_current_files = list(
-        all_options - backup_only_options - selection_only_options,
-    )
-    remove_older_than = list(
-        all_options - backup_only_options - selection_only_options,
-    )
-    remove_all_but_n_full = list(
-        all_options - backup_only_options - selection_only_options,
-    )
-    remove_all_inc_of_but_n_full = list(
-        all_options - backup_only_options - selection_only_options,
-    )
-    restore = list(
-        all_options - backup_only_options - selection_only_options,
-    )
-    verify = list(
-        all_options - backup_only_options,
-    )
-
 
 trans = {
     # TRANSL: Used in usage help to represent a Unix-style path name. Example:

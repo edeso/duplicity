@@ -45,8 +45,23 @@ sudo apt install -y python3-dev librsync-dev gnupg
 
 # install all versions of python and do initial setup
 for V in ${VERS}; do
-    pyenv install $V
     pyenv global $V
-    python$V -m pip install -U build pip setuptools wheel
+    # here we install pip and friends with versions equal to Ubuntu repo that year
+    if [[ `hostname` =~ "-20-" ]]; then
+        curl -sSL https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+        python$V get-pip.py "pip==20.0.2" "setuptools==45.2.0" "wheel==0.34.2"
+        python$V -m pip install distutils==3.8.10 packaging==20.3
+    elif [[ `hostname` =~ "-22-" ]]; then
+        curl -sSL https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+        python$V get-pip.py "pip==22.0.2" "setuptools==59.6.0" "wheel==0.37.1"
+        python$V -m pip install build==0.7.0 distutils==3.10.8 packaging==21.3
+    elif [[ `hostname` =~ "-24-" ]]; then
+        curl -sSL https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+        python$V get-pip.py "pip==24.0" "setuptools==68.1.2" "wheel==0.42.0"
+        python$V -m pip install build==1.0.3 packaging==24.0
+    fi
+    # install requirements.txt
     python$V -m pip install -U -r requirements.txt
 done
+
+pyenv global system

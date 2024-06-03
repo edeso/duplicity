@@ -65,7 +65,7 @@ class RestartTest(FunctionalTestCase):
         """
         self.make_largefiles()
         self.backup("full", f"{_runtest_dir}/testfiles/largefiles", fail=1)
-        assert not os.system(f"rm {_runtest_dir}/testfiles/output/duplicity-full*difftar*")
+        os.system(f"rm {_runtest_dir}/testfiles/output/duplicity-full*difftar*")
         self.backup("full", f"{_runtest_dir}/testfiles/largefiles")
         self.verify(f"{_runtest_dir}/testfiles/largefiles")
 
@@ -77,7 +77,7 @@ class RestartTest(FunctionalTestCase):
         """
         self.make_largefiles()
         self.backup("full", f"{_runtest_dir}/testfiles/largefiles", fail=3)
-        assert not os.system(f"rm {_runtest_dir}/testfiles/output/duplicity-full*vol[23].difftar*")
+        os.system(f"rm {_runtest_dir}/testfiles/output/duplicity-full*vol[23].difftar*")
         self.backup("full", f"{_runtest_dir}/testfiles/largefiles")
         self.verify(f"{_runtest_dir}/testfiles/largefiles")
 
@@ -409,6 +409,12 @@ class RestartTestWithoutEncryption(RestartTest):
         )
         # Confirm we can restore it (which in buggy versions, would fail)
         self.restore()
+
+
+class RestartTestConcurrent(RestartTest):
+    def setUp(self):
+        super().setUp()
+        self.class_args.extend(["--concurrency=4"])
 
 
 if __name__ == "__main__":

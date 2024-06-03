@@ -67,6 +67,7 @@ class CodeTest(DuplicityTestCase):
             [
                 "black",
                 "--check",
+                "--required-version=23.7.0",
             ]
             + files_to_test,
         )

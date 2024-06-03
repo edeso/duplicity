@@ -28,13 +28,10 @@ import re
 import socket
 import sys
 from hashlib import md5
+from textwrap import dedent
 
 # TODO: Remove duplicity.argparse311 when py38 goes EOL
-if sys.version_info[:2] == (3, 8):
-    from duplicity import argparse311 as argparse
-else:
-    import argparse
-
+from duplicity import argparse311 as argparse
 from duplicity import config
 from duplicity import dup_time
 from duplicity import errors
@@ -136,10 +133,20 @@ class WarnAsyncStoreConstAction(argparse._StoreConstAction):
     def __call__(self, parser, namespace, values, option_string=None):
         log.Warn(
             _(
-                "Use of the --asynchronous-upload option is experimental "
-                "and not safe for production! There are reported cases of "
-                "undetected data loss during upload. Be aware and "
-                "periodically verify your backups to be safe."
+                dedent(
+                    """
+                    ----------------------------------------------------------------
+                    | WARNING: replaced with `--concurrency`                       |
+                    | Use of the --asynchronous-upload option was known to be      |
+                    | unsafe and may result in data loss.                          |
+                    | It was removed in VERSION 3.0.0 and replaced by              |
+                    | --concurrency which will offer similar functionality, but    |
+                    | thoroughly tested implementation.                            |
+                    | See: https://gitlab.com/duplicity/duplicity/-/issues/745 and |
+                    | https://gitlab.com/duplicity/duplicity/-/merge_requests/153  |
+                    ----------------------------------------------------------------
+                    """
+                )
             )
         )
         setattr(namespace, self.dest, self.const)
@@ -307,7 +314,11 @@ def generate_default_backup_name(backend_url):
     # where relative paths are used yet the relative path is the same
     # (but duplicity is run from a different directory or similar),
     # then it is simply up to the user to set --archive-dir properly.
-    burlhash = md5()
+    # TODO: Remove when py38 goes EOL
+    if sys.version_info[:2] == (3, 8):
+        burlhash = md5()
+    else:
+        burlhash = md5(usedforsecurity=False)
     burlhash.update(backend_url.encode())
     return burlhash.hexdigest()
 

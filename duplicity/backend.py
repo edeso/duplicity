@@ -27,14 +27,17 @@ intended to be used by the backends themselves.
 from datetime import datetime
 import errno
 import getpass
+import multiprocessing
 import os
 import re
 import sys
 import time
+import traceback
 from typing import Tuple
 import urllib.error
 import urllib.parse
 import urllib.request
+from duplicity import errors
 
 import duplicity.backends
 from duplicity import config
@@ -404,11 +407,22 @@ def retry(operation, fatal=True):
                             extra = " ".join(
                                 [operation] + [make_filename(x) for x in args if (x and isinstance(x, str))]
                             )
-                            log.FatalError(
-                                _("Giving up after %s attempts. %s: %s") % (n, e.__class__.__name__, util.uexc(e)),
-                                code=code,
-                                extra=extra,
-                            )
+                            if multiprocessing.parent_process():
+                                # running as a child process we need to raise an exception to signal an issue
+                                log.Error(
+                                    _("Giving up after %s attempts. %s: %s. (for trace back: set log level DEBUG)")
+                                    % (n, e.__class__.__name__, util.uexc(e)),
+                                    code=code,
+                                    extra=extra,
+                                )
+                                e.code = code
+                                raise
+                            else:
+                                log.FatalError(
+                                    _("Giving up after %s attempts. %s: %s") % (n, e.__class__.__name__, util.uexc(e)),
+                                    code=code,
+                                    extra=extra,
+                                )
                         else:
                             log.Warn(
                                 _("Attempt of %s Nr. %s failed. %s: %s")
@@ -552,7 +566,21 @@ class BackendWrapper(object):
         """
         if not remote_filename:
             remote_filename = source_path.get_filename()
+        if f"vol{config.put_fail_volume}.difftar" in os.fsdecode(remote_filename):
+            raise FileNotFoundError(f"Forced error for testing at volume {config.put_fail_volume}")
         self.__do_put(source_path, remote_filename)
+
+    def put_validated(self, source_path, remote_filename):
+        self.put(source_path, remote_filename)
+        size = source_path.getsize()
+        res, msg = self.validate(remote_filename, size, source_path)
+        if res:
+            return size
+        else:
+            raise errors.BackendException(
+                f"Remotefile {remote_filename}: Transfer not successful. Validation failed: {msg}",
+                code=log.ErrorCode.backend_validation_failed,
+            )
 
     @retry("move", fatal=True)
     def move(self, source_path, remote_filename=None):
@@ -624,7 +652,7 @@ class BackendWrapper(object):
                 info = self.query_info([remote_filename])[remote_filename]
                 size = info["size"]
                 if size is None:
-                    log.Warn(
+                    log.Debug(
                         "File size can't be validated, because of missing capabilities of the backend. "
                         "Please verify the backup separately."
                     )

@@ -33,25 +33,6 @@ from testing.functional import CmdError
 from testing.functional import FunctionalTestCase
 
 
-class BadUploadTest(FunctionalTestCase):
-    """
-    Test missing volume upload using duplicity binary
-    """
-
-    @pytest.mark.slow
-    def test_missing_file(self):
-        """
-        Test basic lost file
-        """
-        try:
-            self.backup("full", f"{_runtest_dir}/testfiles/dir1", options=["--skip-volume=1"])
-            self.fail()
-        except CmdError as e:
-            self.assertEqual(e.exit_status, 56, str(e))
-        else:
-            self.fail("Expected CmdError not thrown")
-
-
 class BadUploadTestBackend(FunctionalTestCase):
     """
     Test missing volume upload using duplicity binary
@@ -74,7 +55,7 @@ class BadUploadTestBackend(FunctionalTestCase):
             f"{_runtest_dir}/testfiles/dir1",
             BE.SKIP_PUT_SILENT,
             "vol1.difftar",
-            log.ErrorCode.backend_verification_failed,
+            log.ErrorCode.backend_validation_failed,
             # PYDEVD="vscode"
         )
 

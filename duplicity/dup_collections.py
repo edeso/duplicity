@@ -308,7 +308,7 @@ class BackupSet(object):
         elif self.remote_jsonstat_name:
             json_stat_bytes = self.get_remote_file(self.remote_jsonstat_name)
         else:
-            log.Info(_("No Jsonstat file found, return enmty."))
+            log.Info(_("No Jsonstat file found, return empty."))
             return {}
         return json.loads(json_stat_bytes)
 

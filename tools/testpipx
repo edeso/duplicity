@@ -45,7 +45,7 @@ cleanup ()
 {
     pyenv global system
     sudo rm -rf dist build duplicity.egg-info
-    pip uninstall duplicity
+    pipx uninstall duplicity
     echo "Cleanup done"
 }
 
@@ -53,13 +53,14 @@ cleanup ()
 for V in ${VERS}; do
     echo "Testing sdist on Python$V"
     pyenv global $V
-    python$V -m build --sdist
-    python$V -m pip -q install dist/duplicity-*.tar.gz
+    pip install --upgrade pipx
+    python -m build --sdist
+    pipx install dist/duplicity-*.tar.gz
     echo -e "\n----------"
     cd ..
     # test duplicity as module
     set +e
-    res=$(python$V -m duplicity -V)
+    res=$(~/.local/share/pipx/venvs/duplicity/bin/python -m duplicity -V)
     set -e
     if [[ "$res" == "duplicity ${VERSION}"* ]]; then
         echo "duplicity as module passed."
@@ -77,30 +78,8 @@ for V in ${VERS}; do
         echo "duplicity as script failed."
         exit 1
     fi
+    # cleanup
+    pipx uninstall duplicity
     cd -
     echo -e "----------\n"
 done
-
-# get wheels from last good run of wheels job
-BRANCH=main
-JOB=wheels
-echo "Downloading artifacts.zip from branch ${BRANCH} job ${JOB}"
-curl --location "https://gitlab.com/api/v4/projects/12450835/jobs/artifacts/${BRANCH}/download?job=${JOB}"  \
-     --output /tmp/artifacts.zip
-unzip -o /tmp/artifacts.zip
-
-# test wheel install on each python version supported
-for V in ${VERS}; do
-    echo "Testing wheel on Python$V"
-    pyenv global $V
-    python$V -m pip uninstall -y duplicity
-    python$V -m pip install wheelhouse/duplicity-*-cp${V//.}-*.whl
-    echo -e "\n----------"
-    cd ..
-    python$V -m duplicity -V
-    duplicity -V
-    cd -
-    echo -e "----------\n"
-done
-
-pyenv global system

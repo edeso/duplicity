@@ -30,16 +30,17 @@
 # any suggestions.
 
 
+from dataclasses import dataclass
 import os
 import platform
 import resource
 import sys
 import time
-from datetime import datetime
 from textwrap import dedent
+from typing import Dict
 
 from duplicity import __version__
-from duplicity import asyncscheduler
+from duplicity import backend_pool
 from duplicity import cli_main
 from duplicity import config
 from duplicity import diffdir
@@ -328,7 +329,7 @@ def write_multivol(backup_type, tarblock_iter, man_outfp, sig_outfp, backend):
             code_extra = f"{util.escape(dest_filename)}: {msg}"
             log.FatalError(
                 _("File %s was corrupted during upload.") % os.fsdecode(dest_filename),
-                log.ErrorCode.backend_verification_failed,
+                log.ErrorCode.backend_validation_failed,
                 code_extra,
             )
 
@@ -366,6 +367,56 @@ def write_multivol(backup_type, tarblock_iter, man_outfp, sig_outfp, backend):
             fileobj = restore_get_enc_fileobj(config.backend, vol1_filename, manifest.volume_info_dict[1])
             fileobj.close()
 
+    @dataclass
+    class CommandMetaData:
+        vol_num: int
+        path_obj: path.Path
+        vol_info: manifest.VolumeInfo
+        transfer_success = False
+        manifest_written = False
+
+    def collect_put_results(bytes_written: int, backend_pooler, command2vol_map: Dict[int, CommandMetaData]) -> int:
+        commands_left, results = backend_pooler.collect_results()
+        for track_id, result in results.items():
+            size = result.result
+            bytes_written += size
+            progress.report_transfer(size, size)
+            log.Progress(_("Processed volume %d") % command2vol_map[track_id].vol_num, bytes_written)
+            command2vol_map[track_id].transfer_success = True
+            if command2vol_map[track_id].path_obj.stat:
+                command2vol_map[track_id].path_obj.delete()
+            if config.progress:
+                progress.tracker.snapshot_progress(command2vol_map[track_id].vol_num)
+            log.Debug(
+                f"Transfer of {command2vol_map[track_id].path_obj.get_filename()} with id {track_id} and size "
+                f"{size} took {result.get_runtime()}"
+            )
+        return commands_left
+
+    def write_manifest_in_sequence(mf, mf_file, command2vol_map: Dict[int, CommandMetaData]):
+        """
+        Ensure volume info is written only if the volume transfer was successful and in sequence
+        without gap otherwise missing volumes won't be detected and data is missing.
+        """
+        i = iter(command2vol_map.keys())
+        info = command2vol_map[next(i)]
+        while info.manifest_written and info.transfer_success:
+            # skip all entries already written
+            info = command2vol_map[next(i)]
+        while info.transfer_success:
+            # if next volumes are tranferred
+            if not info.manifest_written:
+                mf.add_volume_info(info.vol_info)
+            info.manifest_written = True
+            try:
+                info = command2vol_map[next(i)]
+            except StopIteration:
+                break
+            if info.vol_num == 1:
+                mf_file.to_partial()
+            else:
+                mf_file.flush()
+
     if not config.restart:
         # normal backup start
         vol_num = 0
@@ -398,18 +449,10 @@ def write_multivol(backup_type, tarblock_iter, man_outfp, sig_outfp, backend):
         progress.tracker.set_start_volume(vol_num + 1)
         progress.progress_thread.start()
 
-    # This assertion must be kept until we have solved the problem
-    # of concurrency at the backend level. Concurrency 1 is fine
-    # because the actual I/O concurrency on backends is limited to
-    # 1 as usual, but we are allowed to perform local CPU
-    # intensive tasks while that single upload is happening. This
-    # is an assert put in place to avoid someone accidentally
-    # enabling concurrency above 1, before adequate work has been
-    # done on the backends to make them support concurrency.
-    assert config.async_concurrency <= 1
-
-    io_scheduler = asyncscheduler.AsyncScheduler(config.async_concurrency)
-    async_waiters = []
+    backend_pooler = None
+    command2vol_map: Dict[int, CommandMetaData] = {}
+    if config.concurrency > 0:
+        backend_pooler = backend_pool.BackendPool(backend.backend.parsed_url.url_string, processes=config.concurrency)
 
     while not at_end:
         # set up iterator
@@ -433,31 +476,47 @@ def write_multivol(backup_type, tarblock_iter, man_outfp, sig_outfp, backend):
         vi = manifest.VolumeInfo()
         vi.set_info(vol_num, *get_indicies(tarblock_iter))
         vi.set_hash("SHA1", gpg.get_hash("SHA1", tdp))
-        mf.add_volume_info(vi)
 
         # Checkpoint after each volume so restart has a place to restart.
         # Note that until after the first volume, all files are temporary.
         if vol_num == 1:
             sig_outfp.to_partial()
-            man_outfp.to_partial()
         else:
             sig_outfp.flush()
-            man_outfp.flush()
 
         if config.skip_if_no_change and diffdir.stats.DeltaEntries == 0 and at_end and vol_num == 1:
             # if nothing changed, skip upload if configured.
-            msg = _(f"Skipped volume upload, as effectivly nothing has changed")
+            msg = _("Skipped volume upload, as effectivly nothing has changed")
             log.Progress(msg, diffdir.stats.SourceFileSize)
             log.Notice(_(msg))
             config.skipped_inc = True
             tdp.delete()
+            continue
+
+        if config.concurrency > 0 and backend_pooler:
+            try:
+                # use process pool the write volumes in the background.
+                progress.report_transfer(0, tdp.getsize())
+                track_id = backend_pooler.command(backend.put_validated.__name__, args=(tdp, dest_filename))
+                command2vol_map[track_id] = CommandMetaData(vol_num, tdp, vi)
+                commands_processing = collect_put_results(bytes_written, backend_pooler, command2vol_map)
+                log.Debug(f"Still {commands_processing} in the background pool.")
+                write_manifest_in_sequence(mf, man_outfp, command2vol_map)
+            except (Exception, SystemExit) as e:
+                # ensure pool processes terminate clean
+                backend_pooler.shutdown()
+                raise
+
         else:
-            # Write Volume to backend
-            async_waiters.append(
-                io_scheduler.schedule_task(
-                    lambda tdp, dest_filename, vol_num: put(tdp, dest_filename, vol_num), (tdp, dest_filename, vol_num)
-                )
-            )
+            # write Volume to backend - blocking
+            mf.add_volume_info(vi)
+
+            if vol_num == 1:
+                man_outfp.to_partial()
+            else:
+                man_outfp.flush()
+
+            bytes_written += put(tdp, dest_filename, vol_num)
 
             # Log human-readable version as well as raw numbers for machine consumers
             log.Progress(_("Processed volume %d") % vol_num, diffdir.stats.SourceFileSize)
@@ -466,13 +525,32 @@ def write_multivol(backup_type, tarblock_iter, man_outfp, sig_outfp, backend):
             if config.progress:
                 progress.tracker.snapshot_progress(vol_num)
 
-            # for testing purposes only - assert on inc or full
-            assert config.fail_on_volume != vol_num, f"Forced assertion for testing at volume {int(vol_num)}"
-
-    # Collect byte count from all asynchronous jobs; also implicitly waits
-    # for them all to complete.
-    for waiter in async_waiters:
-        bytes_written += waiter()
+    if backend_pooler:
+        try:
+            # wait for background commands, collect some stats and shutdown clean.
+            log.Debug("Collecting remaining results from backend pool.")
+            while True and backend_pooler:
+                commands_left = collect_put_results(bytes_written, backend_pooler, command2vol_map)
+                write_manifest_in_sequence(mf, man_outfp, command2vol_map)
+                if commands_left == 0:
+                    break
+                else:
+                    log.Debug(f"Still {commands_left} commands left, waiting ...")
+                    time.sleep(2)
+            # print some stats, that can be used to track efficiency of concurrent transfers.
+            stats = backend_pooler.get_stats()
+            log.Info(
+                f'Transferred {stats["count"]} volumes, a volume took avg: {stats["avg"]}, '
+                'max: {stats["max"]}, min: {stats["min"]}'
+            )
+            # add stats to jsonstat. Not the most elegant way, but it is working.
+            diffdir.stats.stat_attrs += ("VolumeTransferTimeAVG", "VolumeTransferTimeMAX", "VolumeTransferTimeMIN")
+            diffdir.stats.set_stat("VolumeTransferTimeAVG", stats["avg"])
+            diffdir.stats.set_stat("VolumeTransferTimeMAX", stats["max"])
+            diffdir.stats.set_stat("VolumeTransferTimeMIN", stats["min"])
+        finally:
+            # make sure pool get terminated gracefully in any case.
+            backend_pooler.shutdown()
 
     # Upload the collection summary.
     # bytes_written += write_manifest(mf, backup_type, backend)
@@ -1377,7 +1455,7 @@ def check_resources(action):
         # Calculate space we need for at least 2 volumes of full or inc
         # plus about 30% of one volume for the signature files.
         freespace = stats.f_frsize * stats.f_bavail
-        needspace = ((config.async_concurrency + 1) * config.volsize) + int(0.30 * config.volsize)
+        needspace = ((config.concurrency + 1) * config.volsize) + int(0.30 * config.volsize)
         if freespace < needspace:
             log.FatalError(
                 _("Temp space has %d available, backup needs approx %d.") % (freespace, needspace),
@@ -1457,7 +1535,7 @@ class Restart(object):
                     )
                 )
                 self.last_backup.delete()
-                os.execve(sys.argv[0], sys.argv[1:], os.environ)
+                os.execve(sys.argv[0], sys.argv, os.environ)
             elif mf_len - self.start_vol > 0:
                 # upload of N vols failed, fix manifest and restart
                 log.Notice(
@@ -1480,7 +1558,7 @@ class Restart(object):
                     % (mf_len, self.start_vol)
                 )
                 self.last_backup.delete()
-                os.execve(sys.argv[0], sys.argv[1:], os.environ)
+                os.execve(sys.argv[0], sys.argv, os.environ)
 
     def setLastSaved(self, mf):
         vi = mf.volume_info_dict[self.start_vol]

@@ -25,7 +25,9 @@ import inspect
 import json
 import logging
 import os
+from random import random
 import re
+import sys
 import time
 
 import duplicity.backend
@@ -36,30 +38,33 @@ from duplicity import (
 )
 from duplicity.errors import BackendException
 
-ERROR_ON = {}
-
 
 class BackendErrors:
-    # FAIL_WITH_EXCEPTION: set to substring mached by the filename.
+    # FAIL_WITH_EXCEPTION: set to substring matched by the filename.
     FAIL_WITH_EXCEPTION = "DUP_FAIL_WITH_EXCEPTION"
+    # SYSTEM_EXIT: set to substring matched by the filename.
+    FAIL_SYSTEM_EXIT = "DUP_FAIL_BY_SYSTEM_EXIT"
     # WAIT_FOR_OTHER_VOLUME: set to json string: ["file_to_delay", "file_wait_for"] (substing match)
     WAIT_FOR_OTHER_VOLUME = "DUP_FAIL_WAIT_FOR_VOLUME"
-    # LAST_BYTE_MISSING: set to substring mached by the filename.
+    # LAST_BYTE_MISSING: set to substring matched by the filename.
     LAST_BYTE_MISSING = "DUP_FAIL_LAST_BYTE_MISSING"
     # SKIP_PUT_SILENT: Don't put file if name contains string
     SKIP_PUT_SILENT = "DUP_FAIL_SKIP_PUT_SILENT"
+    # RANDOM_DELAY: max random delay in ms added to command
+    DELAY_RANDOM_MS = "DUP_FAIL_DELAY_RANDOM_MS"
 
 
 class _TestBackend(duplicity.backend.Backend):
     """Use this backend to test/create certain error situations
 
-    errors listed in global ERROR_ON get trigered.
+    errors get triggered via ENV Vars, see class BackendErrors
 
     """
 
     def __init__(self, parsed_url):
+        super().__init__(parsed_url)
         log._logger.addHandler(logging.FileHandler("/tmp/testbackend.log"))
-        log.Warn("TestBackend is not made for produtcion use!")
+        log.Warn("TestBackend is not made for production use!")
         # The URL form "file:MyFile" is not a valid duplicity target.
         if not parsed_url.path.startswith("//"):
             raise BackendException("Bad file:// path syntax.")
@@ -68,16 +73,23 @@ class _TestBackend(duplicity.backend.Backend):
             os.makedirs(self.remote_pathdir.base)
         except Exception:
             pass
-        fail_env = [f"{k}={v}" for k, v in os.environ.items() if k.startswith("DUP_FAIL_")]
-        log.Warn(f"ENV found: {fail_env}")
 
     @staticmethod
     def _fail_with_exception(filename):
         filename = os.fsdecode(filename)
         log.Debug(f"DUB_FAIL: Check if fail on exception for {filename}. Called by {inspect.stack()[2][3]}.")
         if os.getenv(BackendErrors.FAIL_WITH_EXCEPTION) and os.getenv(BackendErrors.FAIL_WITH_EXCEPTION) in filename:
-            log.Warn(f"DUB_FAIL: Force exception on file {filename}.")
-            raise FileNotFoundError(f"TEST: raised  exception on {filename} by intention")
+            log.Error(f"DUB_FAIL: Force exception on file {filename}.")
+            raise FileNotFoundError(f"TEST: raised exception on {filename} by intention")
+
+    @staticmethod
+    def _fail_by_sys_exit(filename):
+        filename = os.fsdecode(filename)
+        log.Debug(f"DUB_FAIL: Check if do sys.exit(30) for {filename}. Called by {inspect.stack()[2][3]}.")
+        if os.getenv(BackendErrors.FAIL_SYSTEM_EXIT) and os.getenv(BackendErrors.FAIL_SYSTEM_EXIT) in filename:
+            log.Error(f"DUB_FAIL: Force sys.exit(30) on file {filename}.")
+            time.sleep(1)  # otherwise log message doesn't get printed.
+            sys.exit(30)
 
     def _wait_for_other_volume(self, filename):
         filename = os.fsdecode(filename)
@@ -86,11 +98,11 @@ class _TestBackend(duplicity.backend.Backend):
         if not env:
             return  # skip if env not set
         file_stop, file_waitfor = json.loads(env)
-        timestamp = re.match(r".*\.(\d{8}T\d{6}[-+0-9:Z]*)\..*", filename).gorup(1)
+        timestamp = re.match(r".*\.(\d{8}T\d{6}[-+0-9:Z]*)\..*", filename).group(1)
         file_waitfor_glob = f"{os.fsdecode(self.remote_pathdir.get_canonical())}/*{timestamp}*{file_waitfor}*"
         if file_stop in filename:
             while not glob.glob(file_waitfor_glob):
-                log.Warn(f"DUB_FAIL: Waiting for file matiching {file_waitfor_glob}.")
+                log.Error(f"DUB_FAIL: Waiting for file matiching {file_waitfor_glob}.")
                 time.sleep(1)
             log.Warn(f"DUB_FAIL: {filename} written after {glob.glob(file_waitfor_glob)}")
 
@@ -98,7 +110,7 @@ class _TestBackend(duplicity.backend.Backend):
         filename = os.fsdecode(filename)
         log.Debug(f"DUB_FAIL: Check if {filename} shoud be truncated. Called by {inspect.stack()[2][3]}.")
         if os.getenv(BackendErrors.LAST_BYTE_MISSING) and os.getenv(BackendErrors.LAST_BYTE_MISSING) in filename:
-            log.Warn(f"DUB_FAIL: removing last byte from {filename}")
+            log.Error(f"DUB_FAIL: removing last byte from {filename}")
             with open(self.remote_pathdir.append(filename).get_canonical(), "ab") as remote_file:
                 remote_file.seek(-1, os.SEEK_END)
                 remote_file.truncate()
@@ -111,13 +123,26 @@ class _TestBackend(duplicity.backend.Backend):
         filename = os.fsdecode(filename)
         log.Debug(f"DUB_FAIL: Check if {filename} should be skipped. Called by {inspect.stack()[2][3]}.")
         if os.getenv(BackendErrors.SKIP_PUT_SILENT) and os.getenv(BackendErrors.SKIP_PUT_SILENT) in filename:
-            log.Warn(f"DUB_FAIL: {filename} skipped silent.")
+            log.Error(f"DUB_FAIL: {filename} skipped silent.")
             return True
         return False
 
+    @staticmethod
+    def _delay_random():
+        """
+        sleep a random amount of milliseconds if ENV set
+        """
+        log.Debug("DUB_FAIL: Check if action should be delayed.")
+        if os.getenv(BackendErrors.DELAY_RANDOM_MS):
+            wait = random() * float(os.getenv(BackendErrors.DELAY_RANDOM_MS)) / 1000  # type: ignore
+            log.Error(f"DUB_FAIL: wait for {wait} millisec.")
+            time.sleep(wait)
+
     def _move(self, source_path, remote_filename):
         self._fail_with_exception(remote_filename)
+        self._fail_by_sys_exit(remote_filename)
         self._wait_for_other_volume(remote_filename)
+        self._delay_random()
         target_path = self.remote_pathdir.append(remote_filename)
         try:
             source_path.rename(target_path)
@@ -128,6 +153,7 @@ class _TestBackend(duplicity.backend.Backend):
     def _put(self, source_path, remote_filename):
         self._fail_with_exception(remote_filename)
         self._wait_for_other_volume(remote_filename)
+        self._delay_random()
         if self._skip_put_silent(remote_filename):
             return
         target_path = self.remote_pathdir.append(remote_filename)
@@ -136,12 +162,15 @@ class _TestBackend(duplicity.backend.Backend):
         progress.report_transfer(0, source_size)
         target_path.writefileobj(source_path.open("rb"))
 
+        self._fail_by_sys_exit(remote_filename)  # fail after file is transferred
         self._remove_last_byte(remote_filename)
 
         progress.report_transfer(source_size, source_size)
 
     def _get(self, filename, local_path):
         self._fail_with_exception(filename)
+        self._fail_by_sys_exit(filename)
+        self._delay_random()
         source_path = self.remote_pathdir.append(filename)
         local_path.writefileobj(source_path.open("rb"))
 
@@ -150,6 +179,7 @@ class _TestBackend(duplicity.backend.Backend):
 
     def _validate(self, remote_filename, size, source_path=None, **kwargs):
         # poc to show that validate can do additional things.
+        self._delay_random()
 
         self._remove_last_byte(remote_filename)
 
@@ -180,22 +210,28 @@ class _TestBackend(duplicity.backend.Backend):
         except Exception as e:
             log.FatalError(
                 _("Unexpected exception while validate %s.") % os.fsdecode(remote_filename),
-                log.ErrorCode.backend_verification_failed,
+                log.ErrorCode.backend_validation_failed,
                 extra=f"Exception: {e}",
             )
         return (all(results_bool), ", ".join(results_str))
 
     def _delete(self, filename):
         self._fail_with_exception(filename)
+        self._fail_by_sys_exit(filename)
+        self._delay_random()
         self.remote_pathdir.append(filename).delete()
 
     def _delete_list(self, filenames):
         for filename in filenames:
             self._fail_with_exception(filename)
+            self._fail_by_sys_exit(filename)
+            self._delay_random()
             self.remote_pathdir.append(filename).delete()
 
     def _query(self, filename):
         self._fail_with_exception(filename)
+        self._delay_random()
+        self._fail_by_sys_exit(filename)
         target_file = self.remote_pathdir.append(filename)
         target_file.setdata()
         size = target_file.getsize() if target_file.exists() else -1
@@ -217,8 +253,11 @@ class _TestBackend(duplicity.backend.Backend):
         self.__hash_fileobj(open(filename, "rb"))
 
     def __hash_fileobj(self, fileobj):
-        h = hashlib.sha1()
-
+        # TODO: Remove when py38 goes EOL
+        if sys.version_info[:2] == (3, 8):
+            h = hashlib.sha1()
+        else:
+            h = hashlib.sha1(usedforsecurity=False)
         # loop till the end of the file
         chunk = 0
         while chunk != b"":

@@ -3,6 +3,7 @@ testing/conftest.py
 testing/functional/__init__.py
 testing/functional/test_badupload.py
 testing/functional/test_cleanup.py
+testing/functional/test_concurrency.py
 testing/functional/test_final.py
 testing/functional/test_log.py
 testing/functional/test_restart.py

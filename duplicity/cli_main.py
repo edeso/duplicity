@@ -28,11 +28,7 @@ import sys
 from textwrap import dedent, wrap
 
 # TODO: Remove duplicity.argparse311 when py38 goes EOL
-if sys.version_info[:2] == (3, 8):
-    from duplicity import argparse311 as argparse
-else:
-    import argparse
-
+from duplicity import argparse311 as argparse
 from duplicity import backend
 from duplicity import config
 from duplicity import cli_util
@@ -239,35 +235,6 @@ def parse_cmdline_options(arglist):
             f"Expected {len(arg_checks)} positionals from {remainder[1:]}."
         )
 
-    # check that option is supported by command
-    skip_options = False
-    valid_opts = CommandOptions.__dict__[opt2var(args.action)]
-    for opt in [o for o in arglist if o.startswith("--")]:
-        # Search for possibly abbreviated opt in valid_opts. Argparse has already vetted the abbreviation to be
-        # unique, so we don't need to. This simulates the affect of argparse subcommands which we can't use because
-        # of interspersed options.
-        if is_bound := "=" in opt:
-            opt = opt.split("=")[0]
-        if skip_options:
-            skip_options = False
-            continue
-        for val in valid_opts:
-            if val.startswith(opt):
-                break
-            if not is_bound and "metavar" in OptionKwargs[opt2var(val)]:
-                skip_options = True
-                continue
-        else:
-            wrapped = wrap(" ".join(sorted(valid_opts)), break_on_hyphens=False)
-            wstr = ""
-            for line in wrapped:
-                wstr += line + "\n"
-            command_line_error(
-                f"Option '{opt}' is not a valid option for command '{args.action}'.\n"
-                f"Options valid for command '{args.action}' are:\n{wstr}\n"
-                f"See man page for more information."
-            )
-
     # harvest args to config
     harvest_namespace(args)
 
@@ -298,16 +265,16 @@ def process_command_line(cmdline_list):
     gpg_version = ".".join(map(str, config.gpg_profile.gpg_version))
     log.Info(_(f"GPG binary is {config.gpg_binary}, version {gpg_version}"))
 
-    # --use-agent is not valid for symmetric encryption.  Turn it off and notify user.
+    # --use-agent is not safe for symmetric encryption.
+    # Notify user and let them decide.
     if (
         config.use_agent
         and config.gpg_profile.sign_key is None
         and len(config.gpg_profile.recipients) == 0
         and len(config.gpg_profile.hidden_recipients) == 0
     ):
-        config.use_agent = False
         log.Warn(
-            "Option --gpg-agent is unsafe with symmetric encryption.  Ignoring --gpg-agent.\n"
+            "Option --gpg-agent is unsafe with symmetric encryption.\n"
             "Refer to https://gitlab.com/duplicity/duplicity/-/issues/799 for more information."
         )
 

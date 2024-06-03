@@ -1,0 +1,19 @@
+
+ ##### testing libraries #####
+
+black==23.7.0
+coverage
+pycodestyle
+pylint
+pytest
+pytest-cov
+pytest-runner
+tox
+
+#### documentation libraries #####
+
+gitchangelog
+myst-parser
+pystache
+sphinx
+sphinx-rtd-theme
