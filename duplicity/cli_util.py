@@ -122,10 +122,11 @@ class IgnoreErrorsAction(DuplicityAction):
         super().__init__(option_strings, dest, **kwargs)
 
     def __call__(self, parser, namespace, values, option_string=None):
+        var = opt2var(option_string)
         log.Warn(
             _("Running in 'ignore errors' mode due to --ignore-errors.\n" "Please reconsider if this was not intended")
         )
-        config.ignore_errors = True
+        setattr(namespace, var, True)
 
 
 class WarnAsyncStoreConstAction(argparse._StoreConstAction):

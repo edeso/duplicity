@@ -899,9 +899,11 @@ def restore_get_patched_rop_iter(col_stats):
         volumes = manifest.get_containing_volumes(index)
         for vol_num in volumes:
             try:
-                yield restore_get_enc_fileobj(
+                fobj = restore_get_enc_fileobj(
                     backup_set.backend, backup_set.volume_name_dict[vol_num], manifest.volume_info_dict[vol_num]
                 )
+                if fobj is not None:
+                    yield fobj
             except BadVolumeException as e:
                 yield e
 
@@ -957,14 +959,15 @@ def restore_get_enc_fileobj(backend, filename, volume_info):
             log.Error(error_msg, code=log.ErrorCode.mismatched_hash)
     else:
         if config.ignore_errors:
-            exc = duplicity.errors.BadVolumeException(f"Hash mismatch for: {os.fsdecode(filename)}")
+            exc = BadVolumeException(f"Hash mismatch for: {os.fsdecode(filename)}")
             log.Warn(
                 _("IGNORED_ERROR: Warning: ignoring error as requested: %s: %s")
                 % (exc.__class__.__name__, util.uexc(exc))
             )
+            # Do not try to actually read it as it is corrupted!
+            return None
         else:
             log.FatalError(error_msg, code=log.ErrorCode.mismatched_hash)
-
     fileobj = tdp.filtered_open_with_delete("rb")
     if parseresults.encrypted and config.gpg_profile.sign_key:
         restore_add_sig_check(fileobj)
