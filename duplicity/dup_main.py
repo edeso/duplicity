@@ -398,24 +398,24 @@ def write_multivol(backup_type, tarblock_iter, man_outfp, sig_outfp, backend):
         Ensure volume info is written only if the volume transfer was successful and in sequence
         without gap otherwise missing volumes won't be detected and data is missing.
         """
-        i = iter(command2vol_map.keys())
-        info = command2vol_map[next(i)]
-        while info.manifest_written and info.transfer_success:
-            # skip all entries already written
+        try:
+            i = iter(command2vol_map.keys())
             info = command2vol_map[next(i)]
-        while info.transfer_success:
-            # if next volumes are tranferred
-            if not info.manifest_written:
-                mf.add_volume_info(info.vol_info)
-            info.manifest_written = True
-            try:
+            while info.manifest_written and info.transfer_success:
+                # skip all entries already written
                 info = command2vol_map[next(i)]
-            except StopIteration:
-                break
-            if info.vol_num == 1:
-                mf_file.to_partial()
-            else:
-                mf_file.flush()
+            while info.transfer_success:
+                # if next volumes are transferred
+                if not info.manifest_written:
+                    mf.add_volume_info(info.vol_info)
+                info.manifest_written = True
+                info = command2vol_map[next(i)]
+                if info.vol_num == 1:
+                    mf_file.to_partial()
+                else:
+                    mf_file.flush()
+        except StopIteration:
+            pass  # no manifest to update
 
     if not config.restart:
         # normal backup start
