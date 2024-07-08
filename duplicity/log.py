@@ -30,48 +30,45 @@ import logging
 import multiprocessing as mp
 import os
 import sys
-import threading
 
-MIN = 0
-ERROR = 0
-WARNING = 2
-NOTICE = 3
-INFO = 5
-DEBUG = 9
-MAX = 9
+# Logging levels are translated in cli_util:check_verbosity().
+# Alphabetic levels are translated directly to logging levels.
+# Numeric levels are reverse translated to logging levels.
+# NOTICE is added between INFO and WARNONG.
+# CRITICAL is currently unused.
 
-PREFIX = ""
+DEBUG = logging.DEBUG
+INFO = logging.INFO
+NOTICE = logging.INFO + 5
+WARNING = logging.WARNING
+ERROR = logging.ERROR
+CRITICAL = logging.CRITICAL
+
+MIN = CRITICAL  # min logging
+MAX = DEBUG  # max logging
+
+PREFIX = ""  # process log prefix
 
 _logger = None
 _log_timestamp = False
 log_queue = mp.Queue()
 
 
-def DupToLoggerLevel(verb):
-    """
-    Convert duplicity level to the logging module's system, where higher is more severe
-    """
-    return MAX - verb + 1
-
-
-def LoggerToDupLevel(verb):
-    """
-    Convert logging module level to duplicity's system, where lower is more severe
-    """
-    return DupToLoggerLevel(verb)
-
-
 def LevelName(level):
-    if level >= 9:
+    if level == DEBUG:
         return "DEBUG"
-    elif level >= 5:
+    elif level == INFO:
         return "INFO"
-    elif level >= 3:
+    elif level == NOTICE:
         return "NOTICE"
-    elif level >= 1:
+    elif level == WARNING:
         return "WARNING"
-    else:
+    elif level == ERROR:
         return "ERROR"
+    elif level == CRITICAL:
+        return "CRITICAL"
+    else:
+        return "UNKNOWN"
 
 
 def Log(s, verb_level, code=1, extra=None, force_print=False, transfer_progress=False):
@@ -88,7 +85,7 @@ def Log(s, verb_level, code=1, extra=None, force_print=False, transfer_progress=
 
     if force_print:
         initial_level = _logger.getEffectiveLevel()
-        _logger.setLevel(DupToLoggerLevel(MAX))
+        _logger.setLevel(MAX)
 
     # If all the backends kindly gave us unicode, we could enable this next
     # assert line.  As it is, we'll attempt to convert s to unicode if we
@@ -100,7 +97,7 @@ def Log(s, verb_level, code=1, extra=None, force_print=False, transfer_progress=
     s = PREFIX + s
 
     _logger.log(
-        DupToLoggerLevel(verb_level),
+        verb_level,
         s,
         extra={
             "levelName": LevelName(verb_level),
@@ -423,7 +420,7 @@ class OutFilter(logging.Filter):
     """
 
     def filter(self, record):
-        return record.msg and record.levelno <= DupToLoggerLevel(WARNING)
+        return record.msg and record.levelno <= WARNING
 
 
 class ErrFilter(logging.Filter):
@@ -432,7 +429,7 @@ class ErrFilter(logging.Filter):
     """
 
     def filter(self, record):
-        return record.msg and record.levelno > DupToLoggerLevel(WARNING)
+        return record.msg and record.levelno > WARNING
 
 
 def setup():
@@ -576,7 +573,7 @@ def setverbosity(verb):
     Set the verbosity level.
     """
     global _logger
-    _logger.setLevel(DupToLoggerLevel(verb))
+    _logger.setLevel(verb)
 
 
 def getverbosity():
@@ -584,7 +581,7 @@ def getverbosity():
     Get the verbosity level.
     """
     global _logger
-    return LoggerToDupLevel(_logger.getEffectiveLevel())
+    return _logger.getEffectiveLevel()
 
 
 def shutdown():

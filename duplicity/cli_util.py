@@ -27,6 +27,7 @@ import os
 import re
 import socket
 import sys
+import warnings
 from hashlib import md5
 from textwrap import dedent
 
@@ -251,8 +252,6 @@ def check_timeout(val):
 
 
 def check_verbosity(val):
-    fail = False
-    verb = log.NOTICE
     val = val.lower()
     if val in ["e", "error"]:
         verb = log.ERROR
@@ -264,24 +263,34 @@ def check_verbosity(val):
         verb = log.INFO
     elif val in ["d", "debug"]:
         verb = log.DEBUG
+    elif val.isdigit():
+        # TODO: remove in 4.0
+        log.Warn(
+            "Numeric verbosity levels are deprecated and will be removed version 4.0.\n"
+            "Use character [ewnid], or word ['error', 'warning', 'notice', 'info', 'debug']",
+        )
+        val = int(val)
+        if val >= 9:
+            verb = log.DEBUG
+        elif val >= 5:
+            verb = log.INFO
+        elif val >= 3:
+            verb = log.NOTICE
+        elif val >= 1:
+            verb = log.WARNING
+        elif val >= 0:
+            verb = log.ERROR
     else:
-        try:
-            verb = int(val)
-            if verb < 0 or verb > 9:
-                fail = True
-        except ValueError:
-            fail = True
-
-    if fail:
         # TRANSL: In this portion of the usage instructions, "[ewnid]" indicates which
         # characters are permitted (e, w, n, i, or d); the brackets imply their own
         # meaning in regex; i.e., only one of the characters is allowed in an instance.
+        # TODO: reword in 4.0
         command_line_error(
             _(
                 "Verbosity must be one of: digit [0-9], character [ewnid],\n"
                 "or word ['error', 'warning', 'notice', 'info', 'debug'].\n"
-                "The default is 3 (Notice).  It is strongly recommended\n"
-                "that verbosity level is set at 2 (Warning) or higher."
+                "The default is Notice.  It is strongly recommended\n"
+                "that verbosity level is set at Warning or higher."
             )
         )
 
