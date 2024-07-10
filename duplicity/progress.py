@@ -36,7 +36,7 @@ from datetime import (
     datetime,
     timedelta,
 )
-import collections as sys_collections
+import collections
 import math
 import pickle
 import threading
@@ -50,7 +50,7 @@ tracker = None
 progress_thread = None
 
 
-class Snapshot(sys_collections.deque):
+class Snapshot(collections.deque):
     """
     A convenience class for storing snapshots in a space/timing efficient manner
     Stores up to 10 consecutive progress snapshots, one for each volume
@@ -125,7 +125,7 @@ class ProgressTracker(object):
         self.last_time = None
         self.elapsed_sum = timedelta()
         self.speed = 0.0
-        self.transfers = sys_collections.deque()
+        self.transfers = collections.deque()
         self.is_full = False
         self.current_estimation = 0.0
         self.prev_estimation = 0.0

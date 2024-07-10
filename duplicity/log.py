@@ -44,31 +44,14 @@ WARNING = logging.WARNING
 ERROR = logging.ERROR
 CRITICAL = logging.CRITICAL
 
-MIN = CRITICAL  # min logging
-MAX = DEBUG  # max logging
+MIN = logging.CRITICAL  # min logging
+MAX = logging.DEBUG  # max logging
 
 PREFIX = ""  # process log prefix
 
 _logger = None
 _log_timestamp = False
-log_queue = mp.Queue()
-
-
-def LevelName(level):
-    if level == DEBUG:
-        return "DEBUG"
-    elif level == INFO:
-        return "INFO"
-    elif level == NOTICE:
-        return "NOTICE"
-    elif level == WARNING:
-        return "WARNING"
-    elif level == ERROR:
-        return "ERROR"
-    elif level == CRITICAL:
-        return "CRITICAL"
-    else:
-        return "UNKNOWN"
+_log_queue = mp.Queue()
 
 
 def Log(s, verb_level, code=1, extra=None, force_print=False, transfer_progress=False):
@@ -100,7 +83,7 @@ def Log(s, verb_level, code=1, extra=None, force_print=False, transfer_progress=
         verb_level,
         s,
         extra={
-            "levelName": LevelName(verb_level),
+            "levelName": logging.getLevelName(verb_level),
             "controlLine": controlLine,
             "transferProgress": transfer_progress,
         },
@@ -144,14 +127,14 @@ class InfoCode(object):
 
 def Info(s, code=InfoCode.generic, extra=None):
     """
-    Shortcut used for info messages (verbosity 5).
+    Shortcut used for info messages (verbosity INFO).
     """
     Log(s, INFO, code, extra)
 
 
 def Progress(s, current, total=None):
     """
-    Shortcut used for progress messages (verbosity 5).
+    Shortcut used for progress messages (verbosity INFO).
     """
     if total:
         controlLine = f"{int(current)} {int(total)}"
@@ -440,6 +423,9 @@ def setup():
     global _log_timestamp
     if _logger:
         return
+
+    # for backwards compatibility
+    logging.addLevelName(NOTICE, "NOTICE")
 
     # OK, now we can start setup
     _logger = logging.getLogger("duplicity")
