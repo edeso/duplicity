@@ -32,6 +32,7 @@ import re
 import sys
 import tempfile
 
+from duplicity import log_util
 from duplicity import config
 from duplicity import gpginterface
 from duplicity import log
@@ -397,7 +398,7 @@ def GPGWriteFile(block_iter, filename, profile, size=200 * 1024 * 1024, max_foot
                 at_end_of_blockiter = 1
                 break
             except Exception as e:
-                log.FatalError(f"Read error on {os.fsdecode(filename)}: {str(e)}")
+                log_util.FatalError(f"Read error on {os.fsdecode(filename)}: {str(e)}")
             file.write(data)
 
         file.write(block_iter.get_footer())

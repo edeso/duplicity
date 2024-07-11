@@ -31,6 +31,7 @@ import sys
 import time
 
 import duplicity.backend
+from duplicity import log_util
 from duplicity import (
     log,
     path,
@@ -214,7 +215,7 @@ class _TestBackend(duplicity.backend.Backend):
             results_bool.append(False)
             results_str.append(f"FileNotFoundError: {e}")
         except Exception as e:
-            log.FatalError(
+            log_util.FatalError(
                 _("Unexpected exception while validate %s.") % os.fsdecode(remote_filename),
                 log.ErrorCode.backend_validation_failed,
                 extra=f"Exception: {e}",

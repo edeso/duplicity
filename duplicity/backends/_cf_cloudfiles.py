@@ -21,6 +21,7 @@
 import os
 
 import duplicity.backend
+from duplicity import log_util
 from duplicity import log
 from duplicity import util
 from duplicity.errors import BackendException
@@ -66,7 +67,7 @@ Exception: {str(e)}"""
         try:
             conn = Connection(**conn_kwargs)
         except Exception as e:
-            log.FatalError(
+            log_util.FatalError(
                 f"Connection failed, please check your credentials: {e.__class__.__name__} {util.uexc(e)}",
                 log.ErrorCode.connection_failed,
             )

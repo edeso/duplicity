@@ -42,6 +42,7 @@ import pickle
 import threading
 import time
 
+from duplicity import log_util
 from duplicity import config
 from duplicity import log
 from duplicity import util
@@ -168,7 +169,7 @@ class ProgressTracker(object):
         if self.stall_last_time is None:
             self.stall_last_time = current_time
         if (current_time - self.stall_last_time).seconds > max(5, 2 * config.progress_rate):
-            log.TransferProgress(
+            log_util.TransferProgress(
                 100.0 * self.progress_estimation,
                 self.time_estimation,
                 self.total_bytecount,
@@ -290,7 +291,7 @@ class ProgressTracker(object):
         for x in self.transfers:
             self.speed = 0.3 * x + 0.7 * self.speed
 
-        log.TransferProgress(
+        log_util.TransferProgress(
             100.0 * self.progress_estimation,
             self.time_estimation,
             self.total_bytecount,

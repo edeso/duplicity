@@ -36,6 +36,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
+from duplicity import log_util
 from duplicity import (
     log,
     config,
@@ -157,7 +158,7 @@ Exception: {str(e)}"""
         app_secret = os.environ["DPBX_APP_SECRET"]
 
         if not sys.stdout.isatty() or not sys.stdin.isatty():
-            log.FatalError(
+            log_util.FatalError(
                 "dpbx error: cannot interact, but need human attention",
                 log.ErrorCode.backend_command_error,
             )

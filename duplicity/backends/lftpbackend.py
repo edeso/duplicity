@@ -32,6 +32,8 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
+from duplicity import log_util
+
 try:
     from shlex import quote as cmd_quote
 except ImportError:
@@ -58,7 +60,7 @@ class LFTPBackend(duplicity.backend.Backend):
             pass
         # there is no output if lftp not found
         if not fout:
-            log.FatalError("LFTP not found:  Please install LFTP.", log.ErrorCode.ftps_lftp_missing)
+            log_util.FatalError("LFTP not found:  Please install LFTP.", log.ErrorCode.ftps_lftp_missing)
 
         # version is the second word of the second part of the first line
         version = fout.split("\n")[0].split(" | ")[1].split()[1]

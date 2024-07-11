@@ -25,6 +25,7 @@ import os
 import gzip
 import json
 
+from duplicity import log_util
 from duplicity import config
 from duplicity import dup_time
 from duplicity import file_naming
@@ -231,7 +232,7 @@ class BackupSet(object):
         Make sure remote manifest is equal to local one
         """
         if not self.remote_manifest_name and not self.local_manifest_path:
-            log.FatalError(
+            log_util.FatalError(
                 _("Fatal Error: No manifests found for most recent backup"),
                 log.ErrorCode.no_manifests,
             )
@@ -243,7 +244,7 @@ class BackupSet(object):
         if remote_manifest and self.local_manifest_path and local_manifest:
             if remote_manifest != local_manifest:
                 if config.check_remote:
-                    log.FatalError(
+                    log_util.FatalError(
                         _(
                             "Fatal Error: Remote manifest does not match "
                             "local one.  Either the remote backup set or "
@@ -261,7 +262,7 @@ class BackupSet(object):
             if self.local_manifest_path:
                 remote_manifest = local_manifest
             else:
-                log.FatalError(
+                log_util.FatalError(
                     _("Fatal Error: Neither remote nor local " "manifest is readable."),
                     log.ErrorCode.unreadable_manifests,
                 )
@@ -288,7 +289,7 @@ class BackupSet(object):
         try:
             remote_file_buffer = self.backend.get_data(remote_file)
         except GPGError as message:
-            log.FatalError(_(f"Error processing remote file ({os.fsdecode(remote_file)}): {util.uexc(message)}"))
+            log_util.FatalError(_(f"Error processing remote file ({os.fsdecode(remote_file)}): {util.uexc(message)}"))
             return b""
         log.Info(_(f"Processing remote file {os.fsdecode(remote_file)} ({len(remote_file_buffer)})"))
         return remote_file_buffer

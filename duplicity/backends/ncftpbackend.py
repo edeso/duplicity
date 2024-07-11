@@ -26,6 +26,7 @@ import urllib.parse
 import urllib.request
 
 import duplicity.backend
+from duplicity import log_util
 from duplicity import config
 from duplicity import log
 from duplicity import tempdir
@@ -46,7 +47,7 @@ class NCFTPBackend(duplicity.backend.Backend):
             pass
         # the expected error is 8 in the high-byte and some output
         if ret != 0x0800 or not fout:
-            log.FatalError(
+            log_util.FatalError(
                 "NcFTP not found:  Please install NcFTP version 3.1.9 or later",
                 log.ErrorCode.ftp_ncftp_missing,
             )
@@ -54,7 +55,7 @@ class NCFTPBackend(duplicity.backend.Backend):
         # version is the second word of the first line
         version = fout.split("\n")[0].split()[1]
         if version < "3.1.9":
-            log.FatalError(
+            log_util.FatalError(
                 "NcFTP too old:  Duplicity requires NcFTP version 3.1.9,"
                 "3.2.1 or later.  Version 3.2.0 will not work properly.",
                 log.ErrorCode.ftp_ncftp_too_old,

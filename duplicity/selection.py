@@ -24,6 +24,7 @@
 import sys
 from textwrap import dedent
 
+from duplicity import log_util
 from duplicity import diffdir
 from duplicity.globmatch import (
     GlobbingError,
@@ -257,7 +258,7 @@ class Select(object):
         """
         # Sanity checks on --filter-* options for the benefit of users
         if argtuples and argtuples[-1][0].startswith("--filter-"):
-            log.FatalError(
+            log_util.FatalError(
                 dedent(
                     _(
                         """\
@@ -272,7 +273,7 @@ class Select(object):
         f_opt = set(opt[0] for opt in argtuples if opt[0].startswith("--filter-"))
         f_def = ("--filter-globbing", "--filter-strictcase")
         if f_opt and all(opt in f_def for opt in f_opt):
-            log.FatalError(
+            log_util.FatalError(
                 dedent(
                     _(
                         """\
@@ -340,7 +341,7 @@ class Select(object):
         """Deal with selection error exc"""
         # Internal, used by ParseArgs.
         if isinstance(exc, FilePrefixError):
-            log.FatalError(
+            log_util.FatalError(
                 dedent(
                     _(
                         """\
@@ -356,7 +357,7 @@ class Select(object):
                 log.ErrorCode.file_prefix_error,
             )
         elif isinstance(exc, GlobbingError):
-            log.FatalError(
+            log_util.FatalError(
                 _("Fatal Error while processing expression\n" "%s") % exc,
                 log.ErrorCode.globbing_error,
             )
@@ -397,7 +398,7 @@ class Select(object):
                 line = dirname
 
         if absolute_path:
-            log.FatalError(
+            log_util.FatalError(
                 dedent(
                     _(
                         """\
@@ -412,7 +413,7 @@ class Select(object):
             )
 
         if not filelist:
-            log.FatalError(
+            log_util.FatalError(
                 dedent(
                     _(
                         """\
@@ -429,7 +430,7 @@ class Select(object):
         """Exit with error if last selection function isn't an exclude"""
         # Internal. Used by ParseArgs.
         if self.selection_functions and not self.selection_functions[-1].exclude:
-            log.FatalError(
+            log_util.FatalError(
                 dedent(
                     _(
                         """\
@@ -628,7 +629,7 @@ class Select(object):
         if include == 0:
             sel_func = exclude_sel_func
         else:
-            log.FatalError(
+            log_util.FatalError(
                 "--include-if-present not implemented (would it make sense?).",
                 log.ErrorCode.not_implemented,
             )

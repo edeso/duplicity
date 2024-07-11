@@ -25,6 +25,7 @@ import os
 import shutil
 import sys
 
+from duplicity import log_util
 from duplicity import config
 from duplicity import file_naming
 from duplicity import gpg
@@ -292,7 +293,7 @@ class SrcIter(object):
         try:
             res = Block(self.fp.read(self.get_read_size()))
         except Exception:
-            log.FatalError(
+            log_util.FatalError(
                 _("Failed to read %s: %s") % (self.src.uc_name, sys.exc_info()),
                 log.ErrorCode.generic,
             )

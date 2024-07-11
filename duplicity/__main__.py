@@ -29,6 +29,7 @@
 import sys
 
 import duplicity.errors
+from duplicity import log_util
 from duplicity import log
 from duplicity import tempdir
 from duplicity import util
@@ -82,29 +83,31 @@ def dup_run():
         # default. But do with sufficient verbosity.
         util.release_lockfile()
         log.Info(_("GPG error detail: %s") % util.exception_traceback())
-        log.FatalError(f"{e.__class__.__name__}: {e.args[0]}", log.ErrorCode.gpg_failed, e.__class__.__name__)
+        log_util.FatalError(f"{e.__class__.__name__}: {e.args[0]}", log.ErrorCode.gpg_failed, e.__class__.__name__)
 
     except duplicity.errors.UserError as e:
         util.release_lockfile()
         # For user errors, don't show an ugly stack trace by
         # default. But do with sufficient verbosity.
         log.Info(_("User error detail: %s") % util.exception_traceback())
-        log.FatalError(f"{e.__class__.__name__}: {util.uexc(e)}", log.ErrorCode.user_error, e.__class__.__name__)
+        log_util.FatalError(f"{e.__class__.__name__}: {util.uexc(e)}", log.ErrorCode.user_error, e.__class__.__name__)
 
     except duplicity.errors.BackendException as e:
         util.release_lockfile()
         # For backend errors, don't show an ugly stack trace by
         # default. But do with sufficient verbosity.
         log.Info(_("Backend error detail: %s") % util.exception_traceback())
-        log.FatalError(f"{e.__class__.__name__}: {util.uexc(e)}", log.ErrorCode.user_error, e.__class__.__name__)
+        log_util.FatalError(f"{e.__class__.__name__}: {util.uexc(e)}", log.ErrorCode.user_error, e.__class__.__name__)
 
     except Exception as e:
         util.release_lockfile()
         if "Forced assertion for testing" in util.uexc(e):
-            log.FatalError(f"{e.__class__.__name__}: {util.uexc(e)}", log.ErrorCode.exception, e.__class__.__name__)
+            log_util.FatalError(
+                f"{e.__class__.__name__}: {util.uexc(e)}", log.ErrorCode.exception, e.__class__.__name__
+            )
         else:
             # Traceback and that mess
-            log.FatalError(util.exception_traceback(), log.ErrorCode.exception, e.__class__.__name__)
+            log_util.FatalError(util.exception_traceback(), log.ErrorCode.exception, e.__class__.__name__)
 
 
 if __name__ == "__main__":

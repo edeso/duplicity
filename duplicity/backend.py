@@ -37,6 +37,8 @@ from typing import Tuple
 import urllib.error
 import urllib.parse
 import urllib.request
+
+from duplicity import log_util
 from duplicity import errors
 
 import duplicity.backends
@@ -418,7 +420,7 @@ def retry(operation, fatal=True):
                                 e.code = code
                                 raise
                             else:
-                                log.FatalError(
+                                log_util.FatalError(
                                     _("Giving up after %s attempts. %s: %s") % (n, e.__class__.__name__, util.uexc(e)),
                                     code=code,
                                     extra=extra,

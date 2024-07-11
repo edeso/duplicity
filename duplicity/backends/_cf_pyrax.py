@@ -21,6 +21,7 @@
 import os
 
 import duplicity.backend
+from duplicity import log_util
 from duplicity import log
 from duplicity import util
 from duplicity.errors import BackendException
@@ -65,7 +66,7 @@ Exception: {str(e)}"""
         try:
             pyrax.set_credentials(**conn_kwargs)
         except Exception as e:
-            log.FatalError(
+            log_util.FatalError(
                 f"Connection failed, please check your credentials: {e.__class__.__name__} {util.uexc(e)}",
                 log.ErrorCode.connection_failed,
             )
@@ -77,7 +78,7 @@ Exception: {str(e)}"""
         try:
             self.container = pyrax.cloudfiles.get_container(container)
         except pyrax.exceptions.Forbidden as e:
-            log.FatalError(
+            log_util.FatalError(
                 f"{e.__class__.__name__} : {util.uexc(e)} \n"
                 + "Container may exist, but access was denied.\n"
                 + "If this container exists, please check its X-Container-Read/Write headers.\n"
@@ -88,7 +89,7 @@ Exception: {str(e)}"""
             try:
                 self.container = pyrax.cloudfiles.create_container(container)
             except pyrax.exceptions.Forbidden as e:
-                log.FatalError(
+                log_util.FatalError(
                     f"{e.__class__.__name__} : {util.uexc(e)} \n"
                     + "Container does not exist, but creation was denied.\n"
                     + "You may be using a read-only user that can view but not create containers.\n"

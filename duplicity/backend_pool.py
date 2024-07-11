@@ -43,6 +43,7 @@ from typing import (
     Iterator,
 )
 
+from duplicity import log_util
 from duplicity import (
     backend,
     config,
@@ -215,7 +216,7 @@ class BackendPool:
             exception_str = f"{''.join(track_rcrd.trace_back)}\n{track_rcrd.result}"
             log.Debug(f"Exception thrown in pool: \n{exception_str}")
             if hasattr(track_rcrd.result, "code"):
-                log.FatalError(
+                log_util.FatalError(
                     f"Exception {track_rcrd.result.__class__.__name__} in background "
                     f"pool {track_rcrd.log_prefix}. "
                     "For trace back set loglevel to DEBUG and check output for given pool.",

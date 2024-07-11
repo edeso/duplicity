@@ -24,6 +24,7 @@
 import os
 import re
 
+from duplicity import log_util
 from duplicity import config
 from duplicity import log
 from duplicity import util
@@ -108,7 +109,7 @@ class Manifest(object):
         else:
             return
 
-        log.FatalError(
+        log_util.FatalError(
             errmsg
             + "\n\n"
             + _(

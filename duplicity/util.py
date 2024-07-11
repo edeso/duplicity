@@ -37,6 +37,7 @@ import sys
 import traceback
 from io import StringIO
 
+from duplicity import log_util
 from duplicity import config
 from duplicity import log
 from duplicity import dup_tarfile
@@ -177,7 +178,7 @@ def acquire_lockfile():
         log.DEBUG,
     )
     if not config.lockfile.acquire(blocking=False):
-        log.FatalError(
+        log_util.FatalError(
             f"Another duplicity instance is already running with this archive directory\n"
             f"If this is not the case, remove {config.lockpath}'.",
             log.ErrorCode.user_error,
@@ -284,7 +285,7 @@ def start_debugger():
         try:
             import debugpy  # pylint: disable=import-error
         except ImportError:
-            log.FatalError(
+            log_util.FatalError(
                 "Module debugpy must be available for debugging.\n"
                 "Don't set 'PYDEVD=vscode'\n"
                 "to avoid starting debugpy as debugger."
@@ -311,7 +312,7 @@ def start_debugger():
         try:
             import pydevd_pycharm  # pylint: disable=import-error
         except ImportError:
-            log.FatalError(
+            log_util.FatalError(
                 "Module pydevd_pycharm must be available for debugging.\n"
                 "Remove '--pydevd' from command line and unset 'PYDEVD'\n"
                 "from the environment to avoid starting the debugger."

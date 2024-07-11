@@ -33,6 +33,7 @@ import urllib.request
 import xml.dom.minidom
 
 import duplicity.backend
+from duplicity import log_util
 from duplicity import config
 from duplicity import log
 from duplicity import util
@@ -135,9 +136,9 @@ class WebDAVBackend(duplicity.backend.Backend):
             try:
                 self.headers = util.merge_dicts(self.headers, util.csv_args_to_dict(config.webdav_headers))
             except IndexError as e:
-                log.FatalError("--webdav-headers value has an odd number of arguments.  Must be paired.")
+                log_util.FatalError("--webdav-headers value has an odd number of arguments.  Must be paired.")
             except SyntaxError as e:
-                log.FatalError("--webdav-headers value has bad syntax.  Check quoting pairs.")
+                log_util.FatalError("--webdav-headers value has bad syntax.  Check quoting pairs.")
             except Exception as e:
                 log.FatalErrof(f"--webdav-headers value caused error: {e}")
 
