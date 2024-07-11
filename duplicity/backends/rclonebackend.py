@@ -85,6 +85,19 @@ class RcloneBackend(duplicity.backend.Backend):
             return filelist
         return [os.fsencode(x) for x in o.split("\n") if x]
 
+    def _query(self, remote_filename: str):
+        size = None
+        try:
+            remote_filename = os.fsdecode(remote_filename)
+            commandline = f"{self.rclone_cmd} lsf --format=s '{self.remote_path}/{remote_filename}'"
+            rc, o, e = self._subprocess_safe_popen(commandline)
+            if rc == 3:  # not found
+                size = -1
+            elif rc == 0:
+                size = int(o)
+        finally:
+            return {"size": size}
+
     def _delete(self, remote_filename):
         remote_filename = os.fsdecode(remote_filename)
         commandline = f"{self.rclone_cmd} deletefile --drive-use-trash=false '{self.remote_path}/{remote_filename}'"
