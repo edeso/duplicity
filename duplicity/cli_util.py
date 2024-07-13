@@ -153,6 +153,14 @@ class WarnAsyncStoreConstAction(argparse._StoreConstAction):
         setattr(namespace, self.dest, self.const)
 
 
+class SetLogTimestampAction(argparse._StoreConstAction):
+    def __init__(self, option_strings, dest, nargs=None, **kwargs):
+        super().__init__(option_strings, dest, **kwargs)
+
+    def __call__(self, parser, namespace, values, option_string=None):
+        log._log_timestamp = True
+
+
 def _check_int(val):
     try:
         return int(val)
