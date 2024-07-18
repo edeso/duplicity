@@ -29,11 +29,11 @@
 import sys
 
 import duplicity.errors
-from duplicity import gpg
 from duplicity import log
 from duplicity import tempdir
 from duplicity import util
 from duplicity.dup_main import main
+from duplicity.gpg import GPGError
 
 sys.stdout.reconfigure(errors="surrogateescape")
 sys.stderr.reconfigure(errors="surrogateescape")
@@ -77,7 +77,7 @@ def dup_run():
         util.release_lockfile()
         sys.exit(4)
 
-    except gpg.GPGError as e:
+    except GPGError as e:
         # For gpg errors, don't show an ugly stack trace by
         # default. But do with sufficient verbosity.
         util.release_lockfile()

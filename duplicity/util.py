@@ -26,15 +26,19 @@ Miscellaneous utilities.
 import atexit
 import csv
 import errno
+import time
+
 import fasteners
+import multiprocessing
 import json
 import os
+import socket
 import sys
 import traceback
 from io import StringIO
 
-import duplicity.config as config
-import duplicity.log as log
+from duplicity import config
+from duplicity import log
 from duplicity import dup_tarfile
 
 
@@ -250,11 +254,31 @@ def which(program):
 
 
 def start_debugger():
-    def is_port_in_use(port: int) -> bool:
-        import socket
+    def is_port_in_use(host: str, port: int) -> bool:
+        """
+        Returns true if a port is in use.
+        """
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        res = sock.connect_ex((host, port)) == 0
+        sock.close()
+        return res
 
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            return s.connect_ex(("localhost", port)) == 0
+    def fix_path():
+        """
+        in a dev environment the path is screwed so fix it.
+        """
+        base = sys.path.pop(0)
+        base = base.split(os.path.sep)[:-1]
+        base = os.path.sep.join(base)
+        sys.path.insert(0, base)
+
+    # bring up remote debugger
+    def cleanup():
+        try:
+            os.unlink("/tmp/DEBUG_RUNNING")
+            os.unlink("/tmp/critical_section.lock")
+        except Exception:
+            pass
 
     if os.environ.get("PYDEVD", None) == "vscode":
         try:
@@ -265,16 +289,25 @@ def start_debugger():
                 "Don't set 'PYDEVD=vscode'\n"
                 "to avoid starting debugpy as debugger."
             )
-        port = 5678
-        while is_port_in_use(port):
-            port += 1
+        host = "127.0.0.1"
+        pool_nr = 0
+        if "multiprocessing" in sys.modules:
+            try:
+                pool_nr = multiprocessing.current_process()._identity[0]
+                print(f"Debugger for Pool Member: {pool_nr}")
+            except IndexError:
+                print("Debugger not in pool process.")
+        port = 5678 + pool_nr
 
-        debugpy.listen(5678)
+        while is_port_in_use(host, port):
+            port += 1
+        print(f"Debugger start on port {port}")
+        debugpy.listen(port)
         print(f"Waiting for debugger attach on port: {port}")
         debugpy.wait_for_client()
-        return
+        fix_path()
 
-    if "--pydevd" in sys.argv or os.environ.get("PYDEVD", None):
+    elif config.pydevd or os.environ.get("PYDEVD", None):
         try:
             import pydevd_pycharm  # pylint: disable=import-error
         except ImportError:
@@ -285,21 +318,29 @@ def start_debugger():
             )
 
         # NOTE: this needs to be customized for your system
-        debug_host = "dione.local"
+        debug_host = "localhost"
         debug_port = 6700
 
-        # get previous pid:port if any
-        # return if pid the same as ours
-        prev_port = None
-        debug_running = os.environ.get("DEBUG_RUNNING", False)
+        # begin critical
+        critical_section = fasteners.InterProcessLock("/tmp/critical_section.lock")
+        critical_section.acquire()
+
+        # get previous pid:port if any, return if pid the same as ours
+        try:
+            debug_running = open("/tmp/DEBUG_RUNNING", "r").read().strip()
+        except IOError as e:
+            debug_running = False
+
+        # get previous pid and port
         if debug_running:
             prev_pid, prev_port = list(map(int, debug_running.split(":")))
-            if prev_pid == os.getpid():
-                return
+            debug_port = prev_port + 1
+        else:
+            prev_pid, prev_port = None, None
 
-        # new pid, next port, start a new debugger
-        if prev_port:
-            debug_port = int(prev_port) + 1
+        # if not new pid return
+        if prev_pid == os.getpid():
+            return
 
         # ignition
         try:
@@ -315,14 +356,19 @@ def start_debugger():
         except ConnectionRefusedError as e:
             log.Info(f"Connection {debug_host}:{debug_port} refused for debug: {str(e)}")
 
-        # in a dev environment the path is screwed so fix it.
-        base = sys.path.pop(0)
-        base = base.split(os.path.sep)[:-1]
-        base = os.path.sep.join(base)
-        sys.path.insert(0, base)
+        # save our state in file
+        try:
+            open("/tmp/DEBUG_RUNNING", "w").write(f"{os.getpid()}:{debug_port}")
+        except IOError as e:
+            raise
 
-        # save last debug pid:port used
-        os.environ["DEBUG_RUNNING"] = f"{os.getpid()}:{debug_port}"
+        # release critical section
+        critical_section.release()
+
+        # clean created files
+        atexit.register(cleanup)
+
+        fix_path()
 
 
 def merge_dicts(*dict_args):

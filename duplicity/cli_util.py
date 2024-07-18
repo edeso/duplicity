@@ -46,7 +46,7 @@ help_footer = _("Enter 'duplicity --help' for help screen.")
 
 
 class CommandLineError(errors.UserError):
-    sys.tracebacklimit = 4
+    # sys.tracebacklimit = 4
     pass
 
 
@@ -153,6 +153,14 @@ class WarnAsyncStoreConstAction(argparse._StoreConstAction):
             )
         )
         setattr(namespace, self.dest, self.const)
+
+
+class SetLogTimestampAction(argparse._StoreConstAction):
+    def __init__(self, option_strings, dest, nargs=None, **kwargs):
+        super().__init__(option_strings, dest, **kwargs)
+
+    def __call__(self, parser, namespace, values, option_string=None):
+        log._log_timestamp = True
 
 
 def _check_int(val):
@@ -278,6 +286,7 @@ def check_verbosity(val):
         )
 
     log.setverbosity(verb)
+    config.verbosity = verb
     return verb
 
 

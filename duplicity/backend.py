@@ -656,9 +656,9 @@ class BackendWrapper(object):
                         "File size can't be validated, because of missing capabilities of the backend. "
                         "Please verify the backup separately."
                     )
-                    return (True, "Backend has no capabilities to check filesize, skip validation.")
+                    return True, "Backend has no capabilities to check filesize, skip validation."
                 if size == expected_size:
-                    return (True, "Validation OK, file size matches.")
+                    return True, "Validation OK, file size matches."
                 msg = _("%s Remote filesize %d for %s does not match local size %d") % (
                     datetime.now(),
                     size,
@@ -667,7 +667,7 @@ class BackendWrapper(object):
                 )
                 log.Notice(f"{msg}, retrying.")
                 time.sleep(2**attempt)
-        return (False, f"{msg}.")
+        return False, f"{msg}."
 
     def pre_process_download(self, remote_filename):
         """

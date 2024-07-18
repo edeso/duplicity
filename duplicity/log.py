@@ -21,12 +21,16 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-"""Log various messages depending on verbosity level"""
+"""
+Log various messages depending on verbosity level.
+"""
 
 import datetime
 import logging
+import multiprocessing as mp
 import os
 import sys
+import threading
 
 MIN = 0
 ERROR = 0
@@ -40,17 +44,20 @@ PREFIX = ""
 
 _logger = None
 _log_timestamp = False
+log_queue = mp.Queue()
 
 
 def DupToLoggerLevel(verb):
-    """Convert duplicity level to the logging module's system, where higher is
-    more severe"""
+    """
+    Convert duplicity level to the logging module's system, where higher is more severe
+    """
     return MAX - verb + 1
 
 
 def LoggerToDupLevel(verb):
-    """Convert logging module level to duplicity's system, where lower is
-    more severe"""
+    """
+    Convert logging module level to duplicity's system, where lower is more severe
+    """
     return DupToLoggerLevel(verb)
 
 
@@ -68,7 +75,9 @@ def LevelName(level):
 
 
 def Log(s, verb_level, code=1, extra=None, force_print=False, transfer_progress=False):
-    """Write s to stderr if verbosity level low enough"""
+    """
+    Write s to stderr if verbosity level low enough
+    """
     global _logger
     if extra:
         controlLine = f"{int(code)} {extra}"
@@ -105,14 +114,18 @@ def Log(s, verb_level, code=1, extra=None, force_print=False, transfer_progress=
 
 
 def Debug(s):
-    """Shortcut used for debug message (verbosity 9)."""
+    """
+    Shortcut used for debug message (verbosity 9).
+    """
     Log(s, DEBUG)
 
 
 class InfoCode(object):
-    """Enumeration class to hold info code values.
+    """
+    Enumeration class to hold info code values.
     These values should never change, as frontends rely upon them.
-    Don't use 0 or negative numbers."""
+    Don't use 0 or negative numbers.
+    """
 
     generic = 1
     progress = 2
@@ -133,12 +146,16 @@ class InfoCode(object):
 
 
 def Info(s, code=InfoCode.generic, extra=None):
-    """Shortcut used for info messages (verbosity 5)."""
+    """
+    Shortcut used for info messages (verbosity 5).
+    """
     Log(s, INFO, code, extra)
 
 
 def Progress(s, current, total=None):
-    """Shortcut used for progress messages (verbosity 5)."""
+    """
+    Shortcut used for progress messages (verbosity 5).
+    """
     if total:
         controlLine = f"{int(current)} {int(total)}"
     else:
@@ -190,7 +207,9 @@ def _RemainingSecs2Str(secs):
 
 
 def TransferProgress(progress, eta, changed_bytes, elapsed, speed, stalled):
-    """Shortcut used for upload progress messages (verbosity 5)."""
+    """
+    Shortcut used for upload progress messages (verbosity 5).
+    """
     dots = int(0.4 * progress)  # int(40.0 * progress / 100.0) -- for 40 chars
     data_amount = float(changed_bytes) / 1024.0
     data_scale = "KB"
@@ -224,7 +243,9 @@ def TransferProgress(progress, eta, changed_bytes, elapsed, speed, stalled):
 
 
 def PrintCollectionStatus(col_stats, force_print=False):
-    """Prints a collection status to the log"""
+    """
+    Prints a collection status to the log.
+    """
     Log(
         str(col_stats),
         8,
@@ -235,7 +256,9 @@ def PrintCollectionStatus(col_stats, force_print=False):
 
 
 def PrintCollectionFileChangedStatus(col_stats, filepath, force_print=False):
-    """Prints a collection status to the log"""
+    """
+    Prints a collection status to the log.
+    """
     Log(
         str(col_stats.get_file_changed_record(filepath)),
         8,
@@ -246,7 +269,9 @@ def PrintCollectionFileChangedStatus(col_stats, filepath, force_print=False):
 
 
 def PrintCollectionChangesInSet(col_stats, set_index, force_print=False):
-    """Prints changes in the specified set to the log"""
+    """
+    Prints changes in the specified set to the log.
+    """
     Log(
         str(col_stats.get_all_file_changed_records(set_index)),
         8,
@@ -257,14 +282,18 @@ def PrintCollectionChangesInSet(col_stats, set_index, force_print=False):
 
 
 def Notice(s):
-    """Shortcut used for notice messages (verbosity 3, the default)."""
+    """
+    Shortcut used for notice messages (verbosity 3, the default).
+    """
     Log(s, NOTICE)
 
 
 class WarningCode(object):
-    """Enumeration class to hold warning code values.
+    """
+    Enumeration class to hold warning code values.
     These values should never change, as frontends rely upon them.
-    Don't use 0 or negative numbers."""
+    Don't use 0 or negative numbers.
+    """
 
     generic = 1
     orphaned_sig = 2
@@ -282,15 +311,19 @@ class WarningCode(object):
 
 
 def Warn(s, code=WarningCode.generic, extra=None):
-    """Shortcut used for warning messages (verbosity 2)"""
+    """
+    Shortcut used for warning messages (verbosity 2)
+    """
     Log(s, WARNING, code, extra)
 
 
 class ErrorCode(object):
-    """Enumeration class to hold error code values.
+    """
+    Enumeration class to hold error code values.
     These values should never change, as frontends rely upon them.
     Don't use 0 or negative numbers.  This code is returned by duplicity
-    to indicate which error occurred via both exit code and log."""
+    to indicate which error occurred via both exit code and log.
+    """
 
     generic = 1  # Don't use if possible, please create a new code and use it
     command_line = 2
@@ -343,7 +376,7 @@ class ErrorCode(object):
     bad_request = 48
     s3_kms_no_id = 49
 
-    # 50->69 reserved for backend errors
+    # 50-> 69 reserved for backend errors
     backend_error = 50
     backend_permission_denied = 51
     backend_not_found = 52
@@ -369,42 +402,47 @@ class ErrorCode(object):
 
 
 def Error(s, code=ErrorCode.generic, extra=None):
-    """Write error message"""
+    """
+    Write error message.
+    """
     Log(s, ERROR, code, extra)
 
 
 def FatalError(s, code=ErrorCode.generic, extra=None):
-    """Write fatal error message and exit"""
+    """
+    Write fatal error message and exit.
+    """
     Log(s, ERROR, code, extra)
     shutdown()
     sys.exit(code)
 
 
 class OutFilter(logging.Filter):
-    """Filter that only allows warning or less important messages"""
+    """
+    Filter that only allows warning or less important messages.
+    """
 
     def filter(self, record):
         return record.msg and record.levelno <= DupToLoggerLevel(WARNING)
 
 
 class ErrFilter(logging.Filter):
-    """Filter that only allows messages more important than warnings"""
+    """
+    Filter that only allows messages more important than warnings.
+    """
 
     def filter(self, record):
         return record.msg and record.levelno > DupToLoggerLevel(WARNING)
 
 
 def setup():
-    """Initialize logging"""
+    """
+    Initialize logging
+    """
     global _logger
     global _log_timestamp
     if _logger:
         return
-
-    # have to get log options from commandline before initializing logger
-    # hackish? yes, but I see no other way other than external config
-    if "--log-timestamp" in sys.argv[1:]:
-        _log_timestamp = True
 
     # OK, now we can start setup
     _logger = logging.getLogger("duplicity")
@@ -431,7 +469,9 @@ def setup():
 
 
 class PrettyProgressFormatter(logging.Formatter):
-    """Formatter that overwrites previous progress lines on ANSI terminals"""
+    """
+    Formatter that overwrites previous progress lines on ANSI terminals.
+    """
 
     last_record_was_progress = False
 
@@ -457,7 +497,9 @@ class PrettyProgressFormatter(logging.Formatter):
 
 
 class DetailFormatter(logging.Formatter):
-    """Formatter that creates messages in a syntax somewhat like syslog."""
+    """
+    Formatter that creates messages in a syntax somewhat like syslog.
+    """
 
     def __init__(self):
         # 'message' will be appended by format()
@@ -473,7 +515,9 @@ class DetailFormatter(logging.Formatter):
 
 
 class MachineFormatter(logging.Formatter):
-    """Formatter that creates messages in a syntax easily consumable by other processes."""
+    """
+    Formatter that creates messages in a syntax easily consumable by other processes.
+    """
 
     def __init__(self):
         # 'message' will be appended by format()
@@ -496,7 +540,9 @@ class MachineFormatter(logging.Formatter):
 
 
 class MachineFilter(logging.Filter):
-    """Filter that only allows levels that are consumable by other processes."""
+    """
+    Filter that only allows levels that are consumable by other processes.
+    """
 
     def filter(self, record):
         # We only want to allow records that have our custom level names
@@ -504,7 +550,9 @@ class MachineFilter(logging.Filter):
 
 
 def add_fd(fd):
-    """Add stream to which to write machine-readable logging"""
+    """
+    Add stream to which to write machine-readable logging.
+    """
     global _logger
     handler = logging.StreamHandler(os.fdopen(fd, "w"))
     handler.setFormatter(MachineFormatter())
@@ -513,7 +561,9 @@ def add_fd(fd):
 
 
 def add_file(filename):
-    """Add file to which to write machine-readable logging"""
+    """
+    Add file to which to write machine-readable logging
+    """
     global _logger
     handler = logging.FileHandler(filename, encoding="utf8")
     handler.setFormatter(MachineFormatter())
@@ -522,18 +572,24 @@ def add_file(filename):
 
 
 def setverbosity(verb):
-    """Set the verbosity level"""
+    """
+    Set the verbosity level.
+    """
     global _logger
     _logger.setLevel(DupToLoggerLevel(verb))
 
 
 def getverbosity():
-    """Get the verbosity level"""
+    """
+    Get the verbosity level.
+    """
     global _logger
     return LoggerToDupLevel(_logger.getEffectiveLevel())
 
 
 def shutdown():
-    """Cleanup and flush loggers"""
+    """
+    Cleanup and flush loggers
+    """
     global _logger
     logging.shutdown()

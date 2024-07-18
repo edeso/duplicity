@@ -44,7 +44,7 @@ class BackendErrors:
     FAIL_WITH_EXCEPTION = "DUP_FAIL_WITH_EXCEPTION"
     # SYSTEM_EXIT: set to substring matched by the filename.
     FAIL_SYSTEM_EXIT = "DUP_FAIL_BY_SYSTEM_EXIT"
-    # WAIT_FOR_OTHER_VOLUME: set to json string: ["file_to_delay", "file_wait_for"] (substing match)
+    # WAIT_FOR_OTHER_VOLUME: set to json string: ["file_to_delay", "file_wait_for"] (substring match)
     WAIT_FOR_OTHER_VOLUME = "DUP_FAIL_WAIT_FOR_VOLUME"
     # LAST_BYTE_MISSING: set to substring matched by the filename.
     LAST_BYTE_MISSING = "DUP_FAIL_LAST_BYTE_MISSING"
@@ -52,6 +52,8 @@ class BackendErrors:
     SKIP_PUT_SILENT = "DUP_FAIL_SKIP_PUT_SILENT"
     # RANDOM_DELAY: max random delay in ms added to command
     DELAY_RANDOM_MS = "DUP_FAIL_DELAY_RANDOM_MS"
+    # FIX_DELAY: fix delay in ms added to command
+    DELAY_FIX_MS = "DUP_FAIL_DELAY_FIX_MS"
 
 
 class _TestBackend(duplicity.backend.Backend):
@@ -128,21 +130,25 @@ class _TestBackend(duplicity.backend.Backend):
         return False
 
     @staticmethod
-    def _delay_random():
+    def _delay():
         """
         sleep a random amount of milliseconds if ENV set
         """
         log.Debug("DUB_FAIL: Check if action should be delayed.")
+        wait = 0
         if os.getenv(BackendErrors.DELAY_RANDOM_MS):
-            wait = random() * float(os.getenv(BackendErrors.DELAY_RANDOM_MS)) / 1000  # type: ignore
-            log.Error(f"DUB_FAIL: wait for {wait} millisec.")
+            wait += random() * float(os.getenv(BackendErrors.DELAY_RANDOM_MS)) / 1000  # type: ignore
+        if os.getenv(BackendErrors.DELAY_FIX_MS):
+            wait += float(os.getenv(BackendErrors.DELAY_FIX_MS)) / 1000  # type: ignore
+        if wait > 0:
+            log.Warn(f"DUB_FAIL: wait for {wait} sec.")
             time.sleep(wait)
 
     def _move(self, source_path, remote_filename):
         self._fail_with_exception(remote_filename)
         self._fail_by_sys_exit(remote_filename)
         self._wait_for_other_volume(remote_filename)
-        self._delay_random()
+        self._delay()
         target_path = self.remote_pathdir.append(remote_filename)
         try:
             source_path.rename(target_path)
@@ -153,7 +159,7 @@ class _TestBackend(duplicity.backend.Backend):
     def _put(self, source_path, remote_filename):
         self._fail_with_exception(remote_filename)
         self._wait_for_other_volume(remote_filename)
-        self._delay_random()
+        self._delay()
         if self._skip_put_silent(remote_filename):
             return
         target_path = self.remote_pathdir.append(remote_filename)
@@ -170,7 +176,7 @@ class _TestBackend(duplicity.backend.Backend):
     def _get(self, filename, local_path):
         self._fail_with_exception(filename)
         self._fail_by_sys_exit(filename)
-        self._delay_random()
+        self._delay()
         source_path = self.remote_pathdir.append(filename)
         local_path.writefileobj(source_path.open("rb"))
 
@@ -179,7 +185,7 @@ class _TestBackend(duplicity.backend.Backend):
 
     def _validate(self, remote_filename, size, source_path=None, **kwargs):
         # poc to show that validate can do additional things.
-        self._delay_random()
+        self._delay()
 
         self._remove_last_byte(remote_filename)
 
@@ -218,19 +224,19 @@ class _TestBackend(duplicity.backend.Backend):
     def _delete(self, filename):
         self._fail_with_exception(filename)
         self._fail_by_sys_exit(filename)
-        self._delay_random()
+        self._delay()
         self.remote_pathdir.append(filename).delete()
 
     def _delete_list(self, filenames):
         for filename in filenames:
             self._fail_with_exception(filename)
             self._fail_by_sys_exit(filename)
-            self._delay_random()
+            self._delay()
             self.remote_pathdir.append(filename).delete()
 
     def _query(self, filename):
         self._fail_with_exception(filename)
-        self._delay_random()
+        self._delay()
         self._fail_by_sys_exit(filename)
         target_file = self.remote_pathdir.append(filename)
         target_file.setdata()

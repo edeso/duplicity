@@ -22,11 +22,11 @@
 """Store global configuration information"""
 
 import os
+import pickle
 import socket
 import sys
-import time
 
-from duplicity import __version__
+from duplicity import __version__, log
 from duplicity import gpg
 
 # The current version of duplicity
@@ -377,6 +377,9 @@ idr_fakeroot = None
 # whether to check remote manifest (requires private key)
 check_remote = True
 
+# log verbosity, default get set in program logic.
+verbosity = None
+
 # whether 'inc` is explicit or not
 # inc_explicit = True
 
@@ -399,3 +402,34 @@ put_fail_volume = 0
 # either 'ascii' or None.  Both are bogus, so default to 'utf-8' if it does.
 fsencoding = sys.getfilesystemencoding()
 fsencoding = fsencoding if fsencoding not in ["ascii", "ANSI_X3.4-1968", None] else "utf-8"
+
+
+def dump_dict(config):
+    """
+    returns "pickleable" config as dict.
+
+    skips all internal attributes (__var__) and atrributes
+    where pickling failed.
+    Know skipped attributes:
+      select: <duplicity.selection.Select object at 0x7fafec27a550>
+      lockfile: <fasteners.process_lock.InterProcessLock object at 0x7fafec706290>
+    """
+    c = {}
+    for k, v in config.__dict__.items():
+        try:
+            if k.startswith("__") and k.endswith("__"):
+                continue
+            pickle.dumps(v)
+        except (pickle.PicklingError, TypeError, AttributeError) as e:
+            log.Debug(f"Skip {k}: {v} in config dump")
+        else:
+            c[k] = v
+    return c
+
+
+def load_dict(config_dict, config):
+    """
+    update config from a dict.
+    """
+    for k, v in config_dict.items():
+        setattr(config, k, v)

@@ -440,8 +440,10 @@ OptionKwargs = dict(
         type=set_log_file,
         help="Logging filename to use",
     ),
+    # log_timestamp is directly applied in SetLogTimestampAction(), not saved in config
     log_timestamp=dict(
-        action="store_true",
+        dest="",
+        action=SetLogTimestampAction,
         help="Whether to include timestamp and level in log",
         default=dflt(False),
     ),

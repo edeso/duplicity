@@ -237,20 +237,20 @@ class StatsObj(object):
 
         def fail_save_read(parent, *attributes, is_function=False, default="N/A"):
             """
-            retruns "N/A" if value can't de determined.
+            returns "N/A" if value can't de determined.
             @type parent: object
-            @param parent: oject where vale should received from. Oject must exists
+            @param parent: object where vale should received from. Object must exists
             @type *attributes: list of str
-            @param *attribures: path down to the attribute that should be read
+            @param *attributes: path down to the attribute that should be read
             @type is_function: boolean
             @param is_function: run last attribute as function instead of reading the value direct
             @param default: overwrite return value if value can't be determined
             """
             try:
                 attr_path = parent
-                for attibute in attributes:
+                for attribute in attributes:
                     try:
-                        attr_path = getattr(attr_path, attibute)
+                        attr_path = getattr(attr_path, attribute)
                     except AttributeError:
                         return default
                 if is_function:
@@ -265,6 +265,8 @@ class StatsObj(object):
         for t in ("StartTime", "EndTime"):
             t_str = f"{t}_str"
             py_obj[t_str] = dup_time.timetostring(py_obj[t])
+        if not py_obj.get("ElapsedTime"):
+            py_obj["ElapsedTime"] = py_obj["EndTime"] - py_obj["StartTime"]
         if col_stat:
             backup_meta = {}
             backup_chain = col_stat.matched_chain_pair[1]
@@ -273,6 +275,7 @@ class StatsObj(object):
             backup_meta["time_full_bkp"] = backup_chain.fullset.time
             backup_meta["time_full_bkp_str"] = dup_time.timetostring(backup_meta["time_full_bkp"])
             backup_meta["no_of_inc"] = len(backup_chain.incset_list)
+            backup_meta["concurrency"] = fail_save_read(config, "concurrency")
             backup_meta["target"] = fail_save_read(config, "target_url")
             backup_meta["source"] = fail_save_read(config, "source_path")
             backup_meta["local_json_stat"] = [
