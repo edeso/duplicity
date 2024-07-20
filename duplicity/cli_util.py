@@ -118,7 +118,7 @@ class IgnoreErrorsAction(argparse.Action):
         setattr(namespace, var, True)
 
 
-class SetLogTimestampAction(argparse.Action):
+class SetLogTimestampAction(argparse._StoreConstAction):
     def __init__(self, option_strings, dest, nargs=None, **kwargs):
         super().__init__(option_strings, dest, **kwargs)
 
