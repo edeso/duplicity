@@ -46,6 +46,7 @@ from typing import (
 from duplicity import (
     backend,
     config,
+    file_naming,
     log,
     path,
     util,
@@ -178,6 +179,7 @@ class BackendPool:
         log.setverbosity(config.verbosity)
         logger = multiprocessing.log_to_stderr(level=logging.getLevelName(log.LevelName(config.verbosity)))
         log.Info(f"Staring pool process with pid: {pid}")
+        file_naming.prepare_regex()
         util.start_debugger()
         backend.import_backends()
         pool_backend = backend.get_backend(url_string)
