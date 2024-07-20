@@ -27,18 +27,19 @@ import os
 import re
 import socket
 import sys
-import warnings
 from hashlib import md5
 from textwrap import dedent
 
 # TODO: Remove duplicity.argparse311 when py38 goes EOL
-from duplicity import argparse311 as argparse
-from duplicity import config
-from duplicity import dup_time
-from duplicity import errors
-from duplicity import log
-from duplicity import path
-from duplicity import selection
+from duplicity import (
+    argparse311 as argparse,
+    config,
+    dup_time,
+    errors,
+    log,
+    path,
+    selection,
+)
 
 gpg_key_patt = re.compile(r"^(0x)?([0-9A-Fa-f]{8}|[0-9A-Fa-f]{16}|[0-9A-Fa-f]{40})$")
 url_regexp = re.compile(r"^[\w\+]+://")
@@ -58,20 +59,7 @@ def command_line_error(message):
     raise CommandLineError(f"{message}\n{help_footer}")
 
 
-class DuplicityAction(argparse.Action):
-    def __init__(self, option_strings, dest, **kwargs):
-        super().__init__(option_strings, dest, **kwargs)
-
-    def __call__(self, parser, namespace, values, option_string=None):
-        raise NotImplementedError
-
-
-class DoNothingAction(DuplicityAction):
-    def __call__(self, parser, *args, **kw):
-        pass
-
-
-class AddSelectionAction(DuplicityAction):
+class AddSelectionAction(argparse.Action):
     def __init__(self, option_strings, dest, **kwargs):
         super().__init__(option_strings, dest, **kwargs)
 
@@ -82,7 +70,7 @@ class AddSelectionAction(DuplicityAction):
         config.select_opts.append((os.fsdecode(option_string), addarg))
 
 
-class AddFilelistAction(DuplicityAction):
+class AddFilelistAction(argparse.Action):
     def __init__(self, option_strings, dest, **kwargs):
         super().__init__(option_strings, dest, **kwargs)
 
@@ -94,7 +82,7 @@ class AddFilelistAction(DuplicityAction):
             command_line_error(str(e))
 
 
-class AddRenameAction(DuplicityAction):
+class AddRenameAction(argparse.Action):
     def __init__(self, option_strings, dest, **kwargs):
         super().__init__(option_strings, dest, **kwargs)
 
@@ -103,7 +91,7 @@ class AddRenameAction(DuplicityAction):
         config.rename[key] = os.fsencode(values[1])
 
 
-class SplitOptionsAction(DuplicityAction):
+class SplitOptionsAction(argparse.Action):
     def __init__(self, option_strings, dest, **kwargs):
         super().__init__(option_strings, dest, **kwargs)
 
@@ -118,7 +106,7 @@ class SplitOptionsAction(DuplicityAction):
         setattr(namespace, var, opts)
 
 
-class IgnoreErrorsAction(DuplicityAction):
+class IgnoreErrorsAction(argparse.Action):
     def __init__(self, option_strings, dest, **kwargs):
         super().__init__(option_strings, dest, **kwargs)
 
@@ -130,6 +118,15 @@ class IgnoreErrorsAction(DuplicityAction):
         setattr(namespace, var, True)
 
 
+class SetLogTimestampAction(argparse.Action):
+    def __init__(self, option_strings, dest, nargs=None, **kwargs):
+        super().__init__(option_strings, dest, **kwargs)
+
+    def __call__(self, parser, namespace, values, option_string=None):
+        log._log_timestamp = True
+
+
+# TODO: Remove in 4.0.0
 class WarnAsyncStoreConstAction(argparse._StoreConstAction):
     def __init__(self, option_strings, dest, nargs=None, **kwargs):
         super().__init__(option_strings, dest, **kwargs)
@@ -154,14 +151,6 @@ class WarnAsyncStoreConstAction(argparse._StoreConstAction):
             )
         )
         setattr(namespace, self.dest, self.const)
-
-
-class SetLogTimestampAction(argparse._StoreConstAction):
-    def __init__(self, option_strings, dest, nargs=None, **kwargs):
-        super().__init__(option_strings, dest, **kwargs)
-
-    def __call__(self, parser, namespace, values, option_string=None):
-        log._log_timestamp = True
 
 
 def _check_int(val):

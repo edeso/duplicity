@@ -30,33 +30,35 @@
 # any suggestions.
 
 
-from dataclasses import dataclass
 import os
 import platform
 import resource
 import sys
 import time
+from dataclasses import dataclass
 from textwrap import dedent
 from typing import Dict
 
-from duplicity import log_util
-from duplicity import __version__
-from duplicity import backend_pool
-from duplicity import cli_main
-from duplicity import config
-from duplicity import diffdir
-from duplicity import dup_collections
-from duplicity import dup_temp
-from duplicity import dup_time
-from duplicity import file_naming
-from duplicity import gpg
-from duplicity import log
-from duplicity import manifest
-from duplicity import patchdir
-from duplicity import path
-from duplicity import progress
-from duplicity import tempdir
-from duplicity import util
+from duplicity import (
+    __version__,
+    backend_pool,
+    cli_main,
+    config,
+    diffdir,
+    dup_collections,
+    dup_temp,
+    dup_time,
+    file_naming,
+    gpg,
+    log,
+    log_util,
+    manifest,
+    patchdir,
+    path,
+    progress,
+    tempdir,
+    util,
+)
 from duplicity.errors import BadVolumeException
 
 # If exit_val is not None, exit with given value at end.
@@ -221,7 +223,7 @@ def dummy_backup(tarblock_iter):
             pass
     except StopIteration:
         pass
-    log.Progress(None, diffdir.stats.SourceFileSize)
+    log_util.Progress(None, diffdir.stats.SourceFileSize)
     return 0
 
 
@@ -373,7 +375,7 @@ def write_multivol(backup_type, tarblock_iter, man_outfp, sig_outfp, backend):
             size = result.result
             bytes_written += size
             progress.report_transfer(size, size)
-            log.Progress(_("Processed volume %d") % command2vol_map[track_id].vol_num, bytes_written)
+            log_util.Progress(_("Processed volume %d") % command2vol_map[track_id].vol_num, bytes_written)
             command2vol_map[track_id].transfer_success = True
             if command2vol_map[track_id].path_obj.stat:
                 command2vol_map[track_id].path_obj.delete()
@@ -478,7 +480,7 @@ def write_multivol(backup_type, tarblock_iter, man_outfp, sig_outfp, backend):
         if config.skip_if_no_change and diffdir.stats.DeltaEntries == 0 and at_end and vol_num == 1:
             # if nothing changed, skip upload if configured.
             msg = _("Skipped volume upload, as effectivly nothing has changed")
-            log.Progress(msg, diffdir.stats.SourceFileSize)
+            log_util.Progress(msg, diffdir.stats.SourceFileSize)
             log.Notice(_(msg))
             config.skipped_inc = True
             tdp.delete()
@@ -509,7 +511,7 @@ def write_multivol(backup_type, tarblock_iter, man_outfp, sig_outfp, backend):
             bytes_written += put(tdp, dest_filename, vol_num)
 
             # Log human-readable version as well as raw numbers for machine consumers
-            log.Progress(_("Processed volume %d") % vol_num, diffdir.stats.SourceFileSize)
+            log_util.Progress(_("Processed volume %d") % vol_num, diffdir.stats.SourceFileSize)
             # Snapshot (serialize) progress now as a Volume has been completed.
             # This is always the last restore point when it comes to restart a failed backup
             if config.progress:
@@ -902,7 +904,7 @@ def restore_get_patched_rop_iter(col_stats):
                 yield e
 
             cur_vol[0] += 1
-            log.Progress(_("Processed volume %d of %d") % (cur_vol[0], num_vols), cur_vol[0], num_vols)
+            log_util.Progress(_("Processed volume %d of %d") % (cur_vol[0], num_vols), cur_vol[0], num_vols)
 
     if hasattr(config.backend, "pre_process_download_batch") or config.dry_run:
         file_names = []

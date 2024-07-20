@@ -26,7 +26,6 @@ Log various messages depending on verbosity level.
 """
 
 import logging
-import multiprocessing as mp
 import os
 import sys
 
@@ -36,21 +35,22 @@ import sys
 # NOTICE is added between INFO and WARNONG.
 # CRITICAL is currently unused.
 
-DEBUG = logging.DEBUG
-INFO = logging.INFO
-NOTICE = logging.INFO + 5
-WARNING = logging.WARNING
-ERROR = logging.ERROR
-CRITICAL = logging.CRITICAL
+from logging import (
+    DEBUG,
+    INFO,
+    WARNING,
+    ERROR,
+    CRITICAL,
+)
 
-MIN = logging.CRITICAL  # min logging
-MAX = logging.DEBUG  # max logging
+NOTICE = INFO + 5
+MIN = CRITICAL  # min logging
+MAX = DEBUG  # max logging
 
 PREFIX = ""  # process log prefix
 
 _logger = None
 _log_timestamp = False
-_log_queue = mp.Queue()
 
 
 def Log(s, verb_level, code=1, extra=None, force_print=False, transfer_progress=False):
@@ -129,17 +129,6 @@ def Info(s, code=InfoCode.generic, extra=None):
     Shortcut used for info messages (verbosity INFO).
     """
     Log(s, INFO, code, extra)
-
-
-def Progress(s, current, total=None):
-    """
-    Shortcut used for progress messages (verbosity INFO).
-    """
-    if total:
-        controlLine = f"{int(current)} {int(total)}"
-    else:
-        controlLine = f"{int(current)}"
-    Log(s, INFO, InfoCode.progress, controlLine)
 
 
 def Notice(s):
@@ -446,5 +435,4 @@ def shutdown():
     """
     Cleanup and flush loggers
     """
-    global _logger
     logging.shutdown()

@@ -30,6 +30,7 @@ import sys
 
 from duplicity.log import (
     Log,
+    INFO,
     InfoCode,
     NOTICE,
     ErrorCode,
@@ -75,6 +76,17 @@ def PrintCollectionChangesInSet(col_stats, set_index, force_print=False):
         None,
         force_print,
     )
+
+
+def Progress(s, current, total=None):
+    """
+    Shortcut used for progress messages (verbosity INFO).
+    """
+    if total:
+        controlLine = f"{int(current)} {int(total)}"
+    else:
+        controlLine = f"{int(current)}"
+    Log(s, INFO, InfoCode.progress, controlLine)
 
 
 def TransferProgress(progress, eta, changed_bytes, elapsed, speed, stalled):
