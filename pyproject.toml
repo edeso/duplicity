@@ -2,6 +2,28 @@
 name = "duplicity"
 version = "3.0.1.dev"
 dynamic = ["dependencies"]
+description = "Encrypted backup using rsync algorithm"
+authors = [
+  { name = "Ben Escoto", email = "ben@emrose.org" },
+  { name = "Kenneth Loafman", email = "kenneth@loafman.com" },
+]
+readme = { file = "README.md", content-type = "text/markdown" }
+requires-python = ">= 3.8, <3.13"
+classifiers = [
+    "Development Status :: 6 - Mature",
+    "Environment :: Console",
+    "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
+    "Operating System :: MacOS",
+    "Operating System :: POSIX",
+    "Programming Language :: C",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: System :: Archiving :: Backup",
+]
 
 
 [build-system]
@@ -20,45 +42,13 @@ build-backend = "setuptools.build_meta"
 duplicity = "duplicity.__main__:dup_run"
 
 
-[tools.setuptools]
-description = "Encrypted backup using rsync algorithm"
-long_description = {file = "README.md"}
-long_description_content_type = "text/markdown"
-readme = "README.md"
-author = "Ben Escoto"
-author_email = "ben at emrose dot org"
-maintainer = "Kenneth Loafman"
-maintainer_email = "kenneth at loafman dot com"
+[project.urls]
 url = "http://duplicity.us"
-python_requires = ">= 3.8, <3.13"
+
+
+[tool.setuptools]
 platforms = [
     "any"
-]
-tests_require = [
-    "fasteners",
-    "pexpect",
-    "pytest",
-    "pytest-runner",
-]
-test_suite = [
-    "testing.test_code.py",
-    "testing/unit",
-    "testing/functional",
-]
-classifiers = [
-    "Development Status :: 6 - Mature",
-    "Environment :: Console",
-    "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
-    "Operating System :: MacOS",
-    "Operating System :: POSIX",
-    "Programming Language :: C",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Topic :: System :: Archiving :: Backup",
 ]
 
 
