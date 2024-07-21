@@ -25,15 +25,15 @@ import inspect
 import json
 import logging
 import os
-from random import random
 import re
 import sys
 import time
+from random import random
 
 import duplicity.backend
-from duplicity import log_util
 from duplicity import (
     log,
+    log_util,
     path,
     progress,
 )
