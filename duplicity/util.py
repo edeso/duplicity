@@ -37,10 +37,14 @@ import sys
 import traceback
 from io import StringIO
 
-from duplicity import log_util
-from duplicity import config
-from duplicity import log
-from duplicity import dup_tarfile
+import fasteners
+
+from duplicity import (
+    log_util,
+    config,
+    log,
+    dup_tarfile,
+)
 
 
 def exception_traceback(limit=50):
