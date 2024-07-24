@@ -22,7 +22,10 @@ import os
 import pickle
 
 import duplicity.backend
-from duplicity import log
+from duplicity import (
+    log,
+    log_util,
+)
 from duplicity.errors import BackendException
 
 
@@ -255,7 +258,7 @@ Exception: {str(e)}"""
         )
         file_list = results.get("files", [])
         if len(file_list) > 1:
-            log.FatalError(f"GDrive backend: multiple files called '{filename}'.")
+            log_util.FatalError(f"GDrive backend: multiple files called '{filename}'.")
         elif len(file_list) > 0:
             file_id = file_list[0]["id"]
             self.id_cache[filename] = file_list[0]["id"]

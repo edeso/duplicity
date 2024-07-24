@@ -24,7 +24,10 @@ import os
 import os.path
 
 import duplicity.backend
-from duplicity import log
+from duplicity import (
+    log,
+    log_util,
+)
 from duplicity.errors import BackendException
 
 
@@ -38,7 +41,7 @@ class RcloneBackend(duplicity.backend.Backend):
         try:
             rc, o, e = self._subprocess_safe_popen(f"{self.rclone_cmd} version")
         except Exception:
-            log.FatalError("rclone not found: please install rclone", log.ErrorCode.backend_error)
+            log_util.FatalError("rclone not found: please install rclone", log.ErrorCode.backend_error)
 
         verb = log.getverbosity()
         if verb >= log.DEBUG:

@@ -24,8 +24,11 @@ import signal
 import subprocess
 
 import duplicity.backend
-from duplicity import log
-from duplicity import util
+from duplicity import (
+    log,
+    log_util,
+    util,
+)
 
 
 def ensure_dbus():
@@ -104,7 +107,7 @@ class GIOBackend(duplicity.backend.Backend):
         except GLib.GError as e:
             # check for NOT_SUPPORTED because some schemas (e.g. file://) validly don't
             if e.code != Gio.IOErrorEnum.ALREADY_MOUNTED and e.code != Gio.IOErrorEnum.NOT_SUPPORTED:
-                log.FatalError(
+                log_util.FatalError(
                     _("Connection failed, please check your password: %s") % util.uexc(e),
                     log.ErrorCode.connection_failed,
                 )

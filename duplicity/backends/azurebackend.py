@@ -23,8 +23,11 @@ import os
 import re
 
 import duplicity.backend
-from duplicity import config
-from duplicity import log
+from duplicity import (
+    config,
+    log,
+    log_util,
+)
 from duplicity.errors import BackendException
 
 _VALID_CONTAINER_NAME_RE = re.compile(r"^[a-z0-9](?!.*--)[a-z0-9-]{1,61}[a-z0-9]$")
@@ -91,7 +94,7 @@ class AzureBackend(duplicity.backend.Backend):
         except ResourceExistsError:
             pass
         except Exception as e:
-            log.FatalError(
+            log_util.FatalError(
                 "Could not create Azure container: %s" % str(e).split("\n", 1)[0],
                 log.ErrorCode.connection_failed,
             )

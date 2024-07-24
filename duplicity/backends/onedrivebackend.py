@@ -29,9 +29,12 @@ import sys
 import time
 
 import duplicity.backend
-from duplicity import config
-from duplicity import log
-from duplicity import util
+from duplicity import (
+    config,
+    log,
+    log_util,
+    util,
+)
 from duplicity.errors import BackendException
 
 
@@ -316,7 +319,7 @@ class DefaultOAuth2Session(OneDriveOAuth2Session):
 
         if token is None:
             if not sys.stdout.isatty() or not sys.stdin.isatty():
-                log.FatalError(
+                log_util.FatalError(
                     f"The OAuth2 token could not be loaded from {self.OAUTH_TOKEN_PATH} and you are not "
                     f"running duplicity interactively, so duplicity cannot possibly access OneDrive."
                 )

@@ -20,7 +20,10 @@
 import os
 
 import duplicity.backend
-from duplicity import log
+from duplicity import (
+    log,
+    log_util,
+)
 from duplicity.errors import BackendException
 
 
@@ -200,7 +203,7 @@ class PyDriveBackend(duplicity.backend.Backend):
         list_file_args.update(self.api_params)
         flist = self.drive.ListFile(list_file_args).GetList()
         if len(flist) > 1:
-            log.FatalError(_("PyDrive backend: multiple files called '%s'.") % (filename,))
+            log_util.FatalError(_("PyDrive backend: multiple files called '%s'.") % (filename,))
         elif flist:
             file_id = flist[0]["id"]
             self.id_cache[filename] = flist[0]["id"]
