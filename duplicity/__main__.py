@@ -29,10 +29,12 @@
 import sys
 
 import duplicity.errors
-from duplicity import log_util
-from duplicity import log
-from duplicity import tempdir
-from duplicity import util
+from duplicity import (
+    log,
+    log_util,
+    tempdir,
+    util,
+)
 from duplicity.dup_main import main
 from duplicity.gpg import GPGError
 

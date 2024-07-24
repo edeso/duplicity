@@ -21,14 +21,15 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-import sys
 from textwrap import dedent
 
-from duplicity import log_util
-from duplicity import diffdir
+from duplicity import (
+    diffdir,
+    log_util,
+)
 from duplicity.globmatch import (
-    GlobbingError,
     FilePrefixError,
+    GlobbingError,
     select_fn_from_glob,
 )
 from duplicity.path import *  # pylint: disable=unused-wildcard-import,redefined-builtin

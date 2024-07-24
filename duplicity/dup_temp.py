@@ -25,13 +25,15 @@ import os
 import shutil
 import sys
 
-from duplicity import log_util
-from duplicity import config
-from duplicity import file_naming
-from duplicity import gpg
-from duplicity import log
-from duplicity import path
-from duplicity import tempdir
+from duplicity import (
+    config,
+    file_naming,
+    gpg,
+    log,
+    log_util,
+    path,
+    tempdir,
+)
 
 
 def new_temppath():

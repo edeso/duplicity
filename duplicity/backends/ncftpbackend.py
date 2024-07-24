@@ -26,10 +26,12 @@ import urllib.parse
 import urllib.request
 
 import duplicity.backend
-from duplicity import log_util
-from duplicity import config
-from duplicity import log
-from duplicity import tempdir
+from duplicity import (
+    config,
+    log,
+    log_util,
+    tempdir,
+)
 
 
 class NCFTPBackend(duplicity.backend.Backend):

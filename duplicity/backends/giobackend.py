@@ -24,9 +24,11 @@ import signal
 import subprocess
 
 import duplicity.backend
-from duplicity import log_util
-from duplicity import log
-from duplicity import util
+from duplicity import (
+    log,
+    log_util,
+    util,
+)
 
 
 def ensure_dbus():

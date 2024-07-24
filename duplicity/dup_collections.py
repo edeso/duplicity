@@ -21,18 +21,20 @@
 
 """Classes and functions on collections of backup volumes"""
 
-import os
 import gzip
 import json
+import os
 
-from duplicity import log_util
-from duplicity import config
-from duplicity import dup_time
-from duplicity import file_naming
-from duplicity import log
-from duplicity import manifest
-from duplicity import path
-from duplicity import util
+from duplicity import (
+    config,
+    dup_time,
+    file_naming,
+    log,
+    log_util,
+    manifest,
+    path,
+    util,
+)
 from duplicity.gpg import GPGError
 
 

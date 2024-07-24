@@ -21,9 +21,11 @@
 import os
 
 import duplicity.backend
-from duplicity import log_util
-from duplicity import log
-from duplicity import util
+from duplicity import (
+    log,
+    log_util,
+    util,
+)
 from duplicity.errors import BackendException
 
 

@@ -21,15 +21,18 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import os
+
 import duplicity.backend
-from duplicity import log_util
-from duplicity import config
-from duplicity import file_naming
-from duplicity import log
-from duplicity import progress
+from duplicity import (
+    config,
+    file_naming,
+    log,
+    log_util,
+    progress,
+)
 from duplicity.errors import (
-    FatalBackendException,
     BackendException,
+    FatalBackendException,
 )
 
 

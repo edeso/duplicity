@@ -28,9 +28,11 @@ import time
 from io import DEFAULT_BUFFER_SIZE
 
 import duplicity.backend
-from duplicity import log_util
-from duplicity import config
-from duplicity import log
+from duplicity import (
+    config,
+    log,
+    log_util,
+)
 from duplicity.errors import BackendException
 
 

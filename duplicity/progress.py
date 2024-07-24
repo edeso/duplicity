@@ -32,20 +32,23 @@ and the time left to transfer all the (yet unknown) amount of data to send.
 This is a forecast based on gathered evidence.
 """
 
+import collections
+import pickle
+import threading
+import time
 from datetime import (
     datetime,
     timedelta,
 )
-import collections
-import math
-import pickle
-import threading
-import time
 
-from duplicity import log_util
-from duplicity import config
-from duplicity import log
-from duplicity import util
+import math
+
+from duplicity import (
+    config,
+    log,
+    log_util,
+    util,
+)
 
 tracker = None
 progress_thread = None

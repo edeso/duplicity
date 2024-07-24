@@ -37,18 +37,18 @@ from datetime import (
     timedelta,
 )
 from typing import (
-    List,
-    Optional,
     Dict,
     Iterator,
+    List,
+    Optional,
 )
 
-from duplicity import log_util
 from duplicity import (
     backend,
     config,
     file_naming,
     log,
+    log_util,
     path,
     util,
 )
@@ -178,7 +178,7 @@ class BackendPool:
         log.setup()
         log.PREFIX = f"Pool{pool_nr}: "
         log.setverbosity(config.verbosity)
-        logger = multiprocessing.log_to_stderr(level=logging.getLevelName(log.LevelName(config.verbosity)))
+        logger = multiprocessing.log_to_stderr(level=log._logger.getEffectiveLevel())
         log.Info(f"Staring pool process with pid: {pid}")
         file_naming.prepare_regex()
         util.start_debugger()

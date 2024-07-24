@@ -24,7 +24,6 @@ Provides a common interface to all backends and certain sevices
 intended to be used by the backends themselves.
 """
 
-from datetime import datetime
 import errno
 import getpass
 import multiprocessing
@@ -32,28 +31,31 @@ import os
 import re
 import sys
 import time
-import traceback
-from typing import Tuple
 import urllib.error
 import urllib.parse
 import urllib.request
-
-from duplicity import log_util
-from duplicity import errors
+from datetime import datetime
+from typing import Tuple
 
 import duplicity.backends
-from duplicity import config
-from duplicity import dup_temp
-from duplicity import file_naming
-from duplicity import log
-from duplicity import path
-from duplicity import util
-from duplicity.errors import BackendException
-from duplicity.errors import ConflictingScheme
-from duplicity.errors import FatalBackendException
-from duplicity.errors import InvalidBackendURL
-from duplicity.errors import TemporaryLoadException
-from duplicity.errors import UnsupportedBackendScheme
+from duplicity import (
+    config,
+    dup_temp,
+    errors,
+    file_naming,
+    log,
+    log_util,
+    path,
+    util,
+)
+from duplicity.errors import (
+    BackendException,
+    ConflictingScheme,
+    FatalBackendException,
+    InvalidBackendURL,
+    TemporaryLoadException,
+    UnsupportedBackendScheme,
+)
 from duplicity.util import exception_traceback
 
 _backends = {}
