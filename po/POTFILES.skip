@@ -9,9 +9,9 @@ testing/functional/test_log.py
 testing/functional/test_restart.py
 testing/functional/test_selection.py
 testing/functional/test_verify.py
-testing/manual/__init__.py
 testing/manual/backendtest.py
 testing/manual/roottest.py
+testing/manual/test-concurrency-performance-stats.py
 testing/overrides/__init__.py
 testing/test_code.py
 testing/unit/__init__.py

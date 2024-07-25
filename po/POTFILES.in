@@ -66,6 +66,7 @@ duplicity/gpginterface.py
 duplicity/lazy.py
 duplicity/librsync.py
 duplicity/log.py
+duplicity/log_util.py
 duplicity/manifest.py
 duplicity/patchdir.py
 duplicity/path.py
