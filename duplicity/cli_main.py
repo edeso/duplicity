@@ -23,18 +23,15 @@ Main for parse command line, check for consistency, and set config
 """
 
 import copy
-import inspect
-import sys
-from textwrap import dedent, wrap
 
 # TODO: Remove duplicity.argparse311 when py38 goes EOL
-from duplicity import argparse311 as argparse
-from duplicity import backend
-from duplicity import config
-from duplicity import cli_util
-from duplicity import gpg
-from duplicity import log
-from duplicity import util
+from duplicity import (
+    argparse311 as argparse,
+    backend,
+    cli_util,
+    gpg,
+    util,
+)
 from duplicity.cli_data import *
 
 

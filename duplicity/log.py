@@ -25,53 +25,32 @@
 Log various messages depending on verbosity level.
 """
 
-import datetime
 import logging
-import multiprocessing as mp
 import os
 import sys
-import threading
 
-MIN = 0
-ERROR = 0
-WARNING = 2
-NOTICE = 3
-INFO = 5
-DEBUG = 9
-MAX = 9
+# Logging levels are translated in cli_util:check_verbosity().
+# Alphabetic levels are translated directly to logging levels.
+# Numeric levels are reverse translated to logging levels.
+# NOTICE is added between INFO and WARNONG.
+# CRITICAL is currently unused.
 
-PREFIX = ""
+from logging import (
+    DEBUG,
+    INFO,
+    WARNING,
+    ERROR,
+    CRITICAL,
+)
+
+NOTICE = INFO + 5
+MIN = CRITICAL  # min logging
+MAX = DEBUG  # max logging
+
+PREFIX = ""  # process log prefix
 
 _logger = None
 _log_timestamp = False
-log_queue = mp.Queue()
-
-
-def DupToLoggerLevel(verb):
-    """
-    Convert duplicity level to the logging module's system, where higher is more severe
-    """
-    return MAX - verb + 1
-
-
-def LoggerToDupLevel(verb):
-    """
-    Convert logging module level to duplicity's system, where lower is more severe
-    """
-    return DupToLoggerLevel(verb)
-
-
-def LevelName(level):
-    if level >= 9:
-        return "DEBUG"
-    elif level >= 5:
-        return "INFO"
-    elif level >= 3:
-        return "NOTICE"
-    elif level >= 1:
-        return "WARNING"
-    else:
-        return "ERROR"
 
 
 def Log(s, verb_level, code=1, extra=None, force_print=False, transfer_progress=False):
@@ -88,7 +67,7 @@ def Log(s, verb_level, code=1, extra=None, force_print=False, transfer_progress=
 
     if force_print:
         initial_level = _logger.getEffectiveLevel()
-        _logger.setLevel(DupToLoggerLevel(MAX))
+        _logger.setLevel(MAX)
 
     # If all the backends kindly gave us unicode, we could enable this next
     # assert line.  As it is, we'll attempt to convert s to unicode if we
@@ -100,10 +79,10 @@ def Log(s, verb_level, code=1, extra=None, force_print=False, transfer_progress=
     s = PREFIX + s
 
     _logger.log(
-        DupToLoggerLevel(verb_level),
+        verb_level,
         s,
         extra={
-            "levelName": LevelName(verb_level),
+            "levelName": logging.getLevelName(verb_level),
             "controlLine": controlLine,
             "transferProgress": transfer_progress,
         },
@@ -147,138 +126,9 @@ class InfoCode(object):
 
 def Info(s, code=InfoCode.generic, extra=None):
     """
-    Shortcut used for info messages (verbosity 5).
+    Shortcut used for info messages (verbosity INFO).
     """
     Log(s, INFO, code, extra)
-
-
-def Progress(s, current, total=None):
-    """
-    Shortcut used for progress messages (verbosity 5).
-    """
-    if total:
-        controlLine = f"{int(current)} {int(total)}"
-    else:
-        controlLine = f"{int(current)}"
-    Log(s, INFO, InfoCode.progress, controlLine)
-
-
-def _ElapsedSecs2Str(secs):
-    tdelta = datetime.timedelta(seconds=secs)
-    hours, rem = divmod(tdelta.seconds, 3600)
-    minutes, seconds = divmod(rem, 60)
-    fmt = ""
-    if tdelta.days > 0:
-        fmt = f"{int(tdelta.days)}d,"
-    fmt = f"{fmt}{int(hours):02}:{int(minutes):02}:{int(seconds):02}"
-    return fmt
-
-
-def _RemainingSecs2Str(secs):
-    tdelta = datetime.timedelta(seconds=secs)
-    hours, rem = divmod(tdelta.seconds, 3600)
-    minutes, seconds = divmod(rem, 60)
-    fmt = ""
-    if tdelta.days > 0:
-        fmt = f"{int(tdelta.days)}d"
-        if hours > 0:
-            fmt = f"{fmt} {int(hours)}h"
-        if minutes > 0:
-            fmt = f"{fmt} {int(minutes)}min"
-    elif hours > 0:
-        fmt = f"{int(hours)}h"
-        if minutes > 0:
-            fmt = f"{fmt} {int(minutes)}min"
-    elif minutes > 5:
-        fmt = f"{int(minutes)}min"
-    elif minutes > 0:
-        fmt = f"{int(minutes)}min"
-        if seconds >= 30:
-            fmt = f"{fmt} 30sec"
-    elif seconds > 45:
-        fmt = "< 1min"
-    elif seconds > 30:
-        fmt = "< 45sec"
-    elif seconds > 15:
-        fmt = "< 30sec"
-    else:
-        fmt = f"{int(seconds)}sec"
-    return fmt
-
-
-def TransferProgress(progress, eta, changed_bytes, elapsed, speed, stalled):
-    """
-    Shortcut used for upload progress messages (verbosity 5).
-    """
-    dots = int(0.4 * progress)  # int(40.0 * progress / 100.0) -- for 40 chars
-    data_amount = float(changed_bytes) / 1024.0
-    data_scale = "KB"
-    if data_amount > 1000.0:
-        data_amount /= 1024.0
-        data_scale = "MB"
-    if data_amount > 1000.0:
-        data_amount /= 1024.0
-        data_scale = "GB"
-    if stalled:
-        eta_str = "Stalled!"
-        speed_amount = 0
-        speed_scale = "B"
-    else:
-        eta_str = _RemainingSecs2Str(eta)
-        speed_amount = float(speed) / 1024.0
-        speed_scale = "KB"
-        if speed_amount > 1000.0:
-            speed_amount /= 1024.0
-            speed_scale = "MB"
-        if speed_amount > 1000.0:
-            speed_amount /= 1024.0
-            speed_scale = "GB"
-    s = (
-        f"{data_amount:.1f}{data_scale} {_ElapsedSecs2Str(elapsed)} [{speed_amount:.1f}{speed_scale}/s] "
-        f"[{'=' * dots}>{' ' * (40 - dots)}] {int(progress)}% ETA {eta_str}"
-    )
-
-    controlLine = f"{int(changed_bytes)} {int(elapsed)} {int(progress)} {int(eta)} {int(speed)} {int(stalled)}"
-    Log(s, NOTICE, InfoCode.upload_progress, controlLine, transfer_progress=True)
-
-
-def PrintCollectionStatus(col_stats, force_print=False):
-    """
-    Prints a collection status to the log.
-    """
-    Log(
-        str(col_stats),
-        8,
-        InfoCode.collection_status,
-        "\n" + "\n".join(col_stats.to_log_info()),
-        force_print,
-    )
-
-
-def PrintCollectionFileChangedStatus(col_stats, filepath, force_print=False):
-    """
-    Prints a collection status to the log.
-    """
-    Log(
-        str(col_stats.get_file_changed_record(filepath)),
-        8,
-        InfoCode.collection_status,
-        None,
-        force_print,
-    )
-
-
-def PrintCollectionChangesInSet(col_stats, set_index, force_print=False):
-    """
-    Prints changes in the specified set to the log.
-    """
-    Log(
-        str(col_stats.get_all_file_changed_records(set_index)),
-        8,
-        InfoCode.collection_status,
-        None,
-        force_print,
-    )
 
 
 def Notice(s):
@@ -408,22 +258,13 @@ def Error(s, code=ErrorCode.generic, extra=None):
     Log(s, ERROR, code, extra)
 
 
-def FatalError(s, code=ErrorCode.generic, extra=None):
-    """
-    Write fatal error message and exit.
-    """
-    Log(s, ERROR, code, extra)
-    shutdown()
-    sys.exit(code)
-
-
 class OutFilter(logging.Filter):
     """
     Filter that only allows warning or less important messages.
     """
 
     def filter(self, record):
-        return record.msg and record.levelno <= DupToLoggerLevel(WARNING)
+        return record.msg and record.levelno <= WARNING
 
 
 class ErrFilter(logging.Filter):
@@ -432,68 +273,7 @@ class ErrFilter(logging.Filter):
     """
 
     def filter(self, record):
-        return record.msg and record.levelno > DupToLoggerLevel(WARNING)
-
-
-def setup():
-    """
-    Initialize logging
-    """
-    global _logger
-    global _log_timestamp
-    if _logger:
-        return
-
-    # OK, now we can start setup
-    _logger = logging.getLogger("duplicity")
-
-    # Default verbosity allows notices and above
-    setverbosity(NOTICE)
-
-    # stdout and stderr are for different logging levels
-    outHandler = logging.StreamHandler(sys.stdout)
-    if _log_timestamp:
-        outHandler.setFormatter(DetailFormatter())
-    else:
-        outHandler.setFormatter(PrettyProgressFormatter())
-    outHandler.addFilter(OutFilter())
-    _logger.addHandler(outHandler)
-
-    errHandler = logging.StreamHandler(sys.stderr)
-    if _log_timestamp:
-        errHandler.setFormatter(DetailFormatter())
-    else:
-        errHandler.setFormatter(PrettyProgressFormatter())
-    errHandler.addFilter(ErrFilter())
-    _logger.addHandler(errHandler)
-
-
-class PrettyProgressFormatter(logging.Formatter):
-    """
-    Formatter that overwrites previous progress lines on ANSI terminals.
-    """
-
-    last_record_was_progress = False
-
-    def __init__(self):
-        # 'message' will be appended by format()
-        # Note that we use our own, custom-created 'levelName' instead of the
-        # standard 'levelname'.  This is because the standard 'levelname' can
-        # be adjusted by any library anywhere in our stack without us knowing.
-        # But we control 'levelName'.
-        logging.Formatter.__init__(self, "%(message)s")
-
-    def format(self, record):
-        s = logging.Formatter.format(self, record)
-
-        # So we don't overwrite actual log lines
-        if self.last_record_was_progress and record.transferProgress:
-            # Go up one line, then erase it
-            s = "\033[F\033[2K" + s
-
-        self.last_record_was_progress = record.transferProgress
-
-        return s
+        return record.msg and record.levelno > WARNING
 
 
 class DetailFormatter(logging.Formatter):
@@ -549,6 +329,34 @@ class MachineFilter(logging.Filter):
         return hasattr(record, "levelName")
 
 
+class PrettyProgressFormatter(logging.Formatter):
+    """
+    Formatter that overwrites previous progress lines on ANSI terminals.
+    """
+
+    last_record_was_progress = False
+
+    def __init__(self):
+        # 'message' will be appended by format()
+        # Note that we use our own, custom-created 'levelName' instead of the
+        # standard 'levelname'.  This is because the standard 'levelname' can
+        # be adjusted by any library anywhere in our stack without us knowing.
+        # But we control 'levelName'.
+        logging.Formatter.__init__(self, "%(message)s")
+
+    def format(self, record):
+        s = logging.Formatter.format(self, record)
+
+        # So we don't overwrite actual log lines
+        if self.last_record_was_progress and record.transferProgress:
+            # Go up one line, then erase it
+            s = "\033[F\033[2K" + s
+
+        self.last_record_was_progress = record.transferProgress
+
+        return s
+
+
 def add_fd(fd):
     """
     Add stream to which to write machine-readable logging.
@@ -576,7 +384,7 @@ def setverbosity(verb):
     Set the verbosity level.
     """
     global _logger
-    _logger.setLevel(DupToLoggerLevel(verb))
+    _logger.setLevel(verb)
 
 
 def getverbosity():
@@ -584,12 +392,47 @@ def getverbosity():
     Get the verbosity level.
     """
     global _logger
-    return LoggerToDupLevel(_logger.getEffectiveLevel())
+    return _logger.getEffectiveLevel()
+
+
+def setup():
+    """
+    Initialize logging
+    """
+    global _logger
+    global _log_timestamp
+    if _logger:
+        return
+
+    # for backwards compatibility
+    logging.addLevelName(NOTICE, "NOTICE")
+
+    # OK, now we can start setup
+    _logger = logging.getLogger("duplicity")
+
+    # Default verbosity allows notices and above
+    setverbosity(NOTICE)
+
+    # stdout and stderr are for different logging levels
+    outHandler = logging.StreamHandler(sys.stdout)
+    if _log_timestamp:
+        outHandler.setFormatter(DetailFormatter())
+    else:
+        outHandler.setFormatter(PrettyProgressFormatter())
+    outHandler.addFilter(OutFilter())
+    _logger.addHandler(outHandler)
+
+    errHandler = logging.StreamHandler(sys.stderr)
+    if _log_timestamp:
+        errHandler.setFormatter(DetailFormatter())
+    else:
+        errHandler.setFormatter(PrettyProgressFormatter())
+    errHandler.addFilter(ErrFilter())
+    _logger.addHandler(errHandler)
 
 
 def shutdown():
     """
     Cleanup and flush loggers
     """
-    global _logger
     logging.shutdown()

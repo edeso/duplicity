@@ -24,8 +24,10 @@ Data for parse command line, check for consistency, and set config
 
 from dataclasses import dataclass
 
-from duplicity import __reldate__
-from duplicity import __version__
+from duplicity import (
+    __reldate__,
+    __version__,
+)
 from duplicity.cli_util import *
 
 
@@ -105,6 +107,7 @@ OptionKwargs = dict(
         help="Path to store metadata archives",
         default=dflt(config.archive_dir),
     ),
+    # TODO: Remove in 4.0.0
     asynchronous_upload=dict(
         action=WarnAsyncStoreConstAction,
         const=1,

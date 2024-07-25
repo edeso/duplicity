@@ -21,14 +21,18 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import os
+
 import duplicity.backend
-from duplicity import config
-from duplicity import file_naming
-from duplicity import log
-from duplicity import progress
+from duplicity import (
+    config,
+    file_naming,
+    log,
+    log_util,
+    progress,
+)
 from duplicity.errors import (
-    FatalBackendException,
     BackendException,
+    FatalBackendException,
 )
 
 
@@ -197,7 +201,7 @@ class S3Boto3Backend(duplicity.backend.Backend):
             self.s3.Object(self.bucket.name, key).download_file(local_path.uc_name)
         except ClientError as ios:
             if ios.response["Error"]["Code"] == "InvalidObjectState":
-                log.FatalError(
+                log_util.FatalError(
                     f"File {remote_filename} seems to be in a long term storage, "
                     f"please use AWS Console/API to initiate restore.\nAPI-Error: {ios}"
                 )

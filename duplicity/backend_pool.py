@@ -37,10 +37,10 @@ from datetime import (
     timedelta,
 )
 from typing import (
-    List,
-    Optional,
     Dict,
     Iterator,
+    List,
+    Optional,
 )
 
 from duplicity import (
@@ -48,6 +48,7 @@ from duplicity import (
     config,
     file_naming,
     log,
+    log_util,
     path,
     util,
 )
@@ -177,7 +178,7 @@ class BackendPool:
         log.setup()
         log.PREFIX = f"Pool{pool_nr}: "
         log.setverbosity(config.verbosity)
-        logger = multiprocessing.log_to_stderr(level=logging.getLevelName(log.LevelName(config.verbosity)))
+        logger = multiprocessing.log_to_stderr(level=log._logger.getEffectiveLevel())
         log.Info(f"Staring pool process with pid: {pid}")
         file_naming.prepare_regex()
         util.start_debugger()
@@ -215,7 +216,7 @@ class BackendPool:
             exception_str = f"{''.join(track_rcrd.trace_back)}\n{track_rcrd.result}"
             log.Debug(f"Exception thrown in pool: \n{exception_str}")
             if hasattr(track_rcrd.result, "code"):
-                log.FatalError(
+                log_util.FatalError(
                     f"Exception {track_rcrd.result.__class__.__name__} in background "
                     f"pool {track_rcrd.log_prefix}. "
                     "For trace back set loglevel to DEBUG and check output for given pool.",

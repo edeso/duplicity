@@ -29,10 +29,11 @@ the second, the ROPath iterator is put into tar block form.
 
 import io
 
-from duplicity import progress
-from duplicity import statistics
-from duplicity import dup_tarfile
-from duplicity import util
+from duplicity import (
+    log_util,
+    progress,
+    statistics,
+)
 from duplicity.path import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 
 # A StatsObj will be written to this from DirDelta and DirDelta_WriteSig.
@@ -604,7 +605,7 @@ class DummyBlockIter(TarBlockIter):
             # Best we can do is count them raw.
             stats.SourceFiles += 1
             stats.SourceFileSize += delta_ropath.getsize()
-            log.Progress(None, stats.SourceFileSize)
+            log_util.Progress(None, stats.SourceFileSize)
         return self.tarinfo2tarblock(index, ti)
 
 

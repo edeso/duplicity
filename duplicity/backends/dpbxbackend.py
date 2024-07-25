@@ -36,14 +36,16 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-from duplicity import (
-    log,
-    config,
-)
-from duplicity import progress
-from duplicity.errors import BackendException
 from requests.exceptions import ConnectionError  # pylint: disable=redefined-builtin
+
 import duplicity.backend
+from duplicity import (
+    config,
+    log,
+    log_util,
+    progress,
+)
+from duplicity.errors import BackendException
 
 # This is chunk size for upload using Dpbx chumked API v2. It doesn't
 # make sense to make it much large since Dpbx SDK uses connection pool
@@ -157,7 +159,7 @@ Exception: {str(e)}"""
         app_secret = os.environ["DPBX_APP_SECRET"]
 
         if not sys.stdout.isatty() or not sys.stdin.isatty():
-            log.FatalError(
+            log_util.FatalError(
                 "dpbx error: cannot interact, but need human attention",
                 log.ErrorCode.backend_command_error,
             )
