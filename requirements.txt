@@ -4,7 +4,8 @@
 chardet<3.10
 cryptography==3.4.8
 requests
-urllib3<1.26
+urllib3<=1.26.0 ; python_version <= "3.11"
+urllib3>=1.26.5 ; python_version >= "3.12"
 
 ##### basic requirements #####
 
