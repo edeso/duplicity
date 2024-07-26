@@ -392,6 +392,11 @@ skip_volume = 0
 # used in testing only - fail BackendWrapper.put() on difftar volN
 put_fail_volume = 0
 
+# path sep in bytes form
+bytes_sep = os.fsencode(os.path.sep)
+
+# path dot in bytes form
+bytes_dot = os.fsencode(".")
 
 # default filesystem encoding
 # It seems that sys.getfilesystemencoding() will normally return
