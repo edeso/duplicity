@@ -33,6 +33,7 @@ import shutil
 import socket
 import stat
 import time
+from collections import UserDict
 
 from duplicity import cached_ops
 from duplicity import config
@@ -60,35 +61,34 @@ class PathException(Exception):
     pass
 
 
-class HardLinks(object):
+class HardLinks(UserDict):
     """
     Keep list of hardlinks encountered during file operations.
     First encountered hlink is treated as regular file.
     The remainder are returned as hardlinks to first.
     """
 
-    def __init__(self):
-        self.hlinks = dict()
-
-    def add_hardlink(self, index, stat):
-        if stat.st_ino not in self.hlinks:
-            self.hlinks[stat.st_ino] = dict()
-            hlink = self.hlinks[stat.st_ino]
-            hlink["stat"] = stat
+    def add_hardlink(self, index: tuple, statres: tuple):
+        if statres.st_ino not in self.data:
+            # first file is treated as regular
+            self.data[statres.st_ino] = dict()
+            hlink = self.data[statres.st_ino]
+            hlink["stat"] = statres
             hlink["first"] = index
             hlink["remain"] = []
             return "reg"
         else:
-            hlink = self.hlinks[stat.st_ino]
+            # later files are hardlinks to first
+            hlink = self.data[statres.st_ino]
             hlink["remain"].append(index)
-            return "hard"
+            return "lnk"
 
-    def is_first(self, index, stat):
+    def is_first(self, index: tuple, statres: tuple):
         """
-        Return True if index is hlinks["first"]
+        Return True if index is data["first"]
         First encountered hlink is treated as regular file in recovery
         """
-        return index == self.hlinks[stat.st_ino]["first"]
+        return index == self.data[statres.st_ino]["first"]
 
 
 hardlinks = HardLinks()
@@ -102,7 +102,7 @@ class ROPath(object):
     have a name.  They are required to be indexed though.
     """
 
-    def __init__(self, index):
+    def __init__(self, index: tuple, statres=None):
         """ROPath initializer"""
         self.opened, self.fileobj = None, None
         self.index = index
@@ -160,10 +160,6 @@ class ROPath(object):
         """True if corresponding file exists"""
         return self.type
 
-    def ishard(self):
-        """True if self corresponds to a hardlink"""
-        return self.type == "hard"
-
     def isreg(self):
         """True if self corresponds to regular file"""
         return self.type == "reg"
@@ -175,6 +171,10 @@ class ROPath(object):
     def issym(self):
         """True if self is sym"""
         return self.type == "sym"
+
+    def islnk(self):
+        """True if self is lnk"""
+        return self.type == "lnk"
 
     def isfifo(self):
         """True if self is fifo"""
@@ -243,7 +243,7 @@ class ROPath(object):
             if isinstance(self.symtext, str):
                 self.symtext = os.fsencode(self.symtext)
         elif type == dup_tarfile.LNKTYPE:
-            self.type = "hard"
+            self.type = "lnk"
             self.lnktext = tarinfo.linkname
             if isinstance(self.lnktext, str):
                 self.lnktext = os.fsencode(self.lnktext)
@@ -263,12 +263,8 @@ class ROPath(object):
         self.mode = tarinfo.mode
         self.statres = StatResult()
 
-        """ If do_not_restore_owner is False,
-        set user and group id
-        use numeric id if name lookup fails
-        OR
-        --numeric-owner is set
-        """
+        # If --do_not_restore_owner is False, set user and group id
+        # Use numeric ids if name lookup fails OR --numeric-owner is set
         try:
             if config.numeric_owner:
                 raise KeyError
@@ -294,19 +290,21 @@ class ROPath(object):
         new_ropath.type, new_ropath.mode = self.type, self.mode
         if self.issym():
             new_ropath.symtext = self.symtext
+        elif self.islnk():
+            new_ropath.lnktext = self.lnktext
         elif self.isdev():
             new_ropath.devnums = self.devnums
         if self.exists():
-            new_ropath.stat = self.statres
+            new_ropath.statres = self.statres
         return new_ropath
 
     def get_tarinfo(self):
-        """Generate a dup_tarfile.TarInfo object based on self
+        """
+        Generate a dup_tarfile.TarInfo object based on self
 
         Doesn't set size based on stat, because we may want to replace
         data wiht other stream.  Size should be set separately by
         calling function.
-
         """
         ti = dup_tarfile.TarInfo()
         if self.index:
@@ -334,7 +332,7 @@ class ROPath(object):
                     ti.linkname = os.fsdecode(ti.linkname)
             elif self.islnk():
                 ti.type = dup_tarfile.LNKTYPE
-                ti.linkname = self.lnktext
+                ti.linkname = os.path.join(*hardlinks.data[self.statres.st_ino]["first"])
                 if isinstance(ti.linkname, bytes):
                     ti.linkname = os.fsdecode(ti.linkname)
             elif self.isdev():
@@ -377,7 +375,7 @@ class ROPath(object):
         """Used to compare two ROPaths.  Doesn't look at fileobjs"""
         if not self.type and not other.type:
             return 1  # neither exists
-        if not self.statres and other.stat or not other.stat and self.statres:
+        if not self.statres and other.statres or not other.statres and self.statres:
             return 0
         if self.type != other.type:
             return 0
@@ -387,10 +385,10 @@ class ROPath(object):
             # signature size to size of file.
             if not self.perms_equal(other):
                 return 0
-            if int(self.statres.st_mtime) == int(other.stat.st_mtime):
+            if int(self.statres.st_mtime) == int(other.statres.st_mtime):
                 return 1
             # Below, treat negative mtimes as equal to 0
-            return self.statres.st_mtime <= 0 and other.stat.st_mtime <= 0
+            return self.statres.st_mtime <= 0 and other.statres.st_mtime <= 0
         elif self.issym():
             # here only symtext matters
             return self.symtext == other.symtext
@@ -424,27 +422,27 @@ class ROPath(object):
 
         if not self.type and not other.type:
             return 1
-        if not self.statres and other.stat:
+        if not self.statres and other.statres:
             log_diff(_("New file %s"))
             return 0
-        if not other.stat and self.statres:
+        if not other.statres and self.statres:
             log_diff(_("File %s is missing"))
             return 0
         if self.type != other.type:
-            log_diff(_("File %%s has type %s, expected %s") % (other.type, self.type))
+            log_diff(_("File %s has type %s, expected %s") % (other.type, self.type))
             return 0
 
         if self.isreg() or self.isdir() or self.isfifo():
             if not self.perms_equal(other):
-                log_diff(_("File %%s has permissions %s, expected %s") % (other.getperms(), self.getperms()))
+                log_diff(_("File %s has permissions %s, expected %s") % (other.getperms(), self.getperms()))
                 return 0
-            if (int(self.statres.st_mtime) != int(other.stat.st_mtime)) and (
-                self.statres.st_mtime > 0 or other.stat.st_mtime > 0
+            if (int(self.statres.st_mtime) != int(other.statres.st_mtime)) and (
+                self.statres.st_mtime > 0 or other.statres.st_mtime > 0
             ):
                 log_diff(
-                    _("File %%s has mtime %s, expected %s")
+                    _("File %s has mtime %s, expected %s")
                     % (
-                        dup_time.timetopretty(int(other.stat.st_mtime)),
+                        dup_time.timetopretty(int(other.statres.st_mtime)),
                         dup_time.timetopretty(int(self.statres.st_mtime)),
                     )
                 )
@@ -458,23 +456,23 @@ class ROPath(object):
             else:
                 return 1
         elif self.issym():
-            if self.symtext == other.symtext or self.symtext + os.fsencode(os.sep) == other.symtext:
+            if self.symtext == other.symtext or self.symtext + config.bytes_sep == other.symtext:
                 return 1
             else:
-                log_diff(_("Symlink %%s points to %s, expected %s") % (other.symtext, self.symtext))
+                log_diff(_("Symlink %s points to %s, expected %s") % (other.symtext, self.symtext))
                 return 0
         elif self.islnk():
-            if self.lnktext == other.lnktext or self.lnktext + os.fsencode(os.sep) == other.lnktext:
+            if self.lnktext == other.lnktext or self.lnktext + config.bytes_sep == other.lnktext:
                 return 1
             else:
-                log_diff(_("Hardlink %%s points to %s, expected %s") % (other.lnktext, self.lnktext))
+                log_diff(_("Hardlink %s points to %s, expected %s") % (other.lnktext, self.lnktext))
                 return 0
         elif self.isdev():
             if not self.perms_equal(other):
-                log_diff(_("Device file %%s has permissions %s, expected %s") % (other.getperms(), self.getperms()))
+                log_diff(_("Device file %s has permissions %s, expected %s") % (other.getperms(), self.getperms()))
                 return 0
             if self.devnums != other.devnums:
-                log_diff(_("Device file %%s has numbers %s, expected %s") % (other.devnums, self.devnums))
+                log_diff(_("Device file %s has numbers %s, expected %s") % (other.devnums, self.devnums))
                 return 0
             return 1
         assert 0
@@ -500,7 +498,7 @@ class ROPath(object):
 
     def perms_equal(self, other):
         """True if self and other have same permissions and ownership"""
-        s1, s2 = self.statres, other.stat
+        s1, s2 = self.statres, other.statres
         return self.mode == other.mode and s1.st_gid == s2.st_gid and s1.st_uid == s2.st_uid
 
     def copy(self, other):
@@ -516,7 +514,7 @@ class ROPath(object):
             other.setdata()
             return  # no need to copy symlink attributes
         elif self.islnk():
-            os.symlink(self.lnktext, other.name)
+            os.link(self.lnktext, other.name)
             other.setdata()
             return  # no need to copy hardlink attributes
         elif self.isfifo():
@@ -546,7 +544,7 @@ class ROPath(object):
             stat = StatResult()
             stat.st_uid, stat.st_gid = self.statres.st_uid, self.statres.st_gid
             stat.st_mtime = int(self.statres.st_mtime)
-            other.stat = stat
+            other.statres = stat
             other.mode = self.mode
 
     def __str__(self):
@@ -573,7 +571,7 @@ class Path(ROPath):
             path, extra = os.path.split(path)
             tail.insert(0, extra)
         if path:
-            return config.rename[path].split(os.fsencode(os.sep)) + tail
+            return config.rename[path].split(config.bytes_sep) + tail
         else:
             return index  # no rename found
 

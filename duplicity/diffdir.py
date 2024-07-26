@@ -146,7 +146,7 @@ def get_delta_path(new_path, sig_path, sigTarFile=None):
                 newfp = FileWithSignature(newfp, callback, new_path.getsize())
             delta_path.setfileobj(newfp)
     new_path.copy_attribs(delta_path)
-    delta_path.stat.st_size = new_path.stat.st_size
+    delta_path.statres.st_size = new_path.statres.st_size
     return delta_path
 
 
