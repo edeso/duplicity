@@ -230,11 +230,8 @@ class FinalTest(FunctionalTestCase):
         self.backup("inc", f"{_runtest_dir}/testfiles/dir2", options=["--allow-source-mismatch"])
         self.collection_status(options=["--show-changes-in-set", "-1", "--jsonstat"])
 
-    @pytest.mark.slow
-    def test_skip_if_no_change(self):
-        """Like test_basic_cycle but use asymmetric encryption and signing"""
-        backup_options = ["--skip-if-no-change"]
-        restore_options = []
+    def run_with_no_change(self, backup_options=None, restore_options=None):
+        """Like test_basic_cycle but runs a incremental backup with no changes after full"""
         testfiles = [
             ("symbolic_link", 99999, "dir1"),
             ("directory_to_file", 100100, "dir1"),
@@ -252,6 +249,20 @@ class FinalTest(FunctionalTestCase):
             ],
             testfiles=testfiles,
         )
+
+    @pytest.mark.slow
+    def test_skip_if_no_change(self):
+        self.run_with_no_change(backup_options=["--skip-if-no-change"])
+
+    @pytest.mark.slow
+    def test_concurrency(self):
+        backup_options = ["--concurrency=2"]
+        self.test_basic_cycle(backup_options=backup_options)
+
+    @pytest.mark.slow
+    def test_concurrency_and_skip_if_no_change(self):
+        backup_options = ["--concurrency=2", "--skip-if-no-change"]
+        self.run_with_no_change(backup_options=backup_options)
 
 
 if __name__ == "__main__":

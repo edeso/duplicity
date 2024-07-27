@@ -22,41 +22,26 @@
 
 import grp
 import pwd
+from functools import lru_cache
+
+limit = 512
 
 
-class CachedCall(object):
-    """Decorator for caching the results of function calls."""
-
-    def __init__(self, f):
-        self.cache = {}
-        self.f = f
-
-    def __call__(self, *args):
-        try:
-            return self.cache[args]
-        except (KeyError, TypeError) as e:
-            result = self.f(*args)
-            if not isinstance(e, TypeError):
-                # TypeError most likely means that args is not hashable
-                self.cache[args] = result
-            return result
-
-
-@CachedCall
+@lru_cache(maxsize=limit)
 def getgrgid(gid):
     return grp.getgrgid(gid)
 
 
-@CachedCall
+@lru_cache(maxsize=limit)
 def getgrnam(name):
     return grp.getgrnam(name)
 
 
-@CachedCall
+@lru_cache(maxsize=limit)
 def getpwnam(name):
     return pwd.getpwnam(name)
 
 
-@CachedCall
+@lru_cache(maxsize=limit)
 def getpwuid(uid):
     return pwd.getpwuid(uid)

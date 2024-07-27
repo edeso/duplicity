@@ -24,8 +24,10 @@ Data for parse command line, check for consistency, and set config
 
 from dataclasses import dataclass
 
-from duplicity import __reldate__
-from duplicity import __version__
+from duplicity import (
+    __reldate__,
+    __version__,
+)
 from duplicity.cli_util import *
 
 
@@ -105,6 +107,7 @@ OptionKwargs = dict(
         help="Path to store metadata archives",
         default=dflt(config.archive_dir),
     ),
+    # TODO: Remove in 4.0.0
     asynchronous_upload=dict(
         action=WarnAsyncStoreConstAction,
         const=1,
@@ -440,8 +443,10 @@ OptionKwargs = dict(
         type=set_log_file,
         help="Logging filename to use",
     ),
+    # log_timestamp is directly applied in SetLogTimestampAction(), not saved in config
     log_timestamp=dict(
-        action="store_true",
+        dest="",
+        action=SetLogTimestampAction,
         help="Whether to include timestamp and level in log",
         default=dflt(False),
     ),

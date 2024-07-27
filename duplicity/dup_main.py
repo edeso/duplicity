@@ -30,32 +30,35 @@
 # any suggestions.
 
 
-from dataclasses import dataclass
 import os
 import platform
 import resource
 import sys
 import time
+from dataclasses import dataclass
 from textwrap import dedent
 from typing import Dict
 
-from duplicity import __version__
-from duplicity import backend_pool
-from duplicity import cli_main
-from duplicity import config
-from duplicity import diffdir
-from duplicity import dup_collections
-from duplicity import dup_temp
-from duplicity import dup_time
-from duplicity import file_naming
-from duplicity import gpg
-from duplicity import log
-from duplicity import manifest
-from duplicity import patchdir
-from duplicity import path
-from duplicity import progress
-from duplicity import tempdir
-from duplicity import util
+from duplicity import (
+    __version__,
+    backend_pool,
+    cli_main,
+    config,
+    diffdir,
+    dup_collections,
+    dup_temp,
+    dup_time,
+    file_naming,
+    gpg,
+    log,
+    log_util,
+    manifest,
+    patchdir,
+    path,
+    progress,
+    tempdir,
+    util,
+)
 from duplicity.errors import BadVolumeException
 
 # If exit_val is not None, exit with given value at end.
@@ -141,19 +144,10 @@ def get_passphrase(n, action, for_signing=False):
     ]:
         return ""
 
-    # for a full backup, we don't need a password if
+    # for a full, inc, verify, we don't need a password if
     # there is no sign_key and there are recipients
     elif (
-        action == "full"
-        and (config.gpg_profile.recipients or config.gpg_profile.hidden_recipients)
-        and (not config.gpg_profile.sign_key or (not config.restart and not for_signing))
-    ):
-        return ""
-
-    # for an inc backup, we don't need a password if
-    # there is no sign_key and there are recipients
-    elif (
-        action == "inc"
+        action in ("full", "inc", "verify")
         and (config.gpg_profile.recipients or config.gpg_profile.hidden_recipients)
         and (not config.gpg_profile.sign_key or (not config.restart and not for_signing))
     ):
@@ -229,7 +223,7 @@ def dummy_backup(tarblock_iter):
             pass
     except StopIteration:
         pass
-    log.Progress(None, diffdir.stats.SourceFileSize)
+    log_util.Progress(None, diffdir.stats.SourceFileSize)
     return 0
 
 
@@ -327,7 +321,7 @@ def write_multivol(backup_type, tarblock_iter, man_outfp, sig_outfp, backend):
         res, msg = backend.validate(dest_filename, putsize, source_path=tdp)
         if not res:
             code_extra = f"{util.escape(dest_filename)}: {msg}"
-            log.FatalError(
+            log_util.FatalError(
                 _("File %s was corrupted during upload.") % os.fsdecode(dest_filename),
                 log.ErrorCode.backend_validation_failed,
                 code_extra,
@@ -357,7 +351,7 @@ def write_multivol(backup_type, tarblock_iter, man_outfp, sig_outfp, backend):
 
         vol1_filename = file_naming.get(backup_type, 1, encrypted=config.encryption, gzipped=config.compression)
         if vol1_filename != backup_set.volume_name_dict[1]:
-            log.FatalError(
+            log_util.FatalError(
                 _("Restarting backup, but current encryption " "settings do not match original settings"),
                 log.ErrorCode.enryption_mismatch,
             )
@@ -375,13 +369,13 @@ def write_multivol(backup_type, tarblock_iter, man_outfp, sig_outfp, backend):
         transfer_success = False
         manifest_written = False
 
-    def collect_put_results(bytes_written: int, backend_pooler, command2vol_map: Dict[int, CommandMetaData]) -> int:
-        commands_left, results = backend_pooler.collect_results()
-        for track_id, result in results.items():
+    def collect_put_results(bytes_written: int, backend_pooler, command2vol_map: Dict[int, CommandMetaData]):
+        for result in backend_pooler.results_since_last_call():
+            track_id = result.track_id
             size = result.result
             bytes_written += size
             progress.report_transfer(size, size)
-            log.Progress(_("Processed volume %d") % command2vol_map[track_id].vol_num, bytes_written)
+            log_util.Progress(_("Processed volume %d") % command2vol_map[track_id].vol_num, bytes_written)
             command2vol_map[track_id].transfer_success = True
             if command2vol_map[track_id].path_obj.stat:
                 command2vol_map[track_id].path_obj.delete()
@@ -391,31 +385,30 @@ def write_multivol(backup_type, tarblock_iter, man_outfp, sig_outfp, backend):
                 f"Transfer of {command2vol_map[track_id].path_obj.get_filename()} with id {track_id} and size "
                 f"{size} took {result.get_runtime()}"
             )
-        return commands_left
 
     def write_manifest_in_sequence(mf, mf_file, command2vol_map: Dict[int, CommandMetaData]):
         """
         Ensure volume info is written only if the volume transfer was successful and in sequence
         without gap otherwise missing volumes won't be detected and data is missing.
         """
-        i = iter(command2vol_map.keys())
-        info = command2vol_map[next(i)]
-        while info.manifest_written and info.transfer_success:
-            # skip all entries already written
+        try:
+            i = iter(command2vol_map.keys())
             info = command2vol_map[next(i)]
-        while info.transfer_success:
-            # if next volumes are tranferred
-            if not info.manifest_written:
-                mf.add_volume_info(info.vol_info)
-            info.manifest_written = True
-            try:
+            while info.manifest_written and info.transfer_success:
+                # skip all entries already written
                 info = command2vol_map[next(i)]
-            except StopIteration:
-                break
-            if info.vol_num == 1:
-                mf_file.to_partial()
-            else:
-                mf_file.flush()
+            while info.transfer_success:
+                # if next volumes are transferred
+                if not info.manifest_written:
+                    mf.add_volume_info(info.vol_info)
+                info.manifest_written = True
+                info = command2vol_map[next(i)]
+                if info.vol_num == 1:
+                    mf_file.to_partial()
+                else:
+                    mf_file.flush()
+        except StopIteration:
+            pass  # no manifest to update
 
     if not config.restart:
         # normal backup start
@@ -487,7 +480,7 @@ def write_multivol(backup_type, tarblock_iter, man_outfp, sig_outfp, backend):
         if config.skip_if_no_change and diffdir.stats.DeltaEntries == 0 and at_end and vol_num == 1:
             # if nothing changed, skip upload if configured.
             msg = _("Skipped volume upload, as effectivly nothing has changed")
-            log.Progress(msg, diffdir.stats.SourceFileSize)
+            log_util.Progress(msg, diffdir.stats.SourceFileSize)
             log.Notice(_(msg))
             config.skipped_inc = True
             tdp.delete()
@@ -497,10 +490,9 @@ def write_multivol(backup_type, tarblock_iter, man_outfp, sig_outfp, backend):
             try:
                 # use process pool the write volumes in the background.
                 progress.report_transfer(0, tdp.getsize())
-                track_id = backend_pooler.command(backend.put_validated.__name__, args=(tdp, dest_filename))
+                track_id = backend_pooler.command_throttled(backend.put_validated.__name__, args=(tdp, dest_filename))
                 command2vol_map[track_id] = CommandMetaData(vol_num, tdp, vi)
-                commands_processing = collect_put_results(bytes_written, backend_pooler, command2vol_map)
-                log.Debug(f"Still {commands_processing} in the background pool.")
+                collect_put_results(bytes_written, backend_pooler, command2vol_map)
                 write_manifest_in_sequence(mf, man_outfp, command2vol_map)
             except (Exception, SystemExit) as e:
                 # ensure pool processes terminate clean
@@ -519,7 +511,7 @@ def write_multivol(backup_type, tarblock_iter, man_outfp, sig_outfp, backend):
             bytes_written += put(tdp, dest_filename, vol_num)
 
             # Log human-readable version as well as raw numbers for machine consumers
-            log.Progress(_("Processed volume %d") % vol_num, diffdir.stats.SourceFileSize)
+            log_util.Progress(_("Processed volume %d") % vol_num, diffdir.stats.SourceFileSize)
             # Snapshot (serialize) progress now as a Volume has been completed.
             # This is always the last restore point when it comes to restart a failed backup
             if config.progress:
@@ -530,24 +522,28 @@ def write_multivol(backup_type, tarblock_iter, man_outfp, sig_outfp, backend):
             # wait for background commands, collect some stats and shutdown clean.
             log.Debug("Collecting remaining results from backend pool.")
             while True and backend_pooler:
-                commands_left = collect_put_results(bytes_written, backend_pooler, command2vol_map)
+                collect_put_results(bytes_written, backend_pooler, command2vol_map)
                 write_manifest_in_sequence(mf, man_outfp, command2vol_map)
-                if commands_left == 0:
+                if backend_pooler.get_queue_length() == 0:
                     break
                 else:
-                    log.Debug(f"Still {commands_left} commands left, waiting ...")
+                    log.Debug(f"Still {backend_pooler.get_queue_length()} commands left, waiting ...")
                     time.sleep(2)
             # print some stats, that can be used to track efficiency of concurrent transfers.
             stats = backend_pooler.get_stats()
             log.Info(
-                f'Transferred {stats["count"]} volumes, a volume took avg: {stats["avg"]}, '
-                'max: {stats["max"]}, min: {stats["min"]}'
+                f'Transferred {stats["count"]} volumes, a volume took avg: {stats["time"]["avg"]}, '
+                + f'max: {stats["time"]["max"]}, min: {stats["time"]["min"]}'
             )
-            # add stats to jsonstat. Not the most elegant way, but it is working.
-            diffdir.stats.stat_attrs += ("VolumeTransferTimeAVG", "VolumeTransferTimeMAX", "VolumeTransferTimeMIN")
-            diffdir.stats.set_stat("VolumeTransferTimeAVG", stats["avg"])
-            diffdir.stats.set_stat("VolumeTransferTimeMAX", stats["max"])
-            diffdir.stats.set_stat("VolumeTransferTimeMIN", stats["min"])
+            # double check that all volumes are transferred
+            if not any([x.transfer_success for x in command2vol_map.values()]) and not config.skipped_inc:
+                failed_volume_numbers = [
+                    x.vol_info.volume_number for x in command2vol_map.values() if not x.transfer_success
+                ]
+                log_util.FatalError(f"Volumes with number {failed_volume_numbers} were not transferred successful.")
+            # Add some stats, accessible with `--jsonstats`. Not the most elegant way, but it is working.
+            diffdir.stats.stat_attrs += ("ConcurrentTransferStats",)
+            diffdir.stats.set_stat("ConcurrentTransferStats", stats)
         finally:
             # make sure pool get terminated gracefully in any case.
             backend_pooler.shutdown()
@@ -680,7 +676,7 @@ def full_backup(col_stats):
             # Terminate the background thread now, if any
             progress.progress_thread.finished = True
             progress.progress_thread.join()
-            log.TransferProgress(
+            log_util.TransferProgress(
                 100.0,
                 0,
                 progress.tracker.total_bytecount,
@@ -704,7 +700,7 @@ def check_sig_chain(col_stats):
     """
     if not col_stats.matched_chain_pair:
         if config.action == "inc" and not config.implied_inc:
-            log.FatalError(
+            log_util.FatalError(
                 _(
                     "Fatal Error: Unable to start incremental backup.  "
                     "Old signatures not found and incremental specified"
@@ -790,7 +786,7 @@ def incremental_backup(sig_chain, col_stats=None):
             # Terminate the background thread now, if any
             progress.progress_thread.finished = True
             progress.progress_thread.join()
-            log.TransferProgress(
+            log_util.TransferProgress(
                 100.0,
                 0,
                 progress.tracker.total_bytecount,
@@ -865,12 +861,12 @@ def restore(col_stats):
         return
     if not patchdir.Write_ROPaths(config.local_path, restore_get_patched_rop_iter(col_stats)):
         if config.restore_path:
-            log.FatalError(
+            log_util.FatalError(
                 _("%s not found in archive - no files restored.") % (os.fsdecode(config.restore_path)),
                 log.ErrorCode.restore_path_not_found,
             )
         else:
-            log.FatalError(_("No files found in archive - nothing restored."), log.ErrorCode.no_restore_files)
+            log_util.FatalError(_("No files found in archive - nothing restored."), log.ErrorCode.no_restore_files)
 
 
 def restore_get_patched_rop_iter(col_stats):
@@ -899,14 +895,16 @@ def restore_get_patched_rop_iter(col_stats):
         volumes = manifest.get_containing_volumes(index)
         for vol_num in volumes:
             try:
-                yield restore_get_enc_fileobj(
+                fobj = restore_get_enc_fileobj(
                     backup_set.backend, backup_set.volume_name_dict[vol_num], manifest.volume_info_dict[vol_num]
                 )
+                if fobj is not None:
+                    yield fobj
             except BadVolumeException as e:
                 yield e
 
             cur_vol[0] += 1
-            log.Progress(_("Processed volume %d of %d") % (cur_vol[0], num_vols), cur_vol[0], num_vols)
+            log_util.Progress(_("Processed volume %d of %d") % (cur_vol[0], num_vols), cur_vol[0], num_vols)
 
     if hasattr(config.backend, "pre_process_download_batch") or config.dry_run:
         file_names = []
@@ -957,14 +955,15 @@ def restore_get_enc_fileobj(backend, filename, volume_info):
             log.Error(error_msg, code=log.ErrorCode.mismatched_hash)
     else:
         if config.ignore_errors:
-            exc = duplicity.errors.BadVolumeException(f"Hash mismatch for: {os.fsdecode(filename)}")
+            exc = BadVolumeException(f"Hash mismatch for: {os.fsdecode(filename)}")
             log.Warn(
                 _("IGNORED_ERROR: Warning: ignoring error as requested: %s: %s")
                 % (exc.__class__.__name__, util.uexc(exc))
             )
+            # Do not try to actually read it as it is corrupted!
+            return None
         else:
-            log.FatalError(error_msg, code=log.ErrorCode.mismatched_hash)
-
+            log_util.FatalError(error_msg, code=log.ErrorCode.mismatched_hash)
     fileobj = tdp.filtered_open_with_delete("rb")
     if parseresults.encrypted and config.gpg_profile.sign_key:
         restore_add_sig_check(fileobj)
@@ -1004,7 +1003,7 @@ def restore_add_sig_check(fileobj):
         sign_key = "None" if sign_key is None else sign_key
         ofs = -min(len(actual_sig), len(sign_key))
         if actual_sig[ofs:] != sign_key[ofs:]:
-            log.FatalError(
+            log_util.FatalError(
                 _("Volume was signed by key %s, not %s") % (actual_sig[ofs:], sign_key[ofs:]),
                 log.ErrorCode.unsigned_volume,
             )
@@ -1253,7 +1252,7 @@ def sync_archive(col_stats):
 
     def copy_raw(src_iter, filename):
         """
-        Copy data from src_iter to file at fn
+        Copy data from src_iter to filename
         """
         file = open(filename, "wb")
         while True:
@@ -1320,7 +1319,9 @@ def sync_archive(col_stats):
                             name = name.name
                     else:
                         name = None
-                    log.FatalError(_("Failed to read %s: %s") % (os.fsdecode(fn), util.uexc(e)), log.ErrorCode.generic)
+                    log_util.FatalError(
+                        _("Failed to read %s: %s") % (os.fsdecode(fn), util.uexc(e)), log.ErrorCode.generic
+                    )
                 if not res.data:
                     self.fileobj.close()
                     raise StopIteration
@@ -1451,47 +1452,46 @@ def check_resources(action):
         try:
             stats = os.statvfs(tempfs)
         except Exception:
-            log.FatalError(_("Unable to get free space on temp."), log.ErrorCode.get_freespace_failed)
+            log_util.FatalError(_("Unable to get free space on temp."), log.ErrorCode.get_freespace_failed)
         # Calculate space we need for at least 2 volumes of full or inc
         # plus about 30% of one volume for the signature files.
         freespace = stats.f_frsize * stats.f_bavail
-        needspace = ((config.concurrency + 1) * config.volsize) + int(0.30 * config.volsize)
+        needspace = ((config.concurrency + 2) * config.volsize) + int(0.30 * config.volsize)
         if freespace < needspace:
-            log.FatalError(
-                _("Temp space has %d available, backup needs approx %d.") % (freespace, needspace),
+            log_util.FatalError(
+                _(f"Temp space has {freespace:,} available, backup needs approx {needspace:,}."),
                 log.ErrorCode.not_enough_freespace,
             )
         else:
-            log.Info(_("Temp has %d available, backup will use approx %d.") % (freespace, needspace))
+            log.Info(_(f"Temp has {freespace:,} available, backup will use approx {needspace:,}."))
 
         # Some environments like Cygwin run with an artificially
         # low value for max open files.  Check for safe number.
         try:
             soft, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
         except resource.error:
-            log.FatalError(_("Unable to get max open files."), log.ErrorCode.get_ulimit_failed)
+            log_util.FatalError(_("Unable to get max open files."), log.ErrorCode.get_ulimit_failed)
         maxopen = min([l for l in (soft, hard) if l > -1])
         if maxopen < 1024:
-            log.FatalError(
+            log_util.FatalError(
                 _(
-                    "Max open files of %s is too low, should be >= 1024.\n"
-                    "Use 'ulimit -n 1024' or higher to correct.\n"
-                )
-                % (maxopen,),
+                    f"Max open files of {maxopen} is too low, should be >= 1024.\n"
+                    f"Use 'ulimit -n 1024' or higher to correct.\n"
+                ),
                 log.ErrorCode.maxopen_too_low,
             )
 
 
-def log_startup_parms(verbosity=log.INFO):
+def log_startup_parms():
     """
     log Python, duplicity, and system versions
     """
-    log.Log("=" * 80, verbosity)
-    log.Log(f"duplicity {__version__}", verbosity)
-    log.Log(f"Args: {' '.join([os.fsdecode(arg) for arg in sys.argv])}", verbosity)
-    log.Log(" ".join(platform.uname()), verbosity)
-    log.Log(f"{sys.executable or sys.platform} {sys.version}", verbosity)
-    log.Log("=" * 80, verbosity)
+    log.Notice("=" * 80)
+    log.Notice(f"duplicity {__version__}")
+    log.Notice(f"Args: {' '.join([os.fsdecode(arg) for arg in sys.argv])}")
+    log.Notice(" ".join(platform.uname()))
+    log.Notice(f"{sys.executable or sys.platform} {sys.version}")
+    log.Notice("=" * 80)
 
 
 class Restart(object):
@@ -1574,7 +1574,7 @@ def main():
     # duplicity crashes when PYTHONOPTIMIZE is set, so check
     # and refuse to run if it is set.
     if "PYTHONOPTIMIZE" in os.environ:
-        log.FatalError(
+        log_util.FatalError(
             dedent(
                 _(
                     """\
@@ -1606,7 +1606,7 @@ def main():
     util.acquire_lockfile()
 
     # log some status info
-    log_startup_parms(log.INFO)
+    log_startup_parms()
 
     try:
         do_backup(action)
@@ -1684,7 +1684,7 @@ def do_backup(action):
     ):
         log.Notice(_("Last full backup is too old, forcing full backup"))
         action = "full"
-    log.PrintCollectionStatus(col_stats)
+    log_util.PrintCollectionStatus(col_stats)
 
     # get the passphrase if we need to based on action/options
     config.gpg_profile.passphrase = get_passphrase(1, action)
@@ -1699,15 +1699,15 @@ def do_backup(action):
         if config.show_changes_in_set is not None:
             if not config.jsonstat:
                 # print classic stats
-                log.PrintCollectionChangesInSet(col_stats, config.show_changes_in_set, True)
+                log_util.PrintCollectionChangesInSet(col_stats, config.show_changes_in_set, True)
             else:
                 # print json stat
                 json_stat = col_stats.get_changes_in_set_json(config.show_changes_in_set)
                 log.Log(str(json_stat), 8, log.InfoCode.collection_status, None, True)
         elif not config.file_changed:
-            log.PrintCollectionStatus(col_stats, True)
+            log_util.PrintCollectionStatus(col_stats, True)
         else:
-            log.PrintCollectionFileChangedStatus(col_stats, config.file_changed, True)
+            log_util.PrintCollectionFileChangedStatus(col_stats, config.file_changed, True)
     elif action == "cleanup":
         cleanup(col_stats)
     elif action == "remove-older-than":
@@ -1736,7 +1736,7 @@ def do_backup(action):
                 config.gpg_profile.signing_passphrase
                 and config.gpg_profile.passphrase != config.gpg_profile.signing_passphrase
             ):
-                log.FatalError(
+                log_util.FatalError(
                     _(
                         "When using symmetric encryption, the signing passphrase "
                         "must equal the encryption passphrase."

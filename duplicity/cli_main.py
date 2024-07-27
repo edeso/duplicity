@@ -23,18 +23,15 @@ Main for parse command line, check for consistency, and set config
 """
 
 import copy
-import inspect
-import sys
-from textwrap import dedent, wrap
 
 # TODO: Remove duplicity.argparse311 when py38 goes EOL
-from duplicity import argparse311 as argparse
-from duplicity import backend
-from duplicity import config
-from duplicity import cli_util
-from duplicity import gpg
-from duplicity import log
-from duplicity import util
+from duplicity import (
+    argparse311 as argparse,
+    backend,
+    cli_util,
+    gpg,
+    util,
+)
 from duplicity.cli_data import *
 
 
@@ -115,7 +112,7 @@ def parse_log_options(arglist):
     try:
         args, remainder = parser.parse_known_intermixed_args(arglist)
     except (argparse.ArgumentError, argparse.ArgumentTypeError) as e:
-        raise CommandLineError(str(e))
+        command_line_error(str(e))
 
     return args, remainder
 
@@ -140,7 +137,7 @@ def parse_cmdline_options(arglist):
     try:
         args, remainder = parser.parse_known_intermixed_args(remainder)
     except (argparse.ArgumentError, argparse.ArgumentTypeError) as e:
-        raise CommandLineError(str(e))
+        command_line_error(str(e))
 
     # let's test the command and try to assume which action,
     # eventually err out if no valid action could be determined/was given

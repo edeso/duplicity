@@ -24,7 +24,6 @@ Provides a common interface to all backends and certain sevices
 intended to be used by the backends themselves.
 """
 
-from datetime import datetime
 import errno
 import getpass
 import multiprocessing
@@ -32,26 +31,31 @@ import os
 import re
 import sys
 import time
-import traceback
-from typing import Tuple
 import urllib.error
 import urllib.parse
 import urllib.request
-from duplicity import errors
+from datetime import datetime
+from typing import Tuple
 
 import duplicity.backends
-from duplicity import config
-from duplicity import dup_temp
-from duplicity import file_naming
-from duplicity import log
-from duplicity import path
-from duplicity import util
-from duplicity.errors import BackendException
-from duplicity.errors import ConflictingScheme
-from duplicity.errors import FatalBackendException
-from duplicity.errors import InvalidBackendURL
-from duplicity.errors import TemporaryLoadException
-from duplicity.errors import UnsupportedBackendScheme
+from duplicity import (
+    config,
+    dup_temp,
+    errors,
+    file_naming,
+    log,
+    log_util,
+    path,
+    util,
+)
+from duplicity.errors import (
+    BackendException,
+    ConflictingScheme,
+    FatalBackendException,
+    InvalidBackendURL,
+    TemporaryLoadException,
+    UnsupportedBackendScheme,
+)
 from duplicity.util import exception_traceback
 
 _backends = {}
@@ -418,7 +422,7 @@ def retry(operation, fatal=True):
                                 e.code = code
                                 raise
                             else:
-                                log.FatalError(
+                                log_util.FatalError(
                                     _("Giving up after %s attempts. %s: %s") % (n, e.__class__.__name__, util.uexc(e)),
                                     code=code,
                                     extra=extra,
@@ -656,9 +660,9 @@ class BackendWrapper(object):
                         "File size can't be validated, because of missing capabilities of the backend. "
                         "Please verify the backup separately."
                     )
-                    return (True, "Backend has no capabilities to check filesize, skip validation.")
+                    return True, "Backend has no capabilities to check filesize, skip validation."
                 if size == expected_size:
-                    return (True, "Validation OK, file size matches.")
+                    return True, "Validation OK, file size matches."
                 msg = _("%s Remote filesize %d for %s does not match local size %d") % (
                     datetime.now(),
                     size,
@@ -667,7 +671,7 @@ class BackendWrapper(object):
                 )
                 log.Notice(f"{msg}, retrying.")
                 time.sleep(2**attempt)
-        return (False, f"{msg}.")
+        return False, f"{msg}."
 
     def pre_process_download(self, remote_filename):
         """

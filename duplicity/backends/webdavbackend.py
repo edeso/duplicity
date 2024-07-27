@@ -33,9 +33,12 @@ import urllib.request
 import xml.dom.minidom
 
 import duplicity.backend
-from duplicity import config
-from duplicity import log
-from duplicity import util
+from duplicity import (
+    config,
+    log,
+    log_util,
+    util,
+)
 from duplicity.errors import (
     BackendException,
     FatalBackendException,
@@ -57,7 +60,7 @@ class CustomMethodRequest(urllib.request.Request):
         return self.method
 
 
-class VerifiedHTTPSConnection(http.client.HTTPSConnection):
+class CustomHTTPSConnection(http.client.HTTPSConnection):
     def __init__(self, *args, **kwargs):
         try:
             global socket, ssl
@@ -93,11 +96,14 @@ class VerifiedHTTPSConnection(http.client.HTTPSConnection):
             self.sock = sock
             self.tunnel()
 
-        context = ssl.create_default_context(
-            ssl.Purpose.SERVER_AUTH,
-            cafile=self.cacert_file,
-            capath=config.ssl_cacert_path,
-        )
+        if config.ssl_no_check_certificate:
+            context = ssl._create_unverified_context()
+        else:
+            context = ssl.create_default_context(
+                ssl.Purpose.SERVER_AUTH,
+                cafile=self.cacert_file,
+                capath=config.ssl_cacert_path,
+            )
         self.sock = context.wrap_socket(sock, server_hostname=self.host)
 
     def request(self, *args, **kwargs):  # pylint: disable=method-hidden
@@ -132,9 +138,9 @@ class WebDAVBackend(duplicity.backend.Backend):
             try:
                 self.headers = util.merge_dicts(self.headers, util.csv_args_to_dict(config.webdav_headers))
             except IndexError as e:
-                log.FatalError("--webdav-headers value has an odd number of arguments.  Must be paired.")
+                log_util.FatalError("--webdav-headers value has an odd number of arguments.  Must be paired.")
             except SyntaxError as e:
-                log.FatalError("--webdav-headers value has bad syntax.  Check quoting pairs.")
+                log_util.FatalError("--webdav-headers value has bad syntax.  Check quoting pairs.")
             except Exception as e:
                 log.FatalErrof(f"--webdav-headers value caused error: {e}")
 
@@ -183,10 +189,7 @@ class WebDAVBackend(duplicity.backend.Backend):
         if self.parsed_url.scheme in ["webdav", "http"]:
             self.conn = http.client.HTTPConnection(self.parsed_url.hostname, self.parsed_url.port)
         elif self.parsed_url.scheme in ["webdavs", "https"]:
-            if config.ssl_no_check_certificate:
-                self.conn = http.client.HTTPSConnection(self.parsed_url.hostname, self.parsed_url.port)
-            else:
-                self.conn = VerifiedHTTPSConnection(self.parsed_url.hostname, self.parsed_url.port)
+            self.conn = CustomHTTPSConnection(self.parsed_url.hostname, self.parsed_url.port)
         else:
             raise FatalBackendException(_("WebDAV Unknown URI scheme: %s") % self.parsed_url.scheme)
 

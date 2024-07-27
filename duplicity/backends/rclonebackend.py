@@ -24,7 +24,10 @@ import os
 import os.path
 
 import duplicity.backend
-from duplicity import log
+from duplicity import (
+    log,
+    log_util,
+)
 from duplicity.errors import BackendException
 
 
@@ -38,7 +41,7 @@ class RcloneBackend(duplicity.backend.Backend):
         try:
             rc, o, e = self._subprocess_safe_popen(f"{self.rclone_cmd} version")
         except Exception:
-            log.FatalError("rclone not found: please install rclone", log.ErrorCode.backend_error)
+            log_util.FatalError("rclone not found: please install rclone", log.ErrorCode.backend_error)
 
         verb = log.getverbosity()
         if verb >= log.DEBUG:
@@ -84,6 +87,19 @@ class RcloneBackend(duplicity.backend.Backend):
         if not o:
             return filelist
         return [os.fsencode(x) for x in o.split("\n") if x]
+
+    def _query(self, remote_filename: str):
+        size = None
+        try:
+            remote_filename = os.fsdecode(remote_filename)
+            commandline = f"{self.rclone_cmd} lsf --format=s '{self.remote_path}/{remote_filename}'"
+            rc, o, e = self._subprocess_safe_popen(commandline)
+            if rc == 3:  # not found
+                size = -1
+            elif rc == 0:
+                size = int(o)
+        finally:
+            return {"size": size}
 
     def _delete(self, remote_filename):
         remote_filename = os.fsdecode(remote_filename)
