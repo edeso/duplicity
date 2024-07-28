@@ -35,13 +35,15 @@ import stat
 import time
 from collections import UserDict
 
-from duplicity import cached_ops
-from duplicity import config
-from duplicity import dup_time
-from duplicity import file_naming
-from duplicity import gpg
-from duplicity import librsync
-from duplicity import dup_tarfile
+from duplicity import (
+    cached_ops,
+    config,
+    dup_tarfile,
+    dup_time,
+    file_naming,
+    gpg,
+    librsync,
+)
 from duplicity.lazy import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 
 _tmp_path_counter = 1
@@ -332,7 +334,7 @@ class ROPath(object):
                     ti.linkname = os.fsdecode(ti.linkname)
             elif self.islnk():
                 ti.type = dup_tarfile.LNKTYPE
-                ti.linkname = os.path.join(*hardlinks.data[self.statres.st_ino]["first"])
+                ti.linkname = self.lnktext
                 if isinstance(ti.linkname, bytes):
                     ti.linkname = os.fsdecode(ti.linkname)
             elif self.isdev():
@@ -616,6 +618,8 @@ class Path(ROPath):
             self.set_from_stat()
             if self.issym():
                 self.symtext = os.readlink(self.name)
+            elif self.islnk():
+                self.lnktext = self.name
 
     def append(self, ext):
         """Return new Path with ext added to index"""

@@ -26,8 +26,10 @@ import pickle
 import socket
 import sys
 
-from duplicity import __version__, log
-from duplicity import gpg
+from duplicity import (
+    __version__,
+    log,
+)
 
 # The current version of duplicity
 version = __version__
