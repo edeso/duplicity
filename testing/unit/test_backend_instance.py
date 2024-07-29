@@ -153,7 +153,7 @@ class BackendInstanceBase(UnitTestCase):
         # Backends can either return -1 themselves, or throw an error
         # that gives log.ErrorCode.backend_not_found.
         try:
-            info = self.backend._query(b"file-a")
+            info = self.backend._query(b"missing-file")
         except BackendException as e:  # pylint:
             pass  # Something went wrong, but it was an 'expected' something
         except Exception as e:
@@ -247,8 +247,6 @@ class FTPSBackendTest(BackendInstanceBase):
 class RCloneBackendTest(BackendInstanceBase):
     def setUp(self):
         super().setUp()
-        # make sure rclone config exists
-        assert not os.system("rclone config touch")
         # add a duptest local config
         try:
             assert not os.system("rclone config create duptest local local=true --non-interactive")
