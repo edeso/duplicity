@@ -34,7 +34,7 @@ from . import CmdError, FunctionalTestCase, EnvController
 # os.environ['PYDEVD'] = "vscode"
 
 
-@pytest.mark.timeout(90)
+@pytest.mark.timeout(90, "signal")
 class ConcurrencyFullLivecycleTest(FunctionalTestCase):
     def test_verify_compare_data(self):
         """Test that verify works in the basic case when the --compare-data option is used"""
@@ -48,7 +48,7 @@ class ConcurrencyFullLivecycleTest(FunctionalTestCase):
         )
 
 
-@pytest.mark.timeout(90)
+@pytest.mark.timeout(90, "signal")
 class ConcurrencyFailTest(FunctionalTestCase):
     def setUp(self):
         super().setUp()

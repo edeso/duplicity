@@ -66,8 +66,8 @@ class _TestBackend(duplicity.backend.Backend):
 
     def __init__(self, parsed_url):
         super().__init__(parsed_url)
-        log._logger.addHandler(logging.FileHandler("/tmp/testbackend.log"))
-        log.Warn("TestBackend is not made for production use!")
+        # log._logger.addHandler(logging.FileHandler("/tmp/testbackend.log"))
+        # log.Warn("TestBackend is not made for production use!")
         # The URL form "file:MyFile" is not a valid duplicity target.
         if not parsed_url.path.startswith("//"):
             raise BackendException("Bad file:// path syntax.")
