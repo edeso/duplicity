@@ -1,6 +1,6 @@
 [project]
 name = "duplicity"
-version = "3.0.1.dev"
+version = "3.0.1"
 dynamic = ["dependencies"]
 description = "Encrypted backup using rsync algorithm"
 authors = [
