@@ -1,6 +1,66 @@
 # Changelog
 
 
+## rel.3.0.1 (2024-08-05)
+
+### Changes
+
+* Remove version limits on urllib3. [Kenneth Loafman]
+
+    - did nothing since requests loads urllib3 first.
+
+* Add some debug output to help pinpoint B2 backend import issues. [ede]
+
+* Make sure rclone backend is tested. [Kenneth Loafman]
+
+    - add to .gitlab-ci.yml
+    - fix test_query_missing
+
+* Run po/update-pot. [Kenneth Loafman]
+
+* Fixes #832, urllib3 error under python3.12. [Kenneth Loafman]
+
+* Fix typo in setuptools section and migrate to new structure. [Sandro]
+
+* Use functools.lru\_cache with limit, not unlimited. [Kenneth Loafman]
+
+* Set dev branch to 3.0.1.dev. [Kenneth Loafman]
+
+### Fix
+
+* Rework logging to be compatible with Python's logging. [Kenneth Loafman]
+
+* S3 glacier storage class and --concurrency #831. [Thomas Laubrock]
+
+* Unblock multiprocessing deadlock, ensure local disk usage not exceed
+n+1 volumes, switch to "spawn". [Thomas Laubrock]
+
+    Fixed a bug when many processed volumes causing a deadlock in an unused queue.
+    * Switched to multiprocessing.get_context(method="spawn") as "fork" is known to cause issues, "spawn" is the default/recommended method since python 3.13 anyway
+    * Throttle local volume creation to keep disk use to n+1, which n as number concurrent uploads
+    * Several smaller bug fixes and cleanups.
+
+* Add file-size query support to rclonebackend. [Michael Terry]
+
+* Allow empty manifest list. #827. [Thomas Laubrock]
+
+* Make --ignore-errors actually ignore (and recover from) errors. [David Huggins-Daines]
+
+* SSLCertVerificationError despite --ssl-no-check-certificate. [ede]
+
+    tested and works https://gitlab.com/duplicity/duplicity/-/issues/822#note_1937487522 thx Nico J
+
+    Fixes #822
+
+* Instead of raise call command\_line\_error() directly. [Kenneth Loafman]
+
+    Will make sure the help footer is printed after error.
+
+* Empty exclude string results in unfriendly traceback. [Kenneth Loafman]
+
+    Fixes #821
+
+
 ## rel.3.0.0 (2024-05-29)
 
 ### Changes
