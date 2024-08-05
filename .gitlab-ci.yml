@@ -51,7 +51,8 @@ workflow:
         - export LC_ALL=C.UTF-8
         - apt-get update
         - apt-get install -y build-essential git intltool lftp librsync-dev
-                             libffi-dev libssl-dev openssl par2 rdiff tzdata
+                             libffi-dev libssl-dev openssl par2 rclone rdiff 
+                             tzdata
 
 variables:
     # Cache local items
