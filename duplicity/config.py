@@ -26,8 +26,10 @@ import pickle
 import socket
 import sys
 
-from duplicity import __version__, log
-from duplicity import gpg
+from duplicity import (
+    __version__,
+    log,
+)
 
 # The current version of duplicity
 version = __version__
@@ -395,6 +397,11 @@ skip_volume = 0
 # used in testing only - fail BackendWrapper.put() on difftar volN
 put_fail_volume = 0
 
+# path sep in bytes form
+bytes_sep = os.fsencode(os.path.sep)
+
+# path dot in bytes form
+bytes_dot = os.fsencode(".")
 
 # default filesystem encoding
 # It seems that sys.getfilesystemencoding() will normally return
